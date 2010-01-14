@@ -183,8 +183,9 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	protected int synchronizeExistence(UnifiedTreeNode node, Resource target) throws CoreException {
 		if (node.existsInWorkspace()) {
 			if (!node.existsInFileSystem()) {
-				//non-local files are always in sync
-				if (target.isLocal(IResource.DEPTH_ZERO)) {
+				// 1. non-local files are always in sync
+				// 2. links to non-existent locations with the modification stamp of IResource.NULL_STAMP are in sync
+				if (target.isLocal(IResource.DEPTH_ZERO) && target.getModificationStamp() != IResource.NULL_STAMP) {
 					deleteResource(node, target);
 					resourceChanged = true;
 					return RL_NOT_IN_SYNC;

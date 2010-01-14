@@ -230,4 +230,230 @@ public class LinkedResourceSyncMoveAndCopyTest extends ResourceTest {
 			Workspace.clear(resolve(folderLocation).toFile());
 		}
 	}
+
+	/**
+	 * Tests bug 299024.
+	 */
+	public void _testMoveFolderWithLinksToNonExisitngLocations_withShallow() {
+		// create a folder
+		IFolder folderWithLinks = existingProject.getFolder(getUniqueString());
+		try {
+			folderWithLinks.create(true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		// non-exisitng location
+		IPath fileLocation = getRandomLocation();
+
+		// create a linked file in the folder
+		IFile linkedFile = folderWithLinks.getFile(getUniqueString());
+		try {
+			linkedFile.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		// move the folder
+		try {
+			folderWithLinks.move(otherExistingProject.getFolder(getUniqueString()).getFullPath(), IResource.SHALLOW, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// move the folder
+		try {
+			folderWithLinks.move(otherExistingProject.getFolder(getUniqueString()).getFullPath(), IResource.NONE, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+
+		}
+
+		// both the folder and link in the source project should not exist
+		assertFalse("5.0", folderWithLinks.exists());
+		assertFalse("6.0", linkedFile.exists());
+	}
+
+	/**
+	 * Tests bug 299024.
+	 */
+	public void _testCopyFolderWithLinksToNonExisitngLocations_withShallow() {
+		// create a folder
+		IFolder folderWithLinks = existingProject.getFolder(getUniqueString());
+		try {
+			folderWithLinks.create(true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		// non-exisitng location
+		IPath fileLocation = getRandomLocation();
+
+		// create a linked file in the folder
+		IFile linkedFile = folderWithLinks.getFile(getUniqueString());
+		try {
+			linkedFile.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		// copy the folder
+		try {
+			folderWithLinks.copy(otherExistingProject.getFolder(getUniqueString()).getFullPath(), IResource.SHALLOW, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		try {
+			folderWithLinks.copy(otherExistingProject.getFolder(getUniqueString()).getFullPath(), IResource.NONE, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+
+		}
+
+		// both the folder and link in the source project should exist
+		assertTrue("5.0", folderWithLinks.exists());
+		assertTrue("6.0", linkedFile.exists());
+	}
+
+	public void testFolderWithFileLinkedToNonExistent_Deep() {
+		IFolder folder = existingProject.getFolder(getUniqueString());
+		ensureExistsInWorkspace(folder, true);
+
+		IFile fileLinkInFolder = folder.getFile(getUniqueString());
+
+		IPath fileLocation = getRandomLocation();
+		try {
+			fileLinkInFolder.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e1) {
+			fail("4.99", e1);
+		}
+
+		assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folder, IResource.NONE, false);
+
+		createFileInFileSystem(fileLocation);
+
+		try {
+			assertFalse(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.NONE, false);
+
+			try {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+
+			assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.NONE, true);
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
+	public void testFolderWithFileLinkedToNonExistent_Shallow() {
+		IFolder folder = existingProject.getFolder(getUniqueString());
+		ensureExistsInWorkspace(folder, true);
+
+		IFile fileLinkInFolder = folder.getFile(getUniqueString());
+
+		IPath fileLocation = getRandomLocation();
+		try {
+			fileLinkInFolder.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e1) {
+			fail("4.99", e1);
+		}
+
+		assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+
+		createFileInFileSystem(fileLocation);
+
+		try {
+			assertFalse(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+
+			try {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+
+			assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
+	public void testFolderWithFolderLinkedToNonExistent_Deep() {
+		IFolder folder = existingProject.getFolder(getUniqueString());
+		ensureExistsInWorkspace(folder, true);
+
+		IFolder folderLinkInFolder = folder.getFolder(getUniqueString());
+
+		IPath folderLocation = getRandomLocation();
+		try {
+			folderLinkInFolder.createLink(folderLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e1) {
+			fail("4.99", e1);
+		}
+
+		assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folder, IResource.NONE, false);
+
+		folderLocation.toFile().mkdir();
+
+		try {
+			assertFalse(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.NONE, true);
+
+			try {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+
+			assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.NONE, true);
+		} finally {
+			Workspace.clear(resolve(folderLocation).toFile());
+		}
+	}
+
+	public void testFolderWithFolderLinkedToNonExistent_Shallow() {
+		IFolder folder = existingProject.getFolder(getUniqueString());
+		ensureExistsInWorkspace(folder, true);
+
+		IFolder folderLinkInFolder = folder.getFolder(getUniqueString());
+
+		IPath folderLocation = getRandomLocation();
+		try {
+			folderLinkInFolder.createLink(folderLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e1) {
+			fail("4.99", e1);
+		}
+
+		assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+
+		folderLocation.toFile().mkdir();
+
+		try {
+			assertFalse(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+
+			try {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+
+			assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folder, IResource.SHALLOW, true);
+		} finally {
+			Workspace.clear(resolve(folderLocation).toFile());
+		}
+	}
+
 }
