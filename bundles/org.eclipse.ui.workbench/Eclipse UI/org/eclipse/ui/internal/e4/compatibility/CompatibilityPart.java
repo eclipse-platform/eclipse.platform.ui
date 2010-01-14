@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.ui.ISaveablePart;
+
+import org.eclipse.e4.ui.model.application.MSaveablePart;
+
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -58,8 +62,15 @@ public abstract class CompatibilityPart {
 
 		wrapped.addPropertyListener(new IPropertyListener() {
 			public void propertyChanged(Object source, int propId) {
-				if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+				switch (propId) {
+				case IWorkbenchPartConstants.PROP_TITLE:
 					part.setLabel(wrapped.getTitle());
+					break;
+				case IWorkbenchPartConstants.PROP_DIRTY:
+					if (part instanceof MSaveablePart && wrapped instanceof ISaveablePart) {
+						((MSaveablePart) part).setDirty(((ISaveablePart) wrapped).isDirty());
+					}
+					break;
 				}
 			}
 		});
