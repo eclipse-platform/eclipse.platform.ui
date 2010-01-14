@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
@@ -48,7 +49,16 @@ public class ViewRegistry implements IViewRegistry {
 			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
 				MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
 				descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
-				descriptor.setId(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
+				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				descriptor.setId(id);
+				if (id.equals(IPageLayout.ID_RES_NAV) || id.equals(IPageLayout.ID_PROJECT_EXPLORER)) {
+					descriptor.setCategory("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+				} else if (id.equals(IPageLayout.ID_OUTLINE)) {
+					descriptor.setCategory("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+				} else {
+					descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+				}
+
 				descriptor.setAllowMultiple(Boolean.parseBoolean(element
 						.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 				descriptor
