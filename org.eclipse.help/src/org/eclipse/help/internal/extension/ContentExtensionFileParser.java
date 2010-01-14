@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.dynamic.DocumentProcessor;
@@ -46,7 +48,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
     	if (reader == null) {
     		reader = new DocumentReader();
     	}
-		URL url = bundle.getEntry(path);
+		URL url= FileLocator.find(bundle, new Path(path), null);
 		if (url != null) {
 			InputStream in = url.openStream();
 			UAElement extension = (UAElement)reader.read(in);
