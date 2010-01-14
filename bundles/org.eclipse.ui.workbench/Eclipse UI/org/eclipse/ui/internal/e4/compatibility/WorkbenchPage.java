@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -568,7 +569,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		editor.setURI(partDescriptor.getURI());
 		editor.setId(editorId);
 
-		window.getChildren().add(editor);
+		MUIElement element = findPrimaryDataStack(window);
+		if (element instanceof MPartStack) {
+			((MPartStack) element).getChildren().add(editor);
+		} else {
+			window.getChildren().add(editor);
+		}
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
 		compatibilityEditor.set(input, descriptor);
@@ -580,6 +586,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		return compatibilityEditor.getEditor();
+	}
+
+	private MPartStack findPrimaryDataStack(MElementContainer<?> container) {
+		for (Object child : container.getChildren()) {
+			if (((MApplicationElement) child).getId().equals("org.eclipse.e4.primaryDataStack")) { //$NON-NLS-1$
+				return (MPartStack) child;
+			} else if (child instanceof MElementContainer<?>) {
+				MPartStack stack = findPrimaryDataStack((MElementContainer<?>) child);
+				if (stack != null) {
+					return stack;
+				}
+			}
+		}
+		return null;
 	}
 
 	private MPartDescriptor getEditorDescriptor() {
