@@ -60,9 +60,11 @@ public class E4Application implements IApplication {
 
 		args = (String[]) applicationContext.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
+		IEclipseContext appContext = createDefaultContext();
 
 		// Create the app model and its context
-		MApplication appModel = loadApplicationModel(applicationContext);
+		MApplication appModel = loadApplicationModel(applicationContext,
+				appContext);
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
 		if (!E4Workbench.getServiceContext().containsKey(
@@ -71,7 +73,6 @@ public class E4Application implements IApplication {
 			E4Workbench.getServiceContext().set(MApplication.class.getName(),
 					appModel);
 		}
-		IEclipseContext appContext = createDefaultContext();
 
 		// Set the app's context after adding itself
 		appContext.set(MApplication.class.getName(), appModel);
@@ -119,7 +120,8 @@ public class E4Application implements IApplication {
 		}
 	}
 
-	private MApplication loadApplicationModel(IApplicationContext appContext) {
+	private MApplication loadApplicationModel(IApplicationContext appContext,
+			IEclipseContext eclipseContext) {
 		MApplication theApp = null;
 
 		Location instanceLocation = Activator.getDefault()
@@ -133,7 +135,8 @@ public class E4Application implements IApplication {
 
 		boolean saveAndRestore = true;
 		handler = new ResourceHandler(instanceLocation,
-				initialWorkbenchDefinitionInstance, saveAndRestore);
+				initialWorkbenchDefinitionInstance, saveAndRestore,
+				(Logger) eclipseContext.get(Logger.class.getName()));
 		Resource resource = handler.loadMostRecentModel();
 		theApp = (MApplication) resource.getContents().get(0);
 

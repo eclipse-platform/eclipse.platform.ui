@@ -25,6 +25,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
@@ -56,10 +57,12 @@ public class ResourceHandler {
 	private URI restoreLocation;
 	private Resource resource;
 	private ModelReconciler reconciler;
+	private Logger logger;
 
 	public ResourceHandler(Location instanceLocation, URI applicationDefinitionInstance,
-			boolean saveAndRestore) {
+			boolean saveAndRestore, Logger logger) {
 		this.applicationDefinitionInstance = applicationDefinitionInstance;
+		this.logger = logger;
 		resourceSetImpl = new ResourceSetImpl();
 		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
 				Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
@@ -167,7 +170,9 @@ public class ResourceHandler {
 					modelReconcilingService.applyDeltas(deltas);
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				if (logger != null) {
+					logger.error(e);
+				}
 			}
 			return resource;
 		}

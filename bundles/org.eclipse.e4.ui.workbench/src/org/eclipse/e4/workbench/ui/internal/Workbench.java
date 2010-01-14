@@ -203,7 +203,7 @@ public class Workbench implements IWorkbench {
 
 	private MApplication createWorkbenchModel(URI applicationDefinitionInstance) {
 		handler = new ResourceHandler(instanceLocation, applicationDefinitionInstance,
-				saveAndRestore);
+				saveAndRestore, (Logger) getContext().get(Logger.class.getName()));
 
 		long restoreLastModified = handler.getLastStoreDatetime();
 		long lastApplicationModification = getLastApplicationModification(applicationDefinitionInstance);
