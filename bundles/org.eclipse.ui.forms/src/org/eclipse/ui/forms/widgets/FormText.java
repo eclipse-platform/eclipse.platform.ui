@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1306,7 +1306,10 @@ public class FormText extends Canvas {
 		event.display = this.getDisplay();
 		event.type = SWT.Selection;
 		notifyListeners(SWT.Selection, event);
-		getAccessible().selectionChanged();
+		// A listener could have caused the widget to be disposed
+		if (!isDisposed()) {
+		    getAccessible().selectionChanged();
+		}
 	}
 
 	private void handleDrag(MouseEvent e) {
@@ -1344,7 +1347,8 @@ public class FormText extends Canvas {
 			}
 		} else {
 			if (e.button == 1) {
-				endSelection(e);
+				endSelection(e);		
+				if (isDisposed()) return; 
 				IHyperlinkSegment segmentUnder = model
 						.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null && armed == segmentUnder && selData == null) {
