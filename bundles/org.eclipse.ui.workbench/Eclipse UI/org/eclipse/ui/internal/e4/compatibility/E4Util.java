@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /**
  *
  */
@@ -19,6 +21,6 @@ public class E4Util {
 		// UnsupportedOperationException ex = new
 		// UnsupportedOperationException(msg);
 		// throw ex;
-		System.err.println("unsupported: " + msg); //$NON-NLS-1$
+		WorkbenchPlugin.log("unsupported: " + msg); //$NON-NLS-1$
 	}
 }
