@@ -50,7 +50,7 @@
   <handlers xmi:id="_AXeqWe8IEd6FC9cDb6iV7g" id="_AXeqWe8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="e4photo.createAlbum"/>
   <handlers xmi:id="_AXeqWu8IEd6FC9cDb6iV7g" id="_AXeqWu8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="e4photo.switchPersepective"/>
   <handlers xmi:id="_AXeqW-8IEd6FC9cDb6iV7g" id="_AXeqW-8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="e4photo.imageDialog"/>
-  <bindings xmi:id="_AXeqXO8IEd6FC9cDb6iV7g" keySequence="CTRL+X" id="_AXeqXO8IEd6FC9cDb6iV7g" command="e4photo.exit"/>
+  <bindings xmi:id="_AXeqXO8IEd6FC9cDb6iV7g" keySequence="CTRL+Q" id="_AXeqXO8IEd6FC9cDb6iV7g" command="e4photo.exit"/>
   <bindings xmi:id="_AXeqXe8IEd6FC9cDb6iV7g" keySequence="CTRL+N" id="_AXeqXe8IEd6FC9cDb6iV7g" command="e4photo.createAlbum"/>
   <commands xmi:id="e4photo.exit" id="e4photo.exit" commandName="Exit" description=""/>
   <commands xmi:id="e4photo.createAlbum" id="e4photo.createAlbum" commandName="Create Album"/>
