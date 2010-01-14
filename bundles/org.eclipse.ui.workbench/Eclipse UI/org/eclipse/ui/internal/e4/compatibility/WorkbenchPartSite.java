@@ -74,7 +74,8 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
 		// FIXME compat registerContextMenu
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -153,7 +154,8 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 */
 	public Object getAdapter(Class adapter) {
 		// FIXME compat getAdapter
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getAdapter"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)

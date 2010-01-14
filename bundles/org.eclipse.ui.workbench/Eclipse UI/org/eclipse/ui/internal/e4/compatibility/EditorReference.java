@@ -29,7 +29,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	public String getFactoryId() {
 		// FIXME compat getFactoryId
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getFactoryId"); //$NON-NLS-1$
+		return null;
 	}
 
 	public String getName() {

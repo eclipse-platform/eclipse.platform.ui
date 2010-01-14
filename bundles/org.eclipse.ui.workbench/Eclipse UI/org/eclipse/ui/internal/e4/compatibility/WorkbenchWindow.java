@@ -110,7 +110,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public ISelectionService getSelectionService() {
 		// FIXME compat window selection service
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getSelectionService"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -132,7 +133,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public boolean isApplicationMenu(String menuId) {
 		// FIXME compat isApplicationMenu
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("isApplicationMenu"); //$NON-NLS-1$
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -183,7 +185,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public void addPageListener(IPageListener listener) {
 		// FIXME compat addPageListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addPageListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -198,7 +201,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public void removePageListener(IPageListener listener) {
 		// FIXME compat removePageListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removePageListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)

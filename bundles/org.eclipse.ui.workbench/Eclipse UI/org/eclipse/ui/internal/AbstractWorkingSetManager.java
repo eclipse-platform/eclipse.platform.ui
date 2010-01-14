@@ -56,6 +56,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
@@ -211,7 +212,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			IWorkingSet[] components) {
 		// return new AggregateWorkingSet(name, label, components);
 		// FIXME compat: no new WS wizard
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("createAggregateWorkingSet"); //$NON-NLS-1$
+		return null;
 	}
 
     /*
@@ -631,7 +633,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		// editWizard.setSelection(workingSet);
 		// return editWizard;
 		// FIXME compat: no new WS wizard
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("createWorkingSetEditWizard"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -659,7 +662,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			return null;
 		}
 		// FIXME compat: no new WS wizard
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("createWorkingSetNewWizard"); //$NON-NLS-1$
+		return null;
 }
 
     //---- working set delta handling -------------------------------------------------
@@ -800,7 +804,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
 		// return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
 		// FIXME compat: no new WS wizard
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("createWorkingSetSelectionDialog"); //$NON-NLS-1$
+		return null;
     }
 
 	/**

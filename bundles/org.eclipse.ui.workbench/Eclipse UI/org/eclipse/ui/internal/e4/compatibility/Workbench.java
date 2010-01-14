@@ -147,7 +147,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IProgressService getProgressService() {
 		// FIXME compat getProgressService
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getProgressService"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -199,7 +200,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public boolean close() {
 		// FIXME compat close
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("close"); //$NON-NLS-1$
+		return true;
 	}
 
 	/*
@@ -274,7 +276,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public PreferenceManager getPreferenceManager() {
 		// FIXME compat getPreferenceManager
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getPreferenceManager"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -284,7 +287,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		// FIXME compat getPreferenceStore
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getPreferenceStore"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -344,7 +348,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public ILocalWorkingSetManager createLocalWorkingSetManager() {
 		// FIXME compat createLocalWorkingSetManager
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("createLocalWorkingSetManager"); //$NON-NLS-1$
+		return null;
 	}
 
 	private void fireWindowOpened(IWorkbenchWindow window) {
@@ -404,7 +409,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public boolean restart() {
 		// FIXME compat restart
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("restart"); //$NON-NLS-1$
+		return true;
 	}
 
 	/*
@@ -509,7 +515,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IElementFactory getElementFactory(String factoryId) {
 		// FIXME compat getElementFactory
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getElementFactory"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -519,7 +526,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchActivitySupport getActivitySupport() {
 		// FIXME compat getActivitySupport
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getActivitySupport"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -529,7 +537,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchCommandSupport getCommandSupport() {
 		// FIXME compat getCommandSupport
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getCommandSupport"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -539,7 +548,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchContextSupport getContextSupport() {
 		// FIXME compat getContextSupport
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getContextSupport"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -549,7 +559,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IThemeManager getThemeManager() {
 		// FIXME compat getThemeManager
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getThemeManager"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -559,7 +570,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IIntroManager getIntroManager() {
 		// FIXME compat getIntroManager
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getIntroManager"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -578,7 +590,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchBrowserSupport getBrowserSupport() {
 		// FIXME compat getBrowserSupport
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getBrowserSupport"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -588,7 +601,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public boolean isStarting() {
 		// FIXME compat isStarting
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("isStarting"); //$NON-NLS-1$
+		return false;
 	}
 
 	/*
@@ -598,7 +612,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public boolean isClosing() {
 		// FIXME compat isClosing
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("isClosing"); //$NON-NLS-1$
+		return false;
 	}
 
 	/*
@@ -629,7 +644,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWizardRegistry getNewWizardRegistry() {
 		// FIXME compat getNewWizardRegistry
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getNewWizardRegistry"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -639,7 +655,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWizardRegistry getImportWizardRegistry() {
 		// FIXME compat getImportWizardRegistry
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getImportWizardRegistry"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -649,7 +666,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWizardRegistry getExportWizardRegistry() {
 		// FIXME compat getExportWizardRegistry
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getExportWizardRegistry"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -664,7 +682,8 @@ public class Workbench implements IWorkbench {
 			IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm) {
 		// FIXME compat saveAll
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("saveAll"); //$NON-NLS-1$
+		return true;
 	}
 
 	/*
@@ -674,7 +693,8 @@ public class Workbench implements IWorkbench {
 	 */
 	public Object getAdapter(Class adapter) {
 		// FIXME compat getAdapter
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getAdapter"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*

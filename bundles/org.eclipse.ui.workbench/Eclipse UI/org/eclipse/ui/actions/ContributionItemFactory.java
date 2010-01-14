@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
@@ -200,7 +201,8 @@ public abstract class ContributionItemFactory {
             }
 			// return new SwitchToWindowMenu(window, getId(), true);
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("OPEN_WINDOWS"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -220,7 +222,8 @@ public abstract class ContributionItemFactory {
             }
 			// return new ShowViewMenu(window, getId());
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("VIEWS_SHORTLIST"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -245,7 +248,8 @@ public abstract class ContributionItemFactory {
 			// showInMenu.initialize(window);
 			// return showInMenu;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("VIEWS_SHOW_IN"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -264,7 +268,8 @@ public abstract class ContributionItemFactory {
             }
 			// return new ReopenEditorMenu(window, getId(), true);
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("REOPEN_EDITORS"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -285,7 +290,8 @@ public abstract class ContributionItemFactory {
                 throw new IllegalArgumentException();
             }
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("PERSPECTIVES_SHORTLIST"); //$NON-NLS-1$
+			return null;
         }
     };
     
@@ -321,7 +327,8 @@ public abstract class ContributionItemFactory {
             }
 			// return new HelpSearchContributionItem(window, getId());
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("HELP_SEARCH"); //$NON-NLS-1$
+			return null;
         }
     };
 

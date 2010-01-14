@@ -38,7 +38,8 @@ public class ViewSite extends WorkbenchPartSite implements IViewSite {
 	 */
 	public String getSecondaryId() {
 		// FIXME compat getSecondaryId
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getSecondaryId"); //$NON-NLS-1$
+		return null;
 	}
 
 }

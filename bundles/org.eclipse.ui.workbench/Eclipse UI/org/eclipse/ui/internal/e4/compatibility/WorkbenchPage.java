@@ -149,7 +149,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		// FIXME compat addPropertyChangeListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addPropertyChangeListener"); //$NON-NLS-1$
+
 	}
 
 	private MPart findPart(IWorkbenchPart part) {
@@ -423,7 +424,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IWorkingSet getWorkingSet() {
 		// FIXME compat getWorkingSet
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getWorkingSet"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -431,7 +433,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void hideActionSet(String actionSetID) {
 		// FIXME compat hideActionSet
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("hideActionSet"); //$NON-NLS-1$
+
 	}
 
 	private boolean hidePart(MPart part, boolean save) {
@@ -516,7 +519,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public boolean isEditorAreaVisible() {
 		// FIXME compat isEditorAreaVisible
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("isEditorAreaVisible"); //$NON-NLS-1$
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -600,7 +604,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		// FIXME compat removePropertyChangeListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removePropertyChangeListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -608,7 +613,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void resetPerspective() {
 		// FIXME compat resetPerspective
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("resetPerspective"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -649,7 +655,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void savePerspective() {
 		// FIXME compat savePerspective
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("savePerspective"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -657,7 +664,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void savePerspectiveAs(IPerspectiveDescriptor perspective) {
 		// FIXME compat savePerspectiveAs
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("savePerspectiveAs"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -665,7 +673,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void setEditorAreaVisible(boolean showEditorArea) {
 		// FIXME compat setEditorAreaVisible
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setEditorAreaVisible"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -693,7 +702,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void showActionSet(String actionSetID) {
 		// FIXME compat showActionSet
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("showActionSet"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -745,7 +755,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public void setEditorReuseThreshold(int openEditors) {
 		// FIXME compat setEditorReuseThreshold, this is an empty implementation
 		// in 3.x, see IPageLayout's setEditorReuseThreshold
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setEditorReuseThreshold"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -753,7 +764,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public INavigationHistory getNavigationHistory() {
 		// FIXME compat getNavigationHistory
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getNavigationHistory"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -786,7 +798,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public String[] getNewWizardShortcuts() {
 		// FIXME compat getNewWizardShortcuts
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getNewWizardShortcuts"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -794,7 +807,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public String[] getPerspectiveShortcuts() {
 		// FIXME compat getPerspectiveShortcuts
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getPerspectiveShortcuts"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -802,7 +816,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public String[] getShowViewShortcuts() {
 		// FIXME compat getShowViewShortcuts
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getShowViewShortcuts"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -855,7 +870,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IExtensionTracker getExtensionTracker() {
 		// FIXME compat we'll probably need this at some point, or use the
 		// window version
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getExtensionTracker"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -864,7 +880,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IWorkingSet[] getWorkingSets() {
 		// FIXME compat most of working sets API has been added back to
 		// WorkbenchPlugin
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getWorkingSets"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -872,7 +889,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void setWorkingSets(IWorkingSet[] sets) {
 		// FIXME compat setWorkingSets
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setWorkingSets"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -880,7 +898,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IWorkingSet getAggregateWorkingSet() {
 		// FIXME compat getAggregateWorkingSet
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getAggregateWorkingSet"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -896,7 +915,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void zoomOut() {
 		// FIXME compat zoomOut
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("zoomOut"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -904,7 +924,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
 		// FIXME compat toggleZoom
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("toggleZoom"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -920,7 +941,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void setPartState(IWorkbenchPartReference ref, int state) {
 		// FIXME compat setPartState
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setPartState"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -947,7 +969,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void showEditor(IEditorReference ref) {
 		// FIXME compat showEditor
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("showEditor"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -955,7 +978,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void hideEditor(IEditorReference ref) {
 		// FIXME compat hideEditor
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("hideEditor"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -996,7 +1020,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addPartListener(IPartListener2 listener) {
 		// FIXME compat addPartListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addPartListener2"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1040,7 +1065,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removePartListener(IPartListener2 listener) {
 		// FIXME compat removePartListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removePartListener2"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1048,7 +1074,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
 		// FIXME compat addSelectionListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addSelectionListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1056,7 +1083,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
 		// FIXME compat addSelectionListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addSelectionListener(partId)"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1064,7 +1092,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
 		// FIXME compat addPostSelectionListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addPostSelectionListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1072,7 +1101,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
 		// FIXME compat addPostSelectionListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("addPostSelectionListener(partId)"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1080,7 +1110,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public ISelection getSelection() {
 		// FIXME compat addPostSelectionListener
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getSelection"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -1088,7 +1119,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public ISelection getSelection(String partId) {
 		// FIXME compat getSelection
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getSelection(partId)"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -1096,7 +1128,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
 		// FIXME compat getSelection
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removeSelectionListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1104,7 +1137,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		// FIXME compat getSelection
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removeSelectionListener(partId)"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1112,7 +1146,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
 		// FIXME compat getSelection
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removePostSelectionListener"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -1120,7 +1155,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		// FIXME compat getSelection
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("removePostSelectionListener(partId)"); //$NON-NLS-1$
+
 	}
 
 }

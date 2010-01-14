@@ -42,6 +42,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -609,7 +610,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// }
 		// return operationSupport;
 		// FIXME compat: add operation support
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getOperationSupport"); //$NON-NLS-1$
+		return null;
     }
     
 
@@ -634,7 +636,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //        }
 //        return preferenceManager;
 		// FIXME compat: add preference manager support
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getPreferenceManager"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -677,7 +680,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //        }
 //        return viewRegistry;
 		// FIXME compat: add view registry support
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getViewRegistry"); //$NON-NLS-1$
+		return null;
     }
 
     /**

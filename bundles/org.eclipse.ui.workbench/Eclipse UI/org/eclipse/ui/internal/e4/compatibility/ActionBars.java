@@ -46,7 +46,8 @@ public class ActionBars implements IActionBars {
 	 */
 	public void clearGlobalActionHandlers() {
 		// FIXME compat clearGlobalActionHandlers
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("clearGlobalActionHandlers"); //$NON-NLS-1$
+
 	}
 
 	/*
@@ -56,7 +57,8 @@ public class ActionBars implements IActionBars {
 	 */
 	public IAction getGlobalActionHandler(String actionId) {
 		// FIXME compat getGlobalActionHandler
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getGlobalActionHandler"); //$NON-NLS-1$
+		return null;
 	}
 
 	/*
@@ -128,7 +130,8 @@ public class ActionBars implements IActionBars {
 	 */
 	public void setGlobalActionHandler(String actionId, IAction handler) {
 		// FIXME compat setGlobalActionHandler
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setGlobalActionHandler"); //$NON-NLS-1$
+
 	}
 
 	/*
@@ -138,7 +141,8 @@ public class ActionBars implements IActionBars {
 	 */
 	public void updateActionBars() {
 		// FIXME compat updateActionBars
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("updateActionBars"); //$NON-NLS-1$
+
 	}
 
 }

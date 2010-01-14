@@ -25,7 +25,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 */
 	public String[] getScopes() {
 		// FIXME compat getScopes
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("getScopes"); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -33,7 +34,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 */
 	public void registerAction(IAction action) {
 		// FIXME compat registerAction
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("registerAction"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +43,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 */
 	public void setScopes(String[] scopes) {
 		// FIXME compat setScopes
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("setScopes"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +52,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 */
 	public void unregisterAction(IAction action) {
 		// FIXME compat unregisterAction
-		throw new UnsupportedOperationException();
+		E4Util.unsupported("unregisterAction"); //$NON-NLS-1$
+
 	}
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -172,7 +173,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("BACKWARD_HISTORY"); //$NON-NLS-1$ 
+			return null;
         }
     };
 
@@ -286,7 +288,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("CLOSE_ALL_SAVED"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -344,7 +347,9 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("INTRO"); //$NON-NLS-1$
+			return null;
+
         }
     };
 
@@ -560,7 +565,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("FORWARD_HISTORY"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -634,7 +640,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("LOCK_TOOL_BAR"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -954,7 +961,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("PREFERENCES"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1242,7 +1250,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("RESET_PERSPECTIVE"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1286,7 +1295,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("SAVE"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1308,7 +1318,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("SAVE_ALL"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1330,7 +1341,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("SAVE_AS"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1352,7 +1364,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("SAVE_PERSPECTIVE"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1398,7 +1411,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("SHOW_EDITOR"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1586,7 +1600,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("HELP_CONTENTS"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1610,7 +1625,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("HELP_SEARCH"); //$NON-NLS-1$
+			return null;
         }
     };
 
@@ -1634,7 +1650,8 @@ public abstract class ActionFactory {
 			// action.setId(getId());
 			// return action;
 			// FIXME compat: where did this go?
-			throw new UnsupportedOperationException();
+			E4Util.unsupported("DYNAMIC_HELP"); //$NON-NLS-1$
+			return null;
         }
     };
 
