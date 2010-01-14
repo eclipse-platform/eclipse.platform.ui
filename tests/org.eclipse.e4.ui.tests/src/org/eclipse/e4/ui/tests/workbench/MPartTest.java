@@ -29,7 +29,6 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -94,11 +93,7 @@ public class MPartTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		// HACK: see bug #280632 - always a composite around
-		// CTabFolder so can implement margins
-		Composite marginHolder = (Composite) sashChildren[0];
-		assertEquals(1, marginHolder.getChildren().length);
-		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		CTabItem item = folder.getItem(0);
 		assertEquals("Part Name", item.getText());
 
@@ -133,11 +128,7 @@ public class MPartTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		// HACK: see bug #280632 - always a composite around
-		// CTabFolder so can implement margins
-		Composite marginHolder = (Composite) sashChildren[0];
-		assertEquals(1, marginHolder.getChildren().length);
-		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		CTabItem item = folder.getItem(0);
 		assertNotNull(item.getImage());
 	}
@@ -196,11 +187,7 @@ public class MPartTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		// HACK: see bug #280632 - always a composite around
-		// CTabFolder so can implement margins
-		Composite marginHolder = (Composite) sashChildren[0];
-		assertEquals(1, marginHolder.getChildren().length);
-		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		CTabItem item = folder.getItem(0);
 		assertEquals(expectedToolTip, item.getToolTipText());
 	}
@@ -239,11 +226,7 @@ public class MPartTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		// HACK: see bug #280632 - always a composite around
-		// CTabFolder so can implement margins
-		Composite marginHolder = (Composite) sashChildren[0];
-		assertEquals(1, marginHolder.getChildren().length);
-		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		CTabItem item = folder.getItem(0);
 		assertEquals(null, item.getToolTipText());
 

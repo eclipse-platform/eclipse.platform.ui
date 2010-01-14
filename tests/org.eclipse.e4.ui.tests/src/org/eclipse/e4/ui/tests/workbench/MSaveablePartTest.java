@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -94,11 +93,7 @@ public class MSaveablePartTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		// HACK: see bug #280632 - always a composite around
-		// CTabFolder so can implement margins
-		Composite marginHolder = (Composite) sashChildren[0];
-		assertEquals(1, marginHolder.getChildren().length);
-		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		CTabItem item = folder.getItem(0);
 		assertEquals("Part Name", item.getText());
 
