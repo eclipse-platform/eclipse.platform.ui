@@ -11,8 +11,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +33,6 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -45,7 +42,6 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -271,18 +267,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 		if (wbwModel.getLabel() != null)
 			wbwShell.setText(wbwModel.getLabel());
-		String uri = wbwModel.getIconURI();
-		if (uri != null) {
-			try {
-				Image image = ImageDescriptor.createFromURL(new URL(uri))
-						.createImage();
-				wbwShell.setImage(image);
-			} catch (MalformedURLException e) {
-				// invalid image in model, so don't set an image
-				if (logger != null)
-					logger.error(e);
-			}
-		}
+
+		wbwShell.setImage(getImage(wbwModel));
 
 		return newWidget;
 	}

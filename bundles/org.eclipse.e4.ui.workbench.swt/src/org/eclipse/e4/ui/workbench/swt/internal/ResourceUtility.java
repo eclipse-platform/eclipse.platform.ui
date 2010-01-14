@@ -193,6 +193,8 @@ public class ResourceUtility implements ISWTResourceUtiltities {
 		try {
 			return ImageDescriptor.createFromURL(new URL(iconPath.toString()));
 		} catch (MalformedURLException e) {
+			System.err.println("iconURI \"" + iconPath.toString()
+					+ "\" is invalid, no image will be shown");
 			return null;
 		}
 	}

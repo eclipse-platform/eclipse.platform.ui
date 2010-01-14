@@ -130,7 +130,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	protected Image getImage(MUILabel element) {
 		IEclipseContext localContext = context;
 		String iconURI = element.getIconURI();
-		if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
+		if (iconURI != null && iconURI.length() > 0) {
 			ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
 					.get(IResourceUtiltities.class.getName());
 			ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI
