@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -138,10 +139,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				// OK, we have a new -visible- part we either have to create
 				// it or host it under the correct parent
-				if (added.getWidget() == null)
+				if (added.getWidget() == null) {
 					// NOTE: createGui will call 'childAdded' if successful
-					createGui(added);
-				else {
+					Widget w = (Widget) createGui(added);
+					if (w instanceof Control) {
+						((Control) w).getParent().getShell().layout(
+								new Control[] { (Control) w }, SWT.DEFER);
+					}
+				} else {
 					if (factory != null)
 						factory.childRendered(changedElement, added);
 				}
@@ -331,8 +336,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			factory.hookControllerLogic(element);
 
 			if (element instanceof MElementContainer) {
-				factory
-						.processContents((MElementContainer<MUIElement>) element);
+				factory.processContents((MElementContainer<MUIElement>) element);
 			}
 
 			factory.postProcess(element);
