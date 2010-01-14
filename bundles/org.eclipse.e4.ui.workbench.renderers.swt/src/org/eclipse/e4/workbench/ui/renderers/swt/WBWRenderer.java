@@ -68,7 +68,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				MWindow window = windowsToUpdate.remove(0);
 				Shell shell = (Shell) window.getWidget();
 				if (shell == null || shell.isDisposed())
-					return;
+					continue;
 
 				shell.setBounds(window.getX(), window.getY(),
 						window.getWidth(), window.getHeight());
