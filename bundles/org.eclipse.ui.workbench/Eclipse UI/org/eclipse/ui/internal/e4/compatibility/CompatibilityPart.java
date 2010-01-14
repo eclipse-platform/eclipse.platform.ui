@@ -11,15 +11,16 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.ui.ISaveablePart;
-
-import org.eclipse.e4.ui.model.application.MSaveablePart;
-
 import javax.inject.Inject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
@@ -74,6 +75,13 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
+	}
+
+	void doSave(@Optional IProgressMonitor monitor) {
+		monitor = SubMonitor.convert(monitor);
+		if (wrapped instanceof ISaveablePart) {
+			((ISaveablePart) wrapped).doSave(monitor);
+		}
 	}
 
 	public IWorkbenchPart getPart() {
