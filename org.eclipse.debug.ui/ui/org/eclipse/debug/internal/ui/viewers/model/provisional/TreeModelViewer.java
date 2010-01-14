@@ -12,7 +12,10 @@
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
@@ -174,5 +177,23 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	
     public ViewerLabel getElementLabel(TreePath path, String columnId) {
         return super.getElementLabel(path, columnId);
+    }
+    
+    /**
+     * Invoking this method fires an editor activation event which tries to
+     * enable the editor but before this event is passed to {@link
+     * ColumnViewerEditorActivationStrategy} to see if this event should really
+     * trigger editor activation
+     * <p>
+     * Note this declaration allows public access this method which is declared
+     * protected in ColumnViewer.
+     * 
+     * @param event
+     *      the activation event
+     *      
+     * @since 3.6
+     */
+    public void triggerEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+        super.triggerEditorActivationEvent(event);
     }
 }
