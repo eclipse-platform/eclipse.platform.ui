@@ -21,8 +21,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.dialogs.PropertyDialog;
-import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 
 /**
  * Standard action for opening a Property Pages Dialog on the currently selected
