@@ -240,7 +240,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				showElementRecursive(curSel, becomingVisible);
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
-			for (MUIElement childElement : container.getChildren()) {
+			List<MUIElement> kids = new ArrayList<MUIElement>(container
+					.getChildren());
+			for (MUIElement childElement : kids) {
 				showElementRecursive(childElement, becomingVisible);
 			}
 		}

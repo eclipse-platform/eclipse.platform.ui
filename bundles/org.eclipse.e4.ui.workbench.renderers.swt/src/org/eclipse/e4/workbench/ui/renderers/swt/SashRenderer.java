@@ -107,8 +107,9 @@ public class SashRenderer extends SWTPartRenderer {
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					MPartSashContainer container = (MPartSashContainer) element;
 					SashForm sashForm = (SashForm) container.getWidget();
-					sashForm.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
-							: SWT.VERTICAL);
+					sashForm
+							.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
+									: SWT.VERTICAL);
 				}
 			}
 		};
@@ -250,6 +251,9 @@ public class SashRenderer extends SWTPartRenderer {
 	 */
 	private static int getWeight(MUIElement element) {
 		String info = element.getContainerData();
+		if (info == null || info.length() == 0)
+			return DEFAULT_WEIGHT;
+
 		try {
 			int value = Integer.parseInt(info);
 			return value;
