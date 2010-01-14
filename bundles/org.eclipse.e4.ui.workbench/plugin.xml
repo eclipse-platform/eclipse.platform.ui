@@ -30,4 +30,16 @@
             type="e4xmi">
       </parser>
    </extension>
+   
+   <extension
+      id="org.eclipse.e4.xwt.content-types"
+      point="org.eclipse.core.contenttype.contentTypes">
+     <content-type
+          base-type="org.eclipse.core.runtime.xml"
+          file-extensions="e4xmi"
+          id="org.eclipse.e4.content-type"
+          name="e4 XMI"
+          priority="low">
+     </content-type>
+   </extension>
 </plugin>
