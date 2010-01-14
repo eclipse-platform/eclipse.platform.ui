@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -58,6 +60,10 @@ public class CompatibilityEditor extends CompatibilityPart {
 	protected void initialize(IWorkbenchPart part) throws PartInitException {
 		((IEditorPart) part).init(new EditorSite(this.part, part, descriptor
 				.getConfigurationElement()), input);
+	}
+
+	void doSave(@Optional IProgressMonitor monitor) {
+		super.doSave(monitor);
 	}
 
 	public IEditorPart getEditor() {
