@@ -52,7 +52,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private IAdaptable input;
 	private IPerspectiveDescriptor perspective;
 
-	private ListenerList perspectiveListener = new ListenerList();
+	private ListenerList pageListeners = new ListenerList();
+	private ListenerList perspectiveListeners = new ListenerList();
 
 	WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
@@ -184,32 +185,28 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void addPageListener(IPageListener listener) {
-		// FIXME compat addPageListener
-		E4Util.unsupported("addPageListener"); //$NON-NLS-1$
-
+		pageListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void addPerspectiveListener(IPerspectiveListener listener) {
-		perspectiveListener.add(listener);
+		perspectiveListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void removePageListener(IPageListener listener) {
-		// FIXME compat removePageListener
-		E4Util.unsupported("removePageListener"); //$NON-NLS-1$
-
+		pageListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void removePerspectiveListener(IPerspectiveListener listener) {
-		perspectiveListener.remove(listener);
+		perspectiveListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
