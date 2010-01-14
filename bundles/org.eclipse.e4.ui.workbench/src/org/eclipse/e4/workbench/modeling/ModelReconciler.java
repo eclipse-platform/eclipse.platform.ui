@@ -227,6 +227,18 @@ public abstract class ModelReconciler {
 			.getName();
 
 	/**
+	 * Attribute defined by MPartDescriptor (value is <code>allowMultiple</code>).
+	 */
+	public static final String PARTDESCRIPTOR_ALLOWMULTIPLE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getPartDescriptor_AllowMultiple().getName();
+
+	/**
+	 * Attribute defined by MPartDescriptor (value is <code>category</code>).
+	 */
+	public static final String PARTDESCRIPTOR_CATEGORY_ATTNAME = MApplicationPackage.eINSTANCE
+			.getPartDescriptor_Category().getName();
+
+	/**
 	 * Attribute defined by MPartDescriptorContainers (value is <code>descriptors</code>).
 	 */
 	public static final String PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME = MApplicationPackage.eINSTANCE

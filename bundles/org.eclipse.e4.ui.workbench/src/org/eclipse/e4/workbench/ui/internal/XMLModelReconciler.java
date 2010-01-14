@@ -40,6 +40,7 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
@@ -209,6 +210,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getWindow_Width();
 		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_Height();
+		} else if (featureName.equals(PARTDESCRIPTOR_ALLOWMULTIPLE_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getPartDescriptor_AllowMultiple();
+		} else if (featureName.equals(PARTDESCRIPTOR_CATEGORY_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getPartDescriptor_Category();
 		}
 		return null;
 	}
@@ -275,6 +280,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MApplication) {
 			for (MCommand command : ((MApplication) object).getCommands()) {
 				if (constructDeltas(deltas, references, (EObject) command, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MPartDescriptorContainer) {
+			for (MPartDescriptor descriptor : ((MPartDescriptorContainer) object).getDescriptors()) {
+				if (constructDeltas(deltas, references, (EObject) descriptor, element, id)) {
 					return true;
 				}
 			}
