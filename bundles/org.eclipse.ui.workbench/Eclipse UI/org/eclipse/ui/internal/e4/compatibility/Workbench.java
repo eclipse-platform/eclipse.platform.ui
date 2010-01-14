@@ -84,6 +84,7 @@ public class Workbench implements IWorkbench {
 	private IPerspectiveRegistry perspectiveRegistry;
 	private IViewRegistry viewRegistry;
 	private WorkingSetManager workingSetManager;
+	private IThemeManager themeManager;
 
 	private ListenerList workbenchListeners = new ListenerList();
 	private ListenerList windowListeners = new ListenerList();
@@ -558,9 +559,10 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getThemeManager()
 	 */
 	public IThemeManager getThemeManager() {
-		// FIXME compat getThemeManager
-		E4Util.unsupported("getThemeManager"); //$NON-NLS-1$
-		return null;
+		if (themeManager == null) {
+			themeManager = new ThemeManager();
+		}
+		return themeManager;
 	}
 
 	/*

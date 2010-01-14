@@ -18,10 +18,19 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -611,7 +620,140 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// return operationSupport;
 		// FIXME compat: add operation support
 		E4Util.unsupported("getOperationSupport"); //$NON-NLS-1$
-		return null;
+		return new IWorkbenchOperationSupport() {
+
+			public IUndoContext getUndoContext() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public IOperationHistory getOperationHistory() {
+				return new IOperationHistory() {
+
+					public IStatus undoOperation(IUndoableOperation operation,
+							IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+						// TODO Auto-generated method stub
+						return Status.OK_STATUS;
+					}
+
+					public IStatus undo(IUndoContext context, IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						// TODO Auto-generated method stub
+						return Status.OK_STATUS;
+					}
+
+					public void setLimit(IUndoContext context, int limit) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void replaceOperation(IUndoableOperation operation,
+							IUndoableOperation[] replacements) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void removeOperationHistoryListener(IOperationHistoryListener listener) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void removeOperationApprover(IOperationApprover approver) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public IStatus redoOperation(IUndoableOperation operation,
+							IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+						// TODO Auto-generated method stub
+						return Status.OK_STATUS;
+					}
+
+					public IStatus redo(IUndoContext context, IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						// TODO Auto-generated method stub
+						return Status.OK_STATUS;
+					}
+
+					public void operationChanged(IUndoableOperation operation) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void openOperation(ICompositeOperation operation, int mode) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public IUndoableOperation getUndoOperation(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public IUndoableOperation[] getUndoHistory(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public IUndoableOperation getRedoOperation(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public IUndoableOperation[] getRedoHistory(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public int getLimit(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+
+					public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						// TODO Auto-generated method stub
+						return Status.OK_STATUS;
+					}
+
+					public void dispose(IUndoContext context, boolean flushUndo, boolean flushRedo,
+							boolean flushContext) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void closeOperation(boolean operationOK, boolean addToHistory, int mode) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public boolean canUndo(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					public boolean canRedo(IUndoContext context) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					public void addOperationHistoryListener(IOperationHistoryListener listener) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void addOperationApprover(IOperationApprover approver) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void add(IUndoableOperation operation) {
+						// TODO Auto-generated method stub
+
+					}
+				};
+			}
+		};
     }
     
 

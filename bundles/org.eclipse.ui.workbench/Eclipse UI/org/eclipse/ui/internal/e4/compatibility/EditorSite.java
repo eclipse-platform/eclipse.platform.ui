@@ -20,14 +20,13 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 
-/**
- * @since 3.5
- *
- */
 public class EditorSite extends WorkbenchPartSite implements IEditorSite {
+
+	private IActionBars actionBars;
 
 	EditorSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
 		super(model, part, element);
+		actionBars = new ActionBars(model);
 	}
 
 	/* (non-Javadoc)
@@ -42,8 +41,7 @@ public class EditorSite extends WorkbenchPartSite implements IEditorSite {
 	 * @see org.eclipse.ui.IEditorSite#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		// TODO Auto-generated method stub
-		return null;
+		return actionBars;
 	}
 
 	/* (non-Javadoc)
