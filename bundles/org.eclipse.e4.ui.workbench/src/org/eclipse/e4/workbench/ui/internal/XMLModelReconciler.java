@@ -70,7 +70,7 @@ import org.w3c.dom.NodeList;
 
 public class XMLModelReconciler extends ModelReconciler {
 
-	private static final String XMIID_ATTNAME = "xmi:id"; //$NON-NLS-1$
+	private static final String XMIID_ATTNAME = "xmiId"; //$NON-NLS-1$
 
 	private static final String REFERENCE_ELEMENT_NAME = "reference"; //$NON-NLS-1$
 	private static final String ORIGINALREFERENCE_ELEMENT_NAME = "originalReference"; //$NON-NLS-1$
