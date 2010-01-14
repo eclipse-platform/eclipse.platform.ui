@@ -59,7 +59,8 @@ public abstract class AbstractCSSEditor {
 	 * @return
 	 */
 	protected CSSEngine getCSSEngine() {
-		if (engine == null) {
+		// FIXME: don't reset, just make a new engine, see bug 289251
+//		if (engine == null) {
 			// Get SWT CSS Engine
 			engine = createCSSEngine();
 			// Error
@@ -69,10 +70,10 @@ public abstract class AbstractCSSEditor {
 				}
 			});
 
-		} else {
-			// Remove all style sheets.
-			engine.reset();
-		}
+//		} else {
+//			// Remove all style sheets.
+//			engine.reset();
+//		}
 
 		if (isHTMLSelector()) {
 			// Register HTML Element Provider to retrieve
