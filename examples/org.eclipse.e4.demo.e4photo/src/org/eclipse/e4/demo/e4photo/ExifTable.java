@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -57,7 +58,7 @@ public class ExifTable {
 	private Logger logger;
 	
 	@Inject
-	private IEventBroker eventBroker;
+	private IEclipseContext context;
 	
 	
 
@@ -157,6 +158,7 @@ public class ExifTable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((StructuredSelection) event.getSelection()).getFirstElement();
+				IEventBroker eventBroker = (IEventBroker) context.get(IEventBroker.class.getName());
 				if (eventBroker != null)
 					eventBroker.post(EVENT_NAME, selected);
 			}
