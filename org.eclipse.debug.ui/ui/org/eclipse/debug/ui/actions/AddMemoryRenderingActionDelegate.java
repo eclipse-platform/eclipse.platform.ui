@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,8 +139,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 
 		private void contextActivated(ISelection selection) {
 			setupActionDelegate(selection);
-			updateAction(fAction, fCurrentSelection);
 			
+			if(fAction != null)
+				updateAction(fAction, fCurrentSelection);
 		}
 
 		public void debugContextChanged(DebugContextEvent event) {
@@ -215,11 +216,17 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		bindAction(action);
 		fCurrentSelection = selection;
-		updateAction(action, selection);
+		
+		if(action != null) {
+			bindAction(action);
+			updateAction(action, selection);
+		}
 	}
 	
+	/**
+	 * @param action - the action to bind with the menu and to update enablement, must not be null
+	 */
 	private void updateAction(IAction action, ISelection selection)
 	{
 		if (fActionDelegate != null)
@@ -233,10 +240,10 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}
 	}
 
+	/**
+	 * @param action - the action to bind with the menu, must not be null
+	 */
 	private void bindAction(IAction action) {
-		if (action == null)
-			return;
-		
 		if (action != fAction) {
 			if (fMenuCreator == null)
 				fMenuCreator = new AddMemoryRenderingMenuCreator();
@@ -264,8 +271,11 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		bindPart(targetEditor);
-		bindAction(action);
-		updateAction(action, fCurrentSelection);
+		
+		if(action != null) {
+			bindAction(action);
+			updateAction(action, fCurrentSelection);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -273,17 +283,20 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		bindPart(targetPart);
-		bindAction(action);
-		updateAction(action, fCurrentSelection);
+		
+		if(action != null) {
+			bindAction(action);
+			updateAction(action, fCurrentSelection);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {		
-		bindAction(action);
-		if (action != null)
-		{
+		if (action != null) {
+			bindAction(action);
+
 			action.setText(ActionMessages.AddMemoryRenderingActionDelegate_2);
 			action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 			action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
