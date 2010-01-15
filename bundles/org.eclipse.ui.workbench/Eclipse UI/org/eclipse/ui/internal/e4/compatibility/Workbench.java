@@ -18,7 +18,10 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -28,10 +31,14 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorRegistry;
@@ -50,8 +57,10 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
@@ -149,7 +158,44 @@ public class Workbench implements IWorkbench {
 	public IProgressService getProgressService() {
 		// FIXME compat getProgressService
 		E4Util.unsupported("getProgressService"); //$NON-NLS-1$
-		return null;
+		return new IProgressService() {
+
+			public void showInDialog(Shell shell, Job job) {
+				E4Util.unsupported("showInDialog"); //$NON-NLS-1$
+			}
+
+			public void runInUI(IRunnableContext context, IRunnableWithProgress runnable,
+					ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
+				E4Util.unsupported("runInUI"); //$NON-NLS-1$
+				runnable.run(new NullProgressMonitor());
+			}
+
+			public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+					throws InvocationTargetException, InterruptedException {
+				E4Util.unsupported("run"); //$NON-NLS-1$
+				runnable.run(new NullProgressMonitor());
+			}
+
+			public void registerIconForFamily(ImageDescriptor icon, Object family) {
+				E4Util.unsupported("registerIconForFamily"); //$NON-NLS-1$
+			}
+
+			public int getLongOperationTime() {
+				E4Util.unsupported("getLongOperationTime"); //$NON-NLS-1$
+				return 0;
+			}
+
+			public Image getIconFor(Job job) {
+				E4Util.unsupported("getIconFor"); //$NON-NLS-1$
+				return null;
+			}
+
+			public void busyCursorWhile(IRunnableWithProgress runnable)
+					throws InvocationTargetException, InterruptedException {
+				E4Util.unsupported("busyCursorWhile"); //$NON-NLS-1$
+				runnable.run(new NullProgressMonitor());
+			}
+		};
 	}
 
 	/*
@@ -736,6 +782,7 @@ public class Workbench implements IWorkbench {
 						.getContext();
 				instance = (Workbench) ContextInjectionFactory.make(Workbench.class, appContext);
 				appContext.set(IWorkbench.class.getName(), instance);
+				initializeLegacyServices(appContext);
 			} catch (InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -745,6 +792,14 @@ public class Workbench implements IWorkbench {
 			}
 		}
 		return instance;
+	}
+
+	/**
+	 * @param appContext
+	 */
+	private static void initializeLegacyServices(IEclipseContext appContext) {
+		appContext.set(ICommandService.class.getName(), new FakeCommandService());
+		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
 	}
 
 }

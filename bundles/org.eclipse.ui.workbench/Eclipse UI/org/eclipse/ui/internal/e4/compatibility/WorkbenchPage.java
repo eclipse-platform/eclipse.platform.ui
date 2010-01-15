@@ -41,7 +41,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
+import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -701,6 +703,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#setPerspective(org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void setPerspective(IPerspectiveDescriptor perspective) {
+		if (perspective == null)
+			return;
 		this.perspective = perspective;
 		
 		sortedPerspectives.remove(perspective);
@@ -785,7 +789,53 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public INavigationHistory getNavigationHistory() {
 		// FIXME compat getNavigationHistory
 		E4Util.unsupported("getNavigationHistory"); //$NON-NLS-1$
-		return null;
+		return new INavigationHistory() {
+
+			public void markLocation(IEditorPart part) {
+			}
+
+			public INavigationLocation[] getLocations() {
+				return new INavigationLocation[] { getCurrentLocation() };
+			}
+
+			public INavigationLocation getCurrentLocation() {
+				return new INavigationLocation() {
+
+					public void update() {
+					}
+
+					public void setInput(Object input) {
+					}
+
+					public void saveState(IMemento memento) {
+					}
+
+					public void restoreState(IMemento memento) {
+					}
+
+					public void restoreLocation() {
+					}
+
+					public void releaseState() {
+					}
+
+					public boolean mergeInto(INavigationLocation currentLocation) {
+						return false;
+					}
+
+					public String getText() {
+						return "nowhere"; //$NON-NLS-1$
+					}
+
+					public Object getInput() {
+						return null;
+					}
+
+					public void dispose() {
+					}
+				};
+			}
+		};
 	}
 
 	/* (non-Javadoc)

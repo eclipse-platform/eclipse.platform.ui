@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.util.Set;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -105,7 +106,7 @@ public class ThemeManager implements IThemeManager {
 		public ColorRegistry getColorRegistry() {
 			// FIXME compat getColorRegistry
 			E4Util.unsupported("getColorRegistry"); //$NON-NLS-1$
-			return null;
+			return JFaceResources.getColorRegistry();
 		}
 
 		/*
@@ -116,7 +117,7 @@ public class ThemeManager implements IThemeManager {
 		public FontRegistry getFontRegistry() {
 			// FIXME compat getFontRegistry
 			E4Util.unsupported("getFontRegistry"); //$NON-NLS-1$
-			return null;
+			return JFaceResources.getFontRegistry();
 		}
 
 		/*

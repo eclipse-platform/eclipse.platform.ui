@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -712,6 +713,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 					public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor,
 							IAdaptable info) throws ExecutionException {
+						operation.execute(new NullProgressMonitor(), null);
 						// TODO Auto-generated method stub
 						return Status.OK_STATUS;
 					}

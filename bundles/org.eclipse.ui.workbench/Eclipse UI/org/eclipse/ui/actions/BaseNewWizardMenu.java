@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
@@ -35,8 +34,7 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -63,9 +61,10 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
          */
         public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof NewWizardShortcutAction) {
-					actions.values().remove(objects[i]);
-				}
+				// TODO commented out for e4 compatibility
+				// if (objects[i] instanceof NewWizardShortcutAction) {
+				// actions.values().remove(objects[i]);
+				// }
             }
         }
 
@@ -191,16 +190,18 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
             IWizardDescriptor wizardDesc = WorkbenchPlugin.getDefault()
 					.getNewWizardRegistry().findWizard(id);
             if (wizardDesc != null) {
-                action = new NewWizardShortcutAction(workbenchWindow,
-						wizardDesc);
-				actions.put(id, action);
-				IConfigurationElement element = (IConfigurationElement) Util
-						.getAdapter(wizardDesc, IConfigurationElement.class);
-				if (element != null) {
-					workbenchWindow.getExtensionTracker().registerObject(
-							element.getDeclaringExtension(), action,
-							IExtensionTracker.REF_WEAK);
-				}
+				E4Util.unsupported("BaseNewWizardMenu.getAction"); //$NON-NLS-1$
+				// TODO commented out for e4 compatibility
+				// action = new NewWizardShortcutAction(workbenchWindow,
+				// wizardDesc);
+				// actions.put(id, action);
+				// IConfigurationElement element = (IConfigurationElement) Util
+				// .getAdapter(wizardDesc, IConfigurationElement.class);
+				// if (element != null) {
+				// workbenchWindow.getExtensionTracker().registerObject(
+				// element.getDeclaringExtension(), action,
+				// IExtensionTracker.REF_WEAK);
+				// }
             }
         }
         return action;

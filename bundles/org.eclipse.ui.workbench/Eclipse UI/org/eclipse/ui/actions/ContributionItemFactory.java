@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -249,7 +251,16 @@ public abstract class ContributionItemFactory {
 			// return showInMenu;
 			// FIXME compat: where did this go?
 			E4Util.unsupported("VIEWS_SHOW_IN"); //$NON-NLS-1$
-			return null;
+			return new ContributionItem("VIEWS_SHOW_IN") { //$NON-NLS-1$
+
+				public void fill(ToolBar parent, int index) {
+					super.fill(parent, index);
+				}
+
+				public void dispose() {
+					super.dispose();
+				}
+			};
         }
     };
 
