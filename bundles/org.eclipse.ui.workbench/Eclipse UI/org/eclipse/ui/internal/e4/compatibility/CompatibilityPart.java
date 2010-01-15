@@ -40,7 +40,11 @@ public abstract class CompatibilityPart {
 	protected abstract void initialize(IWorkbenchPart part) throws PartInitException;
 
 	protected void createPartControl(IWorkbenchPart part, Composite parent) {
-		part.createPartControl(parent);
+		try {
+			part.createPartControl(parent);
+		} catch (Throwable ex) {
+			ex.printStackTrace(System.err);
+		}
 	}
 
 	public void delegateSetFocus() {
