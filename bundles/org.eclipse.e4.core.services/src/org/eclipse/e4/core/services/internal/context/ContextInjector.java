@@ -529,7 +529,12 @@ public class ContextInjector {
 
 	public Object invoke(Object userObject, String methodName, Object defaultValue)
 			throws InvocationTargetException {
-		Method[] methods = userObject.getClass().getDeclaredMethods();
+		return invokeUsingClass(userObject, userObject.getClass(), methodName, defaultValue);
+	}
+
+	public Object invokeUsingClass(Object userObject, Class currentClass, String methodName,
+			Object defaultValue) throws InvocationTargetException {
+		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
 			if (!method.getName().equals(methodName))
@@ -541,7 +546,11 @@ public class ContextInjector {
 			if (actualParams != null)
 				return callMethod(userObject, method, actualParams);
 		}
-		return defaultValue;
+		Class superClass = currentClass.getSuperclass();
+		if (superClass == null) {
+			return defaultValue;
+		}
+		return invokeUsingClass(userObject, superClass, methodName, defaultValue);
 	}
 
 	public Object make(Class clazz) throws InvocationTargetException, InstantiationException {
