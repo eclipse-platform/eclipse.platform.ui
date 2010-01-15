@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbench;
@@ -121,8 +120,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchSite#getShell()
 	 */
 	public Shell getShell() {
-		Control control = (Control) model.getWidget();
-		return control.getShell();
+		return getWorkbenchWindow().getShell();
 	}
 
 	/* (non-Javadoc)
