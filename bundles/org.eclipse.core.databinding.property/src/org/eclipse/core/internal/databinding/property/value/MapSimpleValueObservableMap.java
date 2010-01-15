@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 262269, 265561, 262287, 268688, 278550
+ *     Ovidio Mallo - bug 299619
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -151,6 +152,14 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 			}
 		};
 		this.detailListener = detailProperty.adaptListener(listener);
+	}
+
+	public Object getKeyType() {
+		return masterMap.getKeyType();
+	}
+
+	public Object getValueType() {
+		return detailProperty.getValueType();
 	}
 
 	protected void firstListenerAdded() {
