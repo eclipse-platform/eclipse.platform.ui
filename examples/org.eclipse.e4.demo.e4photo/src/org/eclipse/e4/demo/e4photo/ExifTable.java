@@ -27,7 +27,7 @@ import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -58,7 +58,7 @@ public class ExifTable {
 	private Logger logger;
 	
 	@Inject
-	private IEclipseContext context;
+	private IEventBroker eventBroker;
 	
 	
 
@@ -67,7 +67,7 @@ public class ExifTable {
 	}
 
 	@Inject @Optional
-	void setSelection(@Named("selection") IResource selection) {
+	void setSelection(@Named(IServiceConstants.SELECTION) IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -158,7 +158,6 @@ public class ExifTable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((StructuredSelection) event.getSelection()).getFirstElement();
-				IEventBroker eventBroker = (IEventBroker) context.get(IEventBroker.class.getName());
 				if (eventBroker != null)
 					eventBroker.post(EVENT_NAME, selected);
 			}
