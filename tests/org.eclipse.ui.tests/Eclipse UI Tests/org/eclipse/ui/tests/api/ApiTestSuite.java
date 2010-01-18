@@ -68,7 +68,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(IAggregateWorkingSetTest.class));
         addTest(new TestSuite(MockWorkingSetTest.class));
         addTest(new TestSuite(Bug42616Test.class));
-        addTest(new TestSuite(StickyViewTest.class));
         addTest(new TestSuite(EditorIconTest.class));
         addTest(new TestSuite(RawIViewPartTest.class));
         addTest(new TestSuite(ViewPartTitleTest.class));

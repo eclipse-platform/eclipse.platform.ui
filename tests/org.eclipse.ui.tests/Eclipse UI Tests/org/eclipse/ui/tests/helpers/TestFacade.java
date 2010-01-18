@@ -38,6 +38,8 @@ public abstract class TestFacade {
 			// we're in e4 land, that boat won't float
 		} catch (IllegalAccessException e) {
 			// we're in e4 land, that boat won't float
+		} catch (Error err) {
+			// unresolved compilation problems ... tests in the workspace, but that's OK
 		}
 	}
 	

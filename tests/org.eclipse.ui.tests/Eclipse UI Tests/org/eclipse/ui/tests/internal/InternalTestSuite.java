@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.internal;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ui.tests.api.StickyViewTest;
 import org.eclipse.ui.tests.api.TrimLayoutTest;
 import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
@@ -41,6 +42,7 @@ public class InternalTestSuite extends TestSuite {
      */
     public InternalTestSuite() {
         addTest(new TestSuite(TrimLayoutTest.class));
+        addTest(new TestSuite(StickyViewTest.class));
         addTest(new TestSuite(AnimationEngineTest.class));
         addTest(new TestSuite(EditorActionBarsTest.class));
         addTest(new TestSuite(ActionSetExpressionTest.class));
