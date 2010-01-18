@@ -95,6 +95,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
 
 	private ListenerList partListeners = new ListenerList();
+	private ListenerList propertyChangeListeners = new ListenerList();
 
 	/**
 	 * @param workbenchWindow
@@ -151,9 +152,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		// FIXME compat addPropertyChangeListener
-		E4Util.unsupported("addPropertyChangeListener"); //$NON-NLS-1$
-
+		propertyChangeListeners.add(listener);
 	}
 
 	private MPart findPart(IWorkbenchPart part) {
@@ -625,9 +624,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		// FIXME compat removePropertyChangeListener
-		E4Util.unsupported("removePropertyChangeListener"); //$NON-NLS-1$
-
+		propertyChangeListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
@@ -1066,8 +1063,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 				IEditorPart editor = openEditor(inputs[i], editorIDs[i], i == 0, matchFlags);
 				references[i] = (IEditorReference) getReference(editor);
 			} catch (PartInitException e) {
-				hasFailures = true;
-				exceptions[i] = e;
+				if (!hasFailures) {
+					hasFailures = true;
+					exceptions[i] = e;
+				}
 			}
 		}
 

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.Set;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -21,12 +22,13 @@ import org.eclipse.ui.themes.IThemeManager;
 
 public class ThemeManager implements IThemeManager {
 
+	private ListenerList propertyChangeListeners = new ListenerList();
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.themes.IThemeManager#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		// FIXME compat addPropertyChangeListener
-		E4Util.unsupported("addPropertyChangeListener"); //$NON-NLS-1$
+		propertyChangeListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
@@ -51,8 +53,7 @@ public class ThemeManager implements IThemeManager {
 	 * @see org.eclipse.ui.themes.IThemeManager#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		// FIXME compat removePropertyChangeListener
-		E4Util.unsupported("removePropertyChangeListener"); //$NON-NLS-1$
+		propertyChangeListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
