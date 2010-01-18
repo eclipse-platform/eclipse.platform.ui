@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -33,18 +32,15 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
-import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Generic implementation of the <code>IActionBars</code> interface.
  */
 public class SubActionBars extends EventManager implements IActionBars {
+	static final String LEGACY_LEGACY_NAME = "LEGACY"; //$NON-NLS-1$
 
 	/**
 	 * The expression to use when contributing handlers through
@@ -58,8 +54,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 		}
 
 		public final void collectExpressionInfo(final ExpressionInfo info) {
-			info
-					.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
+			info.addVariableNameAccess(LEGACY_LEGACY_NAME);
 		}
 	};
 
@@ -455,6 +450,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            may be passed to deregister a handler.
 	 */
 	public void setGlobalActionHandler(String actionID, IAction handler) {
+		// FIXME compat: this entire thing has to be replaced
 		if (actionID == null) {
 			/*
 			 * Bug 124061. It used to be invalid to pass null as an action id,
@@ -466,14 +462,15 @@ public class SubActionBars extends EventManager implements IActionBars {
 			return;
 		}
 		
-		if (handler instanceof CommandLegacyActionWrapper) {
-        	// this is a registration of a fake action for an already
-			// registered handler
-			WorkbenchPlugin
-					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
-			return;
-		}
-		
+
+		// if (handler instanceof CommandLegacyActionWrapper) {
+		// // this is a registration of a fake action for an already
+		// // registered handler
+		// WorkbenchPlugin
+		//					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
+		// return;
+		// }
+		//		
 		if (handler instanceof CommandAction) {
 			// we unfortunately had to allow these out into the wild, but they
 			// still must not feed back into the system
@@ -490,11 +487,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 			// Add a mapping from this action id to the command id.
 			if (serviceLocator != null) {
 				String commandId = null;
-				final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
-						.getService(IActionCommandMappingService.class);
-				if (mappingService != null) {
-					commandId = mappingService.getCommandId(actionID);
-				}
+				// final IActionCommandMappingService mappingService =
+				// (IActionCommandMappingService) serviceLocator
+				// .getService(IActionCommandMappingService.class);
+				// if (mappingService != null) {
+				// commandId = mappingService.getCommandId(actionID);
+				// }
 				if (commandId == null) {
 					commandId = handler.getActionDefinitionId();
 				}
@@ -548,9 +546,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 					final IHandler actionHandler = new ActionHandler(handler);
 					Expression handlerExpression = EXPRESSION;
 					//XXX add new API in next release to avoid down-casting (bug 137091)
-					if (this instanceof EditorActionBars) {
-						handlerExpression = ((EditorActionBars)this).getHandlerExpression();
-					}
+					// if (this instanceof EditorActionBars) {
+					// handlerExpression =
+					// ((EditorActionBars)this).getHandlerExpression();
+					// }
 					if (service != null) {
 						final IHandlerActivation activation = service
 								.activateHandler(commandId, actionHandler,
