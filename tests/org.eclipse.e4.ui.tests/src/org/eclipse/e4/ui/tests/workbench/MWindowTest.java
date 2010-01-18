@@ -303,7 +303,7 @@ public class MWindowTest extends TestCase {
 		assertEquals("windowName2", shell.getText());
 	}
 
-	public void XXXtestWindow_X() {
+	public void testWindow_X() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setX(200);
 
@@ -337,7 +337,7 @@ public class MWindowTest extends TestCase {
 		assertEquals(300, bounds.x);
 	}
 
-	public void XXXtestWindow_Y() {
+	public void testWindow_Y() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setY(200);
 
