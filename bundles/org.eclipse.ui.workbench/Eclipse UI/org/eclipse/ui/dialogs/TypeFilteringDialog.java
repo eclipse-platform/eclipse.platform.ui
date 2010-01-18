@@ -35,11 +35,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 
 /**
  * The TypeFilteringDialog is a SelectionDialog that allows the user to select a
@@ -162,7 +162,7 @@ public class TypeFilteringDialog extends SelectionDialog {
      * viewer.
      */
     private void checkInitialSelections() {
-		IFileEditorMapping editorMappings[] = ((IEditorRegistry) PlatformUI
+		IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry()).getUnifiedMappings();
         ArrayList selectedMappings = new ArrayList();
         for (int i = 0; i < editorMappings.length; i++) {
