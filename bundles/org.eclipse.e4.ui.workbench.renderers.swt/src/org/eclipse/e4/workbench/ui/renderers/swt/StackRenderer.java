@@ -327,6 +327,13 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Hook up special logic to synch up the Tab Items
 		hookTabControllerLogic(stack, part, cti);
+
+		// Re-ensure that the activeChild == the selected tab
+		if (stack.getActiveChild() != null) {
+			CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
+			if (selCTI != null && selCTI != ctf.getSelection())
+				ctf.setSelection(selCTI);
+		}
 	}
 
 	private int calcIndexFor(MElementContainer<MUIElement> stack,
@@ -396,6 +403,18 @@ public class StackRenderer extends LazyStackRenderer {
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
 			oldItem.dispose();
+		}
+
+		// Check if we have to reset the currently active child for the stack
+		if (parentElement.getActiveChild() == child) {
+			// HACK!! we'll reset to the first element for now but really should
+			// be based on the activation chain
+			if (parentElement.getChildren().size() == 0) {
+				parentElement.setActiveChild(null);
+			} else {
+				parentElement
+						.setActiveChild(parentElement.getChildren().get(0));
+			}
 		}
 	}
 
