@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.tests.helpers.TestFacade"
+            description="helps with internals"
+            id="org.eclipse.e4.ui.compat.tests.tweaklet.helper"
+            implementation="org.eclipse.e4.ui.compat.tests.tweaklet.TestFacadeE4Impl"
+            name="Compat test helper">
+      </tweaklet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.tests.helpers.TestFacade"
+            description="helps with internals"
+            id="org.eclipse.e4.ui.compat.tests.tweaklet.helper"
+            name="Compat test helper">
+      </tweaklet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+   </extension>
+
+</plugin>
