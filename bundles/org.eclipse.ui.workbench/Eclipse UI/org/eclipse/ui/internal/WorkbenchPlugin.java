@@ -551,7 +551,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return IPerspectiveRegistry. The registry for the receiver.
      */
     public IPerspectiveRegistry getPerspectiveRegistry() {
-		// TODO commented out for e4 compatibility
+		// FIXME: commented out for e4 compatibility, need to do startup
+		// threading in e4?
 //        if (perspRegistry == null) {
 //            perspRegistry = new PerspectiveRegistry();
 //            // the load methods can touch on WorkbenchImages if an image is
@@ -567,7 +568,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //            
 //        }
 //        return perspRegistry;
-    	return null;
+		return PlatformUI.getWorkbench().getPerspectiveRegistry();
     }
 
     /**
