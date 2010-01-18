@@ -56,20 +56,17 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.SaveableHelper;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.tests.PerspectiveState;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
@@ -132,6 +129,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 	};
 
+	private TestFacade facade;
+
 
 
 	public IWorkbenchPageTest(String testName) {
@@ -144,6 +143,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage = fWin.getActivePage();
 		logStatus = null;
 		logCount = 0;
+		facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
 		Platform.addLogListener(openAndHideListener);
 	}
 
@@ -940,17 +940,16 @@ public class IWorkbenchPageTest extends UITestCase {
 				new String[] { "init", "createPartControl", "setFocus" }));
 		assertTrue(!view.equals(view2));
 
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-		IViewReference ref = (IViewReference) page.getReference(view);
-		IViewReference ref2 = (IViewReference) page.getReference(view2);
-		page.addFastView(ref);
-		page.addFastView(ref2);
+		IViewReference ref = (IViewReference) fActivePage.getReference(view);
+		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
+		facade.addFastView(fActivePage, ref);
+		facade.addFastView(fActivePage, ref2);
 
-		page.activate(view);
-		assertEquals(view, page.getActivePart());
+		fActivePage.activate(view);
+		assertEquals(view, fActivePage.getActivePart());
 
-		page.activate(view2);
-		assertEquals(view2, page.getActivePart());
+		fActivePage.activate(view2);
+		assertEquals(view2, fActivePage.getActivePart());
 	}
 
 	/**
@@ -965,14 +964,13 @@ public class IWorkbenchPageTest extends UITestCase {
 		MockViewPart view2 = (MockViewPart) fActivePage.showView(
 				MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
 
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-		IViewReference ref = (IViewReference) page.getReference(view);
-		IViewReference ref2 = (IViewReference) page.getReference(view2);
-		page.addFastView(ref);
-		page.addFastView(ref2);
+		IViewReference ref = (IViewReference) fActivePage.getReference(view);
+		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
+		facade.addFastView(fActivePage, ref);
+		facade.addFastView(fActivePage, ref2);
 
 		IMemento memento = XMLMemento.createWriteRoot("page");
-		page.saveState(memento);
+		facade.saveState(fActivePage, memento);
 		IMemento persps = memento.getChild("perspectives");
 		IMemento persp = persps.getChildren("perspective")[0];
 		IMemento[] fastViews = persp.getChild("fastViews").getChildren("view");
@@ -1055,7 +1053,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(viewId), null);
 
 		try {
-			SaveableHelper.testSetAutomatedResponse(1); // No
+			facade.saveableHelperSetAutomatedResponse(1); // No
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1065,7 +1063,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertTrue(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(viewId), null);
 
-			SaveableHelper.testSetAutomatedResponse(2); // Cancel
+			facade.saveableHelperSetAutomatedResponse(2); // Cancel
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1075,7 +1073,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(viewId), view);
 
-			SaveableHelper.testSetAutomatedResponse(0); // Yes
+			facade.saveableHelperSetAutomatedResponse(0); // Yes
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1088,7 +1086,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			SaveableHelper.testSetAutomatedResponse(-1); // restore default
+			facade.saveableHelperSetAutomatedResponse(-1); // restore default
 			// (prompt)
 		}
 	}
@@ -1113,7 +1111,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(UserSaveableMockViewPart.ID), null);
 
 		try {
-			SaveableHelper.testSetAutomatedResponse(3); // DEFAULT
+			facade.saveableHelperSetAutomatedResponse(3); // DEFAULT
 			view = (UserSaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			view2 = (UserSaveableMockViewPart) fActivePage.showView(viewId,
@@ -1137,8 +1135,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			SaveableHelper
-					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE); // restore
+			facade
+					.saveableHelperSetAutomatedResponse(-1); // restore
 			// default
 			// (prompt)
 		}
@@ -1159,7 +1157,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(UserSaveableSharedViewPart.ID), null);
 
 		try {
-			SaveableHelper.testSetAutomatedResponse(3); // DEFAULT
+			facade.saveableHelperSetAutomatedResponse(3); // DEFAULT
 			UserSaveableSharedViewPart.SharedModel model = new UserSaveableSharedViewPart.SharedModel();
 			view = (UserSaveableSharedViewPart) fActivePage.showView(viewId);
 			view.setSharedModel(model);
@@ -1189,8 +1187,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			SaveableHelper
-					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE); // restore
+			facade
+					.saveableHelperSetAutomatedResponse(-1); // restore
 			// default
 			// (prompt)
 			fActivePage.hideView(view);
@@ -1589,49 +1587,31 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	public void testShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
-		int totalBefore = page.getActionSets().length;
+		int totalBefore = facade.getActionSetCount(fActivePage);
 		fActivePage.showActionSet(id);
 
-		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage)
-				.getActionSets();
-		boolean found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, true);
+		facade.assertActionSetId(fActivePage, id, true);
 
 		// check that the method does not add an invalid action set to itself
 		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
-		sets = ((WorkbenchPage) fActivePage).getActionSets();
-		found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, false);
-		assertEquals(page.getActionSets().length, totalBefore + 1);
+		facade.assertActionSetId(fActivePage, id, false);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 	}
 
 	public void testHideActionSet() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-		int totalBefore = page.getActionSets().length;
+		int totalBefore = facade.getActionSetCount(fActivePage);
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet(id);
-		assertEquals(page.getActionSets().length, totalBefore + 1);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 
 		fActivePage.hideActionSet(id);
-		assertEquals(page.getActionSets().length, totalBefore);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
 
-		IActionSetDescriptor[] sets = page.getActionSets();
-		boolean found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, false);
+		facade.assertActionSetId(fActivePage, id, false);
 	}
 
 	/**
@@ -1831,7 +1811,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Test opening a perspective with a fast view.
 	 */
 	public void testOpenPerspectiveWithFastView() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		try {
 			fWin.getWorkbench().showPerspective(
@@ -1840,13 +1819,14 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		assertEquals(page.getFastViews().length, 1);
-		assertEquals(page.getFastViews()[0].getId(),
+		IViewReference[] fastViews = facade.getFastViews(fActivePage);
+		assertEquals(fastViews.length, 1);
+		assertEquals(fastViews[0].getId(),
 				"org.eclipse.ui.views.ResourceNavigator");
-		assertEquals(page.getViewReferences().length, 1);
-		assertTrue(page.getViewReferences()[0].isFastView());
+		assertEquals(fActivePage.getViewReferences().length, 1);
+		assertTrue(fActivePage.getViewReferences()[0].isFastView());
 		
-		IPerspectiveDescriptor persp = page.getPerspective();
+		IPerspectiveDescriptor persp = fActivePage.getPerspective();
 		
 		ICommandService commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
@@ -1875,7 +1855,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * @since 3.1
 	 */
 	public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		try {
 			fWin.getWorkbench().showPerspective(
@@ -1885,8 +1864,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		PerspectiveState state = new PerspectiveState(page);
-		ArrayList partIds = state.getPartIds(null);
+		ArrayList partIds = facade.getPerspectivePartIds(fActivePage, null);
 		assertTrue(partIds.contains("*"));
 		assertTrue(partIds.contains(MockViewPart.IDMULT));
 		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
@@ -1902,7 +1880,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * @since 3.1
 	 */
 	public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		try {
 			fWin
@@ -1914,8 +1891,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		PerspectiveState state = new PerspectiveState(page);
-		ArrayList partIds = state.getPartIds("placeholderFolder");
+		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"placeholderFolder");
 		assertTrue(partIds.contains("*"));
 		assertTrue(partIds.contains(MockViewPart.IDMULT));
 		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
@@ -1929,8 +1905,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * @since 3.1
 	 */
 	public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-
 		try {
 			fWin
 					.getWorkbench()
@@ -1941,8 +1915,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		PerspectiveState state = new PerspectiveState(page);
-		ArrayList partIds = state.getPartIds("folder");
+		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"folder");
 		assertTrue(partIds.contains("*"));
 		assertTrue(partIds.contains(MockViewPart.IDMULT));
 		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
@@ -2121,7 +2094,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 */
 	public void testClosePerspectiveDoesNotPromptBug272070() throws Exception {
 		try {
-			SaveableHelper.testSetAutomatedResponse(2);
+			facade.saveableHelperSetAutomatedResponse(2);
 			proj = FileUtil
 					.createProject("testClosePerspectiveDoesNotPromptBug272070");
 
@@ -2177,8 +2150,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse("The view should be hidden", fActivePage
 					.isPartVisible(view));
 		} finally {
-			SaveableHelper
-					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE);
+			facade
+					.saveableHelperSetAutomatedResponse(-1);
 		}
 	}
 
@@ -2227,7 +2200,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testCloseAllPerspectivesDoesNotPromptBug272070()
 			throws Exception {
 		try {
-			SaveableHelper.testSetAutomatedResponse(2);
+			facade.saveableHelperSetAutomatedResponse(2);
 			proj = FileUtil
 					.createProject("testCloseAllPerspectivesDoesNotPromptBug272070");
 
@@ -2283,8 +2256,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse("The view should be hidden", fActivePage
 					.isPartVisible(view));
 		} finally {
-			SaveableHelper
-					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE);
+			facade
+					.saveableHelperSetAutomatedResponse(-1);
 		}
 	}
 
@@ -2989,16 +2962,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_MINIMIZED);
 
 		// since it's minimized, it should be a fast view
-		Perspective perspective = ((WorkbenchPage) fActivePage)
-				.getActivePerspective();
-		assertTrue("A minimized view should be a fast view", perspective
-				.isFastView(reference));
+		assertTrue("A minimized view should be a fast view", facade
+				.isFastView(fActivePage, reference));
 
 		// try to restore it
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_RESTORED);
 		// since it's maximized, it should not be a fast view
-		assertFalse("A restored view should not be a fast view", perspective
-				.isFastView(reference));
+		assertFalse("A restored view should not be a fast view", facade
+				.isFastView(fActivePage, reference));
 	}
 
 }

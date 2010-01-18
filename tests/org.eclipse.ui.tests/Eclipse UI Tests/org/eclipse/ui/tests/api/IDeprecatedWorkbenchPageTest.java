@@ -23,14 +23,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.helpers.TestFacade;
 
 public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
@@ -39,6 +39,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	private IWorkbenchWindow fWin;
 
 	private IProject proj;
+	
+	private TestFacade facade;
 
 	public IDeprecatedWorkbenchPageTest(String testName) {
 		super(testName);
@@ -48,6 +50,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		super.doSetUp();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
+		facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
 	}
 
 	protected void doTearDown() throws Exception {
@@ -801,48 +804,30 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
 	public void testShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
-		int totalBefore = page.getActionSets().length;
+		int totalBefore = facade.getActionSetCount(fActivePage);
 		fActivePage.showActionSet(id);
 
-		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage)
-				.getActionSets();
-		boolean found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, true);
+		facade.assertActionSetId(fActivePage, id, true);
 
 		// check that the method does not add an invalid action set to itself
 		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
-		sets = ((WorkbenchPage) fActivePage).getActionSets();
-		found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, false);
-		assertEquals(page.getActionSets().length, totalBefore + 1);
+		facade.assertActionSetId(fActivePage, id, false);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 	}
 
 	public void testHideActionSet() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-		int totalBefore = page.getActionSets().length;
+		int totalBefore = facade.getActionSetCount(fActivePage);
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet(id);
-		assertEquals(page.getActionSets().length, totalBefore + 1);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 
 		fActivePage.hideActionSet(id);
-		assertEquals(page.getActionSets().length, totalBefore);
+		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
 
-		IActionSetDescriptor[] sets = page.getActionSets();
-		boolean found = false;
-		for (int i = 0; i < sets.length; i++)
-			if (id.equals(sets[i].getId()))
-				found = true;
-		assertEquals(found, false);
+		facade.assertActionSetId(fActivePage, id, false);
 	}
 }
