@@ -90,7 +90,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean disposeInvoked = false;
 			boolean destroyInvoked = false;
 
-			Object inject__Field;
+			Integer inject__Field;
 			Object methodValue;
 
 			public void destroy() {
@@ -106,9 +106,9 @@ public class ContextInjectionDisposeTest extends TestCase {
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		Object fieldValue = new Object();
+		Object fieldValue = new Integer(123);
 		Object methodValue = "abc";
-		context.set(Object.class.getName(), fieldValue);
+		context.set(Integer.class.getName(), fieldValue);
 		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);

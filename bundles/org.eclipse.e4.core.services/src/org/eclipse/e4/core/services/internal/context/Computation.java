@@ -106,7 +106,26 @@ abstract class Computation {
 					+ mapToString(dependencies));
 		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
-			c.listeners.add(this);
+			if (c.listeners.contains(this)) { // nested
+				for (Iterator exitsting = c.listeners.iterator(); exitsting.hasNext();) {
+					Computation existingComputation = (Computation) exitsting.next();
+					if (!equals(existingComputation))
+						continue;
+					for (Iterator newDependencies = dependencies.keySet().iterator(); newDependencies
+							.hasNext();) {
+						IEclipseContext newDepenecyContext = (IEclipseContext) newDependencies
+								.next();
+						if (existingComputation.dependencies.containsKey(newDepenecyContext))
+							((Set) existingComputation.dependencies.get(newDepenecyContext))
+									.addAll((Set) dependencies.get(newDepenecyContext));
+						else
+							existingComputation.dependencies.put(newDepenecyContext, dependencies
+									.get(newDepenecyContext));
+					}
+					break;
+				}
+			} else
+				c.listeners.add(this);
 		}
 	}
 
