@@ -110,6 +110,15 @@ public class StructuredViewerManager {
 	}
 
 	/**
+	 * Used when NCEs associated with the viewer are changed.
+	 */
+	public void resetViewerData() {
+		synchronized (viewerDataMap) {
+			viewerDataMap.clear();
+		}
+	}
+
+	/**
 	 * 
 	 * @param aViewer
 	 * @param contentService 

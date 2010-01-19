@@ -614,14 +614,14 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 			item.setData(element);
 			mapElement(element, item);
-			if (associateListener != null)
-				associateListener.associate(element, item);
 		} else {
 			// Always map the element, even if data == element,
 			// since unmapAllElements() can leave the map inconsistent
 			// See bug 2741 for details.
 			mapElement(element, item);
 		}
+		if (associateListener != null)
+			associateListener.associate(element, item);
 	}
 
 	

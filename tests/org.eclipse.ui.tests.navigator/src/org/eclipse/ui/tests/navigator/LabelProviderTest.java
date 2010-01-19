@@ -267,6 +267,28 @@ public class LabelProviderTest extends NavigatorTestBase {
 		checkItems(rootItems, TestLabelProviderCyan.instance);
 	}
 
+	// Bug 299438 activating extensions does not properly refresh
+	public void testChangeActivation() throws Exception {
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+		checkItems(rootItems, TestLabelProviderStyledGreen.instance);
+
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
+				TEST_CONTENT_OVERRIDE2 }, false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2 }, true);
+
+		_viewer.expandAll();
+		
+		// Let the label provider refresh
+		DisplayHelper.sleep(2000);
+
+		if (false)
+			DisplayHelper.sleep(10000000);
+		
+		rootItems = _viewer.getTree().getItems();
+		checkItems(rootItems, TestLabelProviderCyan.instance);
+	}
+
 	// Make sure that it finds label providers that are in overridden content
 	// extensions
 	// if none of the label providers from the desired content extensions return
