@@ -18,13 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Replaces M1Files whose name contains the character '2' with M2Files.
- * 
- * @author franck102@yahoo.com
- */
+/** Replaces M1Files whose name contain the character 2 with M2Files. */
 public class M2ContentProvider extends ResourceWrapperContentProvider {
-	/** Replaces M1Files whose name contain the character 2 with M2Files. */
 	public void getPipelinedChildren(Object aParent, Set currentChildren) {
 		List newElements = new ArrayList();
 		for (Iterator it = currentChildren.iterator(); it.hasNext();) {

@@ -8,7 +8,9 @@
 package org.eclipse.ui.tests.navigator.m12.model;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-public abstract class ResourceWrapper {
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+public abstract class ResourceWrapper implements IWorkbenchAdapter {
 	static final M1Resource[] NO_CHILDREN = new M1Resource[0];
 	IResource _resource;
 	public ResourceWrapper(IResource resource) {
@@ -16,6 +18,9 @@ public abstract class ResourceWrapper {
 	}
 	public IResource getResource() {
 		return _resource;
+	}
+	public Object[] getChildren(Object obj) {
+		return NO_CHILDREN;
 	}
 	public M1Resource[] getChildren() throws CoreException {
 		return NO_CHILDREN;
@@ -33,6 +38,9 @@ public abstract class ResourceWrapper {
 	public int hashCode() {
 		return _resource.hashCode();
 	}
+	public Object getParent(Object obj) {
+		return getParent();
+	}
 	public Object getParent() {
 		IResource parent = _resource.getParent();
 		ResourceWrapper modelParent = getModelObject(parent);
@@ -40,4 +48,12 @@ public abstract class ResourceWrapper {
 	}
 	protected abstract ResourceWrapper getModelObject(IResource resource);
 	public abstract String getModelId();
+	
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+	public String getLabel(Object o) {
+		return  _resource.toString();
+	}
+	
 }

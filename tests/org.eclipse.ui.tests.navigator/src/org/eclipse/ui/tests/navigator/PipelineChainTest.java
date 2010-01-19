@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestPipelineProvider;
 
 /**
@@ -82,10 +83,14 @@ public class PipelineChainTest extends NavigatorTestBase {
 		TestPipelineProvider.reset();
 		newFolder.create(true, true, new NullProgressMonitor());
 		TreeItem[] rootItems = _viewer.getTree().getItems();
+		
 		_expand(rootItems);
+		
+		if (false)
+			DisplayHelper.sleep(10000000);
 		_viewer.refresh(rootItems[_p1Ind]);
 		
-		assertEquals("Wrong query sequence for getPipelineChildren", "CGFBDE", 
+		assertEquals("Wrong query sequence for getPipelineChildren", "A1CGFBDE", 
 				TestPipelineProvider.CHILDREN.get(_p1));
 	}
 	

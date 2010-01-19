@@ -471,7 +471,7 @@
                policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
                suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
          <triggerPoints>
-            <adapt type="org.eclipse.core.resources.IWorkspaceRoot"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
          </triggerPoints>
          <possibleChildren>
          	<instanceof value="org.eclipse.ui.tests.navigator.m12.model.M1Resource"/>

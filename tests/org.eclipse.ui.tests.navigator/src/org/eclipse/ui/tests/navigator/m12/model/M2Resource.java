@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IResource;
 public class M2Resource extends ResourceWrapper {
 	public M2Resource(IResource resource) {
 		super(resource);
-		// TODO Auto-generated constructor stub
 	}
 	protected ResourceWrapper getModelObject(IResource resource) {
 		return M2Core.getModelObject(resource);

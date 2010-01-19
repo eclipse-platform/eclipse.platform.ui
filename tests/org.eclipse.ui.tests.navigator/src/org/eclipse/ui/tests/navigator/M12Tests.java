@@ -8,6 +8,7 @@
  *     Fair Isaac Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.m12.M1ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.M2ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
@@ -100,10 +101,13 @@ public class M12Tests extends NavigatorTestBase {
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 		_expand(rootItems);
-		TreeItem p2Item = rootItems[_p2Ind];
+		TreeItem p2Item = _findChild("p2", rootItems);
 
 		TreeItem[] p2Children = p2Item.getItems();
 		_expand(p2Children);
+
+		if (false)
+			DisplayHelper.sleep(10000000);
 
 		TreeItem file2Child = _findChild("file2.txt", p2Children);
 		assertNotNull("P2 should have a child named file2.txt", file2Child);

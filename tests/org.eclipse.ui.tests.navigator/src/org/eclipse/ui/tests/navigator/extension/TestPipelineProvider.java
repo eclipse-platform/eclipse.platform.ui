@@ -87,6 +87,9 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		if (key instanceof ResourceWrapper) {
 			key = ((ResourceWrapper)key).getResource();
 		}
+		
+		System.out.println("track:  " + mapName(map) + " " + key + " id: " + id);
+		
 		String queries = (String) map.get(key);
 		StringBuffer buf = new StringBuffer(queries==null ? "" : queries);
 		buf.append(id);
@@ -154,7 +157,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	 */
 	public Object[] getChildren(Object parentElement) {
 		try {
-			_track(ELEMENTS, parentElement, _id + "1");
+			_track(CHILDREN, parentElement, _id + "1");
 			return ((ResourceWrapper)parentElement).getChildren();
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -224,6 +227,20 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 			return M1Core.getModelObject((IResource)object);
 		}
 		return null;
+	}
+	
+	public static String mapName(Map map) {
+		if (map == ELEMENTS)
+			return "ELEMENTS";
+		if (map == CHILDREN)
+			return "CHILDREN";
+		if (map == ADDS)
+			return "ADDS";
+		if (map == REMOVES)
+			return "REMOVES";
+		if (map == UPDATES)
+			return "UPDATES";
+		return "??? unknown";
 	}
 	
 	/**

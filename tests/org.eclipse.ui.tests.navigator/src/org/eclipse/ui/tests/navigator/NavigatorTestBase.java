@@ -210,6 +210,11 @@ public class NavigatorTestBase extends TestCase {
 		}
 	}
 
+	/**
+	 * Use this to not have to wait for the label provider to refresh after changing
+	 * the activation.  Otherwise we would have to have a small delay in each test
+	 * case which we don't want.
+	 */
 	protected void refreshViewer() {
 		try {
 			// Setting the text in the tree to be empty forces the

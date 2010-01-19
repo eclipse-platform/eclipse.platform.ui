@@ -24,10 +24,8 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 import org.eclipse.ui.tests.navigator.m12.model.M1Core;
 
 /**
- * Replaces all IProjects with M1Projects, IFolders with M2Folders, and IFiles
+ * Replaces all IProjects with M1Projects, IFolders with M1Folders, and IFiles
  * with M1Files.
- * 
- * @author franck102@yahoo.com
  */
 public class M1ContentProvider extends ResourceWrapperContentProvider {
 	public void getPipelinedElements(Object input, Set currentElements) {
