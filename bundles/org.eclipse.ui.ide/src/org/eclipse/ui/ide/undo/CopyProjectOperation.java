@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,13 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * project, also specifying the location of its contents. Clients may call the
  * public API from a background thread.
  * 
+ * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
+ * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
  */
 public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 

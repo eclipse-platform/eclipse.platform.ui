@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,11 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * when there are possible side effects of operations, building execution
  * exceptions from core exceptions, etc. Clients may call the public API from a
  * background thread.
- * 
+ * <p>
  * This class is not intended to be subclassed by clients.
- * 
+ * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
  */
 public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		implements IAdvancedUndoableOperation, IAdvancedUndoableOperation2 {

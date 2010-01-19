@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * A DeleteResourcesOperation represents an undoable operation for deleting one
  * or more resources in the workspace. Clients may call the public API from a
  * background thread.
- * 
+ * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
- * 
+ * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
  */
 public class DeleteResourcesOperation extends AbstractResourcesOperation {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,18 +29,22 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * more resources in the workspace. Clients may call the public API from a
  * background thread.
  * 
+ * <p>
  * This operation can track any overwritten resources and restore them when the
  * copy is undone. It is up to clients to determine whether overwrites are
  * allowed. If a resource should not be overwritten, it should not be included
  * in this operation. In addition to checking for overwrites, the target
  * location for the copy is assumed to have already been validated by the
  * client. It will not be revalidated on undo and redo.
+ * </p>
  * 
+ * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
+ * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
  */
 public class CopyResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
