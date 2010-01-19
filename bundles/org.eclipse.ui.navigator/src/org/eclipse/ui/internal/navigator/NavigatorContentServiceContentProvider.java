@@ -142,10 +142,12 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					else
 						contributedChildren = foundExtension.internalGetContentProvider().getChildren(aParentElementOrPath);
 					overridingExtensions = foundExtension.getOverridingExtensionsForTriggerPoint(aParentElement);
+					INavigatorContentDescriptor foundDescriptor = foundExtension.getDescriptor();
+					localSet.setContributor(foundDescriptor, foundDescriptor);
 					localSet.setContents(contributedChildren);
 
 					if (overridingExtensions.length > 0) {
-						pipelineChildren(aParentElement, overridingExtensions, localSet, elements);
+						pipelineChildren(aParentElement, overridingExtensions, foundDescriptor, localSet, elements);
 					}
 					finalSet.addAll(localSet);
 				}
@@ -172,7 +174,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 *            modifiable)
 	 */
 	private void pipelineChildren(Object aParentOrPath, NavigatorContentExtension[] theOverridingExtensions,
-			ContributorTrackingSet pipelinedChildren, boolean elements) {
+			INavigatorContentDescriptor firstClassDescriptor, ContributorTrackingSet pipelinedChildren, boolean elements) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
@@ -180,19 +182,16 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
-				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i]
-						.getDescriptor());
+				pipelinedChildren.setContributor(theOverridingExtensions[i]
+						.getDescriptor(), firstClassDescriptor);
 				if (elements) {
 					pipelinedContentProvider.getPipelinedElements(aParentOrPath, pipelinedChildren);
 				} else {
 					pipelinedContentProvider.getPipelinedChildren(aParentOrPath, pipelinedChildren);
 				}
-
-				pipelinedChildren.setContributor(null);
-
 				overridingExtensions = theOverridingExtensions[i].getOverridingExtensionsForTriggerPoint(aParentOrPath);
 				if (overridingExtensions.length > 0) {
-					pipelineChildren(aParentOrPath, overridingExtensions, pipelinedChildren, elements);
+					pipelineChildren(aParentOrPath, overridingExtensions, firstClassDescriptor, pipelinedChildren, elements);
 				}
 			}
 		}
@@ -263,7 +262,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	}
 
 	public synchronized Object getParent(Object anElement) {
-		contentService.resetContributionMemory();
 		Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
 
 		Object parent;

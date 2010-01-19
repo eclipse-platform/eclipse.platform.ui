@@ -274,7 +274,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_viewer.expandAll();
 		
 		// Let the label provider refresh
-		DisplayHelper.sleep(2000);
+		for (int i = 0; i < 20; i++)
+			DisplayHelper.sleep(100);
 
 		if (false)
 			DisplayHelper.sleep(10000000);
@@ -310,7 +311,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 295803 Source of contribution set to lowest priority NCE
-	public void XXXtestMultiNceSameObject() throws Exception {
+	public void testMultiNceSameObject() throws Exception {
 		
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 		// Just two different ones, they don't override, the label provider

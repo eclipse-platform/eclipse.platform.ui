@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,36 +82,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
 			pipelineInterceptAdd(anAddModification, trackedSet, descriptor);
 		}
-		// for consistency, we register the contribution from our best known match
-		registerContribution(anAddModification.getParent(), anAddModification.getChildren().toArray());
 		return anAddModification;
-
 	}
  
-	/**
-	 * @param parent The object to which data was contributed
-	 * @param contributions Data contributed to the viewer
-	 */
-	private void registerContribution(Object parent, Object[] contributions) {
-		 
-		// returns an array sorted by priority
-		Set possibleContributors = contentService.findDescriptorsByTriggerPoint(parent, false);
-		Set possibleMatches = null;
-		for (int i = 0; i < contributions.length; i++) {
-			// returns an array sorted by reverse priority
-			possibleMatches = contentService.findDescriptorsByTriggerPoint(contributions[i], NavigatorContentService.CONSIDER_OVERRIDES);
-			NavigatorContentDescriptor[] descriptors = (NavigatorContentDescriptor[]) possibleMatches.toArray(new NavigatorContentDescriptor[possibleMatches.size()]);
-			for (int indx = possibleMatches.size()-1; indx > -1; indx--) {
-								
-				// terminates once the highest priority match is found for this child
-				if(possibleContributors.contains(descriptors[indx])) {
-					contentService.rememberContribution(descriptors[indx], contributions[i]);
-					break;
-				}
-			}
-		}
-	}
-
 	private void pipelineInterceptAdd(PipelinedShapeModification anAddModification, ContributorTrackingSet trackedSet, INavigatorContentDescriptor descriptor) {
 		if(descriptor.hasOverridingExtensions()) {
 			Set overridingDescriptors = descriptor.getOverriddingExtensions();
@@ -121,10 +94,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				NavigatorContentExtension extension = null;
 				if(contentService.isVisible(overridingDescriptor.getId()) && contentService.isActive(overridingDescriptor.getId())) {
 					try {
-						trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
+						trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor, (NavigatorContentDescriptor) descriptor);
 						extension = contentService.getExtension(overridingDescriptor);
 						((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
-						trackedSet.setContributor(null);
+						trackedSet.setContributor(null, null);
 						pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
 					} catch (Throwable e) {
 						NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] { extension.getDescriptor().getId(), null }), e);
@@ -195,11 +168,11 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr.hasNext();) {
 			try {
 				overridingExtension = (NavigatorContentExtension) extensionsItr.next();
-				trackedSet.setContributor((NavigatorContentDescriptor) overridingExtension.getDescriptor());
+				trackedSet.setContributor((NavigatorContentDescriptor) overridingExtension.getDescriptor(), null);
 				if (overridingExtension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
 					((IPipelinedTreeContentProvider) overridingExtension.getContentProvider()).interceptRemove(aRemoveModification);
 				}
-				trackedSet.setContributor(null);
+				trackedSet.setContributor(null, null);
 				if (overridingExtension.getDescriptor().hasOverridingExtensions())
 					pipelineInterceptRemove(aRemoveModification, trackedSet, overridingExtension);
 			} catch (Throwable e) {
