@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -83,15 +84,23 @@ public class EditorTests extends DynamicTestCase {
         assertEquals(0, window.getActivePage().getEditors().length);		
 	}
 
-	public void testEditorProperties() {
+	public void testEditorProperties() throws Exception {
 		IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
 		
 		assertNull(registry.findEditor(EDITOR_ID));
 		getBundle();
+
+		IFile file = getFile("test.xml");
+		IContentType contentType = IDE.getContentType(file);
 		IEditorDescriptor desc = registry.findEditor(EDITOR_ID);
 		assertNotNull(desc);
 	    
 		testEditorProperties(desc);
+
+		// tests bug 193361
+		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName(), contentType);
+		assertEquals(desc, descriptor);
+		
 		removeBundle();	
 		assertNull(registry.findEditor(EDITOR_ID));
 		try {
@@ -111,16 +120,20 @@ public class EditorTests extends DynamicTestCase {
 		assertNotNull(desc.getImageDescriptor());
 	}
 
+	private IFile getFile() throws CoreException {
+		return getFile("someFile");
+	}
+
 	/**
 	 * 
 	 */
-	private IFile getFile() throws CoreException {
+	private IFile getFile(String fileName) throws CoreException {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IProject testProject = workspace.getRoot().getProject(getName());
         testProject.create(null);
         testProject.open(null);        
 
-        IFile iFile = testProject.getFile("someFile");
+        IFile iFile = testProject.getFile(fileName);
         iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
         return iFile;
 	}	

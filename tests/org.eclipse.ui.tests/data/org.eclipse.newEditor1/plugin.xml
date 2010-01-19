@@ -17,6 +17,7 @@
          id="testDynamicEditorAddition"
          point="org.eclipse.ui.editors">
       <editor
+            extensions="xml"
             icon="anything.gif"
             class="org.eclipse.ui.dynamic.DynamicEditor"
             default="false"
