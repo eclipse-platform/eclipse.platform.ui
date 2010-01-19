@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
  *******************************************************************************/
 package org.eclipse.jface.internal.text.link.contentassist;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-
 
 
 /**
@@ -698,7 +696,6 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (key == 0) {
 				int newSelection= fProposalTable.getSelectionIndex();
 				int visibleRows= (fProposalTable.getSize().y / fProposalTable.getItemHeight()) - 1;
-				boolean smartToggle= false;
 				switch (e.keyCode) {
 
 					case SWT.ARROW_LEFT :
@@ -744,7 +741,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 						return true;
 				}
 
-				selectProposal(newSelection, smartToggle);
+				selectProposal(newSelection, (e.stateMask & SWT.CTRL) != 0);
 
 				e.doit= false;
 				return false;

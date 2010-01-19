@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1240,7 +1240,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			int newSelection= fProposalTable.getSelectionIndex();
 			int visibleRows= (fProposalTable.getSize().y / fProposalTable.getItemHeight()) - 1;
 			int itemCount= fProposalTable.getItemCount();
-			boolean smartToggle= false;
 			switch (e.keyCode) {
 
 				case SWT.ARROW_LEFT :
@@ -1286,7 +1285,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					return true;
 			}
 
-			selectProposal(newSelection, smartToggle);
+			selectProposal(newSelection, (e.stateMask & SWT.CTRL) != 0);
 
 			e.doit= false;
 			return false;
