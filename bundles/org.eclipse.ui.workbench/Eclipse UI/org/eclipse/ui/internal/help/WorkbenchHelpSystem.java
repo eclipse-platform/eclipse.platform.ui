@@ -1039,7 +1039,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 */
 	private void setHelpTrace(String contextId) {
 		// Create an unthrown exception to capture the stack trace
-		IllegalArgumentException e = new IllegalArgumentException();
+		RuntimeException e = new RuntimeException();
 		StackTraceElement[] stackTrace = e.getStackTrace();
 		StackTraceElement currentElement = null;
 		for (int s = 0; s < stackTrace.length; s++) {
