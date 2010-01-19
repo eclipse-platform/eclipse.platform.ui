@@ -277,6 +277,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected boolean fIsUpdatingMarkerViews= false;
+
+	/**
+	 * Indicates whether it wants to update the marker views after a gotoMarker call.
+	 * @see #updateMarkerViews(Annotation)
+	 * @see #gotoMarker(IMarker)
+	 * @since 3.6
+	 */
+	private boolean fIsComingFromGotoMarker= false;
+	
 	/**
 	 * Tells whether editing the current derived editor input is allowed.
 	 * @since 3.3
@@ -1010,7 +1019,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		int length= document.getLength();
 		if (end <= length && start <= length) {
-			fIsUpdatingMarkerViews= true;
+			fIsComingFromGotoMarker= true;
 			selectAndReveal(start, end - start);
 		}
 	}
@@ -2026,8 +2035,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected void updateMarkerViews(Annotation annotation) {
-		if (fIsUpdatingMarkerViews) {
-			fIsUpdatingMarkerViews= false;
+		if (fIsComingFromGotoMarker) {
+			fIsComingFromGotoMarker= false;
 			return;
 		}
 
