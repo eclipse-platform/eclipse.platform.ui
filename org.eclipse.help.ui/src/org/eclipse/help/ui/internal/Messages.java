@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,8 @@ public final class Messages extends NLS {
 	public static String HelpPreferencePage_message;
 	public static String HelpPreferencePage_infopop;
 	public static String BrowserPart_bookmarkTooltip;
+	public static String BrowserPart_magnifyTooltip;
+	public static String BrowserPart_reduceTooltip;
 	public static String BrowserPart_highlightTooltip;
 	public static String BrowserPart_printTooltip;
 	public static String BrowserPart_syncTocTooltip;	

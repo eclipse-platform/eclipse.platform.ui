@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.FontUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -49,10 +50,12 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
 	private final static String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
+	private final static String HELP_VIEW_SCALE = "help_view_scale"; //$NON-NLS-1$
     private final static String EMPTY_PAGE = "<html><head></head><body></body></html>"; //$NON-NLS-1$
     
 	private ReusableHelpPart parent;
@@ -62,6 +65,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String id;
 
 	private int lastProgress = -1;
+
+	private static final int SCALE_MAX = 250;
+	
+	private static final int SCALE_MIN = 50;
+	
+	private static final int SCALE_INCREMENT = 10;
+	
+	private int fontScalePercentage = 100;
 
 	private String url;
 
@@ -74,6 +85,10 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private Action bookmarkAction;
 
 	private Action printAction;
+	
+	private Action magnifyAction;
+	
+	private Action reduceAction;
 
 	private String statusURL;
 
@@ -103,6 +118,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BrowserPart.this.url = url;
 				updateSyncTocAction();
 				BrowserPart.this.highlightAction.setEnabled(isResult);
+				if (fontScalePercentage != 100) {
+				    rescale();
+				}
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
@@ -229,6 +247,32 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip);
 		bookmarkAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
+		
+		if (FontUtils.canRescaleHelpView()) {
+			magnifyAction = new Action() {
+				public void run() {
+					doMagnify(SCALE_INCREMENT);
+				}
+			};
+			magnifyAction.setToolTipText(Messages.BrowserPart_magnifyTooltip);
+			magnifyAction.setImageDescriptor(HelpUIResources
+					.getImageDescriptor(IHelpUIConstants.IMAGE_MAGNIFY));
+			magnifyAction.setDisabledImageDescriptor(HelpUIResources
+					.getImageDescriptor(IHelpUIConstants.IMAGE_D_MAGNIFY));
+			
+			reduceAction = new Action() {
+				public void run() {
+					doMagnify(-SCALE_INCREMENT);
+				}
+			};
+			reduceAction.setToolTipText(Messages.BrowserPart_reduceTooltip);
+			reduceAction.setImageDescriptor(HelpUIResources
+					.getImageDescriptor(IHelpUIConstants.IMAGE_REDUCE));
+			reduceAction.setDisabledImageDescriptor(HelpUIResources
+					.getImageDescriptor(IHelpUIConstants.IMAGE_D_REDUCE));
+			fontScalePercentage = Platform.getPreferencesService().getInt(HelpBasePlugin.PLUGIN_ID, HELP_VIEW_SCALE, 100, null);			
+		} 
+		
 		highlightAction = new Action() {
 			public void run() {
 				InstanceScope instanceScope = new InstanceScope();
@@ -256,7 +300,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		tbm.insertBefore("back", printAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
 		tbm.insertBefore("back", highlightAction); //$NON-NLS-1$
+		if (magnifyAction != null) {
+		    tbm.insertBefore("back", magnifyAction); //$NON-NLS-1$
+		    tbm.insertBefore("back", reduceAction); //$NON-NLS-1$
+		}
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
+		enableButtons();
 	}
 
 	/*
@@ -414,6 +463,30 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		if (id.equals(ActionFactory.PRINT.getId()))
 			return printAction;
 		return null;
+	}
+	
+	private void enableButtons() {
+		if (magnifyAction != null) {
+		    magnifyAction.setEnabled(fontScalePercentage < SCALE_MAX);
+	        reduceAction.setEnabled(fontScalePercentage > SCALE_MIN);	
+		}
+	}
+
+	private void doMagnify(int percent) {
+		fontScalePercentage += percent;
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		prefs.putInt(HELP_VIEW_SCALE, fontScalePercentage);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+		}
+		rescale();
+	}
+
+	public void rescale() {
+		browser.execute(FontUtils.getRescaleScript(fontScalePercentage)); 
+		enableButtons();
 	}
 
 	public void toggleRoleFilter() {

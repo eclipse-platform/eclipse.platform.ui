@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,10 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_SHOW_DESC = "elcl16/showdesc_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ADD_BOOKMARK = "elcl16/addbkmrk_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HIGHLIGHT = "elcl16/highlight.gif"; //$NON-NLS-1$
+	public static final String IMAGE_MAGNIFY = "elcl16/magnify_font.gif"; //$NON-NLS-1$
+	public static final String IMAGE_REDUCE = "elcl16/reduce_font.gif"; //$NON-NLS-1$
+	public static final String IMAGE_D_MAGNIFY = "dlcl16/magnify_font.gif"; //$NON-NLS-1$
+	public static final String IMAGE_D_REDUCE = "dlcl16/reduce_font.gif"; //$NON-NLS-1$
 	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SYNC_TOC = "elcl16/synch_toc_nav.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_ALL = "elcl16/show_all.gif"; //$NON-NLS-1$	
