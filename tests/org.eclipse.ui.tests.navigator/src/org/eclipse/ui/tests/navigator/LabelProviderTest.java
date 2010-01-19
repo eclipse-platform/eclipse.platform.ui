@@ -280,7 +280,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_viewer.expandAll();
 		
 		// Let the label provider refresh
-		DisplayHelper.sleep(2000);
+		for (int i = 0; i < 20; i++)
+			DisplayHelper.sleep(100);
 
 		if (false)
 			DisplayHelper.sleep(10000000);
@@ -316,9 +317,9 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 295803 Source of contribution set to lowest priority NCE
-	public void XXXtestMultiNceSameObject() throws Exception {
-
-		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1, }, true);
+	public void testMultiNceSameObject() throws Exception {
+		
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 		// Just two different ones, they don't override, the label provider
 		// should be associated with the higher priority extension that
 		// contributed the object.
@@ -332,9 +333,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// DisplayHelper.sleep(10000000);
 
 		// But we get the text from the overridden label provider
-		// FIXME - this should be the normal background and foreground color
-		// since it should be from the JDT/Resource NCE
-		if (!rootItems[0].getText().startsWith("Blue"))
+		if (!rootItems[0].getText().equals("p1"))
 			fail("Wrong text: " + rootItems[0].getText());
 	}
 

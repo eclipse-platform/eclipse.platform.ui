@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * in the Tree associated with the viewer.
 	 */
 	private Map contributionMemory;
+	private Map contributionMemoryFirstClass;
 	
 	private ILabelProvider labelProvider;
 
@@ -167,6 +168,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				getActivationService());
 		getActivationService().addExtensionActivationListener(this);
 		contributionMemory = new HashMap();
+		contributionMemoryFirstClass = new HashMap();
 	}
 
 	/**
@@ -713,32 +715,29 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void resetContributionMemory() {
 		contributionMemory.clear();
+		contributionMemoryFirstClass.clear();
 	}
 	
 	/**
 	 * 
 	 * 
-	 * @param elements
+	 * @param firstClassSource
 	 * @param source
-	 */
-	public void rememberContribution(NavigatorContentDescriptor source, Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			if (Policy.DEBUG_RESOLUTION)
-				System.out.println("rememberContribution1: " + Policy.getObjectString(elements[i]) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
-			contributionMemory.put(elements[i], source);
-		}
-	}
-	
-	/**
-	 * 
-	 * 
 	 * @param element
-	 * @param source
 	 */
-	public void rememberContribution(NavigatorContentDescriptor source, Object element) {
-		if (Policy.DEBUG_RESOLUTION)
-			System.out.println("rememberContribution2: " + Policy.getObjectString(element) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
-		contributionMemory.put(element, source);
+	public void rememberContribution(INavigatorContentDescriptor source, INavigatorContentDescriptor firstClassSource, Object element) {
+		/*
+		 * We want to write to (overwrite) the contributionMemory only if we have never heard of the element before, or if the 
+		 * element is coming from the same first class NCE, which means that the subsequent NCE is an override.  The override will
+		 * take precedence over the originally contributing NCE.  However in the case of different first class NCEs, the first one 
+		 * wins, so we don't update the contribution memory. 
+		 */
+		if (contributionMemory.get(element) == null || contributionMemoryFirstClass.get(element) == firstClassSource) {
+			if (Policy.DEBUG_RESOLUTION)
+				System.out.println("rememberContribution: " + Policy.getObjectString(element) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
+			contributionMemory.put(element, source);
+			contributionMemoryFirstClass.put(element, firstClassSource);
+		}
 	}
 	
 	/**
@@ -749,6 +748,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void forgetContribution(Object element) {
 		contributionMemory.remove(element);
+		contributionMemoryFirstClass.remove(element);
 	}
 	
 	/**
@@ -758,7 +758,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public NavigatorContentDescriptor getContribution(Object element)
 	{
 		NavigatorContentDescriptor desc = (NavigatorContentDescriptor) contributionMemory.get(element);
-		contributionMemory.remove(element);
 		return desc;
 	}
 	

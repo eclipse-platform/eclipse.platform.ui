@@ -155,6 +155,8 @@ public class NavigatorContentServiceContentProvider implements
 					contributedChildren = foundExtension.internalGetContentProvider()
 							.getElements(anInputElement);
 					
+					INavigatorContentDescriptor foundDescriptor = foundExtension.getDescriptor();
+					localSet.setContributor(foundDescriptor, foundDescriptor);
 					localSet.setContents(contributedChildren);
 
 					overridingExtensions = foundExtension
@@ -162,7 +164,7 @@ public class NavigatorContentServiceContentProvider implements
 
 					if (overridingExtensions.length > 0) { 
 						localSet = pipelineChildren(anInputElement,
-								overridingExtensions, localSet, ELEMENTS);						
+								overridingExtensions, foundDescriptor, localSet, ELEMENTS);						
 					}
 					finalElementsSet.addAll(localSet);
 				}
@@ -248,12 +250,14 @@ public class NavigatorContentServiceContentProvider implements
 					overridingExtensions = foundExtension
 							.getOverridingExtensionsForTriggerPoint(aParentElement);
 					
+					INavigatorContentDescriptor foundDescriptor = foundExtension.getDescriptor();
+					localSet.setContributor(foundDescriptor, foundDescriptor);
 					localSet.setContents(contributedChildren);
 
 					if (overridingExtensions.length > 0) {
 						// TODO: could pass tree path through pipeline						
 						localSet = pipelineChildren(aParentElement,
-								overridingExtensions, localSet, !ELEMENTS);
+								overridingExtensions, foundDescriptor, localSet, !ELEMENTS);
 					}
 					finalChildrenSet.addAll(localSet);
 				}
@@ -300,7 +304,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @return The set of children to return to the viewer
 	 */
 	private ContributorTrackingSet pipelineChildren(Object aParentOrPath,
-			NavigatorContentExtension[] theOverridingExtensions,
+			NavigatorContentExtension[] theOverridingExtensions, INavigatorContentDescriptor firstClassDescriptor,
 			ContributorTrackingSet theCurrentChildren, boolean elements) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
@@ -311,7 +315,7 @@ public class NavigatorContentServiceContentProvider implements
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
-				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());	
+				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor(), firstClassDescriptor);	
 				if (elements) {
 					pipelinedContentProvider.getPipelinedElements(aParentOrPath,
 							pipelinedChildren);
@@ -320,13 +324,13 @@ public class NavigatorContentServiceContentProvider implements
 							pipelinedChildren);
 				}
 				
-				pipelinedChildren.setContributor(null);
+				pipelinedChildren.setContributor(null, null);
 				
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(aParentOrPath);
 				if (overridingExtensions.length > 0) {
 					pipelinedChildren = pipelineChildren(aParentOrPath,
-							overridingExtensions, pipelinedChildren, elements);
+							overridingExtensions, firstClassDescriptor, pipelinedChildren, elements);
 				}
 			}
 		}
@@ -424,7 +428,6 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public synchronized Object getParent(Object anElement) {
-		contentService.resetContributionMemory();
 		Set extensions = contentService
 				.findContentExtensionsWithPossibleChild(anElement);
 

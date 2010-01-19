@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
@@ -40,17 +39,11 @@ public class SafeDelegateTreeContentProvider implements
 
 	private final ITreeContentProvider contentProvider;
 
-	private NavigatorContentDescriptor descriptor;
-	private NavigatorContentService contentService;
-
 	private StructuredViewer viewer;
 
-	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider,
-			NavigatorContentDescriptor aDescriptor, NavigatorContentService aContentService) {
+	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider) {
 		super();
 		contentProvider = aContentProvider;
-		contentService = aContentService;
-		descriptor = aDescriptor;
 	}
 
 	/**
@@ -88,13 +81,11 @@ public class SafeDelegateTreeContentProvider implements
 			return getChildren(tp);
 		}
 		Object[] children = contentProvider.getChildren(aParentElement);
-		contentService.rememberContribution(descriptor, children);
 		return children;
 	}
 
 	public Object[] getElements(Object anInputElement) {
 		Object[] elements = contentProvider.getElements(anInputElement);
-		contentService.rememberContribution(descriptor, elements);
 		return elements;
 	}
 
@@ -274,7 +265,6 @@ public class SafeDelegateTreeContentProvider implements
 		if (contentProvider instanceof ITreePathContentProvider) {
 			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
 			Object[] children = tpcp.getChildren(parentPath);
-			contentService.rememberContribution(descriptor, children);
 			return children;
 		}
 		return getChildren(parentPath.getLastSegment());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,13 @@ package org.eclipse.ui.internal.navigator;
 
 import java.util.LinkedHashSet;
 
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
+ * Used to associate the NavigatorContentDescriptor (NCD) with an object that it contributes.
+ * 
+ * The NCD/object association is tracked using the NavigatorContentService.rememberContribution().
+ * 
  * @since 3.2
  *
  */
@@ -24,7 +28,8 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	
 	private static final long serialVersionUID = 2516241537206281972L;
 	
-	private NavigatorContentDescriptor contributor;
+	private INavigatorContentDescriptor contributor;
+	private INavigatorContentDescriptor firstClassContributor;
 	private NavigatorContentService contentService;
 	
 	/**
@@ -54,8 +59,9 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 * @see java.util.HashSet#add(java.lang.Object)
 	 */
 	public boolean add(Object o) { 
-		if(contributor != null)
-			contentService.rememberContribution(contributor, o);
+		if (contributor != null) {
+			contentService.rememberContribution(contributor, firstClassContributor, o);
+		}
 		return super.add(o);
 	}
 	
@@ -71,16 +77,26 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 * 
 	 * @return The current contributor.
 	 */
-	public NavigatorContentDescriptor getContributor() {
+	public INavigatorContentDescriptor getContributor() {
 		return contributor;
 	}
 
 	/**
 	 * 
-	 * @param newContributor The contributor to record for the next series of adds.
+	 * @return The current contributor.
 	 */
-	public void setContributor(NavigatorContentDescriptor newContributor) {
+	public INavigatorContentDescriptor getFirstClassContributor() {
+		return firstClassContributor;
+	}
+
+	/**
+	 * 
+	 * @param newContributor The contributor to record for the next series of adds.
+	 * @param theFirstClassContributor The first class contributor associated with the newContributor.
+	 */
+	public void setContributor(INavigatorContentDescriptor newContributor, INavigatorContentDescriptor theFirstClassContributor) {
 		contributor = newContributor;
+		firstClassContributor = theFirstClassContributor;
 	}
 
 	/**
@@ -90,7 +106,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		super.clear();
 		if(contents != null) 
 			for (int i = 0; i < contents.length; i++) 
-				super.add(contents[i]); 
+				add(contents[i]); 
 		
 	}
 }
