@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.menus;
 import java.lang.reflect.Field;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -48,6 +49,9 @@ public class MenuPopulationTest extends MenuTestCase {
 	private AbstractContributionFactory beforeOne;
 	private AbstractContributionFactory endofOne;
 	private CommandContributionItem usefulContribution;
+
+	private static final String ITEM_ID = "my.id";
+	private static final String MENU_LOCATION = "menu:local.menu.test";
 
 	/**
 	 * @param testName
@@ -164,6 +168,100 @@ public class MenuPopulationTest extends MenuTestCase {
 				.lastIndexOf('/')));
 
 		manager.dispose();
+	}
+
+	static class MyFactory extends AbstractContributionFactory {
+		public ContributionItem localContribution;
+
+		public MyFactory() {
+			super(MENU_LOCATION + "?after=additions", "org.eclipse.ui.tests");
+			localContribution = new ContributionItem(ITEM_ID) {
+			};
+		}
+
+		public void createContributionItems(IServiceLocator serviceLocator,
+				IContributionRoot additions) {
+			additions.addContributionItem(localContribution, null);
+		}
+	}
+
+	public void testFactoryAddition() throws Exception {
+		MyFactory factory = new MyFactory();
+		MenuManager manager = new MenuManager(null);
+		try {
+			menuService.addContributionFactory(factory);
+
+			menuService.populateContributionManager(manager, MENU_LOCATION);
+			IContributionItem item = manager.find(ITEM_ID);
+			assertNotNull(item);
+			assertEquals(factory.localContribution, item);
+
+		} finally {
+			menuService.releaseContributions(manager);
+			manager.dispose();
+			menuService.removeContributionFactory(factory);
+		}
+	}
+
+	public void testFactoryRemove() throws Exception {
+		MyFactory factory = new MyFactory();
+		MenuManager manager = new MenuManager(null);
+		try {
+			menuService.addContributionFactory(factory);
+
+			menuService.removeContributionFactory(factory);
+
+			menuService.populateContributionManager(manager, MENU_LOCATION);
+			IContributionItem item = manager.find(ITEM_ID);
+			assertNull(item);
+		} finally {
+			menuService.releaseContributions(manager);
+			manager.dispose();
+			menuService.removeContributionFactory(factory);
+		}
+	}
+
+	public void testDynamicFactoryAddition() throws Exception {
+		MyFactory factory = new MyFactory();
+
+		MenuManager manager = new MenuManager(null);
+		menuService.populateContributionManager(manager, MENU_LOCATION);
+		IContributionItem item = manager.find(ITEM_ID);
+		assertNull(item);
+
+		try {
+			menuService.addContributionFactory(factory);
+			item = manager.find(ITEM_ID);
+			assertNotNull(item);
+			assertEquals(factory.localContribution, item);
+
+		} finally {
+			menuService.releaseContributions(manager);
+			manager.dispose();
+			menuService.removeContributionFactory(factory);
+		}
+	}
+
+	public void testDynamicFactoryRemove() throws Exception {
+		MyFactory factory = new MyFactory();
+		MenuManager manager = new MenuManager(null);
+		try {
+			menuService.addContributionFactory(factory);
+
+			menuService.populateContributionManager(manager, MENU_LOCATION);
+			IContributionItem item = manager.find(ITEM_ID);
+			assertNotNull(item);
+			assertEquals(factory.localContribution, item);
+
+			menuService.removeContributionFactory(factory);
+
+			item = manager.find(ITEM_ID);
+			assertNull(item);
+		} finally {
+			menuService.releaseContributions(manager);
+			manager.dispose();
+			menuService.removeContributionFactory(factory);
+		}
 	}
 
 	public void testFactoryScopePopulation() throws Exception {
