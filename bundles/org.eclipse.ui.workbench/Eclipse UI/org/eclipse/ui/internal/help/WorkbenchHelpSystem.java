@@ -1038,8 +1038,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 * duplicated context IDs.
 	 */
 	private void setHelpTrace(String contextId) {
-
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		// Create an unthrown exception to capture the stack trace
+		IllegalArgumentException e = new IllegalArgumentException();
+		StackTraceElement[] stackTrace = e.getStackTrace();
 		StackTraceElement currentElement = null;
 		for (int s = 0; s < stackTrace.length; s++) {
 			if (stackTrace[s].getMethodName().equals("setHelp") && s + 1 < stackTrace.length) //$NON-NLS-1$
