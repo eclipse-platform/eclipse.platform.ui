@@ -878,6 +878,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				NavigatorPlugin.logError(0, msg, e);
 			}
 		}
+		if (structuredViewerManager != null) {
+			structuredViewerManager.resetViewerData();
+		}
 		update();
 	}
 

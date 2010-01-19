@@ -262,7 +262,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 299438 activating extensions does not properly refresh
-	public void XXXtestChangeActivation() throws Exception {
+	public void testChangeActivation() throws Exception {
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 		checkItems(rootItems, TestLabelProviderStyledGreen.instance);
 
@@ -274,7 +274,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_viewer.expandAll();
 		
 		// Let the label provider refresh
-		DisplayHelper.sleep(1000);
+		DisplayHelper.sleep(2000);
 
 		if (false)
 			DisplayHelper.sleep(10000000);

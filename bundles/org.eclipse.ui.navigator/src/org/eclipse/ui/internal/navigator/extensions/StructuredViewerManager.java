@@ -110,6 +110,17 @@ public class StructuredViewerManager {
 	}
 
 	/**
+	 * Used when NCEs associated with the viewer are changed.
+	 */
+	public void resetViewerData() {
+		synchronized (viewerDataMap) {
+			if (Policy.DEBUG_VIEWER_MAP)
+				System.out.println("viewer map RESET"); //$NON-NLS-1$
+			viewerDataMap.clear();
+		}
+	}
+
+	/**
 	 * 
 	 * @param aViewer
 	 * @param contentService 
