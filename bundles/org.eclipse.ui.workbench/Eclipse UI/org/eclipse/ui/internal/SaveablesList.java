@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -598,7 +598,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
 						monitor);
-				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
+				monitorWrap.beginTask(WorkbenchMessages.Saving_Modifications, finalModels.size());
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
 					Saveable model = (Saveable) i.next();
 					// handle case where this model got saved as a result of
