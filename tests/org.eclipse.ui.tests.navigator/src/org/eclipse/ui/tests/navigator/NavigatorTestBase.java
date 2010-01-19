@@ -71,6 +71,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_RESOURCE_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentResourceOverride";
 	public static final String TEST_CONTENT_PIPELINE = "org.eclipse.ui.tests.navigator.testPipeline";
 	public static final String TEST_CONTENT_WITH = "org.eclipse.ui.tests.navigator.testContentWith";
+	public static final String TEST_CONTENT_NO_CHILDREN = "org.eclipse.ui.tests.navigator.testContentNoChildren";
 
 	public static final String TEST_CONTENT_M12_VIEW = "org.eclipse.ui.tests.navigator.M12View";
 	public static final String TEST_CONTENT_M12_M1_CONTENT = "org.eclipse.ui.tests.navigator.m12.M1";

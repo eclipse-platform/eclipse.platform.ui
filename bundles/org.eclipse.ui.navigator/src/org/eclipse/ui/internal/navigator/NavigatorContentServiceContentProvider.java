@@ -346,6 +346,9 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
 			ext = (NavigatorContentExtension) itr.next();
+			NavigatorContentExtension overridingExtensions[] = ext.getOverridingExtensionsForTriggerPoint(anElement);
+			if (overridingExtensions.length > 0)
+				ext = overridingExtensions[overridingExtensions.length - 1];
 			if (!ext.isLoaded() && !enforceHasChildren) {
 				return true;
 			} else if (ext.internalGetContentProvider().hasChildren(anElement)) {
@@ -362,6 +365,9 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
 			ext = (NavigatorContentExtension) itr.next();
+			NavigatorContentExtension overridingExtensions[] = ext.getOverridingExtensionsForTriggerPoint(anElement);
+			if (overridingExtensions.length > 0)
+				ext = overridingExtensions[overridingExtensions.length - 1];
 			if (!ext.isLoaded() && !enforceHasChildren)
 				return true;
 			ITreeContentProvider cp = ext.internalGetContentProvider();

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
 
 public class PipelineTest extends NavigatorTestBase {
@@ -119,5 +120,27 @@ public class PipelineTest extends NavigatorTestBase {
 		_viewer.add(_project, new Object[] { f });
 
 	}	
+	
+	// Bug 299661 hasChildren() does not handle overrides correctly
+	public void testHasNoChildrenOverride() throws Exception {
+		_contentService.bindExtensions(new String[] {
+				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_NO_CHILDREN},
+				false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
+						TEST_CONTENT_NO_CHILDREN }, true);
+
+		refreshViewer();
+		_viewer.expandAll();
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+		for (int i= 0; i < rootItems.length; i++) {
+			assertEquals(0, rootItems[i].getItems().length);
+		}
+		
+		if (false)
+			DisplayHelper.sleep(10000000);
+	}	
+	
+	
 	
 }
