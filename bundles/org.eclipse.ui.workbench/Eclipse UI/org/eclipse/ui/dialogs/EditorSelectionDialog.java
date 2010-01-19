@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
  *     						have Open With-->Other
+ *     Helena Halperin - Bug 298747 [EditorMgmt] Bidi Incorrect file type direction in mirrored "Editor Selection" dialog
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -18,6 +19,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Util;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -233,7 +235,9 @@ public final class EditorSelectionDialog extends Dialog {
 		for (int i = 0; i < editors.length; i++) {
 			TableItem item = new TableItem(editorTable, SWT.NULL);
 			item.setData(editors[i]);
-			item.setText(editors[i].getLabel());
+			// fix Bug 298747 Bidi Incorrect file type direction in mirrored
+			// "Editor Selection" dialog
+			item.setText(TextProcessor.process(editors[i].getLabel(), ".")); //$NON-NLS-1$
 			item.setImage(images[i]);
 		}
 		editorTable.setRedraw(true);
