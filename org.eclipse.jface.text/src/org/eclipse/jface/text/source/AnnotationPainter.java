@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Annotations not painted when length is 0 / at document end - http://bugs.eclipse.org/bugs/show_bug.cgi?id=227534
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -1372,7 +1373,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			Annotation a= (Annotation)entry.getKey();
 			Decoration pp = (Decoration)entry.getValue();
 			// prune any annotation that is not drawable or does not need drawing
-			if (!(a.isMarkedDeleted() || skip(a) || !pp.fPosition.overlapsWith(vOffset, vLength))) {
+			if (!(a.isMarkedDeleted() || skip(a) || !regionsTouchOrOverlap(pp.fPosition.getOffset(), pp.fPosition.getLength(), vOffset, vLength))) {
 				// ensure sized appropriately
 				for (int i= toBeDrawn.size(); i <= pp.fLayer; i++)
 					toBeDrawn.add(new LinkedList());
@@ -1416,7 +1417,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				String lineDelimiter= document.getLineDelimiter(i);
 				int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
 				int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
-				if (paintLength >= 0 && overlapsWith(paintStart, paintLength, clippingOffset, clippingLength)) {
+				if (paintLength >= 0 && regionsTouchOrOverlap(paintStart, paintLength, clippingOffset, clippingLength)) {
 					// otherwise inside a line delimiter
 					IRegion widgetRange= getWidgetRange(paintStart, paintLength);
 					if (widgetRange != null) {
@@ -1510,20 +1511,23 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Returns the widget region that corresponds to the
 	 * given offset and length in the viewer's document.
+	 * 
+	 * The returned object can be the fReusableRegion and may used
+	 * only to read the return values and must not used to store
+	 * the region.
 	 *
 	 * @param modelOffset the model offset
 	 * @param modelLength the model length
 	 * @return the corresponding widget region
 	 */
 	private IRegion getWidgetRange(int modelOffset, int modelLength) {
-		fReusableRegion.setOffset(modelOffset);
-		fReusableRegion.setLength(modelLength);
-
-		if (fReusableRegion == null || fReusableRegion.getOffset() == Integer.MAX_VALUE)
+		if (modelOffset == Integer.MAX_VALUE)
 			return null;
 
 		if (fSourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+			fReusableRegion.setOffset(modelOffset);
+			fReusableRegion.setLength(modelLength);
 			return extension.modelRange2WidgetRange(fReusableRegion);
 		}
 
@@ -1531,10 +1535,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		int offset= region.getOffset();
 		int length= region.getLength();
 
-		if (overlapsWith(fReusableRegion, region)) {
-			int p1= Math.max(offset, fReusableRegion.getOffset());
-			int p2= Math.min(offset + length, fReusableRegion.getOffset() + fReusableRegion.getLength());
-			return new Region(p1 - offset, p2 - p1);
+		if (regionsTouchOrOverlap(modelOffset, modelLength, offset, length)) {
+			int p1= Math.max(offset, modelOffset);
+			int p2= Math.min(offset + length, modelOffset + modelLength);
+			fReusableRegion.setOffset(p1 - offset);
+			fReusableRegion.setLength(p2 - p1);
+			return fReusableRegion;
 		}
 		return null;
 	}
@@ -1562,40 +1568,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/**
-	 * Checks whether the intersection of the given text ranges
-	 * is empty or not.
+	 * Checks whether the two given text regions touch or overlap each other.
 	 *
-	 * @param range1 the first range to check
-	 * @param range2 the second range to check
-	 * @return <code>true</code> if intersection is not empty
+	 * @param offset1 offset of the first region
+	 * @param length1 length of the first region
+	 * @param offset2 offset of the second region
+	 * @param length2 length of the second region
+	 * @return <code>true</code> if the regions touch or overlap
 	 */
-	private boolean overlapsWith(IRegion range1, IRegion range2) {
-		return overlapsWith(range1.getOffset(), range1.getLength(), range2.getOffset(), range2.getLength());
-	}
-
-	/**
-	 * Checks whether the intersection of the given text ranges
-	 * is empty or not.
-	 *
-	 * @param offset1 offset of the first range
-	 * @param length1 length of the first range
-	 * @param offset2 offset of the second range
-	 * @param length2 length of the second range
-	 * @return <code>true</code> if intersection is not empty
-	 */
-	private boolean overlapsWith(int offset1, int length1, int offset2, int length2) {
-		int end= offset2 + length2;
-		int thisEnd= offset1 + length1;
-
-		if (length2 > 0) {
-			if (length1 > 0)
-				return offset1 < end && offset2 < thisEnd;
-			return  offset2 <= offset1 && offset1 < end;
-		}
-
-		if (length1 > 0)
-			return offset1 <= offset2 && offset2 < thisEnd;
-		return offset1 == offset2;
+	private boolean regionsTouchOrOverlap(int offset1, int length1, int offset2, int length2) {
+		return (offset1 <= offset2+length2) && (offset2 <= offset1+length1);
 	}
 
 	/*
