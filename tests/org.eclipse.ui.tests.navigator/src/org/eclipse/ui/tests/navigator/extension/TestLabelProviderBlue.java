@@ -31,7 +31,7 @@ public class TestLabelProviderBlue extends TestStyledLabelProvider {
 		backgroundColorName = "Blue";
 		font = new Font(Display.getDefault(), boldFontData);
 		image = PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_DEC_FIELD_WARNING);
+				ISharedImages.IMG_ETOOL_SAVE_EDIT);
 		instance = this;
 	}
 

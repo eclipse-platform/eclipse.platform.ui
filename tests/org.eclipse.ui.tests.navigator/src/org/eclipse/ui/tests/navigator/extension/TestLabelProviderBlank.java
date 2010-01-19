@@ -31,7 +31,7 @@ public class TestLabelProviderBlank extends TestStyledLabelProvider {
 		backgroundColorName = "Red";
 		font = new Font(Display.getDefault(), boldFontData);
 		image = PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_DEC_FIELD_ERROR);
+				ISharedImages.IMG_OBJ_ADD);
 		instance = this;
 	}
 

@@ -109,10 +109,11 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		}
 
 		IEvaluationContext context = null;
+		IEvaluationContext parentContext = NavigatorPlugin.getApplicationContext();
 
 		Iterator elements = aStructuredSelection.iterator();
 		while (elements.hasNext()) {
-			context = new EvaluationContext(null, elements.next());
+			context = new EvaluationContext(parentContext, elements.next());
 			context.setAllowPluginActivation(true);
 			try {
 				if (enablement.evaluate(context) == EvaluationResult.FALSE) {
@@ -140,8 +141,7 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		}
 
 		try {
-			EvaluationContext context = new EvaluationContext(null, anElement);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
 			return (enablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);

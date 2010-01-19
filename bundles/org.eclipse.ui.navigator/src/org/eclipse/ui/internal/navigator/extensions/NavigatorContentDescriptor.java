@@ -20,10 +20,10 @@ import java.util.TreeSet;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.core.expressions.ElementHandler;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.IEvaluationContext;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -343,8 +343,7 @@ public final class NavigatorContentDescriptor implements
 		}
 
 		try {
-			EvaluationContext context = new EvaluationContext(null, anElement);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
 			return (enablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
@@ -376,8 +375,7 @@ public final class NavigatorContentDescriptor implements
 		}
 
 		try {
-			EvaluationContext context = new EvaluationContext(null, anElement);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
 			if (possibleChildren != null) {
 				return (possibleChildren.evaluate(context) == EvaluationResult.TRUE);
 			} else if (enablement != null) {
