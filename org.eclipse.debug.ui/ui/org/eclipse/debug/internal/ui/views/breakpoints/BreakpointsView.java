@@ -20,9 +20,11 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
@@ -75,7 +77,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 /**
  * This class implements the breakpoints view.
  */
-public class BreakpointsView extends VariablesView implements ISelectionListener {	
+public class BreakpointsView extends VariablesView implements ISelectionListener, IBreakpointManagerListener {	
 	private static final String ACTION_GOTO_MARKER				= "GotoMarker";				//$NON-NLS-1$
 	private static final String ACTION_SKIP_BREAKPOINTS			= "SkipBreakpoints";		//$NON-NLS-1$
 	private static final String ACTION_SHOW_MODEL_BREAKPOINT	= "ShowBreakpointsForModel";//$NON-NLS-1$
@@ -94,6 +96,7 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	public void dispose() {
 		if (fClipboard != null)
 			fClipboard.dispose();		
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
 		super.dispose();
 	}
 	
@@ -213,6 +216,7 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction(ACTION_SHOW_MODEL_BREAKPOINT, new ShowTargetBreakpointsAction(this));
 		setAction(ACTION_SKIP_BREAKPOINTS, new SkipAllBreakpointsAction(this));
+        DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 
 		fClipboard = new Clipboard(getSite().getShell().getDisplay());
 		        
@@ -224,6 +228,7 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 		SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
 		setAction(ACTION_REMOVE_FROM_GROUP, remove);
 		getViewer().addSelectionChangedListener(remove);
+		
 	}
 
 	/*
@@ -546,6 +551,20 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 			// update the presentation context filter
 			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, fFilterSelection);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
+				if (action != null) {
+					((SkipAllBreakpointsAction) action).updateActionCheckedState();
+				}
+			}
+		});
 	}
 	
 	/**
