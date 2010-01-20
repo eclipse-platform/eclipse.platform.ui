@@ -273,9 +273,19 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		_viewer.expandAll();
 		
-		// Let the label provider refresh
-		for (int i = 0; i < 20; i++)
-			DisplayHelper.sleep(100);
+		System.out.println(System.currentTimeMillis() + " after expand");
+		
+		// Let the label provider refresh - wait up to 30 seconds
+		for (int i = 0; i < 600; i++) {
+			rootItems = _viewer.getTree().getItems();
+			System.out.println("checking text: " + rootItems[0].getText());
+			if (rootItems[0].getBackground(0).equals(TestLabelProviderCyan.instance.backgroundColor))
+				break;
+			System.out.println(System.currentTimeMillis() + " before sleep " + i);
+			DisplayHelper.sleep(50);
+		}
+
+		System.out.println(System.currentTimeMillis() + " after sleep");
 
 		if (false)
 			DisplayHelper.sleep(10000000);
