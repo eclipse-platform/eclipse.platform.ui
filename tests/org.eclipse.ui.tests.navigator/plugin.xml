@@ -1279,5 +1279,19 @@
             id="org.eclipse.ui.tests.navigator.SampleExportWizard"
             name="Test CNF Export Wizard  (Does Nothing)"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+	<menuContribution
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
+         <menu
+            label="Test Using Command">
+            <command
+                  commandId="org.eclipse.ui.edit.copy">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
 
 </plugin>
