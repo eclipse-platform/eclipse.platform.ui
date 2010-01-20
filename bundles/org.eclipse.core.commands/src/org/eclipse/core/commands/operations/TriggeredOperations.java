@@ -463,7 +463,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 * @since 3.6
 	 */
@@ -479,7 +479,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return Status.OK_STATUS;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
 	 * @since 3.6
 	 */
@@ -489,7 +489,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
 	 * @since 3.6
 	 */
