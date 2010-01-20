@@ -464,7 +464,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 	}
 
 	/**
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 * @since 3.6
 	 */
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) throws ExecutionException {
@@ -480,7 +479,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 	}
 	
 	/**
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
 	 * @since 3.6
 	 */
 	public void setQuietCompute(boolean quiet) {
@@ -490,7 +488,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 	}
 	
 	/**
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
 	 * @since 3.6
 	 */
 	public boolean runInBackground() {
