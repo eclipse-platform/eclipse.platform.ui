@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.navigator.filters;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -47,8 +47,8 @@ public class CoreExpressionFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 
 		try {
-			return (filterExpression.evaluate(new EvaluationContext(null,
-					element)) != EvaluationResult.TRUE);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(element);
+			return (filterExpression.evaluate(context) != EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}

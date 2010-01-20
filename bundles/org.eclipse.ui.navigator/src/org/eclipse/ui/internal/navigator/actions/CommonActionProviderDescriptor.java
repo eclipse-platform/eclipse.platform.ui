@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.actions;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -227,8 +226,7 @@ public class CommonActionProviderDescriptor implements
 		
 		if(aStructuredSelection.isEmpty()) {
 			IEvaluationContext context = null; 
-			context = new EvaluationContext(null, Collections.EMPTY_LIST);
-			context.setAllowPluginActivation(true);
+			context = NavigatorPlugin.getEmptyEvalContext();
 			try { 
 				if (enablement.evaluate(context) != EvaluationResult.TRUE) {
 					return false;
@@ -240,9 +238,10 @@ public class CommonActionProviderDescriptor implements
 		} else {
 
 			IEvaluationContext context = null;
+			IEvaluationContext parentContext = NavigatorPlugin.getApplicationContext();
 			Iterator elements = aStructuredSelection.iterator();
 			while (elements.hasNext()) {
-				context = new EvaluationContext(null, elements.next());
+				context = new EvaluationContext(parentContext, elements.next());
 				context.setAllowPluginActivation(true);
 				try { 
 					if (enablement.evaluate(context) != EvaluationResult.TRUE) {
@@ -270,8 +269,7 @@ public class CommonActionProviderDescriptor implements
 		}
 
 		try {
-			EvaluationContext context = new EvaluationContext(null, anElement);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
 			return (enablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
