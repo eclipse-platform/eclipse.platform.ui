@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -281,6 +281,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.4
 	 */
 	public static final int HIDDEN = 0x1000;
+	
+	/**
+	 * Update flag constant (bit mask value 0x2000) indicating that a 
+	 * resource should be marked as a virtual resource.
+	 * 
+	 * @since 3.6
+	 */
+	public static final int VIRTUAL = 0x2000;
 
 	/*====================================================================
 	 * Other constants:
@@ -1702,14 +1710,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isLinked();
 
 	/**
-	 * Returns whether this resource is a group.
+	 * Returns whether this resource is a virtual resource.
 	 * 
-	 * @return <code>true</code> if this resource is a group, and
+	 * @return <code>true</code> if this resource is virtual, and
 	 *         <code>false</code> otherwise
-	 * @see IFolder#createGroup(int, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public boolean isGroup();
+	public boolean isVirtual();
 
 	/**
 	 * Returns whether this resource has filters.

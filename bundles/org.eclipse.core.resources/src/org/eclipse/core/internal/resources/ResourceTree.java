@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -981,7 +981,7 @@ class ResourceTree implements IResourceTree {
 
 			//for linked resources, nothing needs to be moved in the file system
 			boolean isDeep = (flags & IResource.SHALLOW) == 0;
-			if (!isDeep && (source.isLinked() || source.isGroup())) {
+			if (!isDeep && (source.isLinked() || source.isVirtual())) {
 				movedFolderSubtree(source, destination);
 				return;
 			}
@@ -1123,7 +1123,7 @@ class ResourceTree implements IResourceTree {
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) {
 				if (resource.isLinked()) {
-					if (isDeep && !((Resource) resource).isUnderGroup()) {
+					if (isDeep && !((Resource) resource).isUnderVirtual()) {
 						//clear the linked resource bit, if any
 						ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
 						info.clear(ICoreConstants.M_LINK);

@@ -432,7 +432,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			root = info.getFileStoreRoot();
 			if (root != null && root.isValid())
 				return root;
-			if (info.isSet(ICoreConstants.M_GROUP)) {
+			if (info.isSet(ICoreConstants.M_VIRTUAL)) {
 				ProjectDescription description = ((Project) target.getProject()).internalGetDescription();
 				if (description != null) {
 					setLocation(target, info, description.getGroupLocationURI(target.getProjectRelativePath()));

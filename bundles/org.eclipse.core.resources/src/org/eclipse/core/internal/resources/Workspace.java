@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -756,7 +756,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// update link locations in project descriptions
 		if (source.isLinked()) {
 			LinkDescription linkDescription;
-			if (((updateFlags & IResource.SHALLOW) != 0) || ((Resource) source).isUnderGroup()) {
+			if (((updateFlags & IResource.SHALLOW) != 0) || ((Resource) source).isUnderVirtual()) {
 				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
 				linkDescription = new LinkDescription(destinationResource, source.getLocationURI());
@@ -869,6 +869,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			info.set(M_TEAM_PRIVATE_MEMBER);
 		if ((updateFlags & IResource.HIDDEN) != 0)
 			info.set(M_HIDDEN);
+		//		if ((updateFlags & IResource.VIRTUAL) != 0)
+		//			info.set(M_VIRTUAL);
 		return info;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
 		final IResource target = node.getResource();
 		//we don't delete linked content, so no need to keep history
-		if (target.isLinked() || target.isGroup() || node.isSymbolicLink())
+		if (target.isLinked() || target.isVirtual() || node.isSymbolicLink())
 			return;
 		if (node.isFolder()) {
 			monitor.subTask(NLS.bind(Messages.localstore_deleting, target.getFullPath()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,11 +72,11 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 		try {
-			if (source.isGroup()) {
-				((Folder) destination).createGroup(updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
+			if (source.isVirtual()) {
+				((Folder) destination).create(IResource.VIRTUAL, true, null);
 				return true;
 			}
-			if ((!isDeep || source.isUnderGroup()) && source.isLinked()) {
+			if ((!isDeep || source.isUnderVirtual()) && source.isLinked()) {
 				destination.createLink(source.getRawLocationURI(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 				return false;
 			}
@@ -144,8 +144,8 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	}
 
 	protected boolean isSynchronized(UnifiedTreeNode node) {
-		/* groups are always deemed as being synchronized */
-		if (node.getResource().isGroup())
+		/* virtual resources are always deemed as being synchronized */
+		if (node.getResource().isVirtual())
 			return true;
 		/* does the resource exist in workspace and file system? */
 		if (!node.existsInWorkspace() || !node.existsInFileSystem())

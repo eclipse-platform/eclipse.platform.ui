@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class VirtualFolderTest extends ResourceTest {
 
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject}, true);
-		existingVirtualFolderInExistingProject.createGroup(IResource.NONE, getMonitor());
+		existingVirtualFolderInExistingProject.create(IResource.VIRTUAL, true, getMonitor());
 	}
 
 	protected void setUp() throws Exception {
@@ -63,13 +63,13 @@ public class VirtualFolderTest extends ResourceTest {
 		IFolder virtualFolder = existingProject.getFolder(getUniqueString());
 
 		try {
-			virtualFolder.createGroup(0, getMonitor());
+			virtualFolder.create(IResource.VIRTUAL, true, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
 
 		assertTrue("2.0", virtualFolder.exists());
-		assertTrue("3.0", virtualFolder.isGroup());
+		assertTrue("3.0", virtualFolder.isVirtual());
 
 		// delete should succeed
 		try {
@@ -119,13 +119,13 @@ public class VirtualFolderTest extends ResourceTest {
 	public void testCreateVirtualFolderUnderVirtualFolder() {
 		IFolder virtualFolder = existingVirtualFolderInExistingProject.getFolder(getUniqueString());
 		try {
-			virtualFolder.createGroup(IResource.NONE, null);
+			virtualFolder.create(IResource.VIRTUAL, true, null);
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
 
 		assertTrue("2.0", virtualFolder.exists());
-		assertTrue("3.0", virtualFolder.isGroup());
+		assertTrue("3.0", virtualFolder.isVirtual());
 
 		// delete should succeed
 		try {
@@ -223,12 +223,12 @@ public class VirtualFolderTest extends ResourceTest {
 			IFile newFile = destinationProject.getFile(linkedFile.getProjectRelativePath());
 			assertTrue("3.0", newFile.isLinked());
 			assertEquals("3.1", linkedFile.getLocation(), newFile.getLocation());
-			assertTrue("3.2", newFile.getParent().isGroup());
+			assertTrue("3.2", newFile.getParent().isVirtual());
 
 			IFolder newFolder = destinationProject.getFolder(linkedFolder.getProjectRelativePath());
 			assertTrue("4.0", newFolder.isLinked());
 			assertEquals("4.1", linkedFolder.getLocation(), newFolder.getLocation());
-			assertTrue("4.2", newFolder.getParent().isGroup());
+			assertTrue("4.2", newFolder.getParent().isVirtual());
 
 			// test project deep copy
 			try {
@@ -240,10 +240,10 @@ public class VirtualFolderTest extends ResourceTest {
 
 			assertTrue("5.1", newFile.isLinked());
 			assertEquals("5.2", linkedFile.getLocation(), newFile.getLocation());
-			assertTrue("5.3", newFile.getParent().isGroup());
+			assertTrue("5.3", newFile.getParent().isVirtual());
 			assertTrue("5.4", newFolder.isLinked());
 			assertEquals("5.5", linkedFolder.getLocation(), newFolder.getLocation());
-			assertTrue("5.6", newFolder.getParent().isGroup());
+			assertTrue("5.6", newFolder.getParent().isVirtual());
 
 			try {
 				destinationProject.delete(IResource.NONE, getMonitor());
@@ -300,11 +300,11 @@ public class VirtualFolderTest extends ResourceTest {
 			assertTrue("7.0", existingProject.isSynchronized(IResource.DEPTH_INFINITE));
 			assertTrue("8.0", destinationProject.isSynchronized(IResource.DEPTH_INFINITE));
 
-			assertTrue("9.0", newFile.getParent().isGroup());
+			assertTrue("9.0", newFile.getParent().isVirtual());
 			assertTrue("10.0", newFile.isLinked());
 
 			assertTrue("11.0", newFolder.isLinked());
-			assertTrue("12.0", newFolder.getParent().isGroup());
+			assertTrue("12.0", newFolder.getParent().isVirtual());
 		} finally {
 			Workspace.clear(fileLocation.toFile());
 			Workspace.clear(folderLocation.toFile());
@@ -315,7 +315,7 @@ public class VirtualFolderTest extends ResourceTest {
 		IFolder virtualFolder = existingProject.getFolder(getUniqueString());
 
 		try {
-			virtualFolder.createGroup(IResource.NONE, null);
+			virtualFolder.create(IResource.VIRTUAL, true, null);
 			existingProject.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
 			existingProject.create(getMonitor());
 		} catch (CoreException e) {
@@ -333,7 +333,7 @@ public class VirtualFolderTest extends ResourceTest {
 
 		// virtual folder should now exist
 		assertTrue("4.0", virtualFolder.exists());
-		assertTrue("5.0", virtualFolder.isGroup());
+		assertTrue("5.0", virtualFolder.isVirtual());
 	}
 
 	public void testDeleteProjectWithVirtualFolderAndLink() {
@@ -345,7 +345,7 @@ public class VirtualFolderTest extends ResourceTest {
 		try {
 			try {
 				folderLocation.toFile().mkdir();
-				virtualFolder.createGroup(IResource.NONE, null);
+				virtualFolder.create(IResource.VIRTUAL, true, null);
 				linkedFolder.createLink(folderLocation, IResource.NONE, getMonitor());
 				existingProject.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
 				existingProject.create(getMonitor());
@@ -365,7 +365,7 @@ public class VirtualFolderTest extends ResourceTest {
 
 			// virtual folder should now exist
 			assertTrue("5.0", virtualFolder.exists());
-			assertTrue("6.0", virtualFolder.isGroup());
+			assertTrue("6.0", virtualFolder.isVirtual());
 
 			// link should now exist
 			assertTrue("7.0", linkedFolder.exists());
@@ -406,11 +406,11 @@ public class VirtualFolderTest extends ResourceTest {
 		// create a virtual folder
 		IFolder virtualFolder = existingProject.getFolder(getUniqueString());
 		try {
-			virtualFolder.createGroup(IResource.NONE, null);
+			virtualFolder.create(IResource.VIRTUAL, true, null);
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		assertTrue("2.0", virtualFolder.isGroup());
+		assertTrue("2.0", virtualFolder.isVirtual());
 	}
 
 	//	We should decide what is the proper value returned for Virtual Folders
@@ -456,7 +456,7 @@ public class VirtualFolderTest extends ResourceTest {
 				// create the structure in the workspace
 				ensureExistsInWorkspace(topFolder, true);
 				linkedFolder.createLink(linkedFolderLocation, IResource.NONE, getMonitor());
-				virtualFolder.createGroup(0, getMonitor());
+				virtualFolder.create(IResource.VIRTUAL, true, getMonitor());
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
@@ -464,7 +464,7 @@ public class VirtualFolderTest extends ResourceTest {
 			// assert locations
 			assertEquals("2.0", linkedFolderLocation, linkedFolder.getLocation());
 			assertEquals("3.0", linkedFolderLocation.append(subFolder.getName()), subFolder.getLocation());
-			assertTrue("4.0", virtualFolder.isGroup());
+			assertTrue("4.0", virtualFolder.isVirtual());
 			assertTrue("5.0", virtualFolder.getLocation() == null);
 
 			// assert URIs

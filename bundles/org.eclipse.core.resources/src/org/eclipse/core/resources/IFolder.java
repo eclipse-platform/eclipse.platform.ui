@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -127,7 +127,8 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * </p>
 	 * 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link IResource#FORCE}, {@link IResource#DERIVED}, and {@link IResource#TEAM_PRIVATE})
+	 *   ({@link IResource#FORCE}, {@link IResource#DERIVED}, {@link IResource#TEAM_PRIVATE})
+	 *   and {@link IResource#VIRTUAL})
 	 * @param local a flag controlling whether or not the folder will be local
 	 *    after the creation
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -333,52 +334,6 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @since 3.2
 	 */
 	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Creates a new group resource as a member of this handle's parent
-	 * resource. A group is not located anywhere in the file system, and can
-	 * contain only linked files, linked folders and other groups.
-	 * <p>
-	 * This method changes resources; these changes will be reported in a
-	 * subsequent resource change event, including an indication that the folder
-	 * has been added to its parent.
-	 * </p>
-	 * <p>
-	 * This method is long-running; progress and cancellation are provided by
-	 * the given progress monitor.
-	 * </p>
-	 * 
-	 * @param updateFlags
-	 *            bit-wise or of update flag constants (currently no flags are
-	 *            relevant here)
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @exception CoreException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li> This resource already exists in the workspace.</li>
-	 *                <li> The workspace contains a resource of a different type
-	 *                at the same path as this resource.</li>
-	 *                <li> The parent of this resource does not exist.</li>
-	 *                <li> The parent of this resource is not an open project</li>
-	 *                <li> The name of this resource is not valid (according to
-	 *                <code>IWorkspace.validateName</code>).</li>
-	 *                <li> Resource changes are disallowed during certain types
-	 *                of resource change event notification. See
-	 *                <code>IResourceChangeEvent</code> for more details.</li>
-	 *                <li>The team provider for the project which contains this
-	 *                folder does not permit groups.</li>
-	 *                <li>This folder's project contains a nature which does
-	 *                not permit groups.</li>
-	 *                </ul>
-	 * @exception OperationCanceledException
-	 *                if the operation is canceled. Cancelation can occur even
-	 *                if no progress monitor is provided.
-	 * @see IResource#isGroup()
-	 * @since 3.6
-	 */
-	public void createGroup(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this resource from the workspace.

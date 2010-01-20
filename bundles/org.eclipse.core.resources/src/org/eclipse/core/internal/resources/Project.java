@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -749,8 +749,8 @@ public class Project extends Container implements IProject {
 		return false;//projects are never linked
 	}
 
-	public boolean isGroup() {
-		return false;// projects are never groups
+	public boolean isVirtual() {
+		return false; // projects are never virtual
 	}
 
 	/* (non-Javadoc)
@@ -1024,7 +1024,7 @@ public class Project extends Container implements IProject {
 					((Folder) parent).ensureExists(Policy.monitorFor(null));
 				if (!toLink.exists() || !toLink.isLinked()) {
 					if (newLink.isGroup())
-						((Folder) toLink).createGroup(IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+						((Folder) toLink).create(IResource.REPLACE | IResource.VIRTUAL, true, null);
 					else
 						toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 				}
