@@ -101,8 +101,10 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new GlobalBuildAction(window,
+            GlobalBuildAction globalBuildAction = new GlobalBuildAction(window,
                     IncrementalProjectBuilder.INCREMENTAL_BUILD);
+            globalBuildAction.setId(getId());
+			return globalBuildAction;
         }
     };
 

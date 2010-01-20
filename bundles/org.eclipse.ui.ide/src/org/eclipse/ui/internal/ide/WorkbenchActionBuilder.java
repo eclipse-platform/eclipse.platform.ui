@@ -330,8 +330,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     public void fillActionBars(int flags) {
         super.fillActionBars(flags);
+        updateBuildActions(true);
         if ((flags & FILL_PROXY) == 0) {
-            updateBuildActions(true);
             hookListeners();
         }
     }
