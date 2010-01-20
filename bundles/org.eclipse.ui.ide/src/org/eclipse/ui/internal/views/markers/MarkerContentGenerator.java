@@ -808,9 +808,9 @@ public class MarkerContentGenerator {
 						((ResourceMapping) elements[i]));
 			}
 		}
-
-		selectedResources = new IResource[resourceCollection.size()];
-		resourceCollection.toArray(selectedResources);
+		IResource[] newSelection = new IResource[resourceCollection.size()];
+		resourceCollection.toArray(newSelection);
+		selectedResources = newSelection;
 	}
 
 	/**
