@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
@@ -37,7 +38,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
-public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation  {
+public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation, IAdvancedUndoableOperation2  {
 
 	private String fLabel;
 	private String fDescription;
@@ -347,7 +348,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 				}
 			}
 		};
-		ResourcesPlugin.getWorkspace().run(runnable, pm);
+		ResourcesPlugin.getWorkspace().run(runnable, new NotCancelableProgressMonitor(pm));
 		return result;
 	}
 
@@ -388,5 +389,29 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 		fActiveChange.dispose();
 		fActiveChange= null;
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.6
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) throws ExecutionException {
+		return Status.OK_STATUS;
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
+	 * @since 3.6
+	 */
+	public void setQuietCompute(boolean quiet) {
+		// ignored
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
+	 * @since 3.6
+	 */
+	public boolean runInBackground() {
+		return true;
 	}
 }
