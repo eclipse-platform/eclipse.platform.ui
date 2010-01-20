@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3267,49 +3267,9 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Compares items using camel case method.
-	 */
-	private class CamelCaseComparator implements Comparator {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object o1, Object o2) {
-
-			int leftCategory = getCamelCaseCategory(o1);
-			int rightCategory = getCamelCaseCategory(o2);
-			if (leftCategory < rightCategory)
-				return -1;
-			if (leftCategory > rightCategory)
-				return +1;
-
-			return getItemsComparator().compare(o1, o2);
-		}
-
-		private int getCamelCaseCategory(Object item) {
-			if (filter == null)
-				return 0;
-			if (!filter.isCamelCasePattern())
-				return 0;
-			return filter.matchesRawNamePattern(item) ? 0 : 1;
-		}
-	}
-
-	/**
 	 * Compares items according to the history.
 	 */
 	private class HistoryComparator implements Comparator {
-
-		private CamelCaseComparator camelCaseComparator;
-
-		/**
-		 * 
-		 */
-		public HistoryComparator() {
-			this.camelCaseComparator = new CamelCaseComparator();
-		}
 
 		/*
 		 * (non-Javadoc)
@@ -3319,7 +3279,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		public int compare(Object o1, Object o2) {
 			if ((isHistoryElement(o1) && isHistoryElement(o2))
 					|| (!isHistoryElement(o1) && !isHistoryElement(o2)))
-				return this.camelCaseComparator.compare(o1, o2);
+				return getItemsComparator().compare(o1, o2);
 
 			if (isHistoryElement(o1))
 				return -2;
