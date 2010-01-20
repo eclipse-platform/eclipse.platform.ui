@@ -1364,6 +1364,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				return fLineNumberRulerColumn;
 		}
 
+		if (MarkerAnnotationPreferences.class.equals(adapter))
+			return EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
+
 		return super.getAdapter(adapter);
 
 	}
