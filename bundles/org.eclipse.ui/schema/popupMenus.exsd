@@ -95,7 +95,7 @@ The &lt;code&gt;objectContribution&lt;/code&gt; element uses the core expression
 selection must subclass or implement.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="java.lang.object"/>
+                  <meta.attribute kind="java" basedOn="java.lang.Object"/>
                </appInfo>
             </annotation>
          </attribute>
