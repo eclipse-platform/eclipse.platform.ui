@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *      Wojciech Galanciak <wojciech.galanciak@pl.ibm.com> - Bug 236104 [EditorMgmt] File association default needs to be set twice to take effect
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -144,6 +146,16 @@ public class PlatformUIPreferenceListener implements
 						for (i = 0; i < descriptors.length; i++) {
 							IEditorDescriptor descriptor = descriptors[i];
 							editorMap.put(descriptor.getId(), descriptor);
+						}
+						// Get default editors which are not OS or internal
+						// editors
+						IFileEditorMapping[] maps = editorRegistry.getFileEditorMappings();
+						for (int j = 0; j < maps.length; j++) {
+							IFileEditorMapping fileEditorMapping = maps[j];
+							IEditorDescriptor descriptor = fileEditorMapping.getDefaultEditor();
+							if (!editorMap.containsKey(descriptor.getId())) {
+								editorMap.put(descriptor.getId(), descriptor);
+							}
 						}
 						// Update the file to editor(s) mappings
 						editorRegistry.readResources(editorMap, reader);
