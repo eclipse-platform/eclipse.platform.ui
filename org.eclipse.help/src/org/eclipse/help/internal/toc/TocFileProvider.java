@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ResourceLocator;
+import org.xml.sax.SAXParseException;
 
 /*
  * Provides toc data from toc XML files to the help system.
@@ -47,10 +48,17 @@ public class TocFileProvider extends AbstractTocProvider {
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
+				String locationInfo = ""; //$NON-NLS-1$
+				if (t instanceof SAXParseException) {
+					SAXParseException spe = (SAXParseException) t;
+					locationInfo = " at line " + spe.getLineNumber()  //$NON-NLS-1$
+					             + ", column " + spe.getColumnNumber(); //$NON-NLS-1$
+				}
 				String pluginId = tocFiles[i].getPluginId();
 				String file = tocFiles[i].getFile();
 				String msg = "Error reading help table of contents file /\""  //$NON-NLS-1$
 					+ ResourceLocator.getErrorPath(pluginId, file, locale)
+					+ locationInfo 
 					+ "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);			
 			}
