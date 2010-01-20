@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class FileStoreTest extends LocalStoreTest {
 	private IFileStore createDir(String string, boolean clear) throws CoreException {
 		return createDir(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(string)), clear);
 	}
-	
+
 	/**
 	 * Tests behaviour of IFileStore#fetchInfo when underlying file system
 	 * throws exceptions.
@@ -68,7 +68,7 @@ public class FileStoreTest extends LocalStoreTest {
 		//no-arg fetch info should return non-existent file
 		IFileInfo info = broken.fetchInfo();
 		assertTrue("1.0", !info.exists());
-		
+
 		//two-arg fetchInfo should throw exception
 		try {
 			info = broken.fetchInfo(EFS.NONE, getMonitor());
@@ -483,43 +483,86 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	public void testReadOnly() throws CoreException {
-		// We need to know whether or not we can unset the read-only flag
-		// in order to perform this test.
-		if (!isReadOnlySupported())
+		testAttribute(EFS.ATTRIBUTE_READ_ONLY);
+	}
+
+	public void testPermissionsEnabled() {
+		String os = Platform.getOS();
+		String arch = Platform.getOSArch();
+		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os)) {
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_READ));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_WRITE));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_EXECUTE));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_GROUP_READ));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_GROUP_WRITE));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_GROUP_EXECUTE));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OTHER_READ));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OTHER_WRITE));
+			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OTHER_EXECUTE));
+		} else {
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OWNER_READ));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OWNER_WRITE));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OWNER_EXECUTE));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_GROUP_READ));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_GROUP_WRITE));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_GROUP_EXECUTE));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OTHER_READ));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OTHER_WRITE));
+			assertFalse(isAttributeSupported(EFS.ATTRIBUTE_OTHER_EXECUTE));
+		}
+	}
+
+	public void testPermissions() throws CoreException {
+		testAttribute(EFS.ATTRIBUTE_OWNER_READ);
+		testAttribute(EFS.ATTRIBUTE_OWNER_WRITE);
+		testAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE);
+		testAttribute(EFS.ATTRIBUTE_GROUP_READ);
+		testAttribute(EFS.ATTRIBUTE_GROUP_WRITE);
+		testAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE);
+		testAttribute(EFS.ATTRIBUTE_OTHER_READ);
+		testAttribute(EFS.ATTRIBUTE_OTHER_WRITE);
+		testAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE);
+	}
+
+	private void testAttribute(int attribute) throws CoreException {
+		if (!isAttributeSupported(attribute))
 			return;
 
 		IPath root = getWorkspace().getRoot().getLocation().append("" + new Date().getTime());
 		IFileStore targetFolder = createDir(root.toString(), true);
-		IFileStore targetFile = targetFolder.getChild("targetFile");
-		createFileInFileSystem(targetFile);
+		try {
+			IFileStore targetFile = targetFolder.getChild("targetFile");
+			createFileInFileSystem(targetFile);
 
-		// file
-		assertTrue("1.0", !targetFile.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		setReadOnly(targetFile, true);
-		assertTrue("1.2", targetFile.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		setReadOnly(targetFile, false);
-		assertTrue("1.4", !targetFile.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+			// file
+			boolean init = targetFile.fetchInfo().getAttribute(attribute);
+			setAttribute(targetFile, attribute, !init);
+			assertTrue("1.2", targetFile.fetchInfo().getAttribute(attribute) != init);
+			setAttribute(targetFile, attribute, init);
+			assertTrue("1.4", targetFile.fetchInfo().getAttribute(attribute) == init);
 
-		// folder
-		assertTrue("2.0", !targetFolder.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		setReadOnly(targetFolder, true);
-		assertTrue("2.2", targetFolder.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		setReadOnly(targetFolder, false);
-		assertTrue("2.4", !targetFolder.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+			// folder
+			init = targetFolder.fetchInfo().getAttribute(attribute);
+			setAttribute(targetFolder, attribute, !init);
+			assertTrue("2.2", targetFolder.fetchInfo().getAttribute(attribute) != init);
+			setAttribute(targetFolder, attribute, init);
+			assertTrue("2.4", targetFolder.fetchInfo().getAttribute(attribute) == init);
 
-		/* remove trash */
-		targetFolder.delete(EFS.NONE, null);
+		} finally {
+			/* remove trash */
+			targetFolder.delete(EFS.NONE, null);
+		}
 	}
-	
+
 	public void testGetFileStore() throws Exception {
 		// create files
 		File file = getTempDir().append("test.txt").toFile();
 		file.createNewFile();
 		assertTrue("1.0", file.exists());
-		
+
 		IFileStore tempStore = createDir(getTempDir().append("temp").toString(), true);
 		createDir(getTempDir().append("temp/temp2").toString(), true);
-		
+
 		file = getTempDir().append("temp/temp2/test.txt").toFile();
 		file.createNewFile();
 		assertTrue("2.0", file.exists());
@@ -532,19 +575,19 @@ public class FileStoreTest extends LocalStoreTest {
 		IFileInfo info = relativeStore.fetchInfo();
 		assertNotNull("4.0", info);
 		assertTrue("5.0", info.exists());
-		
+
 		// check the parent and self reference
 		relativePath = new Path(".././test.txt");
-		
+
 		relativeStore = tempStore.getFileStore(relativePath);
 		assertNotNull("6.0", relativeStore);
 		info = relativeStore.fetchInfo();
 		assertNotNull("7.0", info);
 		assertTrue("8.0", info.exists());
-		
+
 		// check the a path with no parent and self references
 		relativePath = new Path("temp2/test.txt");
-		
+
 		relativeStore = tempStore.getFileStore(relativePath);
 		assertNotNull("9.0", relativeStore);
 		info = relativeStore.fetchInfo();

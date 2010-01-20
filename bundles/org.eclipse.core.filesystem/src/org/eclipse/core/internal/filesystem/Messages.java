@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public class Messages extends NLS {
 	public static String copying;
 	public static String couldnotDelete;
 	public static String couldnotDeleteReadOnly;
-	public static String couldNotLoadLibrary;
+	public static String couldNotNativeLibrary;
 	public static String couldNotMove;
 	public static String couldNotRead;
 	public static String couldNotWrite;

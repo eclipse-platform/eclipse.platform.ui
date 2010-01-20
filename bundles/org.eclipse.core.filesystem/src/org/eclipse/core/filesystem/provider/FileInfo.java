@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.filesystem.provider;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 
 /**
  * This class should be used by file system providers in their implementation
@@ -33,9 +34,9 @@ public class FileInfo implements IFileInfo {
 	private static final int ATTRIBUTE_EXISTS = 1 << 16;
 
 	/**
-	 * Bit field of file attributes
+	 * Bit field of file attributes. Initialized to specify a writable resource.
 	 */
-	private int attributes = 0;
+	private int attributes = EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_READ;
 
 	/**
 	 * The last modified time.
@@ -113,7 +114,12 @@ public class FileInfo implements IFileInfo {
 	}
 
 	public boolean getAttribute(int attribute) {
-		return isSet(attribute);
+		if (attribute == EFS.ATTRIBUTE_READ_ONLY && isAttributeSuported(EFS.ATTRIBUTE_OWNER_WRITE))
+			return (!isSet(EFS.ATTRIBUTE_OWNER_WRITE)) || isSet(EFS.ATTRIBUTE_IMMUTABLE);
+		else if (attribute == EFS.ATTRIBUTE_EXECUTABLE && isAttributeSuported(EFS.ATTRIBUTE_OWNER_EXECUTE))
+			return isSet(EFS.ATTRIBUTE_OWNER_EXECUTE);
+		else
+			return isSet(attribute);
 	}
 
 	/* (non-Javadoc)
@@ -165,10 +171,29 @@ public class FileInfo implements IFileInfo {
 	 * @see org.eclipse.core.filesystem.IFileInfo#setAttribute(int, boolean)
 	 */
 	public void setAttribute(int attribute, boolean value) {
-		if (value)
-			set(attribute);
-		else
-			clear(attribute);
+		if (attribute == EFS.ATTRIBUTE_READ_ONLY && isAttributeSuported(EFS.ATTRIBUTE_OWNER_WRITE)) {
+			if (value) {
+				clear(EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OTHER_WRITE | EFS.ATTRIBUTE_GROUP_WRITE);
+				set(EFS.ATTRIBUTE_IMMUTABLE);
+			} else {
+				set(EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_READ);
+				clear(EFS.ATTRIBUTE_IMMUTABLE);
+			}
+		} else if (attribute == EFS.ATTRIBUTE_EXECUTABLE && isAttributeSuported(EFS.ATTRIBUTE_OWNER_EXECUTE)) {
+			if (value)
+				set(EFS.ATTRIBUTE_OWNER_EXECUTE);
+			else
+				clear(EFS.ATTRIBUTE_OWNER_EXECUTE | EFS.ATTRIBUTE_GROUP_EXECUTE | EFS.ATTRIBUTE_OTHER_EXECUTE);
+		} else {
+			if (value)
+				set(attribute);
+			else
+				clear(attribute);
+		}
+	}
+
+	private static boolean isAttributeSuported(int value) {
+		return (LocalFileNativesManager.getSupportedAttributes() & value) != 0;
 	}
 
 	/**

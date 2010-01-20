@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,20 +72,21 @@ public class Convert {
 	/**
 	 * Calling new String(byte[] s) creates a new encoding object and other garbage.
 	 * This can be avoided by calling new String(byte[] s, String encoding) instead.
-	 * @param source String in platform bytes
+	 * @param source buffer with String in platform bytes
+	 * @param length number of relevant bytes in the buffer
 	 * @return converted Java String
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
-	public static String fromPlatformBytes(byte[] source) {
+	public static String fromPlatformBytes(byte[] source, int length) {
 		if (defaultEncoding == null)
-			return new String(source);
+			return new String(source, 0, length);
 		// try to use the default encoding
 		try {
-			return new String(source, defaultEncoding);
+			return new String(source, 0, length, defaultEncoding);
 		} catch (UnsupportedEncodingException e) {
 			// null the default encoding so we don't try it again
 			defaultEncoding = null;
-			return new String(source);
+			return new String(source, 0, length);
 		}
 	}
 

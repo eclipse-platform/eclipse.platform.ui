@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,126 @@ public class EFS {
 	 * @see IFileInfo#setAttribute(int, boolean)
 	 */
 	public static final int ATTRIBUTE_READ_ONLY = 1 << 1;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;21) indicating that a
+	 * file is marked with immutable flag.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_IMMUTABLE = 1 << 21;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;22) indicating that a
+	 * file's owner has a read permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OWNER_READ = 1 << 22;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;23) indicating that
+	 * file's owner has a write permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OWNER_WRITE = 1 << 23;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;24) indicating that
+	 * file's owner has an execute permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OWNER_EXECUTE = 1 << 24;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;25) indicating that
+	 * users in file's group have a read permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_GROUP_READ = 1 << 25;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;26) indicating that
+	 * users in file's group have a write permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_GROUP_WRITE = 1 << 26;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;27) indicating that
+	 * users in file's group have an execute permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_GROUP_EXECUTE = 1 << 27;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;28) indicating that
+	 * other users have a read permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OTHER_READ = 1 << 28;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;29) indicating that
+	 * other users have a write permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OTHER_WRITE = 1 << 29;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;30) indicating that
+	 * other users have an execute permission.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.3
+	 */
+	public static final int ATTRIBUTE_OTHER_EXECUTE = 1 << 30;
 
 	/**
 	 * Attribute constant (value 1 &lt;&lt;2) indicating that a

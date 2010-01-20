@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ package org.eclipse.core.internal.filesystem.local;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.filesystem.provider.FileInfo;
-import org.eclipse.core.internal.filesystem.Messages;
-import org.eclipse.core.internal.filesystem.Policy;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.osgi.util.NLS;
 
 abstract class LocalFileNatives {
 	private static boolean hasNatives = false;
@@ -33,7 +29,7 @@ abstract class LocalFileNatives {
 			hasNatives = true;
 			isUnicode = internalIsUnicode();
 		} catch (UnsatisfiedLinkError e) {
-			logMissingNativeLibrary(e);
+			// Nothing to do
 		}
 	}
 
@@ -143,18 +139,12 @@ abstract class LocalFileNatives {
 	 * be called if <code>isUnicode</code> is <code>false</code>). */
 	private static final native boolean internalSetFileInfoW(char[] fileName, IFileInfo attribute, int options);
 
-	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
-		String libName = System.mapLibraryName(LIBRARY_NAME);
-		String message = NLS.bind(Messages.couldNotLoadLibrary, libName);
-		Policy.log(IStatus.INFO, message, e);
-	}
-
 	/**
 	 * @param fileName
 	 * @param info
 	 * @param options
 	 */
-	public static boolean setFileInfo(String fileName, IFileInfo info, int options) {
+	public static boolean putFileInfo(String fileName, IFileInfo info, int options) {
 		if (isUnicode)
 			return internalSetFileInfoW(Convert.toPlatformChars(fileName), info, options);
 		return internalSetFileInfo(Convert.toPlatformBytes(fileName), info);
@@ -166,7 +156,7 @@ abstract class LocalFileNatives {
 	 * @return <code>true</code> if native library is available, and <code>false</code>
 	 * otherwise.
 	 */
-	public static boolean usingNatives() {
+	public static boolean isUsingNatives() {
 		return hasNatives;
 	}
 }

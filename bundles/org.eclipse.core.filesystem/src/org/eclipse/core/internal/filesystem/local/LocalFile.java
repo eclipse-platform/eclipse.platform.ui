@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,8 +140,8 @@ public class LocalFile extends FileStore {
 	}
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
-		if (LocalFileNatives.usingNatives()) {
-			FileInfo info = LocalFileNatives.fetchFileInfo(filePath);
+		if (LocalFileNativesManager.isUsingNatives()) {
+			FileInfo info = LocalFileNativesManager.fetchFileInfo(filePath);
 			//natives don't set the file name on all platforms
 			if (info.getName().length() == 0) {
 				String name = file.getName();
@@ -398,8 +398,8 @@ public class LocalFile extends FileStore {
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		boolean success = true;
 		if ((options & EFS.SET_ATTRIBUTES) != 0) {
-			if (LocalFileNatives.usingNatives())
-				success &= LocalFileNatives.setFileInfo(filePath, info, options);
+			if (LocalFileNativesManager.isUsingNatives())
+				success &= LocalFileNativesManager.putFileInfo(filePath, info, options);
 		}
 		//native does not currently set last modified
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)
