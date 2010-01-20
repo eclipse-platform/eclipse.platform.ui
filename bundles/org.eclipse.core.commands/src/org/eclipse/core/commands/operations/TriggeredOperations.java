@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,13 @@ package org.eclipse.core.commands.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.commands.ExecutionException;
 
 /**
  * Triggered operations are a specialized implementation of a composite
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public final class TriggeredOperations extends AbstractOperation implements
-		ICompositeOperation, IAdvancedUndoableOperation,
+		ICompositeOperation, IAdvancedUndoableOperation, IAdvancedUndoableOperation2,
 		IContextReplacingOperation {
 
 	private IUndoableOperation triggeringOperation;
@@ -462,4 +463,40 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.6
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) throws ExecutionException {
+		if (triggeringOperation instanceof IAdvancedUndoableOperation2) {
+			try {
+				return ((IAdvancedUndoableOperation2) triggeringOperation)
+						.computeExecutionStatus(monitor);
+			} catch (OperationCanceledException e) {
+				return Status.CANCEL_STATUS;
+			}
+		}
+		return Status.OK_STATUS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
+	 * @since 3.6
+	 */
+	public void setQuietCompute(boolean quiet) {
+		if (triggeringOperation instanceof IAdvancedUndoableOperation2) {
+			((IAdvancedUndoableOperation2) triggeringOperation).setQuietCompute(quiet);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
+	 * @since 3.6
+	 */
+	public boolean runInBackground() {
+		if (triggeringOperation instanceof IAdvancedUndoableOperation2) {
+			return ((IAdvancedUndoableOperation2) triggeringOperation).runInBackground();
+		}
+		return false;
+	}
 }
