@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * 
  * This class is not intended to be instantiated or used by clients.
  * 
- * @since 3.3
- * 
+ * @since 3.6
  */
 public class GroupDescription extends ContainerDescription {
 
@@ -74,7 +73,7 @@ public class GroupDescription extends ContainerDescription {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			folderHandle.createGroup(IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(
+			folderHandle.create(IResource.VIRTUAL, true, new SubProgressMonitor(
 					monitor, 100));
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();

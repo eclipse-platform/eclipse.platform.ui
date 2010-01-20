@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,7 +278,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 				// if the target is a group and all sources are files, then automatically create links
 				int type;
 				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isGroup() && (getCurrentOperation() != DND.DROP_LINK))
+				if (!target.isVirtual() && (getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
 				if (dialog.open() == Window.OK)
@@ -315,7 +315,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         IContainer target = getActualTarget((IResource) getCurrentTarget());
 
         boolean shouldLinkAutomatically = false;
-		if (target.isGroup()) {
+		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (int i = 0; i < sources.length; i++) {
 				if (sources[0].getType() != IResource.FILE) {
@@ -336,7 +336,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 		else {
 			boolean allSourceAreLinksOrGroups = true;
 			for (int i = 0; i < sources.length; i++) {
-				if (!sources[0].isGroup() && !sources[0].isLinked()) {
+				if (!sources[0].isVirtual() && !sources[0].isLinked()) {
 					allSourceAreLinksOrGroups = false;
 					break;
 				}
@@ -344,7 +344,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 			// if all sources are either links or groups, copy then normally, don't show the dialog
 			if (!allSourceAreLinksOrGroups) {
 				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isGroup() && (getCurrentOperation() != DND.DROP_LINK))
+				if (!target.isVirtual() && (getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
 				if (dialog.open() == Window.OK) {
@@ -376,10 +376,10 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         IContainer target = getActualTarget((IResource) getCurrentTarget());
         
         boolean shouldLinkAutomatically = false;
-		if (target.isGroup()) {
+		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (int i = 0; i < sources.length; i++) {
-				if (sources[0].isGroup() || sources[0].isLinked()) {
+				if (sources[0].isVirtual() || sources[0].isLinked()) {
 					shouldLinkAutomatically = false;
 					break;
 				}

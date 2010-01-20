@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -370,7 +370,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		IContainer target = getActualTarget((IResource) dropAdapter.getCurrentTarget());
 
 		boolean shouldLinkAutomatically = false;
-		if (target.isGroup()) {
+		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (int i = 0; i < sources.length; i++) {
 				if ((sources[i].getType() != IResource.FILE) && (sources[i].getLocation() != null)) {
@@ -392,7 +392,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		} else {
 			boolean allSourceAreLinksOrGroups = true;
 			for (int i = 0; i < sources.length; i++) {
-				if (!sources[i].isGroup() && !sources[i].isLinked()) {
+				if (!sources[i].isVirtual() && !sources[i].isLinked()) {
 					allSourceAreLinksOrGroups = false;
 					break;
 				}
@@ -401,7 +401,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			// don't show the dialog
 			if (!allSourceAreLinksOrGroups) {
 				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isGroup() && (dropAdapter.getCurrentOperation() != DND.DROP_LINK))
+				if (!target.isVirtual() && (dropAdapter.getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
 				if (dialog.open() == Window.OK) {
@@ -432,10 +432,10 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		IContainer target = getActualTarget((IResource) dropAdapter.getCurrentTarget());
 
 		boolean shouldLinkAutomatically = false;
-		if (target.isGroup()) {
+		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (int i = 0; i < sources.length; i++) {
-				if (sources[i].isGroup() || sources[i].isLinked()) {
+				if (sources[i].isVirtual() || sources[i].isLinked()) {
 					shouldLinkAutomatically = false;
 					break;
 				}
@@ -483,7 +483,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				// automatically create links
 				int type;
 				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isGroup() && (finalAdapter.getCurrentOperation() != DND.DROP_LINK))
+				if (!target.isVirtual() && (finalAdapter.getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
 				if (dialog.open() == Window.OK)

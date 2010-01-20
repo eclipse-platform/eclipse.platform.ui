@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -224,7 +224,7 @@ public class CopyFilesAndFoldersOperation {
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if (resource != null && !resource.isGroup()) {
+			if (resource != null && !resource.isVirtual()) {
 				URI location = resource.getLocationURI();
 				String message = null;
 				if (location != null) {
@@ -457,7 +457,7 @@ public class CopyFilesAndFoldersOperation {
 
 					if ((createLinks || createGroupsAndLinks)
 							&& (source.isLinked() == false)
-							&& (source.isGroup() == false)) {
+							&& (source.isVirtual() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
 							file.createLink(source.getLocationURI(), 0,
@@ -466,8 +466,9 @@ public class CopyFilesAndFoldersOperation {
 							IFolder folder = workspaceRoot
 									.getFolder(destinationPath);
 							if (createGroupsAndLinks) {
-								folder.createGroup(0, new SubProgressMonitor(
-										subMonitor, 1));
+									folder.create(IResource.VIRTUAL, true,
+											new SubProgressMonitor(subMonitor,
+													1));
 								IResource[] members = ((IContainer) source)
 										.members();
 								if (members.length > 0)
@@ -1396,8 +1397,8 @@ public class CopyFilesAndFoldersOperation {
 
 			// verify that if the destination is a group, the resource must be
 			// either a link or another group
-			if (destination.isGroup()) {
-				if (!sourceResource.isLinked() && !sourceResource.isGroup()
+			if (destination.isVirtual()) {
+				if (!sourceResource.isLinked() && !sourceResource.isVirtual()
 						&& !createLinks && !createGroupsAndLinks) {
 					return NLS
 							.bind(
@@ -1421,7 +1422,7 @@ public class CopyFilesAndFoldersOperation {
 								sourceResource.getName());
 
 			}
-			if (!destination.isGroup()) {
+			if (!destination.isVirtual()) {
 			if (sourceLocation.equals(destinationLocation)) {
 				return NLS
 						.bind(
@@ -1528,7 +1529,7 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination))
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
 
-		if (!destination.isGroup()) {
+		if (!destination.isVirtual()) {
 		IFileStore destinationStore;
 		try {
 			destinationStore = EFS.getStore(destination.getLocationURI());
@@ -1575,7 +1576,7 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private String validateLinkedResource(IContainer destination,
 			IResource source) {
-		if ((source.isLinked() == false) || source.isGroup()) {
+		if ((source.isLinked() == false) || source.isVirtual()) {
 			return null;
 		}
 		IWorkspace workspace = destination.getWorkspace();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,8 +279,8 @@ public class WorkspaceUndoUtil {
 	 *            name of the resource (usually only desired when only one
 	 *            resource is being copied). If this value is <code>false</code>,
 	 *            each resource's name will be appended to the destination.
-	 * @param createGroups
-	 *            a boolean that indicates whether groups resources should be
+	 * @param createVirtual
+	 *            a boolean that indicates whether virtual folders should be
 	 *            created instead of folders when a hierarchy of files is
 	 *            copied.
 	 * @param createLinks
@@ -299,7 +299,7 @@ public class WorkspaceUndoUtil {
 	 */
 	static ResourceDescription[] copy(IResource[] resources, IPath destination,
 			List resourcesAtDestination, IProgressMonitor monitor,
-			IAdaptable uiInfo, boolean pathIncludesName, boolean createGroups,
+			IAdaptable uiInfo, boolean pathIncludesName, boolean createVirtual,
 			boolean createLinks)
 			throws CoreException {
 
@@ -321,14 +321,14 @@ public class WorkspaceUndoUtil {
 				// The resource is a folder and it exists in the destination.
 				// Copy its children to the existing destination.
 				if ((source.isLinked() && existing.isLinked())
-						|| (source.isGroup() && existing.isGroup())
+						|| (source.isVirtual() && existing.isVirtual())
 						|| (!source.isLinked() && !existing.isLinked()
-								&& !source.isGroup() && !existing.isGroup())) {
+								&& !source.isVirtual() && !existing.isVirtual())) {
 					IResource[] children = ((IContainer) source).members();
 					ResourceDescription[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
 							new SubProgressMonitor(monitor, 1), uiInfo, false,
-							createGroups, createLinks);
+							createVirtual, createLinks);
 					// We don't record the copy since this recursive call will
 					// do so. Just record the overwrites.
 					for (int j = 0; j < overwritten.length; j++) {
@@ -340,13 +340,13 @@ public class WorkspaceUndoUtil {
 					ResourceDescription[] deleted = delete(
 							new IResource[] { existing },
 							new SubProgressMonitor(monitor, 0), uiInfo, false);
-					if ((createLinks || createGroups)
+					if ((createLinks || createVirtual)
 							&& (source.isLinked() == false)
-							&& (source.isGroup() == false)) {
+							&& (source.isVirtual() == false)) {
 						IFolder folder = workspaceRoot.getFolder(destinationPath);
-						if (createGroups) {
-							folder.createGroup(0, new SubProgressMonitor(
-									monitor, 1));
+						if (createVirtual) {
+							folder.create(IResource.VIRTUAL, true,
+									new SubProgressMonitor(monitor, 1));
 							IResource[] members = ((IContainer) source)
 									.members();
 							if (members.length > 0) {
@@ -354,7 +354,7 @@ public class WorkspaceUndoUtil {
 										members, destinationPath,
 										resourcesAtDestination,
 										new SubProgressMonitor(monitor, 1),
-										uiInfo, false, createGroups,
+										uiInfo, false, createVirtual,
 										createLinks)));
 
 							}
@@ -375,7 +375,7 @@ public class WorkspaceUndoUtil {
 			} else {
 				if (existing != null) {
 					// source is a FILE and destination EXISTS
-					if ((createLinks || createGroups)
+					if ((createLinks || createVirtual)
 							&& (source.isLinked() == false)) {
 						// we create a linked file, and overwrite the
 						// destination
@@ -391,9 +391,9 @@ public class WorkspaceUndoUtil {
 						} else {
 							IFolder folder = workspaceRoot
 									.getFolder(destinationPath);
-							if (createGroups) {
-								folder.createGroup(0, new SubProgressMonitor(
-										monitor, 1));
+							if (createVirtual) {
+								folder.create(IResource.VIRTUAL, true,
+										new SubProgressMonitor(monitor, 1));
 								IResource[] members = ((IContainer) source)
 										.members();
 								if (members.length > 0) {
@@ -404,7 +404,7 @@ public class WorkspaceUndoUtil {
 													new SubProgressMonitor(
 															monitor, 1),
 													uiInfo, false,
-													createGroups, createLinks)));
+													createVirtual, createLinks)));
 
 								}
 							} else
@@ -450,7 +450,7 @@ public class WorkspaceUndoUtil {
 						parentPath = destination.removeLastSegments(1);
 					}
 					IContainer generatedParent = generateContainers(parentPath);
-					if ((createLinks || createGroups)
+					if ((createLinks || createVirtual)
 							&& (source.isLinked() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
@@ -459,8 +459,9 @@ public class WorkspaceUndoUtil {
 						} else {
 							IFolder folder = workspaceRoot
 									.getFolder(destinationPath);
-							if (createGroups) {
-								folder.createGroup(0, new SubProgressMonitor(monitor, 1));
+							if (createVirtual) {
+								folder.create(IResource.VIRTUAL, true,
+										new SubProgressMonitor(monitor, 1));
 								IResource[] members = ((IContainer) source).members();
 								if (members.length > 0) {
 									overwrittenResources.addAll(Arrays
@@ -470,7 +471,7 @@ public class WorkspaceUndoUtil {
 													new SubProgressMonitor(
 															monitor, 1),
 													uiInfo, false,
-													createGroups, createLinks)));
+													createVirtual, createLinks)));
 
 								}
 							} else

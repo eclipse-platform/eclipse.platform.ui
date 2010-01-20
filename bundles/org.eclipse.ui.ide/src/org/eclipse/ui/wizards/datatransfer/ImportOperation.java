@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -310,7 +310,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
             currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
             if (!currentFolder.exists()) {
                 if (createGroups)
-                    ((IFolder) currentFolder).createGroup(0, null);
+					((IFolder) currentFolder).create(IResource.VIRTUAL, true,
+							null);
                 else if (createLinks)
                     ((IFolder) currentFolder).createLink(path, 0, null);
                 else
@@ -705,7 +706,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 
             IFolder folder = workspace.getRoot().getFolder(resourcePath);
-            if (createGroups || createLinks || folder.isGroup() || folder.isLinked()) {
+            if (createGroups || createLinks || folder.isVirtual() || folder.isLinked()) {
                 folder.delete(true, null);
             } else
                 return POLICY_FORCE_OVERWRITE;
@@ -713,7 +714,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         try {
             if (createGroups)
-                workspace.getRoot().getFolder(resourcePath).createGroup(0, null);
+				workspace.getRoot().getFolder(resourcePath).create(
+						IResource.VIRTUAL, true, null);
             else if (createLinks) {
                 workspace.getRoot().getFolder(resourcePath).createLink(
                         new Path(provider.getFullPath(folderObject)),
