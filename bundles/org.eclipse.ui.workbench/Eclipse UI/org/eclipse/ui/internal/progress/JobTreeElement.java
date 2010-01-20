@@ -16,14 +16,16 @@ import org.eclipse.swt.graphics.Image;
 /**
  * The JobTreeElement is the abstract superclass of items displayed in the tree.
  */
-abstract class JobTreeElement implements Comparable {
+public abstract class JobTreeElement implements Comparable {
 
 	/**
 	 * Return the parent of this object.
 	 * 
 	 * @return Object
 	 */
-	abstract Object getParent();
+	public Object getParent() {
+		return null;
+	}
 
 	/**
 	 * Return whether or not the receiver has children.

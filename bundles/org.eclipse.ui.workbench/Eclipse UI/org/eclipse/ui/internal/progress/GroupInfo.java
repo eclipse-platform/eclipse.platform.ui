@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -37,15 +36,6 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	double total = -1;
 
 	double currentWork;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
-	 */
-	Object getParent() {
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)

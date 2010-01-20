@@ -16,27 +16,25 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
-import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)
  */
-public class ProgressContantsTest extends UITestCase {
+public class ProgressContantsTest extends ProgressTestCase {
 
 	/**
+	 * 
 	 * @param testName
+	 * 
 	 */
 	public ProgressContantsTest(String testName) {
 		super(testName);
@@ -44,10 +42,7 @@ public class ProgressContantsTest extends UITestCase {
 
 	public void testCommandProperty() throws Exception {
 
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
-		ProgressView progressView = (ProgressView) window.getActivePage().showView(IPageLayout.ID_PROGRESS_VIEW);
-		assertNotNull(progressView);
-		processEvents();
+		openProgressView();
 
 		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
 
@@ -84,10 +79,7 @@ public class ProgressContantsTest extends UITestCase {
 
 	public void testKeepProperty() throws Exception {
 
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
-		ProgressView progressView = (ProgressView) window.getActivePage().showView(IPageLayout.ID_PROGRESS_VIEW);
-		assertNotNull(progressView);
-		processEvents();
+		openProgressView();
 
 		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
 		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);

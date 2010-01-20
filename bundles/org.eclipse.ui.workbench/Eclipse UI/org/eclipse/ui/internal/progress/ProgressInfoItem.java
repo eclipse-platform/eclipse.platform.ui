@@ -1037,4 +1037,11 @@ public class ProgressInfoItem extends Composite {
 		if(resourceManager != null)
 			resourceManager.dispose();
 	}
+
+	/**
+	 * @return Returns the info.
+	 */
+	public JobTreeElement getInfo() {
+		return info;
+	}
 }

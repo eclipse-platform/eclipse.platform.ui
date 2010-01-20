@@ -110,6 +110,7 @@ public class JobInfo extends JobTreeElement {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
      */
     void clearTaskInfo() {
+		FinishedJobs.getInstance().remove(taskInfo);
         taskInfo = null;
     }
 
@@ -323,7 +324,7 @@ public class JobInfo extends JobTreeElement {
      * 
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
      */
-    Object getParent() {
+	public Object getParent() {
         return parent;
     }
 

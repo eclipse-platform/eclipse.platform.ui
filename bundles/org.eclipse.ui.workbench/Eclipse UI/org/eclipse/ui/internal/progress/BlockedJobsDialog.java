@@ -109,15 +109,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
-		 */
-		Object getParent() {
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 		 */
 		boolean hasChildren() {
