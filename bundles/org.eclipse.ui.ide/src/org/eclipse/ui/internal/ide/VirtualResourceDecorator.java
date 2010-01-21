@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
@@ -29,7 +28,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	static {
 		VIRTUAL_FOLDER = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/virt_fldr_obj.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/ovr16/virt_ovr.gif"); //$NON-NLS-1$
 	}
 
 	/**
@@ -77,9 +76,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFolder && ((IResource) element).isVirtual()) {
-			((DecorationContext) decoration.getDecorationContext())
-					.putProperty(IDecoration.ENABLE_REPLACE, Boolean.TRUE);
-			decoration.addOverlay(VIRTUAL_FOLDER, IDecoration.TOP_LEFT);
+			decoration.addOverlay(VIRTUAL_FOLDER, IDecoration.BOTTOM_RIGHT);
 		}
 	}
 }
