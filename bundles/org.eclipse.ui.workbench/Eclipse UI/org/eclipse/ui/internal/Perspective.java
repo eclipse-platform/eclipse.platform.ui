@@ -932,6 +932,10 @@ public class Perspective {
      * activate.
      */
 	protected void onActivate() {
+		// Trim Stack Support
+        boolean useNewMinMax = Perspective.useNewMinMax(this);
+		boolean hideEditorArea = shouldHideEditorsOnActivate || (editorHidden && editorHolder == null);
+		
 		// Update editor area state.
 		if (editorArea.getControl() != null) {
 			boolean visible = isEditorAreaVisible();
@@ -941,6 +945,13 @@ public class Perspective {
 			// editor if it's supposed to be hidden because the intro is maximized. Note that
 			// 'childObscuredByZoom' will only respond 'true' when using the old behaviour.
 			boolean introMaxed = getPresentation().getLayout().childObscuredByZoom(editorArea);
+
+			// We have to set the editor area's stack state -before-
+			// activating the presentation since it's used there to determine
+			// size of the resulting stack
+			if (useNewMinMax && !hideEditorArea && !introMaxed) {
+				refreshEditorAreaVisibility();
+			}
 			
 			editorArea.setVisible(visible && !inTrim && !introMaxed);
 		}
@@ -965,17 +976,6 @@ public class Perspective {
 
 		// Set the visibility of all fast view pins
 		setAllPinsVisible(true);
-
-		// Trim Stack Support
-        boolean useNewMinMax = Perspective.useNewMinMax(this);
-		boolean hideEditorArea = shouldHideEditorsOnActivate || (editorHidden && editorHolder == null);
-		
-        // We have to set the editor area's stack state -before-
-        // activating the presentation since it's used there to determine
-        // size of the resulting stack
-        if (useNewMinMax && !hideEditorArea) {
-			refreshEditorAreaVisibility();
-        }
 
 		// Show the layout
 		presentation.activate(getClientComposite());
@@ -2069,7 +2069,7 @@ public class Perspective {
 			IWindowTrim beforeMe = ((TrimLayout)tbm).getPreferredLocation(IPageLayout.ID_EDITOR_AREA);
 			
     		// Gain access to the trim manager
-			editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
+			editorAreaTrim = new EditorAreaTrimToolBar(wbw);
 			editorAreaTrim.dock(suggestedSide);
 			tbm.addTrim(suggestedSide, editorAreaTrim, beforeMe);
     	}
@@ -2109,9 +2109,19 @@ public class Perspective {
 		if (editorStack == null)
 			return;
 		
+		// Make sure that the other editor stack all match *this* presentation
+		// state
+		LayoutPart[] stacks = ((EditorSashContainer) editorArea).getChildren();
+		for (int i = 0; i < stacks.length; i++) {
+			if (stacks[i] instanceof EditorStack && stacks[i] != editorStack) {
+				EditorStack es = (EditorStack) stacks[i];
+				es.setPresentationState(editorAreaState);
+			}
+		}
+
 		// Whatever we're doing, make the current editor stack match it
 		editorStack.setStateLocal(editorAreaState);
-		
+
 		// Override the visibility of the EA's min.max buttons based on the
 		// 'fixed' state
 		editorStack.showMinMax(!isFixedLayout());

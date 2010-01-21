@@ -22,18 +22,16 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.layout.TrimToolBarBase;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class EditorAreaTrimToolBar extends TrimToolBarBase {
-	private LayoutPart editorArea;
 	private boolean restoreOnUnzoom = false;
 	
 	// The orientation of the fast view pane when showing a view
 	private int paneOrientation;
 
-	public EditorAreaTrimToolBar(WorkbenchWindow wbw, LayoutPart editorArea) {
+	public EditorAreaTrimToolBar(WorkbenchWindow wbw) {
 		super(IPageLayout.ID_EDITOR_AREA, SWT.TOP, wbw);
-		
-		this.editorArea = editorArea;		
 		dock(SWT.TOP);
 	}
 	
@@ -41,9 +39,8 @@ public class EditorAreaTrimToolBar extends TrimToolBarBase {
 	 * Put the stack back into the presentation
 	 */
 	protected void restoreToPresentation() {
-		EditorSashContainer esc = (EditorSashContainer)editorArea;
-		EditorStack curStack = esc.getUpperRightEditorStack(esc.getChildren());
-		curStack.setMinimized(false);
+		Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
+		persp.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
 	}
 
 	public void initToolBarManager(final ToolBarManager mgr) {

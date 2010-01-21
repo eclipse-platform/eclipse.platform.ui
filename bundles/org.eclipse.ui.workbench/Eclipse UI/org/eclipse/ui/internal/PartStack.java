@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -1460,12 +1459,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		boolean useNewMinMax = Perspective.useNewMinMax(page.getActivePerspective());
 
 		// we have to fiddle with the zoom behavior to satisfy Intro req's
-		// by usning the old zoom behavior for its stack
+		// by using the old zoom behavior for its stack
 		if (newState == IStackPresentationSite.STATE_MAXIMIZED)
 			useNewMinMax = useNewMinMax && !isIntroInStack();
 		else if (newState == IStackPresentationSite.STATE_RESTORED) {
 			PartStack maxStack = page.getActivePerspective().getPresentation().getMaximizedStack();
-			useNewMinMax = useNewMinMax && maxStack == this;
+			useNewMinMax = useNewMinMax && (maxStack == this || maxStack instanceof EditorStack);
 		}
 
 		if (useNewMinMax) {
