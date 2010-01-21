@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -757,12 +757,11 @@ public class Utilities {
 			return (IDocument) te;
 		if (te instanceof IDocumentRange)
 			return ((IDocumentRange) te).getDocument();
-		if (te instanceof IStreamContentAccessor)
-			return DocumentManager.get(te);
+
 		if (isUsingDefaultContentProvider && canHaveSharedDocument) {
 			ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(te, ISharedDocumentAdapter.class, true);
 			if (sda != null) {
-				IEditorInput input = sda.getDocumentKey(element);
+				IEditorInput input= sda.getDocumentKey(te);
 				if (input != null) {
 					IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
 					if (provider != null)
@@ -770,6 +769,10 @@ public class Utilities {
 				}
 			}
 		}
+
+		if (te instanceof IStreamContentAccessor)
+			return DocumentManager.get(te);
+
 		return null;
 	}
 	
