@@ -36,7 +36,6 @@ import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
 import org.eclipse.debug.internal.ui.actions.ConfigureColumnsAction;
-import org.eclipse.debug.internal.ui.actions.variables.ActivateCellEditorAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
@@ -77,11 +76,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -90,10 +85,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerEditor;
-import org.eclipse.jface.viewers.TreeViewerFocusCellManager;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -118,7 +110,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -303,12 +294,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Key for "Find..." action.
 	 */
 	protected static final String VARIABLES_FIND_ELEMENT_ACTION = FIND_ACTION + ".Variables"; //$NON-NLS-1$
-    
-    /**
-     * Key for "Rename..." action.
-     * @since 3.6
-     */
-    protected static final String VARIABLES_RENAME_ELEMENT_ACTION = ActionFactory.RENAME.getId() + ".Variables"; //$NON-NLS-1$
 
 	/**
 	 * Key for "Select All" action.
@@ -610,6 +595,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Create and return the main tree viewer that displays variable.
 	 */
 	protected TreeModelViewer createTreeViewer(Composite parent) {
+		
 		int style = getViewerStyle();
 		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), fModelPresentation); 
 		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style, fPresentationContext);
@@ -621,7 +607,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
-                setAction(ActionFactory.RENAME.getId(), getAction(VARIABLES_RENAME_ELEMENT_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 			
@@ -630,42 +615,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				setAction(SELECT_ALL_ACTION, null);
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
-                setAction(ActionFactory.RENAME.getId(), null);
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
-		
-		// Only enable cell navigation and cell editor activation if the 
-		// viewer has full row selection style flag.  
-		if ( (style & SWT.FULL_SELECTION) != 0) {
-    		// Add strategy to allow users to edit cell values using the Rename action key.
-    		ColumnViewerEditorActivationStrategy activationStrategy = new ColumnViewerEditorActivationStrategy(variablesViewer) {
-    		    protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-    		        return super.isEditorActivationEvent(event) || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
-    		    }
-    		};
-    		
-    		FocusCellOwnerDrawHighlighter focusCellHightlighter = new FocusCellOwnerDrawHighlighter(variablesViewer) {
-    		    protected void focusCellChanged(ViewerCell newCell, ViewerCell oldCell) {
-    		        super.focusCellChanged(newCell, oldCell);
-    		        
-    		        // If the cell changed without the row changing, update the 
-    		        // cell activator action because there will be no selection
-    		        // changed event.
-    		        if (newCell != null && oldCell != null && newCell.getViewerRow().equals(oldCell.getViewerRow())) {
-    	                ActivateCellEditorAction cellEditorAction = (ActivateCellEditorAction)getAction(VARIABLES_RENAME_ELEMENT_ACTION);
-    	                if (cellEditorAction != null) {
-    	                    cellEditorAction.focusCellChanged(newCell);
-    	                }
-    		        }
-    		    }
-    		};
-    		
-    		TreeViewerEditor.create(
-    		    variablesViewer, new TreeViewerFocusCellManager(variablesViewer, focusCellHightlighter), 
-    		    activationStrategy, ColumnViewerEditor.DEFAULT);
-		}
-		
 		variablesViewer.getPresentationContext().addPropertyChangeListener(
 				new IPropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent event) {
@@ -818,9 +770,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		
 		action= new VirtualFindAction(getVariablesViewer());
 		setAction(VARIABLES_FIND_ELEMENT_ACTION, action);
-		
-		action = new ActivateCellEditorAction(getVariablesViewer());
-        setAction(VARIABLES_RENAME_ELEMENT_ACTION, action);
 	} 	
 	
 	/* (non-Javadoc)
