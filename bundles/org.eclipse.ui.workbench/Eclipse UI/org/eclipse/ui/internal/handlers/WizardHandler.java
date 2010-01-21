@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -56,7 +57,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	    private static final int SIZING_WIZARD_HEIGHT = 550;
 
 		protected String getWizardIdParameterId() {
-			return "exportWizardId"; //$NON-NLS-1$
+			return IWorkbenchCommandConstants.FILE_EXPORT_PARM_WIZARDID;
 		}
 
 		protected IWizardRegistry getWizardRegistry() {
@@ -107,7 +108,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	    private static final int SIZING_WIZARD_HEIGHT = 550;
 
 		protected String getWizardIdParameterId() {
-			return "importWizardId"; //$NON-NLS-1$
+			return IWorkbenchCommandConstants.FILE_IMPORT_PARM_WIZARDID;
 		}
 
 		protected IWizardRegistry getWizardRegistry() {
@@ -170,7 +171,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	    private String categoryId = null;
 
 		protected String getWizardIdParameterId() {
-			return "newWizardId"; //$NON-NLS-1$
+			return IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID;
 		}
 
 		protected IWizardRegistry getWizardRegistry() {

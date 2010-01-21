@@ -173,9 +173,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE = "openPerspective"; //$NON-NLS-1$
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW = "showView"; //$NON-NLS-1$
 
-	private static final String SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD = "newWizardId"; //$NON-NLS-1$
-	private static final String SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
-
 	private static final String KEYS_PREFERENCE_PAGE_ID = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
 	private static final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -1017,12 +1014,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						if (item instanceof ShortcutItem) {
 							if (isNewWizard(item)) {
 								parameters.put(
-										SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD,
+												IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID,
 										getParamID(item));
 							} else if (isShowPerspective(item)) {
 								parameters
 										.put(
-												SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE,
+												IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
 												getParamID(item));
 							} else if (isShowView(item)) {
 								parameters.put(
@@ -2367,11 +2364,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					Map m = binding.getParameterizedCommand().getParameterMap();
 					String key = null;
 					if (isNewWizard(item)) {
-						key = SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD;
+						key = IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID;
 					} else if (isShowView(item)) {
 						key = ShowViewMenu.VIEW_ID_PARM;
 					} else if (isShowPerspective(item)) {
-						key = SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE;
+						key = IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID;
 					}
 
 					if (key != null) {

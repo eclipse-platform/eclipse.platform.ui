@@ -16,12 +16,11 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-
 import org.eclipse.jface.viewers.ISelection;
-
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -43,7 +42,6 @@ import org.eclipse.ui.views.IViewRegistry;
  * @since 3.4
  */
 public class ShowInHandler extends AbstractHandler implements IElementUpdater {
-	static final String TARGET_ID = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -51,7 +49,8 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String targetId = event.getParameter(TARGET_ID);
+		String targetId = event
+				.getParameter(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
 		if (targetId == null) {
 			throw new ExecutionException("No targetId specified"); //$NON-NLS-1$
 		}
@@ -124,7 +123,8 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 *      java.util.Map)
 	 */
 	public void updateElement(UIElement element, Map parameters) {
-		String targetId = (String) parameters.get(TARGET_ID);
+		String targetId = (String) parameters
+				.get(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
 		if (targetId == null || targetId.length() == 0) {
 			return;
 		}

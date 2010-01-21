@@ -17,6 +17,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.events.ControlAdapter;
@@ -41,21 +52,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -947,7 +943,6 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(menuItem,
         		IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
         menuItem.addSelectionListener(new SelectionAdapter() {
-			private static final String PARAMETER_CLOSE_PERSP_ID = "org.eclipse.ui.window.closePerspective.perspectiveId"; //$NON-NLS-1$
 
 			public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
@@ -963,7 +958,10 @@ public class PerspectiveSwitcher implements IWindowTrim {
 					Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE);
 					
 					HashMap parameters = new HashMap();
-					parameters.put(PARAMETER_CLOSE_PERSP_ID, persp.getId());
+					parameters
+							.put(
+									IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
+									persp.getId());
 					
 					ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
 					

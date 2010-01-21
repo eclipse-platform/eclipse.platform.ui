@@ -65,8 +65,11 @@ public class ShowViewMenu extends ContributionItem {
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW}
 	 */
 	public static final String SHOW_VIEW_ID= IWorkbenchCommandConstants.VIEWS_SHOW_VIEW;
-	public static final String VIEW_ID_PARM = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
-	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.6, replaced by
+	 *             {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW_PARM_ID}
+	 */
+	public static final String VIEW_ID_PARM = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID;
 
 	private IWorkbenchWindow window;
 
@@ -280,7 +283,9 @@ public class ShowViewMenu extends ContributionItem {
 
 		parms.parameters.put(VIEW_ID_PARM, viewId);
 		if (makeFast) {
-			parms.parameters.put(PARAMETER_MAKE_FAST, "true"); //$NON-NLS-1$
+			parms.parameters.put(
+					IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW,
+					"true"); //$NON-NLS-1$
 		}
 		return parms;
 	}
@@ -352,7 +357,8 @@ public class ShowViewMenu extends ContributionItem {
 		Parameterization[] parms = null;
 		if (makeFast) {
 			try {
-				IParameter parmDef = c.getParameter(PARAMETER_MAKE_FAST);
+				IParameter parmDef = c
+						.getParameter(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW);
 				parms = new Parameterization[] { new Parameterization(parmDef,
 						"true") //$NON-NLS-1$
 				};

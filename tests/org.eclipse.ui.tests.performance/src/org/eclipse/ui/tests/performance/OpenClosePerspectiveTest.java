@@ -23,6 +23,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
@@ -110,7 +111,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 				.getCommand("org.eclipse.ui.window.closePerspective");
 
 		HashMap parameters = new HashMap();
-		parameters.put("org.eclipse.ui.window.closePerspective.perspectiveId",
+		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
 				persp.getId());
 
 		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(

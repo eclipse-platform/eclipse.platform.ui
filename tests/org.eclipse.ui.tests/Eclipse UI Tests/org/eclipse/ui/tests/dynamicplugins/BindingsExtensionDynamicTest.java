@@ -17,6 +17,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -95,7 +96,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 								.getParameterizedCommand().getId())
 						&& binding.getParameterizedCommand().getParameterMap()
 								.containsKey(
-										"org.eclipse.ui.views.showView.viewId")
+										IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID)
 						&& binding.getPlatform() == null
 						&& binding.getLocale() == null
 						&& binding.getType() == Binding.SYSTEM
@@ -128,7 +129,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 								.getParameterizedCommand().getId())
 						&& binding.getParameterizedCommand().getParameterMap()
 								.containsKey(
-										"org.eclipse.ui.views.showView.viewId")
+										IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID)
 						&& binding.getPlatform() == null
 						&& binding.getLocale() == null
 						&& binding.getType() == Binding.SYSTEM
@@ -160,7 +161,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 								.getParameterizedCommand().getId())
 						&& binding.getParameterizedCommand().getParameterMap()
 								.containsKey(
-										"org.eclipse.ui.views.showView.viewId")
+										IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID)
 						&& binding.getPlatform() == null
 						&& binding.getLocale() == null
 						&& binding.getType() == Binding.SYSTEM

@@ -17,6 +17,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.Perspective;
@@ -24,10 +25,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
 
 public class ClosePerspectiveHandler extends AbstractHandler {
 
-	/**
-	 * The name of the parameter providing the perspective id.
-	 */
-	private static final String PARAMETER_NAME_PERSPECTIVE_ID = "org.eclipse.ui.window.closePerspective.perspectiveId"; //$NON-NLS-1$
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
@@ -38,7 +35,7 @@ public class ClosePerspectiveHandler extends AbstractHandler {
 			if (page != null) {
 				Map parameters = event.getParameters();
 				String value = (String) parameters
-						.get(PARAMETER_NAME_PERSPECTIVE_ID);
+						.get(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID);
 				if (value == null) {
 					page.closePerspective(page.getPerspective(), true, true);
 				} else {

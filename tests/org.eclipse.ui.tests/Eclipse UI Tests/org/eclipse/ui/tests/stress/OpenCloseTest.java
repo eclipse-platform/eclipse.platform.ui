@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -114,7 +115,7 @@ public class OpenCloseTest extends UITestCase {
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
 		
 		HashMap parameters = new HashMap();
-		parameters.put("org.eclipse.ui.window.closePerspective.perspectiveId",
+		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
 				ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE);
 		
 		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);

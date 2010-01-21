@@ -76,7 +76,8 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		Map parameters = new HashMap();
 		parameters
 				.put(
-						"org.eclipse.ui.perspectives.showPerspective.perspectiveId", desc.getId()); //$NON-NLS-1$
+						IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
+						desc.getId());
 
 		// Only open a new window if user preference is set and the window
 		// has an active perspective.

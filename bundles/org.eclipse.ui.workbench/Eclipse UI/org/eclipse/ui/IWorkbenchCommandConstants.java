@@ -28,10 +28,18 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String FILE_NEW = "org.eclipse.ui.newWizard"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Close" in category "File"
-     * (value is <code>"org.eclipse.ui.file.close"</code>).
-     */
+	/**
+	 * Id for parameter "New Wizard" in command "New" in category "File" (value
+	 * is <code>"newWizardId"</code>). Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String FILE_NEW_PARM_WIZARDID = "newWizardId"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Close" in category "File" (value is
+	 * <code>"org.eclipse.ui.file.close"</code>).
+	 */
     public static final String FILE_CLOSE = "org.eclipse.ui.file.close"; //$NON-NLS-1$
 
     /**
@@ -46,11 +54,27 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String FILE_IMPORT = "org.eclipse.ui.file.import"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Export" in category "File"
-     * (value is <code>"org.eclipse.ui.file.export"</code>).
-     */
+	/**
+	 * Id for parameter "Import Wizard" in command "Import" in category "File"
+	 * (value is <code>"importWizardId"</code>). Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String FILE_IMPORT_PARM_WIZARDID = "importWizardId"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Export" in category "File" (value is
+	 * <code>"org.eclipse.ui.file.export"</code>).
+	 */
     public static final String FILE_EXPORT = "org.eclipse.ui.file.export"; //$NON-NLS-1$
+
+	/**
+	 * Id for parameter "Export Wizard" in command "Export" in category "File"
+	 * (value is <code>"exportWizardId"</code>). Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String FILE_EXPORT_PARM_WIZARDID = "exportWizardId"; //$NON-NLS-1$
 
     /**
      * Id for command "Save" in category "File"
@@ -278,10 +302,19 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String NAVIGATE_SHOW_IN = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Show In" in category "Navigate"
-     * (value is <code>"org.eclipse.ui.navigate.showInQuickMenu"</code>).
-     */
+	/**
+	 * Id for parameter "Target Id" in command "Show In" in category "Navigate"
+	 * (value is <code>"org.eclipse.ui.navigate.showIn.targetId"</code>).
+	 * Required.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String NAVIGATE_SHOW_IN_PARM_TARGET = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Show In" in category "Navigate" (value is
+	 * <code>"org.eclipse.ui.navigate.showInQuickMenu"</code>).
+	 */
     public static final String NAVIGATE_SHOW_IN_QUICK_MENU = "org.eclipse.ui.navigate.showInQuickMenu"; //$NON-NLS-1$
 
     // project category
@@ -402,10 +435,20 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String WINDOW_CLOSE_PERSPECTIVE = "org.eclipse.ui.window.closePerspective"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Close Part" in category "Window"
-     * (value is <code>"org.eclipse.ui.file.closePart"</code>).
-     */
+	/**
+	 * Id for parameter "Perspective Id" in command "Close Perspective" in
+	 * category "Window" (value is
+	 * <code>"org.eclipse.ui.window.closePerspective.perspectiveId"</code>).
+	 * Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String WINDOW_CLOSE_PERSPECTIVE_PARM_ID = "org.eclipse.ui.window.closePerspective.perspectiveId"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Close Part" in category "Window" (value is
+	 * <code>"org.eclipse.ui.file.closePart"</code>).
+	 */
     public static final String WINDOW_CLOSE_PART = "org.eclipse.ui.file.closePart"; //$NON-NLS-1$
 
     /**
@@ -426,10 +469,18 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String WINDOW_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Reset Perspective" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.resetPerspective"</code>).
-     */
+	/**
+	 * Id for parameter "Preference Page Id" in command "Preferences" in
+	 * category "Window" (value is <code>"preferencePageId"</code>). Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String WINDOW_PREFERENCES_PARM_PAGEID = "preferencePageId"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Reset Perspective" in category "Window" (value is
+	 * <code>"org.eclipse.ui.window.resetPerspective"</code>).
+	 */
     public static final String WINDOW_RESET_PERSPECTIVE = "org.eclipse.ui.window.resetPerspective"; //$NON-NLS-1$
 
     /**
@@ -490,6 +541,23 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String VIEWS_SHOW_VIEW = "org.eclipse.ui.views.showView"; //$NON-NLS-1$
 
+	/**
+	 * Id for parameter "View Id" in command "Show View" in category "Views"
+	 * (value is <code>"org.eclipse.ui.views.showView.viewId"</code>).
+	 * 
+	 * @since 3.6
+	 */
+	public static final String VIEWS_SHOW_VIEW_PARM_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
+
+	/**
+	 * Id for parameter "As Fastview" in command "Show View" in category "Views"
+	 * (value is <code>"org.eclipse.ui.views.showView.makeFast"</code>).
+	 * Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String VIEWS_SHOW_VIEW_PARM_FASTVIEW = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
+
     // Perspectives Category:
 
     /**
@@ -497,5 +565,25 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.perspectives.showPerspective"</code>).
      */
     public static final String PERSPECTIVES_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective"; //$NON-NLS-1$
-	
+
+	/**
+	 * Id for parameter "Perspective Id" in command "Show Perspective" in
+	 * category "Perspectives" (value is
+	 * <code>"org.eclipse.ui.perspectives.showPerspective.perspectiveId"</code>
+	 * ).
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
+
+	/**
+	 * Id for parameter "In New Window" in command "Show Perspective" in
+	 * category "Perspectives" (value is
+	 * <code>"org.eclipse.ui.perspectives.showPerspective.newWindow"</code>).
+	 * Optional.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PERSPECTIVES_SHOW_PERSPECTIVE_PARM_NEWWINDOW = "org.eclipse.ui.perspectives.showPerspective.newWindow"; //$NON-NLS-1$
+
 }
