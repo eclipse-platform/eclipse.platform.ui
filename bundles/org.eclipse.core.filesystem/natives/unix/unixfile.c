@@ -30,7 +30,7 @@
  */
 jbyte* getByteArray(JNIEnv *env, jbyteArray target)
 {
-	jsize len;
+	unsigned int len;
 	jbyte *temp, *result;
 
 	temp = (*env)->GetByteArrayElements(env, target, 0);
@@ -158,13 +158,13 @@ JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_Unix
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives
  * Method:    readlink
- * Signature: ([B[BJ)J
+ * Signature: ([B[BJ)I
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_readlink
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_readlink
     (JNIEnv *env, jclass clazz, jbyteArray path, jbyteArray buf, jlong bufsiz) {
 	jint code;
- 	char *name;
- 	ssize_t len;
+ 	jbyte *name;
+ 	int len;
 	char temp[PATH_MAX+1];
 	jstring linkTarget = NULL;
 
@@ -173,11 +173,11 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_Uni
   	free(name);
 	if (len > 0) {
 		temp[len] = 0;
-		(*env)->SetByteArrayRegion(env, buf, 0, len, temp);
+		(*env)->SetByteArrayRegion(env, buf, 0, len, (jbyte*) temp);
 	}
 	else {
 		temp[0] = 0;
-		(*env)->SetByteArrayRegion(env, buf, 0, 0, temp);
+		(*env)->SetByteArrayRegion(env, buf, 0, 0, (jbyte*) temp);
 	}
 	return len;
 }
@@ -254,7 +254,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_Unix
 	char *flag;
 	jint ret = -1;
 
-	flag = getByteArray(env, buf);
+	flag = (char*) getByteArray(env, buf);
 	if (strcmp(flag, "PATH_MAX") == 0)
 		ret = PATH_MAX;
 	else if (strcmp(flag, "S_IFMT") == 0)

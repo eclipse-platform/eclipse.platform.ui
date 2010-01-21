@@ -71,9 +71,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_Unix
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives
  * Method:    readlink
- * Signature: ([B[BJ)J
+ * Signature: ([B[BJ)I
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_readlink
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_readlink
   (JNIEnv *, jclass, jbyteArray, jbyteArray, jlong);
 
 /*
