@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - support for alternative expression view content providers
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
+ *     Wind Rvier Systems - added support for columns (bug 235646)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -27,6 +28,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
@@ -68,6 +70,7 @@ import org.eclipse.debug.internal.ui.model.elements.VariableContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableEditor;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.WatchExpressionEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -104,6 +107,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementLabelProvider fgLPBreakpoint = new BreakpointLabelProvider();
     private static IElementLabelProvider fgLPBreakpointContainer = new BreakpointContainerLabelProvider(); 
     private static IElementEditor fgEEVariable = new VariableEditor();
+    private static IElementEditor fgEEWatchExpression = new WatchExpressionEditor();
     
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
@@ -255,9 +259,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         }
         
         if (adapterType.equals(IColumnPresentationFactory.class)) {
-        	if (adaptableObject instanceof IStackFrame) {
-        		return fgVariableColumnFactory;
-        	}
+            if (adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager) {
+                return fgVariableColumnFactory;
+            }
         }   
         
         if (adapterType.equals(IElementMementoProvider.class)) {
@@ -294,6 +298,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof IVariable) {
         		return fgEEVariable;
         	}
+            if (adaptableObject instanceof IWatchExpression) {
+                return fgEEWatchExpression;
+            }
         }
         
         if (adapterType.equals(IViewerInputProvider.class)) {

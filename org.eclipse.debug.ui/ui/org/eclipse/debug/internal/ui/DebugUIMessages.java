@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -252,6 +252,11 @@ public class DebugUIMessages extends NLS {
 	public static String WorkingDirectoryBlock_1;
 	public static String WorkingDirectoryBlock_Exception_occurred_reading_configuration___15;
 		
+	//
+	// Elements
+	// 
+    public static String ExpressionManagerContentProvider_1;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);

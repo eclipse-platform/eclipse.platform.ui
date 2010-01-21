@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind Rvier Systems - added support for columns (bug 235646)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -28,8 +30,11 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactory 
 	 */
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		String id = context.getId();
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
-			if (element instanceof IStackFrame) {
+        if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || 
+            IDebugUIConstants.ID_REGISTER_VIEW.equals(id) || 
+            IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) 
+        {
+			if (element instanceof IStackFrame || element instanceof IExpressionManager) {
 				return new VariableColumnPresentation();
 			}
 		}
@@ -41,8 +46,11 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactory 
 	 */
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		String id = context.getId();
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
-			if (element instanceof IStackFrame) {
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || 
+		    IDebugUIConstants.ID_REGISTER_VIEW.equals(id) || 
+		    IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) 
+		{
+			if (element instanceof IStackFrame || element instanceof IExpressionManager) {
 				return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
 			}
 		}

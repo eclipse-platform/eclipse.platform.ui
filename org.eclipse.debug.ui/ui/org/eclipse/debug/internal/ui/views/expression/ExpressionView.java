@@ -39,7 +39,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -140,13 +139,6 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected String getToggleActionLabel() {
 		return VariablesViewMessages.ExpressionView_4; 
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getViewerStyle()
-	 */
-	protected int getViewerStyle() {
-		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL;
 	}
 
 	/* (non-Javadoc)

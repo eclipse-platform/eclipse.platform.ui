@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind Rvier Systems - added support for columns (bug 235646)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -21,20 +22,68 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 
 /**
  * @since 3.3
  */
 public class ExpressionContentProvider extends VariableContentProvider {
 
+    /**
+     * @since 3.6
+     * Element object used to wrap the expression error message.  It displays 
+     * the error message only in the first column if columns are visible.
+     */
+    private static class ErrorMessageElement implements IElementLabelProvider {
+
+        public ErrorMessageElement(String message) {
+            fMessage = message;
+        }
+        
+        private final String fMessage;
+        
+        public void update(ILabelUpdate[] updates) {
+            for (int i = 0; i < updates.length; i++) {
+                String[] columnIds = updates[i].getColumnIds();
+                if (columnIds == null) {
+                    updateLabel(updates[i], 0);
+                } else {
+                    for (int j = 0; j < columnIds.length; j++) {
+                        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnIds[j])) {
+                            updateLabel(updates[i], j);
+                        } else {
+                            updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
+                        }
+                    }
+                }
+                    
+                updates[i].done();
+            }
+        }
+
+        private void updateLabel(ILabelUpdate update, int columnIndex) {
+            update.setLabel(fMessage, columnIndex);
+            FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
+            fontData.setStyle(SWT.ITALIC);                
+            
+        }
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
@@ -132,7 +181,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
                 String[] messages = expression.getErrorMessages();
                 LinkedHashSet set = new LinkedHashSet(messages.length);
                 for (int i = 0; i < messages.length; i++) {
-					set.add(messages[i]);
+					set.add(new ErrorMessageElement(messages[i]));
 				}
                 return set.toArray();
             }
