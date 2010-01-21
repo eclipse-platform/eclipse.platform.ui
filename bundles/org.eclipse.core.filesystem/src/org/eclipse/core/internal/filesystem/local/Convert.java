@@ -90,6 +90,11 @@ public class Convert {
 		}
 	}
 
+	/*
+	 * This method is called via Reflection API from the legacy file system
+	 * library (liblocalfile_1_0_0). Source for the native code is located
+	 * in org.eclipse.core.filesystem/natives/unix/localfile.c.
+	 */
 	public static String fromPlatformBytes(byte[] source) {
 		return fromPlatformBytes(source, source.length);
 	}
