@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,8 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
- * All Help System Test cases must subclass this base Testcase.
- * See SampleTestCase.java for a template.
+ * All Update Manager Test cases must subclass this base test case.
  */
-
 public abstract class UpdateManagerTestCase extends TestCase {
 
 	protected static ResourceBundle bundle;
@@ -86,14 +84,14 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		InstallRegistry.cleanup();
 		
 		// setup cache site to false. 
-		// Note: the standalone tests will set it back to true
+		// Note: the stand-alone tests will set it back to true
 		InternalSiteManager.globalUseCache = false;
 	}
 
 	/**
 	 * Simple implementation of setUp. Subclasses are prevented 
 	 * from overriding this method to maintain logging consistency.
-	 * umSetUp() should be overriden instead.
+	 * umSetUp() should be overridden instead.
 	 */
 	protected final void setUp() throws Exception {
 		System.out.println("----- " + this.getName());
@@ -112,7 +110,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	/**
 	 * Simple implementation of tearDown.  Subclasses are prevented 
 	 * from overriding this method to maintain logging consistency.
-	 * umTearDown() should be overriden instead.
+	 * umTearDown() should be overridden instead.
 	 */
 	protected final void tearDown() throws Exception {
 		System.out.println(this.getName() + ": tearDown...\n");
