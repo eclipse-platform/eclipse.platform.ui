@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,15 @@
 package org.eclipse.debug.ui.actions;
 
  
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -22,12 +28,19 @@ import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationSelectionDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -374,20 +387,90 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 */
 	public void runWithEvent(IAction action, Event event) {
 		if((event.stateMask & SWT.MOD1) > 0) {
-			ILaunchConfiguration config = getLastLaunch();
-			IStructuredSelection selection = null;
-			if (config != null){
-				selection = new StructuredSelection(config);
+			ILaunchConfiguration configuration = null;
+			if(LaunchingResourceManager.isContextLaunchEnabled()) {
+				configuration = resolveContextConfiguration();
+			} else {
+				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
 			}
-			DebugUITools.openLaunchConfigurationDialogOnGroup(
+			if (configuration != null){
+				DebugUITools.openLaunchConfigurationDialogOnGroup(
 						DebugUIPlugin.getShell(), 
-						selection, 
+						new StructuredSelection(configuration), 
 						getLaunchGroupIdentifier());
-				return;
+			}
+			return;
 		}
 		run(action);
 	}
 
+	/**
+	 * Resolves the configuration to show in the dialog when opened via the Ctrl+Click.
+	 * If no configuration exists a new one is created using its respective {@link ILaunchShortcut}
+	 * @return the configuration to show in the launch dialog
+	 * @since 3.6
+	 */
+	private ILaunchConfiguration resolveContextConfiguration() {
+		SelectedResourceManager srm = SelectedResourceManager.getDefault();
+		IStructuredSelection selection = srm.getCurrentSelection();
+		List shortcuts = null;
+		IResource resource = srm.getSelectedResource();
+		shortcuts = getLaunchingResourceManager().getShortcutsForSelection(
+				selection, 
+				getMode());
+		if(resource == null) {
+			resource = getLaunchingResourceManager().getLaunchableResource(shortcuts, selection);
+		}
+		List configs = getLaunchingResourceManager().getParticipatingLaunchConfigurations(
+				selection, 
+				resource, 
+				shortcuts, 
+				getMode());
+		if(configs.size() == 1) {
+			return (ILaunchConfiguration) configs.get(0);
+		} else if(configs.size() > 1) {
+			//choose the one to open
+			LaunchConfigurationSelectionDialog dialog = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell(), configs);
+			if(dialog.open() == IDialogConstants.OK_ID) {
+				return (ILaunchConfiguration) dialog.getResult()[0];
+			}
+			return null;
+		} else if(shortcuts.size() > 1) {
+			//no configs, choose shortcut to create a new one
+			LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(shortcuts, resource, getMode());
+			if(dialog.open() == IDialogConstants.OK_ID) {
+				LaunchShortcutExtension ext = (LaunchShortcutExtension) dialog.getResult()[0];
+				return createConfigurationFromTypes(ext.getAssociatedConfigurationTypes());
+			}
+			return null;
+		} else if(shortcuts.size() == 1) {
+			LaunchShortcutExtension ext = (LaunchShortcutExtension) shortcuts.get(0);
+			return createConfigurationFromTypes(ext.getAssociatedConfigurationTypes());
+		}
+		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
+	}
+	
+	/**
+	 * Creates an {@link ILaunchConfiguration} from the given set of {@link ILaunchConfigurationType}s
+	 * @param types
+	 * @return a new {@link ILaunchConfiguration}
+	 * @since 3.6
+	 */
+	private ILaunchConfiguration createConfigurationFromTypes(Set types) {
+		//context launching always takes the first type, so we do that here as well
+		if(types != null && types.size() > 0) {
+			try {
+				ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType((String) types.toArray()[0]);
+				ILaunchConfigurationWorkingCopy copy = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2));
+				return copy.doSave();
+			}
+			catch(CoreException ce) {
+				//do nothing return null
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 * @since 3.6
