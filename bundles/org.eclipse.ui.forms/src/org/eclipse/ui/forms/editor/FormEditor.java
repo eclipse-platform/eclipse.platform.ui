@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,6 +264,12 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 					IFormPage fpage = (IFormPage) page;
 					if (fpage.isDirty())
 						return true;
+
+				} else if (page instanceof IEditorPart) {
+					IEditorPart editor = (IEditorPart) page;
+					if (editor.isDirty()) {
+						return true;
+					}
 				}
 			}
 		}
