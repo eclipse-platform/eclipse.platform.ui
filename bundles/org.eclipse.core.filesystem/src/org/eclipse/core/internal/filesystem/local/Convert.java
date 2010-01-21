@@ -90,6 +90,10 @@ public class Convert {
 		}
 	}
 
+	public static String fromPlatformBytes(byte[] source) {
+		return fromPlatformBytes(source, source.length);
+	}
+
 	/**
 	 * Calling String.getBytes() creates a new encoding object and other garbage.
 	 * This can be avoided by calling String.getBytes(String encoding) instead.
