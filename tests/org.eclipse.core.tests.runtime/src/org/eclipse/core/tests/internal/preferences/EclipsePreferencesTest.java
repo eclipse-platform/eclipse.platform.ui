@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1221,5 +1221,18 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		} catch (Exception e) {
 			fail("2.2", e);
 		}
+	}
+
+	public String TEST_NODE_PATH = "test.node.path";
+	public String TEST_PREF_KEY = "test.pref.key";
+
+	public void testGetByteArray() {
+		final byte[] testArray = new byte[] {10, 13, 15, 20};
+		DefaultScope defaultScope = new DefaultScope();
+		defaultScope.getNode(TEST_NODE_PATH).putByteArray(TEST_PREF_KEY, testArray);
+		final byte[] returnArray = Platform.getPreferencesService().getByteArray(TEST_NODE_PATH, TEST_PREF_KEY, new byte[] {}, null);
+		assertEquals("1.0 Wrong size", testArray.length, returnArray.length);
+		for (int i = 0; i < testArray.length; i++)
+			assertEquals("2.0 Wrong value at: " + i, testArray[i], returnArray[i]);
 	}
 }
