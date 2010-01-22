@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -439,9 +440,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					return;
 
 				List browsersToCreate = foundBrowsers;
-
-				if (browsersToCreate == null) // cancelled
-					return;
 
 				if (browsersToCreate.isEmpty()) { // no browsers found
 					WebBrowserUtil.openMessage(Messages.searchingNoneFound);
