@@ -38,7 +38,6 @@ public abstract class ModelReconcilerPartDescriptorTest extends
 		descriptor.setAllowMultiple(after);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		descriptor = application.getDescriptors().get(0);
