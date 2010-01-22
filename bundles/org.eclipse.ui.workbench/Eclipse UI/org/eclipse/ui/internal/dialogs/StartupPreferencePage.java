@@ -12,10 +12,14 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Arrays;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,6 +35,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.framework.Constants;
 
@@ -82,18 +87,36 @@ public class StartupPreferencePage extends PreferencePage implements
         data = new GridData(GridData.FILL_BOTH);
         pluginsList.setFont(parent.getFont());
         pluginsList.setLayoutData(data);
-        populatePluginsList();
+		TableViewer viewer = new TableViewer(pluginsList);
+		String pluginIds[] = workbench.getEarlyActivatedPlugins();
+		final ILabelDecorator decorator = workbench.getDecoratorManager().getLabelDecorator(
+				ContributingPluginDecorator.ID);
+		viewer.setLabelProvider(new ColumnLabelProvider() {
+			public String getText(Object element) {
+				return (String) Platform.getBundle((String) element).getHeaders().get(
+						Constants.BUNDLE_NAME);
+			}
+
+			public String getToolTipText(Object element) {
+				if (decorator == null) {
+					return null;
+				}
+				return decorator.decorateText(getText(element), element);
+			}
+		});
+		if (decorator != null) {
+			ColumnViewerToolTipSupport.enableFor(viewer);
+		}
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		viewer.setInput(pluginIds);
+		updateCheckState();
     }
 
-    private void populatePluginsList() {
-        String pluginIds[] = workbench.getEarlyActivatedPlugins();
+	private void updateCheckState() {
         HashSet disabledPlugins = new HashSet(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
-        for (int i = 0; i < pluginIds.length; i++) {
-            String pluginId = pluginIds[i];
-            TableItem item = new TableItem(pluginsList, SWT.NONE);
-            item.setText((String) Platform.getBundle(pluginId).getHeaders().get(
-                    Constants.BUNDLE_NAME));
-            item.setData(pluginId);
+		for (int i = 0; i < pluginsList.getItemCount(); i++) {
+			TableItem item = pluginsList.getItem(i);
+			String pluginId = (String) item.getData();
             item.setChecked(!disabledPlugins.contains(pluginId));
         }
     }

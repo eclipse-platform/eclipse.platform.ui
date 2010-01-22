@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations.defaultpresentation;
 import com.ibm.icu.text.MessageFormat;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
@@ -20,6 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.presentations.util.PartInfo;
 import org.eclipse.ui.internal.presentations.util.WidgetTabItem;
 import org.eclipse.ui.internal.util.Util;
@@ -95,6 +97,16 @@ public class DefaultTabItem extends WidgetTabItem {
 		}
 
 		String toolTipText = info.toolTip;
+
+		ILabelDecorator labelDecorator = PlatformUI.getWorkbench().getDecoratorManager()
+				.getLabelDecorator(ContributingPluginDecorator.ID);
+		if (labelDecorator != null && info.data != null) {
+			if (toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+				toolTipText = shortName;
+			}
+			toolTipText = labelDecorator.decorateText(toolTipText, toolTipText.endsWith(M_TOOLTIP) ? Q_TOOLTIP : info.data);
+		}
+
 		if (toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
 			toolTipText = null;
 		}
@@ -237,4 +249,7 @@ public class DefaultTabItem extends WidgetTabItem {
 
 		return text;
 	}
+	
+	String M_TOOLTIP = "ui.map"; //$NON-NLS-1$
+	String Q_TOOLTIP = "Queens View"; //$NON-NLS-1$
 }

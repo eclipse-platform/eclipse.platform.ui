@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations.util;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 
@@ -24,6 +25,7 @@ public final class PartInfo {
     public String toolTip;
     public Image image;
     public boolean dirty;
+	public Object data;
     
     public PartInfo() {
         name = Util.ZERO_LENGTH_STRING;
@@ -44,5 +46,13 @@ public final class PartInfo {
         image = part.getTitleImage();
         toolTip = part.getTitleToolTip();
         dirty = part.isDirty();
+		if (part instanceof PresentablePart) {
+			PresentablePart pp = (PresentablePart) part;
+			if (pp.getPane() != null) {
+				data = pp.getPane().getPartReference().getPart(false);
+			}
+		} else {
+			data = null;
+		}
     }
 }

@@ -106,4 +106,28 @@
          </menu>
       </menuContribution>
    </extension>
+   <extension
+	         point="org.eclipse.ui.decorators">
+	      <decorator
+	            adaptable="true"
+	            class="org.eclipse.ui.internal.decorators.ContributingPluginDecorator"
+	            id="org.eclipse.ui.decorators.ContributingPluginDecorator"
+	            label="%ShowContributingPluginDecorator.label"
+	            lightweight="false"
+	            state="false">
+	         <enablement>
+	            <or>
+	               <objectClass
+	                     name="org.eclipse.core.runtime.jobs.Job">
+	               </objectClass>
+	               <objectClass
+	                     name="org.eclipse.ui.IWorkbenchPart">
+	               </objectClass>
+	            </or>
+	         </enablement>
+          <description>
+             %ShowContributingPluginDecorator.description
+          </description>
+	      </decorator>
+	   </extension>
 </plugin>
