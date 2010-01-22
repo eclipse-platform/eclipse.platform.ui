@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import java.util.Stack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,6 +38,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextPresentation;
 
 
@@ -200,6 +204,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					// if any of the proposed context matches any of the contexts on the stack,
 					// assume that one (so, if context info is invoked repeatedly, the current
 					// info is kept)
+					int index= 0;
 					for (int i= 0; i < contexts.length; i++) {
 						IContextInformation info= contexts[i];
 						ContextFrame frame= createContextFrame(info, offset);
@@ -211,8 +216,7 @@ class ContextInformationPopup implements IContentAssistListener {
 						}
 
 						if (isLastFrame(frame)) {
-							internalShowContextInfo(frame);
-							return;
+							index= i;
 						}
 
 						// also check all other contexts
@@ -232,7 +236,7 @@ class ContextInformationPopup implements IContentAssistListener {
 						fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
 
 					createContextSelector();
-					setContexts(contexts);
+					setContexts(contexts, index);
 					displayContextSelector();
 				}
 			}
@@ -505,6 +509,28 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextSelectorShell.setLayout(layout);
 		fContextSelectorShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
+		if (fViewer instanceof ITextViewerExtension) {
+			final ITextViewerExtension textViewerExtension= (ITextViewerExtension)fViewer;
+			final StyledText textWidget= fViewer.getTextWidget();
+
+			final VerifyKeyListener verifyListener= new VerifyKeyListener() {
+				public void verifyKey(VerifyEvent event) {
+					if (isActive() && event.keyCode == 13 && event.character == '\r' && event.widget == textWidget) {
+						event.doit= false;
+						insertSelectedContext();
+						hideContextSelector();
+					}
+				}
+			};
+
+			textViewerExtension.prependVerifyKeyListener(verifyListener);
+
+			fContextSelectorShell.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					textViewerExtension.removeVerifyKeyListener(verifyListener);
+				}
+			});
+		}
 
 		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		fContextSelectorTable.setLocation(1, 1);
@@ -524,16 +550,6 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (c == null)
 			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		fContextSelectorTable.setForeground(c);
-
-		fContextSelectorTable.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				insertSelectedContext();
-				hideContextSelector();
-			}
-		});
 
 		fPopupCloser.install(fContentAssistant, fContextSelectorTable);
 
@@ -574,10 +590,11 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	/**
 	 * Sets the contexts in the context selector to the given set.
-	 *
+	 * 
 	 * @param contexts the possible contexts
+	 * @param selectionIndex the index of the proposal to select
 	 */
-	private void setContexts(IContextInformation[] contexts) {
+	private void setContexts(IContextInformation[] contexts, int selectionIndex) {
 		if (Helper.okToUse(fContextSelectorTable)) {
 
 			fContextSelectorInput= contexts;
@@ -595,7 +612,7 @@ class ContextInformationPopup implements IContentAssistListener {
 				item.setText(t.getContextDisplayString());
 			}
 
-			fContextSelectorTable.select(0);
+			fContextSelectorTable.select(selectionIndex);
 			fContextSelectorTable.setRedraw(true);
 		}
 	}
