@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -240,6 +240,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource already exists in the workspace.</li>
 	 * <li> The parent of this resource does not exist.</li>
+	 * <li> The parent of this resource is a virtual folder.</li>
 	 * <li> The project of this resource is not accessible.</li>
 	 * <li> The parent contains a resource of a different type 
 	 *      at the same path as this resource.</li>
@@ -314,6 +315,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource already exists in the workspace.</li>
 	 * <li> The parent of this resource does not exist.</li>
+	 * <li> The parent of this resource is a virtual folder.</li>
 	 * <li> The project of this resource is not accessible.</li>
 	 * <li> The parent contains a resource of a different type 
 	 *      at the same path as this resource.</li>

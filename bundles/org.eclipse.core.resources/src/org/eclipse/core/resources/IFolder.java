@@ -66,6 +66,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * <li> The parent of this resource is a project that is not open.</li>
 	 * <li> The parent contains a resource of a different type 
 	 *      at the same path as this resource.</li>
+	 * <li> The parent of this resource is virtual, but this resource is not.</li>
 	 * <li> The name of this resource is not valid (according to 
 	 *    <code>IWorkspace.validateName</code>).</li>
 	 * <li> The corresponding location in the local file system is occupied
@@ -142,6 +143,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * <li> The parent of this resource is a project that is not open.</li>
 	 * <li> The parent contains a resource of a different type 
 	 *      at the same path as this resource.</li>
+	 * <li> The parent of this resource is virtual, but this resource is not.</li>
 	 * <li> The name of this resource is not valid (according to 
 	 *    <code>IWorkspace.validateName</code>).</li>
 	 * <li> The corresponding location in the local file system is occupied
