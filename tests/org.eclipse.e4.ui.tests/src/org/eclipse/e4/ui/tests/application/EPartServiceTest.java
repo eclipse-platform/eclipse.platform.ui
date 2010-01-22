@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
@@ -680,6 +681,231 @@ public class EPartServiceTest extends TestCase {
 		MPart part2 = partService.showPart("partId");
 		assertEquals("Should not have instantiated a new MPart", part, part2);
 		assertEquals(part, partService.getActivePart());
+	}
+
+	public void testShowPart_DefinedCategoryStackNotExists() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setCategory("categoryId");
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		partDescriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		partDescriptor.setCategory("categoryId");
+		partDescriptor.setId("partId2");
+		application.getDescriptors().add(partDescriptor);
+
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.showPart("partId");
+
+		assertEquals(1, window.getChildren().size());
+		assertTrue(window.getChildren().get(0) instanceof MPartStack);
+
+		MPartStack stack = (MPartStack) window.getChildren().get(0);
+		assertEquals("categoryId", stack.getId());
+
+		assertEquals(1, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+
+		MPart part2 = partService.showPart("partId2");
+		assertEquals(2, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part2, stack.getChildren().get(1));
+	}
+
+	public void testShowPart_DefinedCategoryStackExists() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setCategory("categoryId");
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		partDescriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		partDescriptor.setCategory("categoryId");
+		partDescriptor.setId("partId2");
+		application.getDescriptors().add(partDescriptor);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("categoryId");
+		window.getChildren().add(stack);
+
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.showPart("partId");
+		assertEquals(1, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+
+		MPart part2 = partService.showPart("partId2");
+		assertEquals(2, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part2, stack.getChildren().get(1));
+	}
+
+	public void testGetSaveableParts() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MWindow window = application.getChildren().get(0);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> saveableParts = partService
+				.getSaveableParts();
+		assertNotNull(saveableParts);
+		assertEquals(0, saveableParts.size());
+	}
+
+	public void testGetSaveableParts2() {
+		MApplication application = createApplication("partId");
+		MWindow window = application.getChildren().get(0);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> saveableParts = partService
+				.getSaveableParts();
+		assertNotNull(saveableParts);
+		assertEquals(0, saveableParts.size());
+	}
+
+	public void testGetSaveableParts3() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
+				.createSaveablePart();
+		window.getChildren().add(saveablePart);
+
+		// setup the context
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> saveableParts = partService
+				.getSaveableParts();
+		assertNotNull(saveableParts);
+		assertEquals(1, saveableParts.size());
+	}
+
+	public void testGetDirtyParts() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MWindow window = application.getChildren().get(0);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		assertNotNull(dirtyParts);
+		assertEquals(0, dirtyParts.size());
+	}
+
+	public void testGetDirtyParts2() {
+		MApplication application = createApplication("partId");
+		MWindow window = application.getChildren().get(0);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		assertNotNull(dirtyParts);
+		assertEquals(0, dirtyParts.size());
+	}
+
+	private void testGetDirtyParts3(boolean before, boolean after) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
+				.createSaveablePart();
+		saveablePart.setDirty(before);
+		window.getChildren().add(saveablePart);
+
+		// setup the context
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		assertNotNull(dirtyParts);
+
+		if (before) {
+			assertEquals(1, dirtyParts.size());
+			assertEquals(saveablePart, dirtyParts.iterator().next());
+		} else {
+			assertEquals(0, dirtyParts.size());
+		}
+
+		saveablePart.setDirty(after);
+		dirtyParts = partService.getDirtyParts();
+
+		if (after) {
+			assertEquals(1, dirtyParts.size());
+			assertEquals(saveablePart, dirtyParts.iterator().next());
+		} else {
+			assertEquals(0, dirtyParts.size());
+		}
+	}
+
+	public void testGetDirtyParts3_TrueTrue() {
+		testGetDirtyParts3(true, true);
+	}
+
+	public void testGetDirtyParts3_TrueFalse() {
+		testGetDirtyParts3(true, false);
+	}
+
+	public void testGetDirtyParts3_FalseTrue() {
+		testGetDirtyParts3(false, true);
+	}
+
+	public void testGetDirtyParts3_FalseFalse() {
+		testGetDirtyParts3(false, false);
 	}
 
 	public void testSwitchWindows() {

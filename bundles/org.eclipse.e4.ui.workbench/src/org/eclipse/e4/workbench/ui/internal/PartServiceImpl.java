@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
@@ -26,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -281,6 +283,7 @@ public class PartServiceImpl implements EPartService {
 			((MElementContainer<MPart>) container).getChildren().add(part);
 		} else { // wrap it in a stack
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			stack.setId(descriptorMatch.getCategory());
 			stack.getChildren().add(part);
 			rootContainer.getChildren().add(stack);
 		}
@@ -291,5 +294,35 @@ public class PartServiceImpl implements EPartService {
 		deactivate(part);
 		activate(part);
 		return part;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.modeling.EPartService#getSaveableParts()
+	 */
+	public Collection<MSaveablePart> getSaveableParts() {
+		List<MSaveablePart> saveableParts = new ArrayList<MSaveablePart>();
+		for (MPart part : getParts()) {
+			if (part instanceof MSaveablePart) {
+				saveableParts.add((MSaveablePart) part);
+			}
+		}
+		return saveableParts;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.modeling.EPartService#getDirtyParts()
+	 */
+	public Collection<MSaveablePart> getDirtyParts() {
+		List<MSaveablePart> dirtyParts = new ArrayList<MSaveablePart>();
+		for (MSaveablePart part : getSaveableParts()) {
+			if (part.isDirty()) {
+				dirtyParts.add(part);
+			}
+		}
+		return dirtyParts;
 	}
 }

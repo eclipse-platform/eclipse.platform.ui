@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 
 public interface EPartService {
 	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
@@ -31,5 +32,9 @@ public interface EPartService {
 	public boolean isPartVisible(MPart part);
 
 	public MPart showPart(String id);
+
+	public Collection<MSaveablePart> getSaveableParts();
+
+	public Collection<MSaveablePart> getDirtyParts();
 
 }
