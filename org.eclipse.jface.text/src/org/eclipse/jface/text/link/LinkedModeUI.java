@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,6 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextInputListener;
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
@@ -812,11 +811,7 @@ public class LinkedModeUI {
 	}
 
 	private void triggerContextInfo() {
-		ITextOperationTarget target= fCurrentTarget.getViewer().getTextOperationTarget();
-		if (target != null) {
-			if (target.canDoOperation(ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION))
-				target.doOperation(ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);
-		}
+		fAssistant.showContextInformation();
 	}
 
 	/** Trigger content assist on choice positions */
