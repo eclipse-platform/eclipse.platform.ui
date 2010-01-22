@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
- * Standard action for opening a system editor on the currently selected file 
+ * Standard action for opening a system editor on the currently selected file
  * resource.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -46,7 +46,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
     private IWorkbenchPage workbenchPage;
 
     /**
-     * Creates a new action that will open system editors on the then-selected file 
+     * Creates a new action that will open system editors on the then-selected file
      * resources.
      *
      * @param page the workbench page in which to open the editor
@@ -55,11 +55,11 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
         super(IDEWorkbenchMessages.OpenSystemEditorAction_text);
         setToolTipText(IDEWorkbenchMessages.OpenSystemEditorAction_toolTip);
         setId(ID);
+		if (page == null) {
+			throw new IllegalArgumentException();
+		}
         page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
-        if (page == null) {
-            throw new IllegalArgumentException();
-        }
         this.workbenchPage = page;
     }
 

@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -688,9 +687,6 @@ public abstract class AbstractUIPlugin extends Plugin {
             }
         }
 
-        if (fullPathString == null) {
-			return null;
-		}
         return ImageDescriptor.createFromURL(fullPathString);
     }
     
