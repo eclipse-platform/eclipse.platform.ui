@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,11 @@ public interface IInternalDebugCoreConstants {
 	 */
 	public static final String PREF_ENABLE_STATUS_HANDLERS = DebugPlugin.getUniqueIdentifier() + ".PREF_ENABLE_STATUS_HANDLERS"; //$NON-NLS-1$
 
-	
+	/**
+	 * Persistence of breakpoint manager enabled state.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PREF_BREAKPOINT_MANAGER_ENABLED_STATE =  DebugPlugin.getUniqueIdentifier() + ".PREF_BREAKPOINT_MANAGER_ENABLED_STATE"; //$NON-NLS-1$
 
 }

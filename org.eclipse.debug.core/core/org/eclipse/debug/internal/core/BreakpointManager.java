@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -140,11 +140,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * additions, changes, and removals.
 	 */
 	private static BreakpointManagerVisitor fgVisitor;
-	
-	/**
-	 * Whether or not this breakpoint manager is enabled.
-	 */
-	private boolean fEnabled= true;
 	
 	/**
 	 * Collection of breakpoint manager listeners which are
@@ -1023,15 +1018,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see org.eclipse.debug.core.IBreakpointManager#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return fEnabled;
+		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, true, null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointManager#setEnabled(boolean)
 	 */
 	public void setEnabled(final boolean enabled) {
-        if (fEnabled != enabled) {
-    		fEnabled= enabled;
+        if (isEnabled() != enabled) {
+        	Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, enabled, null);
             IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) throws CoreException {
                     IBreakpoint[] breakpoints = getBreakpoints();

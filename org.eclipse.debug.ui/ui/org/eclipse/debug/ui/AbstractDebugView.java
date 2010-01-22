@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -604,13 +605,14 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 					for (int i = 0; i < items.length; i++) {
 						if (items[i] instanceof ActionContributionItem) {
 							IAction action = ((ActionContributionItem)items[i]).getAction();
-							if (action.getStyle() == IAction.AS_CHECK_BOX) {
-								initActionState(action);	
-								if (action.isChecked()) {
-									action.run();
+							if (!SkipAllBreakpointsAction.ACTION_ID.equals(action.getId())) {
+								if (action.getStyle() == IAction.AS_CHECK_BOX) {
+									initActionState(action);	
+									if (action.isChecked()) {
+										action.run();
+									}
 								}
-							}
-						}
+							}}
 					}
 					setMemento(null);
 				}

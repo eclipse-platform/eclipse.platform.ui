@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -40,7 +42,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * This class also implements the window action delegate for the action presented as
  * part of the "Breakpoints" group for the "Run" menu.
  */
-public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IBreakpointManagerListener {
+public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IActionDelegate2, IBreakpointManagerListener {
 	
 	public static final String ACTION_ID = "org.eclipse.debug.ui.actions.SkipAllBreakpoints"; //$NON-NLS-1$
 	
@@ -69,6 +71,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		this();
 		fPart = part;
 		setId(ACTION_ID); // set action ID when created programmatically.
+		updateActionCheckedState();
 	}
 	
 	/* (non-Javadoc)
@@ -80,7 +83,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 			 progressService =  (IWorkbenchSiteProgressService)fPart.getSite().
 			 	getAdapter(IWorkbenchSiteProgressService.class);
 		}
-		final boolean enabled = !isChecked();
+		final boolean enabled = !getBreakpointManager().isEnabled();
 		Job job = new Job(getText()) {
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!monitor.isCanceled()) {
@@ -159,5 +162,20 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		if (fAction != null) {
 			fAction.setChecked(!enabled);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+		fAction = action;
+		updateActionCheckedState();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 }

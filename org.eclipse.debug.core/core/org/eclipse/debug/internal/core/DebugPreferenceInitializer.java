@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 		//launch configurations preferences
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true);
+		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, true);
 		Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 	}
 
