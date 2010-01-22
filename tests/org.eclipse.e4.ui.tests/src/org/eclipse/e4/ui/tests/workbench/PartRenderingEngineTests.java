@@ -231,6 +231,39 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(0, tabFolder.getSelectionIndex());
 	}
 
+	public void testPartStack_SetActiveChild5() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setId("partA");
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setId("partB");
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		stack.getChildren().add(partA);
+		stack.getChildren().add(partB);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+		assertEquals(0, tabFolder.getSelectionIndex());
+
+		stack.setActiveChild(partB);
+		assertEquals(1, tabFolder.getSelectionIndex());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
