@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 263413, 265561, 271080
+ *     Ovidio Mallo - bug 270494
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -27,6 +28,20 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class SelectionProviderSingleSelectionProperty extends
 		ViewerValueProperty {
+
+	private final boolean isPostSelection;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param isPostSelection
+	 *            Whether the post selection or the normal selection is to be
+	 *            observed.
+	 */
+	public SelectionProviderSingleSelectionProperty(boolean isPostSelection) {
+		this.isPostSelection = isPostSelection;
+	}
+
 	public Object getValueType() {
 		return null;
 	}
@@ -51,10 +66,11 @@ public class SelectionProviderSingleSelectionProperty extends
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return new SelectionChangedListener(this, listener);
+		return new SelectionChangedListener(this, listener, isPostSelection);
 	}
 
 	public String toString() {
-		return "ISelectionProvider.selection"; //$NON-NLS-1$
+		return isPostSelection ? "IPostSelectionProvider.postSelection" //$NON-NLS-1$
+				: "ISelectionProvider.selection"; //$NON-NLS-1$
 	}
 }

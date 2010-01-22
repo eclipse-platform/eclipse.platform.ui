@@ -9,6 +9,7 @@
  *    Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bug 194734
+ *     Ovidio Mallo - bug 270494
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
@@ -23,12 +24,11 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 1.2
  */
 public class SelectionProviderMultiSelectionObservableListTest extends TestCase {
-	private ISelectionProvider selectionProvider;
+	private IPostSelectionProvider selectionProvider;
 
 	private TableViewer viewer;
 
@@ -48,7 +48,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 	protected void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.MULTI);
-		viewer.setContentProvider(new ContentProvider());
+		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setInput(model);
 		selectionProvider = viewer;
 	}
@@ -67,18 +67,37 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		}
 	}
 
+	public void testAddRemove_NormalSelection() {
+		doTestAddRemove(false);
+	}
+
+	public void testAddRemove_PostSelection() {
+		doTestAddRemove(true);
+	}
+
 	/**
 	 * Asserts that when a selection is set on the viewer:
 	 * <ul>
 	 * <li>the selection is available in the observable</li>
 	 * <li>Value change events are fired with appropriate diff values</li>
 	 * </ul>
+	 * 
+	 * @param postSelection
+	 *            <code>true</code> for observing the post selection,
+	 *            <code>false</code> for observing the normal selection.
 	 */
-	public void testAddRemove() {
-		IObservableList observable = ViewersObservables
-				.observeMultiSelection(selectionProvider);
-		ListChangeEventTracker listener = new ListChangeEventTracker();
-		observable.addListChangeListener(listener);
+	private void doTestAddRemove(boolean postSelection) {
+		IObservableList observable;
+		if (postSelection) {
+			observable = ViewersObservables
+					.observeMultiPostSelection(selectionProvider);
+		} else {
+			observable = ViewersObservables
+					.observeMultiSelection(selectionProvider);
+		}
+
+		ListChangeEventTracker listener = ListChangeEventTracker
+				.observe(observable);
 		assertEquals(0, observable.size());
 
 		selectionProvider.setSelection(new StructuredSelection(model[0]));
@@ -129,10 +148,9 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		assertEquals(6, listener.count);
 		assertEquals(1, listener.event.diff.getDifferences().length);
 		// This is a bit surprising (we added at index 0 but the event says
-		// index 1).
-		// It is to the fact that the observable list tracks the underlying
-		// selection
-		// provider's notion of which element is at which index.
+		// index 1). It is to the fact that the observable list tracks the
+		// underlying selection provider's notion of which element is at which
+		// index.
 		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
 				Arrays.asList(new Object[] { model[1], model[2] }));
 		assertEquals(observable, listener.event.getObservableList());
@@ -153,21 +171,5 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		diff.applyTo(oldList);
 		assertEquals("applying diff to list did not produce expected result",
 				newList, oldList);
-	}
-
-	private class ContentProvider implements IStructuredContentProvider {
-		public void dispose() {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public Object[] getElements(Object inputElement) {
-			return (String[]) inputElement;
-		}
 	}
 }

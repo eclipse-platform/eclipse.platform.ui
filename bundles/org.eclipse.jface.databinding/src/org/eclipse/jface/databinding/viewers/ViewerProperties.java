@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 264286
+ *     Ovidio Mallo - bug 270494
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -20,6 +21,7 @@ import org.eclipse.jface.internal.databinding.viewers.ViewerInputProperty;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -74,7 +76,20 @@ public class ViewerProperties {
 	 *         {@link ISelectionProvider}.
 	 */
 	public static IViewerListProperty multipleSelection() {
-		return new SelectionProviderMultipleSelectionProperty();
+		return new SelectionProviderMultipleSelectionProperty(false);
+	}
+
+	/**
+	 * Returns a list property for observing the multiple <i>post</i> selection
+	 * of an {@link IPostSelectionProvider}.
+	 * 
+	 * @return a list property for observing the multiple <i>post</i> selection
+	 *         of an {@link IPostSelectionProvider}.
+	 * 
+	 * @since 1.4
+	 */
+	public static IViewerListProperty multiplePostSelection() {
+		return new SelectionProviderMultipleSelectionProperty(true);
 	}
 
 	/**
@@ -85,6 +100,19 @@ public class ViewerProperties {
 	 *         {@link ISelectionProvider}.
 	 */
 	public static IViewerValueProperty singleSelection() {
-		return new SelectionProviderSingleSelectionProperty();
+		return new SelectionProviderSingleSelectionProperty(false);
+	}
+
+	/**
+	 * Returns a value property for observing the single <i>post</i> selection
+	 * of a {@link IPostSelectionProvider}.
+	 * 
+	 * @return a value property for observing the single <i>post</i> selection
+	 *         of a {@link IPostSelectionProvider}.
+	 * 
+	 * @since 1.4
+	 */
+	public static IViewerValueProperty singlePostSelection() {
+		return new SelectionProviderSingleSelectionProperty(true);
 	}
 }

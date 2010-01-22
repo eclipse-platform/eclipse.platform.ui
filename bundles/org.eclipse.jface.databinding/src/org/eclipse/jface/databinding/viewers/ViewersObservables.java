@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 206839, 124684, 239302, 245647, 194734, 195222,
  *                    264286
+ *     Ovidio Mallo - bug 270494
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -21,6 +22,7 @@ import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecor
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -82,6 +84,28 @@ public class ViewersObservables {
 	}
 
 	/**
+	 * Returns an observable value that tracks the current <i>post</i> selection
+	 * of the given post selection provider. If the selection provider provides
+	 * selections of type {@link IStructuredSelection}, the observable value
+	 * will be the first element of the structured selection as returned by
+	 * {@link IStructuredSelection#getFirstElement()}.
+	 * 
+	 * @param selectionProvider
+	 *            The selection provider on which to track the <i>post</i>
+	 *            selection.
+	 * @return the observable value tracking the (single) <i>post</i> selection
+	 *         of the given post selection provider
+	 * 
+	 * @since 1.4
+	 */
+	public static IObservableValue observeSinglePostSelection(
+			IPostSelectionProvider selectionProvider) {
+		checkNull(selectionProvider);
+		return ViewerProperties.singlePostSelection()
+				.observe(selectionProvider);
+	}
+
+	/**
 	 * Returns an observable list that tracks the current selection of the given
 	 * selection provider. Assumes that the selection provider provides
 	 * selections of type {@link IStructuredSelection}. Note that the observable
@@ -106,6 +130,33 @@ public class ViewersObservables {
 	}
 
 	/**
+	 * Returns an observable list that tracks the current <i>post</i> selection
+	 * of the given post selection provider. Assumes that the selection provider
+	 * provides selections of type {@link IStructuredSelection}. Note that the
+	 * observable list will not honor the full contract of
+	 * <code>java.util.List</code> in that it may delete or reorder elements
+	 * based on what the selection provider returns from
+	 * {@link ISelectionProvider#getSelection()} after having called
+	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
+	 * based on the requested change to the observable list. The affected
+	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
+	 * 
+	 * @param selectionProvider
+	 *            The selection provider on which to track the <i>post</i>
+	 *            selection.
+	 * @return the observable value tracking the (multi) <i>post</i> selection
+	 *         of the given post selection provider
+	 * 
+	 * @since 1.4
+	 */
+	public static IObservableList observeMultiPostSelection(
+			IPostSelectionProvider selectionProvider) {
+		checkNull(selectionProvider);
+		return ViewerProperties.multiplePostSelection().observe(
+				selectionProvider);
+	}
+
+	/**
 	 * Returns an observable value that tracks the current selection of the
 	 * given viewer. If the viewer provides selections of type
 	 * {@link IStructuredSelection}, the observable value will be the first
@@ -121,6 +172,26 @@ public class ViewersObservables {
 	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
 		checkNull(viewer);
 		return ViewerProperties.singleSelection().observe(viewer);
+	}
+
+	/**
+	 * Returns an observable value that tracks the current <i>post</i> selection
+	 * of the given structured viewer. If the viewer provides selections of type
+	 * {@link IStructuredSelection}, the observable value will be the first
+	 * element of the structured selection as returned by
+	 * {@link IStructuredSelection#getFirstElement()}.
+	 * 
+	 * @param viewer
+	 *            The viewer on which to track the <i>post</i> selection.
+	 * @return the observable value tracking the (single) <i>post</i> selection
+	 *         of the given structured viewer
+	 * 
+	 * @since 1.4
+	 */
+	public static IViewerObservableValue observeSinglePostSelection(
+			StructuredViewer viewer) {
+		checkNull(viewer);
+		return ViewerProperties.singlePostSelection().observe(viewer);
 	}
 
 	/**
@@ -143,6 +214,30 @@ public class ViewersObservables {
 	public static IViewerObservableList observeMultiSelection(Viewer viewer) {
 		checkNull(viewer);
 		return ViewerProperties.multipleSelection().observe(viewer);
+	}
+
+	/**
+	 * Returns an observable list that tracks the current <i>post</i> selection
+	 * of the given structured viewer. Assumes that the viewer provides
+	 * selections of type {@link IStructuredSelection}. Note that the observable
+	 * list will not honor the full contract of <code>java.util.List</code> in
+	 * that it may delete or reorder elements based on what the viewer returns
+	 * from {@link ISelectionProvider#getSelection()} after having called
+	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
+	 * based on the requested change to the observable list. The affected
+	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
+	 * 
+	 * @param viewer
+	 *            The viewer on which to track the <i>post</i> selection.
+	 * @return the observable value tracking the (multi) <i>post</i> selection
+	 *         of the given structured viewer
+	 * 
+	 * @since 1.4
+	 */
+	public static IViewerObservableList observeMultiPostSelection(
+			StructuredViewer viewer) {
+		checkNull(viewer);
+		return ViewerProperties.multiplePostSelection().observe(viewer);
 	}
 
 	/**

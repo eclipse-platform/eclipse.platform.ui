@@ -10,6 +10,7 @@
  *    Brad Reynolds - bug 116920
  *    Ashley Cambrell - bug 198906
  *    Matthew Hall - bug 194734
+ *    Ovidio Mallo - bug 270494
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
@@ -18,11 +19,12 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -33,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SelectionProviderSingleSelectionObservableValueTest extends
 		TestCase {
-	private ISelectionProvider selectionProvider;
+	private IPostSelectionProvider selectionProvider;
 
 	private TableViewer viewer;
 
@@ -41,20 +43,20 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
-		viewer.setContentProvider(new ContentProvider());
+		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setInput(model);
 		selectionProvider = viewer;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
@@ -71,18 +73,61 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		}
 	}
 
+	public void testSetValue() {
+		IObservableValue observable = ViewersObservables
+				.observeSingleSelection(selectionProvider);
+
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
+		assertNull(observable.getValue());
+		assertEquals(0, listener.count);
+
+		observable.setValue(model[0]);
+		assertEquals(model[0], getSelectedElement(selectionProvider));
+		assertEquals(model[0], observable.getValue());
+		assertEquals(1, listener.count);
+
+		observable.setValue(model[1]);
+		assertEquals(model[1], getSelectedElement(selectionProvider));
+		assertEquals(model[1], observable.getValue());
+		assertEquals(2, listener.count);
+
+		observable.setValue(null);
+		assertTrue(selectionProvider.getSelection().isEmpty());
+		assertEquals(3, listener.count);
+	}
+
+	public void testSelectionChangesTracked() {
+		doTestSelectionChangesTracked(false);
+	}
+
+	public void testPostSelectionChangesTracked() {
+		doTestSelectionChangesTracked(true);
+	}
+
 	/**
 	 * Asserts that when a selection is set on the viewer:
 	 * <ul>
 	 * <li>the selection is available in the observable</li>
 	 * <li>Value change events are fired with appropriate diff values</li>
 	 * </ul>
+	 * 
+	 * @param postSelection
+	 *            <code>true</code> for observing the post selection,
+	 *            <code>false</code> for observing the normal selection.
 	 */
-	public void testGetSetValue() {
-		IObservableValue observable = ViewersObservables
-				.observeSingleSelection(selectionProvider);
-		ValueChangeEventTracker listener = new ValueChangeEventTracker();
-		observable.addValueChangeListener(listener);
+	private void doTestSelectionChangesTracked(boolean postSelection) {
+		IObservableValue observable;
+		if (postSelection) {
+			observable = ViewersObservables
+					.observeSinglePostSelection(selectionProvider);
+		} else {
+			observable = ViewersObservables
+					.observeSingleSelection(selectionProvider);
+		}
+
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 		assertNull(observable.getValue());
 
 		selectionProvider.setSelection(new StructuredSelection(model[0]));
@@ -110,8 +155,8 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 	public void testDispose() throws Exception {
 		IObservableValue observable = ViewersObservables
 				.observeSingleSelection(selectionProvider);
-		ValueChangeEventTracker listener = new ValueChangeEventTracker();
-		observable.addValueChangeListener(listener);
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 
 		selectionProvider.setSelection(new StructuredSelection(model[0]));
 		assertEquals(1, listener.count);
@@ -125,20 +170,9 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		assertEquals(1, listener.count);
 	}
 
-	private class ContentProvider implements IStructuredContentProvider {
-		public void dispose() {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public Object[] getElements(Object inputElement) {
-			return (String[]) inputElement;
-		}
+	private static Object getSelectedElement(
+			ISelectionProvider selectionProvider) {
+		return ((IStructuredSelection) selectionProvider.getSelection())
+				.getFirstElement();
 	}
-
 }
