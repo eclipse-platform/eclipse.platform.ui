@@ -144,6 +144,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private AbstractStatusHandler ideWorkbenchErrorHandler;
 
 	/**
+	 * Helper class used to process delayed events.
+	 */
+	private DelayedEventsProcessor delayedEventsProcessor;
+
+	/**
 	 * Creates a new workbench advisor instance.
 	 */
 	public IDEWorkbenchAdvisor() {
@@ -152,6 +157,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			throw new IllegalStateException();
 		}
 		workbenchAdvisor = this;
+	}
+
+	/**
+	 * Creates a new workbench advisor instance supporting delayed file open.
+	 * @param processor helper class used to process delayed events
+	 */
+	public IDEWorkbenchAdvisor(DelayedEventsProcessor processor) {
+		this();
+		this.delayedEventsProcessor = processor;
 	}
 
 	/*
@@ -851,5 +865,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					getWorkbenchConfigurer());
 		}
 		return ideWorkbenchErrorHandler;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopIdle(org.eclipse.swt.widgets.Display)
+	 */
+	public void eventLoopIdle(Display display) {
+		if (delayedEventsProcessor != null)
+			delayedEventsProcessor.catchUp(display);
+		super.eventLoopIdle(display);
 	}
 }

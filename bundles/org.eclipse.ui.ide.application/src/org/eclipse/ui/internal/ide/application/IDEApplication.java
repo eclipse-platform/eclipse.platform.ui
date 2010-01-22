@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      */
     public Object start(IApplicationContext appContext) throws Exception {
         Display display = createDisplay();
+        // processor must be created before we start event loop
+        DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
 
         try {
 
@@ -111,7 +113,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             // the workbench globally so that all UI plug-ins can find it using
             // PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
             int returnCode = PlatformUI.createAndRunWorkbench(display,
-                    new IDEWorkbenchAdvisor());
+            		new IDEWorkbenchAdvisor(processor));
 
             // the workbench doesn't support relaunch yet (bug 61809) so
             // for now restart is used, and exit data properties are checked
