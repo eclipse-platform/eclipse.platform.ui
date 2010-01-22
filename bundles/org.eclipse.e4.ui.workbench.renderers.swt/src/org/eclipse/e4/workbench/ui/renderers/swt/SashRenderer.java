@@ -36,6 +36,43 @@ import org.osgi.service.event.EventHandler;
 
 public class SashRenderer extends SWTPartRenderer {
 
+	private ControlListener resizeListener = new ControlListener() {
+		public void controlMoved(ControlEvent e) {
+		}
+
+		public void controlResized(ControlEvent e) {
+			Control ctrl = (Control) e.widget;
+			if (ctrl.isDisposed() || !(ctrl.getParent() instanceof SashForm))
+				return;
+
+			SashForm sf = (SashForm) ctrl.getParent();
+			if (weightsChanged(sf)) {
+				// Cache the new values
+				weightsMap.put(sf, sf.getWeights());
+				if (sashUpdateJob == null) {
+					sashUpdateJob = new SashUpdateJob();
+					sashUpdateJob.sashesToUpdate.add(sf);
+					sf.getDisplay().asyncExec(sashUpdateJob);
+				} else {
+					if (!sashUpdateJob.sashesToUpdate.contains(sf))
+						sashUpdateJob.sashesToUpdate.add(sf);
+				}
+			}
+		}
+
+		private boolean weightsChanged(SashForm sf) {
+			int[] oldW = (int[]) weightsMap.get(sf);
+			int[] newW = sf.getWeights();
+			if (oldW == null || oldW.length != newW.length)
+				return true;
+			for (int j = 0; j < oldW.length; j++) {
+				if (oldW[j] != newW[j])
+					return true;
+			}
+			return false;
+		}
+	};
+
 	private class ModelUpdateJob implements Runnable {
 		public List<MElementContainer<MUIElement>> sashModelsToUpdate = new ArrayList<MElementContainer<MUIElement>>();
 
@@ -213,6 +250,15 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		}
 
+		// Set up the size listeners
+		Control newCtrl = (Control) element.getWidget();
+		newCtrl.addControlListener(resizeListener);
+		newCtrl.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				((Control) e.widget).removeControlListener(resizeListener);
+			}
+		});
+
 		synchSashToModel(psc);
 	}
 
@@ -228,6 +274,8 @@ public class SashRenderer extends SWTPartRenderer {
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
 		super.hideChild(parentElement, child);
+
+		((Control) child.getWidget()).removeControlListener(resizeListener);
 
 		synchSashToModel(parentElement);
 	}
@@ -247,49 +295,6 @@ public class SashRenderer extends SWTPartRenderer {
 				weightsMap.remove(e.widget);
 			}
 		});
-
-		// add a size change listener to each child so we can recalculate
-		// the weights on a change...
-		Control[] childCtrls = sashForm.getChildren();
-		for (int i = 0; i < childCtrls.length; i++) {
-			childCtrls[i].addControlListener(new ControlListener() {
-				public void controlMoved(ControlEvent e) {
-				}
-
-				public void controlResized(ControlEvent e) {
-					Control ctrl = (Control) e.widget;
-					if (ctrl.isDisposed()
-							|| !(ctrl.getParent() instanceof SashForm))
-						return;
-
-					SashForm sf = (SashForm) ctrl.getParent();
-					if (weightsChanged(sf)) {
-						// Cache the new values
-						weightsMap.put(sf, sf.getWeights());
-						if (sashUpdateJob == null) {
-							sashUpdateJob = new SashUpdateJob();
-							sashUpdateJob.sashesToUpdate.add(sf);
-							sf.getDisplay().asyncExec(sashUpdateJob);
-						} else {
-							if (!sashUpdateJob.sashesToUpdate.contains(sf))
-								sashUpdateJob.sashesToUpdate.add(sf);
-						}
-					}
-				}
-
-				private boolean weightsChanged(SashForm sf) {
-					int[] oldW = (int[]) weightsMap.get(sf);
-					int[] newW = sf.getWeights();
-					if (oldW == null || oldW.length != newW.length)
-						return true;
-					for (int j = 0; j < oldW.length; j++) {
-						if (oldW[j] != newW[j])
-							return true;
-					}
-					return false;
-				}
-			});
-		}
 	}
 
 	/**
