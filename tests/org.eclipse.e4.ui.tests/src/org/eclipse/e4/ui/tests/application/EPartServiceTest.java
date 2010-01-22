@@ -720,11 +720,13 @@ public class EPartServiceTest extends TestCase {
 
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part, stack.getActiveChild());
 
 		MPart part2 = partService.showPart("partId2");
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
+		assertEquals(part2, stack.getActiveChild());
 	}
 
 	public void testShowPart_DefinedCategoryStackExists() {
@@ -761,11 +763,13 @@ public class EPartServiceTest extends TestCase {
 		MPart part = partService.showPart("partId");
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part, stack.getActiveChild());
 
 		MPart part2 = partService.showPart("partId2");
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
+		assertEquals(part2, stack.getActiveChild());
 	}
 
 	public void testGetSaveableParts() {
