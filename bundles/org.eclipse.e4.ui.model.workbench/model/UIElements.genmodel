@@ -90,8 +90,10 @@
     </genClasses>
     <genClasses image="false" ecoreClass="UIElements.ecore#//PSCElement"/>
     <genClasses ecoreClass="UIElements.ecore#//Part" labelFeature="#//application/UILabel/label">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//Part/menus"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//Part/toolbar"/>
+      <genFeatures notify="false" children="true" createChild="true" propertySortChoices="true"
+          ecoreFeature="ecore:EReference UIElements.ecore#//Part/menus"/>
+      <genFeatures notify="false" children="true" createChild="true" propertySortChoices="true"
+          ecoreFeature="ecore:EReference UIElements.ecore#//Part/toolbar"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//PartDescriptor" labelFeature="#//application/UILabel/label">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//PartDescriptor/allowMultiple"/>
