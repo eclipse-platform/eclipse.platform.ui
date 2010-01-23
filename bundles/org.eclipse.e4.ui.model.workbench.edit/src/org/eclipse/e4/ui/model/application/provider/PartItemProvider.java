@@ -385,6 +385,8 @@ public class PartItemProvider
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+			childrenFeatures.add(MApplicationPackage.Literals.PART__MENUS);
+			childrenFeatures.add(MApplicationPackage.Literals.PART__TOOLBAR);
 		}
 		return childrenFeatures;
 	}
@@ -480,6 +482,31 @@ public class PartItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
 				 MApplicationFactory.eINSTANCE.createKeyBinding()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.PART__MENUS,
+				 MApplicationFactory.eINSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.PART__MENUS,
+				 MApplicationFactory.eINSTANCE.createMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.PART__MENUS,
+				 MApplicationFactory.eINSTANCE.createDirectMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.PART__MENUS,
+				 MApplicationFactory.eINSTANCE.createHandledMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.PART__TOOLBAR,
+				 MApplicationFactory.eINSTANCE.createToolBar()));
 	}
 
 }
