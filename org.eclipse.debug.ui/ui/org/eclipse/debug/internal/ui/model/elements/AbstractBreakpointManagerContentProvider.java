@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009 Texas Instruments and others
+ * Copyright (c) 2009, 2010 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
+ *     IBM Corporation - ongoing enhancements and bug fixing
  *****************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -275,7 +276,7 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
             
             ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
             for (int i = 0; i < filteredBreakpoints.length; ++i)
-                appendModelDelta(fContainer, delta, IModelDelta.STATE, filteredBreakpoints[i]);
+                appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
             fireModelChanged(fInput, delta, "breakpointsChanged");        //$NON-NLS-1$
 	    }
 
