@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,17 +187,14 @@ public class UndoTextFileChange extends Change {
 			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
-
-			LinkedModeModel.closeAllModels(document);
-
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
-			// perform the changes
-			UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
-			// try to restore the document content stamp
-			boolean success= ContentStamps.set(document, fContentStampToRestore);
+
+			boolean[] setContentStampSuccess= { false };
+			UndoEdit redo= performEdits(buffer, document, setContentStampSuccess);
+
 			if (needsSaving()) {
 				buffer.commit(pm, false);
-				if (!success) {
+				if (!setContentStampSuccess[0]) {
 					// We weren't able to restore document stamp.
 					// Since we save restore the file stamp instead
 					ContentStamps.set(fFile, fContentStampToRestore);
@@ -223,6 +220,68 @@ public class UndoTextFileChange extends Change {
 			if (buffer != null)
 				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 		}
+	}
+
+	private UndoEdit performEdits(ITextFileBuffer buffer, final IDocument document, final boolean[] setContentStampSuccess) throws MalformedTreeException, BadLocationException, CoreException {
+		if (! buffer.isSynchronizationContextRequested()) {
+			return doPerformEdits(document, setContentStampSuccess);
+		}
+		
+		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
+		
+		/** The lock for waiting for computation in the UI thread to complete. */
+		final Lock completionLock= new Lock();
+		final UndoEdit[] result= new UndoEdit[1];
+		final BadLocationException[] badLocationException= new BadLocationException[1];
+		final MalformedTreeException[] malformedTreeException= new MalformedTreeException[1];
+		final CoreException[] coreException= new CoreException[1];
+		Runnable runnable= new Runnable() {
+			public void run() {
+				synchronized (completionLock) {
+					try {
+						result[0]= doPerformEdits(document, setContentStampSuccess);
+					} catch (BadLocationException e) {
+						badLocationException[0]= e;
+					} catch (MalformedTreeException e) {
+						malformedTreeException[0]= e;
+					} catch (CoreException e) {
+						coreException[0]= e;
+					} finally {
+						completionLock.fDone= true;
+						completionLock.notifyAll();
+					}
+				}
+			}
+		};
+		
+		synchronized (completionLock) {
+			fileBufferManager.execute(runnable);
+			while (! completionLock.fDone) {
+				try {
+					completionLock.wait(500);
+				} catch (InterruptedException x) {
+				}
+			}
+		}
+		
+		if (badLocationException[0] != null) {
+			throw badLocationException[0];
+		} else if (malformedTreeException[0] != null) {
+			throw malformedTreeException[0];
+		} else if (coreException[0] != null) {
+			throw coreException[0];
+		}
+		return result[0];
+	}
+
+	private UndoEdit doPerformEdits(IDocument document, boolean[] setContentStampSuccess) throws MalformedTreeException, BadLocationException, CoreException {
+		// perform the changes
+		LinkedModeModel.closeAllModels(document);
+		UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
+
+		// try to restore the document content stamp
+		setContentStampSuccess[0]= ContentStamps.set(document, fContentStampToRestore);
+		return redo;
 	}
 
 	/**
