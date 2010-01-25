@@ -617,7 +617,7 @@ public class BrowserViewer extends Composite {
             return true;
         }
         if (browser!=null)
-            return browser.setUrl(url);
+            return browser.setUrl(url, null, new String[] {"Cache-Control: no-cache"}); //$NON-NLS-1$
         return text.setUrl(url);
     }
  
