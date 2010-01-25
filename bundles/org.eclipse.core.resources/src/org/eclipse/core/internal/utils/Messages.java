@@ -297,8 +297,6 @@ public class Messages extends NLS {
 
 	public static String synchronizer_partnerNotRegistered;
 
-	public static String parentVariableProvider_noVariableSpecified;
-
 	// URL
 	public static String url_badVariant;
 	public static String url_couldNotResolve_projectDoesNotExist;

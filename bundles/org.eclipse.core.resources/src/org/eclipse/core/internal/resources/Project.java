@@ -1198,4 +1198,13 @@ public class Project extends Container implements IProject {
 			ProjectDescription.isWriting = false;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IProject#getPathVariableManager()
+	 */
+	public IPathVariableManager getPathVariableManager() {
+		return new ProjectPathVariableManager(this);
+	}
 }

@@ -354,7 +354,9 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			IResource link = project.findMember(linkDesc.getProjectRelativePath());
 			if (link != null) {
 				try {
-					addToLocationsMap(link, EFS.getStore(linkDesc.getLocationURI()));
+					URI locationURI = linkDesc.getLocationURI();
+					locationURI = project.getPathVariableManager().resolveURI(locationURI, link);
+					addToLocationsMap(link, EFS.getStore(locationURI));
 				} catch (CoreException e) {
 					//ignore links with invalid locations
 				}

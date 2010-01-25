@@ -59,7 +59,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			results.add(Path.ROOT);
 			return results;
 		}
-		IPathVariableManager varMan = workspace.getPathVariableManager();
 		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
@@ -85,7 +84,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				continue;
 			for (Iterator it = links.values().iterator(); it.hasNext();) {
 				LinkDescription link = (LinkDescription) it.next();
-				testLocation = varMan.resolveURI(link.getLocationURI());
+				IResource resource = project.getWorkspace().getRoot().findMember(project.getFullPath().append(link.getProjectRelativePath()));
+				testLocation = project.getPathVariableManager().resolveURI(link.getLocationURI(), resource);
 				// if we are looking for file: locations try to get a file: location for this link
 				if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
 					testLocation = getFileURI(testLocation);
@@ -415,7 +415,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 */
 	public IFileStore getStore(IResource target) {
 		try {
-			return getStoreRoot(target).createStore(target.getFullPath());
+			return getStoreRoot(target).createStore(target.getFullPath(), target);
 		} catch (CoreException e) {
 			//callers aren't expecting failure here, so return null file system
 			return EFS.getNullFileSystem().getStore(target.getFullPath());
@@ -496,7 +496,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 		setLocation(target, info, location);
 		FileStoreRoot root = getStoreRoot(target);
-		return root.createStore(target.getFullPath());
+		return root.createStore(target.getFullPath(), target);
 	}
 
 	/**
@@ -635,7 +635,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * Returns null if the location could not be resolved.
 	 */
 	public IPath locationFor(IResource target) {
-		return getStoreRoot(target).localLocation(target.getFullPath());
+		return getStoreRoot(target).localLocation(target.getFullPath(), target);
 	}
 
 	/**

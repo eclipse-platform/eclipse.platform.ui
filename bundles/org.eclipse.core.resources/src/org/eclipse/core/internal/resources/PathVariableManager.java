@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import org.eclipse.core.resources.IPathVariable;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 import java.net.URI;
 import java.util.*;
@@ -27,6 +33,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
 	private Set listeners;
+	private Map/*<IProject, Set<Project>*/ projectListeners;
 
 	private Preferences preferences;
 
@@ -35,6 +42,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public PathVariableManager() {
 		this.listeners = Collections.synchronizedSet(new HashSet());
+		this.projectListeners = Collections.synchronizedMap(new HashMap());
 		this.preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	}
 
@@ -44,6 +52,15 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public void addChangeListener(IPathVariableChangeListener listener) {
 		listeners.add(listener);
+	}
+
+	synchronized public void addChangeListener(IPathVariableChangeListener listener, IProject project) {
+		Object list = projectListeners.get(project);
+		if (list == null) {
+			list = Collections.synchronizedSet(new HashSet());
+			projectListeners.put(project, list);
+		}
+		((Set)list).add(listener);
 	}
 
 	/**
@@ -83,10 +100,14 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * @see IPathVariableChangeEvent#VARIABLE_DELETED
 	 */
 	private void fireVariableChangeEvent(String name, IPath value, int type) {
-		if (this.listeners.size() == 0)
+		fireVariableChangeEvent(this.listeners, name, value, type);
+	}
+
+	private void fireVariableChangeEvent(Set list, String name, IPath value, int type) {
+		if (list.size() == 0)
 			return;
 		// use a separate collection to avoid interference of simultaneous additions/removals 
-		Object[] listenerArray = this.listeners.toArray();
+		Object[] listenerArray = list.toArray();
 		final PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listenerArray.length; ++i) {
 			final IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
@@ -102,12 +123,27 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			SafeRunner.run(job);
 		}
 	}
+	
+	public void fireVariableChangeEvent(IProject project, String name, IPath value, int type) {
+		Object list = projectListeners.get(project);
+		if (list != null)
+			fireVariableChangeEvent(((Set)list), name, value, type);
+	}
 
 	/**
 	 * Return a key to use in the Preferences.
 	 */
 	private String getKeyForName(String varName) {
 		return VARIABLE_PREFIX + varName;
+	}
+
+	/**
+	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariable(String, IResource)
+	 */
+	public IPathVariable getPathVariable(String name, IResource resource) {
+		if (isDefined(name, resource))
+			return new PathVariable(name);
+		return null;
 	}
 
 	/**
@@ -160,6 +196,16 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public void removeChangeListener(IPathVariableChangeListener listener) {
 		listeners.remove(listener);
+	}
+
+
+	synchronized public void removeChangeListener(IPathVariableChangeListener listener, IProject project) {
+		Object list = projectListeners.get(project);
+		if (list != null) {
+			((Set)list).remove(listener);
+			if (((Set)list).isEmpty())
+				projectListeners.remove(project);
+		}
 	}
 
 	/**
@@ -263,5 +309,62 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * @throws CoreException 
+	 * @see IPathVariableManager#convertToRelative(URI,IResource, boolean, String)
+	 */
+	public URI convertToRelative(URI path, IResource resource, boolean force, String variableHint) throws CoreException {
+		return PathVariableUtil.convertToRelative(this, path, null, false, variableHint);
+	}
+
+	public URI getValue(String name, IResource resource) {
+		IPath path = getValue(name);
+		if (path != null)
+			return URIUtil.toURI(path);
+		return null;
+	}
+
+	public void setValue(String name, IResource resource, URI value) throws CoreException {
+		if (value != null)
+			setValue(name, URIUtil.toPath(value));
+		else
+			setValue(name, null);
+	}
+
+	public IStatus validateValue(URI path) {
+		if (path != null)
+			validateValue(URIUtil.toPath(path));
+		else
+			validateValue((IPath) null);
+		return null;
+	}
+
+	public URI resolveURI(URI uri, IResource resource) {
+		return resolveURI(uri);
+	}
+
+	public String[] getPathVariableNames(IResource resource) {
+		return getPathVariableNames();
+	}
+	public boolean isDefined(String name, IResource resource) {
+		return isDefined(name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
+	 */
+	public URI getVariableRelativePathLocation(URI location, IResource resource) {
+		try {
+			URI result = convertToRelative(location, resource, false, null);
+			if (!result.equals(location))
+				return result;
+		} catch (CoreException e) {
+			// handled by returning null
+		}
+		return null;
 	}
 }

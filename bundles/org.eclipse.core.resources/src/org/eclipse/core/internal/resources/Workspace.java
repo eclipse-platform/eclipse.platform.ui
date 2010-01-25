@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
+import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
+
+
+import java.net.URISyntaxException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -25,6 +31,7 @@ import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -756,10 +763,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// update link locations in project descriptions
 		if (source.isLinked()) {
 			LinkDescription linkDescription;
+			URI sourceLocationURI = transferVariableDefinition(source, destinationResource, source.getLocationURI());
 			if (((updateFlags & IResource.SHALLOW) != 0) || ((Resource) source).isUnderVirtual()) {
 				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
-				linkDescription = new LinkDescription(destinationResource, source.getLocationURI());
+				linkDescription = new LinkDescription(destinationResource, sourceLocationURI);
 			} else {
 				//for deep move the destination is not a linked resource
 				newInfo.clear(ICoreConstants.M_LINK);
@@ -812,6 +820,124 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				copyTree(children[i], childPath, depth, updateFlags, keepSyncInfo, moveResources, movingProject);
 			}
 		}
+	}
+
+	public URI transferVariableDefinition(IResource source, IResource dest,
+			URI sourceURI) throws CoreException {
+		IPath srcLoc = source.getLocation();
+		IPath srcRawLoc = source.getRawLocation();
+		if ((srcLoc != null) && !srcRawLoc.equals(srcLoc)) {
+			// the location is variable relative
+			if (!source.getProject().equals(dest.getProject())) {
+				String variable = srcRawLoc.segment(0);
+				variable = copyVariable(source, dest,
+						variable);
+				IPath newLocation = Path.fromPortableString(variable).append(
+						srcRawLoc.removeFirstSegments(1));
+				sourceURI = toURI(newLocation);
+			} else {
+				sourceURI = toURI(srcRawLoc);
+			}
+		}
+		return sourceURI;
+	}
+
+	URI toURI(IPath path) {
+		if (path.isAbsolute())
+			return org.eclipse.core.filesystem.URIUtil.toURI(path);
+		try {
+			return new URI(null, null, path.toPortableString(), null);
+		} catch (URISyntaxException e) {
+			return org.eclipse.core.filesystem.URIUtil.toURI(path);
+		}
+	}
+
+	String copyVariable(IResource source, IResource dest, String variable)
+			throws CoreException {
+		IPathVariableManager destPathVariableManager = dest.getProject()
+				.getPathVariableManager();
+		IPathVariableManager srcPathVariableManager = source.getProject()
+				.getPathVariableManager();
+
+		IPath srcValue = URIUtil.toPath(srcPathVariableManager.getValue(variable, source));
+		if (srcValue == null) // if the variable doesn't exist, return another
+								// variable that doesn't exist either
+			return PathVariableUtil.getUniqueVariableName(variable, destPathVariableManager, dest);
+		IPath resolvedSrcValue = URIUtil.toPath(srcPathVariableManager.resolveURI(URIUtil.toURI(srcValue), source));
+
+		boolean variableExisted = false;
+		// look if the exact same variable exists
+		if (destPathVariableManager.isDefined(variable, dest)) {
+			variableExisted = true;
+			IPath destValue = 
+				URIUtil.toPath(destPathVariableManager.getValue(variable, dest));
+			if (destValue != null && URIUtil.toPath(destPathVariableManager.resolveURI(URIUtil.toURI(destValue), dest)).equals(
+					resolvedSrcValue))
+				return variable;
+		}
+		// look if one variable in the destination project matches
+		String[] variables = destPathVariableManager.getPathVariableNames(dest);
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].equals(WorkspaceLocationVariableResolver.NAME))
+				continue;
+			if (variables[i].equals(ParentVariableResolver.NAME))
+				continue;
+			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager
+					.resolveURI(destPathVariableManager.getValue(variables[i], dest), dest));
+			if (resolveDestVariable != null && resolveDestVariable.equals(resolvedSrcValue)) {
+				return variables[i];
+			}
+		}
+		// if the variable doesn't exist in the dest project, or
+		// if the value is different than the source project, we have to create
+		// an equivalent.
+		String destVariable = PathVariableUtil.getUniqueVariableName(variable,
+				destPathVariableManager, dest);
+
+		boolean shouldConvertToRelative = true;
+		if (!srcValue.equals(resolvedSrcValue) && !variableExisted) {
+			// the variable content contains references to more variables
+			
+			String[] referencedVariables = ProjectPathVariableManager
+				.splitVariableNames(srcValue.toPortableString());
+			shouldConvertToRelative = false;
+			// If the variable value is of type ${PARENT-COUNT-VAR}, 
+			// we can avoid generating an intermediate variable and convert it directly.
+			if (referencedVariables.length == 1) {
+				if (PathVariableUtil.isParentVariable(referencedVariables[0]))
+					shouldConvertToRelative = true;
+			}
+				
+			if (!shouldConvertToRelative) {
+				String[] segments = ProjectPathVariableManager
+				.splitVariablesAndContent(srcValue.toPortableString());
+				StringBuffer result = new StringBuffer();
+				for (int i = 0; i < segments.length; i++) {
+					String var = ProjectPathVariableManager
+							.extractVariable(segments[i]);
+					if (var.length() > 0) {
+						String copiedVariable = copyVariable(source, dest, var);
+						int index = segments[i].indexOf(var);
+						if (index != -1) {
+							result.append(segments[i].substring(0, index));
+							result.append(copiedVariable);
+							int start = index + var.length();
+							int end = segments[i].length();
+							result.append(segments[i].substring(start, end));
+						}
+					} else
+						result.append(segments[i]);
+				}
+				srcValue = Path.fromPortableString(result.toString());
+			}
+		}
+		if (shouldConvertToRelative) {
+			IPath relativeSrcValue = PathVariableUtil.convertToPathRelativeMacro(destPathVariableManager, resolvedSrcValue, dest, true, null);
+			if (relativeSrcValue != null)
+				srcValue = relativeSrcValue;
+		}
+		destPathVariableManager.setValue(destVariable, dest, URIUtil.toURI(srcValue));
+		return destVariable;
 	}
 
 	/**

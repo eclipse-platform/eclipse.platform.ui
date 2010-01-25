@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.core.resources;
@@ -36,6 +37,35 @@ import org.eclipse.core.runtime.*;
  */
 public interface IPathVariableManager {
 
+	/** Convert an absolute path to path variable relative path.
+	 *  For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
+	 *  granted that the path variable "FOO" value is "C:/foo".
+	 *  
+	 *  The "force" argument allows intermediate path variable to
+	 *  be created if for a given path can be relative only to a parent
+	 *  of an existing path variable.
+	 *  
+	 *  For example, if the path "C:/other/file.txt" is to be converted
+	 *  and no path variables point to "C:/" or "C:/other" but "FOO" 
+	 *  points to "C:/foo", an intermediate "OTHER" variable will be 
+	 *  created relative to "FOO" containing the value "${PARENT-1-FOO}"
+	 *  so that the final path returned will be "OTHER/file.txt".
+	 *  
+	 *  The argument "variableHint" can be used to specify to which 
+	 *  path variable the path should be made relative to.
+	 *  
+	 * @param path  The absolute path to be converted
+	 * @param resource the resource for which this variable is set
+	 * @param force Set to true if intermediate path variables need to be created if the path is relative only to a parent of an existing path variable.
+	 * @param variableHint The name of the variable to which the path should be relative to, or null for the nearest one.
+	 * @return  The converted path
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>The variable name is not valid</li>
+	 * @since 3.6
+	 */
+	public URI convertToRelative(URI path, IResource resource, boolean force, String variableHint) throws CoreException;
+
 	/**
 	 * Sets the path variable with the given name to be the specified value.
 	 * Depending on the value given and if the variable is currently defined
@@ -64,6 +94,7 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable 
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
+	 * @deprecated use setValue(String, IResource, URI) instead.
 	 * <ul>
 	 * <li>The variable name is not valid</li>
 	 * <li>The variable value is relative</li>
@@ -72,21 +103,91 @@ public interface IPathVariableManager {
 	public void setValue(String name, IPath value) throws CoreException;
 
 	/**
+	 * Sets the path variable with the given name to be the specified value.
+	 * Depending on the value given and if the variable is currently defined
+	 * or not, there are several possible outcomes for this operation:
+	 * <p>
+	 * <ul>
+	 * <li>A new variable will be created, if there is no variable defined with
+	 * the given name, and the given value is not <code>null</code>.
+	 * </li>
+	 * 
+	 * <li>The referred variable's value will be changed, if it already exists
+	 * and the given value is not <code>null</code>.</li>
+	 * 
+	 * <li>The referred variable will be removed, if a variable with the given
+	 * name is currently defined and the given value is <code>null</code>.
+	 * </li>
+	 *  
+	 * <li>The call will be ignored, if a variable with the given name is not
+	 * currently defined and the given value is <code>null</code>, or if it is
+	 * defined but the given value is equal to its current value.
+	 * </li>
+	 * </ul>
+	 * <p>If a variable is effectively changed, created or removed by a call to
+	 * this method, notification will be sent to all registered listeners.</p>
+	 * 
+	 * @param name the name of the variable 
+	 * @param resource the resource for which this variable is set
+	 * @param value the value for the variable (may be <code>null</code>)
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>The variable name is not valid</li>
+	 * <li>The variable value is relative</li>
+	 * </ul>
+	 * @since 3.6
+	 */
+	public void setValue(String name, IResource resource, URI value) throws CoreException;
+
+	/**
+	 * Returns the IPathVariable interface for the variable with the given name. 
+	 * If there is no variable defined with the given name, returns <code>null</code>.
+	 * 
+	 * @param name the name of the variable to return the value for  
+	 * @return the value for the variable, or <code>null</code> if there is no
+	 *    variable defined with the given name
+	 * @since 3.6
+	 */
+	public IPathVariable getPathVariable(String name, IResource resource);
+
+	/**
 	 * Returns the value of the path variable with the given name. If there is
 	 * no variable defined with the given name, returns <code>null</code>.
 	 * 
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
+	 * @deprecated use getValue(String, IResource) instead.
 	 */
 	public IPath getValue(String name);
+
+	/**
+	 * Returns the value of the path variable with the given name. If there is
+	 * no variable defined with the given name, returns <code>null</code>.
+	 * 
+	 * @param name the name of the variable to return the value for  
+	 * @param resource the resource for which this variable is resolved  
+	 * @return the value for the variable, or <code>null</code> if there is no
+	 *    variable defined with the given name
+	 * @since 3.6
+	 */
+	public URI getValue(String name, IResource resource);
 
 	/**
 	 * Returns an array containing all defined path variable names.
 	 *  
 	 * @return an array containing all defined path variable names
+	 * @deprecated use getPathVariableNames(IResource) instead.
 	 */
 	public String[] getPathVariableNames();
+
+	/**
+	 * Returns an array containing all defined path variable names.
+	 *  
+	 * @return an array containing all defined path variable names
+	 * @since 3.6
+	 */
+	public String[] getPathVariableNames(IResource resource);
 
 	/**
 	 * Registers the given listener to receive notification of changes to path
@@ -125,8 +226,30 @@ public interface IPathVariableManager {
 	 * @param uri  the URI to be resolved
 	 * @return the resolved URI or <code>null</code>
 	 * @since 3.2
+	 * @deprecated use resolveURI(URI, IResource) instead.
 	 */
 	public URI resolveURI(URI uri);
+
+	/**
+	 * Resolves a relative <code>URI</code> object potentially containing a
+	 * variable reference as its first segment, replacing the variable reference
+	 * (if any) with the variable's value (which is a concrete absolute URI).
+	 * If the given URI is absolute or has a non- <code>null</code> device then
+	 * no variable substitution is done and that URI is returned as is.  If the
+	 * given URI is relative and has a <code>null</code> device, but the first
+	 * segment does not correspond to a defined variable, then the URI is
+	 * returned as is.
+	 * <p>
+	 * If the given URI is <code>null</code> then <code>null</code> will be
+	 * returned.  In all other cases the result will be non-<code>null</code>.
+	 * </p>
+	 * 
+	 * @param uri  the URI to be resolved
+	 * @param resource the resource for which this variable is resolved  
+	 * @return the resolved URI or <code>null</code>
+	 * @since 3.6
+	 */
+	public URI resolveURI(URI uri, IResource resource);
 
 	/**
 	 * Resolves a relative <code>IPath</code> object potentially containing a
@@ -161,6 +284,7 @@ public interface IPathVariableManager {
 	 * 
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
+	 * @deprecated use resolveURI(URI, IResource) instead.
 	 */
 	public IPath resolvePath(IPath path);
 
@@ -172,8 +296,22 @@ public interface IPathVariableManager {
 	 * @param name the variable's name
 	 * @return <code>true</code> if the variable exists, <code>false</code>
 	 *    otherwise
+	 * @deprecated use isDefined(String, IResource) instead.
 	 */
 	public boolean isDefined(String name);
+
+	/**
+	 * Returns <code>true</code> if the given variable is defined and
+	 * <code>false</code> otherwise. Returns <code>false</code> if the given
+	 * name is not a valid path variable name.
+	 * 
+	 * @param name the variable's name
+	 * @param resource the resource for which this variable is resolved  
+	 * @return <code>true</code> if the variable exists, <code>false</code>
+	 *    otherwise
+	 * @since 3.6
+	 */
+	public boolean isDefined(String name, IResource resource);
 
 	/**
 	 * Validates the given name as the name for a path variable. A valid path
@@ -200,4 +338,32 @@ public interface IPathVariableManager {
 	 * @see IStatus#OK
 	 */
 	public IStatus validateValue(IPath path);
+
+	/**
+	 * Validates the given path as the value for a path variable. A path
+	 * variable value must be a valid path that is absolute.
+	 *
+	 * @param path a possibly valid path variable value
+	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * path is a valid path variable value, otherwise a status object indicating
+	 * what is wrong with the value
+	 * @see IPath#isValidPath(String)
+	 * @see IStatus#OK
+	 * @since 3.6
+	 */
+	public IStatus validateValue(URI path);
+
+	/**
+	 * Returns a variable relative path equivalent to an absolute path for a
+	 * file or folder in the file system, according to the variables defined in
+	 * this project PathVariableManager. The file or folder need not to exist.
+	 * 
+	 * @param location
+	 *            a path in the local file system
+	 * @param resource the resource for which this variable is resolved  
+	 * @return the corresponding variable relative path, or <code>null</code>
+	 *         if no such path is available
+	 * @since 3.6
+	 */
+	public URI getVariableRelativePathLocation(URI location, IResource resource);
 }

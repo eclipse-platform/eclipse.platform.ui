@@ -171,7 +171,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (variableUndefined)
 			return null;
 		//check if the file exists
-		URI resolved = workspace.getPathVariableManager().resolveURI(localLocation);
+		URI resolved;
+		if (parent.getProject() != null)
+			resolved = parent.getProject().getPathVariableManager().resolveURI(localLocation, this);
+		else
+			resolved = workspace.getPathVariableManager().resolveURI(localLocation, this);
 		IFileStore store = EFS.getStore(resolved);
 		IFileInfo fileInfo = store.fetchInfo();
 		boolean localExists = fileInfo.exists();

@@ -11,6 +11,7 @@
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
    <extension-point id="modelProviders" name="%modelProviders" schema="schema/modelProviders.exsd"/>
    <extension-point id="filterMatchers" name="%filterMatchers" schema="schema/filterMatchers.exsd"/>
+   <extension-point id="variableResolvers" name="%variableResolvers" schema="schema/variableResolvers.exsd"/>
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="%preferencesExtPtName">
 		<scope name="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
@@ -202,6 +203,29 @@
       </filterMatcher>
    </extension>
 
+   <extension
+         point="org.eclipse.core.resources.variableResolvers">
+      <variableResolver
+            class="org.eclipse.core.internal.resources.projectvariables.EclipseHomeProjectVariable"
+            name="ECLIPSE_HOME">
+      </variableResolver>
+      <variableResolver
+            class="org.eclipse.core.internal.resources.projectvariables.ProjectLocationVariableResolver"
+            name="PROJECT_LOC">
+      </variableResolver>
+      <variableResolver
+            class="org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver"
+            name="WORKSPACE_LOC">
+      </variableResolver>
+      <variableResolver
+            class="org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver"
+            name="PARENT">
+      </variableResolver>
+      <variableResolver
+            class="org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver"
+            name="WORKSPACE_PARENT_LOC">
+      </variableResolver>
+   </extension>
    <extension
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem

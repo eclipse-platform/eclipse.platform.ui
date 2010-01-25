@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,11 @@ public class LocationValidator {
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
-		IPath location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
+		IPath location;
+		if (resource.getProject() != null)
+			location = resource.getProject().getPathVariableManager().resolvePath(unresolvedLocation);
+		else
+			location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
 		if (location.isEmpty())
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), Messages.links_noPath);
 		//check that the location is absolute
@@ -103,7 +107,11 @@ public class LocationValidator {
 			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
-		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
+		URI location;
+		if (resource.getProject() != null)
+			location = resource.getProject().getPathVariableManager().resolveURI(unresolvedLocation, resource);
+		else
+			location = workspace.getPathVariableManager().resolveURI(unresolvedLocation, resource);
 		//check nature veto
 		String[] natureIds = ((Project) resource.getProject()).internalGetDescription().getNatureIds();
 
@@ -293,8 +301,11 @@ public class LocationValidator {
 	public IStatus validateProjectLocation(IProject context, IPath unresolvedLocation) {
 		if (unresolvedLocation == null)
 			return validateProjectLocationURI(context, null);
-
-		IPath location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
+		IPath location;
+		if (context != null)
+			location = context.getPathVariableManager().resolvePath(unresolvedLocation);
+		else
+			location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
 			String message;
@@ -334,8 +345,11 @@ public class LocationValidator {
 		// the default is ok for all other projects
 		if (unresolvedLocation == null)
 			return Status.OK_STATUS;
-
-		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
+		URI location;
+		if (context != null)
+			location = context.getPathVariableManager().resolveURI(unresolvedLocation, context);
+		else
+			location = workspace.getPathVariableManager().resolveURI(unresolvedLocation, context);
 		//check the standard path name restrictions
 		IStatus result = validateSegments(location);
 		if (!result.isOK())

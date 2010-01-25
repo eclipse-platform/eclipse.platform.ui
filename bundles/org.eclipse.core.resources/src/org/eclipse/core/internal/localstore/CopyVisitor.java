@@ -11,6 +11,7 @@
 *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.net.URI;
 import java.util.LinkedList;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -77,7 +78,8 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 				return true;
 			}
 			if ((!isDeep || source.isUnderVirtual()) && source.isLinked()) {
-				destination.createLink(source.getRawLocationURI(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
+				URI sourceLocationURI = getWorkspace().transferVariableDefinition(source, destination, source.getRawLocationURI());
+				destination.createLink(sourceLocationURI, updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 				return false;
 			}
 			// update filters in project descriptions
