@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -63,19 +62,16 @@ public class RefactoringStatusDialog extends Dialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		Composite result= new Composite(parent, SWT.NONE);
-		initializeDialogUnits(result);
-		GridLayout layout= new GridLayout();
-		result.setLayout(layout);
-		GridData gd= new GridData(GridData.FILL_BOTH);
+		Composite result= (Composite) super.createDialogArea(parent);
+		GridData gd= (GridData) result.getLayoutData();
 		gd.widthHint= 600;
 		gd.heightHint= 400;
-		result.setLayoutData(gd);
+
 		if (!fLightWeight) {
 			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			ViewForm messagePane= new ViewForm(result, SWT.BORDER | SWT.FLAT);
-			messagePane.marginWidth= layout.marginWidth;
-			messagePane.marginHeight= layout.marginHeight;
+			messagePane.marginWidth= 3;
+			messagePane.marginHeight= 3;
 			gd= new GridData(GridData.FILL_HORIZONTAL);
 			// XXX http://bugs.eclipse.org/bugs/show_bug.cgi?id=27572
 			Rectangle rect= messagePane.computeTrim(0, 0, 0, convertHeightInCharsToPixels(2) + messagePane.marginHeight * 2);
