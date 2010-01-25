@@ -11,15 +11,18 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -250,7 +253,7 @@ public class WorkspaceUndoUtil {
 			List resourcesAtDestination, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean pathIncludesName) throws CoreException {
 		return copy(resources, destination, resourcesAtDestination, monitor,
-				uiInfo, pathIncludesName, false, false);
+				uiInfo, pathIncludesName, false, false, null);
 	}
 
 	/**
@@ -300,7 +303,7 @@ public class WorkspaceUndoUtil {
 	static ResourceDescription[] copy(IResource[] resources, IPath destination,
 			List resourcesAtDestination, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean pathIncludesName, boolean createVirtual,
-			boolean createLinks)
+			boolean createLinks, String relativeToVariable)
 			throws CoreException {
 
 		monitor.beginTask("", resources.length); //$NON-NLS-1$
@@ -328,7 +331,7 @@ public class WorkspaceUndoUtil {
 					ResourceDescription[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
 							new SubProgressMonitor(monitor, 1), uiInfo, false,
-							createVirtual, createLinks);
+							createVirtual, createLinks, relativeToVariable);
 					// We don't record the copy since this recursive call will
 					// do so. Just record the overwrites.
 					for (int j = 0; j < overwritten.length; j++) {
@@ -355,12 +358,13 @@ public class WorkspaceUndoUtil {
 										resourcesAtDestination,
 										new SubProgressMonitor(monitor, 1),
 										uiInfo, false, createVirtual,
-										createLinks)));
+										createLinks, relativeToVariable)));
 
 							}
 						} else
-							folder.createLink(source
-									.getLocationURI(), 0,
+							folder.createLink(createRelativePath(
+									folder.getProject().getPathVariableManager(), source
+									.getLocationURI(), relativeToVariable, folder), 0,
 									new SubProgressMonitor(monitor, 1));
 					} else
 						source.copy(destinationPath, IResource.SHALLOW,
@@ -385,8 +389,9 @@ public class WorkspaceUndoUtil {
 								false);
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
-							file.createLink(source
-									.getLocationURI(), 0,
+							file.createLink(createRelativePath(
+									file.getProject().getPathVariableManager(), source
+									.getLocationURI(), relativeToVariable, file), 0,
 									new SubProgressMonitor(monitor, 1));
 						} else {
 							IFolder folder = workspaceRoot
@@ -404,11 +409,14 @@ public class WorkspaceUndoUtil {
 													new SubProgressMonitor(
 															monitor, 1),
 													uiInfo, false,
-													createVirtual, createLinks)));
+													createVirtual, createLinks,
+													relativeToVariable)));
 
 								}
 							} else
-								folder.createLink(source.getLocationURI(),
+								folder.createLink(createRelativePath(
+										folder.getProject().getPathVariableManager(),
+										source.getLocationURI(), relativeToVariable, folder),
 										0, new SubProgressMonitor(monitor, 1));
 						}
 						resourcesAtDestination.add(getWorkspace().getRoot()
@@ -454,7 +462,9 @@ public class WorkspaceUndoUtil {
 							&& (source.isLinked() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
-							file.createLink(source.getLocationURI(), 0,
+							file.createLink(createRelativePath(
+									file.getProject().getPathVariableManager(),
+									source.getLocationURI(), relativeToVariable, file), 0,
 									new SubProgressMonitor(monitor, 1));
 						} else {
 							IFolder folder = workspaceRoot
@@ -471,11 +481,14 @@ public class WorkspaceUndoUtil {
 													new SubProgressMonitor(
 															monitor, 1),
 													uiInfo, false,
-													createVirtual, createLinks)));
+													createVirtual, createLinks,
+													relativeToVariable)));
 
 								}
 							} else
-								folder.createLink(source.getLocationURI(),
+								folder.createLink(createRelativePath(
+										folder.getProject().getPathVariableManager(),
+										source.getLocationURI(), relativeToVariable, folder),
 										0, new SubProgressMonitor(monitor, 1));
 						}
 					} else
@@ -499,6 +512,29 @@ public class WorkspaceUndoUtil {
 		monitor.done();
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
+	}
+
+	/**
+	 * Transform an absolute path URI to a relative path one (i.e. from
+	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
+	 * is "VAR" and points to "C:\foo\bar\").
+	 *
+	 * @param locationURI
+	 * @param pvm the IPathVariableManager to use for resolving variables
+	 * @param resource 
+	 * @return an URI that was made relative to a variable
+	 */
+	static private URI createRelativePath(IPathVariableManager pvm, URI locationURI, String relativeVariable, IResource resource) {
+		if (relativeVariable == null)
+			return locationURI;
+		IPath location = URIUtil.toPath(locationURI);
+		IPath result;
+		try {
+			result = URIUtil.toPath(pvm.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+		} catch (CoreException e) {
+			return locationURI;
+		}
+		return URIUtil.toURI(result);
 	}
 
 	/**

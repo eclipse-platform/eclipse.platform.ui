@@ -22,9 +22,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -104,6 +106,7 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private boolean createLinks = false;
 
+	private String relativeVariable = null;
 	/**
 	 * Overwrite all flag.
 	 */
@@ -460,7 +463,9 @@ public class CopyFilesAndFoldersOperation {
 							&& (source.isVirtual() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
-							file.createLink(source.getLocationURI(), 0,
+							file.createLink(createRelativePath(file
+									.getProject().getPathVariableManager(),
+									source.getLocationURI(), file), 0,
 									new SubProgressMonitor(subMonitor, 1));
 						} else {
 							IFolder folder = workspaceRoot
@@ -476,7 +481,9 @@ public class CopyFilesAndFoldersOperation {
 											new SubProgressMonitor(subMonitor,
 													1));
 							} else
-								folder.createLink(source.getLocationURI(), 0,
+								folder.createLink(createRelativePath(folder
+										.getProject().getPathVariableManager(),
+										source.getLocationURI(), folder), 0,
 								new SubProgressMonitor(subMonitor, 1));
 						}
 					} else
@@ -490,6 +497,27 @@ public class CopyFilesAndFoldersOperation {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Transform an absolute path URI to a relative path one (i.e. from
+	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
+	 * is "VAR" and points to "C:\foo\bar\").
+	 * 
+	 * @param locationURI
+	 * @return an URI that was made relative to a variable
+	 */
+	private URI createRelativePath(IPathVariableManager pvm, URI locationURI, IResource resource) {
+		if (relativeVariable == null)
+			return locationURI;
+		IPath location = URIUtil.toPath(locationURI);
+		IPath result;
+		try {
+			result = URIUtil.toPath(pvm.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+		} catch (CoreException e) {
+			return locationURI;
+		}
+		return URIUtil.toURI(result);
 	}
 
 	/**
@@ -1200,6 +1228,7 @@ public class CopyFilesAndFoldersOperation {
 				CopyResourcesOperation copyMoveOp = (CopyResourcesOperation) op;
 				copyMoveOp.setCreateGroups(createGroupsAndLinks);
 				copyMoveOp.setCreateLinks(createLinks);
+				copyMoveOp.setRelativeVariable(relativeVariable);
 			}
 			PlatformUI.getWorkbench().getOperationSupport()
 					.getOperationHistory().execute(op, monitor,
@@ -1326,6 +1355,7 @@ public class CopyFilesAndFoldersOperation {
 		op.setCreateContainerStructure(false);
 		op.setCreateGroups(createGroupsAndLinks);
 		op.setCreateLinks(createLinks);
+		op.setRelativeVariable(relativeVariable);
 		try {
 			op.run(monitor);
 		} catch (InterruptedException e) {
@@ -1838,6 +1868,16 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void setCreateLinks(boolean value) {
 		createLinks = value;
+	}
+
+	/**
+	 * Set a variable relative to which the links are created
+	 * 
+	 * @param variable
+	 * @since 3.6
+	 */
+	public void setRelativeVariable(String variable) {
+		relativeVariable = variable;
 	}
 
 	/**

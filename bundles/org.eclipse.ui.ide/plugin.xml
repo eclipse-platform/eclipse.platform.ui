@@ -725,6 +725,15 @@
             </adapt>
          </enabledWhen>
       </page>
+      <page
+            class="org.eclipse.ui.internal.ide.dialogs.ProjectLinkedResourcePage"
+            id="org.eclipse.ui.propertypages.project.linkedResourcesPage"
+            name="%linked_resources"
+            >
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
+      </page>    
    </extension>
    <extension
          point="org.eclipse.ui.commands">

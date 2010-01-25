@@ -20,9 +20,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -87,6 +90,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private boolean createLinks = false;
 
+    private String relativeVariable = null;
+
     private boolean createContainerStructure = true;
 
     //The constants for the overwrite 3 state
@@ -97,6 +102,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
     private static final int OVERWRITE_ALL = 2;
 
     private int overwriteState = OVERWRITE_NOT_SET;
+
+	private static final String ABSOLUTE_PATH = "<Absolute Path>"; //$NON-NLS-1$
 
 	/**
      * Creates a new operation that recursively imports the entire contents of the
@@ -313,7 +320,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 					((IFolder) currentFolder).create(IResource.VIRTUAL, true,
 							null);
                 else if (createLinks)
-                    ((IFolder) currentFolder).createLink(path, 0, null);
+                    ((IFolder) currentFolder).createLink(createRelativePath(
+                            currentFolder.getProject(), path, currentFolder), 0, null);
                 else
                     ((IFolder) currentFolder).create(false, true, null);
             }
@@ -564,8 +572,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         IResource.KEEP_HISTORY, null);
             } else {
                 if (createGroups || createLinks)
-                    targetResource.createLink(new Path(provider
-                                    .getFullPath(fileObject)), 0, null);
+                    targetResource.createLink(createRelativePath(
+                            containerResource.getProject(), new Path(provider
+                                    .getFullPath(fileObject)), targetResource), 0, null);
                 else
                     targetResource.create(contentStream, false, null);
             }
@@ -717,8 +726,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				workspace.getRoot().getFolder(resourcePath).create(
 						IResource.VIRTUAL, true, null);
             else if (createLinks) {
-                workspace.getRoot().getFolder(resourcePath).createLink(
-                        new Path(provider.getFullPath(folderObject)),
+            	IFolder newFolder = workspace.getRoot().getFolder(resourcePath);
+            	newFolder.createLink(
+                        createRelativePath(containerResource.getProject(),
+                                new Path(provider.getFullPath(folderObject)), newFolder),
                         0, null);
                 policy = POLICY_SKIP_CHILDREN;
             } else
@@ -729,6 +740,28 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         return policy;
     }
+
+    /**
+     * Transform an absolute path URI to a relative path one (i.e. from
+     * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
+     * is "VAR" and points to "C:\foo\bar\").
+     * 
+     * @param location
+     * @param resource 
+     * @return an URI that was made relative to a variable
+     */
+    private IPath createRelativePath(IProject project, IPath location, IResource resource) {
+		if (relativeVariable == null)
+			return location;
+		if (relativeVariable.equals(ABSOLUTE_PATH))
+			return location;
+		IPathVariableManager pathVariableManager = project.getPathVariableManager();
+		try {
+			return URIUtil.toPath(pathVariableManager.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+		} catch (CoreException e) {
+			return location;
+		}
+	}
 
 	/**
      * Imports the specified file system object recursively into the workspace.
@@ -932,5 +965,15 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public void setCreateLinks(boolean links) {
         createLinks = links;
+    }
+
+    /**
+     * Set a variable relative to which the links are created
+     * 
+     * @param variable
+     * @since 3.6
+     */
+    public void setRelativeVariable(String variable) {
+        relativeVariable = variable;
     }
 }

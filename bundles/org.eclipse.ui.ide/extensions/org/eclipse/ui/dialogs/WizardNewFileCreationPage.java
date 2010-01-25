@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -190,6 +192,18 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 					public String getValue() {
 						return resourceGroup.getResource();
+					}
+
+					public IResource getResource() {
+						IPath path = resourceGroup.getContainerFullPath();
+						IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+								.getRoot();
+						IResource resource = root.findMember(path);
+						if (resource != null && resource instanceof IContainer) {
+							String resourceName = resourceGroup.getResource();
+							return ((IContainer) resource).getFile(Path.fromOSString(resourceName.length() > 0 ? resourceName:"foo")); //$NON-NLS-1$
+						}
+						return resource;
 					}
 				});
 	}

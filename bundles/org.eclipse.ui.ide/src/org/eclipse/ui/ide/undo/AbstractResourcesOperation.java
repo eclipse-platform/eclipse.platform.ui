@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,7 +325,8 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			IResource subResource = targetResources[i];
 			for (int j = 0; j < targetResources.length; j++) {
 				IResource superResource = targetResources[j];
-				if (isDescendantOf(subResource, superResource))
+				if (isDescendantOf(subResource, superResource)
+						&& !subResources.contains(subResource))
 					subResources.add(subResource);
 			}
 		}

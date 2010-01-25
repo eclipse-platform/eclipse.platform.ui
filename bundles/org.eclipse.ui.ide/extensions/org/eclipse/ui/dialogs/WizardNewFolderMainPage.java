@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -181,6 +182,17 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 					public void setValue(String string) {
 						resourceGroup.setResource(string);
+					}
+					public IResource getResource() {
+						IPath path = resourceGroup.getContainerFullPath();
+						IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+								.getRoot();
+						IResource resource = root.findMember(path);
+						if (resource != null && resource instanceof IContainer) {
+							String resourceName = resourceGroup.getResource();
+							return ((IContainer) resource).getFolder(Path.fromOSString(resourceName.length() > 0 ? resourceName:"foo")); //$NON-NLS-1$
+						}
+						return resource;
 					}
 				});
 	}

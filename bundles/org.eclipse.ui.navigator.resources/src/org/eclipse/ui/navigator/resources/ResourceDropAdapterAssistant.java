@@ -404,11 +404,14 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				if (!target.isVirtual() && (dropAdapter.getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				dialog.setResource(target);
 				if (dialog.open() == Window.OK) {
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_GROUPS_AND_LINKS)
 						operation.setCreateGroups(true);
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
 						operation.setCreateLinks(true);
+					if (dialog.getVariable() != null)
+						operation.setRelativeVariable(dialog.getVariable());
 					operation.copyResources(sources, target);
 				} else
 					return problems;
@@ -486,6 +489,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				if (!target.isVirtual() && (finalAdapter.getCurrentOperation() != DND.DROP_LINK))
 					mask |= ImportTypeDialog.IMPORT_COPY;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				dialog.setResource(target);
 				if (dialog.open() == Window.OK)
 					type = dialog.getSelection();
 				else
@@ -495,9 +499,13 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 					operation.copyFiles(names, target);
 					break;
 				case ImportTypeDialog.IMPORT_GROUPS_AND_LINKS:
+					if (dialog.getVariable() != null)
+						operation.setRelativeVariable(dialog.getVariable());
 					operation.createGroupAndLinks(names, target);
 					break;
 				case ImportTypeDialog.IMPORT_LINK:
+					if (dialog.getVariable() != null)
+						operation.setRelativeVariable(dialog.getVariable());
 					operation.linkFiles(names, target);
 					break;
 				case ImportTypeDialog.IMPORT_NONE:

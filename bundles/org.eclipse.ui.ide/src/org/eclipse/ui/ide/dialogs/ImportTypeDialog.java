@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
+import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
@@ -153,6 +156,7 @@ public class ImportTypeDialog extends MessageDialog implements SelectionListener
 	private Button alwaysPerformThisOperation = null;
 	private Label variableLabel = null;
 	private String variable = ABSOLUTE_PATH;
+	private IResource receivingResource = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.MessageDialog#open()
@@ -210,6 +214,42 @@ public class ImportTypeDialog extends MessageDialog implements SelectionListener
 			linkButton.setData(new Integer(IMPORT_LINK));
 			linkButton.addSelectionListener(this);
 		}
+
+		if ((operationMask & (IMPORT_GROUPS_AND_LINKS | IMPORT_LINK)) != 0) {
+			Composite variableGroup = new Composite(composite, 0);
+			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+			variableGroup.setLayoutData(gridData);
+
+	 		layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.verticalSpacing = 9;
+			variableGroup.setLayout(layout);
+
+			variableLabel = new Label(variableGroup, 0);
+			variableLabel.setText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAs);
+			gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+			variableLabel.setLayoutData(gridData);
+			
+			variableCombo = new Combo(variableGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+			gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING); // GridData.FILL_HORIZONTAL);
+			variableCombo.setLayoutData(gridData);
+			variableCombo.addSelectionListener(new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {
+					if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1))
+						editVariables();
+					else
+						selectVariable(variableCombo.getItem(variableCombo.getSelectionIndex()));
+				}
+				public void widgetSelected(SelectionEvent e) {
+					if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1))
+						editVariables();
+					else
+						selectVariable(variableCombo.getItem(variableCombo.getSelectionIndex()));
+				}
+			});
+			setupVariableContent();
+			selectVariable(readContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VARIABLE));
+		}
 		
 		alwaysPerformThisOperation = new Button(composite, SWT.CHECK);
 		alwaysPerformThisOperation.setText(IDEWorkbenchMessages.ImportTypeDialog_alwaysPerformThisOperation);
@@ -218,6 +258,66 @@ public class ImportTypeDialog extends MessageDialog implements SelectionListener
 
 		refreshSelection();
 		return composite;
+	}
+	
+	private void editVariables() {
+		PathVariableEditDialog dialog = new PathVariableEditDialog(getShell());
+		dialog.setResource(receivingResource);
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			String[] variableNames = (String[]) dialog.getResult();
+			if (variableNames != null && variableNames.length >= 1) {
+				variable = variableNames[0];
+			}
+		}
+		setupVariableContent();
+		selectVariable(variable);
+	}
+
+	private void selectVariable(String var) {
+		if (var.equals(IDEWorkbenchMessages.ImportTypeDialog_automatic) || var.equals(AUTOMATIC)) {
+			variableCombo.select(0);
+			variable = var;
+		}
+		else
+		if (var.equals(IDEWorkbenchMessages.ImportTypeDialog_absolutePath) || var.equals(ABSOLUTE_PATH)) {
+			variableCombo.select(1);
+			variable = var;
+		}
+		else {
+			String[] items = variableCombo.getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (var.equals(items[i])) {
+					variableCombo.select(i);
+					if (i == 0)
+						variable = AUTOMATIC;
+					else
+					if (i == 1)
+						variable = ABSOLUTE_PATH;
+					else
+						variable = items[i];
+					return;
+				}
+			}
+			variableCombo.select(0);
+			variable = AUTOMATIC;
+		}
+	}
+	private void setupVariableContent() {
+		String[] items;
+		IPathVariableManager pathVariableManager;
+		if (receivingResource != null)
+			pathVariableManager = receivingResource.getProject().getPathVariableManager();
+		else
+			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+		String[] variables = pathVariableManager.getPathVariableNames();
+		items = new String[variables.length + 3];
+		items[0] = IDEWorkbenchMessages.ImportTypeDialog_automatic;
+		items[1] = IDEWorkbenchMessages.ImportTypeDialog_absolutePath;
+		for (int i = 0; i < variables.length; i++)
+			items[i + 2] = variables[i];
+		items[items.length - 1] = IDEWorkbenchMessages.ImportTypeDialog_editVariables;
+		variableCombo.setItems(items);
+		super.getShell().layout(true);
 	}
 	
 	protected void buttonPressed(int buttonId) {
@@ -253,5 +353,12 @@ public class ImportTypeDialog extends MessageDialog implements SelectionListener
 			variableCombo.setEnabled((currentSelection & (IMPORT_GROUPS_AND_LINKS | IMPORT_LINK)) != 0);
 		if (variableLabel != null)
 			variableLabel.setEnabled((currentSelection & (IMPORT_GROUPS_AND_LINKS | IMPORT_LINK)) != 0);
+	}
+
+	/** Set the project that is the destination of the import operation
+	 * @param resource
+	 */
+	public void setResource(IResource resource) {
+		receivingResource = resource;
 	}
 }

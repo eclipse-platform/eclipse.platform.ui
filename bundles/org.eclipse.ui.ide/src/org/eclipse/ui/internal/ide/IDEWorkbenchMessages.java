@@ -487,24 +487,31 @@ public class IDEWorkbenchMessages extends NLS {
 	// and should be removed.
 	public static String PathVariableDialog_shellTitle_newVariable;
 	public static String PathVariableDialog_shellTitle_existingVariable;
+	public static String PathVariableDialog_shellTitle_editLocation;
 	public static String PathVariableDialog_dialogTitle_newVariable;
 	public static String PathVariableDialog_dialogTitle_existingVariable;
+	public static String PathVariableDialog_dialogTitle_editLinkLocation;
 	public static String PathVariableDialog_message_newVariable;
 	public static String PathVariableDialog_message_existingVariable;
+	public static String PathVariableDialog_message_editLocation;
 
 	public static String PathVariableDialog_variableName;
 	public static String PathVariableDialog_variableValue;
+	public static String PathVariableDialog_variableResolvedValue;
 	public static String PathVariableDialog_variableNameEmptyMessage;
 	public static String PathVariableDialog_variableValueEmptyMessage;
 	public static String PathVariableDialog_variableValueInvalidMessage;
 	public static String PathVariableDialog_file;
 	public static String PathVariableDialog_folder;
+	public static String PathVariableDialog_variable;
 	public static String PathVariableDialog_selectFileTitle;
 	public static String PathVariableDialog_selectFolderTitle;
 	public static String PathVariableDialog_selectFolderMessage;
 	public static String PathVariableDialog_variableAlreadyExistsMessage;
 	public static String PathVariableDialog_pathIsRelativeMessage;
 	public static String PathVariableDialog_pathDoesNotExistMessage;
+	public static String PathVariableDialog_variableValueIsWrongTypeFolder;
+	public static String PathVariableDialog_variableValueIsWrongTypeFile;
 
 	// --- Local History ---
 	public static String FileHistory_longevity;
@@ -577,10 +584,34 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_containerEncodingFormat;
 	public static String ResourceInfo_exWarning;
 	public static String ResourceInfo_isGroup;
+	public static String ResourceInfo_edit;
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
 
+	// --- Project Linked Resources References ---
+	public static String ProjectLinkedResourcePage_description;
+	public static String ProjectLinkedResourcePage_pathVariableTabTitle;
+	public static String ProjectLinkedResourcePage_linkedResourcesTabTitle;
+
+	// --- Linked Resource Editor ---
+	public static String LinkedResourceEditor_editLinkedLocation;
+	public static String LinkedResourceEditor_convertToVariableLocation;
+	public static String LinkedResourceEditor_resourceName;
+	public static String LinkedResourceEditor_path;
+	public static String LinkedResourceEditor_location;
+	public static String LinkedResourceEditor_fixed;
+	public static String LinkedResourceEditor_broken;
+	public static String LinkedResourceEditor_absolute;
+	public static String LinkedResourceEditor_changedTo;
+	public static String LinkedResourceEditor_unableToSetLinkLocationForResource;
+	public static String LinkedResourceEditor_convertRelativePathLocations;
+	public static String LinkedResourceEditor_convertionResults;
+	public static String linkedResourceEditor_OK;
+	public static String LinkedResourceEditor_unableToCreateVariable;
+	public static String LinkedResourceEditor_unableToFindCommonPathSegments;
+	public static String LinkedResourceEditor_convertAbsolutePathLocations;	
+	
 	// ==============================================================================
 	// Editors
 	// ==============================================================================
@@ -678,9 +709,13 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CreateLinkedResourceGroup_linkRequiredUnderAGroup;
 
 	public static String PathVariablesBlock_variablesLabel;
+	public static String PathVariablesBlock_variablesLabelForResource;
 	public static String PathVariablesBlock_addVariableButton;
 	public static String PathVariablesBlock_editVariableButton;
 	public static String PathVariablesBlock_removeVariableButton;
+	public static String PathVariablesBlock_nameColumn;
+	public static String PathVariablesBlock_valueColumn;
+	public static String PathVariablesBlock_resolvedValueColumn;
 
 	public static String PathVariableSelectionDialog_title;
 	public static String PathVariableSelectionDialog_extendButton;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,8 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	protected boolean fCreateGroups = false;
 
 	protected boolean fCreateLinks = false;
+
+	protected String fRelativeToVariable = null;
 
 	/**
 	 * Create an AbstractCopyOrMoveResourcesOperation that moves or copies all
@@ -267,5 +269,9 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 
 	public void setCreateLinks(boolean value) {
 		fCreateLinks = value;
+	}
+
+	public void setRelativeVariable(String value) {
+		fRelativeToVariable = value;
 	}
 }

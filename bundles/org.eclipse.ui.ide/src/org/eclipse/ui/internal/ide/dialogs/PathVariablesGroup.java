@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +20,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.resources.ProjectPathVariableManager;
+import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +34,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,6 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -120,10 +127,18 @@ public class PathVariablesGroup {
     private final Image FOLDER_IMG = PlatformUI.getWorkbench()
             .getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 
+    private final Image BUILTIN_IMG = PlatformUI.getWorkbench()
+            .getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
     // unknown (non-existent) image. created locally, dispose locally
     private Image imageUnkown;
 
-    /**
+    // current project for which the variables are being edited.
+    // If null, the workspace variables are being edited instead.
+    private IResource currentResource = null;
+
+    private final static String PARENT_VARIABLE_NAME = "PARENT"; //$NON-NLS-1$
+    
+	/**
      * Creates a new PathVariablesGroup.
      *
      * @param multiSelect create a multi select tree
@@ -167,6 +182,7 @@ public class PathVariablesGroup {
                 PathVariableDialog.NEW_VARIABLE, variableType,
                 pathVariableManager, tempPathVariables.keySet());
 
+        dialog.setResource(currentResource);
         // opens the dialog - just returns if the user cancels it
         if (dialog.open() == Window.CANCEL) {
 			return;
@@ -217,7 +233,13 @@ public class PathVariablesGroup {
 
         // layout the table & its buttons
         variableLabel = new Label(pageComponent, SWT.LEFT);
-        variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
+        if (currentResource == null)
+            variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
+        else
+            variableLabel.setText(NLS.bind(
+                                    IDEWorkbenchMessages.PathVariablesBlock_variablesLabelForResource,
+                                    currentResource.getName()));
+
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
@@ -237,6 +259,18 @@ public class PathVariablesGroup {
 				}
             }
         });
+        
+        TableColumn tableColumn = new TableColumn(variableTable, SWT.NONE);
+        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
+        tableColumn.setWidth(150);
+        tableColumn = new TableColumn(variableTable, SWT.NONE);
+        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
+        tableColumn.setWidth(250);
+        tableColumn = new TableColumn(variableTable, SWT.NONE);
+        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_resolvedValueColumn);
+        tableColumn.setWidth(250);
+        
+        variableTable.setHeaderVisible(true);
         data = new GridData(GridData.FILL_BOTH);
         data.heightHint = variableTable.getItemHeight() * 7;
         variableTable.setLayoutData(data);
@@ -277,6 +311,7 @@ public class PathVariablesGroup {
                 pathVariableManager, tempPathVariables.keySet());
         dialog.setVariableName(variableName);
         dialog.setVariableValue(variableValue.toOSString());
+        dialog.setResource(currentResource);
 
         // opens the dialog - just returns if the user cancels it
         if (dialog.open() == Window.CANCEL) {
@@ -407,19 +442,24 @@ public class PathVariablesGroup {
      * (Re-)Initialize collections used to mantain temporary variable state.
      */
     private void initTemporaryState() {
-        String[] varNames = pathVariableManager.getPathVariableNames();
+        String[] varNames = pathVariableManager.getPathVariableNames(currentResource);
 
         tempPathVariables.clear();
         for (int i = 0; i < varNames.length; i++) {
-            IPath value = pathVariableManager.getValue(varNames[i]);
-
+        	// hide the PARENT variable
+        	if (varNames[i].equals(PARENT_VARIABLE_NAME))
+        		continue;
+            URI uri = pathVariableManager.getValue(varNames[i], currentResource);
             // the value may not exist any more
-            if (value != null) {
-                boolean isFile = value.toFile().isFile();
-                if ((isFile && (variableType & IResource.FILE) != 0)
-                        || (isFile == false && (variableType & IResource.FOLDER) != 0)) {
-
-                    tempPathVariables.put(varNames[i], value);
+            if (uri != null) {
+                IPath value = URIUtil.toPath(uri);
+                if (value != null) {
+	                boolean isFile = value.toFile().isFile();
+	                if ((isFile && (variableType & IResource.FILE) != 0)
+	                        || (isFile == false && (variableType & IResource.FOLDER) != 0)) {
+	
+	                    tempPathVariables.put(varNames[i], value);
+	                }
                 }
             }
         }
@@ -432,8 +472,8 @@ public class PathVariablesGroup {
      */
     private void updateEnabledState() {
         int itemsSelectedCount = variableTable.getSelectionCount();
-        editButton.setEnabled(itemsSelectedCount == 1);
-        removeButton.setEnabled(itemsSelectedCount > 0);
+        editButton.setEnabled(itemsSelectedCount == 1 && canChangeSelection());
+        removeButton.setEnabled(itemsSelectedCount > 0 && canChangeSelection());
     }
 
     /**
@@ -445,7 +485,7 @@ public class PathVariablesGroup {
      * @param selectedVarName the name for the variable to be selected (may be
      * <code>null</code>)
      * @see IPathVariableManager#getPathVariableNames()
-     * @see IPathVariableManager#getValue(String)
+     * @see IPathVariableManager#getValue(String, IResource)
      */
     private void updateVariableTable(String selectedVarName) {
         variableTable.removeAll();
@@ -455,13 +495,22 @@ public class PathVariablesGroup {
             TableItem item = new TableItem(variableTable, SWT.NONE);
             String varName = (String) varNames.next();
             IPath value = (IPath) tempPathVariables.get(varName);
-            IFileInfo file = IDEResourceInfoUtils.getFileInfo(value);
+            IPath resolvedValue = value;
+            if (currentResource != null) {
+            	URI resolvedURI = currentResource.getProject().getPathVariableManager().resolveURI(URIUtil.toURI(resolvedValue), currentResource);
+            	resolvedValue = URIUtil.toPath(resolvedURI);
+            }
+            IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
 
-            item.setText(varName + " - " + value.toOSString()); //$NON-NLS-1$ 
+            item.setText(0, varName);
+            item.setText(1, removeParentVariable(value.toOSString()));
+            item.setText(2, resolvedValue.toOSString());
             // the corresponding variable name is stored in each table widget item
             item.setData(varName);
-            item.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG 
-                    : FILE_IMG ) : imageUnkown);
+            if (!isBuiltInVariable(varName)) {
+                item.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
+            } else
+                item.setImage(BUILTIN_IMG);
             if (varName.equals(selectedVarName)) {
 				selectedVarIndex = variableTable.getItemCount() - 1;
 			}
@@ -478,10 +527,19 @@ public class PathVariablesGroup {
     }
 
     /**
+     * Converts the ${PARENT-COUNT-VAR} format to "VAR/../../" format
+     * @param value
+     * @return the converted value
+     */
+    private String removeParentVariable(String value) {
+    	return ProjectPathVariableManager.convertToUserEditableFormat(value);
+    }
+    
+    /**
      * Commits the temporary state to the path variable manager in response to user
      * confirmation.
      * @return boolean <code>true</code> if there were no problems.
-     * @see IPathVariableManager#setValue(String, IPath)
+     * @see IPathVariableManager#setValue(String, IResource, URI)
      */
     public boolean performOk() {
         try {
@@ -491,7 +549,7 @@ public class PathVariablesGroup {
                 String removedVariableName = (String) removed.next();
                 // only removes variables that have not been added again
                 if (!tempPathVariables.containsKey(removedVariableName)) {
-					pathVariableManager.setValue(removedVariableName, null);
+					pathVariableManager.setValue(removedVariableName, currentResource, null);
 				}
             }
 
@@ -501,7 +559,8 @@ public class PathVariablesGroup {
                 Map.Entry entry = (Map.Entry) current.next();
                 String variableName = (String) entry.getKey();
                 IPath variableValue = (IPath) entry.getValue();
-                pathVariableManager.setValue(variableName, variableValue);
+                if (!isBuiltInVariable(variableName))
+                    pathVariableManager.setValue(variableName, currentResource, URIUtil.toURI(variableValue));
             }
             // re-initialize temporary state
             initTemporaryState();
@@ -527,6 +586,30 @@ public class PathVariablesGroup {
             tempPathVariables.remove(varName);
         }
         updateWidgetState(null);
+    }
+
+    private boolean canChangeSelection() {
+        int[] selectedIndices = variableTable.getSelectionIndices();
+        for (int i = 0; i < selectedIndices.length; i++) {
+            TableItem selectedItem = variableTable.getItem(selectedIndices[i]);
+            String varName = (String) selectedItem.getData();
+            if (isBuiltInVariable(varName))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param varName
+     *            the variable name to test
+     */
+    private boolean isBuiltInVariable(String varName) {
+        if (currentResource != null) {
+        	IPathVariable variable = pathVariableManager.getPathVariable(varName, currentResource);
+            if (variable != null) 
+            	return variable.isReadOnly();
+        }
+        return false;
     }
 
     /**
@@ -580,4 +663,30 @@ public class PathVariablesGroup {
         updateVariableTable(selectedVarName);
         updateEnabledState();
     }
+
+    /**
+     * @param resource
+     */
+    public void setResource(IResource resource) {
+    	currentResource = resource;
+        if (resource != null)
+        	pathVariableManager = resource.getProject().getPathVariableManager();
+        else
+        	pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+        removedVariableNames = new HashSet();
+        tempPathVariables = new TreeMap();
+        // initialize internal model
+        initTemporaryState();
+    }
+
+	/**
+	 * Reloads the path variables from the project description.
+	 */
+	public void reloadContent() {
+        removedVariableNames = new HashSet();
+        tempPathVariables = new TreeMap();
+		initTemporaryState();
+		if (variableTable != null)
+	        updateWidgetState(null);
+	}
 }

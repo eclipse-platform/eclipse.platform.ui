@@ -183,6 +183,10 @@ public class NewFolderDialog extends SelectionStatusDialog {
 					public String getValue() {
 						return folderNameField.getText();
 					}
+
+					public IResource getResource() {
+						return container;
+					}
 				});
 	}
 
