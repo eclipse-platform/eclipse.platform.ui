@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -61,8 +63,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -78,6 +83,7 @@ import org.eclipse.search.internal.ui.CopyToClipboardAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.internal.ui.SelectAllAction;
+import org.eclipse.search.internal.ui.text.EditorOpener;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -239,6 +245,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private IAction[] fFilterActions;
 	private Integer fElementLimit;
+
+	/**
+	 * The editor opener.
+	 * @since 3.6
+	 */
+	private EditorOpener fEditorOpener= new EditorOpener();
 
 	/**
 	 * Flag (<code>value 1</code>) denoting flat list layout.
@@ -409,6 +421,48 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		showMatch(match, currentOffset, currentLength);
+	}
+
+	/**
+	 * Opens an editor on the given file resource and tries to select the given offset and length.
+	 * <p>
+	 * If the page already has an editor open on the target object then that editor is brought to
+	 * front; otherwise, a new editor is opened. If <code>activate == true</code> the editor will be
+	 * activated.
+	 * <p>
+	 * 
+	 * @param page the workbench page in which the editor will be opened
+	 * @param file the file to open
+	 * @param offset the offset to select in the editor
+	 * @param length the length to select in the editor
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 * @throws PartInitException if the editor could not be initialized
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
+	 * @since 3.6
+	 */
+	protected final IEditorPart openAndSelect(IWorkbenchPage page, IFile file, int offset, int length, boolean activate) throws PartInitException {
+		return fEditorOpener.openAndSelect(page, file, offset, length, activate);
+	}
+
+	/**
+	 * Opens an editor on the given file resource.
+	 * <p>
+	 * If the page already has an editor open on the target object then that editor is brought to
+	 * front; otherwise, a new editor is opened. If <code>activate == true</code> the editor will be
+	 * activated.
+	 * <p>
+	 * 
+	 * @param page the workbench page in which the editor will be opened
+	 * @param file the file to open
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 * @throws PartInitException if the editor could not be initialized
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
+	 * @since 3.6
+	 */
+	protected final IEditorPart open(IWorkbenchPage page, IFile file, boolean activate) throws PartInitException {
+		return fEditorOpener.open(page, file, activate);
 	}
 
 	/**

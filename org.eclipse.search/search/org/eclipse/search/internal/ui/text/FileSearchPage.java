@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,8 +112,6 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
 
-	private EditorOpener fEditorOpener= new EditorOpener();
-
 
 	private static final String[] SHOW_IN_TARGETS= new String[] { IPageLayout.ID_RES_NAV };
 	private  static final IShowInTargetList SHOW_IN_TARGET_LIST= new IShowInTargetList() {
@@ -169,9 +167,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		IFile file= (IFile) match.getElement();
 		IWorkbenchPage page= getSite().getPage();
 		if (offset >= 0 && length != 0) {
-			fEditorOpener.openAndSelect(page, file, offset, length, activate);
+			openAndSelect(page, file, offset, length, activate);
 		} else {
-			fEditorOpener.open(page, file, activate);
+			open(page, file, activate);
 		}
 	}
 
@@ -181,7 +179,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
 					try {
-						fEditorOpener.open(getSite().getPage(), (IFile) firstElement, false);
+						open(getSite().getPage(), (IFile)firstElement, false);
 					} catch (PartInitException e) {
 						ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus());
 					}
