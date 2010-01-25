@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,17 @@
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 public class PlatformURLLocalTest extends RuntimeTest {
 
@@ -87,5 +91,47 @@ public class PlatformURLLocalTest extends RuntimeTest {
 			fail("4.0", e);
 		}
 		assertEquals("5.0", expected, resolvedURL, false);
+	}
+
+	public void testBug155081() throws IOException, BundleException {
+		Bundle bundle = null;
+		try {
+			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "platformURL/platform.test.underscore");
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
+			URL test = new URL("platform:/plugin/platform.test.underscore_1.1.0.r321_v20060816/test.txt");
+			InputStream in = test.openStream();
+			in.close();
+		} finally {
+			if (bundle != null)
+				bundle.uninstall();
+		}
+	}
+
+	public void testBug300197_01() throws IOException, BundleException {
+		Bundle bundle = null;
+		try {
+			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "platformURL/platform_test_underscore");
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
+			URL test = new URL("platform:/plugin/platform_test_underscore/test.txt");
+			InputStream in = test.openStream();
+			in.close();
+		} finally {
+			if (bundle != null)
+				bundle.uninstall();
+		}
+	}
+
+	public void testBug300197_02() throws IOException, BundleException {
+		Bundle bundle = null;
+		try {
+			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "platformURL/platform_test_underscore_2.0.0");
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
+			URL test = new URL("platform:/plugin/platform_test_underscore_2.0.0/test.txt");
+			InputStream in = test.openStream();
+			in.close();
+		} finally {
+			if (bundle != null)
+				bundle.uninstall();
+		}
 	}
 }
