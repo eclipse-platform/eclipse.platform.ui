@@ -430,10 +430,16 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		if(configs.size() == 1) {
 			return (ILaunchConfiguration) configs.get(0);
 		} else if(configs.size() > 1) {
-			//choose the one to open
-			LaunchConfigurationSelectionDialog dialog = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell(), configs);
-			if(dialog.open() == IDialogConstants.OK_ID) {
-				return (ILaunchConfiguration) dialog.getResult()[0];
+			// launch most recently launched config
+			ILaunchConfiguration config = getLaunchConfigurationManager().getMRUConfiguration(configs, fLaunchGroup, resource);
+			if(config != null) {
+				return config;
+			} else {
+				// Let the use select which config to open
+				LaunchConfigurationSelectionDialog dialog = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell(), configs);
+				if(dialog.open() == IDialogConstants.OK_ID) {
+					return (ILaunchConfiguration) dialog.getResult()[0];
+				}
 			}
 			return null;
 		} else if(shortcuts.size() > 1) {
