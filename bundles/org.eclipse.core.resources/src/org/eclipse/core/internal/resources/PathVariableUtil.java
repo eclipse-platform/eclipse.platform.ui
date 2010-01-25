@@ -80,8 +80,11 @@ public class PathVariableUtil {
 	}
 	
 	static private IPath convertToRelative(IPathVariableManager pathVariableManager, IPath originalPath, IResource resource, boolean force, String variableHint, boolean skipWorkspace, boolean generateMacro) throws CoreException {
-		if (variableHint != null && pathVariableManager.isDefined(variableHint, resource))
-			return wrapInProperFormat(makeRelativeToVariable(pathVariableManager, originalPath, resource, force, variableHint, generateMacro), generateMacro);
+		if (variableHint != null && pathVariableManager.isDefined(variableHint, resource)) {
+			IPath value = URIUtil.toPath(pathVariableManager.getValue(variableHint, resource));
+			if (value != null)
+				return wrapInProperFormat(makeRelativeToVariable(pathVariableManager, originalPath, resource, force, variableHint, generateMacro), generateMacro);
+		}
 		IPath path = convertToProperCase(originalPath);
 		IPath newPath = null;
 		int maxMatchLength = -1;
