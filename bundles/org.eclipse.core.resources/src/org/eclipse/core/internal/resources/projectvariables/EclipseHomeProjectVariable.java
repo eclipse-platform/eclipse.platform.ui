@@ -33,7 +33,7 @@ public class EclipseHomeProjectVariable extends PathVariableResolver {
 	public String getValue(String variable, IResource resource) {
 		URL installURL = Platform.getInstallLocation().getURL();
 		try {
-			return installURL.toURI().toASCIIString();
+			return URIUtil.toURI(installURL).toASCIIString();
 		} catch (URISyntaxException e) {
 			return null;
 		}
