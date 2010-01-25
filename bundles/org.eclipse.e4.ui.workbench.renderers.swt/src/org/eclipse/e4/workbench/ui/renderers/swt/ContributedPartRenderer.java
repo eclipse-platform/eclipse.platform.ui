@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -84,13 +83,10 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);
 
-		parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
-
 		Object newPart = contributionFactory
 				.create(part.getURI(), localContext);
 		part.setObject(newPart);
 
-		activate((MPart) element);
 		return newWidget;
 	}
 

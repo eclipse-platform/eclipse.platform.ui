@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -328,11 +328,13 @@ public class StackRenderer extends LazyStackRenderer {
 		// Hook up special logic to synch up the Tab Items
 		hookTabControllerLogic(stack, part, cti);
 
-		// Re-ensure that the activeChild == the selected tab
-		if (stack.getActiveChild() != null) {
-			CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
-			if (selCTI != null && selCTI != ctf.getSelection())
-				ctf.setSelection(selCTI);
+		if (stack.getActiveChild() == null) {
+			stack.setActiveChild(part);
+		}
+
+		CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
+		if (selCTI != null && selCTI != ctf.getSelection()) {
+			ctf.setSelection(selCTI);
 		}
 	}
 

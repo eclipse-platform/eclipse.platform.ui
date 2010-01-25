@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -262,6 +262,34 @@ public class PartRenderingEngineTests extends TestCase {
 
 		stack.setActiveChild(partB);
 		assertEquals(1, tabFolder.getSelectionIndex());
+	}
+
+	public void testPartStack_SetActiveChild6() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(partA);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertEquals(partA, stack.getActiveChild());
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(partB);
+
+		assertEquals(partA, stack.getActiveChild());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

@@ -203,18 +203,23 @@ public class PartServiceImpl implements EPartService {
 		MContext pwc = getParentWithContext(part);
 		MUIElement curElement = part;
 		while (pwc != null) {
+			// Ensure that the UI model has the part 'on top'
+			while (curElement != pwc) {
+				MElementContainer<MUIElement> parent = curElement.getParent();
+				if (parent.getActiveChild() != curElement) {
+					parent.setActiveChild(curElement);
+				}
+				curElement = parent;
+			}
+
+			if (curContext == null) {
+				curContext = getContext(part);
+			}
+
 			IEclipseContext parentContext = pwc.getContext();
 			if (parentContext != null) {
 				parentContext.set(IContextConstants.ACTIVE_CHILD, curContext);
 				curContext = parentContext;
-			}
-
-			// Ensure that the UI model has the part 'on top'
-			while (curElement != pwc) {
-				MElementContainer<MUIElement> parent = curElement.getParent();
-				if (parent.getActiveChild() != curElement)
-					parent.setActiveChild(curElement);
-				curElement = parent;
 			}
 
 			pwc = getParentWithContext((MUIElement) pwc);
@@ -289,9 +294,6 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		// 3) make it visible / active / re-layout
-
-		// bug with activation - need to deactivate first:
-		deactivate(part);
 		activate(part);
 		return part;
 	}
