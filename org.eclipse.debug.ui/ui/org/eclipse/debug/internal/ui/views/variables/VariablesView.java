@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -263,6 +267,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private static final int[] DEFAULT_SASH_WEIGHTS = {13, 6};
 	private int[] fLastSashWeights;
+	private Map fPaneWeights = new HashMap();
 	private boolean fToggledDetailOnce;
 	private String fCurrentDetailPaneOrientation = IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN;
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
@@ -289,6 +294,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @since 3.2
 	 */
 	protected static final String SASH_DETAILS_PART = DebugUIPlugin.getUniqueIdentifier() + ".SASH_DETAILS_PART"; //$NON-NLS-1$
+	
+	/**
+	 * Sash weights for a specific detail pane type
+	 */
+	protected static final String DETAIL_PANE_TYPE = "DETAIL_PANE_TYPE"; //$NON-NLS-1$
 	
 	/**
 	 * Key for "Find..." action.
@@ -527,20 +537,47 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
         // check the weights to makes sure they are valid -- bug 154025
         setLastSashWeights(DEFAULT_SASH_WEIGHTS);
 		if (mem != null) {
-			Integer sw = mem.getInteger(SASH_VIEW_PART);
-			if(sw != null) {
-				int view = sw.intValue();
-				sw = mem.getInteger(SASH_DETAILS_PART);
-				if(sw != null) {
-					int details = sw.intValue();
-					if(view > -1 & details > -1) {
-						setLastSashWeights(new int[] {view, details});
+			int[] weights = getWeights(mem);
+			if (weights != null) {
+				setLastSashWeights(weights);
+			}
+			IMemento[] children = mem.getChildren(DETAIL_PANE_TYPE);
+			if (children != null && children.length > 0) {
+				for (int i = 0; i < children.length; i++) {
+					IMemento child = children[i];
+					String id = child.getString(IMemento.TAG_ID);
+					if (id != null) {
+						weights = getWeights(child);
+						if (weights != null) {
+							fPaneWeights.put(id, weights);
+						}
 					}
 				}
 			}
 		}
 		site.getWorkbenchWindow().addPerspectiveListener(this);
     }
+	
+	/**
+	 * Returns sash weights stored in the given memento or <code>null</code> if none.
+	 * 
+	 * @param memento 
+	 * @return sash weights or <code>null</code>
+	 */
+	private int[] getWeights(IMemento memento) {
+		Integer sw = memento.getInteger(SASH_VIEW_PART);
+		if(sw != null) {
+			int view = sw.intValue();
+			sw = memento.getInteger(SASH_DETAILS_PART);
+			if(sw != null) {
+				int details = sw.intValue();
+				if(view > -1 & details > -1) {
+					return new int[] {view, details};
+				}
+			}
+		}
+		return null;
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
@@ -580,6 +617,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	        int[] weights = fSashForm.getWeights();
 			memento.putInteger(SASH_VIEW_PART, weights[0]);
 			memento.putInteger(SASH_DETAILS_PART, weights[1]);
+		}
+		Iterator iterator = fPaneWeights.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry entry = (Entry) iterator.next();
+			String paneId = (String) entry.getKey();
+			int[] weights = (int[]) entry.getValue();
+			IMemento child = memento.createChild(DETAIL_PANE_TYPE, paneId);
+			child.putInteger(SASH_VIEW_PART, weights[0]);
+			child.putInteger(SASH_DETAILS_PART, weights[1]);
 		}
 		getVariablesViewer().saveState(memento);
 	}
@@ -943,6 +989,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
 	 */
 	public void refreshDetailPaneContents() {
+		String currentPaneID = getCurrentPaneID();
+		if (currentPaneID != null) {
+			fPaneWeights.put(currentPaneID, fSashForm.getWeights());
+		}
 		fDetailPane.display(getCurrentSelection());
 	}
 
@@ -958,6 +1008,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			};
 		}
 		fDetailPane.getCurrentControl().addListener(SWT.Activate, fDetailPaneActivatedListener);
+		if (newPaneID != null) {
+			int[] weights = (int[])fPaneWeights.get(newPaneID);
+			if (weights != null) {
+				fSashForm.setWeights(weights);
+			}
+		}
 	}
 	
 	/**
@@ -1144,7 +1200,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		if(changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
 			setLastSashWeights(DEFAULT_SASH_WEIGHTS);
+			fPaneWeights.clear();
 			fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+			fDetailPane.display(new StructuredSelection(new Object[]{this})); // bogus selection to force detail pane / sash reset
+			fSashForm.layout(true);
 		}
 	}
 
