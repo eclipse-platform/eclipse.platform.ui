@@ -216,11 +216,13 @@ public class PathVariableUtil {
 			URI uri = pathVariableManager.getValue(variable, resource);
 			if (uri != null) {
 				IPath value = URIUtil.toPath(uri);
-				if (value.toOSString().equals(newValue))
-					return variable;
-				IPath resolvedValue = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
-				if (resolvedValue.equals(resolvedNewValue))
-					return variable;
+				if (value != null) {
+					if (value.toOSString().equals(newValue))
+						return variable;
+					IPath resolvedValue = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
+					if (resolvedValue.equals(resolvedNewValue))
+						return variable;
+				}
 			}
 		}
 		return null;
