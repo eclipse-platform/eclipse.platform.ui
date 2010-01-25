@@ -97,14 +97,13 @@ public class DefaultTabItem extends WidgetTabItem {
 		}
 
 		String toolTipText = info.toolTip;
-
 		ILabelDecorator labelDecorator = PlatformUI.getWorkbench().getDecoratorManager()
 				.getLabelDecorator(ContributingPluginDecorator.ID);
-		if (labelDecorator != null && info.data != null) {
+		if (labelDecorator != null && info.bundleId != null) {
 			if (toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
 				toolTipText = shortName;
 			}
-			toolTipText = labelDecorator.decorateText(toolTipText, toolTipText.endsWith(M_TOOLTIP) ? Q_TOOLTIP : info.data);
+			toolTipText = labelDecorator.decorateText(toolTipText, info.bundleId);
 		}
 
 		if (toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
@@ -249,7 +248,4 @@ public class DefaultTabItem extends WidgetTabItem {
 
 		return text;
 	}
-	
-	String M_TOOLTIP = "ui.map"; //$NON-NLS-1$
-	String Q_TOOLTIP = "Queens View"; //$NON-NLS-1$
 }

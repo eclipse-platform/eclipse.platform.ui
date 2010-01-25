@@ -11,9 +11,13 @@
 package org.eclipse.ui.internal.presentations.util;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.1
@@ -25,7 +29,7 @@ public final class PartInfo {
     public String toolTip;
     public Image image;
     public boolean dirty;
-	public Object data;
+	public String bundleId;
     
     public PartInfo() {
         name = Util.ZERO_LENGTH_STRING;
@@ -46,13 +50,17 @@ public final class PartInfo {
         image = part.getTitleImage();
         toolTip = part.getTitleToolTip();
         dirty = part.isDirty();
-		if (part instanceof PresentablePart) {
+		bundleId = null;
+		if (part instanceof PresentablePart
+				&& PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(
+						ContributingPluginDecorator.ID) != null) {
 			PresentablePart pp = (PresentablePart) part;
 			if (pp.getPane() != null) {
-				data = pp.getPane().getPartReference().getPart(false);
+				IWorkbenchPart p = pp.getPane().getPartReference().getPart(false);
+				if (p != null) {
+					bundleId = FrameworkUtil.getBundle(p.getClass()).getSymbolicName();
+				}
 			}
-		} else {
-			data = null;
 		}
     }
 }
