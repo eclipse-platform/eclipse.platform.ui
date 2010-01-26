@@ -127,7 +127,7 @@
     <genClasses image="false" ecoreClass="UIElements.ecore#//BindingContainer">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//BindingContainer/bindings"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//Command" labelFeature="#//application/Command/commandName">
+    <genClasses ecoreClass="UIElements.ecore#//Command" labelFeature="#//application/Command/commandName">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Command/commandName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Command/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Command/parameters"/>
