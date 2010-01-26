@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.IPath;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -199,8 +201,13 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		LinkedList variableStack = new LinkedList();
 
 		String value = resolveVariable(variable, resource, variableStack);
-		if (value != null)
-			return URI.create(value);
+		if (value != null) {
+			try {
+				return URI.create(value);
+			} catch (IllegalArgumentException e) {
+				return URIUtil.toURI(Path.fromPortableString(value));
+			}
+		}
 		return null;
 	}
 
@@ -220,7 +227,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			String stringValue;
 			try {
 				URI uri = URI.create(value);
-				stringValue = URIUtil.toPath(uri).toPortableString();
+				if (uri != null) {
+					IPath path = URIUtil.toPath(uri);
+					if (path != null)
+						stringValue = path.toPortableString();
+					else
+						stringValue = value;
+				} else
+					stringValue = value;
 			} catch (IllegalArgumentException e) {
 				stringValue = value;
 			}
@@ -264,14 +278,18 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			return uri;
 		
 		String path = value.getPath();
-		IPath p = Path.fromPortableString(path);
-		p = p.append(raw.removeFirstSegments(1));
-		try {
-			value = new URI(value.getScheme(), value.getHost(), p.toPortableString(), value.getFragment());
-		} catch (URISyntaxException e) {
-			return uri;
+		if (path != null) {
+			IPath p = Path.fromPortableString(path);
+			p = p.append(raw.removeFirstSegments(1));
+			try {
+				value = new URI(value.getScheme(), value.getHost(), p.toPortableString(), value.getFragment());
+			} catch (URISyntaxException e) {
+				return uri;
+			}
+			return value;
 		}
-		return value;
+		else
+			return uri;
 	}
 
 	/**
