@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.core.patch.FilePatch2;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
 
 public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeListener {
 
@@ -110,8 +115,11 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	}
 
 	public boolean fileExists() {
-		IFile file = ((WorkspaceFileDiffResult)getDiffResult()).getTargetFile();
+		IResource file = getResource();
 		return file != null && file.isAccessible();
 	}
 
+	public IResource getResource() {
+		return ((WorkspaceFileDiffResult)getDiffResult()).getTargetFile();
+	}
 }

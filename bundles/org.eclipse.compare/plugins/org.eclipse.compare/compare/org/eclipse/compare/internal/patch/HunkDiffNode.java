@@ -14,6 +14,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.core.resources.IResource;
 
 public class HunkDiffNode extends PatchDiffNode {
 
@@ -101,4 +102,7 @@ public class HunkDiffNode extends PatchDiffNode {
 		return false;
 	}
 
+	public IResource getResource() {
+		return ((PatchFileDiffNode)getParent()).getResource();
+	}
 }

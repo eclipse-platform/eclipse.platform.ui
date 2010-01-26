@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.core.resources.IResource;
 
-public abstract class PatchDiffNode extends DiffNode {
+public abstract class PatchDiffNode extends DiffNode implements IResourceProvider {
 
 	private Object fElement;
 
@@ -59,4 +62,7 @@ public abstract class PatchDiffNode extends DiffNode {
 		return getPatchElement().hashCode();
 	}
 
+	public IResource getResource() {
+		return null;
+	}
 }

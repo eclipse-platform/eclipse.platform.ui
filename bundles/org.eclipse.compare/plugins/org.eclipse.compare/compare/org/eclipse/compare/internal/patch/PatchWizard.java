@@ -40,9 +40,9 @@ public class PatchWizard extends Wizard {
 
 	private boolean fHasNewDialogSettings;
 	
-	private InputPatchPage fPatchWizardPage;
-	private PatchTargetPage fPatchTargetPage;
-	private PreviewPatchPage2 fPreviewPage2;
+	protected InputPatchPage fPatchWizardPage;
+	protected PatchTargetPage fPatchTargetPage;
+	protected PreviewPatchPage2 fPreviewPage2;
 	
 	private final WorkspacePatcher fPatcher;
 	
@@ -86,14 +86,17 @@ public class PatchWizard extends Wizard {
 		}
 	}
 
-	WorkspacePatcher getPatcher() {
+	protected WorkspacePatcher getPatcher() {
 		return fPatcher;
 	}
-	
+
+	protected IStorage getPatch() {
+		return patch;
+	}
+
 	IResource getTarget() {
 		return fPatcher.getTarget();
 	}
-	
 	
 	/* (non-Javadoc)
 	 * Method declared on IWizard.

@@ -14,7 +14,11 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
@@ -74,6 +78,10 @@ public class PatchProjectDiffNode extends PatchDiffNode {
 
 	public DiffProject getDiffProject() {
 		return project;
+	}
+
+	public IResource getResource() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(getDiffProject().getName());
 	}
 
 }

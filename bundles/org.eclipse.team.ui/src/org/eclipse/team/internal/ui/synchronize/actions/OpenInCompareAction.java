@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchModelCompareEditorInput;
+import org.eclipse.team.internal.ui.synchronize.patch.PatchModelProvider;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -110,7 +112,10 @@ public class OpenInCompareAction extends Action {
 			ICompareInput input = msp.asCompareInput(object);
 			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
 			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
-				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
+				if (configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER).equals(PatchModelProvider.ID))
+					return openCompareEditor(workbenchPage, new ApplyPatchModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
+				else
+					return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
 			}
 		}
 		return null;

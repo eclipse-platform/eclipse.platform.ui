@@ -119,7 +119,13 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 		return getCompareImage(base, compareKind);
 	}
 
-	private Image getCompareImage(Image base, int compareKind) {
+	/**
+	 * Returns an image showing the specified change kind applied to a given base image.
+	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected Image getCompareImage(Image base, int compareKind) {
 		return getImageManager().getImage(base, compareKind);
 	}
 

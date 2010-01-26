@@ -714,6 +714,11 @@ public class TeamUIMessages extends NLS {
 	public static String SelectAncestorDialog_message;
 	public static String SelectAncestorDialog_option;
 	
+	public static String PatchPreviewModePage_title;
+	public static String PatchPreviewModePage_description;
+	public static String PatchPreviewModePage_previewInPatchWizard;
+	public static String PatchPreviewModePage_previewInSynchronizeView;
+	
 	public static String NotFound;
 
 }

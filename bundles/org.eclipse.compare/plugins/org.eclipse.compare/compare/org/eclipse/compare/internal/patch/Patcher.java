@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,8 @@ import java.util.Set;
 
 import org.eclipse.compare.internal.core.Messages;
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.PatchReader;
 import org.eclipse.compare.patch.IHunk;
@@ -601,7 +601,7 @@ public class Patcher implements IHunkFilter {
 		refresh(getDiffs());
 	}
 	
-	protected void refresh(FilePatch2[] diffs) {
+	public void refresh(FilePatch2[] diffs) {
 		for (int i = 0; i < diffs.length; i++) {
 			FilePatch2 diff = diffs[i];
 			FileDiffResult result = getDiffResult(diff);

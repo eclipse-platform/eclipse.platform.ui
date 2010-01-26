@@ -189,7 +189,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	}
 
 	protected void handleMenuAboutToShow(IMenuManager manager) {
-		StructuredSelection selection = new StructuredSelection(((ResourceDiffCompareInput)getCompareInput()).getResource());
+		StructuredSelection selection = new StructuredSelection(((IResourceProvider)getCompareInput()).getResource());
 		final ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(getSynchronizeConfiguration());
 		markAsMergedHandler.updateEnablement(selection);
 		Action markAsMergedAction = new Action(TeamUIMessages.ModelCompareEditorInput_0) {

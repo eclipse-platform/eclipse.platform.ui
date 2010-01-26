@@ -80,7 +80,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import com.ibm.icu.text.MessageFormat;
 
-/* package */ class InputPatchPage extends WizardPage {
+public class InputPatchPage extends WizardPage {
 
 	// constants
 	protected static final int SIZING_TEXT_FIELD_WIDTH= 250;
@@ -139,7 +139,7 @@ import com.ibm.icu.text.MessageFormat;
 		}
 	}
 	
-	InputPatchPage(PatchWizard pw) {
+	public InputPatchPage(PatchWizard pw) {
 		super(INPUTPATCHPAGE_NAME, PatchMessages.InputPatchPage_title, null);
 		fPatchWizard= pw;
 		setMessage(PatchMessages.InputPatchPage_message);
@@ -221,7 +221,10 @@ import com.ibm.icu.text.MessageFormat;
 		// all of the projects that make up the patch and continue on to final preview page 
 		// else go on to target selection page
 		if (patcher.isWorkspacePatch()) {
-			return fPatchWizard.getPage(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME);
+			// skip 'Patch Target' page
+			IWizardPage page = super.getNextPage();
+			if (page.getName().equals(PatchTargetPage.PATCHTARGETPAGE_NAME))
+				return page.getNextPage();
 		}
 
 		return super.getNextPage();
