@@ -1354,8 +1354,6 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("5.0", file);
 		assertEquals("5.1", targetPath, resolvedPath);
-		assertEquals("5.2", pathVariableCount + 1, newPathVariableCount);
-
 	}
 
 	public void testConvertToUserEditableFormat() {
