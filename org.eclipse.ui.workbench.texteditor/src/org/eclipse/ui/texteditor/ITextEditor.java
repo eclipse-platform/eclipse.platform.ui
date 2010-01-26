@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,12 +157,12 @@ public interface ITextEditor extends IEditorPart {
 
 	/**
 	 * Sets the highlighted range of this text editor to the specified region.
-	 *
+	 * 
 	 * @param offset the offset of the highlighted range
 	 * @param length the length of the highlighted range
-	 * @param moveCursor <code>true</code> if the cursor should be moved to
-	 *   the start of the highlighted range, and <code>false</code> to leave
-	 *   the cursor unaffected
+	 * @param moveCursor <code>true</code> if the cursor should be moved to the start of the
+	 *            highlighted range, and <code>false</code> to leave the cursor unaffected - has no
+	 *            effect if the range to highlight is already the highlighted one
 	 * @see #getHighlightRange()
 	 */
 	void setHighlightRange(int offset, int length, boolean moveCursor);
