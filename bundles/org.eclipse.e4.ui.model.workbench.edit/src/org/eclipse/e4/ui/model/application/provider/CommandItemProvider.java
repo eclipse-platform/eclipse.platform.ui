@@ -152,11 +152,11 @@ public class CommandItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MCommand)object).getId();
+		String label = ((MCommand)object).getCommandName();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Command_type") : //$NON-NLS-1$
 			getString("_UI_Command_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
