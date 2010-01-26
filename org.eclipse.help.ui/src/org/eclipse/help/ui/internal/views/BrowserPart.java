@@ -118,9 +118,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BrowserPart.this.url = url;
 				updateSyncTocAction();
 				BrowserPart.this.highlightAction.setEnabled(isResult);
-				if (fontScalePercentage != 100) {
-				    rescale();
-				}
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
@@ -156,6 +153,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 					monitor.done();
 				}
 				lastProgress = -1;
+				if (fontScalePercentage != 100) {
+				    rescale();
+				}
 				String value = executeQuery("document.title"); //$NON-NLS-1$
 				BrowserPart.this.title = value != null ? value : "N/A"; //$NON-NLS-1$
 			}

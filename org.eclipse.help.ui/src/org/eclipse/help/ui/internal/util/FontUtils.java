@@ -52,11 +52,11 @@ public class FontUtils {
 	 */
 	static public boolean canRescaleHelpView() {
 		String os = Platform.getOS();
-		if (Constants.WS_WIN32.equalsIgnoreCase(os)) {
+		if (Constants.WS_WIN32.equalsIgnoreCase(os) ||
+			Constants.OS_MACOSX.equalsIgnoreCase(os)) {
 			return true;
 		}
 		// No rescale in Mozilla browsers, see Bug 227198
-		// No rescale on MacOS until the timing can be fixed
 		return false;
 	}
 
