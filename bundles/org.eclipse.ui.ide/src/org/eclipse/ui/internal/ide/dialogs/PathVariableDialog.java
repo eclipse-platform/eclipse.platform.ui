@@ -18,10 +18,9 @@ import java.util.Set;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.internal.resources.PathVariableUtil;
-import org.eclipse.core.internal.resources.ProjectPathVariableManager;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -373,11 +372,17 @@ public class PathVariableDialog extends TitleAreaDialog {
         		false, 2, 1));
     }
 
+    private IPathVariableManager getPathVariableManager() {
+    	if (currentResource != null)
+    		return currentResource.getProject().getPathVariableManager();
+    	return ResourcesPlugin.getWorkspace().getPathVariableManager();
+    }
+    
     private String getVariableResolvedValue() {
         if (currentResource != null) {
         	IPathVariableManager pathVariableManager2 = currentResource.getProject().getPathVariableManager();
 			String[] variables = pathVariableManager2.getPathVariableNames();
-    		String internalFormat = ((ProjectPathVariableManager) pathVariableManager2).convertFromUserEditableFormat(variableValue);
+    		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, currentResource);
     		URI uri = URIUtil.toURI(Path.fromPortableString(internalFormat));
         	URI resolvedURI = pathVariableManager2.resolveURI(uri, currentResource);
         	String resolveValue = URIUtil.toPath(resolvedURI).toPortableString();
@@ -471,7 +476,7 @@ public class PathVariableDialog extends TitleAreaDialog {
                 String newValue = variableNames[0];
             	IPath path = Path.fromPortableString(newValue);
                 if (operationMode != EDIT_LINK_LOCATION && currentResource != null && !path.isAbsolute() && path.segmentCount() > 0) {
-                	path = PathVariableUtil.buildVariableMacro(path);
+                	path = buildVariableMacro(path);
                 	newValue = path.toPortableString();
                 }
                 variableValue = newValue;
@@ -480,7 +485,13 @@ public class PathVariableDialog extends TitleAreaDialog {
         }
     }
 
-    /**
+	private IPath buildVariableMacro(IPath relativeSrcValue) {
+		String variable = relativeSrcValue.segment(0);
+		variable = "${" + variable + "}";  //$NON-NLS-1$//$NON-NLS-2$
+		return Path.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
+	}
+
+	/**
      * Adds buttons to this dialog's button bar.
      * 
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar
@@ -644,7 +655,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     public String getVariableValue() {
     	if (currentResource != null) {
-    		String internalFormat = ((ProjectPathVariableManager) currentResource.getProject().getPathVariableManager()).convertFromUserEditableFormat(variableValue);
+    		String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, currentResource);
     		return internalFormat;
     	}
     	return variableValue;
@@ -666,7 +677,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @param variable the new variable value
      */
     public void setVariableValue(String variable) {
-    	String userEditableString = ProjectPathVariableManager.convertToUserEditableFormat(variable);
+    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(variable);
         variableValue = userEditableString;
     }
 
@@ -681,7 +692,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @param location
      */
     public void setLinkLocation(IPath location) {
-    	String userEditableString = ProjectPathVariableManager.convertToUserEditableFormat(location.toPortableString());
+    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(location.toPortableString());
         variableValue = userEditableString;
     }
 

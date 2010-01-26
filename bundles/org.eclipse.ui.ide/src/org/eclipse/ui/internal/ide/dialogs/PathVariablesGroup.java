@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.internal.resources.ProjectPathVariableManager;
 import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
@@ -484,7 +483,7 @@ public class PathVariablesGroup {
      * 
      * @param selectedVarName the name for the variable to be selected (may be
      * <code>null</code>)
-     * @see IPathVariableManager#getPathVariableNames()
+     * @see IPathVariableManager#getPathVariableNames(IResource)
      * @see IPathVariableManager#getValue(String, IResource)
      */
     private void updateVariableTable(String selectedVarName) {
@@ -532,7 +531,7 @@ public class PathVariablesGroup {
      * @return the converted value
      */
     private String removeParentVariable(String value) {
-    	return ProjectPathVariableManager.convertToUserEditableFormat(value);
+    	return pathVariableManager.convertToUserEditableFormat(value);
     }
     
     /**
