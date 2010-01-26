@@ -6030,7 +6030,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSourceViewer.setVisibleRegion(offset, length);
 		} else {
 			IRegion rangeIndication= fSourceViewer.getRangeIndication();
-			if (moveCursor || rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
+			if (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
 				fSourceViewer.setRangeIndication(offset, length, moveCursor);
 		}
 	}
