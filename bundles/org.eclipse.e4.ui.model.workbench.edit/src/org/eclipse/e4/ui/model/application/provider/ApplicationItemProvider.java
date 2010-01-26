@@ -77,7 +77,6 @@ public class ApplicationItemProvider
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
 			addActiveChildPropertyDescriptor(object);
-			addCommandsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -281,28 +280,6 @@ public class ApplicationItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Commands feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addCommandsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Application_commands_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Application_commands_feature", "_UI_Application_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION__COMMANDS,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -318,6 +295,7 @@ public class ApplicationItemProvider
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+			childrenFeatures.add(MApplicationPackage.Literals.APPLICATION__COMMANDS);
 		}
 		return childrenFeatures;
 	}
@@ -386,6 +364,7 @@ public class ApplicationItemProvider
 			case MApplicationPackage.APPLICATION__HANDLERS:
 			case MApplicationPackage.APPLICATION__BINDINGS:
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case MApplicationPackage.APPLICATION__COMMANDS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -532,6 +511,16 @@ public class ApplicationItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
 				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.APPLICATION__COMMANDS,
+				 MApplicationFactory.eINSTANCE.createCommand()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.APPLICATION__COMMANDS,
+				 MApplicationFactory.eINSTANCE.createTestHarness()));
 	}
 
 	/**
@@ -547,7 +536,8 @@ public class ApplicationItemProvider
 
 		boolean qualify =
 			childFeature == MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+			childFeature == MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS ||
+			childFeature == MApplicationPackage.Literals.APPLICATION__COMMANDS;
 
 		if (qualify) {
 			return getString
