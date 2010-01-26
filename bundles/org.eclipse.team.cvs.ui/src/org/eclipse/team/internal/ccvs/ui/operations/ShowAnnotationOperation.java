@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -254,11 +254,9 @@ public class ShowAnnotationOperation extends CVSOperation {
 					private String fCommitter= null;
 					
 					public Object getHoverInfo() {
-						if (entry != null)
-							return entry.getAuthor() + " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) //$NON-NLS-1$ //$NON-NLS-2$
-							  + "\n\n" + entry.getComment(); //$NON-NLS-1$
-							
-						return block.toString().substring(0, block.toString().indexOf(" (")); //$NON-NLS-1$
+						return entry.getAuthor()
+								+ " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) //$NON-NLS-1$ //$NON-NLS-2$
+								+ "\n\n" + entry.getComment(); //$NON-NLS-1$
 					}
 					
 					private String getCommitterId() {
