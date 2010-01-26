@@ -13,25 +13,22 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
-import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
-
-
-import java.net.URISyntaxException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
+import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
+import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.*;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -898,7 +895,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!srcValue.equals(resolvedSrcValue) && !variableExisted) {
 			// the variable content contains references to more variables
 			
-			String[] referencedVariables = ProjectPathVariableManager
+			String[] referencedVariables = PathVariableUtil
 				.splitVariableNames(srcValue.toPortableString());
 			shouldConvertToRelative = false;
 			// If the variable value is of type ${PARENT-COUNT-VAR}, 
@@ -909,11 +906,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 				
 			if (!shouldConvertToRelative) {
-				String[] segments = ProjectPathVariableManager
+				String[] segments = PathVariableUtil
 				.splitVariablesAndContent(srcValue.toPortableString());
 				StringBuffer result = new StringBuffer();
 				for (int i = 0; i < segments.length; i++) {
-					String var = ProjectPathVariableManager
+					String var = PathVariableUtil
 							.extractVariable(segments[i]);
 					if (var.length() > 0) {
 						String copiedVariable = copyVariable(source, dest, var);

@@ -11,19 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.ProjectLocationVariableResolver;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IPathVariableChangeEvent;
-
-import org.eclipse.core.resources.IResource;
-
-import java.net.URISyntaxException;
-
-import org.eclipse.core.resources.IPathVariableChangeListener;
-
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.Messages;
@@ -215,72 +204,6 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		return null;
 	}
 
-	/*
-	 * Splits a value (returned by this.getValue(variable) in an array of
-	 * string, where the array is divided between the value content and the
-	 * value variables.
-	 * 
-	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
-	 * returned will be {"${ECLIPSE_HOME}" "/plugins"}
-	 */
-	static String[] splitVariablesAndContent(String value) {
-		LinkedList result = new LinkedList();
-		while (true) {
-			// we check if the value contains referenced variables with ${VAR}
-			int index = value.indexOf("${"); //$NON-NLS-1$
-			if (index != -1) {
-				int endIndex = getMatchingBrace(value, index);
-				if (index > 0)
-					result.add(value.substring(0, index));
-				result.add(value.substring(index, endIndex + 1));
-				value = value.substring(endIndex + 1);
-			} else
-				break;
-		}
-		if (value.length() > 0)
-			result.add(value);
-		return (String[]) result.toArray(new String[0]);
-	}
-
-	/*
-	 * Splits a value (returned by this.getValue(variable) in an array of
-	 * string of the variables contained in the value.
-	 * 
-	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
-	 * returned will be {"ECLIPSE_HOME"}. If the value is 
-	 * "${ECLIPSE_HOME}/${FOO}/plugins", the value returned will be 
-	 * {"ECLIPSE_HOME", "FOO"}.
-	 */
-	static String[] splitVariableNames(String value) {
-		LinkedList result = new LinkedList();
-		while (true) {
-			int index = value.indexOf("${"); //$NON-NLS-1$
-			if (index != -1) {
-				int endIndex = getMatchingBrace(value, index);
-				result.add(value.substring(index + 2, endIndex));
-				value = value.substring(endIndex + 1);
-			} else
-				break;
-		}
-		return (String[]) result.toArray(new String[0]);
-	}
-
-	/*
-	 * Extracts the variable name from a variable segment.
-	 * 
-	 * For example, if the value is "${ECLIPSE_HOME}", the value returned will
-	 * be "ECLIPSE_HOME". If the segment doesn't contain any variable, the value
-	 * returned will be "".
-	 */
-	static String extractVariable(String segment) {
-		int index = segment.indexOf("${"); //$NON-NLS-1$
-		if (index != -1) {
-			int endIndex = getMatchingBrace(segment, index);
-			return segment.substring(index + 2, endIndex);
-		}
-		return ""; //$NON-NLS-1$
-	}
-
 	public String resolveVariable(String value, IResource resource, LinkedList variableStack) {
 		if (variableStack == null)
 			variableStack = new LinkedList();
@@ -304,7 +227,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			// we check if the value contains referenced variables with ${VAR}
 			int index = stringValue.indexOf("${"); //$NON-NLS-1$
 			if (index != -1) {
-				int endIndex = getMatchingBrace(stringValue, index);
+				int endIndex = PathVariableUtil.getMatchingBrace(stringValue, index);
 				String macro = stringValue.substring(index + 2, endIndex);
 				String resolvedMacro = ""; //$NON-NLS-1$
 				if (!variableStack.contains(macro)) {
@@ -322,26 +245,6 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 				break;
 		}
 		return value;
-	}
-
-	// getMatchingBrace("${FOO}/something") returns 5
-	// getMatchingBrace("${${OTHER}}/something") returns 10
-	// getMatchingBrace("${FOO") returns 5
-	static int getMatchingBrace(String value, int index) {
-		int scope = 0;
-		for (int i = index + 1; i < value.length(); i++) {
-			char c = value.charAt(i);
-			if (c == '}') {
-				if (scope == 0)
-					return i;
-				scope--;
-			}
-			if (c == '$') {
-				if ((i + 1 < value.length()) && (value.charAt(i + 1) == '{'))
-					scope++;
-			}
-		}
-		return value.length();
 	}
 
 	public URI resolveURI(URI uri) {
@@ -511,152 +414,16 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * Converts the internal format of the linked resource location if the PARENT
-	 * variables is used.  For example, if the value is "${PARENT-2-VAR}/foo", the
-	 * converted result is "${VAR}/../../foo".
-	 * @param value
-	 * @return the converted path variable value
+	 * @see IPathVariableManager#convertToUserEditableFormat(String)
 	 */
-	public static String convertToUserEditableFormat(String value) {
-		StringBuffer buffer = new StringBuffer();
-		String components[] = splitVariablesAndContent(value);
-		for (int i = 0; i < components.length; i++) {
-			String variable = extractVariable(components[i]);
-			if (PathVariableUtil.isParentVariable(variable)) {
-				String argument = PathVariableUtil.getParentVariableArgument(variable);
-				int count = PathVariableUtil.getParentVariableCount(variable);
-				if (argument != null && count != -1) {
-					buffer.append(PathVariableUtil.buildVariableMacro(Path.fromOSString(argument)));
-					for (int j = 0; j < count; j++) {
-						buffer.append("/.."); //$NON-NLS-1$
-					}
-				} else
-					buffer.append(components[i]);
-			} else
-				buffer.append(components[i]);
-		}
-		return buffer.toString();
+	public String convertToUserEditableFormat(String value) { 
+		return PathVariableUtil.convertToUserEditableFormatInternal(value);
 	}
-
-	/**
-	 * Converts the user editable format to the internal format.
-	 * For example, if the value is "${VAR}/../../foo", the
-	 * converted result is "${PARENT-2-VAR}/foo".
-	 * If the string is not directly convertible to a ${PARENT-COUNT-VAR}
-	 * syntax (for example, the editable string "${FOO}bar/../../"), intermediate
-	 * path variables will be created.
-	 * @param userFormat The user editable string
-	 * @return the converted path variable value
-	 */
-	public String convertFromUserEditableFormat(String userFormat) {
-		boolean isAbsolute = (userFormat.length() > 0) && (userFormat.charAt(0) == '/' || userFormat.charAt(0) == '\\');
-		String components[] = splitPathComponents(userFormat);
-		for (int i = 0; i < components.length; i++) {
-			if (components[i] == null)
-				continue;
-			if (isDotDot(components[i])) {
-				int parentCount = 1;
-				components[i] = null;
-				for (int j = i + 1; j < components.length; j++) {
-					if (components[j] != null) {
-						if (isDotDot(components[j])) {
-							parentCount++;
-							components[j] = null;
-						} else
-							break;
-					}
-				}
-				if (i == 0) // this means the value is implicitly relative to the project location
-					components[0] = PathVariableUtil.buildParentPathVariable(ProjectLocationVariableResolver.NAME, parentCount, false);
-				else {
-					for (int j = i - 1; j >= 0; j--) {
-						if (parentCount == 0)
-							break;
-						if (components[j] == null)
-							continue;
-						String variable = extractVariable(components[j]);
-						try {
-							if (variable.length() > 0) {
-								int indexOfVariable = components[j].indexOf(variable) - "${".length(); //$NON-NLS-1$
-								String prefix = components[j].substring(0, indexOfVariable);
-								String suffix = components[j].substring(indexOfVariable + "${".length() + variable.length() + "}".length()); //$NON-NLS-1$ //$NON-NLS-2$
-								if (suffix.length() != 0) {
-									// Create an intermediate variable, since a syntax of "${VAR}foo/../"
-									// can't be converted to a "${PARENT-1-VAR}foo" variable.
-									// So instead, an intermediate variable "VARFOO" will be created of value 
-									// "${VAR}foo", and the string "${PARENT-1-VARFOO}" will be inserted.
-									String intermediateVariable = PathVariableUtil.getValidVariableName(variable + suffix);
-									IPath intermediateValue = Path.fromPortableString(components[j]);
-									int intermediateVariableIndex = 1;
-									String originalIntermediateVariableName = intermediateVariable;
-									while (isDefined(intermediateVariable)) {
-										IPath tmpValue = getValue(intermediateVariable);
-										if (tmpValue.equals(intermediateValue))
-											break;
-										intermediateVariable = originalIntermediateVariableName + intermediateVariableIndex;
-									}
-									if (!isDefined(intermediateVariable))
-										setValue(intermediateVariable, intermediateValue);
-									variable = intermediateVariable;
-									prefix = new String();
-								}
-								String newVariable = variable;
-								if (PathVariableUtil.isParentVariable(variable)) {
-									String argument = PathVariableUtil.getParentVariableArgument(variable);
-									int count = PathVariableUtil.getParentVariableCount(variable);
-									if (argument != null && count != -1)
-										newVariable = PathVariableUtil.buildParentPathVariable(argument, count + parentCount, false);
-									else
-										newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
-								} else
-									newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
-								components[j] = prefix + newVariable;
-								break;
-							}
-							components[j] = null;
-							parentCount--;
-						} catch (CoreException e) {
-							components[j] = null;
-							parentCount--;
-						}
-					}
-				}
-			}
-		}
-		StringBuffer buffer = new StringBuffer();
-		if (isAbsolute)
-			buffer.append('/');
-		for (int i = 0; i < components.length; i++) {
-			if (components[i] != null) {
-				if (i > 0)
-					buffer.append('/');
-				buffer.append(components[i]);
-			}
-		}
-		return buffer.toString();
+	
+	public String convertFromUserEditableFormat(String userFormat, IResource resource) {
+		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, resource);
 	}
-
-	private static boolean isDotDot(String component) {
-		return component.equals(".."); //$NON-NLS-1$
-	}
-
-	private static String[] splitPathComponents(String userFormat) {
-		ArrayList list = new ArrayList();
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < userFormat.length(); i++) {
-			char c = userFormat.charAt(i);
-			if (c == '/' || c == '\\') {
-				if (buffer.length() > 0)
-					list.add(buffer.toString());
-				buffer = new StringBuffer();
-			} else
-				buffer.append(c);
-		}
-		if (buffer.length() > 0)
-			list.add(buffer.toString());
-		return (String[]) list.toArray(new String[0]);
-	}
-
+	
 	public void addChangeListener(IPathVariableChangeListener listener) {
 		getWorkspaceManager().addChangeListener(listener, project);
 	}

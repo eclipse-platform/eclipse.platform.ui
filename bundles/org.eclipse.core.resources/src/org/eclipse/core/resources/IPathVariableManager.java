@@ -366,4 +366,28 @@ public interface IPathVariableManager {
 	 * @since 3.6
 	 */
 	public URI getVariableRelativePathLocation(URI location, IResource resource);
+
+	/**
+	 * Converts the internal format of the linked resource location if the PARENT
+	 * variables is used.  For example, if the value is "${PARENT-2-VAR}/foo", the
+	 * converted result is "${VAR}/../../foo".
+	 * @param value
+	 * @return the converted path variable value
+	 * @since 3.6
+	 */
+	public String convertToUserEditableFormat(String value);
+
+	/**
+	 * Converts the user editable format to the internal format.
+	 * For example, if the value is "${VAR}/../../foo", the
+	 * converted result is "${PARENT-2-VAR}/foo".
+	 * If the string is not directly convertible to a ${PARENT-COUNT-VAR}
+	 * syntax (for example, the editable string "${FOO}bar/../../"), intermediate
+	 * path variables will be created.
+	 * @param userFormat The user editable string
+	 * @param resource the resource for which this variable is resolved  
+	 * @return the converted path variable value
+	 * @since 3.6
+	 */
+	public String convertFromUserEditableFormat(String userFormat, IResource resource);
 }

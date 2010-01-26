@@ -10,21 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.*;
-
-import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.core.filesystem.URIUtil;
-
-import org.eclipse.core.runtime.CoreException;
-
 import java.net.URI;
-
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.IPath;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.resources.projectvariables.*;
 import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 
 public class PathVariableUtil {
 	
@@ -275,5 +268,220 @@ public class PathVariableUtil {
 		String variable = relativeSrcValue.segment(0);
 		variable = "${" + variable + "}";  //$NON-NLS-1$//$NON-NLS-2$
 		return Path.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
+	}
+
+	public static String convertFromUserEditableFormatInternal(IPathVariableManager manager, String userFormat, IResource resource) {
+		boolean isAbsolute = (userFormat.length() > 0) && (userFormat.charAt(0) == '/' || userFormat.charAt(0) == '\\');
+		String components[] = splitPathComponents(userFormat);
+		for (int i = 0; i < components.length; i++) {
+			if (components[i] == null)
+				continue;
+			if (isDotDot(components[i])) {
+				int parentCount = 1;
+				components[i] = null;
+				for (int j = i + 1; j < components.length; j++) {
+					if (components[j] != null) {
+						if (isDotDot(components[j])) {
+							parentCount++;
+							components[j] = null;
+						} else
+							break;
+					}
+				}
+				if (i == 0) // this means the value is implicitly relative to the project location
+					components[0] = PathVariableUtil.buildParentPathVariable(ProjectLocationVariableResolver.NAME, parentCount, false);
+				else {
+					for (int j = i - 1; j >= 0; j--) {
+						if (parentCount == 0)
+							break;
+						if (components[j] == null)
+							continue;
+						String variable = extractVariable(components[j]);
+						try {
+							if (variable.length() > 0) {
+								int indexOfVariable = components[j].indexOf(variable) - "${".length(); //$NON-NLS-1$
+								String prefix = components[j].substring(0, indexOfVariable);
+								String suffix = components[j].substring(indexOfVariable + "${".length() + variable.length() + "}".length()); //$NON-NLS-1$ //$NON-NLS-2$
+								if (suffix.length() != 0) {
+									// Create an intermediate variable, since a syntax of "${VAR}foo/../"
+									// can't be converted to a "${PARENT-1-VAR}foo" variable.
+									// So instead, an intermediate variable "VARFOO" will be created of value 
+									// "${VAR}foo", and the string "${PARENT-1-VARFOO}" will be inserted.
+									String intermediateVariable = PathVariableUtil.getValidVariableName(variable + suffix);
+									IPath intermediateValue = Path.fromPortableString(components[j]);
+									int intermediateVariableIndex = 1;
+									String originalIntermediateVariableName = intermediateVariable;
+									while (manager.isDefined(intermediateVariable, resource)) {
+										IPath tmpValue = URIUtil.toPath(manager.getValue(intermediateVariable, resource));
+										if (tmpValue.equals(intermediateValue))
+											break;
+										intermediateVariable = originalIntermediateVariableName + intermediateVariableIndex;
+									}
+									if (!manager.isDefined(intermediateVariable, resource))
+										manager.setValue(intermediateVariable, resource, URIUtil.toURI(intermediateValue));
+									variable = intermediateVariable;
+									prefix = new String();
+								}
+								String newVariable = variable;
+								if (PathVariableUtil.isParentVariable(variable)) {
+									String argument = PathVariableUtil.getParentVariableArgument(variable);
+									int count = PathVariableUtil.getParentVariableCount(variable);
+									if (argument != null && count != -1)
+										newVariable = PathVariableUtil.buildParentPathVariable(argument, count + parentCount, false);
+									else
+										newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
+								} else
+									newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
+								components[j] = prefix + newVariable;
+								break;
+							}
+							components[j] = null;
+							parentCount--;
+						} catch (CoreException e) {
+							components[j] = null;
+							parentCount--;
+						}
+					}
+				}
+			}
+		}
+		StringBuffer buffer = new StringBuffer();
+		if (isAbsolute)
+			buffer.append('/');
+		for (int i = 0; i < components.length; i++) {
+			if (components[i] != null) {
+				if (i > 0)
+					buffer.append('/');
+				buffer.append(components[i]);
+			}
+		}
+		return buffer.toString();
+	}
+
+	private static boolean isDotDot(String component) {
+		return component.equals(".."); //$NON-NLS-1$
+	}
+
+	private static String[] splitPathComponents(String userFormat) {
+		ArrayList list = new ArrayList();
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < userFormat.length(); i++) {
+			char c = userFormat.charAt(i);
+			if (c == '/' || c == '\\') {
+				if (buffer.length() > 0)
+					list.add(buffer.toString());
+				buffer = new StringBuffer();
+			} else
+				buffer.append(c);
+		}
+		if (buffer.length() > 0)
+			list.add(buffer.toString());
+		return (String[]) list.toArray(new String[0]);
+	}
+
+	public static String convertToUserEditableFormatInternal(String value) {
+		StringBuffer buffer = new StringBuffer();
+		String components[] = splitVariablesAndContent(value);
+		for (int i = 0; i < components.length; i++) {
+			String variable = extractVariable(components[i]);
+			if (PathVariableUtil.isParentVariable(variable)) {
+				String argument = PathVariableUtil.getParentVariableArgument(variable);
+				int count = PathVariableUtil.getParentVariableCount(variable);
+				if (argument != null && count != -1) {
+					buffer.append(PathVariableUtil.buildVariableMacro(Path.fromOSString(argument)));
+					for (int j = 0; j < count; j++) {
+						buffer.append("/.."); //$NON-NLS-1$
+					}
+				} else
+					buffer.append(components[i]);
+			} else
+				buffer.append(components[i]);
+		}
+		return buffer.toString();
+	}
+	/*
+	 * Splits a value (returned by this.getValue(variable) in an array of
+	 * string, where the array is divided between the value content and the
+	 * value variables.
+	 * 
+	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
+	 * returned will be {"${ECLIPSE_HOME}" "/plugins"}
+	 */
+	static String[] splitVariablesAndContent(String value) {
+		LinkedList result = new LinkedList();
+		while (true) {
+			// we check if the value contains referenced variables with ${VAR}
+			int index = value.indexOf("${"); //$NON-NLS-1$
+			if (index != -1) {
+				int endIndex = getMatchingBrace(value, index);
+				if (index > 0)
+					result.add(value.substring(0, index));
+				result.add(value.substring(index, endIndex + 1));
+				value = value.substring(endIndex + 1);
+			} else
+				break;
+		}
+		if (value.length() > 0)
+			result.add(value);
+		return (String[]) result.toArray(new String[0]);
+	}
+
+	/*
+	 * Splits a value (returned by this.getValue(variable) in an array of
+	 * string of the variables contained in the value.
+	 * 
+	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
+	 * returned will be {"ECLIPSE_HOME"}. If the value is 
+	 * "${ECLIPSE_HOME}/${FOO}/plugins", the value returned will be 
+	 * {"ECLIPSE_HOME", "FOO"}.
+	 */
+	static String[] splitVariableNames(String value) {
+		LinkedList result = new LinkedList();
+		while (true) {
+			int index = value.indexOf("${"); //$NON-NLS-1$
+			if (index != -1) {
+				int endIndex = getMatchingBrace(value, index);
+				result.add(value.substring(index + 2, endIndex));
+				value = value.substring(endIndex + 1);
+			} else
+				break;
+		}
+		return (String[]) result.toArray(new String[0]);
+	}
+
+	/*
+	 * Extracts the variable name from a variable segment.
+	 * 
+	 * For example, if the value is "${ECLIPSE_HOME}", the value returned will
+	 * be "ECLIPSE_HOME". If the segment doesn't contain any variable, the value
+	 * returned will be "".
+	 */
+	static String extractVariable(String segment) {
+		int index = segment.indexOf("${"); //$NON-NLS-1$
+		if (index != -1) {
+			int endIndex = getMatchingBrace(segment, index);
+			return segment.substring(index + 2, endIndex);
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	// getMatchingBrace("${FOO}/something") returns 5
+	// getMatchingBrace("${${OTHER}}/something") returns 10
+	// getMatchingBrace("${FOO") returns 5
+	static int getMatchingBrace(String value, int index) {
+		int scope = 0;
+		for (int i = index + 1; i < value.length(); i++) {
+			char c = value.charAt(i);
+			if (c == '}') {
+				if (scope == 0)
+					return i;
+				scope--;
+			}
+			if (c == '$') {
+				if ((i + 1 < value.length()) && (value.charAt(i + 1) == '{'))
+					scope++;
+			}
+		}
+		return value.length();
 	}
 }

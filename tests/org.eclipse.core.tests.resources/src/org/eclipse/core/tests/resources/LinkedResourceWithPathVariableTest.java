@@ -1357,4 +1357,111 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertEquals("5.2", pathVariableCount + 1, newPathVariableCount);
 
 	}
+
+	public void testConvertToUserEditableFormat() {
+		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
+
+		String result = pathVariableManager.convertToUserEditableFormat("C:\\foo\\bar");
+		assertEquals("1.0", "C:\\foo\\bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("C:/foo/bar");
+		assertEquals("1.1", "C:/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("VAR/foo/bar");
+		assertEquals("1.2", "VAR/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${VAR}/foo/bar");
+		assertEquals("1.3", "${VAR}/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${VAR}/../foo/bar");
+		assertEquals("1.4", "${VAR}/../foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-1-VAR}/foo/bar");
+		assertEquals("1.5", "${VAR}/../foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-0-VAR}/foo/bar");
+		assertEquals("1.6", "${VAR}/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-VAR}/foo/bar");
+		assertEquals("1.7", "${PARENT-VAR}/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2}/foo/bar");
+		assertEquals("1.8", "${PARENT-2}/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT}/foo/bar");
+		assertEquals("1.9", "${PARENT}/foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo/bar");
+		assertEquals("2.0", "${VAR}/../../foo/bar", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo/${PARENT-4-BAR}");
+		assertEquals("2.1", "${VAR}/../../foo/${BAR}/../../../..", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo${PARENT-4-BAR}");
+		assertEquals("2.2", "${VAR}/../../foo${BAR}/../../../..", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/${PARENT-4-BAR}/foo");
+		assertEquals("2.3", "${VAR}/../../${BAR}/../../../../foo", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/f${PARENT-4-BAR}/oo");
+		assertEquals("2.4", "${VAR}/../../f${BAR}/../../../../oo", result);
+
+		result = pathVariableManager.convertToUserEditableFormat("/foo/bar");
+		assertEquals("2.5", "/foo/bar", result);
+	}
+
+	public void testConvertFromUserEditableFormat() {
+		IPathVariableManager manager = existingProject.getPathVariableManager();
+
+		String result = manager.convertFromUserEditableFormat("C:\\foo\\bar", existingProject);
+		assertEquals("1.0", "C:/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("C:/foo/bar", existingProject);
+		assertEquals("1.1", "C:/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("VAR/foo/bar", existingProject);
+		assertEquals("1.2", "VAR/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/foo/bar", existingProject);
+		assertEquals("1.3", "${VAR}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../foo/bar", existingProject);
+		assertEquals("1.4", "${PARENT-1-VAR}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${PARENT-1-VAR}/foo/bar", existingProject);
+		assertEquals("1.5", "${PARENT-1-VAR}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${PARENT-VAR}/foo/bar", existingProject);
+		assertEquals("1.6", "${PARENT-VAR}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${PARENT-2}/foo/bar", existingProject);
+		assertEquals("1.7", "${PARENT-2}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${PARENT}/foo/bar", existingProject);
+		assertEquals("1.8", "${PARENT}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../../foo/bar", existingProject);
+		assertEquals("1.9", "${PARENT-2-VAR}/foo/bar", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../../foo/${BAR}/../../../../", existingProject);
+		assertEquals("2.0", "${PARENT-2-VAR}/foo/${PARENT-4-BAR}", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../../foo${BAR}/../../../../", existingProject);
+		assertEquals("2.1", "${PARENT-2-VAR}/foo${PARENT-4-BAR}", result);
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../../${BAR}foo/../../../../", existingProject);
+		assertEquals("2.2", "${PARENT-2-VAR}/${PARENT-4-BARfoo}", result);
+
+		IPath intermeiateValue = manager.getValue("BARfoo");
+		assertEquals("2.3", "${BAR}foo", intermeiateValue.toPortableString());
+
+		result = manager.convertFromUserEditableFormat("${VAR}/../../f${BAR}oo/../../../../", existingProject);
+		assertEquals("2.4", "${PARENT-2-VAR}/${PARENT-4-BARoo}", result);
+
+		intermeiateValue = manager.getValue("BARoo");
+		assertEquals("2.5", "f${BAR}oo", intermeiateValue.toPortableString());
+
+		result = manager.convertFromUserEditableFormat("/foo/bar", existingProject);
+		assertEquals("2.6", "/foo/bar", result);
+	}
 }

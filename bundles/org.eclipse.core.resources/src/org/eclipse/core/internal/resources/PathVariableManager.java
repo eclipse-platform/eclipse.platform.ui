@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IPathVariable;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
@@ -366,5 +360,16 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			// handled by returning null
 		}
 		return null;
+	}
+
+	/**
+	 * @see IPathVariableManager#convertToUserEditableFormat(String)
+	 */
+	public String convertToUserEditableFormat(String value) { 
+		return PathVariableUtil.convertToUserEditableFormatInternal(value);
+	}
+
+	public String convertFromUserEditableFormat(String userFormat, IResource resource) {
+		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, resource);
 	}
 }
