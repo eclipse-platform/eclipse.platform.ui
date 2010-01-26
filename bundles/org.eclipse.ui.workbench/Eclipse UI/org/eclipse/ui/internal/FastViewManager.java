@@ -988,17 +988,11 @@ public class FastViewManager {
 	 *  false when ending the operation
 	 */
 	public void deferUpdates(boolean defer) {
-		if (defer && !deferringUpdates) {
-			deferringUpdates = defer;
-			
-			deferAnimations(true);
-			
+		if (defer == deferringUpdates)
 			return;
-		}
-		
-		// 'false': reset and run any necessary updates
-		deferringUpdates = false;
-		deferAnimations(false);
+
+		deferringUpdates = defer;
+		deferAnimations(deferringUpdates);
 	}
 
 	/**
