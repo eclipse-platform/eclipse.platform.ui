@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1150,6 +1150,84 @@ public final class IDE {
         // open the editor on the file
         return page.openEditor(input, editorId);
     }
+
+	/**
+	 * Opens an internal editor on the given IFileStore object.
+	 * <p>
+	 * Unlike the other <code>openEditor</code> methods, this one can be used to
+	 * open files that reside outside the workspace resource set.
+	 * </p>
+	 * <p>
+	 * If the page already has an editor open on the target object then that
+	 * editor is brought to front; otherwise, a new editor is opened.
+	 * </p>
+	 * 
+	 * @param page
+	 *            the page in which the editor will be opened
+	 * @param fileStore
+	 *            the IFileStore representing the file to open
+	 * @return an open editor or <code>null</code> if an external editor was
+	 *         opened
+	 * @exception PartInitException
+	 *                if no internal editor can be found or if the editor could
+	 *                not be initialized
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
+	 * @since 3.6
+	 */
+	public static IEditorPart openInternalEditorOnFileStore(IWorkbenchPage page, IFileStore fileStore) throws PartInitException {
+		if (page == null)
+			throw new IllegalArgumentException();
+		if (fileStore == null)
+			throw new IllegalArgumentException();
+
+		IEditorInput input = getEditorInput(fileStore);
+		String name = fileStore.fetchInfo().getName();
+		if (name == null)
+			throw new IllegalArgumentException();
+
+		IContentType[] contentTypes = null;
+		InputStream is = null;
+		try {
+			is = fileStore.openInputStream(EFS.NONE, null);
+			contentTypes = Platform.getContentTypeManager().findContentTypesFor(is, name);
+		} catch (CoreException ex) {
+			// it's OK, ignore
+		} catch (IOException ex) {
+			// it's OK, ignore
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// nothing good can be done here, ignore
+				}
+			}
+		}
+
+		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+		if (contentTypes != null) {
+			for(int i = 0 ; i < contentTypes.length; i++) {
+				IEditorDescriptor editorDesc = editorReg.getDefaultEditor(name, contentTypes[i]);
+				if ((editorDesc != null) && (editorDesc.isInternal()))
+					return page.openEditor(input, editorDesc.getId());
+			}
+		}
+
+		// no content types are available, use file name associations
+		IEditorDescriptor[] editors = editorReg.getEditors(name);
+		if (editors != null) {
+			for(int i = 0 ; i < editors.length; i++) {
+				if ((editors[i] != null) && (editors[i].isInternal()))
+					return page.openEditor(input, editors[i].getId());
+			}
+		}
+
+		// fallback to the default text editor
+		IEditorDescriptor textEditor = editorReg.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		if (textEditor == null)
+			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
+		return page.openEditor(input, textEditor.getId());
+	}
 
 	/**
 	 * Save all dirty editors in the workbench whose editor input is a child

@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -92,12 +95,19 @@ public class DelayedEventsProcessor implements Listener {
 				IFileInfo fetchInfo = fileStore.fetchInfo();
 				if (!fetchInfo.isDirectory() && fetchInfo.exists()) {
 					IWorkbenchPage page = window.getActivePage();
+					if (page == null) {
+						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_noWindow, path);
+						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
+								IDEWorkbenchMessages.OpenDelayedFileAction_title,
+								msg, SWT.SHEET);
+					}
 					try {
-						IDE.openEditorOnFileStore(page, fileStore);
+						IDE.openInternalEditorOnFileStore(page, fileStore);
 					} catch (PartInitException e) {
 						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_errorOnOpen,
 										fileStore.getName());
-						IDEWorkbenchPlugin.log(msg, e.getStatus());
+						CoreException eLog = new PartInitException(e.getMessage());
+						IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, msg, eLog));
 						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
 								IDEWorkbenchMessages.OpenDelayedFileAction_title,
 								msg, SWT.SHEET);

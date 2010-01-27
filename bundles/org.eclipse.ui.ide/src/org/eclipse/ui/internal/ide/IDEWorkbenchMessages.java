@@ -907,6 +907,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenDelayedFileAction_title;
 	public static String OpenDelayedFileAction_message_errorOnOpen;
 	public static String OpenDelayedFileAction_message_fileNotFound;
+	public static String OpenDelayedFileAction_message_noWindow;
 
 	static {
 		// load message values from bundle file
