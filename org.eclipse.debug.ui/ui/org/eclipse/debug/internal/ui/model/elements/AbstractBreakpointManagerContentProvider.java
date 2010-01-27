@@ -745,7 +745,7 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 		if (parent.contains(breakpoint)) {
 			if ((containers.length != 0)) {
 				for (int i = 0; i < containers.length; ++i) {
-					ModelDelta nodeDelta = parentDelta.addNode(containers[i], flags);
+					ModelDelta nodeDelta = parentDelta.addNode(containers[i], IModelDelta.STATE);
 					appendModelDelta(containers[i], nodeDelta, flags, breakpoint);
 				}			
 			} else {
