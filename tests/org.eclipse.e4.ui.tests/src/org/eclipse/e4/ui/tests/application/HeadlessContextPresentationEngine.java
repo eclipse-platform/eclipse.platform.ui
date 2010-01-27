@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.services.IDisposable;
@@ -21,6 +23,8 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -34,6 +38,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	private EventHandler childHandler;
+	private EventHandler activeChildHandler;
 
 	private static IEclipseContext getParentContext(MUIElement element) {
 		MElementContainer<MUIElement> parent = element.getParent();
@@ -62,9 +69,34 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@PostConstruct
 	void postConstruct() {
+		childHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				if (UIEvents.EventTypes.ADD.equals(event
+						.getProperty(UIEvents.EventTags.TYPE))) {
+					Object element = event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					if (element instanceof MUIElement) {
+						Object parent = event
+								.getProperty(UIEvents.EventTags.ELEMENT);
+						createGui((MUIElement) element, parent);
+
+						if (parent instanceof MPartStack) {
+							MPartStack stack = (MPartStack) parent;
+							List<MPart> children = stack.getChildren();
+							if (children.size() == 1) {
+								stack.setActiveChild((MPart) element);
+							}
+						}
+					}
+				}
+			}
+		};
+
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
+				UIEvents.ElementContainer.CHILDREN), childHandler);
+
+		activeChildHandler = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object element = event
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
@@ -74,7 +106,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 					createGui((MUIElement) element, parent);
 				}
 			}
-		});
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.ACTIVECHILD), activeChildHandler);
 	}
 
 	/*
@@ -103,22 +139,31 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 			mcontext.setContext(createdContext);
 		}
-		if (element instanceof MElementContainer<?>) {
-			boolean active = false;
+
+		if (element instanceof MPartStack) {
+			MPartStack container = (MPartStack) element;
+			MPart active = container.getActiveChild();
+			if (active != null) {
+				createGui(active, container);
+				IEclipseContext childContext = ((MContext) active).getContext();
+				IEclipseContext parentContext = getParentContext(active);
+				parentContext.set(IContextConstants.ACTIVE_CHILD, childContext);
+			} else {
+				List<MPart> children = container.getChildren();
+				if (!children.isEmpty()) {
+					container.setActiveChild(children.get(0));
+				}
+			}
+		} else if (element instanceof MElementContainer<?>) {
 			for (Object child : ((MElementContainer<?>) element).getChildren()) {
 				if (child instanceof MUIElement) {
 					createGui((MUIElement) child, element);
-					if (!active) {
-						active = true;
-						((MElementContainer) element)
-								.setActiveChild((MUIElement) child);
-						if (child instanceof MContext) {
-							IEclipseContext childContext = ((MContext) child)
-									.getContext();
-							IEclipseContext parentContext = getParentContext((MUIElement) child);
-							parentContext.set(IContextConstants.ACTIVE_CHILD,
-									childContext);
-						}
+					if (child instanceof MContext) {
+						IEclipseContext childContext = ((MContext) child)
+								.getContext();
+						IEclipseContext parentContext = getParentContext((MUIElement) child);
+						parentContext.set(IContextConstants.ACTIVE_CHILD,
+								childContext);
 					}
 				}
 			}

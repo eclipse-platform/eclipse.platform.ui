@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -44,8 +42,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 public abstract class HeadlessApplicationTest extends
 		HeadlessApplicationElementTest {
@@ -54,35 +50,15 @@ public abstract class HeadlessApplicationTest extends
 
 	protected IPresentationEngine renderer;
 
-	private EventHandler eventHandler = new EventHandler() {
-		public void handleEvent(Event event) {
-			if (event.getProperty(UIEvents.EventTags.ATTNAME).equals(
-					UIEvents.ElementContainer.ACTIVECHILD)) {
-				Object oldPart = event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				Object newPart = event
-						.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (oldPart instanceof MContext) {
-					IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
-							.getContext().get(IContextConstants.PARENT);
-					context.set(IContextConstants.ACTIVE_CHILD,
-							newPart == null ? null : ((MContext) newPart)
-									.getContext());
-				} else if (newPart instanceof MContext) {
-					IEclipseContext context = (IEclipseContext) ((MContext) newPart)
-							.getContext().get(IContextConstants.PARENT);
-					context.set(IContextConstants.ACTIVE_CHILD,
-							((MContext) newPart).getContext());
-				}
-			}
-		}
-	};
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		application = (MApplication) applicationElement;
+
+		for (MWindow wbw : application.getChildren()) {
+			createGUI(wbw);
+		}
 
 		if (needsActiveChildEventHandling()) {
 			addActiveChildEventHandling();
@@ -91,10 +67,6 @@ public abstract class HeadlessApplicationTest extends
 
 	@Override
 	protected void tearDown() throws Exception {
-		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
-				IEventBroker.class.getName());
-		eventBroker.unsubscribe(eventHandler);
-
 		for (MWindow window : application.getChildren()) {
 			renderer.removeGui(window);
 		}
@@ -107,11 +79,6 @@ public abstract class HeadlessApplicationTest extends
 	}
 
 	private void addActiveChildEventHandling() {
-		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
-				IEventBroker.class.getName());
-		eventBroker.subscribe(UIEvents
-				.buildTopic(UIEvents.ElementContainer.TOPIC), null,
-				eventHandler, true);
 	}
 
 	public void testGet_ActiveContexts() throws Exception {
@@ -348,10 +315,6 @@ public abstract class HeadlessApplicationTest extends
 		processPartContributions(application.getContext(), resource);
 
 		renderer = createPresentationEngine(getEngineURI());
-
-		for (MWindow wbw : windows) {
-			createGUI(wbw);
-		}
 
 		return application;
 	}

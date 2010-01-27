@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -66,6 +67,9 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	@Named(EPartService.PART_SERVICE_ROOT)
 	private MElementContainer<MUIElement> rootContainer;
+
+	@Inject
+	private IPresentationEngine engine;
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
@@ -253,11 +257,25 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart showPart(String id) {
+		return showPart(id, PartState.ACTIVATE);
+	}
+
+	public MPart showPart(String id, PartState partState) {
 		Assert.isNotNull(id);
 
 		MPart part = findPart(id);
 		if (part != null) {
-			activate(part);
+			switch (partState) {
+			case ACTIVATE:
+				activate(part);
+				return part;
+			case VISIBLE:
+				bringToTop(part);
+				return part;
+			case CREATE:
+				engine.createGui(part);
+				return part;
+			}
 			return part;
 		}
 
@@ -294,7 +312,14 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		// 3) make it visible / active / re-layout
-		activate(part);
+		switch (partState) {
+		case ACTIVATE:
+			activate(part);
+			return part;
+		case VISIBLE:
+			bringToTop(part);
+			return part;
+		}
 		return part;
 	}
 
