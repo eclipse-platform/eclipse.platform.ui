@@ -62,6 +62,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.osgi.service.event.Event;
@@ -738,9 +739,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
 	 */
 	public IViewPart showView(String viewId, String secondaryId, int mode) throws PartInitException {
+		switch (mode) {
+		case VIEW_ACTIVATE:
+		case VIEW_VISIBLE:
+		case VIEW_CREATE:
+			break;
+		default:
+			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+		}
+
 		MPart part = partService.findPart(viewId);
 		if (part == null) {
-			part = partService.showPart(viewId);
+			switch (mode) {
+			case VIEW_ACTIVATE:
+				part = partService.showPart(viewId, EPartService.PartState.ACTIVATE);
+				break;
+			case VIEW_VISIBLE:
+				part = partService.showPart(viewId, EPartService.PartState.VISIBLE);
+				break;
+			case VIEW_CREATE:
+				part = partService.showPart(viewId, EPartService.PartState.CREATE);
+				break;
+			}
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
@@ -749,9 +769,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return compatibilityView.getView();
 		}
 
-		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
-		compatibilityView.delegateSetFocus();
-		return compatibilityView.getView();
+		switch (mode) {
+		case VIEW_ACTIVATE:
+			part = partService.showPart(viewId, EPartService.PartState.ACTIVATE);
+			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+			compatibilityView.delegateSetFocus();
+			return compatibilityView.getView();
+		case VIEW_VISIBLE:
+			part = partService.showPart(viewId, EPartService.PartState.VISIBLE);
+			compatibilityView = (CompatibilityView) part.getObject();
+			return compatibilityView.getView();
+		case VIEW_CREATE:
+			part = partService.showPart(viewId, EPartService.PartState.CREATE);
+			compatibilityView = (CompatibilityView) part.getObject();
+			return compatibilityView.getView();
+		default:
+			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+		}
 	}
 
 	/* (non-Javadoc)
