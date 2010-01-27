@@ -1318,7 +1318,6 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 		IPathVariableManager pathVariableManager = existingProjectInSubDirectory.getPathVariableManager();
 
-		int pathVariableCount = pathVariableManager.getPathVariableNames().length;
 		// creates a variable-based location
 		IPath variableBasedLocation = null;
 		IPath targetPath = existingProjectInSubDirectory.getLocation().removeLastSegments(1).append("outside.txt");
@@ -1336,12 +1335,10 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		} catch (CoreException e1) {
 			fail("2.0", e1);
 		}
-		int newPathVariableCount = pathVariableManager.getPathVariableNames().length;
 		IPath resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation), file));
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("3.0", file);
 		assertEquals("3.1", targetPath, resolvedPath);
-		assertEquals("3.2", pathVariableCount + 1, newPathVariableCount);
 
 		try {
 			variableBasedLocation = convertToRelative(pathVariableManager, targetPath, file, true, null);
@@ -1349,7 +1346,6 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			fail("4.0", e1);
 		}
 
-		newPathVariableCount = pathVariableManager.getPathVariableNames().length;
 		resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation), file));
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("5.0", file);
