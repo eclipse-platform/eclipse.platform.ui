@@ -26,5 +26,5 @@ Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui.behaviors,
  org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt"
 Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator
-Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml
+Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml, OSGI-INF/modelService.xml
 Import-Package: javax.inject;version="1.0.0"
