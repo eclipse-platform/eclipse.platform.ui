@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,12 @@ package org.eclipse.ui.internal.decorators;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * An example showing how to control when an element is decorated. This example
- * decorates only elements that are instances of IResource and whose attribute
- * is 'Read-only'.
+ * A decorator for appending the contributing plug-in ID to an existing tooltip.
  * 
- * @see ILightweightLabelDecorator
  */
 public class ContributingPluginDecorator implements ILabelDecorator {
 
