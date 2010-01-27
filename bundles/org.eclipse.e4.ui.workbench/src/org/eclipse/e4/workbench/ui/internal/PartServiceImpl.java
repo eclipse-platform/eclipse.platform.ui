@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
@@ -70,6 +71,9 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	private IPresentationEngine engine;
+
+	@Inject
+	private EModelService modelService;
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
@@ -124,10 +128,8 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		MApplicationElement applicationElement = findPart(rootContainer, id);
-		if (applicationElement instanceof MPart)
-			return (MPart) applicationElement;
-		return null;
+		MApplicationElement element = modelService.find(id, rootContainer);
+		return element instanceof MPart ? (MPart) element : null;
 	}
 
 	public Collection<MPart> getParts() {
@@ -152,26 +154,6 @@ public class PartServiceImpl implements EPartService {
 			return parent.getActiveChild() == part;
 		}
 		return false;
-	}
-
-	private MApplicationElement findPart(MElementContainer<?> container, String id) {
-		if (id == null)
-			return null;
-		for (Object object : container.getChildren()) {
-			if (object instanceof MApplicationElement) {
-				MApplicationElement part = (MApplicationElement) object;
-				if (id.equals(part.getId())) {
-					return part;
-				}
-			}
-			if (object instanceof MElementContainer<?>) {
-				MApplicationElement part = findPart((MElementContainer<?>) object, id);
-				if (part != null) {
-					return part;
-				}
-			}
-		}
-		return null;
 	}
 
 	private boolean isInContainer(MPart part) {
@@ -301,7 +283,8 @@ public class PartServiceImpl implements EPartService {
 		// part.setLabel(descriptor.getLabel());
 		part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
 
-		MApplicationElement container = findPart(rootContainer, descriptorMatch.getCategory());
+		MApplicationElement container = modelService.find(descriptorMatch.getCategory(),
+				rootContainer);
 		if (container instanceof MElementContainer<?>) {
 			((MElementContainer<MPart>) container).getChildren().add(part);
 		} else { // wrap it in a stack

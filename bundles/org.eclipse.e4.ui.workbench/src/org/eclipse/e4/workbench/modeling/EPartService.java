@@ -116,6 +116,20 @@ public interface EPartService {
 	 */
 	public MPart showPart(String id);
 
+	/**
+	 * Shows the part identified by the given id. The behavior of this method is dictated by the
+	 * supplied state. If <code>ACTIVATE</code> is supplied, then the part is made visible and
+	 * granted focus. If <code>VISIBLE</code> is supplied, then the part will be made visible though
+	 * it may not necessarily be granted focus. If <code>CREATE</code> is supplied, then the part
+	 * will be instantiated though its contents may not necessarily be visible to the end user.
+	 * 
+	 * @param id
+	 *            the identifier of the part, must not be <code>null</code>
+	 * @param partState
+	 *            the desired state of the shown part to be in
+	 * @return the shown part, or <code>null</code> if no parts or part descriptors can be found
+	 *         that match the specified id
+	 */
 	public MPart showPart(String id, PartState partState);
 
 	public Collection<MSaveablePart> getSaveableParts();
