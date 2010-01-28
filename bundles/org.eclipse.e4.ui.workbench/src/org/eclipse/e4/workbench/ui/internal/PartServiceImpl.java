@@ -374,25 +374,16 @@ public class PartServiceImpl implements EPartService {
 		try {
 			ContextInjectionFactory.invoke(client, "doSave", part.getContext()); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
-			if (logger != null) {
-				logger.error(e.getCause());
-			}
+			logger.error(e.getCause());
 			return false;
 		} catch (CoreException e) {
-			if (logger != null) {
-				logger.error(e.getStatus().getException());
-			}
+			logger.error(e.getStatus().getException());
 			return false;
 		}
 		return true;
 	}
 
 	public boolean saveAll(boolean confirm) {
-		// FIXME: hack to get tests to pass, need to figure out why this is null
-		if (rootContainer == null) {
-			return true;
-		}
-
 		Collection<MSaveablePart> dirtyParts = getDirtyParts();
 		if (dirtyParts.isEmpty()) {
 			return true;

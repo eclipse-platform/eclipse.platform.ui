@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
@@ -68,6 +69,12 @@ public class MToolItemTest extends TestCase {
 		window.getChildren().add(windowTrim);
 		toolBar.getChildren().add(toolItem);
 		windowTrim.getChildren().add(toolBar);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -138,7 +145,12 @@ public class MToolItemTest extends TestCase {
 		window.getChildren().add(windowTrim);
 		toolBar.getChildren().add(toolItem);
 		windowTrim.getChildren().add(toolBar);
-		// windowTrim.getChildren().add(toolItem);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);

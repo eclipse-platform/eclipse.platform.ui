@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -54,7 +55,7 @@ public class MMenuItemTest extends TestCase {
 		return tpl.clientArea.getChildren();
 	}
 
-	private void testMToolItem_Text(String before, String beforeExpected,
+	private void testMMenuItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
@@ -65,6 +66,12 @@ public class MMenuItemTest extends TestCase {
 		window.setMainMenu(menu);
 		menu.getChildren().add(menuItem);
 
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
@@ -72,52 +79,52 @@ public class MMenuItemTest extends TestCase {
 		assertNotNull(widget);
 		assertTrue(widget instanceof MenuItem);
 
-		MenuItem toolItemWidget = (MenuItem) widget;
+		MenuItem menuItemWidget = (MenuItem) widget;
 
-		assertEquals(beforeExpected, toolItemWidget.getText());
+		assertEquals(beforeExpected, menuItemWidget.getText());
 
 		menuItem.setLabel(after);
 
-		assertEquals(afterExpected, toolItemWidget.getText());
+		assertEquals(afterExpected, menuItemWidget.getText());
 	}
 
-	public void testMToolItem_Text_NullNull() {
-		testMToolItem_Text(null, "", null, "");
+	public void testMMenuItem_Text_NullNull() {
+		testMMenuItem_Text(null, "", null, "");
 	}
 
-	public void testMToolItem_Text_NullEmpty() {
-		testMToolItem_Text(null, "", "", "");
+	public void testMMenuItem_Text_NullEmpty() {
+		testMMenuItem_Text(null, "", "", "");
 	}
 
-	public void testMToolItem_Text_NullString() {
-		testMToolItem_Text(null, "", "label", "label");
+	public void testMMenuItem_Text_NullString() {
+		testMMenuItem_Text(null, "", "label", "label");
 	}
 
-	public void testMToolItem_Text_EmptyNull() {
-		testMToolItem_Text("", "", null, "");
+	public void testMMenuItem_Text_EmptyNull() {
+		testMMenuItem_Text("", "", null, "");
 	}
 
-	public void testMToolItem_Text_EmptyEmpty() {
-		testMToolItem_Text("", "", "", "");
+	public void testMMenuItem_Text_EmptyEmpty() {
+		testMMenuItem_Text("", "", "", "");
 	}
 
-	public void testMToolItem_Text_EmptyString() {
-		testMToolItem_Text("", "", "label", "label");
+	public void testMMenuItem_Text_EmptyString() {
+		testMMenuItem_Text("", "", "label", "label");
 	}
 
-	public void testMToolItem_Text_StringNull() {
-		testMToolItem_Text("label", "label", null, "");
+	public void testMMenuItem_Text_StringNull() {
+		testMMenuItem_Text("label", "label", null, "");
 	}
 
-	public void testMToolItem_Text_StringEmpty() {
-		testMToolItem_Text("label", "label", "", "");
+	public void testMMenuItem_Text_StringEmpty() {
+		testMMenuItem_Text("label", "label", "", "");
 	}
 
-	public void testMToolItem_Text_StringStringUnchanged() {
-		testMToolItem_Text("label", "label", "label", "label");
+	public void testMMenuItem_Text_StringStringUnchanged() {
+		testMMenuItem_Text("label", "label", "label", "label");
 	}
 
-	public void testMToolItem_Text_StringStringChanged() {
-		testMToolItem_Text("label", "label", "label2", "label2");
+	public void testMMenuItem_Text_StringStringChanged() {
+		testMMenuItem_Text("label", "label", "label2", "label2");
 	}
 }
