@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,20 +30,26 @@ import org.eclipse.core.runtime.Assert;
 public class CopyOnWriteTextStore implements ITextStore {
 
 	/**
-	 * An unmodifiable String based text store. It is not possible to modify the content other than
-	 * using {@link #set}. Trying to {@link #replace} a text range will throw an
+	 * An unmodifiable String based text store. It is not possible to modify the initial content.
+	 * Trying to {@link #replace} a text range or {@link #set} new content will throw an
 	 * <code>UnsupportedOperationException</code>.
 	 */
 	private static class StringTextStore implements ITextStore {
 
+		/** Minimum text limit whether to enable String copying */
+		private static final int SMALL_TEXT_LIMIT= 1024 * 1024;
+
 		/** Represents the content of this text store. */
-		private String fText= ""; //$NON-NLS-1$
+		private final String fText;
+		
+		/** Minimum length limit below which {@link #get(int, int)} will return a String copy */
+		private final int fCopyLimit;
 
 		/**
 		 * Create an empty text store.
 		 */
 		private StringTextStore() {
-			super();
+			this(""); //$NON-NLS-1$
 		}
 
 		/**
@@ -53,7 +59,8 @@ public class CopyOnWriteTextStore implements ITextStore {
 		 */
 		private StringTextStore(String text) {
 			super();
-			set(text);
+			fText= text != null ? text : ""; //$NON-NLS-1$
+			fCopyLimit= fText.length() > SMALL_TEXT_LIMIT ? fText.length() / 2 : 0;
 		}
 
 		/*
@@ -67,6 +74,10 @@ public class CopyOnWriteTextStore implements ITextStore {
 		 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 		 */
 		public String get(int offset, int length) {
+			if (length < fCopyLimit) {
+				// create a copy to avoid sharing of contained char[] - bug 292664
+				return new String(fText.substring(offset, offset + length).toCharArray());
+			}
 			return fText.substring(offset, offset + length);
 		}
 
@@ -89,7 +100,8 @@ public class CopyOnWriteTextStore implements ITextStore {
 		 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
 		 */
 		public void set(String text) {
-			fText= text != null ? text : ""; //$NON-NLS-1$
+			// modification not supported
+			throw new UnsupportedOperationException();
 		}
 
 	}
