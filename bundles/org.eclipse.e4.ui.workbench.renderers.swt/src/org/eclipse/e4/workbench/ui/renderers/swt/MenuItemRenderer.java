@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
@@ -40,6 +41,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -96,8 +98,11 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		MMenuItem itemModel = (MMenuItem) element;
 		Menu parentMenu = (Menu) parent;
 
+		// determine the index at which we should create the new item
+		int addIndex = calcVisibleIndex(element);
+
 		if (itemModel.getType() == ItemType.SEPARATOR) {
-			return new MenuItem(parentMenu, SWT.SEPARATOR);
+			return new MenuItem(parentMenu, SWT.SEPARATOR, addIndex);
 		}
 
 		// OK, it's a real menu item, what kind?
@@ -111,11 +116,31 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		else if (itemModel.getType() == ItemType.RADIO)
 			flags = SWT.RADIO;
 
-		MenuItem newItem = new MenuItem((Menu) parent, flags);
+		MenuItem newItem = new MenuItem((Menu) parent, flags, addIndex);
 		setItemText(itemModel, newItem);
 		newItem.setEnabled(itemModel.isEnabled());
 
 		return newItem;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer#hideChild
+	 * (org.eclipse.e4.ui.model.application.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		// Since there's no place to 'store' a child that's not in a menu
+		// we'll blow it away and re-create on an add
+		Widget widget = (Widget) child.getWidget();
+		if (widget != null && !widget.isDisposed())
+			widget.dispose();
 	}
 
 	private void setItemText(MMenuItem model, MenuItem item) {

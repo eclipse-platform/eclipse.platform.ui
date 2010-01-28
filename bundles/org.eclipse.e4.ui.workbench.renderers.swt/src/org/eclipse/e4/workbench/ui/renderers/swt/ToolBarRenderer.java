@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -17,6 +18,7 @@ import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Create a contribute part.
@@ -41,5 +43,25 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		ToolBar tb = new ToolBar((Composite) parent, orientation | SWT.WRAP
 				| SWT.FLAT | SWT.RIGHT);
 		return tb;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer#hideChild
+	 * (org.eclipse.e4.ui.model.application.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		// Since there's no place to 'store' a child that's not in a menu
+		// we'll blow it away and re-create on an add
+		Widget widget = (Widget) child.getWidget();
+		if (widget != null && !widget.isDisposed())
+			widget.dispose();
 	}
 }

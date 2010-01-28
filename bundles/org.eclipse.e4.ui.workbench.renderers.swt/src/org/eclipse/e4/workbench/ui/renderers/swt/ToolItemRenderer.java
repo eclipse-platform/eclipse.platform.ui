@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MToolItem;
@@ -41,6 +42,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -143,8 +145,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		ToolBar tb = (ToolBar) parent;
 		MToolItem itemModel = (MToolItem) element;
 
+		// determine the index at which we should create the new item
+		int addIndex = calcVisibleIndex(element);
+
 		if (itemModel.getType() == ItemType.SEPARATOR) {
-			return new ToolItem(tb, SWT.SEPARATOR);
+			return new ToolItem(tb, SWT.SEPARATOR, addIndex);
 		}
 
 		// OK, it's a real menu item, what kind?
@@ -156,7 +161,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		else if (itemModel.getType() == ItemType.RADIO)
 			flags |= SWT.RADIO;
 
-		ToolItem newItem = new ToolItem((ToolBar) parent, flags);
+		ToolItem newItem = new ToolItem((ToolBar) parent, flags, addIndex);
 		if (itemModel.getLabel() != null)
 			newItem.setText(itemModel.getLabel());
 
@@ -169,6 +174,26 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		newItem.setSelection(itemModel.isSelected());
 
 		return newItem;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer#hideChild
+	 * (org.eclipse.e4.ui.model.application.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		// Since there's no place to 'store' a child that's not in a menu
+		// we'll blow it away and re-create on an add
+		Widget widget = (Widget) child.getWidget();
+		if (widget != null && !widget.isDisposed())
+			widget.dispose();
 	}
 
 	/*

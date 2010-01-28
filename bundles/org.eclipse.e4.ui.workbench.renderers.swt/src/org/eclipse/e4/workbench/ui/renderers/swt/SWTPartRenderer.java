@@ -68,6 +68,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		Widget swtWidget = (Widget) widget;
 		swtWidget.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
+				MUIElement element = (MUIElement) e.widget.getData(OWNING_ME);
+				if (element != null)
+					unbindWidget(element);
 			}
 		});
 	}
@@ -76,7 +79,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		Widget widget = (Widget) me.getWidget();
 		if (widget != null) {
 			me.setWidget(null);
-			widget.setData(OWNING_ME, null);
+			if (!widget.isDisposed())
+				widget.setData(OWNING_ME, null);
 		}
 
 		// Clear the factory reference
@@ -154,6 +158,31 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		return outerMost;
+	}
+
+	/**
+	 * Calculates the index of the element in terms of the other <b>rendered</b>
+	 * elements. This is useful when 'inserting' elements in the middle of
+	 * existing, rendered parents.
+	 * 
+	 * @param element
+	 *            The element to get the index for
+	 * @return The visible index or -1 if the element is not a child of the
+	 *         parent
+	 */
+	protected int calcVisibleIndex(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+
+		int curIndex = 0;
+		for (MUIElement child : parent.getChildren()) {
+			if (child == element) {
+				return curIndex;
+			}
+
+			if (child.getWidget() != null)
+				curIndex++;
+		}
+		return -1;
 	}
 
 	/*

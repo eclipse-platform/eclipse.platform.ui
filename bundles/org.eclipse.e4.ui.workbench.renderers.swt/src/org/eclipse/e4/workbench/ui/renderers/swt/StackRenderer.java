@@ -328,13 +328,14 @@ public class StackRenderer extends LazyStackRenderer {
 		// Hook up special logic to synch up the Tab Items
 		hookTabControllerLogic(stack, part, cti);
 
-		if (stack.getActiveChild() == null) {
+		// Re-ensure that the activeChild == the selected tab
+		if (stack.getActiveChild() == null)
 			stack.setActiveChild(part);
-		}
 
-		CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
-		if (selCTI != null && selCTI != ctf.getSelection()) {
-			ctf.setSelection(selCTI);
+		if (stack.getActiveChild() != null) {
+			CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
+			if (selCTI != null && selCTI != ctf.getSelection())
+				ctf.setSelection(selCTI);
 		}
 	}
 
