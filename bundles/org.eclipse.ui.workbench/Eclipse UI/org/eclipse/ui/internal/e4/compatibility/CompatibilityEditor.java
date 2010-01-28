@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -50,6 +52,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 		if (initialized) {
 			super.create();
 		}
+	}
+
+	// FIXME: remove me when bug 299760 is fixed
+	void doSave(@Optional IProgressMonitor monitor) {
+		super.doSave(monitor);
 	}
 
 	private boolean initialized = false;

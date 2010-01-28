@@ -1,12 +1,20 @@
 package org.eclipse.e4.ui.compat.tests.tweaklet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.compatibility.Workbench;
 import org.eclipse.ui.tests.helpers.TestFacade;
 
 public class TestFacadeE4Impl extends TestFacade {
@@ -53,8 +61,54 @@ public class TestFacadeE4Impl extends TestFacade {
 	}
 
 	@Override
-	public void saveableHelperSetAutomatedResponse(int response) {
-		E4Util.unsupported("assertActionSetId");
+	public void saveableHelperSetAutomatedResponse(final int response) {
+		Workbench workbench = (Workbench) PlatformUI.getWorkbench();
+		MApplication application = workbench.getApplication();
+		
+		IEclipseContext context = application.getContext();
+		ISaveHandler saveHandler = (ISaveHandler) context.get(ISaveHandler.class.getName());
+		if (response == -1) {
+			context.set(ISaveHandler.class.getName(), originalHandler);
+		} else {
+			if (saveHandler == testSaveHandler) {
+				testSaveHandler.setResponse(response);
+			} else {
+				originalHandler = saveHandler;
+				testSaveHandler.setResponse(response);
+				context.set(ISaveHandler.class.getName(), testSaveHandler);
+			}	
+		}
+		while (workbench.getDisplay().readAndDispatch());
+	}
+	
+	private static ISaveHandler originalHandler;
+	
+	private static TestSaveHandler testSaveHandler = new TestSaveHandler();
+	
+	static class TestSaveHandler implements ISaveHandler {
+		
+		private int response;
+		
+		public void setResponse(int response) {
+			this.response = response;
+		}
+
+		public Save promptToSave(MSaveablePart dirtyPart) {
+			switch (response) {
+			case 0: return Save.YES;
+			case 1: return Save.NO;
+			case 2: return Save.CANCEL;
+			}
+			throw new RuntimeException();
+		}
+
+		public Save[] promptToSave(Collection<MSaveablePart> dirtyParts) {
+			Save save = promptToSave((MSaveablePart) null);
+			Save[] prompt = new Save[dirtyParts.size()];
+			Arrays.fill(prompt, save);
+			return prompt;
+		}
+		
 	}
 
 }

@@ -10,25 +10,28 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -215,6 +218,39 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC),
 				sizeHandler);
+
+		context.set(ISaveHandler.class.getName(), new ISaveHandler() {
+
+			public Save promptToSave(MSaveablePart dirtyPart) {
+				Shell shell = (Shell) context
+						.get(IServiceConstants.ACTIVE_SHELL);
+				Object[] elements = promptForSave(shell, Collections
+						.singleton(dirtyPart));
+				if (elements == null) {
+					return Save.CANCEL;
+				}
+				return elements.length == 0 ? Save.NO : Save.YES;
+			}
+
+			public Save[] promptToSave(Collection<MSaveablePart> dirtyParts) {
+				List<MSaveablePart> parts = new ArrayList<MSaveablePart>(
+						dirtyParts);
+				Shell shell = (Shell) context
+						.get(IServiceConstants.ACTIVE_SHELL);
+				Save[] response = new Save[dirtyParts.size()];
+				Object[] elements = promptForSave(shell, parts);
+				if (elements == null) {
+					Arrays.fill(response, Save.CANCEL);
+				} else {
+					Arrays.fill(response, Save.NO);
+					for (int i = 0; i < elements.length; i++) {
+						response[parts.indexOf(elements[i])] = Save.YES;
+					}
+				}
+				return response;
+			}
+
+		});
 	}
 
 	@PreDestroy
@@ -306,7 +342,12 @@ public class WBWRenderer extends SWTPartRenderer {
 
 			shell.addShellListener(new ShellAdapter() {
 				public void shellClosed(ShellEvent e) {
-					e.doit = promptForSave(shell, w);
+					MContext context = (MContext) e.widget.getData(OWNING_ME);
+					EPartService partService = (EPartService) context
+							.getContext().get(EPartService.class.getName());
+					if (partService != null) {
+						e.doit = partService.saveAll(true);
+					}
 				}
 			});
 		}
@@ -371,67 +412,15 @@ public class WBWRenderer extends SWTPartRenderer {
 		shell.layout(true);
 	}
 
-	private List<MSaveablePart> collectSaveableParts(
-			MElementContainer<?> window, List<MSaveablePart> saveableParts) {
-		for (Object element : window.getChildren()) {
-			if (element instanceof MSaveablePart) {
-				MSaveablePart part = (MSaveablePart) element;
-				if (part.isDirty()) {
-					Object clientObject = part.getObject();
-					if (clientObject != null) {
-
-						Boolean saveOnCloseNeeded = Boolean.TRUE;
-						try {
-							saveOnCloseNeeded = (Boolean) ContextInjectionFactory
-									.invoke(
-											clientObject,
-											"isSaveOnCloseNeeded", part.getContext(), Boolean.TRUE); //$NON-NLS-1$
-						} catch (InvocationTargetException e) {
-							if (logger != null)
-								logger.error(e);
-						}
-						if (saveOnCloseNeeded.booleanValue()) {
-							saveableParts.add(part);
-						}
-					}
-				}
-			}
-
-			if (element instanceof MElementContainer<?>) {
-				collectSaveableParts((MElementContainer<?>) element,
-						saveableParts);
-			}
-		}
-		return saveableParts;
-	}
-
-	private boolean promptForSave(Shell parentShell, MElementContainer<?> window) {
-		List<MSaveablePart> saveableParts = collectSaveableParts(window,
-				new ArrayList<MSaveablePart>());
-		if (!saveableParts.isEmpty()) {
-			SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(
-					parentShell, saveableParts);
-			if (dialog.open() == Window.CANCEL) {
-				return false;
-			}
-
-			for (Object element : dialog.getCheckedElements()) {
-				MSaveablePart part = (MSaveablePart) element;
-				Object clientObject = part.getObject();
-				try {
-					ContextInjectionFactory.invoke(clientObject,
-							"doSave", context); //$NON-NLS-1$
-				} catch (InvocationTargetException e) {
-					if (logger != null)
-						logger.error(e);
-				} catch (CoreException e) {
-					if (logger != null)
-						logger.error(e);
-				}
-			}
+	private Object[] promptForSave(Shell parentShell,
+			Collection<MSaveablePart> saveableParts) {
+		SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(
+				parentShell, saveableParts);
+		if (dialog.open() == Window.CANCEL) {
+			return null;
 		}
 
-		return true;
+		return dialog.getCheckedElements();
 	}
 
 	@Inject
@@ -452,13 +441,14 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	class SaveablePartPromptDialog extends Dialog {
 
-		private Collection<?> collection;
+		private Collection<MSaveablePart> collection;
 
 		private CheckboxTableViewer tableViewer;
 
 		private Object[] checkedElements = new Object[0];
 
-		SaveablePartPromptDialog(Shell shell, Collection<?> collection) {
+		SaveablePartPromptDialog(Shell shell,
+				Collection<MSaveablePart> collection) {
 			super(shell);
 			this.collection = collection;
 		}
@@ -468,9 +458,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			parent = (Composite) super.createDialogArea(parent);
 
 			Label label = new Label(parent, SWT.LEAD);
-			label
-					.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-							false));
+			label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label.setText("Select the parts to save:"); //$NON-NLS-1$
 
 			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE

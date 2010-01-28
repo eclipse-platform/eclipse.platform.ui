@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,10 +75,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-/**
- * @since 3.5
- *
- */
 public class Workbench implements IWorkbench {
 
 	private static Workbench instance;
@@ -100,6 +96,10 @@ public class Workbench implements IWorkbench {
 
 	Workbench() {
 		// prevent external initialization
+	}
+
+	public MApplication getApplication() {
+		return application;
 	}
 
 	@PostConstruct

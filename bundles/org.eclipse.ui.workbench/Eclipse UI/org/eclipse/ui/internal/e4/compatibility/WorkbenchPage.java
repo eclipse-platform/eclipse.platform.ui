@@ -12,12 +12,12 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -445,12 +446,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
 		if (workbenchPart instanceof ISaveablePart) {
 			ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-			if (saveablePart.isDirty()) {
-				if (save && saveablePart.isSaveOnCloseNeeded()) {
-					if (!saveSaveable(saveablePart, true)) {
-						return false;
-					}
-				}
+			if (!saveSaveable(saveablePart, save, true)) {
+				return false;
 			}
 		}
 
@@ -637,27 +634,47 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
+	private boolean saveAllEditors(boolean confirm, boolean closing) {
+		for (IEditorPart editor : getEditors()) {
+			if (!saveSaveable(editor, confirm, closing)) {
+				return false;
+			}
+		}
+		return partService.saveAll(confirm);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
-		boolean success = true;
-		for (IEditorPart editor : getEditors()) {
-			if (!saveEditor(editor, confirm)) {
-				success = false;
-			}
-		}
-		return success;
+		return saveAllEditors(confirm, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart, boolean)
 	 */
-	private boolean saveSaveable(ISaveablePart saveable, boolean confirm) {
-		if (saveable.isDirty()) {
-			saveable.doSave(new NullProgressMonitor());
+	private boolean saveSaveable(ISaveablePart saveable, boolean confirm, boolean closing) {
+		Collection<MPart> parts = partService.getParts();
+		for (MPart part : parts) {
+			Object client = part.getObject();
+			if (client instanceof CompatibilityPart) {
+				if (((CompatibilityPart) client).getPart() == saveable) {
+					if (saveable.isDirty()) {
+						if (closing) {
+							if (saveable.isSaveOnCloseNeeded()) {
+								partService.savePart((MSaveablePart) part, confirm);
+							}
+						} else {
+							partService.savePart((MSaveablePart) part, confirm);
+						}
+					}
+					return true;
+				}
+			}
 		}
-		return true;
+		return false;
 	}
 
 	/*
@@ -667,7 +684,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * boolean)
 	 */
 	public boolean saveEditor(IEditorPart editor, boolean confirm) {
-		return saveSaveable(editor, confirm);
+		return saveSaveable(editor, confirm, false);
 	}
 
 	/* (non-Javadoc)
@@ -954,11 +971,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
 		// TODO Auto-generated method stub
 		if (saveEditors) {
-			saveAllEditors(true);
+			saveAllEditors(true, true);
 		}
 
 		sortedPerspectives.clear();
 		openedPerspectives.clear();
+
+		for (MPart part : partService.getParts()) {
+			hidePart(part, false);
+		}
 
 		if (closePage) {
 			workbenchWindow.setActivePage(null);
