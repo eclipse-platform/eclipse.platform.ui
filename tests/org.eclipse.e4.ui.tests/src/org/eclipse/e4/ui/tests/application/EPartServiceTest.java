@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import junit.framework.TestCase;
@@ -28,6 +29,8 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -830,11 +833,7 @@ public class EPartServiceTest extends TestCase {
 		partStackB.setActiveChild(partB1);
 		window.setActiveChild(partStackA);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -897,11 +896,7 @@ public class EPartServiceTest extends TestCase {
 		window.setActiveChild(partStack);
 		application.setActiveChild(window);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -948,11 +943,7 @@ public class EPartServiceTest extends TestCase {
 		window.setActiveChild(partStackA);
 		application.setActiveChild(window);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1004,11 +995,7 @@ public class EPartServiceTest extends TestCase {
 		partStackB.setActiveChild(partB1);
 		window.setActiveChild(partStackA);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1056,11 +1043,7 @@ public class EPartServiceTest extends TestCase {
 		window.setActiveChild(partStack);
 		application.setActiveChild(window);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1107,11 +1090,7 @@ public class EPartServiceTest extends TestCase {
 		window.setActiveChild(partStackA);
 		application.setActiveChild(window);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1274,6 +1253,259 @@ public class EPartServiceTest extends TestCase {
 		testGetDirtyParts3(false, false);
 	}
 
+	private void testSavePart(final Save returnValue, boolean confirm,
+			boolean beforeDirty, boolean afterDirty, boolean success,
+			boolean saveCalled, boolean throwException) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
+				.createSaveablePart();
+		saveablePart.setDirty(beforeDirty);
+		saveablePart
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		window.getChildren().add(saveablePart);
+
+		// setup the context
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
+
+		getEngine().createGui(window);
+
+		ClientEditor editor = (ClientEditor) saveablePart.getObject();
+		editor.setThrowException(throwException);
+
+		window.getContext().set(ISaveHandler.class.getName(),
+				new ISaveHandler() {
+					public Save[] promptToSave(
+							Collection<MSaveablePart> saveablePart) {
+						return null;
+					}
+
+					public Save promptToSave(MSaveablePart saveablePart) {
+						return returnValue;
+					}
+				});
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		if (beforeDirty) {
+			assertEquals(success, partService.savePart(saveablePart, confirm));
+		} else {
+			assertTrue(
+					"The part is not dirty, the save operation should complete successfully",
+					partService.savePart(saveablePart, confirm));
+		}
+
+		assertEquals(afterDirty, saveablePart.isDirty());
+		assertEquals(saveCalled, editor.wasSaveCalled());
+	}
+
+	private void testSavePart(Save returnValue, boolean confirm,
+			boolean beforeDirty, boolean throwException) {
+		switch (returnValue) {
+		case YES:
+			if (throwException) {
+				if (beforeDirty) {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							beforeDirty, false, true, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							beforeDirty, true, false, throwException);
+				}
+			} else if (beforeDirty) {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							false, true, true, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							false, true, true, throwException);
+				}
+			} else {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							false, true, false, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty,
+							false, true, false, throwException);
+				}
+			}
+			break;
+		case NO:
+			if (throwException) {
+				if (beforeDirty) {
+					if (confirm) {
+						testSavePart(ISaveHandler.Save.NO, confirm,
+								beforeDirty, beforeDirty, true, false,
+								throwException);
+					} else {
+						testSavePart(ISaveHandler.Save.NO, confirm,
+								beforeDirty, beforeDirty, false, true,
+								throwException);
+					}
+				} else {
+					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty,
+							beforeDirty, true, false, throwException);
+				}
+			} else if (beforeDirty) {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty,
+							true, true, false, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty,
+							false, true, true, throwException);
+				}
+			} else {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty,
+							false, true, false, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty,
+							false, true, false, throwException);
+				}
+			}
+			break;
+		case CANCEL:
+			if (throwException) {
+				if (beforeDirty) {
+					if (confirm) {
+						testSavePart(ISaveHandler.Save.CANCEL, confirm,
+								beforeDirty, beforeDirty, false, false,
+								throwException);
+					} else {
+						testSavePart(ISaveHandler.Save.CANCEL, confirm,
+								beforeDirty, beforeDirty, false, true,
+								throwException);
+					}
+				} else {
+					testSavePart(ISaveHandler.Save.CANCEL, confirm,
+							beforeDirty, beforeDirty, true, false,
+							throwException);
+				}
+			} else if (beforeDirty) {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.CANCEL, confirm,
+							beforeDirty, true, false, false, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.CANCEL, confirm,
+							beforeDirty, false, true, true, throwException);
+				}
+			} else {
+				if (confirm) {
+					testSavePart(ISaveHandler.Save.CANCEL, confirm,
+							beforeDirty, false, true, false, throwException);
+				} else {
+					testSavePart(ISaveHandler.Save.CANCEL, confirm,
+							beforeDirty, false, true, false, throwException);
+				}
+			}
+			break;
+		default:
+			fail("Unknown expected return value set: " + returnValue);
+		}
+	}
+
+	public void testSavePart_YesTrueTrueTrue() {
+		testSavePart(ISaveHandler.Save.YES, true, true, true);
+	}
+
+	public void testSavePart_YesTrueTrueFalse() {
+		testSavePart(ISaveHandler.Save.YES, true, true, false);
+	}
+
+	public void testSavePart_YesTrueFalseTrue() {
+		testSavePart(ISaveHandler.Save.YES, true, false, true);
+	}
+
+	public void testSavePart_YesTrueFalseFalse() {
+		testSavePart(ISaveHandler.Save.YES, true, false, false);
+	}
+
+	public void testSavePart_YesFalseTrueTrue() {
+		testSavePart(ISaveHandler.Save.YES, false, true, true);
+	}
+
+	public void testSavePart_YesFalseTrueFalse() {
+		testSavePart(ISaveHandler.Save.YES, false, true, false);
+	}
+
+	public void testSavePart_YesFalseFalseTrue() {
+		testSavePart(ISaveHandler.Save.YES, false, false, true);
+	}
+
+	public void testSavePart_YesFalseFalseFalse() {
+		testSavePart(ISaveHandler.Save.YES, false, false, false);
+	}
+
+	public void testSavePart_NoTrueTrueTrue() {
+		testSavePart(ISaveHandler.Save.NO, true, true, true);
+	}
+
+	public void testSavePart_NoTrueTrueFalse() {
+		testSavePart(ISaveHandler.Save.NO, true, true, false);
+	}
+
+	public void testSavePart_NoTrueFalseTrue() {
+		testSavePart(ISaveHandler.Save.NO, true, false, true);
+	}
+
+	public void testSavePart_NoTrueFalseFalse() {
+		testSavePart(ISaveHandler.Save.NO, true, false, false);
+	}
+
+	public void testSavePart_NoFalseTrueTrue() {
+		testSavePart(ISaveHandler.Save.NO, false, true, true);
+	}
+
+	public void testSavePart_NoFalseTrueFalse() {
+		testSavePart(ISaveHandler.Save.NO, false, true, false);
+	}
+
+	public void testSavePart_NoFalseFalseTrue() {
+		testSavePart(ISaveHandler.Save.NO, false, false, true);
+	}
+
+	public void testSavePart_NoFalseFalseFalse() {
+		testSavePart(ISaveHandler.Save.NO, false, false, false);
+	}
+
+	public void testSavePart_CancelTrueTrueTrue() {
+		testSavePart(ISaveHandler.Save.CANCEL, true, true, true);
+	}
+
+	public void testSavePart_CancelTrueTrueFalse() {
+		testSavePart(ISaveHandler.Save.CANCEL, true, true, false);
+	}
+
+	public void testSavePart_CancelTrueFalseTrue() {
+		testSavePart(ISaveHandler.Save.CANCEL, true, false, true);
+	}
+
+	public void testSavePart_CancelTrueFalseFalse() {
+		testSavePart(ISaveHandler.Save.CANCEL, true, false, false);
+	}
+
+	public void testSavePart_CancelFalseTrueTrue() {
+		testSavePart(ISaveHandler.Save.CANCEL, false, true, true);
+	}
+
+	public void testSavePart_CancelFalseTrueFalse() {
+		testSavePart(ISaveHandler.Save.CANCEL, false, true, false);
+	}
+
+	public void testSavePart_CancelFalseFalseTrue() {
+		testSavePart(ISaveHandler.Save.CANCEL, false, false, true);
+	}
+
+	public void testSavePart_CancelFalseFalseFalse() {
+		testSavePart(ISaveHandler.Save.CANCEL, false, false, false);
+	}
+
 	public void testSwitchWindows() {
 		// create an application with two windows
 		MApplication application = MApplicationFactory.eINSTANCE
@@ -1290,11 +1522,7 @@ public class EPartServiceTest extends TestCase {
 		window1.setActiveChild(part);
 
 		// setup the context
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		// render the windows
 		getEngine().createGui(window1);
@@ -1365,12 +1593,31 @@ public class EPartServiceTest extends TestCase {
 			}
 		}
 
+		initialize(applicationContext, application);
+
+		return application;
+	}
+
+	private void initialize(IEclipseContext applicationContext,
+			MApplication application) {
 		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
 		Workbench.processHierarchy(application);
 		((Notifier) application).eAdapters().add(
 				new UIEventPublisher(applicationContext));
 
-		return application;
+		applicationContext.set(ISaveHandler.class.getName(),
+				new ISaveHandler() {
+					public Save[] promptToSave(
+							Collection<MSaveablePart> saveablePart) {
+						Save[] ret = new Save[saveablePart.size()];
+						Arrays.fill(ret, ISaveHandler.Save.YES);
+						return ret;
+					}
+
+					public Save promptToSave(MSaveablePart saveablePart) {
+						return ISaveHandler.Save.YES;
+					}
+				});
 	}
 }

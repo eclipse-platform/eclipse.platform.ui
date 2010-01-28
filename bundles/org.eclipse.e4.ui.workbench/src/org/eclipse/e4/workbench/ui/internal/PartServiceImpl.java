@@ -10,14 +10,18 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -34,6 +38,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.ecore.EObject;
@@ -42,6 +47,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class PartServiceImpl implements EPartService {
+
 	public static void addListener(IEventBroker broker) {
 		EventHandler windowHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -74,6 +80,12 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	private EModelService modelService;
+
+	@Inject
+	private Logger logger;
+
+	@Inject
+	private ISaveHandler saveHandler;
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
@@ -334,5 +346,46 @@ public class PartServiceImpl implements EPartService {
 			}
 		}
 		return dirtyParts;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.modeling.EPartService#save(org.eclipse.e4.ui.model.application.
+	 * MSaveablePart, boolean)
+	 */
+	public boolean savePart(MSaveablePart part, boolean confirm) {
+		if (!part.isDirty()) {
+			return true;
+		}
+
+		if (confirm && saveHandler != null) {
+			switch (saveHandler.promptToSave(part)) {
+			case NO:
+				return true;
+			case CANCEL:
+				return false;
+			}
+		}
+
+		Object client = part.getObject();
+		try {
+			ContextInjectionFactory.invoke(client, "doSave", part.getContext()); //$NON-NLS-1$
+		} catch (InvocationTargetException e) {
+			if (logger != null) {
+				logger.error(e.getCause());
+			}
+			return false;
+		} catch (CoreException e) {
+			if (logger != null) {
+				logger.error(e.getStatus().getException());
+			}
+			return false;
+		}
+		return true;
+	}
+
+	public boolean saveAll(boolean confirm) {
+		return false;
 	}
 }

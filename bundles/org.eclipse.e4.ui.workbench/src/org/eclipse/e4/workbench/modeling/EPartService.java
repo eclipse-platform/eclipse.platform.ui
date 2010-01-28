@@ -132,8 +132,37 @@ public interface EPartService {
 	 */
 	public MPart showPart(String id, PartState partState);
 
+	/**
+	 * Returns a collection of all the saveable parts that are being managed by this service.
+	 * 
+	 * 
+	 * @return a collection of saveable parts that are being managed by this service, never
+	 *         <code>null</code>
+	 */
 	public Collection<MSaveablePart> getSaveableParts();
 
+	/**
+	 * Returns a collection of all the dirty saveable parts that are being managed by this service.
+	 * 
+	 * 
+	 * @return a collection of dirty saveable parts that are being managed by this service, never
+	 *         <code>null</code>
+	 */
 	public Collection<MSaveablePart> getDirtyParts();
+
+	/**
+	 * Saves the contents of the part if it is dirty and returns whether the operation completed.
+	 * 
+	 * @param part
+	 *            the part to save
+	 * @param confirm
+	 *            <code>true</code> if the user should be prompted prior to saving the changes, and
+	 *            <code>false</code> to save changes without asking
+	 * @return <code>true</code> if the operation completed successfully, <code>false</code> if the
+	 *         user canceled the operation or if an error occurred while saving the changes
+	 */
+	public boolean savePart(MSaveablePart part, boolean confirm);
+
+	public boolean saveAll(boolean confirm);
 
 }

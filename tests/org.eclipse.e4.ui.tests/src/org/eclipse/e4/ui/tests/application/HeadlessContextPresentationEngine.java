@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -22,6 +23,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -38,6 +40,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	@Inject
+	private IContributionFactory contributionFactory;
 
 	private EventHandler childHandler;
 	private EventHandler activeChildHandler;
@@ -138,6 +143,16 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 
 			mcontext.setContext(createdContext);
+
+			if (element instanceof MContribution) {
+				MContribution contribution = (MContribution) element;
+				String uri = contribution.getURI();
+				if (uri != null) {
+					Object clientObject = contributionFactory.create(uri,
+							createdContext);
+					contribution.setObject(clientObject);
+				}
+			}
 		}
 
 		if (element instanceof MPartStack) {
