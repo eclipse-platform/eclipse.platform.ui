@@ -101,13 +101,14 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-            &lt;extension
-         point=&quot;org.eclipse.core.resources.variableResolvers&quot;&gt;
-      &lt;variableResolver
-            class=&quot;org.eclipse.core.internal.resources.projectVariables.EclipseHomeProjectVariable&quot;
-            name=&quot;ECLIPSE_HOME&quot;&gt;
-      &lt;/variableResolver&gt;
-   &lt;/extension&gt;
+         &lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.core.resources.variableResolvers&quot;&gt;
+	&lt;variableResolver class=&quot;org.eclipse.core.internal.resources.projectVariables.EclipseHomeProjectVariable&quot; name=&quot;ECLIPSE_HOME&quot;&gt;
+	&lt;/variableResolver&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -117,7 +118,6 @@
       </appInfo>
       <documentation>
          The &lt;tt&gt;org.eclipse.core.resources&lt;/tt&gt; bundle provides resolvers for the following variables:  &lt;tt&gt;ECLIPSE_HOME&lt;/tt&gt;, &lt;tt&gt;PROJECT_LOC&lt;/tt&gt;, &lt;tt&gt;WORKSPACE_LOC&lt;/tt&gt;, and &lt;tt&gt;PARENT&lt;/tt&gt;
-
       </documentation>
    </annotation>
 
