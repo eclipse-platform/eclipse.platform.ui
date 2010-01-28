@@ -1624,8 +1624,13 @@ public class EPartServiceTest extends TestCase {
 		if (confirm) {
 			if (returnValues[0] == Save.YES) {
 				if (returnValues[1] == Save.YES) {
-					return new boolean[] {
-							beforeDirty[0] ? throwException[0] : false,
+					if (beforeDirty[0]) {
+						return new boolean[] {
+								throwException[0],
+								beforeDirty[1] ? throwException[0]
+										|| throwException[1] : false };
+					}
+					return new boolean[] { beforeDirty[0],
 							beforeDirty[1] ? throwException[1] : false };
 				}
 				return new boolean[] {
@@ -1648,11 +1653,15 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private boolean[] saveCalled(Save[] returnValues, boolean confirm,
-			boolean[] beforeDirty) {
+			boolean[] beforeDirty, boolean[] throwException) {
 		if (confirm) {
 			if (returnValues[0] == Save.YES) {
 				if (returnValues[1] == Save.YES) {
-					return new boolean[] { beforeDirty[0], beforeDirty[1] };
+					if (beforeDirty[0]) {
+						return new boolean[] { true,
+								!throwException[0] && beforeDirty[1] };
+					}
+					return beforeDirty;
 				}
 				return new boolean[] { beforeDirty[0], false };
 			} else if (returnValues[1] == Save.YES) {
@@ -1673,7 +1682,7 @@ public class EPartServiceTest extends TestCase {
 					returnValues, confirm, beforeDirty, throwException),
 					isSuccessful(returnValues, confirm, beforeDirty,
 							throwException), saveCalled(returnValues, confirm,
-							beforeDirty), throwException);
+							beforeDirty, throwException), throwException);
 		}
 	}
 

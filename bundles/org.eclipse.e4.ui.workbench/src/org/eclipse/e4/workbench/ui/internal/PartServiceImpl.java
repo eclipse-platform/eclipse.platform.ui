@@ -13,6 +13,7 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -393,7 +394,8 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		if (confirm) {
-			List<MSaveablePart> dirtyPartsList = new ArrayList<MSaveablePart>(dirtyParts);
+			List<MSaveablePart> dirtyPartsList = Collections
+					.unmodifiableList(new ArrayList<MSaveablePart>(dirtyParts));
 			Save[] decisions = saveHandler.promptToSave(dirtyParts);
 			for (Save decision : decisions) {
 				if (decision == Save.CANCEL) {
@@ -405,7 +407,7 @@ public class PartServiceImpl implements EPartService {
 			for (int i = 0; i < decisions.length; i++) {
 				if (decisions[i] == Save.YES) {
 					if (!savePart(dirtyPartsList.get(i), false)) {
-						success = false;
+						return false;
 					}
 				}
 			}
