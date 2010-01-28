@@ -75,7 +75,7 @@ public class TrimmedPartLayout extends Layout {
 		composite.setRedraw(false);
 		try {
 			Rectangle ca = composite.getClientArea();
-			Rectangle caRect = new Rectangle(0, 0, ca.width, ca.height);
+			Rectangle caRect = new Rectangle(ca.x, ca.y, ca.width, ca.height);
 
 			// 'Top' spans the entire area
 			if (top != null) {
@@ -85,7 +85,7 @@ public class TrimmedPartLayout extends Layout {
 				caRect.height -= topSize.y;
 
 				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(0, 0, caRect.width,
+				Rectangle newBounds = new Rectangle(ca.x, ca.y, caRect.width,
 						topSize.y);
 				if (!newBounds.equals(top.getBounds())) {
 					top.setBounds(newBounds);
@@ -99,8 +99,8 @@ public class TrimmedPartLayout extends Layout {
 				caRect.height -= bottomSize.y;
 
 				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(0,
-						caRect.y + caRect.height, caRect.width, bottomSize.y);
+				Rectangle newBounds = new Rectangle(caRect.x, caRect.y
+						+ caRect.height, caRect.width, bottomSize.y);
 				if (!newBounds.equals(bottom.getBounds())) {
 					bottom.setBounds(newBounds);
 				}
@@ -114,8 +114,8 @@ public class TrimmedPartLayout extends Layout {
 				caRect.width -= leftSize.x;
 
 				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(0, caRect.y, leftSize.x,
-						caRect.height);
+				Rectangle newBounds = new Rectangle(caRect.x, caRect.y,
+						leftSize.x, caRect.height);
 				if (!newBounds.equals(left.getBounds())) {
 					left.setBounds(newBounds);
 				}
