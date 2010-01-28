@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.tests.application;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -21,6 +22,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -1268,12 +1271,7 @@ public class EPartServiceTest extends TestCase {
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
-		// setup the context
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1504,6 +1502,1439 @@ public class EPartServiceTest extends TestCase {
 
 	public void testSavePart_CancelFalseFalseFalse() {
 		testSavePart(ISaveHandler.Save.CANCEL, false, false, false);
+	}
+
+	private MSaveablePart createSaveablePart(
+			MElementContainer<MPSCElement> container, boolean beforeDirty) {
+		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
+				.createSaveablePart();
+		saveablePart.setDirty(beforeDirty);
+		saveablePart
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		container.getChildren().add(saveablePart);
+		return saveablePart;
+	}
+
+	private Save prompt(Save[] candidates, MSaveablePart partToTest,
+			MSaveablePart part) {
+		return partToTest == part ? candidates[0] : candidates[1];
+	}
+
+	private void testSaveAll(final Save[] returnValues, boolean confirm,
+			boolean[] beforeDirty, boolean[] afterDirty, boolean success,
+			boolean[] saveCalled, boolean[] throwException) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		final MSaveablePart saveablePart = createSaveablePart(window,
+				beforeDirty[0]);
+		final MSaveablePart saveablePart2 = createSaveablePart(window,
+				beforeDirty[1]);
+
+		// setup the context
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		ClientEditor editor = (ClientEditor) saveablePart.getObject();
+		editor.setThrowException(throwException[0]);
+
+		ClientEditor editor2 = (ClientEditor) saveablePart2.getObject();
+		editor2.setThrowException(throwException[1]);
+
+		window.getContext().set(ISaveHandler.class.getName(),
+				new ISaveHandler() {
+					public Save[] promptToSave(
+							Collection<MSaveablePart> saveableParts) {
+						int index = 0;
+						Save[] prompt = new Save[saveableParts.size()];
+						Iterator<MSaveablePart> it = saveableParts.iterator();
+						while (it.hasNext()) {
+							prompt[index] = prompt(returnValues, it.next(),
+									saveablePart);
+							index++;
+						}
+						return prompt;
+					}
+
+					public Save promptToSave(MSaveablePart saveablePart) {
+						return null;
+					}
+				});
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(success, partService.saveAll(confirm));
+
+		assertEquals(afterDirty[0], saveablePart.isDirty());
+		assertEquals(saveCalled[0], editor.wasSaveCalled());
+
+		assertEquals(afterDirty[1], saveablePart2.isDirty());
+		assertEquals(saveCalled[1], editor2.wasSaveCalled());
+	}
+
+	private boolean hasCancel(Save[] returnValues, boolean[] beforeDirty) {
+		for (int i = 0; i < returnValues.length; i++) {
+			if (returnValues[i] == Save.CANCEL && beforeDirty[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isSuccessful(Save[] returnValues, boolean confirm,
+			boolean[] beforeDirty, boolean[] throwException) {
+		if (confirm) {
+			if (returnValues[0] == Save.YES) {
+				if (returnValues[1] == Save.YES) {
+					if (beforeDirty[0]) {
+						if (beforeDirty[1]) {
+							return !throwException[0] && !throwException[1];
+						}
+						return !throwException[0];
+					} else if (beforeDirty[1]) {
+						return !throwException[1];
+					}
+					return true;
+				} else if (beforeDirty[0]) {
+					return !throwException[0];
+				}
+				return true;
+			} else if (returnValues[1] == Save.YES) {
+				if (beforeDirty[1]) {
+					return !throwException[1];
+				}
+			}
+			return true;
+		} else if (beforeDirty[0]) {
+			if (beforeDirty[1]) {
+				return !throwException[0] && !throwException[1];
+			}
+			return !throwException[0];
+		} else if (beforeDirty[1]) {
+			return !throwException[1];
+		}
+		return true;
+	}
+
+	private boolean[] afterDirty(Save[] returnValues, boolean confirm,
+			boolean[] beforeDirty, boolean[] throwException) {
+		if (confirm) {
+			if (returnValues[0] == Save.YES) {
+				if (returnValues[1] == Save.YES) {
+					return new boolean[] {
+							beforeDirty[0] ? throwException[0] : false,
+							beforeDirty[1] ? throwException[1] : false };
+				}
+				return new boolean[] {
+						beforeDirty[0] ? throwException[0] : false,
+						beforeDirty[1] };
+			} else if (returnValues[1] == Save.YES) {
+				return new boolean[] { beforeDirty[0],
+						beforeDirty[1] ? throwException[1] : false };
+			}
+			return beforeDirty;
+		} else if (beforeDirty[0]) {
+			if (beforeDirty[1]) {
+				return new boolean[] { throwException[0], throwException[1] };
+			}
+			return new boolean[] { throwException[0], false };
+		} else if (beforeDirty[1]) {
+			return new boolean[] { false, throwException[1] };
+		}
+		return new boolean[] { false, false };
+	}
+
+	private boolean[] saveCalled(Save[] returnValues, boolean confirm,
+			boolean[] beforeDirty) {
+		if (confirm) {
+			if (returnValues[0] == Save.YES) {
+				if (returnValues[1] == Save.YES) {
+					return new boolean[] { beforeDirty[0], beforeDirty[1] };
+				}
+				return new boolean[] { beforeDirty[0], false };
+			} else if (returnValues[1] == Save.YES) {
+				return new boolean[] { false, beforeDirty[1] };
+			}
+			return new boolean[] { false, false };
+		}
+		return beforeDirty;
+	}
+
+	private void testSaveAll(Save[] returnValues, boolean confirm,
+			boolean[] beforeDirty, boolean[] throwException) {
+		if (hasCancel(returnValues, beforeDirty) && confirm) {
+			testSaveAll(returnValues, confirm, beforeDirty, beforeDirty, false,
+					new boolean[] { false, false }, throwException);
+		} else {
+			testSaveAll(returnValues, confirm, beforeDirty, afterDirty(
+					returnValues, confirm, beforeDirty, throwException),
+					isSuccessful(returnValues, confirm, beforeDirty,
+							throwException), saveCalled(returnValues, confirm,
+							beforeDirty), throwException);
+		}
+	}
+
+	public void testSaveAll_YY_True_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_True_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_True_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_True_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_True_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_True_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_True_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YY_True_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_True_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_True_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_True_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_True_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_True_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_True_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YY_False_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_False_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_False_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_False_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_False_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_False_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_False_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YY_False_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_False_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_False_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_False_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YY_False_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YY_False_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YY_False_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YN_True_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_True_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_True_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_True_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_True_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_True_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_True_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YN_True_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_True_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_True_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_True_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_True_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_True_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_True_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YN_False_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_False_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_False_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_False_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_False_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_False_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_False_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YN_False_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_False_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_False_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_False_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YN_False_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YN_False_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YN_False_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YC_True_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_True_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_True_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_True_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_True_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_True_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_True_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YC_True_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_True_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_True_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_True_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_True_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_True_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_True_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YC_False_TT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_False_TT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_False_TT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_False_TF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_False_TF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_False_TF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_False_TF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_YC_False_FT_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_False_FT_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_False_FT_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_False_FF_TT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_YC_False_FF_TF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_YC_False_FF_FT() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_YC_False_FF_FF() {
+		testSaveAll(new Save[] { Save.YES, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NY_True_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_True_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_True_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_True_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_True_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_True_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_True_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NY_True_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_True_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_True_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_True_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_True_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_True_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_True_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NY_False_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_False_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_False_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_False_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_False_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_False_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_False_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NY_False_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_False_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_False_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_False_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NY_False_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NY_False_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NY_False_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NN_True_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_True_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_True_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_True_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_True_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_True_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_True_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NN_True_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_True_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_True_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_True_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_True_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_True_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_True_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NN_False_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_False_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_False_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_False_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_False_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_False_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_False_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NN_False_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_False_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_False_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_False_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NN_False_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NN_False_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NN_False_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NC_True_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_True_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_True_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_True_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_True_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_True_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_True_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NC_True_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_True_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_True_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_True_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_True_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_True_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_True_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NC_False_TT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_False_TT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_False_TT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_False_TF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_False_TF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_False_TF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_False_TF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NC_False_FT_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_False_FT_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_False_FT_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_False_FF_TT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NC_False_FF_TF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NC_False_FF_FT() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NC_False_FF_FF() {
+		testSaveAll(new Save[] { Save.NO, Save.CANCEL }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CY_True_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_True_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_True_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_True_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_True_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_True_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_True_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CY_True_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_True_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_True_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_True_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_True_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_True_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_True_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CY_False_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_False_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_False_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_False_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_False_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_False_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_False_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CY_False_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_False_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_False_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_False_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CY_False_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CY_False_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CY_False_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.YES }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CN_True_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_True_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_True_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_True_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_True_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_True_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_True_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CN_True_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_True_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_True_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_True_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_True_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_True_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_True_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, true, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CN_False_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_False_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_False_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_False_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_False_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_False_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_False_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CN_False_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_False_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_False_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_False_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CN_False_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CN_False_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CN_False_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.NO }, false, new boolean[] {
+				false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CC_True_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_True_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_True_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_True_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_True_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_True_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_True_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CC_True_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_True_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_True_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_True_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_True_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_True_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_True_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, true,
+				new boolean[] { false, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CC_False_TT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_False_TT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_False_TT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_False_TF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_False_TF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_False_TF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_False_TF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { true, false }, new boolean[] { false, false });
+	}
+
+	public void testSaveAll_CC_False_FT_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, true }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_False_FT_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, true }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_False_FT_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, true }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_False_FF_TT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, false }, new boolean[] { true, true });
+	}
+
+	public void testSaveAll_CC_False_FF_TF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, false }, new boolean[] { true, false });
+	}
+
+	public void testSaveAll_CC_False_FF_FT() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, false }, new boolean[] { false, true });
+	}
+
+	public void testSaveAll_CC_False_FF_FF() {
+		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
+				new boolean[] { false, false }, new boolean[] { false, false });
 	}
 
 	public void testSwitchWindows() {

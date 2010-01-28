@@ -20,8 +20,8 @@ public interface ISaveHandler {
 		YES, NO, CANCEL
 	}
 
-	public Save promptToSave(MSaveablePart saveablePart);
+	public Save promptToSave(MSaveablePart dirtyPart);
 
-	public Save[] promptToSave(Collection<MSaveablePart> saveablePart);
+	public Save[] promptToSave(Collection<MSaveablePart> dirtyParts);
 
 }

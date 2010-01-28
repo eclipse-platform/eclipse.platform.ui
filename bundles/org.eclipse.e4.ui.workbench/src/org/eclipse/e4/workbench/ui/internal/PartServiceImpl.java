@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.ecore.EObject;
@@ -386,6 +387,37 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public boolean saveAll(boolean confirm) {
-		return false;
+		Collection<MSaveablePart> dirtyParts = getDirtyParts();
+		if (dirtyParts.isEmpty()) {
+			return true;
+		}
+
+		if (confirm) {
+			List<MSaveablePart> dirtyPartsList = new ArrayList<MSaveablePart>(dirtyParts);
+			Save[] decisions = saveHandler.promptToSave(dirtyParts);
+			for (Save decision : decisions) {
+				if (decision == Save.CANCEL) {
+					return false;
+				}
+			}
+
+			boolean success = true;
+			for (int i = 0; i < decisions.length; i++) {
+				if (decisions[i] == Save.YES) {
+					if (!savePart(dirtyPartsList.get(i), false)) {
+						success = false;
+					}
+				}
+			}
+			return success;
+		}
+
+		boolean success = true;
+		for (MSaveablePart dirtyPart : dirtyParts) {
+			if (!savePart(dirtyPart, false)) {
+				success = false;
+			}
+		}
+		return success;
 	}
 }
