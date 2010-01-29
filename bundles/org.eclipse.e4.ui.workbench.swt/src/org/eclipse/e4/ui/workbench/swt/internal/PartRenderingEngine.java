@@ -11,8 +11,6 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +29,6 @@ import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -67,24 +64,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private String curFactoryId = defaultRenderingFactoryId;
 	IRendererFactory curFactory = null;
 
-	class RenderingRecord {
-		public Control widget;
-		public AbstractPartRenderer renderer;
-		public Object implementation;
-		public int refCount = 0;
-
-		public RenderingRecord(Control widget, AbstractPartRenderer renderer,
-				Object implementation) {
-			super();
-			this.widget = widget;
-			this.renderer = renderer;
-			this.implementation = implementation;
-		}
-
-	}
-
-	Map<String, RenderingRecord> renderedWidgets = new HashMap<String, RenderingRecord>();
-
 	// Life Cycle handlers
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -94,9 +73,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// If the parent isn't displayed who cares?
 			MElementContainer<?> parent = changedElement.getParent();
-			AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
+			AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
 					: null;
-			if (parentFactory == null)
+			if (parentRenderer == null)
 				return;
 
 			if (changedElement.isToBeRendered()) {
@@ -126,8 +105,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			boolean isApplication = changedObj instanceof MApplication;
 
 			// If the parent isn't in the UI then who cares?
-			AbstractPartRenderer factory = getFactoryFor(changedElement);
-			if (!isApplication && factory == null)
+			AbstractPartRenderer renderer = getRendererFor(changedElement);
+			if (!isApplication && renderer == null)
 				return;
 
 			String eventType = (String) event
@@ -147,8 +126,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 								new Control[] { (Control) w }, SWT.DEFER);
 					}
 				} else {
-					if (factory != null)
-						factory.childRendered(changedElement, added);
+					if (renderer != null)
+						renderer.childRendered(changedElement, added);
 				}
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
@@ -159,8 +138,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (!removed.isToBeRendered())
 					return;
 
-				if (factory != null)
-					factory.hideChild(changedElement, removed);
+				if (renderer != null)
+					renderer.hideChild(changedElement, removed);
 			}
 		}
 	};
@@ -313,41 +292,27 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Remember that we've created the control
 		if (newWidget != null) {
-			AbstractPartRenderer factory = getFactoryFor(element);
+			AbstractPartRenderer renderer = getRendererFor(element);
 
-			// Remember the widgets with ids that we create
-			if (element.getId() != null && element.getId().length() > 0
-					&& newWidget instanceof Control) {
-				Object implementation = null;
-				if (element instanceof MContribution)
-					implementation = ((MContribution) element).getObject();
-				// Already there ?
-				RenderingRecord record = renderedWidgets.get(element.getId());
-				if (record == null)
-					record = new RenderingRecord((Control) newWidget, factory,
-							implementation);
-				record.refCount++;
-				renderedWidgets.put(element.getId(), record);
-			}
+			// Have the renderer hook up any widget specific listeners
+			renderer.hookControllerLogic(element);
 
-			// Process its internal structure through the factory that created
+			// Process its internal structure through the renderer that created
 			// it
-
-			factory.hookControllerLogic(element);
-
 			if (element instanceof MElementContainer) {
-				factory.processContents((MElementContainer<MUIElement>) element);
+				renderer.processContents((MElementContainer<MUIElement>) element);
 			}
 
-			factory.postProcess(element);
+			// Allow a final chance to set up
+			renderer.postProcess(element);
 
 			// Now that we have a widget let the parent (if any) know
 			if (element.getParent() instanceof MUIElement) {
 				MElementContainer<MUIElement> parentElement = element
 						.getParent();
-				AbstractPartRenderer parentFactory = getFactoryFor(parentElement);
-				if (parentFactory != null)
-					parentFactory.childRendered(parentElement, element);
+				AbstractPartRenderer parentRenderer = getRendererFor(parentElement);
+				if (parentRenderer != null)
+					parentRenderer.childRendered(parentElement, element);
 			}
 		} else {
 			// failed to create the widget, dispose its context if necessary
@@ -379,7 +344,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Object parent = null;
 		MUIElement parentME = element.getParent();
 		if (parentME != null) {
-			AbstractPartRenderer renderer = getFactoryFor(parentME);
+			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {
 				parent = renderer.getUIContainer(element);
 			}
@@ -392,28 +357,20 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param element
 	 */
 	public void removeGui(MUIElement element) {
-		boolean needsDispose = true;
-		if (element.getId() != null && element.getId().length() > 0) {
-			RenderingRecord record = renderedWidgets.get(element.getId());
-			if (record != null) {
-				record.refCount--;
-				needsDispose = record.refCount == 0;
-			}
-		}
-		AbstractPartRenderer factory = getFactoryFor(element);
-		assert (factory != null);
+		AbstractPartRenderer renderer = getRendererFor(element);
+		assert (renderer != null);
 
 		MUIElement parent = element.getParent();
-		AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
+		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
 				: null;
-		if (parentFactory != null) {
-			parentFactory.hideChild(element.getParent(), element);
+		if (parentRenderer != null) {
+			parentRenderer.hideChild(element.getParent(), element);
 		}
 
-		if (factory != null && needsDispose)
-			factory.disposeWidget(element);
+		if (renderer != null)
+			renderer.disposeWidget(element);
 		else
-			System.out.println("Null factory in removeGui");
+			System.out.println("Null renderer in removeGui");
 
 		// dispose the context
 		if (element instanceof MContext) {
@@ -427,19 +384,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	protected Object createWidget(MUIElement element, Object parent) {
-		// Have we already created this one ?
-		if (element.getId() != null && element.getId().length() > 0) {
-			RenderingRecord record = renderedWidgets.get(element.getId());
-			if (record != null && !record.widget.isDisposed()) {
-				element.setRenderer(record.renderer);
-				record.renderer.bindWidget(element, record.widget);
-				if (element instanceof MContribution)
-					((MContribution) element).setObject(record.implementation);
-				record.widget.setParent((Composite) parent);
-				return record.widget;
-			}
-		}
-
 		AbstractPartRenderer renderer = getRenderer(element, parent);
 		if (renderer != null) {
 			Object newWidget = renderer.createWidget(element, parent);
@@ -456,12 +400,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return curFactory.getRenderer(uiElement, parent);
 	}
 
-	protected void setFactoryFor(MUIElement element,
-			AbstractPartRenderer factory) {
-		element.setRenderer(factory);
-	}
-
-	protected AbstractPartRenderer getFactoryFor(MUIElement element) {
+	protected AbstractPartRenderer getRendererFor(MUIElement element) {
 		return (AbstractPartRenderer) element.getRenderer();
 	}
 
