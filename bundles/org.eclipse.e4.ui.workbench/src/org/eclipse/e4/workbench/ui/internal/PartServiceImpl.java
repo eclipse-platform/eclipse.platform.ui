@@ -315,13 +315,18 @@ public class PartServiceImpl implements EPartService {
 			rootContainer.getChildren().add(stack);
 		}
 
+		MPart activePart = getActivePart();
+		if (activePart == null) {
+			activate(part);
+			return part;
+		}
+
 		// 3) make it visible / active / re-layout
 		switch (partState) {
 		case ACTIVATE:
 			activate(part);
 			return part;
 		case VISIBLE:
-			MPart activePart = getActivePart();
 			if (activePart.getParent() != part.getParent()) {
 				bringToTop(part);
 			}

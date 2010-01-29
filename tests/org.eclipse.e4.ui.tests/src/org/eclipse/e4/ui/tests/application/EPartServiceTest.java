@@ -969,6 +969,37 @@ public class EPartServiceTest extends TestCase {
 				partService.isPartVisible(partB));
 	}
 
+	public void testShowPart_CREATE4() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("stackId");
+		window.getChildren().add(stack);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("part");
+		partDescriptor.setCategory("stackId");
+		application.getDescriptors().add(partDescriptor);
+
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService
+				.showPart("part", EPartService.PartState.CREATE);
+
+		assertEquals(1, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part, partService.getActivePart());
+	}
+
 	public void testShowPart_VISIBLE() {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
@@ -1115,6 +1146,37 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(
 				"The part is the only one in the stack, it should be visible",
 				partService.isPartVisible(partB));
+	}
+
+	public void testShowPart_VISIBLE4() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("stackId");
+		window.getChildren().add(stack);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("part");
+		partDescriptor.setCategory("stackId");
+		application.getDescriptors().add(partDescriptor);
+
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.showPart("part",
+				EPartService.PartState.VISIBLE);
+
+		assertEquals(1, stack.getChildren().size());
+		assertEquals(part, stack.getChildren().get(0));
+		assertEquals(part, partService.getActivePart());
 	}
 
 	public void testGetSaveableParts() {
