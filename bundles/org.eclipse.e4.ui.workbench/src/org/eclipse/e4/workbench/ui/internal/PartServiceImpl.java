@@ -266,7 +266,14 @@ public class PartServiceImpl implements EPartService {
 				activate(part);
 				return part;
 			case VISIBLE:
-				bringToTop(part);
+				MPart activePart = getActivePart();
+				if (activePart != part) {
+					if (activePart.getParent() == part.getParent()) {
+						engine.createGui(part);
+					} else {
+						bringToTop(part);
+					}
+				}
 				return part;
 			case CREATE:
 				engine.createGui(part);
@@ -314,7 +321,10 @@ public class PartServiceImpl implements EPartService {
 			activate(part);
 			return part;
 		case VISIBLE:
-			bringToTop(part);
+			MPart activePart = getActivePart();
+			if (activePart.getParent() != part.getParent()) {
+				bringToTop(part);
+			}
 			return part;
 		}
 		return part;

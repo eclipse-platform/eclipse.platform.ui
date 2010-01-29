@@ -1059,12 +1059,13 @@ public class EPartServiceTest extends TestCase {
 				EPartService.PartState.VISIBLE);
 
 		assertEquals(2, partStack.getChildren().size());
-		assertEquals(
-				"The part is in the same stack as the active part, so the active part should change",
-				partB, partService.getActivePart());
+		assertFalse(
+				"The part is in the same stack as the active part, so the active part should not have changed",
+				partB.equals(partService.getActivePart()));
 		assertNotNull("The shown part should have a context", partB
 				.getContext());
-		assertTrue(partService.isPartVisible(partB));
+		assertTrue(partService.isPartVisible(partA));
+		assertFalse(partService.isPartVisible(partB));
 	}
 
 	public void testShowPart_VISIBLE3() {

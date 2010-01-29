@@ -39,7 +39,8 @@ public interface EPartService {
 
 		/**
 		 * Part state that indicates the part should be made visible though it may not necessarily
-		 * be granted focus.
+		 * be granted focus. If the part will be displayed in the same stack as the currently active
+		 * part, then this has the same effect as <code>CREATE</code>.
 		 */
 		VISIBLE,
 
@@ -119,9 +120,9 @@ public interface EPartService {
 	/**
 	 * Shows the part identified by the given id. The behavior of this method is dictated by the
 	 * supplied state. If <code>ACTIVATE</code> is supplied, then the part is made visible and
-	 * granted focus. If <code>VISIBLE</code> is supplied, then the part will be made visible though
-	 * it may not necessarily be granted focus. If <code>CREATE</code> is supplied, then the part
-	 * will be instantiated though its contents may not necessarily be visible to the end user.
+	 * granted focus. If <code>VISIBLE</code> is supplied, then the part will be made visible but
+	 * not given focus. If <code>CREATE</code> is supplied, then the part will be instantiated
+	 * though its contents may not necessarily be visible to the end user.
 	 * 
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
