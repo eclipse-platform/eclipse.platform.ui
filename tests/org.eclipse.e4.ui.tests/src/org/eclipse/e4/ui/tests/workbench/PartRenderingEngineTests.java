@@ -52,7 +52,7 @@ public class PartRenderingEngineTests extends TestCase {
 		}
 	}
 
-	public void testCreateView() {
+	public void testCreateViewBug298415() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
@@ -99,7 +99,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNotNull(window2.getWidget());
 	}
 
-	public void testPartStack_SetActiveChild() throws Exception {
+	public void testPartStack_SetActiveChildBug299379() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -134,7 +134,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(1, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild2() throws Exception {
+	public void testPartStack_SetActiveChild2Bug299379() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -169,7 +169,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(1, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild3() throws Exception {
+	public void testPartStack_SetActiveChild3Bug299379() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -204,7 +204,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(0, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild4() throws Exception {
+	public void testPartStack_SetActiveChild4Bug299379() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -231,7 +231,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(0, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild5() throws Exception {
+	public void testPartStack_SetActiveChild5Bug299379() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -264,7 +264,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(1, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild6() throws Exception {
+	public void testPartStack_SetActiveChild6Bug295250() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -290,6 +290,61 @@ public class PartRenderingEngineTests extends TestCase {
 		stack.getChildren().add(partB);
 
 		assertEquals(partA, stack.getActiveChild());
+	}
+
+	public void testCreateGuiBug301021() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		// create two descriptors
+		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		descriptor
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		descriptor.setId("part");
+		descriptor.setCategory("aStack");
+		application.getDescriptors().add(descriptor);
+
+		MPartDescriptor descriptor2 = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		descriptor2
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		descriptor2.setId("part2");
+		descriptor2.setCategory("aStack");
+		application.getDescriptors().add(descriptor2);
+
+		// make a window with a sash container and a stack inside, this will
+		// force the stack to have SashFormData
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+				.createPartSashContainer();
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		// assign the stack with the category id of the descriptors above
+		stack.setId("aStack");
+		partSashContainer.getChildren().add(stack);
+		window.getChildren().add(partSashContainer);
+		application.getChildren().add(window);
+
+		// make a new window with nothing
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+		wb.createAndRunUI(window2);
+
+		// try to show the parts in the second window
+		EPartService service = (EPartService) window2.getContext().get(
+				EPartService.class.getName());
+		service.showPart("part", EPartService.PartState.VISIBLE);
+		service.showPart("part", EPartService.PartState.CREATE);
+
+		service.showPart("part2", EPartService.PartState.CREATE);
+
+		while (Display.getDefault().readAndDispatch())
+			;
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
