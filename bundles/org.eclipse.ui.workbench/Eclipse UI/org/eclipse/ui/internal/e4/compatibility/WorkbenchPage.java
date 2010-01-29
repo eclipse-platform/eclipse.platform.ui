@@ -444,10 +444,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private boolean hidePart(MPart part, boolean save) {
 		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
 		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
-		if (workbenchPart instanceof ISaveablePart) {
-			ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-			if (!saveSaveable(saveablePart, save, true)) {
-				return false;
+		if (save) {
+			if (workbenchPart instanceof ISaveablePart) {
+				ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
+				if (!saveSaveable(saveablePart, true, true)) {
+					return false;
+				}
 			}
 		}
 
