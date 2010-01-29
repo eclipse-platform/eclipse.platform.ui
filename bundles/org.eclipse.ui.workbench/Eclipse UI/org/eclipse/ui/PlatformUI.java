@@ -12,6 +12,7 @@ package org.eclipse.ui;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.e4.compatibility.Workbench;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.testing.TestableObject;
@@ -138,11 +139,10 @@ public final class PlatformUI {
      * @since 3.0
      */
 	// TODO commented out for e4 compatibility
-	// public static int createAndRunWorkbench(Display display,
-	// WorkbenchAdvisor advisor) {
-	// // return Workbench.createAndRunWorkbench(display, advisor);
-	// return 0;
-	// }
+	public static int createAndRunWorkbench(Display display, WorkbenchAdvisor advisor) {
+		// return Workbench.createAndRunWorkbench(display, advisor);
+		return 0;
+	}
 
     /**
      * Creates the <code>Display</code> to be used by the workbench.
