@@ -38,6 +38,7 @@ import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -147,7 +148,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (mpart != null) {
 			partService.activate(mpart);
 			part.setFocus();
+			processEventLoop();
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void processEventLoop() {
+		Display display = getWorkbenchWindow().getShell().getDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
+		while (display.readAndDispatch())
+			;
 	}
 
 	/* (non-Javadoc)
