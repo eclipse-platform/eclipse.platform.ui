@@ -355,8 +355,8 @@ public class PartServiceImpl implements EPartService {
 	 * 
 	 * @see org.eclipse.e4.workbench.modeling.EPartService#getDirtyParts()
 	 */
-	public Collection<MSaveablePart> getDirtyParts() {
-		List<MSaveablePart> dirtyParts = new ArrayList<MSaveablePart>();
+	public Collection<MPart> getDirtyParts() {
+		List<MPart> dirtyParts = new ArrayList<MPart>();
 		for (MSaveablePart part : getSaveableParts()) {
 			if (part.isDirty()) {
 				dirtyParts.add(part);
@@ -399,7 +399,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public boolean saveAll(boolean confirm) {
-		Collection<MSaveablePart> dirtyParts = getDirtyParts();
+		Collection<MPart> dirtyParts = getDirtyParts();
 		if (dirtyParts.isEmpty()) {
 			return true;
 		}
@@ -426,8 +426,8 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		boolean success = true;
-		for (MSaveablePart dirtyPart : dirtyParts) {
-			if (!savePart(dirtyPart, false)) {
+		for (MPart dirtyPart : dirtyParts) {
+			if (!savePart((MSaveablePart) dirtyPart, false)) {
 				success = false;
 			}
 		}

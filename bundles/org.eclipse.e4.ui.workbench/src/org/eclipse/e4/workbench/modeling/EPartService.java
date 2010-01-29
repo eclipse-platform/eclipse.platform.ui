@@ -149,7 +149,7 @@ public interface EPartService {
 	 * @return a collection of dirty saveable parts that are being managed by this service, never
 	 *         <code>null</code>
 	 */
-	public Collection<MSaveablePart> getDirtyParts();
+	public Collection<MPart> getDirtyParts();
 
 	/**
 	 * Saves the contents of the part if it is dirty and returns whether the operation completed.

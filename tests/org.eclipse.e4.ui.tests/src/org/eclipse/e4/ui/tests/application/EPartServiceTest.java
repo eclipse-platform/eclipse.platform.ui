@@ -1242,7 +1242,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		Collection<MPart> dirtyParts = partService.getDirtyParts();
 		assertNotNull(dirtyParts);
 		assertEquals(0, dirtyParts.size());
 	}
@@ -1255,7 +1255,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		Collection<MPart> dirtyParts = partService.getDirtyParts();
 		assertNotNull(dirtyParts);
 		assertEquals(0, dirtyParts.size());
 	}
@@ -1282,7 +1282,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		Collection<MSaveablePart> dirtyParts = partService.getDirtyParts();
+		Collection<MPart> dirtyParts = partService.getDirtyParts();
 		assertNotNull(dirtyParts);
 
 		if (before) {
