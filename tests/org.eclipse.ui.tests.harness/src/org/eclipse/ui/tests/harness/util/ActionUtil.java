@@ -21,8 +21,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * <code>ActionUtil</code> contains methods to run actions
@@ -77,8 +77,8 @@ public class ActionUtil {
      */
     public static void runActionWithLabel(TestCase test, IWorkbenchWindow win,
             String label) {
-        WorkbenchWindow realWin = (WorkbenchWindow) win;
-        IMenuManager mgr = realWin.getMenuManager();
+        ApplicationWindow realWin = (ApplicationWindow) win;
+        IMenuManager mgr = realWin.getMenuBarManager();
         runActionWithLabel(test, mgr, label);
     }
 
@@ -107,8 +107,8 @@ public class ActionUtil {
      */
     public static void runActionUsingPath(TestCase test, IWorkbenchWindow win,
             String idPath) {
-        WorkbenchWindow realWin = (WorkbenchWindow) win;
-        IMenuManager mgr = realWin.getMenuManager();
+    	ApplicationWindow realWin = (ApplicationWindow) win;
+        IMenuManager mgr = realWin.getMenuBarManager();
         runActionUsingPath(test, mgr, idPath);
     }
 
