@@ -86,7 +86,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -1542,7 +1541,7 @@ public class WorkbenchStatusDialogManager {
 		link.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					Workbench.getInstance().getActiveWorkbenchWindow()
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 							.getActivePage().showView(LOG_VIEW_ID);
 				} catch (CoreException ce) {
 					StatusManager.getManager().handle(ce,
@@ -2375,7 +2374,7 @@ public class WorkbenchStatusDialogManager {
 			return null;
 		}
 		/* view description */
-		return Workbench.getInstance().getViewRegistry().find(LOG_VIEW_ID);
+		return PlatformUI.getWorkbench().getViewRegistry().find(LOG_VIEW_ID);
 	}
 
 	/**
