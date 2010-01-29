@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
@@ -93,7 +93,7 @@ public class TestFacadeE4Impl extends TestFacade {
 			this.response = response;
 		}
 
-		public Save promptToSave(MSaveablePart dirtyPart) {
+		public Save promptToSave(MPart dirtyPart) {
 			switch (response) {
 			case 0: return Save.YES;
 			case 1: return Save.NO;
@@ -102,8 +102,8 @@ public class TestFacadeE4Impl extends TestFacade {
 			throw new RuntimeException();
 		}
 
-		public Save[] promptToSave(Collection<MSaveablePart> dirtyParts) {
-			Save save = promptToSave((MSaveablePart) null);
+		public Save[] promptToSave(Collection<MPart> dirtyParts) {
+			Save save = promptToSave((MPart) null);
 			Save[] prompt = new Save[dirtyParts.size()];
 			Arrays.fill(prompt, save);
 			return prompt;
