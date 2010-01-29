@@ -1343,12 +1343,11 @@ public class EPartServiceTest extends TestCase {
 
 		window.getContext().set(ISaveHandler.class.getName(),
 				new ISaveHandler() {
-					public Save[] promptToSave(
-							Collection<MSaveablePart> saveablePart) {
+					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						return null;
 					}
 
-					public Save promptToSave(MSaveablePart saveablePart) {
+					public Save promptToSave(MPart saveablePart) {
 						return returnValue;
 					}
 				});
@@ -1578,8 +1577,7 @@ public class EPartServiceTest extends TestCase {
 		return saveablePart;
 	}
 
-	private Save prompt(Save[] candidates, MSaveablePart partToTest,
-			MSaveablePart part) {
+	private Save prompt(Save[] candidates, MPart partToTest, MPart part) {
 		return partToTest == part ? candidates[0] : candidates[1];
 	}
 
@@ -1609,11 +1607,10 @@ public class EPartServiceTest extends TestCase {
 
 		window.getContext().set(ISaveHandler.class.getName(),
 				new ISaveHandler() {
-					public Save[] promptToSave(
-							Collection<MSaveablePart> saveableParts) {
+					public Save[] promptToSave(Collection<MPart> saveableParts) {
 						int index = 0;
 						Save[] prompt = new Save[saveableParts.size()];
-						Iterator<MSaveablePart> it = saveableParts.iterator();
+						Iterator<MPart> it = saveableParts.iterator();
 						while (it.hasNext()) {
 							prompt[index] = prompt(returnValues, it.next(),
 									saveablePart);
@@ -1622,7 +1619,7 @@ public class EPartServiceTest extends TestCase {
 						return prompt;
 					}
 
-					public Save promptToSave(MSaveablePart saveablePart) {
+					public Save promptToSave(MPart saveablePart) {
 						return null;
 					}
 				});
@@ -3111,14 +3108,13 @@ public class EPartServiceTest extends TestCase {
 
 		applicationContext.set(ISaveHandler.class.getName(),
 				new ISaveHandler() {
-					public Save[] promptToSave(
-							Collection<MSaveablePart> saveablePart) {
+					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						Save[] ret = new Save[saveablePart.size()];
 						Arrays.fill(ret, ISaveHandler.Save.YES);
 						return ret;
 					}
 
-					public Save promptToSave(MSaveablePart saveablePart) {
+					public Save promptToSave(MPart saveablePart) {
 						return ISaveHandler.Save.YES;
 					}
 				});

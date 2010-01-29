@@ -405,9 +405,9 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		if (confirm) {
-			List<MSaveablePart> dirtyPartsList = Collections
-					.unmodifiableList(new ArrayList<MSaveablePart>(dirtyParts));
-			Save[] decisions = saveHandler.promptToSave(dirtyParts);
+			List<MPart> dirtyPartsList = Collections.unmodifiableList(new ArrayList<MPart>(
+					dirtyParts));
+			Save[] decisions = saveHandler.promptToSave(dirtyPartsList);
 			for (Save decision : decisions) {
 				if (decision == Save.CANCEL) {
 					return false;
@@ -417,7 +417,7 @@ public class PartServiceImpl implements EPartService {
 			boolean success = true;
 			for (int i = 0; i < decisions.length; i++) {
 				if (decisions[i] == Save.YES) {
-					if (!savePart(dirtyPartsList.get(i), false)) {
+					if (!savePart((MSaveablePart) dirtyPartsList.get(i), false)) {
 						return false;
 					}
 				}

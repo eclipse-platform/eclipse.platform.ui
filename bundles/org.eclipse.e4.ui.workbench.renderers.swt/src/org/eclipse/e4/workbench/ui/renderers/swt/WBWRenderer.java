@@ -23,7 +23,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -221,7 +221,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		context.set(ISaveHandler.class.getName(), new ISaveHandler() {
 
-			public Save promptToSave(MSaveablePart dirtyPart) {
+			public Save promptToSave(MPart dirtyPart) {
 				Shell shell = (Shell) context
 						.get(IServiceConstants.ACTIVE_SHELL);
 				Object[] elements = promptForSave(shell, Collections
@@ -232,9 +232,8 @@ public class WBWRenderer extends SWTPartRenderer {
 				return elements.length == 0 ? Save.NO : Save.YES;
 			}
 
-			public Save[] promptToSave(Collection<MSaveablePart> dirtyParts) {
-				List<MSaveablePart> parts = new ArrayList<MSaveablePart>(
-						dirtyParts);
+			public Save[] promptToSave(Collection<MPart> dirtyParts) {
+				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
 				Shell shell = (Shell) context
 						.get(IServiceConstants.ACTIVE_SHELL);
 				Save[] response = new Save[dirtyParts.size()];
@@ -413,7 +412,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	private Object[] promptForSave(Shell parentShell,
-			Collection<MSaveablePart> saveableParts) {
+			Collection<MPart> saveableParts) {
 		SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(
 				parentShell, saveableParts);
 		if (dialog.open() == Window.CANCEL) {
@@ -441,14 +440,13 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	class SaveablePartPromptDialog extends Dialog {
 
-		private Collection<MSaveablePart> collection;
+		private Collection<MPart> collection;
 
 		private CheckboxTableViewer tableViewer;
 
 		private Object[] checkedElements = new Object[0];
 
-		SaveablePartPromptDialog(Shell shell,
-				Collection<MSaveablePart> collection) {
+		SaveablePartPromptDialog(Shell shell, Collection<MPart> collection) {
 			super(shell);
 			this.collection = collection;
 		}
@@ -470,7 +468,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			tableViewer.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((MSaveablePart) element).getLabel();
+					return ((MPart) element).getLabel();
 				}
 			});
 			tableViewer.setContentProvider(ArrayContentProvider.getInstance());

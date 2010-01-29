@@ -12,7 +12,7 @@
 package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MPart;
 
 public interface ISaveHandler {
 
@@ -20,8 +20,8 @@ public interface ISaveHandler {
 		YES, NO, CANCEL
 	}
 
-	public Save promptToSave(MSaveablePart dirtyPart);
+	public Save promptToSave(MPart dirtyPart);
 
-	public Save[] promptToSave(Collection<MSaveablePart> dirtyParts);
+	public Save[] promptToSave(Collection<MPart> dirtyParts);
 
 }
