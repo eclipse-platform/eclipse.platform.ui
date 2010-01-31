@@ -162,6 +162,9 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	 * org.eclipse.e4.core.services.context.IEclipseContext)
 	 */
 	public Object create(String uriString, IEclipseContext context) {
+		if (uriString == null) {
+			return null;
+		}
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		Object contribution;
@@ -175,7 +178,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		return contribution;
 	}
 
-	private Object createFromBundle(Bundle bundle, IEclipseContext context, URI uri) {
+	protected Object createFromBundle(Bundle bundle, IEclipseContext context, URI uri) {
 		Object contribution;
 		if (uri.segmentCount() > 3) {
 			String prefix = uri.segment(2);
@@ -211,7 +214,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		return contribution;
 	}
 
-	private void processLanguages() {
+	protected void processLanguages() {
 		languages = new HashMap<String, Object>();
 		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
 		IConfigurationElement[] languageElements = registry.getConfigurationElementsFor(extId);
@@ -230,7 +233,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		}
 	}
 
-	private Bundle getBundle(URI platformURI) {
+	protected Bundle getBundle(URI platformURI) {
 		return Activator.getDefault().getBundleForName(platformURI.segment(1));
 	}
 
