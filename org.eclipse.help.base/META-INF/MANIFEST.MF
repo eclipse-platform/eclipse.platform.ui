@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.help.internal.base.HelpBasePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.apache.lucene.demo.html;x-internal:=true,
+ org.eclipse.help.base,
  org.eclipse.help.browser,
  org.eclipse.help.internal.base;
   x-friends:="org.eclipse.help.ui,
@@ -15,6 +16,7 @@ Export-Package: org.apache.lucene.demo.html;x-internal:=true,
    org.eclipse.ui.intro,
    org.eclipse.ua.tests.doc",
  org.eclipse.help.internal.base.remote;x-friends:="org.eclipse.ua.tests,org.eclipse.help.webapp,org.eclipse.help.ui",
+ org.eclipse.help.internal.base.scope;x-friends:="org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.base.util;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.browser;x-friends:="org.eclipse.help.ui,org.eclipse.ua.tests",
  org.eclipse.help.internal.browser.macosx;x-friends:="org.eclipse.ua.tests",

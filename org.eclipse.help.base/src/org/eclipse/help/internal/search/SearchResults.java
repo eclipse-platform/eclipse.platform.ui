@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
@@ -34,6 +35,7 @@ public class SearchResults implements ISearchHitCollector {
 	private ArrayList scopes;
 	private int maxHits;
 	private String locale;
+	private AbstractHelpScope filter;
 	protected SearchHit[] searchHits = new SearchHit[0];
 	/**
 	 * Constructor
@@ -45,6 +47,10 @@ public class SearchResults implements ISearchHitCollector {
 		this.maxHits = maxHits;
 		this.locale = locale;
 		this.scopes = getScopes(workingSets);
+	}
+	
+	public void setFilter(AbstractHelpScope filter) {
+		this.filter = filter;
 	}
 
 	/* (non-Javadoc)
@@ -65,6 +71,9 @@ public class SearchResults implements ISearchHitCollector {
 			// the scope for the topic, if any
 			if (scopes == null) {
 				toc = getTocForTopic(href, locale);
+				if (toc == null && !rawHit.canOpen()) {
+					continue;
+				}
 			} else {
 				scope = getScopeForTopic(href);
 				if (scope == null) {
@@ -123,8 +132,11 @@ public class SearchResults implements ISearchHitCollector {
 	private AdaptableHelpResource getScopeForTopic(String href) {
 		for (int i = 0; i < scopes.size(); i++) {
 			AdaptableHelpResource scope = (AdaptableHelpResource) scopes.get(i);
-			if (scope.getTopic(href) != null)
-				return scope;
+			ITopic inScopeTopic = scope.getTopic(href);
+			if (inScopeTopic != null)
+				if (filter == null || filter.inScope(inScopeTopic)) {
+				    return scope;
+				}
 		
 			// add root toc's extradir topics to search scope
 			IToc tocRoot = getTocForScope(scope, locale);
@@ -133,6 +145,9 @@ public class SearchResults implements ISearchHitCollector {
 				if (toc != null) {
 					String owningTocHref = toc.getHref();
 					if (owningTocHref == tocRoot.getHref()) {
+						if (filter == null || filter.inScope(inScopeTopic)) {
+						    return scope;
+						}
 						return scope;
 					}
 				}
@@ -176,10 +191,25 @@ public class SearchResults implements ISearchHitCollector {
 	 */
 	private IToc getTocForTopic(String href, String locale) {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		boolean foundInToc = false;
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic topic = tocs[i].getTopic(href);
-			if (topic != null)
-				return tocs[i];
+			if (topic != null) {
+				foundInToc = true;
+				if (filter == null || filter.inScope(topic)) {
+				    return tocs[i];
+				}
+			} 
+		}
+		if (!foundInToc) {
+			// test to pick up files in extradirs
+			IToc toc = HelpPlugin.getTocManager().getOwningToc(href);
+			if (toc != null) {
+				foundInToc = true;
+				if (filter == null || filter.inScope(toc)) {
+				    return toc;
+				}
+			}
 		}
 		return null;
 	}

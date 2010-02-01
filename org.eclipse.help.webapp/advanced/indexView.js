@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation 2006, refactored index view into a single frame
  *     IBM Corporation 2007, allow partial loading of index
+ *     IBM Corporation 2010, add filtering in toc and index view
  *******************************************************************************/
  
 var isMozilla = navigator.userAgent.indexOf("Mozilla") != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
@@ -204,7 +205,7 @@ function removePlaceholder() {
 }
 
 function makeNodeRequest(parameters) {
-    var href = "../indexfragment" + parameters;
+    var href = "indexfragment" + parameters;
     var callback = function(xml) { updateIndexTree(xml);}; 
     var errorCallback = function() { 
         // alert("ajax error"); 

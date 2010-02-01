@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.toc.Toc;
-import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 public class ChildLinkInserter {
@@ -31,10 +33,12 @@ public class ChildLinkInserter {
 	private OutputStream out;
 	private static final String NO_CHILDREN = "no_child_topics"; //$NON-NLS-1$
 	private static final String HAS_CHILDREN = "has_child_topics"; //$NON-NLS-1$
+	private AbstractHelpScope scope;
 
 	public ChildLinkInserter(HttpServletRequest req, OutputStream out) {
 		this.req = req;
 		this.out = out;
+		scope = RequestScope.getScopeFromRequest(req, null);
 	}
 	
 	public void addContents(String encoding) throws IOException {	
@@ -46,7 +50,7 @@ public class ChildLinkInserter {
 	    }
 	    StringBuffer links = new StringBuffer("\n<ul class=\"childlinks\">\n"); //$NON-NLS-1$
 		for (int i=0;i<subtopics.length;++i) {
-			if (EnabledTopicUtils.isEnabled(subtopics[i])) {
+			if (ScopeUtils.showInTree(subtopics[i], scope)) {
 				links.append("\n<li><a href=\""); //$NON-NLS-1$
 				String href = subtopics[i].getHref();
 				if (href == null) {
@@ -106,7 +110,7 @@ public class ChildLinkInserter {
 		if (topic != null && topic.getHref() != null) {
 			ITopic[] subtopics = topic.getSubtopics();
 			for (int i = 0; i < subtopics.length; ++i) {
-				if (EnabledTopicUtils.isEnabled(subtopics[i])) {
+				if (ScopeUtils.showInTree(subtopics[i], scope)) {
 					out.write(HAS_CHILDREN.getBytes(UTF_8));
 					return;
 				}

@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2009 IBM Corporation and others.
+ Copyright (c) 2000, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -72,9 +72,9 @@ function onloadHandler()
     setRootAccessibility();
 	loadChildren(null);
 	
-	// Set prefix for AJAX calls by removing advanced/tocView.jsp from location
+	// Set prefix for AJAX calls by removing tocView.jsp from location
 	var locationHref = window.location.href;
-    var slashAdvanced = locationHref.lastIndexOf('/advanced');
+    var slashAdvanced = locationHref.lastIndexOf('/tocView.jsp');
     if(slashAdvanced > 0) {
 	    setAjaxPrefix(locationHref.substr(0, slashAdvanced));
 	}

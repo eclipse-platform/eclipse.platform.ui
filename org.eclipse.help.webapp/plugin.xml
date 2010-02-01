@@ -83,7 +83,7 @@
             httpcontextId="help">
       </servlet>
       <servlet
-            alias="/tocfragment"
+            alias="/advanced/tocfragment"
             class="org.eclipse.help.internal.webapp.servlet.TocFragmentServlet"
             httpcontextId="help">
       </servlet>
@@ -93,7 +93,7 @@
             httpcontextId="help">
       </servlet>
       <servlet
-            alias="/indexfragment"
+            alias="/advanced/indexfragment"
             class="org.eclipse.help.internal.webapp.servlet.IndexFragmentServlet"
             httpcontextId="help">
       </servlet>

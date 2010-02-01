@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.webapp.WebappResources;
-import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.IconFinder;
+import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -54,7 +56,8 @@ public class TocFragmentServlet extends HttpServlet {
 		
 		readParameters(req);
 		
-		Serializer serializer = new Serializer(data, req.getLocale());
+		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		Serializer serializer = new Serializer(data, req.getLocale(), scope);
 		String response = serializer.generateTreeXml();	
 		locale2Response.put(locale, response);
 		resp.getWriter().write(response);
@@ -74,15 +77,17 @@ public class TocFragmentServlet extends HttpServlet {
 		private StringBuffer buf;
 		private int requestKind;
 		private Locale locale;
+		private AbstractHelpScope scope;
 		private static final int REQUEST_SHOW_IN_TOC = 1;      // Get the path to an element an element based on its href
 		private static final int REQUEST_SHOW_TOCS = 2;        // Show all the tocs but not their children
 		private static final int REQUEST_SHOW_CHILDREN = 3;    // Show the children of a node
 		private static final int REQUEST_EXPAND_PATH = 4;      // Get all the nodes requires to expand a path in the tree
 
-		public Serializer(TocData data, Locale locale) {
+		public Serializer(TocData data, Locale locale, AbstractHelpScope scope) {
 			tocData = data;
 			buf = new StringBuffer();
 			this.locale = locale;
+			this.scope = scope;
 			if (tocData.isExpandPath()) {
 				requestKind = REQUEST_EXPAND_PATH;
 			} else if (tocData.getTopicHref() != null) {
@@ -119,7 +124,7 @@ public class TocFragmentServlet extends HttpServlet {
 				// Count the number of enabled tocs
 				int enabled = 0;
 				for (int i = 0; i <= selectedToc; i++) {
-					if (EnabledTopicUtils.isEnabled(tocData.getTocs()[i])) {
+					if (ScopeUtils.showInTree(tocData.getTocs()[i], scope)) {
 						enabled++;
 					}
 				}
@@ -165,8 +170,8 @@ public class TocFragmentServlet extends HttpServlet {
 	
 		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {		
 			
-			if (!EnabledTopicUtils.isEnabled(toc)) {
-				// do not generate toc when there are no leaf topics
+			if (!ScopeUtils.showInTree(toc, scope)) {
+				// do not generate toc when there are no leaf topics or if it is filtered out
 				return;
 			}
 			ITopic[] topics = toc.getTopics();
@@ -205,7 +210,7 @@ public class TocFragmentServlet extends HttpServlet {
 
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
 		    ITopic[] subtopics = topic.getSubtopics();
-		     boolean isLeaf = !EnabledTopicUtils.hasEnabledSubtopic(topic);
+		     boolean isLeaf = !ScopeUtils.hasInScopeDescendent(topic, scope);
 		    buf.append("<node"); //$NON-NLS-1$
 			if (topic.getLabel() != null) { 
 				buf.append('\n'	+ "      title=\"" + XMLGenerator.xmlEscape(topic.getLabel()) + '"'); //$NON-NLS-1$
@@ -293,14 +298,14 @@ public class TocFragmentServlet extends HttpServlet {
 				// Show the children of this node
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
 				    ITopic childTopic = childTopics[subtopic];
-				    if (EnabledTopicUtils.isEnabled(childTopic)) {
+				    if (ScopeUtils.showInTree(childTopic, scope)) {
 					    serializeTopic(childTopic, null, false, addSuffix(parentPath, subtopic));
 				    }
 				}
 			} else if (topicPath != null) {
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
 					ITopic childTopic = childTopics[subtopic];
-					if (EnabledTopicUtils.isEnabled(childTopic)) {
+				    if (ScopeUtils.showInTree(childTopic, scope)) {
 						if (topicPath[0].getLabel().equals(childTopic.getLabel())) {
 							ITopic[] newPath = null;
 							if (topicPath.length > 1) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,14 @@
 // Tree code specific to the help toc
 
 var showExpanders = true;
-var ajaxPrefix = "../tocfragment"; 
+var ajaxPath = "tocfragment"; 
 var pendingSynchTopic = null; // Should the toc be synchronized when the view becomes visible
 
-// The default value of ajaxPrefix works from jsp files but needs to be overridden to 
+// The default value of ajaxPath works from jsp files but needs to be overridden to 
 // a non relative path to work from scripts launched from any page
 
 function setAjaxPrefix(prefix) {
-    ajaxPrefix = prefix;
+    ajaxPath = prefix + "/tocfragment";
 }
 
 /*
@@ -174,11 +174,7 @@ function updateTocTree(xml) {
 
 function makeNodeRequest(parameters) {
     var href;
-    if (ajaxPrefix) {
-        href = ajaxPrefix + "/tocfragment" +parameters; 
-    } else {
-        href = "../tocfragment" + parameters;
-    }
+    href = ajaxPath +parameters; 
     var callback = function(xml) { updateTocTree(xml);}; 
     var errorCallback = function() { 
         // alert("ajax error"); 
@@ -188,11 +184,7 @@ function makeNodeRequest(parameters) {
 
 function makeShowInTocRequest(parameters) {
     var href;
-    if (ajaxPrefix) {
-        href = ajaxPrefix + "/tocfragment" +parameters; 
-    } else {
-        href = "../tocfragment" + parameters;
-    }
+    href = ajaxPath +parameters; 
     var callback = function(xml) { showInToc(xml);}; 
     var errorCallback = function() { 
         // alert("ajax error"); 

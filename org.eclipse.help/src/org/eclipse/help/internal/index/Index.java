@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
  *     IBM Corporation - add support for see / see also
+ *     IBM Corporation - add support for filtering of the index view
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -42,18 +43,18 @@ public class Index extends UAElement implements IIndex {
 
 	/**
 	 * @param see A see element
-	 * @return true if the keyword of the see matches an entry in the index
+	 * @return the entry with matching keyword or null 
 	 */
-	public boolean containsSeeTarget(IndexSee see) {
+	public IndexEntry getSeeTarget(IndexSee see) {
 		if (children == null) getChildren();
 		String keyword = see.getKeyword();
 		for (Iterator iter = children.iterator(); iter.hasNext();) {
 			Object next = iter.next();
 			if (next instanceof IndexEntry && keyword.equals(((IndexEntry)next).getKeyword())) {
-				return true;
+				return (IndexEntry)next;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 }

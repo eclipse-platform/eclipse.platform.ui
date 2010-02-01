@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,13 @@ import org.eclipse.help.IIndexEntry2;
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.ActivitiesData;
-import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.osgi.util.NLS;
 
@@ -107,7 +109,8 @@ public class IndexFragmentServlet extends HttpServlet {
 		    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
 		    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$	
 		}
-		Serializer serializer = new Serializer(locale);
+		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		Serializer serializer = new Serializer(locale, scope);
 		String response = serializer.generateIndexXml();	
 		locale2Response.put(locale, response);
 		resp.getWriter().write(response);
@@ -126,9 +129,11 @@ public class IndexFragmentServlet extends HttpServlet {
 		private IIndexEntry[] entries;
 		private boolean enablePrevious = true;
 		private boolean enableNext = true;
+		private AbstractHelpScope scope;
 
-		public Serializer(String locale) {
+		public Serializer(String locale, AbstractHelpScope scope) {
 			this.locale = locale;
+			this.scope = scope;
 			index = HelpPlugin.getIndexManager().getIndex(locale);
 			buf = new StringBuffer();
 		}
@@ -265,21 +270,44 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 		
 		private int enabledEntryCount(IIndexEntry entry) {
-			if (!EnabledTopicUtils.isEnabled(entry)) return 0;
+			if (!ScopeUtils.showInTree(entry, scope)) return 0;
 			if (entry.getKeyword() == null || entry.getKeyword().length() == 0) {
 				return 0;
 			}
 			int count = 1;
-		    ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
-			IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
-			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
-			if (topics.length + subentries.length + sees.length > 1) {
-				count += topics.length;
-			}
-			for (int i=0;i<subentries.length;++i) {
+		    int topicCount = enabledTopicCount(entry);
+
+			IIndexEntry[] subentries = entry.getSubentries();
+		    int subentryCount = 0;
+			for (int i=0; i<subentries.length; ++i) {
 				count += enabledEntryCount(subentries[i]);
 			}
+			
+			int seeCount = 0;
+			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
+			for (int s = 0; s < sees.length; s++) {
+				if (scope.inScope(sees[s])) {
+					seeCount++;
+				}
+			}
+			
+			if (topicCount + subentryCount + seeCount > 1) {
+				count += topicCount;
+			}
+			count += subentryCount;
+			count += seeCount;
             return count;
+		}
+
+		private int enabledTopicCount(IIndexEntry entry) {
+			int topicCount = 0;
+		    ITopic[] topics = entry.getTopics();
+		    for (int i = 0; i < topics.length; i++) {
+		    	if (scope.inScope(topics[i])) {
+		    		topicCount++;
+		    	}
+		    }
+			return topicCount;
 		}
 		
 		private void generateEmptyIndexMessage() {
@@ -293,10 +321,10 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 		
 		private void generateEntry(IIndexEntry entry, int level, String id) {
-			if (!EnabledTopicUtils.isEnabled(entry)) return;
+			if (!ScopeUtils.showInTree(entry, scope)) return;
 			if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
-				ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
-				IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
+				ITopic[] topics = ScopeUtils.inScopeTopics(entry.getTopics(), scope);
+				IIndexEntry[] subentries = ScopeUtils.inScopeEntries(entry.getSubentries(), scope);
 				IIndexSee[] sees; 
 				if (entry instanceof IIndexEntry2) {
 					sees = ((IIndexEntry2)entry).getSees();
@@ -370,7 +398,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		private void generateSees(IIndexSee[] sees) {
 	        for (int i = 0; i < sees.length; i++) {
 	        	IIndexSee see = sees[i];
-				if (EnabledTopicUtils.isEnabled(see)) {
+				if (scope.inScope(see)) {
 					//
 					String key = see.isSeeAlso() ? "SeeAlso" : "See"; //$NON-NLS-1$ //$NON-NLS-2$
 					String seePrefix = WebappResources.getString(key, UrlUtil

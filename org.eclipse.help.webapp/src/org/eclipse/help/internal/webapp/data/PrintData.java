@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.search.HTMLDocParser;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
@@ -70,6 +72,8 @@ public class PrintData extends RequestData {
 	// flag right-to-left direction of text
 	private boolean isRTL;
 
+	private AbstractHelpScope scope;
+
 	/*
 	 * Constructs the print data for the given request.
 	 */
@@ -81,6 +85,7 @@ public class PrintData extends RequestData {
 		}
 
 		isRTL = UrlUtil.isRTL(request, response);
+		scope = RequestScope.getScopeFromRequest(request, response);
 		
 		String confirmString = request.getParameter("confirmed"); //$NON-NLS-1$
 		if ((confirmString != null) && ("true".equals(confirmString))) { //$NON-NLS-1$
@@ -209,7 +214,7 @@ public class PrintData extends RequestData {
 			topicsRequested++;
 		}
 
-		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+		ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
 		for (int i = 0; i < subtopics.length; ++i) {
 			topicsRequested += topicsRequested(subtopics[i]);
 		}
@@ -243,7 +248,7 @@ public class PrintData extends RequestData {
 		if (href != null && href.length() > 0) {
 			tocGenerated++;
 		}
-		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+		ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
 		for (int i = 0; i < subtopics.length; ++i) {
 			tocGenerated = generateToc(subtopics[i], String.valueOf(i + 1), tocGenerated, out);
 		}
@@ -267,7 +272,7 @@ public class PrintData extends RequestData {
 				tocGenerated++;
 			}
 
-			ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+			ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
 			for (int i = 0; i < subtopics.length; ++i) {
 				String subsectionId = sectionId + "." + (i + 1); //$NON-NLS-1$
 				tocGenerated = generateToc(subtopics[i], subsectionId, tocGenerated, out);
@@ -311,7 +316,7 @@ public class PrintData extends RequestData {
 					out.write(content);
 				}
 			}
-			ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+			ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
 			for (int i = 0; i < subtopics.length; ++i) {
 				String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
 				topicsGenerated = generateContent(subtopics[i], subsectionId, topicsGenerated, generated, out);

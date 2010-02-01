@@ -26,6 +26,7 @@ import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -348,7 +349,8 @@ public class SearchData extends ActivitiesData {
 					.getProgressMonitor(getLocale());
 			if (pm.isDone()) {
 				this.indexCompletion = 100;
-				SearchResults results = createHitCollector();
+				AbstractHelpScope filter = RequestScope.getScopeFromRequest(request, response);
+				SearchResults results = createHitCollector(filter);
 				BaseHelpSystem.getSearchManager().search(createSearchQuery(),
 						results, pm);
 				hits = results.getSearchHits();
@@ -386,7 +388,7 @@ public class SearchData extends ActivitiesData {
 				getLocale());
 	}
 
-	private SearchResults createHitCollector() {
+	private SearchResults createHitCollector(AbstractHelpScope filter) {
 		WorkingSet[] workingSets;
 		if (request.getParameterValues("scopedSearch") != null) { //$NON-NLS-1$
 			// scopes are books (advanced search)
@@ -414,7 +416,7 @@ public class SearchData extends ActivitiesData {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		return new SearchResultFilter(workingSets, maxHits, getLocale());
+		return new SearchResultFilter(workingSets, maxHits, getLocale(), filter);
 	}
 
 	/**
@@ -533,8 +535,9 @@ public class SearchData extends ActivitiesData {
 	 * that implement ISearchEngineResult2 and canOpen() returns true.
 	 */
 	private static class SearchResultFilter extends SearchResults {
-		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale) {
+		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale, AbstractHelpScope filter) {
 			super(workingSets, maxHits, locale);
+			setFilter(filter);
 		}
 		public void addHits(List hits, String highlightTerms) {
 			List filtered = new ArrayList();

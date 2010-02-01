@@ -19,6 +19,7 @@
    <extension-point id="luceneSearchParticipants" name="%search_participant_extension_point_name" schema="schema/luceneSearchParticipants.exsd"/>
    <extension-point id="server" name="%server_extension_point_name" schema="schema/server.exsd"/>
    <extension-point id="searchParticipant" name="Help Search Participant" schema="schema/searchParticipant.exsd"/>
+   <extension-point id="scope" name="Help Scope" schema="schema/scope.exsd"/>
 
 <!-- Stand-alone infocenter application -->
    <extension

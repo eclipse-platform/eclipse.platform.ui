@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.ITopic;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.webapp.WebappResources;
-import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;
 
@@ -61,7 +62,8 @@ public class NavServlet extends HttpServlet {
 		}
 
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp));
+		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
 		writer.close();
 	}
 	
@@ -93,7 +95,7 @@ public class NavServlet extends HttpServlet {
 		return topic;
 	}
 	
-	private void writeContent(ITopic topic, String path, Locale locale, PrintWriter writer, boolean isRTL) {
+	private void writeContent(ITopic topic, String path, Locale locale, PrintWriter writer, boolean isRTL, AbstractHelpScope scope) {
 		writer.write(XHTML_1);
 		writer.write(topic.getLabel());
 		if (isRTL) {
@@ -106,7 +108,7 @@ public class NavServlet extends HttpServlet {
 		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
-			if (EnabledTopicUtils.isEnabled(subtopics[i])) {
+			if (scope.inScope(subtopics[i])) {
 				writer.write("<li><a href=\""); //$NON-NLS-1$
 				String href = subtopics[i].getHref();
 				if (href == null) {
