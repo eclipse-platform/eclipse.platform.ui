@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
  * Factory class to create some SWT resources. 
@@ -141,6 +142,24 @@ public class SWTFactory {
 	}	
 	
 	/**
+	 * Creates and returns a new push button with the given
+	 * label, tooltip and/or image.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param tooltip the tooltip text for the button or <code>null</code>
+	 * @param image image of <code>null</code>
+	 * 
+	 * @return a new push button
+	 * @since 3.6
+	 */
+	public static Button createPushButton(Composite parent, String label, String tooltip, Image image) {
+		Button button = createPushButton(parent, label, image);
+		button.setToolTipText(tooltip);
+		return button;
+	}
+	
+	/**
 	 * Creates and returns a new radio button with the given
 	 * label.
 	 * 
@@ -160,6 +179,30 @@ public class SWTFactory {
 		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
+	
+	/**
+	 * Creates and returns a new radio button with the given
+	 * label.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param hspan the number of columns to span in the parent composite
+	 * 
+	 * @return a new radio button
+	 * @since 3.6
+	 */
+	public static Button createRadioButton(Composite parent, String label, int hspan) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setFont(parent.getFont());
+		if (label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = hspan;
+		button.setLayoutData(gd);	
+		SWTFactory.setButtonDimensionHint(button);
+		return button;	
+	}
 	
 	/**
 	 * Creates a new label widget
@@ -339,6 +382,25 @@ public class SWTFactory {
     }
 	
 	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param style the style bits for the text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param text the initial text, not <code>null</code>
+	 * @return the new text widget
+	 * @since 3.6
+	 */
+	public static Text createText(Composite parent, int style, int hspan, String text) {
+    	Text t = new Text(parent, style);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	t.setText(text);
+    	return t;
+    }
+	
+	/**
 	 * Creates a Group widget
 	 * @param parent the parent composite to add this group to
 	 * @param text the text for the heading of the group
@@ -379,6 +441,27 @@ public class SWTFactory {
     	g.setLayoutData(gd);
     	return g;
     }
+	
+	/**
+	 * Creates an ExpandibleComposite widget
+	 * @param parent the parent to add this widget to
+	 * @param style the style for ExpandibleComposite expanding handle, and layout
+	 * @param label the label for the widget
+	 * @param hspan how many columns to span in the parent
+	 * @param fill the fill style for the widget
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
+	 * @return a new ExpandibleComposite widget
+	 * @since 3.6
+	 */
+	public static ExpandableComposite createExpandibleComposite(Composite parent, int style, String label, int hspan, int fill) {
+		ExpandableComposite ex = new ExpandableComposite(parent, SWT.NONE, style);
+		ex.setText(label);
+		ex.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		ex.setLayoutData(gd);
+		return ex;
+	}
 	
 	/**
 	 * Creates a composite that uses the parent's font and has a grid layout
@@ -516,5 +599,21 @@ public class SWTFactory {
 	 */
 	public static void showPreferencePage(String id) {
 		PreferencesUtil.createPreferenceDialogOn(DebugUIPlugin.getShell(), id, new String[] {id}, null).open();
+	}
+	
+	/**
+	 * This method allows users to open a specific preference page and supply a custom
+	 * set of page filter items.
+	 * 
+	 * This alternative to <code>showPreferencePage(String)</code> allows other related 
+	 * pref pages to be shown at the same time at the developers/context discretion.
+	 * All pages can be shown if <code>null</code> is passed.  
+	 * 
+	 * @param page_id the id for the page to open
+	 * @param page_filters the listing of pages to be shown in the dialog
+	 * @since 3.6
+	 */
+	public static void showPreferencePage(String page_id, String[] page_filters) {
+		PreferencesUtil.createPreferenceDialogOn(DebugUIPlugin.getShell(), page_id, page_filters, null).open();
 	}
 }

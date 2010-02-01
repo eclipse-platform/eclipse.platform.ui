@@ -6,7 +6,7 @@ Bundle-Version: 3.6.0.qualifier
 Bundle-Activator: org.eclipse.debug.internal.ui.DebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.debug.internal.ui;x-internal:=true,
+Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.ui",
  org.eclipse.debug.internal.ui.actions;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpointGroups;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpoints;x-internal:=true,
@@ -14,7 +14,7 @@ Export-Package: org.eclipse.debug.internal.ui;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.variables;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.variables.details;x-internal:=true,
  org.eclipse.debug.internal.ui.breakpoints.provisional;
-   x-friends:="org.eclipse.debug.examples.ui,
+  x-friends:="org.eclipse.debug.examples.ui,
    org.eclipse.jdt.debug.ui,
    org.eclipse.cdt.dsf.ui,
    org.eclipse.cdt.dsf.gdb.ui,
@@ -75,5 +75,6 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.2.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Import-Package: com.ibm.icu.text
+Import-Package: com.ibm.icu.text,
+ org.eclipse.ui.forms.widgets
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
