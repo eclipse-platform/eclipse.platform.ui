@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -215,6 +216,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		} else if (featureName.equals(PARTDESCRIPTOR_CATEGORY_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPartDescriptor_Category();
 		}
+
+		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
+				+ object.eClass().getName() + '#' + featureName);
+		for (EStructuralFeature sf : object.eClass().getEAllStructuralFeatures()) {
+			if (sf.getName().equals(featureName)) {
+				return sf;
+			}
+		}
 		return null;
 	}
 
@@ -332,25 +341,27 @@ public class XMLModelReconciler extends ModelReconciler {
 			Element innerElement = (Element) node;
 			String featureName = innerElement.getNodeName();
 			EStructuralFeature feature = getStructuralFeature(object, featureName);
-
-			if (isChainedReference(featureName)) {
-				ModelDelta delta = createMultiReferenceDelta(deltas, references, object, feature,
-						innerElement);
-				deltas.add(delta);
-			} else if (isUnset(innerElement)) {
-				ModelDelta delta = new EMFModelDeltaUnset(object, feature);
-				deltas.add(delta);
-			} else if (isDirectReference(featureName)) {
-				ModelDelta delta = createDirectReferenceDelta(deltas, references, object, feature,
-						innerElement);
-				deltas.add(delta);
-			} else if (isIndirectReference(featureName)) {
-				ModelDelta delta = createIndirectReferenceDelta(references, object, feature,
-						innerElement);
-				deltas.add(delta);
-			} else {
-				ModelDelta delta = createAttributeDelta(object, feature, innerElement, featureName);
-				deltas.add(delta);
+			if (feature != null) {
+				if (isChainedReference(featureName)) {
+					ModelDelta delta = createMultiReferenceDelta(deltas, references, object,
+							feature, innerElement);
+					deltas.add(delta);
+				} else if (isUnset(innerElement)) {
+					ModelDelta delta = new EMFModelDeltaUnset(object, feature);
+					deltas.add(delta);
+				} else if (isDirectReference(featureName)) {
+					ModelDelta delta = createDirectReferenceDelta(deltas, references, object,
+							feature, innerElement);
+					deltas.add(delta);
+				} else if (isIndirectReference(featureName)) {
+					ModelDelta delta = createIndirectReferenceDelta(references, object, feature,
+							innerElement);
+					deltas.add(delta);
+				} else {
+					ModelDelta delta = createAttributeDelta(object, feature, innerElement,
+							featureName);
+					deltas.add(delta);
+				}
 			}
 		}
 	}
@@ -624,54 +635,56 @@ public class XMLModelReconciler extends ModelReconciler {
 					String attributeName = item.getNodeName();
 					EStructuralFeature attributeFeature = getStructuralFeature(object,
 							attributeName);
-					if (isDirectReference(attributeName)) {
-						String id = item.getAttribute(attributeName);
-						Object objectReference = findReference(references, id);
-						if (objectReference == null) {
-							objectReference = createObject(deltas,
-									getFirstElement((NodeList) item), references);
-						}
-
-						IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
-								objectReference);
-						compositeDelta.add(delta);
-					} else if (isIndirectReference(attributeName)) {
-						String id = item.getAttribute(attributeName);
-						Object objectReference = findReference(references, id);
-						if (objectReference == null) {
-							NodeList list = (NodeList) item;
-							Element refElement = getFirstElement(list);
-							if (refElement != null) {
-								ModelDelta delta = createDelayedDelta(object, attributeFeature,
-										refElement);
-								deltas.add(delta);
+					if (attributeFeature != null) {
+						if (isDirectReference(attributeName)) {
+							String id = item.getAttribute(attributeName);
+							Object objectReference = findReference(references, id);
+							if (objectReference == null) {
+								objectReference = createObject(deltas,
+										getFirstElement((NodeList) item), references);
 							}
-						} else {
+
 							IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
 									objectReference);
 							compositeDelta.add(delta);
-						}
-					} else if (isChainedReference(attributeName)) {
-						List<Object> objectReferences = new ArrayList<Object>();
-						NodeList objectReferenceNodes = (NodeList) item;
+						} else if (isIndirectReference(attributeName)) {
+							String id = item.getAttribute(attributeName);
+							Object objectReference = findReference(references, id);
+							if (objectReference == null) {
+								NodeList list = (NodeList) item;
+								Element refElement = getFirstElement(list);
+								if (refElement != null) {
+									ModelDelta delta = createDelayedDelta(object, attributeFeature,
+											refElement);
+									deltas.add(delta);
+								}
+							} else {
+								IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
+										objectReference);
+								compositeDelta.add(delta);
+							}
+						} else if (isChainedReference(attributeName)) {
+							List<Object> objectReferences = new ArrayList<Object>();
+							NodeList objectReferenceNodes = (NodeList) item;
 
-						for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
-							Node refNode = objectReferenceNodes.item(j);
-							if (refNode instanceof Element) {
-								Object objectReference = getReference(deltas, (Element) refNode,
-										references);
-								if (objectReference != null) {
-									objectReferences.add(objectReference);
+							for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
+								Node refNode = objectReferenceNodes.item(j);
+								if (refNode instanceof Element) {
+									Object objectReference = getReference(deltas,
+											(Element) refNode, references);
+									if (objectReference != null) {
+										objectReferences.add(objectReference);
+									}
 								}
 							}
-						}
 
-						IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
-								objectReferences);
-						compositeDelta.add(delta);
-					} else {
-						object.eSet(attributeFeature, getValue(attributeFeature, item
-								.getAttribute(attributeName)));
+							IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
+									objectReferences);
+							compositeDelta.add(delta);
+						} else {
+							object.eSet(attributeFeature, getValue(attributeFeature, item
+									.getAttribute(attributeName)));
+						}
 					}
 				}
 			}
