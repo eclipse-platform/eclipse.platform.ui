@@ -1,0 +1,80 @@
+package org.eclipse.help.internal.criteria;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.help.ICriteria;
+
+/**
+ * A class represents one criterion, which has the name and values
+ * 
+ * @since 3.5
+ */
+public class CriterionResource {
+
+	private String criterionName;
+	private List criterionValues;
+	
+	public CriterionResource(String criterionName){
+		this(criterionName, null);
+	}
+	
+	public CriterionResource (String criterionName, List criterionValues){
+		this.criterionName = criterionName;
+		this.criterionValues = new ArrayList();
+		if(null != criterionValues) {
+			this.addCriterionValues(criterionValues);
+		}
+	}
+	
+	public String getCriterionName(){
+		return this.criterionName;
+	}
+	
+	public List getCriterionValues(){
+		return this.criterionValues;
+	}
+	
+	public void addCriterionValue(String criterionValue){
+		if(null != criterionValue && 0 != criterionValue.length() && !criterionValues.contains(criterionValue)){
+			criterionValues.add(criterionValue);
+		}
+	}
+	
+	public void addCriterionValues(List criterionValues){
+		for(Iterator iterator = criterionValues.iterator(); iterator.hasNext();){
+			String criterionValue = (String) iterator.next();
+			this.addCriterionValue(criterionValue);
+		}
+	}
+	
+	public static CriterionResource[] toCriterionResource(ICriteria[] criteriaElements) {
+		List criteriaList = new ArrayList();
+		outer: for (int i = 0; i < criteriaElements.length; ++i) {
+			String elementName = criteriaElements[i].getName();
+			String elementValue = criteriaElements[i].getValue();
+			if (null != elementName && 0 != elementName.length() && null != elementValue
+					&& 0 != elementValue.length()) {
+				if (CriteriaPreferences.getInstance().isSupportedCriterion(elementName)) {
+					elementName = elementName.toLowerCase();
+					List values = Arrays.asList(elementValue.split(",")); //$NON-NLS-1$
+					for(int j = 0; j < criteriaList.size(); ++j){
+						CriterionResource criterion = (CriterionResource) criteriaList.get(j);
+						if(elementName.equals(criterion.getCriterionName())){
+							criterion.addCriterionValues(values);
+							continue outer;
+						}
+					}
+				    CriterionResource criterionResource = new CriterionResource(elementName, values);
+				    criteriaList.add(criterionResource);
+				}
+			}
+		}
+		CriterionResource[] criteria = new CriterionResource[criteriaList.size()];                                        		
+		criteriaList.toArray(criteria);
+		return criteria;
+	}
+
+}

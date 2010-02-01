@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,14 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.help.ICriteria;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.criteria.CriteriaPreferences;
 import org.eclipse.help.internal.dynamic.DocumentProcessor;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
@@ -431,6 +433,9 @@ public class TocAssembler {
 				if (href != null) {
 					topic.setHref(normalize(href, id));
 				}
+				
+				processCriteria(element);
+				
 				return HANDLED_CONTINUE;
 			}
 			else if (element instanceof Toc) {
@@ -440,6 +445,9 @@ public class TocAssembler {
 				if (topic != null) {
 					toc.setTopic(normalize(topic, id));
 				}
+				
+				processCriteria(element);
+				
 				return HANDLED_CONTINUE;
 			}
 			return UNHANDLED;
@@ -459,6 +467,22 @@ public class TocAssembler {
 				}
 			}
 			return href;
+		}
+		
+		private void processCriteria(UAElement element) {
+			if(CriteriaPreferences.getInstance().isCriteriaEnabled()){
+				ICriteria[] criteria = new ICriteria[0];
+				if (element instanceof Topic) {
+					Topic topic = (Topic) element;
+					criteria = topic.getCriteria();
+				}
+				else if (element instanceof Toc) {
+					Toc toc = (Toc) element;
+					criteria = toc.getCriteria();
+				}
+
+				CriteriaPreferences.getInstance().addCriteriaValues(criteria);
+			}
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.help.IAnchor;
 import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContentExtension;
 import org.eclipse.help.IContext;
+import org.eclipse.help.ICriteria;
 import org.eclipse.help.IInclude;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
@@ -29,6 +30,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.context.Context;
+import org.eclipse.help.internal.criteria.Criteria;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
@@ -57,6 +59,7 @@ public class UAElementFactory {
 		{ ICommandLink.class, CommandLink.class },
 		{ IIndex.class, Index.class },
 		{ IContentExtension.class, ContentExtension.class },
+		{ ICriteria.class, Criteria.class },
 	};
 
 	private static final Map classByElementName;
@@ -74,6 +77,7 @@ public class UAElementFactory {
 		classByElementName.put(Link.NAME, Link.class);
 		classByElementName.put(IndexSee.NAME, IndexSee.class);
 		classByElementName.put(IndexSubpath.NAME, IndexSubpath.class);
+		classByElementName.put(Criteria.NAME, Criteria.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_REPLACEMENT, ContentExtension.class);
