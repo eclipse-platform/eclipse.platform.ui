@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.REGISTERS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		
 		// Breakpoints view default settings
-		prefs.setDefault(IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN);
+		prefs.setDefault(IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		
 		// Variable/Expression view default settings
 		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
