@@ -31,10 +31,8 @@ import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -67,8 +65,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 /**
  * @since 3.5
@@ -91,14 +87,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Inject
 	private MWindow window;
 
-	@Inject
-	private IEventBroker eventBroker;
-
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
 	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
 
-	private ListenerList partListeners = new ListenerList();
+	private ListenerList partListenerList = new ListenerList();
+	private ListenerList partListener2List = new ListenerList();
 	private ListenerList propertyChangeListeners = new ListenerList();
+
+	private E4PartListener e4PartListener = new E4PartListener();
 
 	/**
 	 * @param workbenchWindow
@@ -109,35 +105,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		this.input = input;
 	}
 
-	private void firePartBroughtToTop(IWorkbenchPart part) {
-		for (Object listener : partListeners.getListeners()) {
-			((IPartListener) listener).partBroughtToTop(part);
-		}
-	}
-
 	@Inject
 	void inject() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.ACTIVECHILD), new EventHandler() {
-			public void handleEvent(Event event) {
-				Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (value instanceof MPart) {
-					MPart part = (MPart) value;
-					MElementContainer<?> parentWindow = part.getParent();
-					while (!(parentWindow instanceof MWindow)) {
-						parentWindow = parentWindow.getParent();
-					}
-
-					if (((MWindow) parentWindow).getContext().get(IWorkbenchWindow.class.getName()) == workbenchWindow) {
-						Object object = part.getObject();
-						if (object instanceof CompatibilityPart) {
-							firePartBroughtToTop(((CompatibilityPart) object).getPart());
-						}
-					}
-				}
-			}
-		});
-
+		partService.addPartListener(e4PartListener);
 	}
 
 	/* (non-Javadoc)
@@ -188,6 +158,38 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return null;
 	}
 
+	private void firePartActivated(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListenerList.getListeners()) {
+				((IPartListener) listener).partActivated(workbenchPart);
+			}
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partActivated(partReference);
+			}
+		}
+	}
+
+	private void firePartBroughtToTop(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListenerList.getListeners()) {
+				((IPartListener) listener).partBroughtToTop(workbenchPart);
+			}
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partBroughtToTop(partReference);
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#bringToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -210,6 +212,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			hideView(view);
 		}
 
+		partService.removePartListener(e4PartListener);
 		workbenchWindow.setActivePage(null);
 		return true;
 	}
@@ -300,12 +303,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getActiveEditor()
 	 */
 	public IEditorPart getActiveEditor() {
-		MPart part = partService.getActivePart();
-		if (part instanceof MEditor) {
-			CompatibilityEditor editor = (CompatibilityEditor) part.getObject();
-			return editor.getEditor();
-		}
-		return null;
+		return (IEditorPart) getActivePart();
 	}
 
 	/* (non-Javadoc)
@@ -572,6 +570,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 				if (editor instanceof IShowEditorInput) {
 					((IShowEditorInput) editor).showEditorInput(input);
 				}
+
+				if (activate) {
+					activate(editor);
+				}
 				return editor;
 			}
 		}
@@ -772,6 +774,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
 	 */
 	public IViewPart showView(String viewId, String secondaryId, int mode) throws PartInitException {
+		try {
+			return internalShowView(viewId, secondaryId, mode);
+		} finally {
+			processEventLoop(); // FIXME: remove when bug 299529 is fixed
+		}
+	}
+
+	private IViewPart internalShowView(String viewId, String secondaryId, int mode)
+			throws PartInitException {
 		switch (mode) {
 		case VIEW_ACTIVATE:
 		case VIEW_VISIBLE:
@@ -779,6 +790,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			break;
 		default:
 			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+		}
+
+		if (secondaryId != null) {
+			if (secondaryId.length() == 0 || secondaryId.indexOf(':') != -1) {
+				throw new IllegalArgumentException(
+						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
+			}
 		}
 
 		MPart part = partService.findPart(viewId);
@@ -1152,22 +1170,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener)
 	 */
 	public void addPartListener(IPartListener listener) {
-		partListeners.add(listener);
+		partListenerList.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener2)
 	 */
 	public void addPartListener(IPartListener2 listener) {
-		// FIXME compat addPartListener
-		E4Util.unsupported("addPartListener2"); //$NON-NLS-1$
-
+		partListener2List.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartService#getActivePart()
 	 */
 	public IWorkbenchPart getActivePart() {
+		processEventLoop(); // FIXME: remove when bug 299529 is fixed
 		MPart part = partService.getActivePart();
 		if (part != null) {
 			Object object = part.getObject();
@@ -1197,16 +1214,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener)
 	 */
 	public void removePartListener(IPartListener listener) {
-		partListeners.remove(listener);
+		partListenerList.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener2)
 	 */
 	public void removePartListener(IPartListener2 listener) {
-		// FIXME compat removePartListener
-		E4Util.unsupported("removePartListener2"); //$NON-NLS-1$
-
+		partListener2List.remove(listener);
 	}
 
 	/* (non-Javadoc)
@@ -1296,6 +1311,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		// FIXME compat getSelection
 		E4Util.unsupported("removePostSelectionListener(partId)"); //$NON-NLS-1$
+
+	}
+
+	class E4PartListener implements org.eclipse.e4.workbench.modeling.IPartListener {
+
+		public void partActivated(MPart part) {
+			firePartActivated(part);
+		}
+
+		public void partBroughtToTop(MPart part) {
+			firePartBroughtToTop(part);
+		}
 
 	}
 
