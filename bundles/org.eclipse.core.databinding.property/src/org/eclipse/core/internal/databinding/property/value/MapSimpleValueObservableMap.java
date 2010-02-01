@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 262269, 265561, 262287, 268688, 278550
- *     Ovidio Mallo - bug 299619
+ *     Ovidio Mallo - bugs 299619, 301370
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -314,7 +314,7 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		if (!masterMap.containsKey(key))
 			return null;
 		Object masterValue = masterMap.get(key);
-		Object oldValue = detailProperty.getValue(key);
+		Object oldValue = detailProperty.getValue(masterValue);
 		detailProperty.setValue(masterValue, value);
 		notifyIfChanged(masterValue);
 		return oldValue;
