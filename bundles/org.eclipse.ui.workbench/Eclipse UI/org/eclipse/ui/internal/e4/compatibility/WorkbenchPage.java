@@ -267,8 +267,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IViewPart findView(String viewId) {
 		MPart part = partService.findPart(viewId);
 		if (part != null) {
-			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
-			return compatibilityView.getView();
+			Object object = part.getObject();
+			if (object instanceof CompatibilityView) {
+				return ((CompatibilityView) object).getView();
+			}
 		}
 		return null;
 	}
@@ -454,7 +456,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	private boolean hidePart(MPart part, boolean save) {
-		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+		if (!partService.getParts().contains(part)) {
+			return false;
+		}
+
+		Object clientObject = part.getObject();
+		if (!(clientObject instanceof CompatibilityPart)) {
+			return false;
+		}
+
+		CompatibilityPart compatibilityPart = (CompatibilityPart) clientObject;
 		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
 		if (save) {
 			if (workbenchPart instanceof ISaveablePart) {
@@ -465,17 +476,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
-		MElementContainer<MUIElement> parent = part.getParent();
-		parent.getChildren().remove(part);
-		// TODO: this shouldn't be mandatory??
-		engine.removeGui(part);
-
-		compatibilityPart.delegateDispose();
 
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
 			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
+				partService.hidePart(part);
+				compatibilityPart.delegateDispose();
 				return true;
 			}
 		}
@@ -484,6 +491,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			IEditorReference reference = it.next();
 			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
+				partService.hidePart(part);
+				compatibilityPart.delegateDispose();
 				return true;
 			}
 		}
@@ -1201,7 +1210,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IWorkbenchPartReference getActivePartReference() {
 		IWorkbenchPart part = getActivePart();
 		if (part != null) {
-			for (IViewReference reference : viewReferences) {
+			for (IWorkbenchPartReference reference : viewReferences) {
+				if (reference.getPart(false) == part) {
+					return reference;
+				}
+			}
+
+			for (IWorkbenchPartReference reference : editorReferences) {
 				if (reference.getPart(false) == part) {
 					return reference;
 				}
