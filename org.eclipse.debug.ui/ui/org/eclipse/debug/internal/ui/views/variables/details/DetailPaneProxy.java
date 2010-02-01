@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,17 +18,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IDetailPane3;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -262,10 +262,8 @@ public class DetailPaneProxy implements ISaveablePart {
 	private void createErrorLabel(String message){
 		if (fCurrentPane != null) fCurrentPane.dispose();
 		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
-		Label errorLabel = new Label(fParentContainer.getParentComposite(),SWT.LEFT);
-		errorLabel.setText(message);
-		errorLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fCurrentControl = errorLabel;
+		fCurrentControl = SWTFactory.createComposite(fParentContainer.getParentComposite(), 1, 1, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel((Composite) fCurrentControl, message, 1);
 		fParentContainer.getParentComposite().layout();
 	}
 

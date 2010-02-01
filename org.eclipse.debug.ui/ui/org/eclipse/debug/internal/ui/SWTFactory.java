@@ -542,6 +542,31 @@ public class SWTFactory {
 	}
 	
 	/**
+	 * Creates a Composite widget
+	 * @param parent the parent composite to add this composite to
+	 * @param font the font to set on the control
+	 * @param columns the number of columns within the composite
+	 * @param hspan the horizontal span the composite should take up on the parent
+	 * @param fill the style for how this composite should fill into its parent
+	 * @param marginwidth the width of the margin to place on the sides of the composite (default is 5, specified by GridLayout)
+	 * @param marginheight the height of the margin to place o the top and bottom of the composite
+	 * @return the new composite
+	 * @since 3.6
+	 */
+	public static Composite createComposite(Composite parent, Font font, int style, int columns, int hspan, int fill, int marginwidth, int marginheight) {
+		Composite g = new Composite(parent, style);
+		GridLayout layout = new GridLayout(columns, false);
+		layout.marginWidth = marginwidth;
+		layout.marginHeight = marginheight;
+    	g.setLayout(layout);
+    	g.setFont(font);
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+	}
+	
+	/**
 	 * This method is used to make a combo box
 	 * @param parent the parent composite to add the new combo to
 	 * @param style the style for the Combo
