@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -28,6 +29,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
@@ -39,6 +41,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -89,14 +92,34 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	private ISaveHandler saveHandler;
 
+	private MPart activePart;
+
+	private ListenerList listeners = new ListenerList();
+
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		activePart = p;
+
+		if (p != null) {
+			firePartActivated(p);
+		}
 	}
 
-	private MPart activePart;
+	private void firePartActivated(MPart part) {
+		for (Object listener : listeners.getListeners()) {
+			((IPartListener) listener).partActivated(part);
+		}
+	}
 
-	protected MContext getParentWithContext(MUIElement part) {
+	public void addPartListener(IPartListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removePartListener(IPartListener listener) {
+		listeners.remove(listener);
+	}
+
+	private MContext getParentWithContext(MUIElement part) {
 		MElementContainer<MUIElement> parent = part.getParent();
 		while (parent != null) {
 			if (parent instanceof MContext) {
@@ -106,10 +129,6 @@ public class PartServiceImpl implements EPartService {
 			parent = parent.getParent();
 		}
 		return null;
-	}
-
-	protected IEclipseContext getContext(MPart part) {
-		return part.getContext();
 	}
 
 	public void bringToTop(MPart part) {
@@ -199,7 +218,7 @@ public class PartServiceImpl implements EPartService {
 		if (!isInContainer(part)) {
 			return;
 		}
-		IEclipseContext curContext = getContext(part);
+		IEclipseContext curContext = part.getContext();
 		MContext pwc = getParentWithContext(part);
 		MUIElement curElement = part;
 		while (pwc != null) {
@@ -213,7 +232,7 @@ public class PartServiceImpl implements EPartService {
 			}
 
 			if (curContext == null) {
-				curContext = getContext(part);
+				curContext = part.getContext();
 			}
 
 			IEclipseContext parentContext = pwc.getContext();
@@ -371,8 +390,8 @@ public class PartServiceImpl implements EPartService {
 	 * @see org.eclipse.e4.workbench.modeling.EPartService#save(org.eclipse.e4.ui.model.application.
 	 * MSaveablePart, boolean)
 	 */
-	public boolean savePart(MSaveablePart part, boolean confirm) {
-		if (!part.isDirty()) {
+	public boolean savePart(MPart part, boolean confirm) {
+		if (!((MDirtyable) part).isDirty()) {
 			return true;
 		}
 
@@ -417,7 +436,7 @@ public class PartServiceImpl implements EPartService {
 			boolean success = true;
 			for (int i = 0; i < decisions.length; i++) {
 				if (decisions[i] == Save.YES) {
-					if (!savePart((MSaveablePart) dirtyPartsList.get(i), false)) {
+					if (!savePart(dirtyPartsList.get(i), false)) {
 						return false;
 					}
 				}

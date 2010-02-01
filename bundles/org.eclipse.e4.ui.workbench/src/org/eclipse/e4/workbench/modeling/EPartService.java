@@ -52,6 +52,10 @@ public interface EPartService {
 
 	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
 
+	public void addPartListener(IPartListener listener);
+
+	public void removePartListener(IPartListener listener);
+
 	/**
 	 * Activates the given part. The part will be brought to top (if necessary) and granted focus.
 	 * 
@@ -162,7 +166,7 @@ public interface EPartService {
 	 * @return <code>true</code> if the operation completed successfully, <code>false</code> if the
 	 *         user canceled the operation or if an error occurred while saving the changes
 	 */
-	public boolean savePart(MSaveablePart part, boolean confirm);
+	public boolean savePart(MPart part, boolean confirm);
 
 	/**
 	 * Saves the contents of all dirty parts and returns whether the operation completed.
