@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
 
 /**
- * Action group that provide expand, collapse and naviGAtion atCions.
+ * Action group that provide expand, collapse and navigation actions.
  */
 public class NavigationActionGroup extends SynchronizePageActionGroup {
 
@@ -40,7 +41,8 @@ public class NavigationActionGroup extends SynchronizePageActionGroup {
 			
 			collapseAll = new Action() {
 				public void run() {
-					if (viewer == null || viewer.getControl().isDisposed() || !(viewer instanceof AbstractTreeViewer)) return;
+					if (viewer.getControl().isDisposed() || !(viewer instanceof AbstractTreeViewer))
+						return;
 					viewer.getControl().setRedraw(false);		
 					((AbstractTreeViewer)viewer).collapseToLevel(viewer.getInput(), AbstractTreeViewer.ALL_LEVELS);
 					viewer.getControl().setRedraw(true);
@@ -60,10 +62,10 @@ public class NavigationActionGroup extends SynchronizePageActionGroup {
 	}
 	public void fillActionBars(IActionBars actionBars) {
 		IToolBarManager manager = actionBars.getToolBarManager();
+		appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, collapseAll);
 		if (gotoNext != null)
 			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoNext);
 		if (gotoPrevious != null)
 			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoPrevious);
-		appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, collapseAll);
 	}
 }
