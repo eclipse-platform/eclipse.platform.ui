@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,7 +218,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 			
 		};
 		Utils.initAction(mergeAction, "action.merge."); //$NON-NLS-1$
-		mergeAction.setEnabled(markAsMergedAction.isEnabled());
+		mergeAction.setEnabled(mergeAction.isEnabled());
 		
 		final ResourceMergeHandler overwriteHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), true);
 		overwriteHandler.updateEnablement(selection);
@@ -233,7 +233,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 			
 		};
 		Utils.initAction(overwriteAction, "action.overwrite."); //$NON-NLS-1$
-		overwriteAction.setEnabled(markAsMergedAction.isEnabled());
+		overwriteAction.setEnabled(overwriteAction.isEnabled());
 		
 		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
 		manager.insertAfter("merge", new Separator("overwrite")); //$NON-NLS-1$ //$NON-NLS-2$
