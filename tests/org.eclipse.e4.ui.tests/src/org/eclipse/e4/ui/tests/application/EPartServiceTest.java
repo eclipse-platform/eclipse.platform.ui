@@ -10,9 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -32,6 +34,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -735,11 +738,7 @@ public class EPartServiceTest extends TestCase {
 		partDescriptor.setId("partId2");
 		application.getDescriptors().add(partDescriptor);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -785,11 +784,7 @@ public class EPartServiceTest extends TestCase {
 		stack.setId("categoryId");
 		window.getChildren().add(stack);
 
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1218,11 +1213,7 @@ public class EPartServiceTest extends TestCase {
 		window.getChildren().add(saveablePart);
 
 		// setup the context
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1272,11 +1263,7 @@ public class EPartServiceTest extends TestCase {
 		window.getChildren().add(saveablePart);
 
 		// setup the context
-		applicationContext.set(MApplication.class.getName(), application);
-		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		initialize(applicationContext, application);
 
 		getEngine().createGui(window);
 
@@ -1317,6 +1304,33 @@ public class EPartServiceTest extends TestCase {
 
 	public void testGetDirtyParts3_FalseFalse() {
 		testGetDirtyParts3(false, false);
+	}
+
+	public void testEvent_PartActivated() {
+		MApplication application = createApplication("partFront", "partBack");
+
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partStack.setActiveChild(partFront);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(partFront, partService.getActivePart());
+
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		partService.activate(partBack);
+
+		assertEquals(1, partListener.getActivated());
+		assertEquals(1, partListener.getBroughtToTop());
+		assertEquals(partBack, partListener.getActivatedParts().get(0));
+		assertEquals(partBack, partListener.getBroughtToTopParts().get(0));
+		assertTrue(partListener.isValid());
 	}
 
 	private void testSavePart(final Save returnValue, boolean confirm,
@@ -3118,5 +3132,58 @@ public class EPartServiceTest extends TestCase {
 						return ISaveHandler.Save.YES;
 					}
 				});
+	}
+
+	class PartListener implements IPartListener {
+
+		private List<MPart> activatedParts = new ArrayList<MPart>();
+		private List<MPart> broughtToTopParts = new ArrayList<MPart>();
+
+		private int activated = 0;
+		private int broughtToTop = 0;
+		private boolean valid = true;
+
+		public void clear() {
+			activated = 0;
+			broughtToTop = 0;
+			valid = false;
+		}
+
+		public int getActivated() {
+			return activated;
+		}
+
+		public int getBroughtToTop() {
+			return broughtToTop;
+		}
+
+		public boolean isValid() {
+			return valid;
+		}
+
+		public List<MPart> getActivatedParts() {
+			return activatedParts;
+		}
+
+		public List<MPart> getBroughtToTopParts() {
+			return broughtToTopParts;
+		}
+
+		public void partActivated(MPart part) {
+			if (valid && part == null) {
+				valid = false;
+			}
+			activated++;
+			activatedParts.add(part);
+		}
+
+		public void partBroughtToTop(MPart part) {
+			if (valid && part == null) {
+				valid = false;
+			}
+			broughtToTop++;
+			broughtToTopParts.add(part);
+		}
+
 	}
 }

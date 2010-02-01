@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -70,6 +72,15 @@ public class PartServiceImpl implements EPartService {
 				windowHandler);
 	}
 
+	private EventHandler selectedHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			if (selected instanceof MPart) {
+				firePartBroughtToTop((MPart) selected);
+			}
+		}
+	};
+
 	@Inject
 	private MApplication application;
 
@@ -92,6 +103,9 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	private ISaveHandler saveHandler;
 
+	@Inject
+	private IEventBroker eventBroker;
+
 	private MPart activePart;
 
 	private ListenerList listeners = new ListenerList();
@@ -105,9 +119,26 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
+	@PostConstruct
+	void postConstruct() {
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.ACTIVECHILD), selectedHandler);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		eventBroker.unsubscribe(selectedHandler);
+	}
+
 	private void firePartActivated(MPart part) {
 		for (Object listener : listeners.getListeners()) {
 			((IPartListener) listener).partActivated(part);
+		}
+	}
+
+	private void firePartBroughtToTop(MPart part) {
+		for (Object listener : listeners.getListeners()) {
+			((IPartListener) listener).partBroughtToTop(part);
 		}
 	}
 
