@@ -530,7 +530,8 @@ public class ExtendedMarkersView extends ViewPart {
 		
 		builder.dispose();
 		generator.dispose();
-		instanceCount--;
+		if (instanceCount > 1)
+			instanceCount--;
 		if (clipboard != null)
 			clipboard.dispose();
 
