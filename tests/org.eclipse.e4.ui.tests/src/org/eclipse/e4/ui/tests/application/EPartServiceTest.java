@@ -1229,6 +1229,44 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(part, partService.getActivePart());
 	}
 
+	public void testHidePart_PartInAnotherWindow() {
+		MApplication application = createApplication(
+				new String[] { "partInWindow1" },
+				new String[] { "partInWindow2" });
+
+		MWindow window1 = application.getChildren().get(0);
+		MWindow window2 = application.getChildren().get(1);
+
+		getEngine().createGui(window1);
+		getEngine().createGui(window2);
+
+		EPartService partService1 = (EPartService) window1.getContext().get(
+				EPartService.class.getName());
+		EPartService partService2 = (EPartService) window2.getContext().get(
+				EPartService.class.getName());
+		MPart part1 = partService1.findPart("partInWindow1");
+		MPart part2 = partService2.findPart("partInWindow2");
+
+		assertTrue(part1.isToBeRendered());
+		assertTrue(part2.isToBeRendered());
+
+		partService1.hidePart(part2);
+		assertTrue(part1.isToBeRendered());
+		assertTrue(part2.isToBeRendered());
+
+		partService2.hidePart(part1);
+		assertTrue(part1.isToBeRendered());
+		assertTrue(part2.isToBeRendered());
+
+		partService1.hidePart(part1);
+		assertFalse(part1.isToBeRendered());
+		assertTrue(part2.isToBeRendered());
+
+		partService2.hidePart(part2);
+		assertFalse(part1.isToBeRendered());
+		assertFalse(part2.isToBeRendered());
+	}
+
 	public void testGetSaveableParts() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

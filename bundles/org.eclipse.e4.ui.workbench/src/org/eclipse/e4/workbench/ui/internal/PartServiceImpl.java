@@ -389,6 +389,12 @@ public class PartServiceImpl implements EPartService {
 		return part;
 	}
 
+	public void hidePart(MPart part) {
+		if (isInContainer(part)) {
+			part.setToBeRendered(false);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

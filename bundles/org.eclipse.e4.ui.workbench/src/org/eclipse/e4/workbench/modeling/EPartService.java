@@ -138,6 +138,14 @@ public interface EPartService {
 	public MPart showPart(String id, PartState partState);
 
 	/**
+	 * Hides the given part. The part must be a part managed by this service.
+	 * 
+	 * @param part
+	 *            the part to hide
+	 */
+	public void hidePart(MPart part);
+
+	/**
 	 * Returns a collection of all the saveable parts that are being managed by this service.
 	 * 
 	 * 
