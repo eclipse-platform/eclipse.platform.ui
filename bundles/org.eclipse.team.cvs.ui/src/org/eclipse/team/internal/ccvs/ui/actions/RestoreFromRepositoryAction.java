@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,11 +85,11 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
                 	// See bug 238334
                 	CVSRepositoryLocation repo = (CVSRepositoryLocation)location;
                 	// Remove root directory
-                	String repoPath = line.substring(repo.getRootDirectory().length()); 
+                	String repoPath = line.substring(repo.getRootDirectory().length());
     				try {
     					String cmdRootRelativePath = commandRoot.getRepositoryRelativePath();
     					// Remove command root path
-						String path = repoPath.substring(repoPath.indexOf(cmdRootRelativePath)	+ cmdRootRelativePath.length()); 
+						String path = repoPath.substring(repoPath.indexOf(cmdRootRelativePath)	+ cmdRootRelativePath.length());
     					// Remove filename at the end
     					String folderPath = path.substring(0, path.indexOf(fileName));
     					// The "raw" folderPath contains CVS's 'Attic/' segment when a file has been deleted from cvs.
@@ -98,7 +98,7 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 						}
     					// A separator means the same as "current folder"
 						if (folderPath.equals(Session.SERVER_SEPARATOR))
-							folderPath = Session.CURRENT_LOCAL_FOLDER; 
+							folderPath = Session.CURRENT_LOCAL_FOLDER;
 						ICVSFolder folder = commandRoot.getFolder(folderPath);
     					ICVSFile file = folder.getFile(fileName);
     					if (!file.exists())
@@ -146,12 +146,12 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 		ICVSFile[] files = fetchDeletedFiles(resource);
 		if (files == null) return;
 		if (files.length == 0) {
-			MessageDialog.openInformation(getShell(), CVSUIMessages.RestoreFromRepositoryAction_noFilesTitle, NLS.bind(CVSUIMessages.RestoreFromRepositoryAction_noFilesMessage, new String[] { resource.getName() })); // 
+			MessageDialog.openInformation(getShell(), CVSUIMessages.RestoreFromRepositoryAction_noFilesTitle, NLS.bind(CVSUIMessages.RestoreFromRepositoryAction_noFilesMessage, new String[] { resource.getName() })); //
 			return;
 		}
 		RestoreFromRepositoryWizard wizard = new RestoreFromRepositoryWizard(resource, files);
 		WizardDialog dialog = new ResizableWizardDialog(getShell(), wizard);
-		dialog.setMinimumPageSize(350, 250);
+		dialog.setMinimumPageSize(1000, 250);
 		dialog.open();
 	}
 
@@ -211,7 +211,7 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 				CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 				IStatus status = Command.LOG.execute(
 					session,
-					Command.NO_GLOBAL_OPTIONS, 
+					Command.NO_GLOBAL_OPTIONS,
 					new LocalOption[] { Log.RCS_FILE_NAMES_ONLY },
 					new ICVSResource[] { parent }, listener,
 					Policy.subMonitorFor(monitor, 90));

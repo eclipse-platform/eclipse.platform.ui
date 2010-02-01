@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,15 +144,17 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		revisionSelectionPane.setLayoutData(data);
 		historyTableProvider = new HistoryTableProvider();
 		revisionsTable = createRevisionSelectionTable(revisionSelectionPane, historyTableProvider);
-		revisionSelectionPane.setText(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_emptyRevisionPane); 
+		revisionSelectionPane.setText(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_emptyRevisionPane);
 		
 		// Bottom: File content viewer
 		fileContentPane = new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUI.findContentViewer(oldViewer, input, this, null);	
+				return CompareUI.findContentViewer(oldViewer, input, this, null);
 			}
 		};
-						
+
+		hsplitter.setWeights(new int[] { 40, 60 });
+
 		initializeValues();
 		updateWidgetEnablements();
         Dialog.applyDialogFont(parent);
@@ -164,7 +166,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 			public Object[] getElements(Object inputElement) {
 				ILogEntry[] entries = getSelectedEntries();
 				if (entries != null) return entries;
-				return new Object[0];		
+				return new Object[0];
 			}
 			public void dispose() {
 			}
@@ -205,12 +207,12 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 							ILogEntry entry = (ILogEntry)filesToRestore.get(element);
 							text = super.decorateText(input, element);
 							if (entry != null) {
-								text = NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileToRestore, new String[] { text, entry.getRevision() }); 
+								text = NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileToRestore, new String[] { text, entry.getRevision() });
 							}
 						}
 						return text;
 					}
-				}, 
+				},
 				CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		tree.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		tree.setInput(treeInput);
@@ -241,14 +243,14 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 			IFile file = (IFile) iter.next();
 			if (file.exists()) {
 				setPageComplete(false);
-				setErrorMessage(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileExists, new String[] { file.getName() })); 
+				setErrorMessage(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileExists, new String[] { file.getName() }));
 				return;
 			}
 			
 			ILogEntry entry = (ILogEntry) filesToRestore.get(file);
 			if (entry.isDeletion())  {
 				setPageComplete(false);
-				setErrorMessage(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_revisionIsDeletion, new String[] { entry.getRevision(), file.getName() })); 
+				setErrorMessage(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_revisionIsDeletion, new String[] { entry.getRevision(), file.getName() }));
 				return;
 			}
 		}
@@ -309,13 +311,13 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		if (folder == null) return;
 		
 		if (fileSelectionPane != null && !fileSelectionPane.isDisposed()) {
-			fileSelectionPane.setText(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileSelectionPaneTitle, new String[] { folder.getProject().getName() })); 
+			fileSelectionPane.setText(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_fileSelectionPaneTitle, new String[] { folder.getProject().getName() }));
 			fileSelectionPane.setImage(CompareUI.getImage(folder.getProject()));
 		}
 		
 		if (revisionSelectionPane != null && !revisionSelectionPane.isDisposed()) {
 			if (selectedFile == null) {
-				revisionSelectionPane.setText(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_emptyRevisionPane); 
+				revisionSelectionPane.setText(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_emptyRevisionPane);
 				revisionSelectionPane.setImage(null);
 			}
 		}
@@ -355,7 +357,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 			}
 		}
 		// Set the titlebar text for the revisions table
-		revisionSelectionPane.setText(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_revisionSelectionPaneTitle, new String[] { selectedFile.getName() })); 
+		revisionSelectionPane.setText(NLS.bind(CVSUIMessages.RestoreFromRepositoryFileSelectionPage_revisionSelectionPaneTitle, new String[] { selectedFile.getName() }));
 		revisionSelectionPane.setImage(CompareUI.getImage(selectedFile));
 		// Clear the file content pane
 		fileContentPane.setInput(null);
