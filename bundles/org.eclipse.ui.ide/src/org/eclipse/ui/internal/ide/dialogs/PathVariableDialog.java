@@ -334,18 +334,6 @@ public class PathVariableDialog extends TitleAreaDialog {
             }
         });
 
-    	variableButton = new Button(buttonsComposite, SWT.PUSH);
-    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
-
- 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-    		false));
-
-        variableButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                selectVariable();
-            }
-        });
-
         // select folder path button
         folderButton = new Button(buttonsComposite, SWT.PUSH);
         folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
@@ -358,6 +346,18 @@ public class PathVariableDialog extends TitleAreaDialog {
         folderButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 selectFolder();
+            }
+        });
+
+    	variableButton = new Button(buttonsComposite, SWT.PUSH);
+    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
+
+ 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+    		false));
+
+        variableButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                selectVariable();
             }
         });
 
@@ -381,14 +381,14 @@ public class PathVariableDialog extends TitleAreaDialog {
     private String getVariableResolvedValue() {
         if (currentResource != null) {
         	IPathVariableManager pathVariableManager2 = currentResource.getProject().getPathVariableManager();
-			String[] variables = pathVariableManager2.getPathVariableNames();
+			String[] variables = pathVariableManager2.getPathVariableNames(currentResource);
     		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, currentResource);
     		URI uri = URIUtil.toURI(Path.fromPortableString(internalFormat));
         	URI resolvedURI = pathVariableManager2.resolveURI(uri, currentResource);
         	String resolveValue = URIUtil.toPath(resolvedURI).toPortableString();
         	// Delete intermediate variables that might have been created as
         	// as a side effect of converting arbitrary relative paths to an internal string. 
-        	String[] newVariables = pathVariableManager2.getPathVariableNames();
+        	String[] newVariables = pathVariableManager2.getPathVariableNames(currentResource);
         	for (int i = 0; i < newVariables.length; i++) {
         		boolean found = false;
             	for (int j = 0; j < variables.length; j++) {
@@ -399,7 +399,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             	}
             	if (!found) {
 					try {
-						pathVariableManager2.setValue(newVariables[i], null);
+						pathVariableManager2.setValue(newVariables[i], currentResource, null);
 					} catch (CoreException e) {
 						// do nothing
 					}
