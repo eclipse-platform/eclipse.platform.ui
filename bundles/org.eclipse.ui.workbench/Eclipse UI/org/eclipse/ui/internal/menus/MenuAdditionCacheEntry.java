@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
@@ -65,6 +64,8 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 	private List subCaches;
 
 	private boolean hasAdditions = false;
+
+	private Boolean contributeToAllPopups = null;
 
 	public MenuAdditionCacheEntry(IMenuService menuService,
 			IConfigurationElement element, String location, String namespace) {
@@ -488,5 +489,24 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 	
 	public boolean hasAdditions() {
 		return hasAdditions;
+	}
+
+	/**
+	 * 
+	 * Returns the value of the allPopups attribute
+	 * 
+	 * @return <code>true</code> if specified and the value equals to true,
+	 *         <code>false</code> otherwise
+	 * 
+	 */
+	public boolean contributeToAllPopups() {
+		if (contributeToAllPopups == null) {
+			String allPopups = getConfigElement().getAttribute("allPopups"); //$NON-NLS-1$
+			if (allPopups == null || Boolean.valueOf(allPopups).booleanValue())
+				contributeToAllPopups = Boolean.TRUE;
+			else
+				contributeToAllPopups = Boolean.FALSE;
+		}
+		return contributeToAllPopups.booleanValue();
 	}
 }

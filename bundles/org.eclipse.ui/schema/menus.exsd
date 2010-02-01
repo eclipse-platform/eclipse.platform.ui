@@ -546,6 +546,13 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="allPopups" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  By default popup contributions are not contributed to context menus that do not include an &lt;b&gt;additions&lt;/b&gt; marker.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

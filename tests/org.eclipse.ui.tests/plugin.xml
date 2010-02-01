@@ -3555,6 +3555,29 @@
             </visibleWhen>
             </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <command
+               commandId="org.eclipse.ui.tests.anypopup.command1"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <command
+               commandId="org.eclipse.ui.tests.anypopup.command2"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <command
+               commandId="org.eclipse.ui.tests.anypopup.command3"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -3882,6 +3905,22 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.tests.popup.testPrivatePopup?after=additions">
+            <command
+                  commandId="org.eclipse.ui.tests.menus.iconsDefault"
+                  style="push">
+            </command>
+      </menuContribution>
+      
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+            <command
+                  commandId="org.eclipse.ui.tests.menus.iconsAll"
+                  style="push">
+            </command>
+      </menuContribution>      
+      
    </extension>
    
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
@@ -4237,6 +4276,18 @@
          <command
                id="org.eclipse.ui.tests.progressViewCommand"
                name="Progress View Command">
+         </command>
+         <command
+               id="org.eclipse.ui.tests.anypopup.command1"
+               name="cmd1">
+         </command>
+         <command
+               id="org.eclipse.ui.tests.anypopup.command3"
+               name="cmd3">
+         </command>
+         <command
+               id="org.eclipse.ui.tests.anypopup.command2"
+               name="cmd2">
          </command>
       </extension>
    <extension id="rcpSessionApplication" point="org.eclipse.core.runtime.applications">

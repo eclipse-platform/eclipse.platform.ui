@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,15 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -60,6 +64,9 @@ public class MenuPopulationTest extends MenuTestCase {
 		super(testName);
 	}
 
+	
+
+	
 	public void testViewPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"
@@ -465,4 +472,69 @@ public class MenuPopulationTest extends MenuTestCase {
 		usefulContribution = null;
 		super.doTearDown();
 	}
+		
+		public void testPrivatePopup()throws Exception {
+			
+			PopupMenuExtender popupMenuExtender = null;
+			MenuManager manager = null;
+			try {
+	
+				window.getActivePage().showView("org.eclipse.ui.tests.workbenchpart.EmptyView");
+				
+				processEventsUntil(new Condition() {
+	
+					public boolean compute() {
+						return window.getActivePage().getActivePart() != null;
+					}
+					
+				}, 10000);
+	
+				IWorkbenchPart activePart = window.getActivePage().getActivePart();
+				assertNotNull(activePart);
+
+				manager = new MenuManager();
+				manager.setRemoveAllWhenShown(true);
+				popupMenuExtender = new PopupMenuExtender(activePart.getSite().getId(), manager, null, activePart);
+				popupMenuExtender.menuAboutToShow(manager);
+				
+				assertPrivatePopups(manager);
+				
+				manager.removeAll();
+				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+				
+				popupMenuExtender.menuAboutToShow(manager);
+
+				assertPrivatePopups(manager);
+				
+			}finally {
+				if(popupMenuExtender != null)
+					popupMenuExtender.dispose();
+				if(manager != null)
+					manager.dispose();
+			}
+		}
+	
+		private void assertPrivatePopups(final MenuManager manager) {
+			boolean cmd1Found = false;
+			boolean cmd2Found = false;
+			boolean cmd3Found = false;
+			IContributionItem[] items = manager.getItems();
+			for (int i = 0; i < items.length; i++) {
+				if("org.eclipse.ui.tests.anypopup.command1".equals(items[i].getId())) {
+					cmd1Found = true;
+				}else if("org.eclipse.ui.tests.anypopup.command2".equals(items[i].getId())) {
+					cmd2Found = true;
+				}else if("org.eclipse.ui.tests.anypopup.command3".equals(items[i].getId())) {
+					cmd3Found = true;
+				}
+			}
+			
+			boolean hasAdditions = manager.indexOf(IWorkbenchActionConstants.MB_ADDITIONS) != -1;
+			assertTrue("no allPopups attribute for cmd1. Should show always", cmd1Found); 
+			assertTrue("allPopups = true for cmd2. Should always show", cmd2Found);
+			assertTrue("allPopups = false for cmd3. Should show only if additions present", hasAdditions == cmd3Found); // allPopups = false. Should show only if additions is available
+		}
+		
+	 
+
 }

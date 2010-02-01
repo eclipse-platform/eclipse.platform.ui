@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -555,6 +555,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	private boolean processAdditions(final IServiceLocator serviceLocatorToUse,
 			Set restriction, final ContributionManager mgr,
 			final AbstractContributionFactory cache, final Set itemsAdded) {
+
+		if (!processFactory(mgr, cache))
+			return true;
+
 		final int idx = getInsertionIndex(mgr, cache.getLocation());
 		if (idx == -1)
 			return false; // can't process (yet)
@@ -634,6 +638,33 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			}
 		};
 		SafeRunner.run(run);
+
+		return true;
+	}
+
+	/**
+	 * Determines whether the factory should be processed for this manager.
+	 * 
+	 * @param factory
+	 *            The factory to be added
+	 * @param mgr
+	 *            The contribution manager
+	 * @return <code>true</code> if the factory to be processed,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean processFactory(ContributionManager mgr, AbstractContributionFactory factory) {
+
+		MenuLocationURI uri = new MenuLocationURI(factory.getLocation());
+		if (MenuUtil.ANY_POPUP.equals(uri.getScheme() + ':' + uri.getPath())) {
+			// its any popup. check whether manager has additions
+			if (mgr.indexOf(IWorkbenchActionConstants.MB_ADDITIONS) == -1) {
+				// menu has no additions. Add only if allPopups = true
+				if (factory instanceof MenuAdditionCacheEntry) {
+					MenuAdditionCacheEntry menuEntry = (MenuAdditionCacheEntry) factory;
+					return menuEntry.contributeToAllPopups();
+				}
+			}
+		}
 
 		return true;
 	}
