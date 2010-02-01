@@ -110,11 +110,13 @@ public class PartServiceImpl implements EPartService {
 
 	private ListenerList listeners = new ListenerList();
 
+	private boolean constructed = false;
+
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		activePart = p;
 
-		if (p != null) {
+		if (constructed && p != null) {
 			firePartActivated(p);
 		}
 	}
@@ -123,10 +125,12 @@ public class PartServiceImpl implements EPartService {
 	void postConstruct() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.ACTIVECHILD), selectedHandler);
+		constructed = true;
 	}
 
 	@PreDestroy
 	void preDestroy() {
+		constructed = false;
 		eventBroker.unsubscribe(selectedHandler);
 	}
 

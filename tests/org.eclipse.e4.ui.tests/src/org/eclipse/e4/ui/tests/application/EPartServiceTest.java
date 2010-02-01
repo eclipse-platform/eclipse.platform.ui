@@ -299,6 +299,58 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partStackB.getActiveChild(), partBackB);
 	}
 
+	public void testBringToTop_ActivationChanges() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
+		MPart partFrontA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partBackA = MApplicationFactory.eINSTANCE.createPart();
+		partStackA.getChildren().add(partFrontA);
+		partStackA.getChildren().add(partBackA);
+		window.getChildren().add(partStackA);
+
+		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPart partFrontB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partBackB = MApplicationFactory.eINSTANCE.createPart();
+		partStackB.getChildren().add(partFrontB);
+		partStackB.getChildren().add(partBackB);
+		window.getChildren().add(partStackB);
+
+		partStackA.setActiveChild(partFrontA);
+		partStackB.setActiveChild(partFrontB);
+		window.setActiveChild(partStackA);
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partFrontA);
+		assertEquals(partFrontA, partService.getActivePart());
+
+		partService.bringToTop(partBackB);
+
+		assertEquals(partFrontA, partService.getActivePart());
+		assertTrue(partService.isPartVisible(partFrontA));
+		assertFalse(partService.isPartVisible(partBackA));
+		assertFalse(partService.isPartVisible(partFrontB));
+		assertTrue(partService.isPartVisible(partBackB));
+
+		partService.bringToTop(partBackA);
+
+		assertEquals(partBackA, partService.getActivePart());
+		assertFalse(partService.isPartVisible(partFrontA));
+		assertTrue(partService.isPartVisible(partBackA));
+		assertFalse(partService.isPartVisible(partFrontB));
+		assertTrue(partService.isPartVisible(partBackB));
+	}
+
 	public void testGetParts_Empty() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
@@ -726,6 +778,7 @@ public class EPartServiceTest extends TestCase {
 				.createApplication();
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
+		application.setActiveChild(window);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
 				.createPartDescriptor();
@@ -768,6 +821,7 @@ public class EPartServiceTest extends TestCase {
 				.createApplication();
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
+		application.setActiveChild(window);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
 				.createPartDescriptor();
@@ -830,6 +884,7 @@ public class EPartServiceTest extends TestCase {
 		partStackA.setActiveChild(partA1);
 		partStackB.setActiveChild(partB1);
 		window.setActiveChild(partStackA);
+		application.setActiveChild(window);
 
 		initialize(applicationContext, application);
 
@@ -1327,9 +1382,71 @@ public class EPartServiceTest extends TestCase {
 		partService.activate(partBack);
 
 		assertEquals(1, partListener.getActivated());
-		assertEquals(1, partListener.getBroughtToTop());
 		assertEquals(partBack, partListener.getActivatedParts().get(0));
-		assertEquals(partBack, partListener.getBroughtToTopParts().get(0));
+		assertTrue(partListener.isValid());
+	}
+
+	public void testEvent_PartBroughtToTop() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
+		MPart partFrontA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partBackA = MApplicationFactory.eINSTANCE.createPart();
+		partStackA.getChildren().add(partFrontA);
+		partStackA.getChildren().add(partBackA);
+		window.getChildren().add(partStackA);
+
+		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPart partFrontB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partBackB = MApplicationFactory.eINSTANCE.createPart();
+		partStackB.getChildren().add(partFrontB);
+		partStackB.getChildren().add(partBackB);
+		window.getChildren().add(partStackB);
+
+		partStackA.setActiveChild(partFrontA);
+		partStackB.setActiveChild(partFrontB);
+		window.setActiveChild(partStackA);
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partFrontA);
+		assertEquals(partFrontA, partService.getActivePart());
+
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		partService.bringToTop(partBackB);
+
+		assertEquals(0, partListener.getActivated());
+		assertEquals(1, partListener.getBroughtToTop());
+
+		assertEquals(0, partListener.getActivatedParts().size());
+		assertEquals(1, partListener.getBroughtToTopParts().size());
+		assertEquals(partBackB, partListener.getBroughtToTopParts().get(0));
+
+		assertTrue(partListener.isValid());
+
+		partListener.clear();
+
+		partService.bringToTop(partBackA);
+
+		assertEquals(1, partListener.getActivated());
+		assertEquals(1, partListener.getBroughtToTop());
+
+		assertEquals(1, partListener.getActivatedParts().size());
+		assertEquals(partBackA, partListener.getActivatedParts().get(0));
+		assertEquals(1, partListener.getBroughtToTopParts().size());
+		assertEquals(partBackA, partListener.getBroughtToTopParts().get(0));
+
 		assertTrue(partListener.isValid());
 	}
 
@@ -3146,7 +3263,9 @@ public class EPartServiceTest extends TestCase {
 		public void clear() {
 			activated = 0;
 			broughtToTop = 0;
-			valid = false;
+			activatedParts.clear();
+			broughtToTopParts.clear();
+			valid = true;
 		}
 
 		public int getActivated() {
