@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -46,6 +47,7 @@ import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IReusableEditor;
@@ -105,9 +107,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		this.input = input;
 	}
 
-	@Inject
-	void inject() {
+	@PostConstruct
+	void postConstruct() {
 		partService.addPartListener(e4PartListener);
+		window.getContext().set(IPartService.class.getName(), this);
 	}
 
 	/* (non-Javadoc)
@@ -475,7 +478,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 				}
 			}
 		}
-
 
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
