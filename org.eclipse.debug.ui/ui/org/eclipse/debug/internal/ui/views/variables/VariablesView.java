@@ -93,6 +93,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusAdapter;
@@ -376,7 +377,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private IPresentationContext fPresentationContext;
 
-	private Composite fDetailComposite = null;
+	/**
+	 * Parent {@link ViewForm} to hold all detail panes, with a standard LAF border
+	 * @since 3.6
+	 */
+	private ViewForm fDetailComposite = null;
 	
 	/**
 	 * Remove myself as a selection listener
@@ -473,7 +478,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
 
-		fDetailComposite = SWTFactory.createComposite(fSashForm, fSashForm.getFont(), SWT.BORDER, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fDetailComposite = SWTFactory.createViewform(fSashForm, SWT.FLAT | SWT.BORDER, 1, 1, GridData.FILL_BOTH, 0, 0);
+		fDetailComposite.setTopLeft(null);
+		fDetailComposite.setContent(SWTFactory.createComposite(fDetailComposite, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0));
 		fSelectionProvider = new SelectionProviderWrapper(variablesViewer);
 		getSite().setSelectionProvider(fSelectionProvider);
 
@@ -980,7 +987,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 	 */
 	public Composite getParentComposite() {
-		return fDetailComposite;
+		return (Composite) fDetailComposite.getContent();
 	}
 
 	/* (non-Javadoc)

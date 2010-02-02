@@ -17,6 +17,7 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -539,6 +540,31 @@ public class SWTFactory {
 		gd.horizontalSpan = hspan;
     	g.setLayoutData(gd);
     	return g;
+	}
+	
+	/**
+	 * Creates a {@link ViewForm}
+	 * @param parent
+	 * @param style
+	 * @param cols
+	 * @param span
+	 * @param fill
+	 * @param marginwidth
+	 * @param marginheight
+	 * @return a new {@link ViewForm}
+	 * @since 3.6
+	 */
+	public static ViewForm createViewform(Composite parent, int style, int cols, int span, int fill, int marginwidth, int marginheight) {
+		ViewForm form = new ViewForm(parent, style);
+		form.setFont(parent.getFont());
+		GridLayout layout = new GridLayout(cols, false);
+        layout.marginWidth = marginwidth;
+		layout.marginHeight = marginheight;
+        form.setLayout(layout);
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = span;
+		form.setLayoutData(gd);
+		return form;
 	}
 	
 	/**
