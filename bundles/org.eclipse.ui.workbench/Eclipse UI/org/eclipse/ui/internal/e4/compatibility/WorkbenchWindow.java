@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -80,7 +82,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public boolean close() {
 		// FIXME: the rendering engine should destroy in response to a remove,
 		// right?
+		MElementContainer<MUIElement> parent = model.getParent();
 		model.getParent().getChildren().remove(model);
+		if (parent.getActiveChild() == model) {
+			if (!parent.getChildren().isEmpty()) {
+				parent.setActiveChild(parent.getChildren().get(0));
+			}
+		}
 		engine.removeGui(model);
 		return true;
 	}
