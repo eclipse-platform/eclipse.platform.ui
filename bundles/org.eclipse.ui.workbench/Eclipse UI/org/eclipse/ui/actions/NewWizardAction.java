@@ -26,7 +26,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
-import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -77,7 +76,9 @@ public class NewWizardAction extends Action implements
      * Tracks perspective activation, to update this action's
      * enabled state.
      */
-    private PerspectiveTracker tracker;
+	// private PerspectiveTracker tracker;
+	// TODO compat: we need to listen to perspective changes in the e4 workbench
+
     
     /**
      * Create a new instance of this class.
@@ -89,7 +90,9 @@ public class NewWizardAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        tracker = new PerspectiveTracker(window, this);
+		// TODO compat: we need to listen to perspective changes in the e4
+		// workbench
+		// tracker = new PerspectiveTracker(window, this);
         // @issues should be IDE-specific images
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         setImageDescriptor(images
@@ -192,7 +195,7 @@ public class NewWizardAction extends Action implements
             // action has already been disposed
             return;
         }
-        tracker.dispose();
+
         workbenchWindow = null;
     }
 

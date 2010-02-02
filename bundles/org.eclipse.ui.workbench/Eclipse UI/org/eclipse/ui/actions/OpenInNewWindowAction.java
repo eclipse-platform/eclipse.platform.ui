@@ -11,15 +11,12 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -50,7 +47,7 @@ public class OpenInNewWindowAction extends Action implements
      * @param window the workbench window containing this action
      */
     public OpenInNewWindowAction(IWorkbenchWindow window) {
-        this(window, ((Workbench) window.getWorkbench()).getDefaultPageInput());
+		this(window, null);
 		setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_NEW_WINDOW);
     }
 
