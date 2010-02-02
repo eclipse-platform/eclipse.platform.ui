@@ -442,6 +442,36 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNotNull(partB.getObject());
 	}
 
+	public void testClientObjectUnsetWhenNotRenderedBug301439() {
+		final MWindow window = createWindowWithOneView("");
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MPartSashContainer container = (MPartSashContainer) window
+				.getChildren().get(0);
+		MPartStack stack = (MPartStack) container.getChildren().get(0);
+		MPart part = stack.getChildren().get(0);
+
+		assertNotNull(part.getWidget());
+		assertNotNull(part.getRenderer());
+		assertNotNull(part.getObject());
+
+		part.setToBeRendered(false);
+
+		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+
+		assertNull(part.getWidget());
+		assertNull(part.getRenderer());
+		assertNull(part.getObject());
+		assertEquals(0, tabFolder.getItemCount());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
