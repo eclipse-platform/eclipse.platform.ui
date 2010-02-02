@@ -55,10 +55,12 @@ import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.change.ChangeDescription;
 import org.eclipse.emf.ecore.change.FeatureChange;
@@ -100,7 +102,17 @@ public class XMLModelReconciler extends ModelReconciler {
 	public void recordChanges(Object object) {
 		Assert.isNotNull(object);
 		rootObject = (EObject) object;
-		changeRecorder = new ChangeRecorder(rootObject);
+		changeRecorder = new ChangeRecorder(rootObject) {
+			protected boolean shouldRecord(EStructuralFeature feature, EObject eObject) {
+				return !feature.isTransient() && super.shouldRecord(feature, eObject);
+			}
+
+			protected boolean shouldRecord(EStructuralFeature feature, EReference containment,
+					Notification notification, EObject eObject) {
+				return !feature.isTransient()
+						&& super.shouldRecord(feature, containment, notification, eObject);
+			}
+		};
 		changeDescription = null;
 	}
 
