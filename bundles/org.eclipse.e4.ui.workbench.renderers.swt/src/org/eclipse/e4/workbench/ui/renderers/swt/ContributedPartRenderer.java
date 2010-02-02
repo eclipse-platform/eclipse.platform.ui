@@ -27,12 +27,6 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ContributedPartRenderer extends SWTPartRenderer {
 
-	@Override
-	public void disposeWidget(MUIElement element) {
-		((MPart) element).setObject(null);
-		super.disposeWidget(element);
-	}
-
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MPart) || !(parent instanceof Composite))
 			return null;

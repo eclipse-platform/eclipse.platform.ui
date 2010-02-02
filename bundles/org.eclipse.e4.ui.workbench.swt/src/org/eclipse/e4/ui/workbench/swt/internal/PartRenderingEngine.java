@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.swt.internal;
 import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,6 +30,7 @@ import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -358,7 +360,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 */
 	public void removeGui(MUIElement element) {
 		AbstractPartRenderer renderer = getRendererFor(element);
-		assert (renderer != null);
+		Assert.isNotNull(renderer);
 
 		MUIElement parent = element.getParent();
 		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
@@ -367,10 +369,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 			parentRenderer.hideChild(element.getParent(), element);
 		}
 
-		if (renderer != null)
-			renderer.disposeWidget(element);
-		else
-			System.out.println("Null renderer in removeGui");
+		renderer.disposeWidget(element);
+
+		// unset the client object
+		if (element instanceof MContribution) {
+			((MContribution) element).setObject(null);
+		}
 
 		// dispose the context
 		if (element instanceof MContext) {
