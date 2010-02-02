@@ -131,7 +131,9 @@ public class PartRenderingEngineTests extends TestCase {
 		EPartService service = (EPartService) window.getContext().get(
 				EPartService.class.getName());
 		service.activate(partB);
-		assertEquals(1, tabFolder.getSelectionIndex());
+		assertEquals(
+				"Activating another part should've altered the tab folder's selection",
+				1, tabFolder.getSelectionIndex());
 	}
 
 	public void testPartStack_SetActiveChild2Bug299379() throws Exception {
@@ -156,6 +158,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
+		stack.setActiveChild(partA);
 
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
@@ -166,7 +169,8 @@ public class PartRenderingEngineTests extends TestCase {
 		EPartService service = (EPartService) window.getContext().get(
 				EPartService.class.getName());
 		service.showPart(partB.getId());
-		assertEquals(1, tabFolder.getSelectionIndex());
+		assertEquals("Showing a part should alter the tab folder's selection",
+				1, tabFolder.getSelectionIndex());
 	}
 
 	public void testPartStack_SetActiveChild3Bug299379() throws Exception {
@@ -198,10 +202,12 @@ public class PartRenderingEngineTests extends TestCase {
 
 		EPartService service = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		service.showPart("part");
+		MPart shownPart = service.showPart("part");
 
 		assertEquals(1, tabFolder.getItemCount());
 		assertEquals(0, tabFolder.getSelectionIndex());
+		assertEquals("The shown part should be the active part", shownPart,
+				stack.getActiveChild());
 	}
 
 	public void testPartStack_SetActiveChild4Bug299379() throws Exception {
@@ -229,6 +235,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertEquals(1, tabFolder.getItemCount());
 		assertEquals(0, tabFolder.getSelectionIndex());
+		assertEquals(part, stack.getActiveChild());
 	}
 
 	public void testPartStack_SetActiveChild5Bug299379() throws Exception {
@@ -261,7 +268,9 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(0, tabFolder.getSelectionIndex());
 
 		stack.setActiveChild(partB);
-		assertEquals(1, tabFolder.getSelectionIndex());
+		assertEquals(
+				"Switching the active child should've changed the folder's selection",
+				1, tabFolder.getSelectionIndex());
 	}
 
 	public void testPartStack_SetActiveChild6Bug295250() throws Exception {
@@ -289,7 +298,9 @@ public class PartRenderingEngineTests extends TestCase {
 		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partB);
 
-		assertEquals(partA, stack.getActiveChild());
+		assertEquals(
+				"Adding a part to a stack should not cause the stack's active child to change",
+				partA, stack.getActiveChild());
 	}
 
 	public void testCreateGuiBug301021() throws Exception {
@@ -335,7 +346,9 @@ public class PartRenderingEngineTests extends TestCase {
 		wb.createAndRunUI(window);
 		wb.createAndRunUI(window2);
 
-		// try to show the parts in the second window
+		// try to show the parts in the second window, a new stack should be
+		// created in the second window instead of trying to reuse the one in
+		// the first window
 		EPartService service = (EPartService) window2.getContext().get(
 				EPartService.class.getName());
 		service.showPart("part", EPartService.PartState.VISIBLE);
@@ -345,6 +358,88 @@ public class PartRenderingEngineTests extends TestCase {
 
 		while (Display.getDefault().readAndDispatch())
 			;
+	}
+
+	public void testPart_ToBeRendered() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setId("partA");
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setId("partB");
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		stack.getChildren().add(partA);
+		stack.getChildren().add(partB);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+		assertEquals(0, tabFolder.getSelectionIndex());
+
+		EPartService service = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		service.activate(partB);
+		assertEquals(1, tabFolder.getSelectionIndex());
+
+		// set the currently active part to not be rendered
+		partB.setToBeRendered(false);
+		assertEquals(1, tabFolder.getItemCount());
+		assertEquals(0, tabFolder.getSelectionIndex());
+		assertEquals(partA, stack.getActiveChild());
+	}
+
+	public void testPart_ToBeRendered2() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setId("partA");
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setId("partB");
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setToBeRendered(false);
+
+		stack.getChildren().add(partA);
+		stack.getChildren().add(partB);
+		stack.setActiveChild(partA);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+		assertEquals(1, tabFolder.getItemCount());
+		assertEquals(0, tabFolder.getSelectionIndex());
+
+		partB.setToBeRendered(true);
+		assertEquals(
+				"Rendering another part in the stack should not change the selection",
+				0, tabFolder.getSelectionIndex());
+		assertEquals(partA, stack.getActiveChild());
+		assertEquals(2, tabFolder.getItemCount());
+		assertNotNull(partB.getObject());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
