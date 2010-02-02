@@ -65,6 +65,8 @@ public interface EPartService {
 	public void activate(MPart part);
 
 	/**
+	 * This method will be removed before 1.0 is released.
+	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void deactivate(MPart part); // FIXME: remove this for 1.0

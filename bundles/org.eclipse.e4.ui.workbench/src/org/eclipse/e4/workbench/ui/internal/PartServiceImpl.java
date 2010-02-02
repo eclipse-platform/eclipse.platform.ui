@@ -168,6 +168,7 @@ public class PartServiceImpl implements EPartService {
 
 	public void bringToTop(MPart part) {
 		if (isInContainer(part)) {
+			part.setToBeRendered(true);
 			internalBringToTop(part);
 		}
 	}
@@ -260,6 +261,7 @@ public class PartServiceImpl implements EPartService {
 			// Ensure that the UI model has the part 'on top'
 			while (curElement != pwc) {
 				MElementContainer<MUIElement> parent = curElement.getParent();
+				curElement.setToBeRendered(true);
 				if (parent.getActiveChild() != curElement) {
 					parent.setActiveChild(curElement);
 				}
@@ -321,7 +323,9 @@ public class PartServiceImpl implements EPartService {
 				return part;
 			case VISIBLE:
 				MPart activePart = getActivePart();
-				if (activePart != part) {
+				if (activePart == part) {
+					part.setToBeRendered(true);
+				} else {
 					if (activePart.getParent() == part.getParent()) {
 						part.setToBeRendered(true);
 						engine.createGui(part);

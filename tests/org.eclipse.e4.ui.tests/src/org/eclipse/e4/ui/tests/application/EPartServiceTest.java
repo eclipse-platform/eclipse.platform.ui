@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
@@ -349,6 +350,32 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partService.isPartVisible(partBackA));
 		assertFalse(partService.isPartVisible(partFrontB));
 		assertTrue(partService.isPartVisible(partBackB));
+	}
+
+	public void testBringToTop_Unrendered() {
+		MApplication application = createApplication("partFront", "partBack");
+
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partBack.setToBeRendered(false);
+
+		partStack.setActiveChild(partFront);
+		window.setActiveChild(partStack);
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		assertFalse(partBack.isToBeRendered());
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.bringToTop(partBack);
+		assertTrue("Bringing a part to the top should cause it to be rendered",
+				partBack.isToBeRendered());
 	}
 
 	public void testGetParts_Empty() {
@@ -730,6 +757,32 @@ public class EPartServiceTest extends TestCase {
 				IServiceConstants.ACTIVE_PART);
 		assertNotNull(shouldBeCorrect);
 		assertEquals(partBackB, partServiceB.getActivePart());
+	}
+
+	public void testActivate_Unrendered() {
+		MApplication application = createApplication("partFront", "partBack");
+
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partBack.setToBeRendered(false);
+
+		partStack.setActiveChild(partFront);
+		window.setActiveChild(partStack);
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		assertFalse(partBack.isToBeRendered());
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partBack);
+		assertTrue("Activating a part should cause it to be rendered", partBack
+				.isToBeRendered());
 	}
 
 	public void testShowPart() {
@@ -1140,9 +1193,9 @@ public class EPartServiceTest extends TestCase {
 				EPartService.PartState.VISIBLE);
 
 		assertEquals(2, partStack.getChildren().size());
-		assertFalse(
+		assertEquals(
 				"The part is in the same stack as the active part, so the active part should not have changed",
-				partB.equals(partService.getActivePart()));
+				partA, partService.getActivePart());
 		assertNotNull("The shown part should have a context", partB
 				.getContext());
 		assertTrue(partService.isPartVisible(partA));
@@ -1189,7 +1242,7 @@ public class EPartServiceTest extends TestCase {
 
 		assertEquals(1, partStackA.getChildren().size());
 		assertEquals(
-				"Only creating the part, the active part should not have changed",
+				"Only making a part visible, the active part should not have changed",
 				partA, partService.getActivePart());
 		assertNotNull("The shown part should have a context", partB
 				.getContext());
@@ -1227,6 +1280,98 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
 		assertEquals(part, partService.getActivePart());
+	}
+
+	public void testShowPart_VISIBLE5() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partB");
+		partDescriptor.setCategory("aCategory");
+		application.getDescriptors().add(partDescriptor);
+
+		MPartStack partStack = MApplicationFactory.eINSTANCE.createPartStack();
+		partStack.setId("aCategory");
+		window.getChildren().add(partStack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setId("partA");
+		partStack.getChildren().add(partA);
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setId("partB");
+		partB.setToBeRendered(false);
+		partStack.getChildren().add(partB);
+
+		partStack.setActiveChild(partA);
+		window.setActiveChild(partStack);
+		application.setActiveChild(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		MPart shownPart = partService.showPart("partB",
+				EPartService.PartState.VISIBLE);
+
+		assertEquals(2, partStack.getChildren().size());
+		assertEquals(
+				"The part is in the same stack as the active part, so the active part should not have changed",
+				partA, partService.getActivePart());
+		assertNotNull("The shown part should have a context", partB
+				.getContext());
+		assertTrue(partService.isPartVisible(partA));
+		assertFalse(partService.isPartVisible(partB));
+		assertEquals(partB, shownPart);
+		assertTrue(partB.isToBeRendered());
+	}
+
+	private void testShowPart_Unrendered(EPartService.PartState partState) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setActiveChild(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId("partId");
+		part.setToBeRendered(false);
+		window.getChildren().add(part);
+		window.setActiveChild(part);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart shownPart = partService.showPart("partId", partState);
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(part, window.getChildren().get(0));
+		assertEquals(part, shownPart);
+		assertTrue("A shown part should be rendered", part.isToBeRendered());
+	}
+
+	public void testShowPart_Unrendered_CREATE() {
+		testShowPart_Unrendered(PartState.CREATE);
+	}
+
+	public void testShowPart_Unrendered_VISIBLE() {
+		testShowPart_Unrendered(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Unrendered_ACTIVATE() {
+		testShowPart_Unrendered(PartState.ACTIVATE);
 	}
 
 	public void testHidePart_PartInAnotherWindow() {
