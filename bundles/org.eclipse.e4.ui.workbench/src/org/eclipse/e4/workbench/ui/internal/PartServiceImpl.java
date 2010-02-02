@@ -323,6 +323,7 @@ public class PartServiceImpl implements EPartService {
 				MPart activePart = getActivePart();
 				if (activePart != part) {
 					if (activePart.getParent() == part.getParent()) {
+						part.setToBeRendered(true);
 						engine.createGui(part);
 					} else {
 						bringToTop(part);
@@ -330,6 +331,7 @@ public class PartServiceImpl implements EPartService {
 				}
 				return part;
 			case CREATE:
+				part.setToBeRendered(true);
 				engine.createGui(part);
 				return part;
 			}
