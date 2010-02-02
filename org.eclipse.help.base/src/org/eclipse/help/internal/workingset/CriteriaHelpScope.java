@@ -117,7 +117,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 	}
 
 	public boolean inScope(IIndexEntry entry) {
-		return true;
+		return hasInScopeChildren(entry);
 	}
 
 	public String getName(Locale locale) {
