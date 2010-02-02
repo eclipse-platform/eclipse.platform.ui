@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,4 +23,13 @@ public interface ISearchHitCollector {
 	 * @param hits the List of raw hits
 	 */
 	public void addHits(List hits, String wordsSearched);
+	
+	/**
+	 * An exception occurred in the search. Implementing subclasses should either
+	 * rethrow the exception or save a local copy and test for it later.
+	 * @param exception
+	 * @throws QueryTooComplexException
+	 */
+	public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException;
 }
+

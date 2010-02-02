@@ -58,6 +58,10 @@ public class LocalHelp implements ISearchEngine2 {
 
 	private void postResults(SearchResults results,
 			ISearchEngineResultCollector collector, boolean activityFiltering) {
+		if (results.getException() != null) {
+			collector.error(new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 
+					HelpBaseResources.HelpSearch_QueryTooComplex, results.getException()));
+		}
 		SearchHit[] searchHits = results.getSearchHits();
 		if (!activityFiltering) {
 			collector.accept(searchHits);

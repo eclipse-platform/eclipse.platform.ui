@@ -37,6 +37,7 @@ public class SearchResults implements ISearchHitCollector {
 	private String locale;
 	private AbstractHelpScope filter;
 	protected SearchHit[] searchHits = new SearchHit[0];
+	private QueryTooComplexException searchException = null;
 	/**
 	 * Constructor
 	 * 
@@ -222,6 +223,10 @@ public class SearchResults implements ISearchHitCollector {
 	public SearchHit[] getSearchHits() {
 		return searchHits;
 	}
+	
+	public QueryTooComplexException getException() {
+		return searchException;
+	}
 
 	/**
 	 * Returns a collection of adaptable help resources that are roots for
@@ -240,5 +245,9 @@ public class SearchResults implements ISearchHitCollector {
 				scopes.add(elements[i]);
 		}
 		return scopes;
+	}
+
+	public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
+		this.searchException = exception;
 	}
 }

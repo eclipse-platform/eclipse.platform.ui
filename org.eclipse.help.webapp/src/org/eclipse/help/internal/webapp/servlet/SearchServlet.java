@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
+import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.util.URLCoder;
@@ -42,11 +43,17 @@ public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_PHRASE = "phrase"; //$NON-NLS-1$
 	private Collection results = new ArrayList();
+	private QueryTooComplexException searchException;
 	private ISearchHitCollector collector = new ISearchHitCollector() {
 		public void addHits(List hits, String wordsSearched) {
 			if (results != null) {
 				results.addAll(hits);
 			}
+		}
+
+		public void addQTCException(QueryTooComplexException exception)
+				throws QueryTooComplexException {
+			searchException = exception;			
 		}
 	};
 	
@@ -62,12 +69,14 @@ public class SearchServlet extends HttpServlet {
 			ISearchQuery query = new SearchQuery(phrase, false, Collections.EMPTY_LIST, locale);
 			results.clear();
 			BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
-			String response = serialize(results);
-			resp.getWriter().write(response);
+			if (searchException == null) {
+				String response = serialize(results);
+				resp.getWriter().write(response);
+			}
 		}
-		else {
-			resp.sendError(400); // bad request; missing parameter
-		}
+
+		resp.sendError(400); // bad request; missing parameter
+
 	}
 	
 	public static String serialize(Collection results) {

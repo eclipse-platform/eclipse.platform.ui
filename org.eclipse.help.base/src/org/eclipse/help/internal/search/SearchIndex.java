@@ -615,9 +615,9 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 				collector.addHits(LocalSearchManager.asList(hits), highlightTerms);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
-			throw new QueryTooComplexException();
+			collector.addQTCException(new QueryTooComplexException());
 		} catch (QueryTooComplexException qe) {
-			throw qe;
+			collector.addQTCException(qe);
 		} catch (Exception e) {
 			HelpBasePlugin.logError("Exception occurred performing search for: " //$NON-NLS-1$
 					+ searchQuery.getSearchWord() + ".", e); //$NON-NLS-1$
