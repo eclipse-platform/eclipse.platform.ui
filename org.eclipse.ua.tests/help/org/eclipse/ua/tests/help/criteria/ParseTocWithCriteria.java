@@ -249,4 +249,75 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertEquals("2.0", criteria[1].getValue());
 	}
 
+	public void testMultipleValues() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		
+		CriterionResource[] linuxResource = new CriterionResource[1];
+		linuxResource[0] = new CriterionResource("platform");
+		linuxResource[0].addCriterionValue("linux");
+		CriteriaHelpScope linuxScope = new CriteriaHelpScope(linuxResource);
+		assertTrue(linuxScope.inScope(toc));
+		
+		CriterionResource[] win32Resource = new CriterionResource[1];
+		win32Resource[0] = new CriterionResource("platform");
+		win32Resource[0].addCriterionValue("win32");
+		CriteriaHelpScope win32scope = new CriteriaHelpScope(win32Resource);
+		assertTrue(win32scope.inScope(toc));
+	}
+
+	public void testValuesOfDifferentCases() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		ITopic[] topics = toc.getTopics();
+		
+		CriterionResource[] linuxResource = new CriterionResource[1];
+		linuxResource[0] = new CriterionResource("platform");
+		linuxResource[0].addCriterionValue("linux");
+		CriteriaHelpScope linuxScope = new CriteriaHelpScope(linuxResource);
+		assertTrue(linuxScope.inScope(topics[0]));		
+	}
+
+	public void testValuesWithWhitespace() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		ITopic[] topics = toc.getTopics();
+		
+		CriterionResource[] win32Resource = new CriterionResource[1];
+		win32Resource[0] = new CriterionResource("platform");
+		win32Resource[0].addCriterionValue("win32");
+		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
+		assertTrue(win32Scope.inScope(topics[1]));		
+	}
+
+	public void testNoName() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		ITopic[] topics = toc.getTopics();
+		
+		CriterionResource[] win32Resource = new CriterionResource[1];
+		win32Resource[0] = new CriterionResource("platform");
+		win32Resource[0].addCriterionValue("win32");
+		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
+		assertFalse(win32Scope.inScope(topics[2]));		
+	}
+
+	public void testNoValue() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		ITopic[] topics = toc.getTopics();
+		
+		CriterionResource[] win32Resource = new CriterionResource[1];
+		win32Resource[0] = new CriterionResource("platform");
+		win32Resource[0].addCriterionValue("win32");
+		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
+		assertFalse(win32Scope.inScope(topics[3]));		
+	}
+
+	public void testNoCriteria() throws Exception {
+		IToc toc = parseToc("data/help/criteria/c2.xml");
+		ITopic[] topics = toc.getTopics();
+		
+		CriterionResource[] win32Resource = new CriterionResource[1];
+		win32Resource[0] = new CriterionResource("platform");
+		win32Resource[0].addCriterionValue("win32");
+		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
+		assertFalse(win32Scope.inScope(topics[4]));		
+	}
+
 }
