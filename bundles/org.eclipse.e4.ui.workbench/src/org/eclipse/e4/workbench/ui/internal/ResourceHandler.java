@@ -137,8 +137,9 @@ public class ResourceHandler {
 				StreamResult result = new StreamResult(f);
 				transformer.transform(source, result);
 			} catch (Exception e) {
-				// why don't we log next time
-				e.printStackTrace();
+				if (logger != null) {
+					logger.error(e);
+				}
 			}
 		} else {
 			resource.save(null);
