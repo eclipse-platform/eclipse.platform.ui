@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
@@ -441,7 +442,13 @@ public class PartServiceImpl implements EPartService {
 			logger.error(e.getCause());
 			return false;
 		} catch (CoreException e) {
-			logger.error(e.getStatus().getException());
+			IStatus status = e.getStatus();
+			Throwable throwable = status.getException();
+			if (throwable == null) {
+				logger.error(status.getMessage());
+			} else {
+				logger.error(throwable);
+			}
 			return false;
 		}
 		return true;
