@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.css.core.css2.CSS2PrimitiveValueImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
@@ -399,8 +398,6 @@ public class CSSSWTFontHelper {
 	private static Font getFont(Widget widget) {
 		if (widget instanceof CTabItem) {
 			return ((CTabItem) widget).getFont();
-		} else if (widget instanceof ETabItem) {
-			return ((ETabItem) widget).getFont();
 		} else if (widget instanceof Control) {
 			return ((Control) widget).getFont();
 		} else {

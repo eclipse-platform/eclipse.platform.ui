@@ -4,11 +4,8 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyPadding
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.css.sac.CSSException;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
@@ -139,26 +136,6 @@ public class CSSPropertyPaddingSWTHandler extends
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
 		Widget widget = SWTElementHelpers.getWidget(element);
-
-		if(! (widget instanceof ETabItem)) {
-			return;
-		}
-		
-		ETabItem item = (ETabItem) widget;
-		ETabFolder folder = item.getETabParent();
-		
-		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-		switch (side) {
-		case TOP:
-			if("selected".equals(pseudo))
-				folder.setTabTopSelectionPadding(pixelValue);
-			else
-				folder.setTabTopPadding(pixelValue);
-			break;
-		case BOTTOM:
-			folder.setTabBottomPadding(pixelValue);
-			break;
-		}
+		 // TBD: is there a CTF equivalent ?
 	}
 }

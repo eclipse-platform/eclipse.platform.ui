@@ -15,8 +15,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.VerifyEvent;
@@ -66,15 +64,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 				} else {
 					folder.setForeground(newColor);
 				}
-			} else if (widget instanceof ETabItem) {
-				ETabFolder folder = ((ETabItem) widget).getETabParent();
-				if ("selected".equals(pseudo)) {
-					folder.setSelectionForeground(newColor);
-				} else {
-					folder.setForeground(newColor);
-				}
-			} else if (widget instanceof Control) {
-				((Control) widget).setForeground(newColor);
 			}
 		}
 	}
@@ -140,12 +129,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 			} else {
 				color = ((CTabItem) widget).getParent().getForeground();
 			}
-		} else if (widget instanceof ETabItem) {
-				if ("selected".equals(pseudo)) {
-					color = ((ETabItem) widget).getParent().getSelectionForeground();	
-				} else {
-					color = ((ETabItem) widget).getParent().getForeground();
-				}
 		} else if (widget instanceof Control) {
 			color = ((Control) widget).getForeground();	
 		}

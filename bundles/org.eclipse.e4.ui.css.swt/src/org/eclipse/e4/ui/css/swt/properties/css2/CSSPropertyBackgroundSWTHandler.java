@@ -20,8 +20,6 @@ import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
@@ -74,13 +72,6 @@ public class CSSPropertyBackgroundSWTHandler extends
 				} else {
 					folder.setBackground(newColor);
 				}
-			} else if (widget instanceof ETabItem) {
-				ETabFolder folder = ((ETabItem) widget).getETabParent();
-				if ("selected".equals(pseudo)) {
-					folder.setSelectionBackground(newColor);
-				} else {
-					folder.setUnselectedTabBackgroundColor(newColor);
-				}
 			} else if (widget instanceof Control) {
 				((Control) widget).setBackground(newColor);
 			}
@@ -89,12 +80,6 @@ public class CSSPropertyBackgroundSWTHandler extends
 					widget.getDisplay());
 			if (widget instanceof CTabItem && "selected".equals(pseudo)) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
-				folder.setSelectionBackground(
-						CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine),
-						CSSSWTColorHelper.getPercents(grad),
-						true);
-			} else if (widget instanceof ETabItem && "selected".equals(pseudo)) {
-				ETabFolder folder = ((ETabItem) widget).getETabParent();
 				folder.setSelectionBackground(
 						CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine),
 						CSSSWTColorHelper.getPercents(grad),
@@ -119,8 +104,6 @@ public class CSSPropertyBackgroundSWTHandler extends
 				.getDisplay());
 		if (control instanceof CTabFolder && "selected".equals(pseudo)) {
 			((CTabFolder) control).setSelectionBackground(image);
-		} else if (control instanceof ETabFolder && "selected".equals(pseudo)) {
-			((ETabFolder) control).setSelectionBackground(image);
 		} else if (control instanceof Button) {
 			Button button = ((Button) control);
 			// Image oldImage = button.getImage();
@@ -154,12 +137,6 @@ public class CSSPropertyBackgroundSWTHandler extends
 				color = ((CTabItem) widget).getParent().getSelectionBackground();	
 			} else {
 				color = ((CTabItem) widget).getParent().getBackground();				
-			}
-		} else if (widget instanceof ETabItem) {
-			if ("selected".equals(pseudo)) {
-				color = ((ETabItem) widget).getParent().getSelectionBackground();	
-			} else {
-				color = ((ETabItem) widget).getETabParent().getUnselectedTabBackgroundColor();				
 			}
 		} else if (widget instanceof Control) {
 			color = ((Control) widget).getBackground();	

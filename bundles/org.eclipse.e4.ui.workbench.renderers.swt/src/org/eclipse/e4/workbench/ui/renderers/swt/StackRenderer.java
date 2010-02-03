@@ -22,18 +22,16 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
-import org.eclipse.e4.ui.widgets.CTabFolderEvent;
-import org.eclipse.e4.ui.widgets.CTabItem;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -192,7 +190,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TBD: need to define attributes to handle this
 		int styleModifier = 0; // SWT.CLOSE
-		final CTabFolder ctf = new ETabFolder(parentComposite, SWT.BORDER
+		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER
 				| styleModifier);
 
 		// configureForStyling(ctf);
@@ -303,7 +301,7 @@ public class StackRenderer extends LazyStackRenderer {
 			int index = calcIndexFor(stack, part);
 			// TODO see bug 282901 - [UI] Need better support for switching
 			// renderer to use
-			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
+			cti = new CTabItem(ctf, createFlags, index);
 
 			cti.setData(OWNING_ME, part);
 			cti.setText(getLabel(itemPart, itemPart.getLabel()));
@@ -414,8 +412,8 @@ public class StackRenderer extends LazyStackRenderer {
 			if (parentElement.getChildren().size() == 0) {
 				parentElement.setSelectedElement(null);
 			} else {
-				parentElement
-						.setSelectedElement(parentElement.getChildren().get(0));
+				parentElement.setSelectedElement(parentElement.getChildren()
+						.get(0));
 			}
 		}
 	}

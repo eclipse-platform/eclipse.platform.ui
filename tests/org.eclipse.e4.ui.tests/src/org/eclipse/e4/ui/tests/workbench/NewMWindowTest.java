@@ -24,12 +24,12 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -99,7 +99,7 @@ public class NewMWindowTest extends TestCase {
 		Control[] sashChildren = sash.getChildren();
 		assertEquals(1, sashChildren.length);
 
-		ETabFolder folder = (ETabFolder) sashChildren[0];
+		CTabFolder folder = (CTabFolder) sashChildren[0];
 		assertEquals(1, folder.getItemCount());
 		Control c = folder.getItem(0).getControl();
 		assertTrue(c instanceof Composite);

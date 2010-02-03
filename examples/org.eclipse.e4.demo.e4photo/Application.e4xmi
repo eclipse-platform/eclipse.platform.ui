@@ -17,6 +17,7 @@
             <children xsi:type="application:PartStack" xmi:id="_AXU5Wu8IEd6FC9cDb6iV7g" id="_AXU5Wu8IEd6FC9cDb6iV7g" containerData="30">
               <children xsi:type="application:Part" xmi:id="_AXU5W-8IEd6FC9cDb6iV7g" id="_AXU5W-8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
               <children xsi:type="application:Part" xmi:id="_IljJcflEEd6zQeFS0uSN1A" id="e4.photo.demo.exif" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
+              <children xsi:type="application:Part" id="Tracker" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.WheresTheCursor" label="Tracker"/>
             </children>
           </children>
         </children>

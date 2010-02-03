@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.css.swt.properties.custom;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Control;
@@ -34,7 +33,7 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
-		if (widget instanceof CTabItem || widget instanceof ETabItem) {
+		if (widget instanceof CTabItem) {
 			Item item = (Item) widget;
 			boolean showClose = ((Boolean) engine.convert(value, Boolean.class,
 					null)).booleanValue();
@@ -71,10 +70,6 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget instanceof CTabItem) {
 			CTabItem item = (CTabItem) widget;
-			return Boolean.toString(item.getShowClose());
-		}
-		if (widget instanceof ETabItem) {
-			ETabItem item = (ETabItem) widget;
 			return Boolean.toString(item.getShowClose());
 		}
 		return null;

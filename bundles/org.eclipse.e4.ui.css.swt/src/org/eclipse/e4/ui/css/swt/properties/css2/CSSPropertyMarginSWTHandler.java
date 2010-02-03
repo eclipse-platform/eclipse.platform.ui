@@ -5,8 +5,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -158,11 +156,6 @@ public class CSSPropertyMarginSWTHandler extends
 		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
 
 		Widget widget = SWTElementHelpers.getWidget(element);
-		
-		if(widget instanceof ETabItem) {
-			if(setMargin((ETabItem) widget, side, pixelValue, pseudo))
-				return;
-		}
 
 		if(! (widget instanceof Control))
 			return;
@@ -184,21 +177,5 @@ public class CSSPropertyMarginSWTHandler extends
 			layout.marginLeft = pixelValue;
 			break;
 		}
-	}
-		
-	private boolean setMargin(ETabItem widget, int side, int pixelValue, String pseudo) {
-		ETabFolder folder = ((ETabItem) widget).getETabParent();
-		switch (side) {
-		case TOP:
-			folder.setTabTopMargin(pixelValue);
-			return true;
-		case RIGHT:
-			folder.setTabRightMargin(pixelValue);
-			return true;
-		case LEFT:
-			folder.setTabLeftMargin(pixelValue);
-			return true;
-		}
-		return false;
 	}
 }

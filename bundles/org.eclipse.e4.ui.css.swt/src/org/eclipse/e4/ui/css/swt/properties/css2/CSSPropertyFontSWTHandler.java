@@ -19,8 +19,6 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.custom.CTabETabHelper;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -47,8 +45,6 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 	private static void setFont(Widget widget, Font font) {
 		if (widget instanceof CTabItem) {
 			((CTabItem) widget).setFont(font);
-		} else if (widget instanceof ETabItem) {
-			((ETabItem) widget).setFont(font);
 		} else if (widget instanceof Control) {
 			((Control) widget).setFont(font);
 		}
@@ -64,7 +60,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			if (fontProperties != null) {
 				super.applyCSSProperty(fontProperties, property, value, pseudo,
 						engine);
-				if (widget instanceof CTabItem || widget instanceof ETabItem) {
+				if (widget instanceof CTabItem) {
 					Control parent = CTabETabHelper.getParent(widget);
 					FontSelectionListener listener = (FontSelectionListener) parent.getData(
 									CSS_CTABITEM_SELECTED_FONT_LISTENER_KEY);
@@ -145,7 +141,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
 			throws Exception {
 		final Widget widget = SWTElementHelpers.getWidget(element);
-		if (widget == null || widget instanceof CTabItem || widget instanceof ETabItem)
+		if (widget == null || widget instanceof CTabItem)
 			return;
 		CSS2FontProperties fontProperties = CSSSWTFontHelper
 				.getCSS2FontProperties(widget, engine
@@ -297,18 +293,13 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 		}
 
 		public void handleEvent(Event e) {
-			if (e.widget instanceof CTabFolder || e.widget instanceof ETabFolder) {
+			if (e.widget instanceof CTabFolder) {
 				Item[] items;
 				Item selection;
-				if (e.widget instanceof CTabFolder) {
-					CTabFolder folder = (CTabFolder) e.widget;
-					selection = folder.getSelection();
-					items = folder.getItems();
-				} else {
-					ETabFolder folder = (ETabFolder) e.widget;
-					selection = (ETabItem) folder.getSelection();
-					items = folder.getItems();
-				}
+				CTabFolder folder = (CTabFolder) e.widget;
+				selection = folder.getSelection();
+				items = folder.getItems();
+				
 				// only style if the selection has changed
 				if (!shouldStyle && this.selection == selection) {
 					return;	
