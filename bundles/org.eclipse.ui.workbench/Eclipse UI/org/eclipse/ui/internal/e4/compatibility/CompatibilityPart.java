@@ -72,7 +72,7 @@ public abstract class CompatibilityPart {
 					part.setLabel(wrapped.getTitle());
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
-					if (part instanceof MDirtyable && wrapped instanceof ISaveablePart) {
+					if (wrapped instanceof ISaveablePart) {
 						((MDirtyable) part).setDirty(((ISaveablePart) wrapped).isDirty());
 					}
 					break;

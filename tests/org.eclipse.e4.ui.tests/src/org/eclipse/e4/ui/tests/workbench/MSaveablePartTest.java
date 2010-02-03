@@ -17,7 +17,6 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -100,7 +99,7 @@ public class MSaveablePartTest extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MDirtyable part = (MDirtyable) stack.getChildren().get(0);
+		MPart part = stack.getChildren().get(0);
 		assertFalse(part.isDirty());
 
 		part.setDirty(true);

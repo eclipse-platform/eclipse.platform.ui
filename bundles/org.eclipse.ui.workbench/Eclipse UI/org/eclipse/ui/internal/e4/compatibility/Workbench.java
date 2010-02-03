@@ -267,7 +267,7 @@ public class Workbench implements IWorkbench {
 			return null;
 		}
 
-		Object activeChild = application.getActiveChild();
+		Object activeChild = application.getSelectedElement();
 		MWindow activeWindow = (MWindow) activeChild;
 		if (activeWindow == null && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
@@ -428,7 +428,7 @@ public class Workbench implements IWorkbench {
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		WorkbenchWindow result = new WorkbenchWindow(input, descriptor);
 		ContextInjectionFactory.inject(result, window.getContext());
@@ -519,7 +519,7 @@ public class Workbench implements IWorkbench {
 					if (page.getInput() == input) {
 						WorkbenchWindow wwindow = (WorkbenchWindow) page.getWorkbenchWindow();
 						MWindow model = wwindow.getModel();
-						application.setActiveChild(model);
+						application.setSelectedElement(model);
 						return true;
 					}
 				}

@@ -31,7 +31,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
@@ -408,10 +407,8 @@ public class PartServiceImpl implements EPartService {
 	public Collection<MPart> getDirtyParts() {
 		List<MPart> dirtyParts = new ArrayList<MPart>();
 		for (MPart part : getParts()) {
-			if (part instanceof MDirtyable) {
-				if (((MDirtyable) part).isDirty()) {
-					dirtyParts.add(part);
-				}
+			if (part.isDirty()) {
+				dirtyParts.add(part);
 			}
 		}
 		return dirtyParts;
@@ -424,7 +421,7 @@ public class PartServiceImpl implements EPartService {
 	 * MSaveablePart, boolean)
 	 */
 	public boolean savePart(MPart part, boolean confirm) {
-		if (!((MDirtyable) part).isDirty()) {
+		if (!part.isDirty()) {
 			return true;
 		}
 
