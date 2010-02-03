@@ -18,10 +18,12 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubCoolBarManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -113,6 +115,22 @@ public class EditorActionBarsTest extends UITestCase {
         fPage.activate(editor);
         verifyToolItemState(contributor, true);
     }
+    
+    public void testCoolBarContribution() throws Throwable {
+    	
+        MockEditorPart editor = openEditor(fPage, "3");
+        MockEditorActionBarContributor contributor = (MockEditorActionBarContributor) editor
+                .getEditorSite().getActionBarContributor();
+        
+        assertTrue(contributor.getActionBars() instanceof IActionBars2);
+        IActionBars2 actionBars = (IActionBars2) contributor.getActionBars();
+        
+        assertTrue(actionBars.getCoolBarManager() instanceof SubCoolBarManager);
+        SubCoolBarManager coolBarManager = (SubCoolBarManager) actionBars.getCoolBarManager();
+        assertTrue("Coolbar should be visible", coolBarManager.isVisible());
+    }
+
+
 
     /**
      * Open a test editor.

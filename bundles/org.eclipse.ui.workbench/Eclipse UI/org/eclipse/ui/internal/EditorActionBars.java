@@ -21,6 +21,7 @@ import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.SubContributionManager;
+import org.eclipse.jface.action.SubCoolBarManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
@@ -477,6 +478,9 @@ public class EditorActionBars extends SubActionBars2 {
 			coolItemToolBarMgr.update(false);
 			if (toolBarContributionItem != null) {
 				toolBarContributionItem.setVisible(visible || !forceVisibility);
+			}
+			if (getCoolBarManager() != null) {
+				((SubCoolBarManager) getCoolBarManager()).setVisible(visible || !forceVisibility);
 			}
 		}
 	}
