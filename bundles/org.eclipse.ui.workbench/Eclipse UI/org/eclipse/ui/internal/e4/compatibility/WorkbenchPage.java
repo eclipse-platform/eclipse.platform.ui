@@ -673,6 +673,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 				return false;
 			}
 		}
+
+		for (IViewPart view : getViews()) {
+			if (view instanceof ISaveablePart) {
+				if (!saveSaveable((ISaveablePart) view, confirm, closing)) {
+					return false;
+				}
+			}
+		}
+
 		return partService.saveAll(confirm);
 	}
 
@@ -697,10 +706,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 					if (saveable.isDirty()) {
 						if (closing) {
 							if (saveable.isSaveOnCloseNeeded()) {
-								partService.savePart(part, confirm);
+								return partService.savePart(part, confirm);
 							}
 						} else {
-							partService.savePart(part, confirm);
+							return partService.savePart(part, confirm);
 						}
 					}
 					return true;

@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -38,6 +40,11 @@ public class CompatibilityView extends CompatibilityPart {
 			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					status.getCode(), status.getMessage(), status.getException()));
 		}
+	}
+
+	// FIXME: remove me when bug 299760 is fixed
+	void doSave(@Optional IProgressMonitor monitor) {
+		super.doSave(monitor);
 	}
 
 	protected void initialize(IWorkbenchPart part) throws PartInitException {
