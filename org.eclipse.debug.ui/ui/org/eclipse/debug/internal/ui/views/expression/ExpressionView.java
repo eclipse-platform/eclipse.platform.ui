@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.expression;
 
  
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
@@ -118,7 +119,8 @@ public class ExpressionView extends VariablesView {
      * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(IViewerInputUpdate)
      */
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
-        if (update.getElement() != null) {
+        IStatus status = update.getStatus();
+        if ( (status == null || status.isOK()) && update.getElement() != null) {
             setViewerInput(update.getInputElement());
         } else {
             setViewerInput(DebugPlugin.getDefault().getExpressionManager());

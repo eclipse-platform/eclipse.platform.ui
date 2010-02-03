@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -307,7 +308,8 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 */
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {		
 		// handles non-standard debug model
-        if (update.getElement() != null) {
+	    IStatus status = update.getStatus();
+        if ( (status == null || status.isOK()) && update.getElement() != null) {
             setViewerInput(update.getInputElement());
         } else {
             setViewerInput(new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext()));
