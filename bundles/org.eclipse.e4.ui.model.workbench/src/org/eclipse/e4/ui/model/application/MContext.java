@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -73,5 +75,22 @@ public interface MContext {
 	 * @generated
 	 */
 	EList<String> getVariables();
+
+	/**
+	 * Returns the value of the '<em><b>Properties</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Properties</em>' map isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Properties</em>' map.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext_Properties()
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+	 * @generated
+	 */
+	EMap<String, String> getProperties();
 
 } // MContext

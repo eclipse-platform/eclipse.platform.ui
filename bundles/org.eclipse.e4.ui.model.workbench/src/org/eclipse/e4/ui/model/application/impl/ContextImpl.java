@@ -19,14 +19,20 @@ import org.eclipse.e4.ui.model.application.MContext;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -37,6 +43,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -72,6 +79,16 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -130,6 +147,32 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.CONTEXT__PROPERTIES);
+		}
+		return properties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MApplicationPackage.CONTEXT__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -137,6 +180,9 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 				return getContext();
 			case MApplicationPackage.CONTEXT__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.CONTEXT__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -157,6 +203,9 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
+			case MApplicationPackage.CONTEXT__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -175,6 +224,9 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 			case MApplicationPackage.CONTEXT__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.CONTEXT__PROPERTIES:
+				getProperties().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -191,6 +243,8 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.CONTEXT__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.CONTEXT__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

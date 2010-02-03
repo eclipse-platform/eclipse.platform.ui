@@ -27,14 +27,17 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -58,6 +61,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -273,6 +277,16 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -591,6 +605,18 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.PERSPECTIVE__PROPERTIES);
+		}
+		return properties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -617,6 +643,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -670,6 +698,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return getContext();
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -724,6 +755,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
+			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -775,6 +809,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
+				getProperties().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -813,6 +850,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -854,6 +893,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
 				case MApplicationPackage.PERSPECTIVE__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				case MApplicationPackage.PERSPECTIVE__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -902,6 +942,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.PERSPECTIVE__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.PERSPECTIVE__VARIABLES;
+				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.PERSPECTIVE__PROPERTIES;
 				default: return -1;
 			}
 		}

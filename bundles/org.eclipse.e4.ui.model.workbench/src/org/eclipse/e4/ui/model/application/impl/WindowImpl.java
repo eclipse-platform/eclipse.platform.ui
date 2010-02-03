@@ -32,8 +32,10 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -41,6 +43,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -64,6 +67,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getMainMenu <em>Main Menu</em>}</li>
@@ -286,6 +290,16 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -714,6 +728,18 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.WINDOW__PROPERTIES);
+		}
+		return properties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.WINDOW__HANDLERS);
@@ -891,6 +917,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.WINDOW__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.WINDOW__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.WINDOW__BINDINGS:
@@ -950,6 +978,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return getContext();
 			case MApplicationPackage.WINDOW__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.WINDOW__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return getHandlers();
 			case MApplicationPackage.WINDOW__BINDINGS:
@@ -1017,6 +1048,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			case MApplicationPackage.WINDOW__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
+			case MApplicationPackage.WINDOW__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
 				return;
 			case MApplicationPackage.WINDOW__HANDLERS:
 				getHandlers().clear();
@@ -1092,6 +1126,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			case MApplicationPackage.WINDOW__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.WINDOW__PROPERTIES:
+				getProperties().clear();
+				return;
 			case MApplicationPackage.WINDOW__HANDLERS:
 				getHandlers().clear();
 				return;
@@ -1151,6 +1188,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.WINDOW__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.WINDOW__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.WINDOW__BINDINGS:
@@ -1206,6 +1245,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.WINDOW__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
 				case MApplicationPackage.WINDOW__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				case MApplicationPackage.WINDOW__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -1266,6 +1306,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.WINDOW__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.WINDOW__VARIABLES;
+				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.WINDOW__PROPERTIES;
 				default: return -1;
 			}
 		}

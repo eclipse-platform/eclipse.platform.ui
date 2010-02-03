@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009,2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class UIEvents {
 	public static interface Context {
 		public static final String TOPIC = UITopicBase + "/application/Context"; //$NON-NLS-1$
 		public static final String CONTEXT = "context"; //$NON-NLS-1$
+		public static final String PROPERTIES = "properties"; //$NON-NLS-1$
 		public static final String VARIABLES = "variables"; //$NON-NLS-1$
 	}
 
@@ -170,6 +171,12 @@ public class UIEvents {
 	public static interface Placeholder {
 		public static final String TOPIC = UITopicBase + "/application/Placeholder"; //$NON-NLS-1$
 		public static final String REF = "ref"; //$NON-NLS-1$
+	}
+
+	public static interface StringToStringMap {
+		public static final String TOPIC = UITopicBase + "/application/StringToStringMap"; //$NON-NLS-1$
+		public static final String KEY = "key"; //$NON-NLS-1$
+		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
 	public static interface TrimContainer {

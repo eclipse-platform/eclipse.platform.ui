@@ -34,14 +34,17 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -54,6 +57,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -104,6 +108,16 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -395,6 +409,18 @@ public class PartImpl extends ContributionImpl implements MPart {
 			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.PART__VARIABLES);
 		}
 		return variables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.PART__PROPERTIES);
+		}
+		return properties;
 	}
 
 	/**
@@ -753,6 +779,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case MApplicationPackage.PART__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.PART__PARENT:
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.PART__HANDLERS:
@@ -793,6 +821,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getContext();
 			case MApplicationPackage.PART__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.PART__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 			case MApplicationPackage.PART__WIDGET:
 				return getWidget();
 			case MApplicationPackage.PART__RENDERER:
@@ -842,6 +873,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
+			case MApplicationPackage.PART__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
 				return;
 			case MApplicationPackage.PART__WIDGET:
 				setWidget(newValue);
@@ -909,6 +943,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.PART__PROPERTIES:
+				getProperties().clear();
+				return;
 			case MApplicationPackage.PART__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -970,6 +1007,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.PART__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.PART__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.PART__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.PART__RENDERER:
@@ -1015,6 +1054,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PART__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
 				case MApplicationPackage.PART__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				case MApplicationPackage.PART__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -1075,6 +1115,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.PART__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.PART__VARIABLES;
+				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.PART__PROPERTIES;
 				default: return -1;
 			}
 		}

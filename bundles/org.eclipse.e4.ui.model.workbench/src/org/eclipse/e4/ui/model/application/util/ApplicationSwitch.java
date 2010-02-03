@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.util;
 
 import java.util.List;
 
+import java.util.Map;
 import org.eclipse.e4.ui.model.application.*;
 
 import org.eclipse.emf.ecore.EClass;
@@ -94,6 +95,12 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.VCONSTANTS_AND_TYPES_V: {
 				MV____________ConstantsAndTypes_____________V v____________ConstantsAndTypes_____________V = (MV____________ConstantsAndTypes_____________V)theEObject;
 				T1 result = caseV____________ConstantsAndTypes_____________V(v____________ConstantsAndTypes_____________V);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.STRING_TO_STRING_MAP: {
+				@SuppressWarnings("unchecked") Map.Entry<String, String> stringToStringMap = (Map.Entry<String, String>)theEObject;
+				T1 result = caseStringToStringMap(stringToStringMap);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1356,6 +1363,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseTestHarness(MTestHarness object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>String To String Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>String To String Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseStringToStringMap(Map.Entry<String, String> object) {
 		return null;
 	}
 

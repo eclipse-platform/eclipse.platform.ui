@@ -34,8 +34,10 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -43,6 +45,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -58,6 +61,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getPersistedState <em>Persisted State</em>}</li>
@@ -165,6 +169,16 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
@@ -670,6 +684,18 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.TEST_HARNESS__VARIABLES);
 		}
 		return variables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.TEST_HARNESS__PROPERTIES);
+		}
+		return properties;
 	}
 
 	/**
@@ -1192,6 +1218,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		switch (featureID) {
 			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
 				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
@@ -1232,6 +1260,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getContext();
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 			case MApplicationPackage.TEST_HARNESS__URI:
 				return getURI();
 			case MApplicationPackage.TEST_HARNESS__OBJECT:
@@ -1306,6 +1337,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__URI:
 				setURI((String)newValue);
@@ -1401,6 +1435,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
+				getProperties().clear();
+				return;
 			case MApplicationPackage.TEST_HARNESS__URI:
 				setURI(URI_EDEFAULT);
 				return;
@@ -1489,6 +1526,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.TEST_HARNESS__URI:
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case MApplicationPackage.TEST_HARNESS__OBJECT:
@@ -1556,6 +1595,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
 				case MApplicationPackage.TEST_HARNESS__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				case MApplicationPackage.TEST_HARNESS__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -1643,6 +1683,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.TEST_HARNESS__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.TEST_HARNESS__VARIABLES;
+				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.TEST_HARNESS__PROPERTIES;
 				default: return -1;
 			}
 		}

@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -466,6 +467,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass stringToStringMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum itemTypeEEnum = null;
 
 	/**
@@ -800,6 +808,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EAttribute getContext_Variables() {
 		return (EAttribute)contextEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getContext_Properties() {
+		return (EReference)contextEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1581,6 +1598,33 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getStringToStringMap() {
+		return stringToStringMapEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStringToStringMap_Key() {
+		return (EAttribute)stringToStringMapEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStringToStringMap_Value() {
+		return (EAttribute)stringToStringMapEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getItemType() {
 		return itemTypeEEnum;
 	}
@@ -1642,6 +1686,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		// Create classes and their features
 		v____________ConstantsAndTypes_____________VEClass = createEClass(VCONSTANTS_AND_TYPES_V);
 
+		stringToStringMapEClass = createEClass(STRING_TO_STRING_MAP);
+		createEAttribute(stringToStringMapEClass, STRING_TO_STRING_MAP__KEY);
+		createEAttribute(stringToStringMapEClass, STRING_TO_STRING_MAP__VALUE);
+
 		v____________Abstract_____________VEClass = createEClass(VABSTRACT_V);
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
@@ -1676,6 +1724,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		contextEClass = createEClass(CONTEXT);
 		createEAttribute(contextEClass, CONTEXT__CONTEXT);
 		createEAttribute(contextEClass, CONTEXT__VARIABLES);
+		createEReference(contextEClass, CONTEXT__PROPERTIES);
 
 		v_________AbstractContainers__________VEClass = createEClass(VABSTRACT_CONTAINERS_V);
 
@@ -2016,6 +2065,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		// Initialize classes and features; add operations and parameters
 		initEClass(v____________ConstantsAndTypes_____________VEClass, MV____________ConstantsAndTypes_____________V.class, "V____________ConstantsAndTypes_____________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
+		initEClass(stringToStringMapEClass, Map.Entry.class, "StringToStringMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getStringToStringMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getStringToStringMap_Value(), ecorePackage.getEString(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(v____________Abstract_____________VEClass, MV____________Abstract_____________V.class, "V____________Abstract_____________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2053,6 +2106,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContext_Context(), this.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+		initEReference(getContext_Properties(), this.getStringToStringMap(), null, "properties", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v_________AbstractContainers__________VEClass, MV_________AbstractContainers__________V.class, "V_________AbstractContainers__________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

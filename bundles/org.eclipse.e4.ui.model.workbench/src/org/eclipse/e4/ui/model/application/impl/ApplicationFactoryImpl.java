@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Map;
 import org.eclipse.e4.ui.model.application.*;
 
 import org.eclipse.emf.ecore.EClass;
@@ -65,6 +66,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case MApplicationPackage.STRING_TO_STRING_MAP: return (EObject)createStringToStringMap();
 			case MApplicationPackage.ITEM: return (EObject)createItem();
 			case MApplicationPackage.MENU_ITEM: return (EObject)createMenuItem();
 			case MApplicationPackage.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
@@ -421,6 +423,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MTestHarness createTestHarness() {
 		TestHarnessImpl testHarness = new TestHarnessImpl();
 		return testHarness;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, String> createStringToStringMap() {
+		StringToStringMapImpl stringToStringMap = new StringToStringMapImpl();
+		return stringToStringMap;
 	}
 
 	/**
