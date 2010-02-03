@@ -13,12 +13,12 @@ package org.eclipse.e4.ui.tests.application;
 
 import javax.inject.Inject;
 
-import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 
 public class ClientEditor {
 
 	@Inject
-	private MSaveablePart saveablePart;
+	private MDirtyable dirtyable;
 
 	private boolean saveCalled = false;
 
@@ -34,7 +34,7 @@ public class ClientEditor {
 			throw new RuntimeException();
 		}
 
-		saveablePart.setDirty(false);
+		dirtyable.setDirty(false);
 	}
 
 	public boolean wasSaveCalled() {

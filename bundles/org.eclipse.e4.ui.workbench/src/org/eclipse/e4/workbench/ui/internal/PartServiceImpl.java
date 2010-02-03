@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -399,21 +398,6 @@ public class PartServiceImpl implements EPartService {
 		if (isInContainer(part)) {
 			part.setToBeRendered(false);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.workbench.modeling.EPartService#getSaveableParts()
-	 */
-	public Collection<MSaveablePart> getSaveableParts() {
-		List<MSaveablePart> saveableParts = new ArrayList<MSaveablePart>();
-		for (MPart part : getParts()) {
-			if (part instanceof MSaveablePart) {
-				saveableParts.add((MSaveablePart) part);
-			}
-		}
-		return saveableParts;
 	}
 
 	/*

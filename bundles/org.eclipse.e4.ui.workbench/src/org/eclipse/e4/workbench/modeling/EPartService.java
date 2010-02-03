@@ -12,7 +12,6 @@ package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 
 /**
  * The part service provides clients with the functionalities of showing and hiding parts. Part
@@ -146,15 +145,6 @@ public interface EPartService {
 	 *            the part to hide
 	 */
 	public void hidePart(MPart part);
-
-	/**
-	 * Returns a collection of all the saveable parts that are being managed by this service.
-	 * 
-	 * 
-	 * @return a collection of saveable parts that are being managed by this service, never
-	 *         <code>null</code>
-	 */
-	public Collection<MSaveablePart> getSaveableParts();
 
 	/**
 	 * Returns a collection of all the dirty parts that are being managed by this service.

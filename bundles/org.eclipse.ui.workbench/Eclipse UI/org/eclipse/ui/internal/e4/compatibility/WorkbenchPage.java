@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -693,10 +692,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 					if (saveable.isDirty()) {
 						if (closing) {
 							if (saveable.isSaveOnCloseNeeded()) {
-								partService.savePart((MSaveablePart) part, confirm);
+								partService.savePart(part, confirm);
 							}
 						} else {
-							partService.savePart((MSaveablePart) part, confirm);
+							partService.savePart(part, confirm);
 						}
 					}
 					return true;

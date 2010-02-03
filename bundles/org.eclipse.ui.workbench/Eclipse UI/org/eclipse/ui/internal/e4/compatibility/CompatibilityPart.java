@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
@@ -72,8 +72,8 @@ public abstract class CompatibilityPart {
 					part.setLabel(wrapped.getTitle());
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
-					if (part instanceof MSaveablePart && wrapped instanceof ISaveablePart) {
-						((MSaveablePart) part).setDirty(((ISaveablePart) wrapped).isDirty());
+					if (part instanceof MDirtyable && wrapped instanceof ISaveablePart) {
+						((MDirtyable) part).setDirty(((ISaveablePart) wrapped).isDirty());
 					}
 					break;
 				}

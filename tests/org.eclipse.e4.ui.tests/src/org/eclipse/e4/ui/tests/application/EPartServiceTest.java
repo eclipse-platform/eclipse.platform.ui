@@ -1412,57 +1412,6 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(part2.isToBeRendered());
 	}
 
-	public void testGetSaveableParts() {
-		MApplication application = createApplication(1, new String[1][0]);
-		MWindow window = application.getChildren().get(0);
-
-		getEngine().createGui(window);
-
-		EPartService partService = (EPartService) window.getContext().get(
-				EPartService.class.getName());
-		Collection<MSaveablePart> saveableParts = partService
-				.getSaveableParts();
-		assertNotNull(saveableParts);
-		assertEquals(0, saveableParts.size());
-	}
-
-	public void testGetSaveableParts2() {
-		MApplication application = createApplication("partId");
-		MWindow window = application.getChildren().get(0);
-
-		getEngine().createGui(window);
-
-		EPartService partService = (EPartService) window.getContext().get(
-				EPartService.class.getName());
-		Collection<MSaveablePart> saveableParts = partService
-				.getSaveableParts();
-		assertNotNull(saveableParts);
-		assertEquals(0, saveableParts.size());
-	}
-
-	public void testGetSaveableParts3() {
-		MApplication application = MApplicationFactory.eINSTANCE
-				.createApplication();
-
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
-				.createSaveablePart();
-		window.getChildren().add(saveablePart);
-
-		// setup the context
-		initialize(applicationContext, application);
-
-		getEngine().createGui(window);
-
-		EPartService partService = (EPartService) window.getContext().get(
-				EPartService.class.getName());
-		Collection<MSaveablePart> saveableParts = partService
-				.getSaveableParts();
-		assertNotNull(saveableParts);
-		assertEquals(1, saveableParts.size());
-	}
-
 	public void testGetDirtyParts() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
