@@ -13,6 +13,9 @@ package org.eclipse.ui.tests.menus;
 
 import java.lang.reflect.Field;
 
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -26,6 +29,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -65,6 +69,36 @@ public class MenuPopulationTest extends MenuTestCase {
 	}
 
 	
+	public void testMenuServiceContribution() {
+		IMenuService ms = (IMenuService) PlatformUI.getWorkbench().getService(IMenuService.class);
+		AbstractContributionFactory factory = new AbstractContributionFactory("menu:org.eclipse.ui.main.menu?after=file", "205747") {
+			public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
+				MenuManager manager = new MenuManager("&LoFile", "lofile");
+				CommandContributionItem cci = new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, "my.about",
+						IWorkbenchCommandConstants.HELP_ABOUT, CommandContributionItem.STYLE_PUSH));
+				manager.add(cci);
+				additions.addContributionItem(manager, null);
+			}
+		};
+		
+		final boolean []errorLogged = new boolean[] {false};
+		Platform.addLogListener(new ILogListener() {
+			
+			public void logging(IStatus status, String plugin) {
+				if("org.eclipse.ui.workbench".equals(status.getPlugin()) 
+						&& status.getSeverity() == IStatus.ERROR
+						&& status.getException() instanceof IndexOutOfBoundsException) {
+					errorLogged[0] = true;
+				}
+			}
+		});
+		
+		ms.addContributionFactory(factory);
+		
+		assertFalse(errorLogged[0]);
+		
+		ms.removeContributionFactory(factory);
+	}
 
 	
 	public void testViewPopulation() throws Exception {
