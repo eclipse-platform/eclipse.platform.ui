@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.keys;
 
-import org.eclipse.ui.internal.keys.CompactKeyFormatter;
-import org.eclipse.ui.internal.keys.EmacsKeyFormatter;
-import org.eclipse.ui.internal.keys.FormalKeyFormatter;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * A cache for formatters. It keeps a few instances of pre-defined instances of
@@ -25,21 +23,15 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * @see org.eclipse.ui.keys.IKeyFormatter
  */
 public final class KeyFormatterFactory {
-    private static final IKeyFormatter COMPACT_KEY_FORMATTER = new CompactKeyFormatter();
-
-    private static final IKeyFormatter FORMAL_KEY_FORMATTER = new FormalKeyFormatter();
-
-    private static final IKeyFormatter EMACS_KEY_FORMATTER = new EmacsKeyFormatter();
-
-    private static IKeyFormatter defaultKeyFormatter = FORMAL_KEY_FORMATTER;
-
     /**
      * Provides an instance of <code>CompactKeyFormatter</code>.
      * 
      * @return The compact formatter; never <code>null</code>.
      */
     public static final IKeyFormatter getCompactKeyFormatter() {
-        return COMPACT_KEY_FORMATTER;
+		// TODO compat: getCompactKeyFormatter
+		E4Util.unsupported("getCompactKeyFormatter"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -48,7 +40,9 @@ public final class KeyFormatterFactory {
      * @return The default formatter; never <code>null</code>.
      */
     public static IKeyFormatter getDefault() {
-        return defaultKeyFormatter;
+		// TODO compat: getDefault
+		E4Util.unsupported("getDefault"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -57,7 +51,9 @@ public final class KeyFormatterFactory {
      * @return The Xemacs formatter; never <code>null</code>.
      */
     public static IKeyFormatter getEmacsKeyFormatter() {
-        return EMACS_KEY_FORMATTER;
+		// TODO compat: getEmacsKeyFormatter
+		E4Util.unsupported("getEmacsKeyFormatter"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -66,7 +62,9 @@ public final class KeyFormatterFactory {
      * @return The formal formatter; never <code>null</code>.
      */
     public static IKeyFormatter getFormalKeyFormatter() {
-        return FORMAL_KEY_FORMATTER;
+		// TODO compat: getFormalKeyFormatter
+		E4Util.unsupported("getFormalKeyFormatter"); //$NON-NLS-1$
+		return null;
     }
 
     /**
@@ -76,11 +74,8 @@ public final class KeyFormatterFactory {
      *            the default key formatter. Must not be <code>null</code>.
      */
     public static void setDefault(IKeyFormatter defaultKeyFormatter) {
-        if (defaultKeyFormatter == null) {
-			throw new NullPointerException();
-		}
-
-        KeyFormatterFactory.defaultKeyFormatter = defaultKeyFormatter;
+		// TODO compat: setDefault
+		E4Util.unsupported("setDefault"); //$NON-NLS-1$
     }
 
     private KeyFormatterFactory() {

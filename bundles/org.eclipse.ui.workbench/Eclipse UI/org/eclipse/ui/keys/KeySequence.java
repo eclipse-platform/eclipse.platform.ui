@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -86,6 +86,8 @@ public final class KeySequence implements Comparable {
      *         Guaranteed not to be <code>null</code>.
      */
     public static KeySequence getInstance() {
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance"); //$NON-NLS-1$
         return EMPTY_KEY_SEQUENCE;
     }
 
@@ -107,6 +109,8 @@ public final class KeySequence implements Comparable {
 			throw new NullPointerException();
 		}
 
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(keySequence, keyStroke)"); //$NON-NLS-1$
         List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
         keyStrokes.add(keyStroke);
         return new KeySequence(keyStrokes);
@@ -121,6 +125,8 @@ public final class KeySequence implements Comparable {
      * @return a key sequence. Guaranteed not to be <code>null</code>.
      */
     public static KeySequence getInstance(KeyStroke keyStroke) {
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(keyStroke)"); //$NON-NLS-1$
         return new KeySequence(Collections.singletonList(keyStroke));
     }
 
@@ -135,6 +141,8 @@ public final class KeySequence implements Comparable {
      * @return a key sequence. Guaranteed not to be <code>null</code>.
      */
     public static KeySequence getInstance(KeyStroke[] keyStrokes) {
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(keyStrokes)"); //$NON-NLS-1$
         return new KeySequence(Arrays.asList(keyStrokes));
     }
 
@@ -149,6 +157,8 @@ public final class KeySequence implements Comparable {
      * @return a key sequence. Guaranteed not to be <code>null</code>.
      */
     public static KeySequence getInstance(List keyStrokes) {
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(keyStrokes)"); //$NON-NLS-1$
         return new KeySequence(keyStrokes);
     }
 	
@@ -163,6 +173,8 @@ public final class KeySequence implements Comparable {
 	 */
 	public static final KeySequence getInstance(
 			final org.eclipse.jface.bindings.keys.KeySequence newKeySequence) {
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(newKeySequence)"); //$NON-NLS-1$
 		final org.eclipse.jface.bindings.keys.KeyStroke[] newKeyStrokes = newKeySequence
 				.getKeyStrokes();
 		final int newKeyStrokesCount = newKeyStrokes.length;
@@ -195,6 +207,8 @@ public final class KeySequence implements Comparable {
 			throw new NullPointerException();
 		}
 
+		// TODO compat: what to do about this deprecated interface
+		E4Util.unsupported("getInstance(string)"); //$NON-NLS-1$
         List keyStrokes = new ArrayList();
         StringTokenizer stringTokenizer = new StringTokenizer(string,
                 KEY_STROKE_DELIMITERS);
