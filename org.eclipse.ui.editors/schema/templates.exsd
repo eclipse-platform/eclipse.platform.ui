@@ -259,7 +259,16 @@
          <attribute name="file" type="string" use="required">
             <annotation>
                <documentation>
-                  the XML file to import templates from
+                  the XML file to import templates from. It defines at least one &amp;lt;template&amp;gt; element inside &amp;lt;templates&amp;gt;...&amp;lt;/templates&amp;gt;, with the following attributes:
+&lt;ul&gt;
+	&lt;li&gt;id - the uniqe id&lt;/li&gt;
+	&lt;li&gt;name - the name&lt;/li&gt;
+	&lt;li&gt;context - the context id&lt;/li&gt;
+	&lt;li&gt;description - the description (optional, default: &quot;&quot;)&lt;/li&gt;
+	&lt;li&gt;autoinsert (optional, default: true)&lt;/li&gt;
+	&lt;li&gt;enabled (optional, default: true)&lt;/li&gt;
+&lt;/ul&gt;
+See above template element for more details about those attributes.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -376,7 +385,7 @@ then the translations must go into:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2009 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2010 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
