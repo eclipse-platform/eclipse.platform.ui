@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [210664] descriptionChanged(): ignore LF style
+ *     Martin Oberhuber (Wind River) - [233939] findFilesForLocation() with symlinks
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -50,7 +51,18 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * </p>
 	 */
 	protected ArrayList allPathsForLocation(URI inputLocation) {
-		URI location = FileUtil.canonicalURI(inputLocation);
+		URI canonicalLocation = FileUtil.canonicalURI(inputLocation);
+		// First, try the canonical version of the inputLocation.
+		// If the inputLocation is different from the canonical version, it will be tried second
+		ArrayList results = allPathsForLocationNonCanonical(canonicalLocation);
+		if(results.size()==0 && canonicalLocation!=inputLocation) {
+			results = allPathsForLocationNonCanonical(inputLocation);
+		}
+		return results;
+	}
+	
+	private ArrayList allPathsForLocationNonCanonical(URI inputLocation) {
+		URI location = inputLocation;
 		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
 		final IWorkspaceRoot root = getWorkspace().getRoot();
 		final ArrayList results = new ArrayList();
