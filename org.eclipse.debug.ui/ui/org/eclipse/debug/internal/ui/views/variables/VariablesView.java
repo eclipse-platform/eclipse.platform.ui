@@ -37,7 +37,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
 import org.eclipse.debug.internal.ui.actions.ConfigureColumnsAction;
@@ -93,12 +92,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -376,12 +373,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Presentation context for this view.
 	 */
 	private IPresentationContext fPresentationContext;
-
-	/**
-	 * Parent {@link ViewForm} to hold all detail panes, with a standard LAF border
-	 * @since 3.6
-	 */
-	private ViewForm fDetailComposite = null;
 	
 	/**
 	 * Remove myself as a selection listener
@@ -478,9 +469,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
 
-		fDetailComposite = SWTFactory.createViewform(fSashForm, SWT.FLAT | SWT.BORDER, 1, 1, GridData.FILL_BOTH, 0, 0);
-		fDetailComposite.setTopLeft(null);
-		fDetailComposite.setContent(SWTFactory.createComposite(fDetailComposite, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0));
 		fSelectionProvider = new SelectionProviderWrapper(variablesViewer);
 		getSite().setSelectionProvider(fSelectionProvider);
 
@@ -987,7 +975,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 	 */
 	public Composite getParentComposite() {
-		return (Composite) fDetailComposite.getContent();
+		return fSashForm;
 	}
 
 	/* (non-Javadoc)
