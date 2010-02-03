@@ -57,7 +57,6 @@ import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -394,12 +393,13 @@ public class CommandContributionItem extends ContributionItem {
 		if (!(handler instanceof IElementUpdater))
 			return true;
 
+		// TODO compat: how are we proxying client contributions
 		// special case, if its HandlerProxy, then check the actual handler
-		if (handler instanceof HandlerProxy) {
-			HandlerProxy handlerProxy = (HandlerProxy) handler;
-			IHandler actualHandler = handlerProxy.getHandler();
-			return shouldRestoreAppearance(actualHandler);
-		}
+		// if (handler instanceof HandlerProxy) {
+		// HandlerProxy handlerProxy = (HandlerProxy) handler;
+		// IHandler actualHandler = handlerProxy.getHandler();
+		// return shouldRestoreAppearance(actualHandler);
+		// }
 		return false;
 	}
 
