@@ -31,11 +31,14 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -87,6 +90,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Inject
 	private MWindow window;
+
+	@Inject
+	private EModelService modelService;
 
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
 	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
@@ -759,9 +765,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		// TODO Auto-generated method stub
 		MPerspective modelPerspective = MApplicationFactory.eINSTANCE.createPerspective();
+		modelPerspective.setId(perspective.getId());
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		factory.createInitialLayout(new ModeledPageLayout(application, modelPerspective,
+		factory.createInitialLayout(new ModeledPageLayout(application, modelService, window,
+				modelPerspective,
 				perspective));
+
+		window.getChildren().add(modelPerspective);
 	}
 
 	/* (non-Javadoc)
@@ -823,6 +833,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 				break;
 			}
 
+			if (part == null) {
+				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple,
+						viewId));
+			}
+
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
 			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
@@ -830,23 +845,37 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return compatibilityView.getView();
 		}
 
+		boolean rendered = part.isToBeRendered();
+
+		part = partService.showPart(viewId, convert(mode));
+		if (part == null) {
+			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple, viewId));
+		}
+
+		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+
+		if (mode == VIEW_ACTIVATE) {
+			compatibilityView.delegateSetFocus();
+		}
+
+		if (!rendered) {
+			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
+		}
+
+		compatibilityView = (CompatibilityView) part.getObject();
+		return compatibilityView.getView();
+	}
+
+	private PartState convert(int mode) {
 		switch (mode) {
 		case VIEW_ACTIVATE:
-			part = partService.showPart(viewId, EPartService.PartState.ACTIVATE);
-			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
-			compatibilityView.delegateSetFocus();
-			return compatibilityView.getView();
+			return PartState.ACTIVATE;
 		case VIEW_VISIBLE:
-			part = partService.showPart(viewId, EPartService.PartState.VISIBLE);
-			compatibilityView = (CompatibilityView) part.getObject();
-			return compatibilityView.getView();
+			return PartState.VISIBLE;
 		case VIEW_CREATE:
-			part = partService.showPart(viewId, EPartService.PartState.CREATE);
-			compatibilityView = (CompatibilityView) part.getObject();
-			return compatibilityView.getView();
-		default:
-			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+			return PartState.CREATE;
 		}
+		throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
 	}
 
 	/* (non-Javadoc)

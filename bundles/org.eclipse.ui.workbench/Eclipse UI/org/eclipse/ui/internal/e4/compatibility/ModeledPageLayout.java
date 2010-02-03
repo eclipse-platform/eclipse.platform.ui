@@ -22,7 +22,8 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
@@ -35,30 +36,37 @@ import org.eclipse.ui.IViewLayout;
 public class ModeledPageLayout implements IPageLayout {
 
 	private MApplication application;
+	EModelService modelService;
+	MWindow window;
 	private MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
+
+	private MPartStack editorStack;
+
 	private ArrayList newWizardShortcuts = new ArrayList();
 	private ArrayList perspectiveShortcut = new ArrayList();
 	private ArrayList showInPart = new ArrayList();
 	private ArrayList showViewShortcut = new ArrayList();
 	private ArrayList actionSet = new ArrayList();
 
-	public ModeledPageLayout(MApplication application, MPerspective perspModel,
+	public ModeledPageLayout(MApplication application, EModelService modelService, MWindow window,
+			MPerspective perspModel,
 			IPerspectiveDescriptor descriptor) {
 		this.application = application;
+		this.modelService = modelService;
+		this.window = window;
 		// Create the editor area stack
 		this.perspModel = perspModel;
 		this.descriptor = descriptor;
 
 		MPartSashContainer esc = MApplicationFactory.eINSTANCE.createPartSashContainer();
-		MPartStack editorArea = MApplicationFactory.eINSTANCE.createPartStack();
-		esc.getChildren().add(editorArea);
-		editorArea.setId(getEditorArea());
+		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
+		esc.getChildren().add(editorStack);
 		esc.setId(getEditorArea());
 
 		// editorArea.setName("Editor Area");
 
-		// perspModel.getChildren().add(esc);
+		perspModel.getChildren().add(esc);
 	}
 
 	public MPerspective getModel() {
@@ -182,6 +190,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void setEditorAreaVisible(boolean showEditorArea) {
+		editorStack.setToBeRendered(showEditorArea);
 	}
 
 	public void setEditorReuseThreshold(int openEditors) {
@@ -210,7 +219,7 @@ public class ModeledPageLayout implements IPageLayout {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getId().equals(id)) {
 				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
-				part.setVisible(visible);
+				part.setToBeRendered(visible);
 				return part;
 			}
 		}
@@ -267,9 +276,10 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MPart insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
-		MUIElement refModel = findPart(perspModel, refId);
-		if (refModel == null || !(refModel instanceof MPart))
-			return null;
+		MUIElement refModel = findElement(perspModel, refId);
+		if (refModel instanceof MPart) {
+			refModel = refModel.getParent();
+		}
 
 		MPart viewModel = createViewModel(application, viewId, visible);
 
@@ -287,7 +297,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MPartStack insertStack(String stackId, int relationship,
 			float ratio, String refId, boolean visible) {
-		MUIElement refModel = findPart(perspModel, refId);
+		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel == null || !(refModel instanceof MPart)) {
 			// If the 'refModel' is -not- a stack then find one
 			// This covers cases where the defining layout is adding
@@ -402,38 +412,13 @@ public class ModeledPageLayout implements IPageLayout {
 		insert(toInsert, relTo, swtSide, pct);
 	}
 
-	public static MUIElement findElementById(MUIElement element, String id) {
-		if (id == null || id.length() == 0)
-			return null;
-
-		// is it me?
-		if (id.equals(element.getId()))
-			return element;
-
-		// Recurse if this is a container
-		if (element instanceof MElementContainer) {
-			EList<MUIElement> children = ((MElementContainer<MUIElement>) element)
-					.getChildren();
-			MUIElement foundElement = null;
-			for (MUIElement childME : children) {
-				foundElement = findElementById(childME, id);
-				if (foundElement != null)
-					return foundElement;
-			}
-		}
-
-		return null;
+	private MUIElement findElement(MUIElement toSearch, String id) {
+		return modelService.find(id, toSearch);
 	}
 
-	public static MPart findPart(MUIElement toSearch, String id) {
-		if (toSearch == null)
-			return null;
-
-		MUIElement found = findElementById(toSearch, id);
-		if (found instanceof MPart)
-			return (MPart) found;
-
-		return null;
+	private MPart findPart(MUIElement toSearch, String id) {
+		MUIElement element = modelService.find(id, toSearch);
+		return element instanceof MPart ? (MPart) element : null;
 	}
 
 	/**
