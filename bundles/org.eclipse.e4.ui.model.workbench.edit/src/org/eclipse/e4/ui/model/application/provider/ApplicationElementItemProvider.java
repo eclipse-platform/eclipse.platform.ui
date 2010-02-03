@@ -69,7 +69,7 @@ public class ApplicationElementItemProvider
 			super.getPropertyDescriptors(object);
 
 			addIdPropertyDescriptor(object);
-			addStylePropertyDescriptor(object);
+			addTagsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -97,19 +97,19 @@ public class ApplicationElementItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Style feature.
+	 * This adds a property descriptor for the Tags feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addStylePropertyDescriptor(Object object) {
+	protected void addTagsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_style_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_style_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__STYLE,
+				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -156,7 +156,7 @@ public class ApplicationElementItemProvider
 
 		switch (notification.getFeatureID(MApplicationElement.class)) {
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
-			case MApplicationPackage.APPLICATION_ELEMENT__STYLE:
+			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

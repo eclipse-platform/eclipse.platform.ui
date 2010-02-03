@@ -271,11 +271,6 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createSaveablePart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPartStack()));
 
 		newChildDescriptors.add
@@ -307,11 +302,6 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createEditor()));
 
 		newChildDescriptors.add
 			(createChildParameter

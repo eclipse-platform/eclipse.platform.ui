@@ -80,6 +80,29 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StringToStringMapItemProvider stringToStringMapItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link java.util.Map.Entry}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStringToStringMapAdapter() {
+		if (stringToStringMapItemProvider == null) {
+			stringToStringMapItemProvider = new StringToStringMapItemProvider(this);
+		}
+
+		return stringToStringMapItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MItem} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -330,29 +353,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		}
 
 		return partDescriptorContainerItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MSaveablePart} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected SaveablePartItemProvider saveablePartItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MSaveablePart}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createSaveablePartAdapter() {
-		if (saveablePartItemProvider == null) {
-			saveablePartItemProvider = new SaveablePartItemProvider(this);
-		}
-
-		return saveablePartItemProvider;
 	}
 
 	/**
@@ -678,29 +678,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MEditor} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected EditorItemProvider editorItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MEditor}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createEditorAdapter() {
-		if (editorItemProvider == null) {
-			editorItemProvider = new EditorItemProvider(this);
-		}
-
-		return editorItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MPlaceholder} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -891,6 +868,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * @generated
 	 */
 	public void dispose() {
+		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
 		if (itemItemProvider != null) itemItemProvider.dispose();
 		if (menuItemItemProvider != null) menuItemItemProvider.dispose();
 		if (directMenuItemItemProvider != null) directMenuItemItemProvider.dispose();
@@ -902,7 +880,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (partItemProvider != null) partItemProvider.dispose();
 		if (partDescriptorItemProvider != null) partDescriptorItemProvider.dispose();
 		if (partDescriptorContainerItemProvider != null) partDescriptorContainerItemProvider.dispose();
-		if (saveablePartItemProvider != null) saveablePartItemProvider.dispose();
 		if (partStackItemProvider != null) partStackItemProvider.dispose();
 		if (partSashContainerItemProvider != null) partSashContainerItemProvider.dispose();
 		if (windowItemProvider != null) windowItemProvider.dispose();
@@ -917,7 +894,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (keyBindingItemProvider != null) keyBindingItemProvider.dispose();
 		if (parameterItemProvider != null) parameterItemProvider.dispose();
 		if (windowTrimItemProvider != null) windowTrimItemProvider.dispose();
-		if (editorItemProvider != null) editorItemProvider.dispose();
 		if (placeholderItemProvider != null) placeholderItemProvider.dispose();
 		if (perspectiveItemProvider != null) perspectiveItemProvider.dispose();
 		if (perspectiveStackItemProvider != null) perspectiveStackItemProvider.dispose();

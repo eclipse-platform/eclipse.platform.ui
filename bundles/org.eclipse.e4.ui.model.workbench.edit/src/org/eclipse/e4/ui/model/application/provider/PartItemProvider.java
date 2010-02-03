@@ -79,6 +79,7 @@ public class PartItemProvider
 			addLabelPropertyDescriptor(object);
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
+			addDirtyPropertyDescriptor(object);
 			addMenusPropertyDescriptor(object);
 			addToolbarPropertyDescriptor(object);
 		}
@@ -328,6 +329,28 @@ public class PartItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Dirty feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDirtyPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Dirtyable_dirty_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Dirtyable_dirty_feature", "_UI_Dirtyable_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.DIRTYABLE__DIRTY,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This adds a property descriptor for the Menus feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -383,6 +406,7 @@ public class PartItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
+			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.PART__MENUS);
@@ -452,8 +476,10 @@ public class PartItemProvider
 			case MApplicationPackage.PART__LABEL:
 			case MApplicationPackage.PART__ICON_URI:
 			case MApplicationPackage.PART__TOOLTIP:
+			case MApplicationPackage.PART__DIRTY:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
+			case MApplicationPackage.PART__PROPERTIES:
 			case MApplicationPackage.PART__HANDLERS:
 			case MApplicationPackage.PART__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -472,6 +498,11 @@ public class PartItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.CONTEXT__PROPERTIES,
+				 MApplicationFactory.eINSTANCE.create(MApplicationPackage.Literals.STRING_TO_STRING_MAP)));
 
 		newChildDescriptors.add
 			(createChildParameter

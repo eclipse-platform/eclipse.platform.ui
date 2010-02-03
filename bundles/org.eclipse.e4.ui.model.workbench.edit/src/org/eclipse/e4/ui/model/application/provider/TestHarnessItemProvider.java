@@ -81,7 +81,7 @@ public class TestHarnessItemProvider
 			addOnTopPropertyDescriptor(object);
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
-			addActiveChildPropertyDescriptor(object);
+			addSelectedElementPropertyDescriptor(object);
 			addTagPropertyDescriptor(object);
 			addValuePropertyDescriptor(object);
 			addInputURIPropertyDescriptor(object);
@@ -383,19 +383,19 @@ public class TestHarnessItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Active Child feature.
+	 * This adds a property descriptor for the Selected Element feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addActiveChildPropertyDescriptor(Object object) {
+	protected void addSelectedElementPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ElementContainer_activeChild_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_activeChild_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD,
+				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
 				 true,
 				 false,
 				 true,
@@ -637,6 +637,7 @@ public class TestHarnessItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.COMMAND__PARAMETERS);
+			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 		}
 		return childrenFeatures;
@@ -718,6 +719,7 @@ public class TestHarnessItemProvider
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -740,6 +742,11 @@ public class TestHarnessItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.COMMAND__PARAMETERS,
 				 MApplicationFactory.eINSTANCE.createCommandParameter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.CONTEXT__PROPERTIES,
+				 MApplicationFactory.eINSTANCE.create(MApplicationPackage.Literals.STRING_TO_STRING_MAP)));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -794,11 +801,6 @@ public class TestHarnessItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createSaveablePart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPartStack()));
 
 		newChildDescriptors.add
@@ -830,11 +832,6 @@ public class TestHarnessItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createEditor()));
 
 		newChildDescriptors.add
 			(createChildParameter

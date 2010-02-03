@@ -73,7 +73,7 @@ public class KeyBindingItemProvider
 
 			addKeySequencePropertyDescriptor(object);
 			addIdPropertyDescriptor(object);
-			addStylePropertyDescriptor(object);
+			addTagsPropertyDescriptor(object);
 			addCommandPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -124,19 +124,19 @@ public class KeyBindingItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Style feature.
+	 * This adds a property descriptor for the Tags feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addStylePropertyDescriptor(Object object) {
+	protected void addTagsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_style_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_style_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__STYLE,
+				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -236,7 +236,7 @@ public class KeyBindingItemProvider
 		switch (notification.getFeatureID(MKeyBinding.class)) {
 			case MApplicationPackage.KEY_BINDING__KEY_SEQUENCE:
 			case MApplicationPackage.KEY_BINDING__ID:
-			case MApplicationPackage.KEY_BINDING__STYLE:
+			case MApplicationPackage.KEY_BINDING__TAGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.KEY_BINDING__PARAMETERS:

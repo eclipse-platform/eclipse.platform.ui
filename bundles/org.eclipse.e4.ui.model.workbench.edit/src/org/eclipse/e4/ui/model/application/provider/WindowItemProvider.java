@@ -69,14 +69,14 @@ public class WindowItemProvider
 			super.getPropertyDescriptors(object);
 
 			addIdPropertyDescriptor(object);
-			addStylePropertyDescriptor(object);
+			addTagsPropertyDescriptor(object);
 			addWidgetPropertyDescriptor(object);
 			addRendererPropertyDescriptor(object);
 			addToBeRenderedPropertyDescriptor(object);
 			addOnTopPropertyDescriptor(object);
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
-			addActiveChildPropertyDescriptor(object);
+			addSelectedElementPropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
 			addXPropertyDescriptor(object);
@@ -110,19 +110,19 @@ public class WindowItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Style feature.
+	 * This adds a property descriptor for the Tags feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addStylePropertyDescriptor(Object object) {
+	protected void addTagsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_style_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_style_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__STYLE,
+				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -264,19 +264,19 @@ public class WindowItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Active Child feature.
+	 * This adds a property descriptor for the Selected Element feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addActiveChildPropertyDescriptor(Object object) {
+	protected void addSelectedElementPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ElementContainer_activeChild_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_activeChild_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD,
+				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
 				 true,
 				 false,
 				 true,
@@ -430,6 +430,7 @@ public class WindowItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.WINDOW__MAIN_MENU);
@@ -488,7 +489,7 @@ public class WindowItemProvider
 
 		switch (notification.getFeatureID(MWindow.class)) {
 			case MApplicationPackage.WINDOW__ID:
-			case MApplicationPackage.WINDOW__STYLE:
+			case MApplicationPackage.WINDOW__TAGS:
 			case MApplicationPackage.WINDOW__WIDGET:
 			case MApplicationPackage.WINDOW__RENDERER:
 			case MApplicationPackage.WINDOW__TO_BE_RENDERED:
@@ -504,6 +505,7 @@ public class WindowItemProvider
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.WINDOW__CHILDREN:
+			case MApplicationPackage.WINDOW__PROPERTIES:
 			case MApplicationPackage.WINDOW__HANDLERS:
 			case MApplicationPackage.WINDOW__BINDINGS:
 			case MApplicationPackage.WINDOW__MAIN_MENU:
@@ -577,11 +579,6 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createSaveablePart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPartStack()));
 
 		newChildDescriptors.add
@@ -617,11 +614,6 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createEditor()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add
@@ -638,6 +630,11 @@ public class WindowItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createTestHarness()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.CONTEXT__PROPERTIES,
+				 MApplicationFactory.eINSTANCE.create(MApplicationPackage.Literals.STRING_TO_STRING_MAP)));
 
 		newChildDescriptors.add
 			(createChildParameter

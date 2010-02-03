@@ -80,7 +80,7 @@ public class DirectToolItemItemProvider
 			addEnabledPropertyDescriptor(object);
 			addSelectedPropertyDescriptor(object);
 			addTypePropertyDescriptor(object);
-			addActiveChildPropertyDescriptor(object);
+			addSelectedElementPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -350,19 +350,19 @@ public class DirectToolItemItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Active Child feature.
+	 * This adds a property descriptor for the Selected Element feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addActiveChildPropertyDescriptor(Object object) {
+	protected void addSelectedElementPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ElementContainer_activeChild_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_activeChild_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD,
+				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
 				 true,
 				 false,
 				 true,
@@ -523,11 +523,6 @@ public class DirectToolItemItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createSaveablePart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPartStack()));
 
 		newChildDescriptors.add
@@ -559,11 +554,6 @@ public class DirectToolItemItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createEditor()));
 
 		newChildDescriptors.add
 			(createChildParameter
