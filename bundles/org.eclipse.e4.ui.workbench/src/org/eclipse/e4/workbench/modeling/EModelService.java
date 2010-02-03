@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
 /**
- *
+ * @since 1.0
  */
 public interface EModelService {
 	/**
