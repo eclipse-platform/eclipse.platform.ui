@@ -1,0 +1,5 @@
+#Tue Feb 02 23:25:15 MST 2010
+eclipse.preferences.version=1
+org.moreunit.prefixes=
+org.moreunit.unitsourcefolder=org.eclipse.core.databinding.beans\:src\:org.eclipse.jface.tests.databinding\:src
+org.moreunit.useprojectsettings=true
