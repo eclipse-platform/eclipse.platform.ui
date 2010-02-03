@@ -169,7 +169,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getUIElement_Parent();
 		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_ContainerData();
-		} else if (featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME)) {
+		} else if (featureName.equals(ELEMENTCONTAINER_SELECTEDELEMENT_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_SelectedElement();
 		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getCommand_CommandName();
@@ -1331,7 +1331,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	 */
 	private static boolean isIndirectReference(String featureName) {
 		// an ElementContainer has a single reference to its active child
-		return featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME) ||
+		return featureName.equals(ELEMENTCONTAINER_SELECTEDELEMENT_ATTNAME) ||
 		// a Handler has a single reference to a command
 				featureName.equals(HANDLER_COMMAND_ATTNAME) ||
 				// a KeyBinding has a single reference to a command

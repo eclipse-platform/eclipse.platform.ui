@@ -101,9 +101,9 @@ public abstract class ModelReconciler {
 			.getElementContainer_Children().getName();
 
 	/**
-	 * Attribute defined by MElementContainers (value is <code>activeChild</code>).
+	 * Attribute defined by MElementContainers (value is <code>selectedElement</code>).
 	 */
-	public static final String ELEMENTCONTAINER_ACTIVECHILD_ATTNAME = MApplicationPackage.eINSTANCE
+	public static final String ELEMENTCONTAINER_SELECTEDELEMENT_ATTNAME = MApplicationPackage.eINSTANCE
 			.getElementContainer_SelectedElement().getName();
 
 	/**
