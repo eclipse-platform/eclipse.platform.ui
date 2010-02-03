@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -21,12 +20,8 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -44,12 +39,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * The launch configuration to display
 	 */
 	private ILaunchConfiguration fLaunchConfiguration;
-	
-	/**
-	 * Whether to set default values when opened
-	 * @since 3.3
-	 */
-	private boolean fSetDefaultOnOpen = false;
 
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -106,22 +95,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 */
 	protected void initializeContent() {
 		ILaunchConfiguration launchConfiguration = getLaunchConfiguration();
-		if (fSetDefaultOnOpen && launchConfiguration instanceof ILaunchConfigurationWorkingCopy) {
+		if (shouldSetDefaultsOnOpen() && launchConfiguration instanceof ILaunchConfigurationWorkingCopy) {
 			ILaunchConfigurationWorkingCopy wc = (ILaunchConfigurationWorkingCopy) launchConfiguration;
-			try {
-				ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc, getMode());
-				// this only works because this action is only present when the dialog is open
-				ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-				tabGroup.createTabs(dialog, dialog.getMode());
-				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].setLaunchConfigurationDialog(dialog);
-				}
-				tabGroup.setDefaults(wc);
-				tabGroup.dispose();
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
-			}
+			doSetDefaults(wc);
 		}
 		getTabViewer().setInput(launchConfiguration);
 		IStatus status = getInitialStatus();
@@ -255,16 +231,4 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}
-	
-	/**
-	 * Sets whether the tab group should set default values in the launch configuration
-	 * when the dialog is opened. If this method is not called, default values are not
-	 * set.
-	 * 
-	 * @param setDefaults whether to set default values
-	 */
-	public void setDefaultsOnOpen(boolean setDefaults) {
-		fSetDefaultOnOpen = setDefaults;
-	}
-
 }

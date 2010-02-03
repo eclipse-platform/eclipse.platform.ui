@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationEdi
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypeFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
@@ -81,6 +82,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -671,6 +673,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     		dialog.setInitialStatus(status);
     		dialog.setDefaultsOnOpen(setDefaults);
     		return dialog.open();
+    	}
+    	return Window.CANCEL;
+    }
+    
+    /**
+     * Opens the {@link LaunchConfigurationsDialog} on the given selection for the given group. A status
+     * can be provided or <code>null</code> and the dialog can initialize the given {@link ILaunchConfiguration}
+     * to its defaults when opening as well - as long as the specified configuration is an {@link ILaunchConfigurationWorkingCopy}.
+     * @param shell
+     * @param selection
+     * @param groupIdentifier
+     * @param status
+     * @param setDefaults
+     * @return the return code from the dialog.open() call
+     * @since 3.6
+     */
+    public static int openLaunchConfigurationsDialog(Shell shell, IStructuredSelection selection, String groupIdentifier, boolean setDefaults) {
+    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+    	if (group != null) {
+			LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(shell, group);
+			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+			dialog.setInitialSelection(selection);
+			dialog.setDefaultsOnOpen(setDefaults);
+			return dialog.open();
     	}
     	return Window.CANCEL;
     }

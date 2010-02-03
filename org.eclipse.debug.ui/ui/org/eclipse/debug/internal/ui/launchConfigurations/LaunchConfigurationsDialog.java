@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,9 +24,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -227,6 +229,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Set fReservedNames = null;
 	
 	/**
+	 * Whether to set default values when opened
+	 * @since 3.6
+	 */
+	private boolean fSetDefaultOnOpen = false;
+	
+	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
 	 * 
@@ -238,7 +246,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLaunchGroup(group);
 	}
-
+	
 	/**
 	 * Adds content to the dialog area
 	 * 
@@ -1019,10 +1027,45 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
+	 * Sets the default values for the given {@link LaunchConfigurationWorkingCopy}
+	 * @param wc
+	 * @since 3.6
+	 */
+	protected void doSetDefaults(ILaunchConfigurationWorkingCopy wc) {
+		try {
+			ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc, getMode());
+			// this only works because this action is only present when the dialog is open
+			ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+			tabGroup.createTabs(dialog, dialog.getMode());
+			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].setLaunchConfigurationDialog(dialog);
+			}
+			tabGroup.setDefaults(wc);
+			tabGroup.dispose();
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
 	 * Performs initialization of the content by setting the initial tree selection
 	 */
 	protected void initializeContent() {
+		if(fSetDefaultOnOpen) {
+			try {
+				Object o = fInitialSelection.getFirstElement();
+				if(o instanceof ILaunchConfigurationWorkingCopy) {
+					ILaunchConfigurationWorkingCopy wc = (ILaunchConfigurationWorkingCopy) o;
+					doSetDefaults(wc);
+					setInitialSelection(new StructuredSelection(wc.doSave()));
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
 		doInitialTreeSelection();
+		
 		IStatus status = getInitialStatus();
 		if (status != null) {
 			handleStatus(status);
@@ -1288,6 +1331,29 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void setInitialStatus(IStatus status) {
 		fInitialStatus = status;
+	}
+	
+	/**
+	 * Sets whether the tab group should set default values in the launch configuration
+	 * when the dialog is opened. If this method is not called, default values are not
+	 * set.
+	 * 
+	 * @param setDefaults whether to set default values
+	 * @since 3.6
+	 */
+	public void setDefaultsOnOpen(boolean setDefaults) {
+		fSetDefaultOnOpen = setDefaults;
+	}
+	
+	/**
+	 * Returns if the dialog is supposed to be setting the default values for 
+	 * the initial configuration when it opens
+	 * 
+	 * @return <code>true</code> if the defaults should be set on open, <code>false</code> otherwise
+	 * @since 3.6
+	 */
+	public boolean shouldSetDefaultsOnOpen() {
+		return fSetDefaultOnOpen;
 	}
 	
 	/**

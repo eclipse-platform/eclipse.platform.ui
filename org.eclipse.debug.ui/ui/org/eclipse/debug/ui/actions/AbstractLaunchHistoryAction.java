@@ -34,7 +34,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.Action;
@@ -395,10 +394,11 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
 			}
 			if (configuration != null){
-				DebugUITools.openLaunchConfigurationDialogOnGroup(
+				DebugUIPlugin.openLaunchConfigurationsDialog(
 						DebugUIPlugin.getShell(), 
 						new StructuredSelection(configuration), 
-						getLaunchGroupIdentifier());
+						getLaunchGroupIdentifier(),
+						true);
 			}
 			return;
 		}
@@ -469,7 +469,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			try {
 				ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType((String) types.toArray()[0]);
 				ILaunchConfigurationWorkingCopy copy = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2));
-				return copy.doSave();
+				return copy;
 			}
 			catch(CoreException ce) {
 				//do nothing return null
