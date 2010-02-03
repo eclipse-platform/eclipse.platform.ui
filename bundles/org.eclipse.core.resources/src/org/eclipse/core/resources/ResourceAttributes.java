@@ -103,7 +103,7 @@ public class ResourceAttributes {
 	}
 
 	/**
-	 * Returns whether this ResourceAttributes object is marked read only.
+	 * Returns whether this ResourceAttributes object is marked as symbolic link.
 	 *
 	 * @return <code>true</code> if this resource is marked as symbolic link, 
 	 *		<code>false</code> otherwise
