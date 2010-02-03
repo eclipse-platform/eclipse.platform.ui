@@ -30,7 +30,6 @@ import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.MHandledToolItem;
@@ -151,7 +150,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
 		} else if (featureName.equals(APPLICATIONELEMENT_STYLE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getApplicationElement_Style();
+			return MApplicationPackage.eINSTANCE.getApplicationElement_Tags();
 		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplication_Commands();
 		} else if (featureName.equals(UILABEL_LABEL_ATTNAME)) {
@@ -171,7 +170,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_ContainerData();
 		} else if (featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getElementContainer_ActiveChild();
+			return MApplicationPackage.eINSTANCE.getElementContainer_SelectedElement();
 		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getCommand_CommandName();
 		} else if (featureName.equals(COMMAND_DESCRIPTION_ATTNAME)) {
@@ -579,8 +578,6 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static EObject createObject(String type) {
 		if (type.equals(MPart.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPart();
-		} else if (type.equals(MEditor.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createEditor();
 		} else if (type.equals(MCommand.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createCommand();
 		} else if (type.equals(MHandler.class.getSimpleName())) {

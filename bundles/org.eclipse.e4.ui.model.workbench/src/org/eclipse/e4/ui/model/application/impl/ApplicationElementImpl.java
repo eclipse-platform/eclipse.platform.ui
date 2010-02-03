@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,24 +56,24 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String STYLE_EDEFAULT = null;
+	protected static final String TAGS_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected String style = STYLE_EDEFAULT;
+	protected String tags = TAGS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -120,8 +120,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getStyle() {
-		return style;
+	public String getTags() {
+		return tags;
 	}
 
 	/**
@@ -129,11 +129,11 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setStyle(String newStyle) {
-		String oldStyle = style;
-		style = newStyle;
+	public void setTags(String newTags) {
+		String oldTags = tags;
+		tags = newTags;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION_ELEMENT__STYLE, oldStyle, style));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION_ELEMENT__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -146,8 +146,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
 				return getId();
-			case MApplicationPackage.APPLICATION_ELEMENT__STYLE:
-				return getStyle();
+			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
+				return getTags();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -163,8 +163,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
 				setId((String)newValue);
 				return;
-			case MApplicationPackage.APPLICATION_ELEMENT__STYLE:
-				setStyle((String)newValue);
+			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
+				setTags((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -181,8 +181,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case MApplicationPackage.APPLICATION_ELEMENT__STYLE:
-				setStyle(STYLE_EDEFAULT);
+			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
+				setTags(TAGS_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -198,8 +198,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.APPLICATION_ELEMENT__STYLE:
-				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
+			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
+				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -216,8 +216,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
-		result.append(", style: "); //$NON-NLS-1$
-		result.append(style);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(')');
 		return result.toString();
 	}

@@ -17,6 +17,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
@@ -65,6 +66,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
  * </ul>
@@ -302,6 +304,26 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected EList<MKeyBinding> bindings;
+
+	/**
+	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTY_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' containment reference list.
@@ -635,6 +657,27 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDirty(boolean newDirty) {
+		boolean oldDirty = dirty;
+		dirty = newDirty;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__DIRTY, oldDirty, dirty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MMenu> getMenus() {
 		if (menus == null) {
 			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, MApplicationPackage.PART__MENUS);
@@ -774,6 +817,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getHandlers();
 			case MApplicationPackage.PART__BINDINGS:
 				return getBindings();
+			case MApplicationPackage.PART__DIRTY:
+				return isDirty();
 			case MApplicationPackage.PART__MENUS:
 				return getMenus();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -836,6 +881,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				getBindings().clear();
 				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
 				return;
+			case MApplicationPackage.PART__DIRTY:
+				setDirty((Boolean)newValue);
+				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
 				getMenus().addAll((Collection<? extends MMenu>)newValue);
@@ -897,6 +945,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__BINDINGS:
 				getBindings().clear();
 				return;
+			case MApplicationPackage.PART__DIRTY:
+				setDirty(DIRTY_EDEFAULT);
+				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
 				return;
@@ -943,6 +994,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.PART__BINDINGS:
 				return bindings != null && !bindings.isEmpty();
+			case MApplicationPackage.PART__DIRTY:
+				return dirty != DIRTY_EDEFAULT;
 			case MApplicationPackage.PART__MENUS:
 				return menus != null && !menus.isEmpty();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -1002,6 +1055,12 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
+		if (baseClass == MDirtyable.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.PART__DIRTY: return MApplicationPackage.DIRTYABLE__DIRTY;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -1056,6 +1115,12 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
+		if (baseClass == MDirtyable.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.DIRTYABLE__DIRTY: return MApplicationPackage.PART__DIRTY;
+				default: return -1;
+			}
+		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
@@ -1091,6 +1156,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
 		result.append(')');
 		return result.toString();
 	}

@@ -24,14 +24,14 @@ public abstract class ModelReconcilerApplicationElementTest extends
 
 	private void testApplicationElement_Style(String before, String after) {
 		MApplication application = createApplication();
-		application.setStyle(before);
+		application.setTags(before);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setStyle(after);
+		application.setTags(after);
 
 		Object state = reconciler.serialize();
 
@@ -39,11 +39,11 @@ public abstract class ModelReconcilerApplicationElementTest extends
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, application.getStyle());
+		assertEquals(before, application.getTags());
 
 		applyAll(deltas);
 
-		assertEquals(after, application.getStyle());
+		assertEquals(after, application.getTags());
 	}
 
 	public void testApplicationElement_Style_NullNull() {

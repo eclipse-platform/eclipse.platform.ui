@@ -26,7 +26,7 @@ public abstract class ModelReconciler {
 	 * Attribute defined by MApplicationElements (value is <code>style</code>).
 	 */
 	public static final String APPLICATIONELEMENT_STYLE_ATTNAME = MApplicationPackage.eINSTANCE
-			.getApplicationElement_Style().getName();
+			.getApplicationElement_Tags().getName();
 
 	/**
 	 * Attribute defined by MApplications (value is <code>commands</code>).
@@ -104,7 +104,7 @@ public abstract class ModelReconciler {
 	 * Attribute defined by MElementContainers (value is <code>activeChild</code>).
 	 */
 	public static final String ELEMENTCONTAINER_ACTIVECHILD_ATTNAME = MApplicationPackage.eINSTANCE
-			.getElementContainer_ActiveChild().getName();
+			.getElementContainer_SelectedElement().getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>x</code>).

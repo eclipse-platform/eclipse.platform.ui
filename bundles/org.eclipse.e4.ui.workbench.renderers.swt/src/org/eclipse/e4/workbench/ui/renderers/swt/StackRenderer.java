@@ -121,7 +121,7 @@ public class StackRenderer extends LazyStackRenderer {
 						.getProperty(UIEvents.EventTags.ELEMENT);
 
 				// Ensure that this event is for a MMenuItem
-				if (!(objElement instanceof MDirtyable)) {
+				if (!(objElement instanceof MPart)) {
 					return;
 				}
 
@@ -263,7 +263,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
 		CTabFolder ctf = (CTabFolder) element.getWidget();
-		MPart selPart = ((MPartStack) element).getActiveChild();
+		MPart selPart = ((MPartStack) element).getSelectedElement();
 		if (selPart == null)
 			return;
 
@@ -328,11 +328,11 @@ public class StackRenderer extends LazyStackRenderer {
 		hookTabControllerLogic(stack, part, cti);
 
 		// Re-ensure that the activeChild == the selected tab
-		if (stack.getActiveChild() == null)
-			stack.setActiveChild(part);
+		if (stack.getSelectedElement() == null)
+			stack.setSelectedElement(part);
 
-		if (stack.getActiveChild() != null) {
-			CTabItem selCTI = findItemForPart(stack, stack.getActiveChild());
+		if (stack.getSelectedElement() != null) {
+			CTabItem selCTI = findItemForPart(stack, stack.getSelectedElement());
 			if (selCTI != null && selCTI != ctf.getSelection())
 				ctf.setSelection(selCTI);
 		}
@@ -408,14 +408,14 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		// Check if we have to reset the currently active child for the stack
-		if (parentElement.getActiveChild() == child) {
+		if (parentElement.getSelectedElement() == child) {
 			// HACK!! we'll reset to the first element for now but really should
 			// be based on the activation chain
 			if (parentElement.getChildren().size() == 0) {
-				parentElement.setActiveChild(null);
+				parentElement.setSelectedElement(null);
 			} else {
 				parentElement
-						.setActiveChild(parentElement.getChildren().get(0));
+						.setSelectedElement(parentElement.getChildren().get(0));
 			}
 		}
 	}
@@ -437,7 +437,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 			public void widgetSelected(SelectionEvent e) {
 				MPart newPart = (MPart) e.item.getData(OWNING_ME);
-				if (stack.getActiveChild() != newPart) {
+				if (stack.getSelectedElement() != newPart) {
 					activate(newPart);
 				}
 
@@ -471,7 +471,7 @@ public class StackRenderer extends LazyStackRenderer {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				CTabFolder ctf = (CTabFolder) event.widget;
 				MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
-				MPart part = stack.getActiveChild();
+				MPart part = stack.getSelectedElement();
 				if (part != null)
 					activate(part);
 			}

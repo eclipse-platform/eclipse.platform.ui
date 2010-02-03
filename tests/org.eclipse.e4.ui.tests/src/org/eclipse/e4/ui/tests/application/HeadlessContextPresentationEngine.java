@@ -89,7 +89,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 							MPartStack stack = (MPartStack) parent;
 							List<MPart> children = stack.getChildren();
 							if (children.size() == 1) {
-								stack.setActiveChild((MPart) element);
+								stack.setSelectedElement((MPart) element);
 							}
 						}
 					}
@@ -115,7 +115,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.ACTIVECHILD), activeChildHandler);
+				UIEvents.ElementContainer.SELECTEDELEMENT), activeChildHandler);
 	}
 
 	/*
@@ -157,7 +157,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		if (element instanceof MPartStack) {
 			MPartStack container = (MPartStack) element;
-			MPart active = container.getActiveChild();
+			MPart active = container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container);
 				IEclipseContext childContext = ((MContext) active).getContext();
@@ -166,7 +166,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			} else {
 				List<MPart> children = container.getChildren();
 				if (!children.isEmpty()) {
-					container.setActiveChild(children.get(0));
+					container.setSelectedElement(children.get(0));
 				}
 			}
 		} else if (element instanceof MElementContainer<?>) {

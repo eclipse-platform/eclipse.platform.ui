@@ -230,7 +230,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	private static MPSCElement getNonContainer(MPSCElement activeChild) {
 		if (activeChild instanceof MElementContainer<?>) {
 			activeChild = (MPSCElement) ((MElementContainer<?>) activeChild)
-					.getActiveChild();
+					.getSelectedElement();
 			assertNotNull(activeChild);
 
 			activeChild = getNonContainer(activeChild);
@@ -240,8 +240,8 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	private static IEclipseContext getActiveChildContext(
 			MApplication application) {
-		MPSCElement nonContainer = getNonContainer(application.getActiveChild()
-				.getActiveChild());
+		MPSCElement nonContainer = getNonContainer(application.getSelectedElement()
+				.getSelectedElement());
 		return ((MContext) nonContainer).getContext();
 	}
 

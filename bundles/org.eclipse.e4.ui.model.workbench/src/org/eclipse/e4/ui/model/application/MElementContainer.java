@@ -21,7 +21,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MElementContainer#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MElementContainer#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -49,29 +49,29 @@ public interface MElementContainer<T extends MUIElement> extends MUIElement {
 	EList<T> getChildren();
 
 	/**
-	 * Returns the value of the '<em><b>Active Child</b></em>' reference.
+	 * Returns the value of the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Active Child</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Active Child</em>' reference.
-	 * @see #setActiveChild(MUIElement)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getElementContainer_ActiveChild()
+	 * @return the value of the '<em>Selected Element</em>' reference.
+	 * @see #setSelectedElement(MUIElement)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getElementContainer_SelectedElement()
 	 * @model
 	 * @generated
 	 */
-	T getActiveChild();
+	T getSelectedElement();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild <em>Active Child</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MElementContainer#getSelectedElement <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Active Child</em>' reference.
-	 * @see #getActiveChild()
+	 * @param value the new value of the '<em>Selected Element</em>' reference.
+	 * @see #getSelectedElement()
 	 * @generated
 	 */
-	void setActiveChild(T value);
+	void setSelectedElement(T value);
 
 } // MElementContainer

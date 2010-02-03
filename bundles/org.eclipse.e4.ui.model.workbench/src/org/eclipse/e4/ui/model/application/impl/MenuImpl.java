@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,14 +58,14 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 	protected EList<MMenuItem> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MMenuItem activeChild;
+	protected MMenuItem selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -103,16 +103,16 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuItem getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MMenuItem)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MMenuItem getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MMenuItem)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.MENU__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -120,8 +120,8 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuItem basicGetActiveChild() {
-		return activeChild;
+	public MMenuItem basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -129,11 +129,11 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MMenuItem newActiveChild) {
-		MMenuItem oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MMenuItem newSelectedElement) {
+		MMenuItem oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -175,9 +175,9 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 		switch (featureID) {
 			case MApplicationPackage.MENU__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.MENU__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.MENU__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -195,8 +195,8 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MMenuItem>)newValue);
 				return;
-			case MApplicationPackage.MENU__ACTIVE_CHILD:
-				setActiveChild((MMenuItem)newValue);
+			case MApplicationPackage.MENU__SELECTED_ELEMENT:
+				setSelectedElement((MMenuItem)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -213,8 +213,8 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 			case MApplicationPackage.MENU__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.MENU__ACTIVE_CHILD:
-				setActiveChild((MMenuItem)null);
+			case MApplicationPackage.MENU__SELECTED_ELEMENT:
+				setSelectedElement((MMenuItem)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -230,8 +230,8 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 		switch (featureID) {
 			case MApplicationPackage.MENU__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.MENU__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.MENU__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -246,7 +246,7 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.MENU__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.MENU__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.MENU__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -263,7 +263,7 @@ public class MenuImpl extends UIElementImpl implements MMenu {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.MENU__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.MENU__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.MENU__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

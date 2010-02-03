@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,14 +60,14 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 	protected EList<MPart> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MPart activeChild;
+	protected MPart selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -105,16 +105,16 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPart getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MPart)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MPart getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MPart)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PART_STACK__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PART_STACK__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPart basicGetActiveChild() {
-		return activeChild;
+	public MPart basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -131,11 +131,11 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MPart newActiveChild) {
-		MPart oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MPart newSelectedElement) {
+		MPart oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART_STACK__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART_STACK__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -177,9 +177,9 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 		switch (featureID) {
 			case MApplicationPackage.PART_STACK__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.PART_STACK__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.PART_STACK__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -197,8 +197,8 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MPart>)newValue);
 				return;
-			case MApplicationPackage.PART_STACK__ACTIVE_CHILD:
-				setActiveChild((MPart)newValue);
+			case MApplicationPackage.PART_STACK__SELECTED_ELEMENT:
+				setSelectedElement((MPart)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -215,8 +215,8 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 			case MApplicationPackage.PART_STACK__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.PART_STACK__ACTIVE_CHILD:
-				setActiveChild((MPart)null);
+			case MApplicationPackage.PART_STACK__SELECTED_ELEMENT:
+				setSelectedElement((MPart)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -232,8 +232,8 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 		switch (featureID) {
 			case MApplicationPackage.PART_STACK__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.PART_STACK__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.PART_STACK__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -253,7 +253,7 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PART_STACK__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.PART_STACK__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.PART_STACK__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -280,7 +280,7 @@ public class PartStackImpl extends UIElementImpl implements MPartStack {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.PART_STACK__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.PART_STACK__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.PART_STACK__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

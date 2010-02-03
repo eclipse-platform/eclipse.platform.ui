@@ -76,7 +76,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PART: return (EObject)createPart();
 			case MApplicationPackage.PART_DESCRIPTOR: return (EObject)createPartDescriptor();
 			case MApplicationPackage.PART_DESCRIPTOR_CONTAINER: return (EObject)createPartDescriptorContainer();
-			case MApplicationPackage.SAVEABLE_PART: return (EObject)createSaveablePart();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
@@ -91,7 +90,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
-			case MApplicationPackage.EDITOR: return (EObject)createEditor();
 			case MApplicationPackage.PLACEHOLDER: return (EObject)createPlaceholder();
 			case MApplicationPackage.PERSPECTIVE: return (EObject)createPerspective();
 			case MApplicationPackage.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
@@ -250,16 +248,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MSaveablePart createSaveablePart() {
-		SaveablePartImpl saveablePart = new SaveablePartImpl();
-		return saveablePart;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MPartStack createPartStack() {
 		PartStackImpl partStack = new PartStackImpl();
 		return partStack;
@@ -393,16 +381,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MWindowTrim createWindowTrim() {
 		WindowTrimImpl windowTrim = new WindowTrimImpl();
 		return windowTrim;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MEditor createEditor() {
-		EditorImpl editor = new EditorImpl();
-		return editor;
 	}
 
 	/**

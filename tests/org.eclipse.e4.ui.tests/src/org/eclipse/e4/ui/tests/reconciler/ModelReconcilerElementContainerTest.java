@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
@@ -147,7 +146,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		MPart editor = MApplicationFactory.eINSTANCE.createPart();
 		editor.setLabel("newEditor");
 		window.getChildren().add(editor);
 
@@ -164,7 +163,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		assertEquals(1, window.getChildren().size());
 
-		editor = (MEditor) window.getChildren().get(0);
+		editor = (MPart) window.getChildren().get(0);
 		assertEquals("newEditor", editor.getLabel());
 	}
 
@@ -852,7 +851,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		stack.setActiveChild(part1);
+		stack.setSelectedElement(part1);
 
 		Object state = reconciler.serialize();
 
@@ -865,11 +864,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertNull(stack.getActiveChild());
+		assertNull(stack.getSelectedElement());
 
 		applyAll(deltas);
 
-		assertEquals(part1, stack.getActiveChild());
+		assertEquals(part1, stack.getSelectedElement());
 	}
 
 	public void testElementContainer_ActiveChild2() {
@@ -886,14 +885,14 @@ public abstract class ModelReconcilerElementContainerTest extends
 		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(part2);
 
-		stack.setActiveChild(part1);
+		stack.setSelectedElement(part1);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		stack.setActiveChild(part2);
+		stack.setSelectedElement(part2);
 
 		Object state = reconciler.serialize();
 
@@ -904,15 +903,15 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part1 = stack.getChildren().get(0);
 		part2 = stack.getChildren().get(1);
 
-		stack.setActiveChild(part1);
+		stack.setSelectedElement(part1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(part1, stack.getActiveChild());
+		assertEquals(part1, stack.getSelectedElement());
 
 		applyAll(deltas);
 
-		assertEquals(part2, stack.getActiveChild());
+		assertEquals(part2, stack.getSelectedElement());
 	}
 
 	private void testElementContainer_ActiveChild3(boolean setActiveChildFirst) {
@@ -934,11 +933,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		// active child
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		if (setActiveChildFirst) {
-			partSashContainer.setActiveChild(part);
+			partSashContainer.setSelectedElement(part);
 			partSashContainer.getChildren().add(part);
 		} else {
 			partSashContainer.getChildren().add(part);
-			partSashContainer.setActiveChild(part);
+			partSashContainer.setSelectedElement(part);
 		}
 
 		Object state = reconciler.serialize();
@@ -967,7 +966,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(partSashContainer.getChildren().get(0) instanceof MPart);
 
 		part = (MPart) partSashContainer.getChildren().get(0);
-		assertEquals(part, partSashContainer.getActiveChild());
+		assertEquals(part, partSashContainer.getSelectedElement());
 	}
 
 	public void testElementContainer_ActiveChild3_True() {

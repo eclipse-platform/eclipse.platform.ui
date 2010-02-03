@@ -46,7 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -55,7 +55,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getVariables <em>Variables</em>}</li>
  * </ul>
@@ -85,24 +85,24 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String STYLE_EDEFAULT = null;
+	protected static final String TAGS_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected String style = STYLE_EDEFAULT;
+	protected String tags = TAGS_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -235,14 +235,14 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	protected EList<MPSCElement> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MPSCElement activeChild;
+	protected MPSCElement selectedElement;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -319,8 +319,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getStyle() {
-		return style;
+	public String getTags() {
+		return tags;
 	}
 
 	/**
@@ -328,11 +328,11 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setStyle(String newStyle) {
-		String oldStyle = style;
-		style = newStyle;
+	public void setTags(String newTags) {
+		String oldTags = tags;
+		tags = newTags;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__STYLE, oldStyle, style));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -520,16 +520,16 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPSCElement getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MPSCElement)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MPSCElement getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MPSCElement)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -537,8 +537,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPSCElement basicGetActiveChild() {
-		return activeChild;
+	public MPSCElement basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -546,11 +546,11 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MPSCElement newActiveChild) {
-		MPSCElement oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MPSCElement newSelectedElement) {
+		MPSCElement oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -645,8 +645,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		switch (featureID) {
 			case MApplicationPackage.PERSPECTIVE__ID:
 				return getId();
-			case MApplicationPackage.PERSPECTIVE__STYLE:
-				return getStyle();
+			case MApplicationPackage.PERSPECTIVE__TAGS:
+				return getTags();
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				return getWidget();
 			case MApplicationPackage.PERSPECTIVE__RENDERER:
@@ -663,9 +663,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return getContainerData();
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				return getContext();
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
@@ -686,8 +686,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__ID:
 				setId((String)newValue);
 				return;
-			case MApplicationPackage.PERSPECTIVE__STYLE:
-				setStyle((String)newValue);
+			case MApplicationPackage.PERSPECTIVE__TAGS:
+				setTags((String)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				setWidget(newValue);
@@ -714,8 +714,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MPSCElement>)newValue);
 				return;
-			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				setActiveChild((MPSCElement)newValue);
+			case MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT:
+				setSelectedElement((MPSCElement)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -739,8 +739,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case MApplicationPackage.PERSPECTIVE__STYLE:
-				setStyle(STYLE_EDEFAULT);
+			case MApplicationPackage.PERSPECTIVE__TAGS:
+				setTags(TAGS_EDEFAULT);
 				return;
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
@@ -766,8 +766,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				setActiveChild((MPSCElement)null);
+			case MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT:
+				setSelectedElement((MPSCElement)null);
 				return;
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
@@ -789,8 +789,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		switch (featureID) {
 			case MApplicationPackage.PERSPECTIVE__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.PERSPECTIVE__STYLE:
-				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
+			case MApplicationPackage.PERSPECTIVE__TAGS:
+				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.PERSPECTIVE__RENDERER:
@@ -807,8 +807,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT:
+				return selectedElement != null;
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
@@ -827,7 +827,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
-				case MApplicationPackage.PERSPECTIVE__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
+				case MApplicationPackage.PERSPECTIVE__TAGS: return MApplicationPackage.APPLICATION_ELEMENT__TAGS;
 				default: return -1;
 			}
 		}
@@ -846,7 +846,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -875,7 +875,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.PERSPECTIVE__ID;
-				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.PERSPECTIVE__STYLE;
+				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.PERSPECTIVE__TAGS;
 				default: return -1;
 			}
 		}
@@ -894,7 +894,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.PERSPECTIVE__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.PERSPECTIVE__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -925,8 +925,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
-		result.append(", style: "); //$NON-NLS-1$
-		result.append(style);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$

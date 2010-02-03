@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getKeySequence <em>Key Sequence</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
@@ -92,24 +92,24 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String STYLE_EDEFAULT = null;
+	protected static final String TAGS_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected String style = STYLE_EDEFAULT;
+	protected String tags = TAGS_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -197,8 +197,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getStyle() {
-		return style;
+	public String getTags() {
+		return tags;
 	}
 
 	/**
@@ -206,11 +206,11 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setStyle(String newStyle) {
-		String oldStyle = style;
-		style = newStyle;
+	public void setTags(String newTags) {
+		String oldTags = tags;
+		tags = newTags;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.KEY_BINDING__STYLE, oldStyle, style));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.KEY_BINDING__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -289,8 +289,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				return getKeySequence();
 			case MApplicationPackage.KEY_BINDING__ID:
 				return getId();
-			case MApplicationPackage.KEY_BINDING__STYLE:
-				return getStyle();
+			case MApplicationPackage.KEY_BINDING__TAGS:
+				return getTags();
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
@@ -315,8 +315,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__ID:
 				setId((String)newValue);
 				return;
-			case MApplicationPackage.KEY_BINDING__STYLE:
-				setStyle((String)newValue);
+			case MApplicationPackage.KEY_BINDING__TAGS:
+				setTags((String)newValue);
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
@@ -343,8 +343,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case MApplicationPackage.KEY_BINDING__STYLE:
-				setStyle(STYLE_EDEFAULT);
+			case MApplicationPackage.KEY_BINDING__TAGS:
+				setTags(TAGS_EDEFAULT);
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)null);
@@ -368,8 +368,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				return KEY_SEQUENCE_EDEFAULT == null ? keySequence != null : !KEY_SEQUENCE_EDEFAULT.equals(keySequence);
 			case MApplicationPackage.KEY_BINDING__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.KEY_BINDING__STYLE:
-				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
+			case MApplicationPackage.KEY_BINDING__TAGS:
+				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				return command != null;
 			case MApplicationPackage.KEY_BINDING__PARAMETERS:
@@ -388,7 +388,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.KEY_BINDING__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
-				case MApplicationPackage.KEY_BINDING__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
+				case MApplicationPackage.KEY_BINDING__TAGS: return MApplicationPackage.APPLICATION_ELEMENT__TAGS;
 				default: return -1;
 			}
 		}
@@ -405,7 +405,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.KEY_BINDING__ID;
-				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.KEY_BINDING__STYLE;
+				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.KEY_BINDING__TAGS;
 				default: return -1;
 			}
 		}
@@ -426,8 +426,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		result.append(keySequence);
 		result.append(", id: "); //$NON-NLS-1$
 		result.append(id);
-		result.append(", style: "); //$NON-NLS-1$
-		result.append(style);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(')');
 		return result.toString();
 	}

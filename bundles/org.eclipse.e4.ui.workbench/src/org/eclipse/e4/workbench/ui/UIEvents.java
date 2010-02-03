@@ -39,7 +39,7 @@ public class UIEvents {
 	public static interface ApplicationElement {
 		public static final String TOPIC = UITopicBase + "/application/ApplicationElement"; //$NON-NLS-1$
 		public static final String ID = "id"; //$NON-NLS-1$
-		public static final String STYLE = "style"; //$NON-NLS-1$
+		public static final String TAGS = "tags"; //$NON-NLS-1$
 	}
 
 	public static interface BindingContainer {
@@ -81,8 +81,8 @@ public class UIEvents {
 
 	public static interface ElementContainer {
 		public static final String TOPIC = UITopicBase + "/application/ElementContainer"; //$NON-NLS-1$
-		public static final String ACTIVECHILD = "activeChild"; //$NON-NLS-1$
 		public static final String CHILDREN = "children"; //$NON-NLS-1$
+		public static final String SELECTEDELEMENT = "selectedElement"; //$NON-NLS-1$
 	}
 
 	public static interface GenericTile {
@@ -154,6 +154,17 @@ public class UIEvents {
 		public static final String TOPIC = UITopicBase + "/application/Part"; //$NON-NLS-1$
 		public static final String MENUS = "menus"; //$NON-NLS-1$
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
+	}
+
+	public static interface PartDescriptor {
+		public static final String TOPIC = UITopicBase + "/application/PartDescriptor"; //$NON-NLS-1$
+		public static final String ALLOWMULTIPLE = "allowMultiple"; //$NON-NLS-1$
+		public static final String CATEGORY = "category"; //$NON-NLS-1$
+	}
+
+	public static interface PartDescriptorContainer {
+		public static final String TOPIC = UITopicBase + "/application/PartDescriptorContainer"; //$NON-NLS-1$
+		public static final String DESCRIPTORS = "descriptors"; //$NON-NLS-1$
 	}
 
 	public static interface Placeholder {

@@ -24,10 +24,10 @@ public class SwitchPerspectiveHandler {
 		MApplication app = (MApplication) context.get(MApplication.class.getName());
 		MPerspectiveStack ps = (MPerspectiveStack) ModelUtils.findById(app, "DefaultPerspectiveStack");
 		EList<MPerspective> kids = ps.getChildren();
-		if (ps.getActiveChild() == kids.get(0))
-			ps.setActiveChild(kids.get(1));
+		if (ps.getSelectedElement() == kids.get(0))
+			ps.setSelectedElement(kids.get(1));
 		else
-			ps.setActiveChild(kids.get(0));
+			ps.setSelectedElement(kids.get(0));
 	}
 
 }

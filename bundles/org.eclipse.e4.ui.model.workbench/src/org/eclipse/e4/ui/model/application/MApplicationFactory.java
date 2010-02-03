@@ -129,15 +129,6 @@ public interface MApplicationFactory extends EFactory {
 	MPartDescriptorContainer createPartDescriptorContainer();
 
 	/**
-	 * Returns a new object of class '<em>Saveable Part</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Saveable Part</em>'.
-	 * @generated
-	 */
-	MSaveablePart createSaveablePart();
-
-	/**
 	 * Returns a new object of class '<em>Part Stack</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -262,15 +253,6 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MWindowTrim createWindowTrim();
-
-	/**
-	 * Returns a new object of class '<em>Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Editor</em>'.
-	 * @generated
-	 */
-	MEditor createEditor();
 
 	/**
 	 * Returns a new object of class '<em>Placeholder</em>'.

@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,14 +58,14 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 	protected EList<MToolItem> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MToolItem activeChild;
+	protected MToolItem selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -103,16 +103,16 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolItem getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MToolItem)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MToolItem getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MToolItem)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.TOOL_BAR__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -120,8 +120,8 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolItem basicGetActiveChild() {
-		return activeChild;
+	public MToolItem basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -129,11 +129,11 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MToolItem newActiveChild) {
-		MToolItem oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MToolItem newSelectedElement) {
+		MToolItem oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TOOL_BAR__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -175,9 +175,9 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 		switch (featureID) {
 			case MApplicationPackage.TOOL_BAR__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.TOOL_BAR__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -195,8 +195,8 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MToolItem>)newValue);
 				return;
-			case MApplicationPackage.TOOL_BAR__ACTIVE_CHILD:
-				setActiveChild((MToolItem)newValue);
+			case MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT:
+				setSelectedElement((MToolItem)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -213,8 +213,8 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 			case MApplicationPackage.TOOL_BAR__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.TOOL_BAR__ACTIVE_CHILD:
-				setActiveChild((MToolItem)null);
+			case MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT:
+				setSelectedElement((MToolItem)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -230,8 +230,8 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 		switch (featureID) {
 			case MApplicationPackage.TOOL_BAR__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.TOOL_BAR__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -246,7 +246,7 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TOOL_BAR__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.TOOL_BAR__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -263,7 +263,7 @@ public class ToolBarImpl extends UIElementImpl implements MToolBar {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.TOOL_BAR__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.TOOL_BAR__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.TOOL_BAR__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

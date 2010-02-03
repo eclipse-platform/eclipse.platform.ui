@@ -50,7 +50,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 				Composite psComp = (Composite) ps.getWidget();
 				StackLayout sl = (StackLayout) psComp.getLayout();
-				Control ctrl = (Control) ps.getActiveChild().getWidget();
+				Control ctrl = (Control) ps.getSelectedElement().getWidget();
 				sl.topControl = ctrl;
 				psComp.layout();
 			}
@@ -58,7 +58,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.ACTIVECHILD), showPerspectiveHandler);
+				UIEvents.ElementContainer.SELECTEDELEMENT), showPerspectiveHandler);
 	}
 
 	@PreDestroy
@@ -100,9 +100,9 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		super.postProcess(element);
 
 		MPerspectiveStack ps = (MPerspectiveStack) element;
-		if (ps.getActiveChild() != null
-				&& ps.getActiveChild().getWidget() != null) {
-			Control ctrl = (Control) ps.getActiveChild().getWidget();
+		if (ps.getSelectedElement() != null
+				&& ps.getSelectedElement().getWidget() != null) {
+			Control ctrl = (Control) ps.getSelectedElement().getWidget();
 			Composite psComp = (Composite) ps.getWidget();
 			StackLayout sl = (StackLayout) psComp.getLayout();
 			sl.topControl = ctrl;

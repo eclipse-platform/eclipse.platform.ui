@@ -50,7 +50,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -59,7 +59,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
@@ -91,24 +91,24 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String STYLE_EDEFAULT = null;
+	protected static final String TAGS_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyle()
+	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected String style = STYLE_EDEFAULT;
+	protected String tags = TAGS_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -241,14 +241,14 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	protected EList<MWindow> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MWindow activeChild;
+	protected MWindow selectedElement;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -335,8 +335,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getStyle() {
-		return style;
+	public String getTags() {
+		return tags;
 	}
 
 	/**
@@ -344,11 +344,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setStyle(String newStyle) {
-		String oldStyle = style;
-		style = newStyle;
+	public void setTags(String newTags) {
+		String oldTags = tags;
+		tags = newTags;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__STYLE, oldStyle, style));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -536,16 +536,16 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MWindow getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MWindow)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MWindow getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MWindow)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.APPLICATION__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.APPLICATION__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -553,8 +553,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MWindow basicGetActiveChild() {
-		return activeChild;
+	public MWindow basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -562,11 +562,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MWindow newActiveChild) {
-		MWindow oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MWindow newSelectedElement) {
+		MWindow oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -684,8 +684,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION__ID:
 				return getId();
-			case MApplicationPackage.APPLICATION__STYLE:
-				return getStyle();
+			case MApplicationPackage.APPLICATION__TAGS:
+				return getTags();
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return getWidget();
 			case MApplicationPackage.APPLICATION__RENDERER:
@@ -702,9 +702,9 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return getContainerData();
 			case MApplicationPackage.APPLICATION__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return getHandlers();
 			case MApplicationPackage.APPLICATION__BINDINGS:
@@ -729,8 +729,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ID:
 				setId((String)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__STYLE:
-				setStyle((String)newValue);
+			case MApplicationPackage.APPLICATION__TAGS:
+				setTags((String)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(newValue);
@@ -757,8 +757,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MWindow>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
-				setActiveChild((MWindow)newValue);
+			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
+				setSelectedElement((MWindow)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				getHandlers().clear();
@@ -791,8 +791,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case MApplicationPackage.APPLICATION__STYLE:
-				setStyle(STYLE_EDEFAULT);
+			case MApplicationPackage.APPLICATION__TAGS:
+				setTags(TAGS_EDEFAULT);
 				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
@@ -818,8 +818,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
-				setActiveChild((MWindow)null);
+			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
+				setSelectedElement((MWindow)null);
 				return;
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				getHandlers().clear();
@@ -847,8 +847,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.APPLICATION__STYLE:
-				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
+			case MApplicationPackage.APPLICATION__TAGS:
+				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.APPLICATION__RENDERER:
@@ -865,8 +865,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.APPLICATION__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
+				return selectedElement != null;
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.APPLICATION__BINDINGS:
@@ -889,7 +889,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.APPLICATION__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
-				case MApplicationPackage.APPLICATION__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
+				case MApplicationPackage.APPLICATION__TAGS: return MApplicationPackage.APPLICATION_ELEMENT__TAGS;
 				default: return -1;
 			}
 		}
@@ -908,7 +908,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.APPLICATION__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.APPLICATION__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.APPLICATION__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -943,7 +943,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.APPLICATION__ID;
-				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.APPLICATION__STYLE;
+				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.APPLICATION__TAGS;
 				default: return -1;
 			}
 		}
@@ -962,7 +962,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.APPLICATION__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.APPLICATION__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.APPLICATION__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -999,8 +999,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
-		result.append(", style: "); //$NON-NLS-1$
-		result.append(style);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$

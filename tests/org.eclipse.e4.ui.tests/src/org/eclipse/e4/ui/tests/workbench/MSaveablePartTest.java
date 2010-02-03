@@ -120,8 +120,7 @@ public class MSaveablePartTest extends TestCase {
 		window.getChildren().add(sash);
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 		sash.getChildren().add(stack);
-		MPart contributedPart = MApplicationFactory.eINSTANCE
-				.createSaveablePart();
+		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel(partName);
 		contributedPart

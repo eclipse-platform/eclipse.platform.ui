@@ -69,7 +69,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getInputURI <em>Input URI</em>}</li>
@@ -357,14 +357,14 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected EList<MUIElement> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MUIElement activeChild;
+	protected MUIElement selectedElement;
 
 	/**
 	 * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
@@ -920,16 +920,16 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MUIElement getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MUIElement)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MUIElement getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MUIElement)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -937,8 +937,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MUIElement basicGetActiveChild() {
-		return activeChild;
+	public MUIElement basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -946,11 +946,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MUIElement newActiveChild) {
-		MUIElement oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MUIElement newSelectedElement) {
+		MUIElement oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -1254,9 +1254,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getContainerData();
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 			case MApplicationPackage.TEST_HARNESS__TAG:
 				return getTag();
 			case MApplicationPackage.TEST_HARNESS__VALUE:
@@ -1341,8 +1341,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MUIElement>)newValue);
 				return;
-			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
-				setActiveChild((MUIElement)newValue);
+			case MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT:
+				setSelectedElement((MUIElement)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__TAG:
 				setTag((String)newValue);
@@ -1434,8 +1434,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
-				setActiveChild((MUIElement)null);
+			case MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT:
+				setSelectedElement((MUIElement)null);
 				return;
 			case MApplicationPackage.TEST_HARNESS__TAG:
 				setTag(TAG_EDEFAULT);
@@ -1511,8 +1511,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT:
+				return selectedElement != null;
 			case MApplicationPackage.TEST_HARNESS__TAG:
 				return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
 			case MApplicationPackage.TEST_HARNESS__VALUE:
@@ -1582,7 +1582,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -1669,7 +1669,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.TEST_HARNESS__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.TEST_HARNESS__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

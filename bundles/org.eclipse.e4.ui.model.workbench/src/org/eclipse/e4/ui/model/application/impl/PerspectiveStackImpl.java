@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,14 +60,14 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	protected EList<MPerspective> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MPerspective activeChild;
+	protected MPerspective selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -105,16 +105,16 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPerspective getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MPerspective)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MPerspective getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MPerspective)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MPerspective basicGetActiveChild() {
-		return activeChild;
+	public MPerspective basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -131,11 +131,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MPerspective newActiveChild) {
-		MPerspective oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MPerspective newSelectedElement) {
+		MPerspective oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -177,9 +177,9 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		switch (featureID) {
 			case MApplicationPackage.PERSPECTIVE_STACK__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -197,8 +197,8 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MPerspective>)newValue);
 				return;
-			case MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD:
-				setActiveChild((MPerspective)newValue);
+			case MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT:
+				setSelectedElement((MPerspective)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -215,8 +215,8 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			case MApplicationPackage.PERSPECTIVE_STACK__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD:
-				setActiveChild((MPerspective)null);
+			case MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT:
+				setSelectedElement((MPerspective)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -232,8 +232,8 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		switch (featureID) {
 			case MApplicationPackage.PERSPECTIVE_STACK__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -253,7 +253,7 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE_STACK__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -280,7 +280,7 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.PERSPECTIVE_STACK__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.PERSPECTIVE_STACK__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

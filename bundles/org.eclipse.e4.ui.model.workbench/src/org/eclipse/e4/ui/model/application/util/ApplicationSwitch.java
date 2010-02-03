@@ -298,6 +298,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUILabel(part);
 				if (result == null) result = caseHandlerContainer(part);
 				if (result == null) result = caseBindingContainer(part);
+				if (result == null) result = caseDirtyable(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -313,6 +314,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
 				if (result == null) result = caseBindingContainer(partDescriptor);
+				if (result == null) result = caseDirtyable(partDescriptor);
 				if (result == null) result = caseUIElement(partDescriptor);
 				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
@@ -321,22 +323,6 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PART_DESCRIPTOR_CONTAINER: {
 				MPartDescriptorContainer partDescriptorContainer = (MPartDescriptorContainer)theEObject;
 				T1 result = casePartDescriptorContainer(partDescriptorContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MApplicationPackage.SAVEABLE_PART: {
-				MSaveablePart saveablePart = (MSaveablePart)theEObject;
-				T1 result = caseSaveablePart(saveablePart);
-				if (result == null) result = casePart(saveablePart);
-				if (result == null) result = caseDirtyable(saveablePart);
-				if (result == null) result = caseContribution(saveablePart);
-				if (result == null) result = caseContext(saveablePart);
-				if (result == null) result = casePSCElement(saveablePart);
-				if (result == null) result = caseUILabel(saveablePart);
-				if (result == null) result = caseHandlerContainer(saveablePart);
-				if (result == null) result = caseBindingContainer(saveablePart);
-				if (result == null) result = caseUIElement(saveablePart);
-				if (result == null) result = caseApplicationElement(saveablePart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -370,6 +356,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
 				if (result == null) result = caseBindingContainer(window);
+				if (result == null) result = casePSCElement(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
 				if (result == null) result = defaultCase(theEObject);
@@ -510,30 +497,6 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseElementContainer(windowTrim);
 				if (result == null) result = caseUIElement(windowTrim);
 				if (result == null) result = caseApplicationElement(windowTrim);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MApplicationPackage.VEDITING_V: {
-				MV______________Editing_______________V v______________Editing_______________V = (MV______________Editing_______________V)theEObject;
-				T1 result = caseV______________Editing_______________V(v______________Editing_______________V);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MApplicationPackage.EDITOR: {
-				MEditor editor = (MEditor)theEObject;
-				T1 result = caseEditor(editor);
-				if (result == null) result = caseInput(editor);
-				if (result == null) result = caseSaveablePart(editor);
-				if (result == null) result = casePart(editor);
-				if (result == null) result = caseDirtyable(editor);
-				if (result == null) result = caseContribution(editor);
-				if (result == null) result = caseContext(editor);
-				if (result == null) result = casePSCElement(editor);
-				if (result == null) result = caseUILabel(editor);
-				if (result == null) result = caseHandlerContainer(editor);
-				if (result == null) result = caseBindingContainer(editor);
-				if (result == null) result = caseUIElement(editor);
-				if (result == null) result = caseApplicationElement(editor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1007,21 +970,6 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Saveable Part</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Saveable Part</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseSaveablePart(MSaveablePart object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Part Stack</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -1318,36 +1266,6 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseWindowTrim(MWindowTrim object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>VEditing V</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>VEditing V</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseV______________Editing_______________V(MV______________Editing_______________V object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Editor</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseEditor(MEditor object) {
 		return null;
 	}
 

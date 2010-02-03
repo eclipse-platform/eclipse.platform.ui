@@ -15,7 +15,6 @@ import javax.inject.Named;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -31,7 +30,7 @@ public class AddNoteHandler {
 		System.out.println("AddNoteHandler called " + selection.toString());
 		// add an editor next to the Exif tab
 		MPart exifPart = partService.findPart("e4.photo.demo.exif");
-		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		MPart editor = MApplicationFactory.eINSTANCE.createPart();
 		editor.setLabel("Note");
 		editor.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NoteEditor");
 		editor.setId("org.eclipse.e4.demo.e4photo.noteEditor" + editors);
@@ -46,7 +45,7 @@ public class AddNoteHandler {
 		
 		path = path.removeFileExtension();
 		path = path.addFileExtension("txt");
-		editor.setInputURI(path.toString());
+		editor.setPersistedState(path.toString());
 		
 		exifPart.getParent().getChildren().add(editor);
 	}

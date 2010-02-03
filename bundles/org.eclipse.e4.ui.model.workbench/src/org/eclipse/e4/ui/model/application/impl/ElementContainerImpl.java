@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ElementContainerImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ElementContainerImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ElementContainerImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,14 +56,14 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	protected EList<T> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected T activeChild;
+	protected T selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -102,16 +102,16 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public T getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (T)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public T getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (T)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -119,8 +119,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public T basicGetActiveChild() {
-		return activeChild;
+	public T basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -128,11 +128,11 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(T newActiveChild) {
-		T oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(T newSelectedElement) {
+		T oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -174,9 +174,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		switch (featureID) {
 			case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -194,8 +194,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends T>)newValue);
 				return;
-			case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD:
-				setActiveChild((T)newValue);
+			case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				setSelectedElement((T)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -212,8 +212,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 			case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD:
-				setActiveChild((T)null);
+			case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				setSelectedElement((T)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -229,8 +229,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		switch (featureID) {
 			case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}

@@ -16,7 +16,6 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -834,7 +833,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window2);
-		application.setActiveChild(window2);
+		application.setSelectedElement(window2);
 
 		Object state = reconciler.serialize();
 
@@ -844,7 +843,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
-		assertNull(application.getActiveChild());
+		assertNull(application.getSelectedElement());
 		assertEquals(window1, application.getChildren().get(0));
 
 		applyAll(deltas);
@@ -854,7 +853,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(window1, application.getChildren().get(0));
 		assertNotNull(application.getChildren().get(1));
 		assertEquals(application.getChildren().get(1), application
-				.getActiveChild());
+				.getSelectedElement());
 	}
 
 	public void testElementContainer_ActiveChild_Removed() {
@@ -869,7 +868,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setActiveChild(window2);
+		application.setSelectedElement(window2);
 
 		Object state = reconciler.serialize();
 
@@ -881,13 +880,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
-		assertNull(application.getActiveChild());
+		assertNull(application.getSelectedElement());
 		assertEquals(window1, application.getChildren().get(0));
 
 		applyAll(deltas);
 
 		assertEquals(1, application.getChildren().size());
-		assertNull(application.getActiveChild());
+		assertNull(application.getSelectedElement());
 		assertEquals(window1, application.getChildren().get(0));
 	}
 
@@ -913,7 +912,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window.getChildren().add(partStack2);
 
 		partStack2.getChildren().add(part2);
-		partStack2.setActiveChild(part2);
+		partStack2.setSelectedElement(part2);
 
 		Object state = reconciler.serialize();
 
@@ -949,7 +948,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partStack2 = (MPartStack) window.getChildren().get(1);
 
 		assertEquals(0, partStack2.getChildren().size());
-		assertNull(partStack2.getActiveChild());
+		assertNull(partStack2.getSelectedElement());
 	}
 
 	public void testElementContainer_Children_Move_IdenticalToUserChange() {
@@ -1114,7 +1113,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window2);
 
-		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		MPart editor = MApplicationFactory.eINSTANCE.createPart();
 		window2.getChildren().add(editor);
 
 		application.getChildren().remove(window2);
@@ -1160,7 +1159,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window2);
-		application.setActiveChild(window2);
+		application.setSelectedElement(window2);
 
 		application.getChildren().remove(window2);
 
@@ -1172,7 +1171,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
-		assertNull(application.getActiveChild());
+		assertNull(application.getSelectedElement());
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(0, window.getChildren().size());
@@ -1180,7 +1179,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		applyAll(deltas);
 
 		assertEquals(1, application.getChildren().size());
-		assertNull(application.getActiveChild());
+		assertNull(application.getSelectedElement());
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(0, window.getChildren().size());
@@ -1207,7 +1206,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window2);
 
-		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		MPart editor = MApplicationFactory.eINSTANCE.createPart();
 		window2.getChildren().add(editor);
 		editor.setLabel("editor");
 

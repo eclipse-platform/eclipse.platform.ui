@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
@@ -152,7 +151,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart partFront = partStack.getChildren().get(0);
-		partStack.setActiveChild(partFront);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
@@ -160,7 +159,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partService.bringToTop(partFront);
-		assertEquals(partStack.getActiveChild(), partFront);
+		assertEquals(partStack.getSelectedElement(), partFront);
 	}
 
 	public void testBringToTop_PartOnTop_myService() {
@@ -169,7 +168,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart partFront = partStack.getChildren().get(0);
-		partStack.setActiveChild(partFront);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
@@ -177,7 +176,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partService.bringToTop(partFront);
-		assertEquals(partStack.getActiveChild(), partFront);
+		assertEquals(partStack.getSelectedElement(), partFront);
 	}
 
 	public void testBringToTop_PartNotOnTop() {
@@ -187,7 +186,7 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart partFront = partStack.getChildren().get(0);
 		MPart partBack = partStack.getChildren().get(1);
-		partStack.setActiveChild(partFront);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
@@ -195,7 +194,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partService.bringToTop(partBack);
-		assertEquals(partStack.getActiveChild(), partBack);
+		assertEquals(partStack.getSelectedElement(), partBack);
 	}
 
 	public void testBringToTop_PartNotOnTop_myService() {
@@ -205,7 +204,7 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart partFront = partStack.getChildren().get(0);
 		MPart partBack = partStack.getChildren().get(1);
-		partStack.setActiveChild(partFront);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
@@ -213,7 +212,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partService.bringToTop(partBack);
-		assertEquals(partStack.getActiveChild(), partBack);
+		assertEquals(partStack.getSelectedElement(), partBack);
 	}
 
 	public void testBringToTop_PartInAnotherWindow() {
@@ -225,13 +224,13 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
+		partStackA.setSelectedElement(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
+		partStackB.setSelectedElement(partFrontB);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -242,20 +241,20 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partServiceA.bringToTop(partBackB);
-		assertEquals(partStackA.getActiveChild(), partFrontA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partFrontA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceB.bringToTop(partBackA);
-		assertEquals(partStackA.getActiveChild(), partFrontA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partFrontA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceA.bringToTop(partBackA);
-		assertEquals(partStackA.getActiveChild(), partBackA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partBackA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceB.bringToTop(partBackB);
-		assertEquals(partStackA.getActiveChild(), partBackA);
-		assertEquals(partStackB.getActiveChild(), partBackB);
+		assertEquals(partStackA.getSelectedElement(), partBackA);
+		assertEquals(partStackB.getSelectedElement(), partBackB);
 	}
 
 	public void testBringToTop_PartInAnotherWindow_myService() {
@@ -267,13 +266,13 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
+		partStackA.setSelectedElement(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
+		partStackB.setSelectedElement(partFrontB);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -284,20 +283,20 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partServiceA.bringToTop(partBackB);
-		assertEquals(partStackA.getActiveChild(), partFrontA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partFrontA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceB.bringToTop(partBackA);
-		assertEquals(partStackA.getActiveChild(), partFrontA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partFrontA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceA.bringToTop(partBackA);
-		assertEquals(partStackA.getActiveChild(), partBackA);
-		assertEquals(partStackB.getActiveChild(), partFrontB);
+		assertEquals(partStackA.getSelectedElement(), partBackA);
+		assertEquals(partStackB.getSelectedElement(), partFrontB);
 
 		partServiceB.bringToTop(partBackB);
-		assertEquals(partStackA.getActiveChild(), partBackA);
-		assertEquals(partStackB.getActiveChild(), partBackB);
+		assertEquals(partStackA.getSelectedElement(), partBackA);
+		assertEquals(partStackB.getSelectedElement(), partBackB);
 	}
 
 	public void testBringToTop_ActivationChanges() {
@@ -321,10 +320,10 @@ public class EPartServiceTest extends TestCase {
 		partStackB.getChildren().add(partBackB);
 		window.getChildren().add(partStackB);
 
-		partStackA.setActiveChild(partFrontA);
-		partStackB.setActiveChild(partFrontB);
-		window.setActiveChild(partStackA);
-		application.setActiveChild(window);
+		partStackA.setSelectedElement(partFrontA);
+		partStackB.setSelectedElement(partFrontB);
+		window.setSelectedElement(partStackA);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -361,9 +360,9 @@ public class EPartServiceTest extends TestCase {
 		MPart partBack = partStack.getChildren().get(1);
 		partBack.setToBeRendered(false);
 
-		partStack.setActiveChild(partFront);
-		window.setActiveChild(partStack);
-		application.setActiveChild(window);
+		partStack.setSelectedElement(partFront);
+		window.setSelectedElement(partStack);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -446,7 +445,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart part = partStack.getChildren().get(0);
-		partStack.setActiveChild(part);
+		partStack.setSelectedElement(part);
 
 		getEngine().createGui(window);
 
@@ -461,7 +460,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart part = partStack.getChildren().get(0);
-		partStack.setActiveChild(part);
+		partStack.setSelectedElement(part);
 
 		getEngine().createGui(window);
 
@@ -475,7 +474,7 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
-		partStack.setActiveChild(partStack.getChildren().get(0));
+		partStack.setSelectedElement(partStack.getChildren().get(0));
 
 		getEngine().createGui(window);
 
@@ -491,7 +490,7 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
-		partStack.setActiveChild(partStack.getChildren().get(0));
+		partStack.setSelectedElement(partStack.getChildren().get(0));
 
 		getEngine().createGui(window);
 
@@ -522,13 +521,13 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
+		partStackA.setSelectedElement(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
+		partStackB.setSelectedElement(partFrontB);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -558,13 +557,13 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
+		partStackA.setSelectedElement(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
+		partStackB.setSelectedElement(partFrontB);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -590,7 +589,7 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = application.getChildren().get(0);
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
-		partStack.setActiveChild(partStack.getChildren().get(0));
+		partStack.setSelectedElement(partStack.getChildren().get(0));
 
 		getEngine().createGui(window);
 
@@ -621,17 +620,17 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
-		windowA.setActiveChild(partStackA);
+		partStackA.setSelectedElement(partFrontA);
+		windowA.setSelectedElement(partStackA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
-		windowB.setActiveChild(partStackB);
+		partStackB.setSelectedElement(partFrontB);
+		windowB.setSelectedElement(partStackB);
 
-		application.setActiveChild(windowA);
+		application.setSelectedElement(windowA);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -670,7 +669,7 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partServiceB.isPartVisible(partBackB));
 	}
 
-	public void testActivate_partService_activeChild() {
+	public void testActivate_partService_SelectedElement() {
 		MApplication application = createApplication(new String[] {
 				"partFrontA", "partBackA" }, new String[] { "partFrontB",
 				"partBackB" });
@@ -679,13 +678,13 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
+		partStackA.setSelectedElement(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
+		partStackB.setSelectedElement(partFrontB);
 
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
@@ -697,7 +696,7 @@ public class EPartServiceTest extends TestCase {
 
 		partServiceA.activate(partBackA);
 
-		assertEquals(windowA, application.getActiveChild());
+		assertEquals(windowA, application.getSelectedElement());
 		IEclipseContext a = application.getContext();
 		IEclipseContext c = (IEclipseContext) a
 				.getLocal(IContextConstants.ACTIVE_CHILD);
@@ -709,7 +708,7 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partBackA, aPart);
 
 		partServiceB.activate(partBackB);
-		assertEquals(windowB, application.getActiveChild());
+		assertEquals(windowB, application.getSelectedElement());
 		a = application.getContext();
 		c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
 		while (c != null) {
@@ -745,14 +744,14 @@ public class EPartServiceTest extends TestCase {
 
 		partServiceA.activate(partBackA);
 
-		assertEquals(windowA, application.getActiveChild());
+		assertEquals(windowA, application.getSelectedElement());
 		MPart shouldBeCorrect = (MPart) partFrontA.getContext().get(
 				IServiceConstants.ACTIVE_PART);
 		assertNotNull(shouldBeCorrect);
 		assertEquals(partBackA, partServiceA.getActivePart());
 
 		partServiceB.activate(partBackB);
-		assertEquals(windowB, application.getActiveChild());
+		assertEquals(windowB, application.getSelectedElement());
 		shouldBeCorrect = (MPart) partFrontB.getContext().get(
 				IServiceConstants.ACTIVE_PART);
 		assertNotNull(shouldBeCorrect);
@@ -768,9 +767,9 @@ public class EPartServiceTest extends TestCase {
 		MPart partBack = partStack.getChildren().get(1);
 		partBack.setToBeRendered(false);
 
-		partStack.setActiveChild(partFront);
-		window.setActiveChild(partStack);
-		application.setActiveChild(window);
+		partStack.setSelectedElement(partFront);
+		window.setSelectedElement(partStack);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -831,7 +830,7 @@ public class EPartServiceTest extends TestCase {
 				.createApplication();
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
 				.createPartDescriptor();
@@ -860,13 +859,13 @@ public class EPartServiceTest extends TestCase {
 
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
-		assertEquals(part, stack.getActiveChild());
+		assertEquals(part, stack.getSelectedElement());
 
 		MPart part2 = partService.showPart("partId2");
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
-		assertEquals(part2, stack.getActiveChild());
+		assertEquals(part2, stack.getSelectedElement());
 	}
 
 	public void testShowPart_DefinedCategoryStackExists() {
@@ -874,7 +873,7 @@ public class EPartServiceTest extends TestCase {
 				.createApplication();
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
 				.createPartDescriptor();
@@ -900,13 +899,13 @@ public class EPartServiceTest extends TestCase {
 		MPart part = partService.showPart("partId");
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
-		assertEquals(part, stack.getActiveChild());
+		assertEquals(part, stack.getSelectedElement());
 
 		MPart part2 = partService.showPart("partId2");
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
-		assertEquals(part2, stack.getActiveChild());
+		assertEquals(part2, stack.getSelectedElement());
 	}
 
 	public void testShowPart_CREATE() {
@@ -934,10 +933,10 @@ public class EPartServiceTest extends TestCase {
 		partStackB.getChildren().add(partB1);
 		partStackB.getChildren().add(partB2);
 
-		partStackA.setActiveChild(partA1);
-		partStackB.setActiveChild(partB1);
-		window.setActiveChild(partStackA);
-		application.setActiveChild(window);
+		partStackA.setSelectedElement(partA1);
+		partStackB.setSelectedElement(partB1);
+		window.setSelectedElement(partStackA);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -998,9 +997,9 @@ public class EPartServiceTest extends TestCase {
 		partA.setId("partA");
 		partStack.getChildren().add(partA);
 
-		partStack.setActiveChild(partA);
-		window.setActiveChild(partStack);
-		application.setActiveChild(window);
+		partStack.setSelectedElement(partA);
+		window.setSelectedElement(partStack);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1045,9 +1044,9 @@ public class EPartServiceTest extends TestCase {
 		partA.setId("partA");
 		partStackA.getChildren().add(partA);
 
-		partStackA.setActiveChild(partA);
-		window.setActiveChild(partStackA);
-		application.setActiveChild(window);
+		partStackA.setSelectedElement(partA);
+		window.setSelectedElement(partStackA);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1087,7 +1086,7 @@ public class EPartServiceTest extends TestCase {
 		partDescriptor.setCategory("stackId");
 		application.getDescriptors().add(partDescriptor);
 
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1128,9 +1127,9 @@ public class EPartServiceTest extends TestCase {
 		partStackB.getChildren().add(partB1);
 		partStackB.getChildren().add(partB2);
 
-		partStackA.setActiveChild(partA1);
-		partStackB.setActiveChild(partB1);
-		window.setActiveChild(partStackA);
+		partStackA.setSelectedElement(partA1);
+		partStackB.setSelectedElement(partB1);
+		window.setSelectedElement(partStackA);
 
 		initialize(applicationContext, application);
 
@@ -1176,9 +1175,9 @@ public class EPartServiceTest extends TestCase {
 		partA.setId("partA");
 		partStack.getChildren().add(partA);
 
-		partStack.setActiveChild(partA);
-		window.setActiveChild(partStack);
-		application.setActiveChild(window);
+		partStack.setSelectedElement(partA);
+		window.setSelectedElement(partStack);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1224,9 +1223,9 @@ public class EPartServiceTest extends TestCase {
 		partA.setId("partA");
 		partStackA.getChildren().add(partA);
 
-		partStackA.setActiveChild(partA);
-		window.setActiveChild(partStackA);
-		application.setActiveChild(window);
+		partStackA.setSelectedElement(partA);
+		window.setSelectedElement(partStackA);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1266,7 +1265,7 @@ public class EPartServiceTest extends TestCase {
 		partDescriptor.setCategory("stackId");
 		application.getDescriptors().add(partDescriptor);
 
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1307,9 +1306,9 @@ public class EPartServiceTest extends TestCase {
 		partB.setToBeRendered(false);
 		partStack.getChildren().add(partB);
 
-		partStack.setActiveChild(partA);
-		window.setActiveChild(partStack);
-		application.setActiveChild(window);
+		partStack.setSelectedElement(partA);
+		window.setSelectedElement(partStack);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1340,13 +1339,13 @@ public class EPartServiceTest extends TestCase {
 				.createApplication();
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		application.setActiveChild(window);
+		application.setSelectedElement(window);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setId("partId");
 		part.setToBeRendered(false);
 		window.getChildren().add(part);
-		window.setActiveChild(part);
+		window.setSelectedElement(part);
 
 		initialize(applicationContext, application);
 
@@ -1444,8 +1443,7 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
-				.createSaveablePart();
+		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
 		saveablePart.setDirty(before);
 		window.getChildren().add(saveablePart);
 
@@ -1500,7 +1498,7 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStack = (MPartStack) window.getChildren().get(0);
 		MPart partFront = partStack.getChildren().get(0);
 		MPart partBack = partStack.getChildren().get(1);
-		partStack.setActiveChild(partFront);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
@@ -1539,10 +1537,10 @@ public class EPartServiceTest extends TestCase {
 		partStackB.getChildren().add(partBackB);
 		window.getChildren().add(partStackB);
 
-		partStackA.setActiveChild(partFrontA);
-		partStackB.setActiveChild(partFrontB);
-		window.setActiveChild(partStackA);
-		application.setActiveChild(window);
+		partStackA.setSelectedElement(partFrontA);
+		partStackB.setSelectedElement(partFrontB);
+		window.setSelectedElement(partStackA);
+		application.setSelectedElement(window);
 
 		initialize(applicationContext, application);
 
@@ -1590,8 +1588,7 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
-				.createSaveablePart();
+		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
@@ -1829,10 +1826,9 @@ public class EPartServiceTest extends TestCase {
 		testSavePart(ISaveHandler.Save.CANCEL, false, false, false);
 	}
 
-	private MSaveablePart createSaveablePart(
-			MElementContainer<MPSCElement> container, boolean beforeDirty) {
-		MSaveablePart saveablePart = MApplicationFactory.eINSTANCE
-				.createSaveablePart();
+	private MPart createSaveablePart(MElementContainer<MPSCElement> container,
+			boolean beforeDirty) {
+		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
@@ -1852,10 +1848,8 @@ public class EPartServiceTest extends TestCase {
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		final MSaveablePart saveablePart = createSaveablePart(window,
-				beforeDirty[0]);
-		final MSaveablePart saveablePart2 = createSaveablePart(window,
-				beforeDirty[1]);
+		final MPart saveablePart = createSaveablePart(window, beforeDirty[0]);
+		final MPart saveablePart2 = createSaveablePart(window, beforeDirty[1]);
 
 		// setup the context
 		initialize(applicationContext, application);
@@ -3277,12 +3271,12 @@ public class EPartServiceTest extends TestCase {
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window1);
 		application.getChildren().add(window2);
-		application.setActiveChild(window1);
+		application.setSelectedElement(window1);
 
 		// place a part in the first window
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		window1.getChildren().add(part);
-		window1.setActiveChild(part);
+		window1.setSelectedElement(part);
 
 		// setup the context
 		initialize(applicationContext, application);

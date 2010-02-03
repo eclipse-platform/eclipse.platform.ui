@@ -52,7 +52,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getTooltip <em>Tooltip</em>}</li>
@@ -196,14 +196,14 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	protected EList<MMenuItem> children;
 
 	/**
-	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getActiveChild()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected MMenuItem activeChild;
+	protected MMenuItem selectedElement;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -529,16 +529,16 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuItem getActiveChild() {
-		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
-			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MMenuItem)eResolveProxy(oldActiveChild);
-			if (activeChild != oldActiveChild) {
+	public MMenuItem getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MMenuItem)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD, oldActiveChild, activeChild));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
-		return activeChild;
+		return selectedElement;
 	}
 
 	/**
@@ -546,8 +546,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuItem basicGetActiveChild() {
-		return activeChild;
+	public MMenuItem basicGetSelectedElement() {
+		return selectedElement;
 	}
 
 	/**
@@ -555,11 +555,11 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MMenuItem newActiveChild) {
-		MMenuItem oldActiveChild = activeChild;
-		activeChild = newActiveChild;
+	public void setSelectedElement(MMenuItem newSelectedElement) {
+		MMenuItem oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD, oldActiveChild, activeChild));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -761,9 +761,9 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				return getContainerData();
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
-				if (resolve) return getActiveChild();
-				return basicGetActiveChild();
+			case MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 			case MApplicationPackage.DIRECT_MENU_ITEM__LABEL:
 				return getLabel();
 			case MApplicationPackage.DIRECT_MENU_ITEM__ICON_URI:
@@ -814,8 +814,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MMenuItem>)newValue);
 				return;
-			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
-				setActiveChild((MMenuItem)newValue);
+			case MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT:
+				setSelectedElement((MMenuItem)newValue);
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__LABEL:
 				setLabel((String)newValue);
@@ -871,8 +871,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
-				setActiveChild((MMenuItem)null);
+			case MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT:
+				setSelectedElement((MMenuItem)null);
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__LABEL:
 				setLabel(LABEL_EDEFAULT);
@@ -920,8 +920,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
-				return activeChild != null;
+			case MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT:
+				return selectedElement != null;
 			case MApplicationPackage.DIRECT_MENU_ITEM__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.DIRECT_MENU_ITEM__ICON_URI:
@@ -960,7 +960,7 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				case MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -1015,7 +1015,7 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD;
+				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.DIRECT_MENU_ITEM__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}

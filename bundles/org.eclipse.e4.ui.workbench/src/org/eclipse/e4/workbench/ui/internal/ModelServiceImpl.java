@@ -176,7 +176,7 @@ public class ModelServiceImpl implements EModelService {
 
 		// First, get all the elements under the existing 'selected' element
 		List<MUIElement> goingHidden = new ArrayList<MUIElement>();
-		MUIElement curSel = stack.getActiveChild();
+		MUIElement curSel = stack.getSelectedElement();
 		hideElementRecursive(curSel, goingHidden);
 
 		// Now process any newly visible elements
@@ -203,7 +203,7 @@ public class ModelServiceImpl implements EModelService {
 		} else if (element instanceof MGenericStack<?>) {
 			// For stacks only the currently selected elements are being hidden
 			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getActiveChild();
+			MUIElement curSel = container.getSelectedElement();
 			hideElementRecursive(curSel, goingHidden);
 		}
 	}
@@ -232,7 +232,7 @@ public class ModelServiceImpl implements EModelService {
 		} else if (element instanceof MGenericStack<?>) {
 			// For stacks only the currently selected elements are being visible
 			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getActiveChild();
+			MUIElement curSel = container.getSelectedElement();
 			showElementRecursive(curSel, becomingVisible);
 		}
 	}

@@ -61,7 +61,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				MUIElement oldSel = (MUIElement) event
 						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				selectStackElement(stack, oldSel);
-				MUIElement selPart = stack.getActiveChild();
+				MUIElement selPart = stack.getSelectedElement();
 				if (selPart != null && selPart.getWidget() == null) {
 					IPresentationEngine renderer = (IPresentationEngine) context
 							.get(IPresentationEngine.class.getName());
@@ -86,7 +86,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.ACTIVECHILD), lazyLoader);
+				UIEvents.ElementContainer.SELECTEDELEMENT), lazyLoader);
 	}
 
 	/**
@@ -101,14 +101,14 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			return;
 
 		MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
-		MUIElement selPart = stack.getActiveChild();
+		MUIElement selPart = stack.getSelectedElement();
 
 		// If there's no 'active' part defined then pick the first
 		if (selPart == null && stack.getChildren().size() > 0) {
 			// NOTE: no need to render first because the listener for
 			// the active child changing will do it
 			int defaultIndex = 0;
-			stack.setActiveChild(stack.getChildren().get(defaultIndex));
+			stack.setSelectedElement(stack.getChildren().get(defaultIndex));
 		} else if (selPart != null && selPart.getWidget() == null) {
 			IPresentationEngine renderer = (IPresentationEngine) context
 					.get(IPresentationEngine.class.getName());
@@ -162,7 +162,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 							CTabFolder ctf = (CTabFolder) event.widget;
 							MPartStack stack = (MPartStack) ctf
 									.getData(OWNING_ME);
-							MPart selPart = stack.getActiveChild();
+							MPart selPart = stack.getSelectedElement();
 							if (selPart != null)
 								activate(selPart);
 						}
@@ -182,7 +182,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 
 		// Now process any newly visible elements
-		MUIElement curSel = stack.getActiveChild();
+		MUIElement curSel = stack.getSelectedElement();
 		if (curSel != null) {
 			showElementRecursive(curSel, becomingVisible);
 		}
@@ -203,7 +203,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MGenericStack<?>) {
 			// For stacks only the currently selected elements are being hidden
 			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getActiveChild();
+			MUIElement curSel = container.getSelectedElement();
 			hideElementRecursive(curSel, goingHidden);
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
@@ -233,7 +233,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MGenericStack<?>) {
 			// For stacks only the currently selected elements are being visible
 			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getActiveChild();
+			MUIElement curSel = container.getSelectedElement();
 			if (curSel == null && container.getChildren().size() > 0)
 				curSel = container.getChildren().get(0);
 			if (curSel != null)
@@ -280,11 +280,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		elementParent.getChildren().add(elementIndex, placeholder);
 		phParent.getChildren().add(phIndex, element);
 
-		if (elementParent.getActiveChild() == element)
-			elementParent.setActiveChild(null);
+		if (elementParent.getSelectedElement() == element)
+			elementParent.setSelectedElement(null);
 
-		if (phParent.getActiveChild() == null)
-			phParent.setActiveChild(element);
+		if (phParent.getSelectedElement() == null)
+			phParent.setSelectedElement(element);
 
 		// directly manage the widget reparent if the parent exists
 		if (element.getWidget() instanceof Control) {

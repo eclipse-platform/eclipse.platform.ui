@@ -184,10 +184,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createPartDescriptorContainerAdapter();
 			}
 			@Override
-			public Adapter caseSaveablePart(MSaveablePart object) {
-				return createSaveablePartAdapter();
-			}
-			@Override
 			public Adapter casePartStack(MPartStack object) {
 				return createPartStackAdapter();
 			}
@@ -266,14 +262,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseWindowTrim(MWindowTrim object) {
 				return createWindowTrimAdapter();
-			}
-			@Override
-			public Adapter caseV______________Editing_______________V(MV______________Editing_______________V object) {
-				return createV______________Editing_______________VAdapter();
-			}
-			@Override
-			public Adapter caseEditor(MEditor object) {
-				return createEditorAdapter();
 			}
 			@Override
 			public Adapter caseV______________SharedElements_______________V(MV______________SharedElements_______________V object) {
@@ -698,20 +686,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MSaveablePart <em>Saveable Part</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MSaveablePart
-	 * @generated
-	 */
-	public Adapter createSaveablePartAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -988,34 +962,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindowTrimAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________Editing_______________V <em>VEditing V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MV______________Editing_______________V
-	 * @generated
-	 */
-	public Adapter createV______________Editing_______________VAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MEditor
-	 * @generated
-	 */
-	public Adapter createEditorAdapter() {
 		return null;
 	}
 

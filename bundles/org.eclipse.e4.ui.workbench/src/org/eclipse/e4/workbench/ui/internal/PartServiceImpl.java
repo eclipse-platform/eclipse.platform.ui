@@ -123,7 +123,7 @@ public class PartServiceImpl implements EPartService {
 	@PostConstruct
 	void postConstruct() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.ACTIVECHILD), selectedHandler);
+				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
 	}
 
@@ -174,20 +174,20 @@ public class PartServiceImpl implements EPartService {
 
 	private void internalBringToTop(MPart part) {
 		MElementContainer<MUIElement> parent = part.getParent();
-		MPart oldActiveChild = (MPart) parent.getActiveChild();
-		if (oldActiveChild != part) {
-			parent.setActiveChild(part);
-			internalFixContext(part, oldActiveChild);
+		MPart oldSelectedElement = (MPart) parent.getSelectedElement();
+		if (oldSelectedElement != part) {
+			parent.setSelectedElement(part);
+			internalFixContext(part, oldSelectedElement);
 		}
 	}
 
-	private void internalFixContext(MPart part, MPart oldActiveChild) {
-		MContext parentPart = getParentWithContext(oldActiveChild);
+	private void internalFixContext(MPart part, MPart oldSelectedElement) {
+		MContext parentPart = getParentWithContext(oldSelectedElement);
 		if (parentPart == null) {
 			return;
 		}
 		IEclipseContext parentContext = parentPart.getContext();
-		IEclipseContext oldContext = oldActiveChild.getContext();
+		IEclipseContext oldContext = oldSelectedElement.getContext();
 		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
 		if (child == oldContext) {
 			parentContext.set(IContextConstants.ACTIVE_CHILD, part == null ? null : part
@@ -219,7 +219,7 @@ public class PartServiceImpl implements EPartService {
 	public boolean isPartVisible(MPart part) {
 		if (isInContainer(part)) {
 			MElementContainer<MUIElement> parent = part.getParent();
-			return parent.getActiveChild() == part;
+			return parent.getSelectedElement() == part;
 		}
 		return false;
 	}
@@ -261,8 +261,8 @@ public class PartServiceImpl implements EPartService {
 			while (curElement != pwc) {
 				MElementContainer<MUIElement> parent = curElement.getParent();
 				curElement.setToBeRendered(true);
-				if (parent.getActiveChild() != curElement) {
-					parent.setActiveChild(curElement);
+				if (parent.getSelectedElement() != curElement) {
+					parent.setSelectedElement(curElement);
 				}
 				curElement = parent;
 			}
@@ -299,10 +299,10 @@ public class PartServiceImpl implements EPartService {
 	 */
 	public void deactivate(MPart part) {
 		MElementContainer<MUIElement> parent = part.getParent();
-		MPart oldActiveChild = (MPart) parent.getActiveChild();
-		if (oldActiveChild == part) {
-			parent.setActiveChild(null);
-			internalFixContext(null, oldActiveChild);
+		MPart oldSelectedElement = (MPart) parent.getSelectedElement();
+		if (oldSelectedElement == part) {
+			parent.setSelectedElement(null);
+			internalFixContext(null, oldSelectedElement);
 		}
 
 	}

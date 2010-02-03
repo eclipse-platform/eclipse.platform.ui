@@ -192,13 +192,13 @@ public abstract class HeadlessApplicationTest extends
 
 	public void testGetFirstPart_GetContext() {
 		// set the active part to ensure that it's actually been rendered
-		getFirstPart().getParent().setActiveChild(getFirstPart());
+		getFirstPart().getParent().setSelectedElement(getFirstPart());
 		test_GetContext(getFirstPart());
 	}
 
 	public void testGetSecondPart_GetContext() {
 		// set the active part to ensure that it's actually been rendered
-		getSecondPart().getParent().setActiveChild(getSecondPart());
+		getSecondPart().getParent().setSelectedElement(getSecondPart());
 		test_GetContext(getSecondPart());
 	}
 

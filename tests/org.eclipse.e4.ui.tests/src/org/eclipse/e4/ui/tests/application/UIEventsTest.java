@@ -117,7 +117,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
 			super("AppElement", ApplicationElement.TOPIC, new String[] {
-					ApplicationElement.ID, ApplicationElement.STYLE },
+					ApplicationElement.ID, ApplicationElement.TAGS },
 					eventBroker);
 		}
 	}
@@ -147,7 +147,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class ElementContainerTester extends EventTester {
 		ElementContainerTester(IEventBroker eventBroker) {
 			super("ElementContainer", ElementContainer.TOPIC, new String[] {
-					ElementContainer.CHILDREN, ElementContainer.ACTIVECHILD },
+					ElementContainer.CHILDREN, ElementContainer.SELECTEDELEMENT },
 					eventBroker);
 		}
 	}
@@ -242,7 +242,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		String newId = "Some New Id";
 		allData.setId(newId);
-		allData.setStyle("new Style");
+		allData.setTags("new Style");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events
@@ -275,7 +275,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
 		allData.getChildren().add(menu);
-		allData.setActiveChild(menu);
+		allData.setSelectedElement(menu);
 		checkForFailures(allTesters, elementContainerTester);
 
 		// Input

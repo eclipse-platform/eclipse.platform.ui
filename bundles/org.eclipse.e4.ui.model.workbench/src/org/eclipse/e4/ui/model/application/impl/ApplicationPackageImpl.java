@@ -27,7 +27,6 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MDirtyable;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MGenericTile;
@@ -54,7 +53,6 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
@@ -66,7 +64,6 @@ import org.eclipse.e4.ui.model.application.MV_________Testing__________V;
 import org.eclipse.e4.ui.model.application.MV____________Abstract_____________V;
 import org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V;
 import org.eclipse.e4.ui.model.application.MV______________Commands_______________V;
-import org.eclipse.e4.ui.model.application.MV______________Editing_______________V;
 import org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V;
 import org.eclipse.e4.ui.model.application.MV______________RCP_______________V;
 import org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V;
@@ -287,13 +284,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass saveablePartEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass partStackEClass = null;
 
 	/**
@@ -428,20 +418,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass windowTrimEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass v______________Editing_______________VEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass editorEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -615,7 +591,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getApplicationElement_Style() {
+	public EAttribute getApplicationElement_Tags() {
 		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -858,7 +834,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getElementContainer_ActiveChild() {
+	public EReference getElementContainer_SelectedElement() {
 		return (EReference)elementContainerEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -1094,15 +1070,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EReference getPartDescriptorContainer_Descriptors() {
 		return (EReference)partDescriptorContainerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getSaveablePart() {
-		return saveablePartEClass;
 	}
 
 	/**
@@ -1551,24 +1518,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getV______________Editing_______________V() {
-		return v______________Editing_______________VEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getEditor() {
-		return editorEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getV______________SharedElements_______________V() {
 		return v______________SharedElements_______________VEClass;
 	}
@@ -1697,7 +1646,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ID);
-		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__STYLE);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 
 		contributionEClass = createEClass(CONTRIBUTION);
 		createEAttribute(contributionEClass, CONTRIBUTION__URI);
@@ -1732,7 +1681,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		elementContainerEClass = createEClass(ELEMENT_CONTAINER);
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__CHILDREN);
-		createEReference(elementContainerEClass, ELEMENT_CONTAINER__ACTIVE_CHILD);
+		createEReference(elementContainerEClass, ELEMENT_CONTAINER__SELECTED_ELEMENT);
 
 		genericStackEClass = createEClass(GENERIC_STACK);
 
@@ -1775,8 +1724,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
 		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-
-		saveablePartEClass = createEClass(SAVEABLE_PART);
 
 		partStackEClass = createEClass(PART_STACK);
 
@@ -1846,10 +1793,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(trimContainerEClass, TRIM_CONTAINER__SIDE);
 
 		windowTrimEClass = createEClass(WINDOW_TRIM);
-
-		v______________Editing_______________VEClass = createEClass(VEDITING_V);
-
-		editorEClass = createEClass(EDITOR);
 
 		v______________SharedElements_______________VEClass = createEClass(VSHARED_ELEMENTS_V);
 
@@ -1969,9 +1912,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getUILabel());
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
 		partEClass.getESuperTypes().add(this.getBindingContainer());
+		partEClass.getESuperTypes().add(this.getDirtyable());
 		partDescriptorEClass.getESuperTypes().add(this.getPart());
-		saveablePartEClass.getESuperTypes().add(this.getPart());
-		saveablePartEClass.getESuperTypes().add(this.getDirtyable());
 		g1 = createEGenericType(this.getUIElement());
 		partStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
@@ -1994,11 +1936,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getContext());
 		windowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIElement());
-		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandlerContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBindingContainer());
+		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPSCElement());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(this.getPartDescriptorContainer());
@@ -2029,8 +1971,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowTrimEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
 		windowTrimEClass.getEGenericSuperTypes().add(g1);
-		editorEClass.getESuperTypes().add(this.getInput());
-		editorEClass.getESuperTypes().add(this.getSaveablePart());
 		placeholderEClass.getESuperTypes().add(this.getUIElement());
 		g1 = createEGenericType(this.getUILabel());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
@@ -2080,7 +2020,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getApplicationElement_Style(), ecorePackage.getEString(), "style", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getApplicationElement_Tags(), ecorePackage.getEString(), "tags", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_URI(), ecorePackage.getEString(), "URI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -2120,7 +2060,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(elementContainerEClass_T);
 		initEReference(getElementContainer_Children(), g1, this.getUIElement_Parent(), "children", null, 0, -1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(elementContainerEClass_T);
-		initEReference(getElementContainer_ActiveChild(), g1, null, "activeChild", null, 0, 1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getElementContainer_SelectedElement(), g1, null, "selectedElement", null, 0, 1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(genericStackEClass, MGenericStack.class, "GenericStack", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2163,8 +2103,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(saveablePartEClass, MSaveablePart.class, "SaveablePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(partStackEClass, MPartStack.class, "PartStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2234,10 +2172,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getTrimContainer_Side(), this.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(windowTrimEClass, MWindowTrim.class, "WindowTrim", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-
-		initEClass(v______________Editing_______________VEClass, MV______________Editing_______________V.class, "V______________Editing_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-
-		initEClass(editorEClass, MEditor.class, "Editor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(v______________SharedElements_______________VEClass, MV______________SharedElements_______________V.class, "V______________SharedElements_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
