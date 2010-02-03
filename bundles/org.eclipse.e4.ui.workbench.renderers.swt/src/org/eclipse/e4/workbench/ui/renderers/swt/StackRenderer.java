@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -122,12 +121,12 @@ public class StackRenderer extends LazyStackRenderer {
 						.getProperty(UIEvents.EventTags.ELEMENT);
 
 				// Ensure that this event is for a MMenuItem
-				if (!(objElement instanceof MSaveablePart)) {
+				if (!(objElement instanceof MDirtyable)) {
 					return;
 				}
 
 				// Extract the data bits
-				MSaveablePart uiElement = (MSaveablePart) objElement;
+				MPart uiElement = (MPart) objElement;
 
 				// This listener only updates stacks -it- rendered
 				MElementContainer<MUIElement> parent = uiElement.getParent();

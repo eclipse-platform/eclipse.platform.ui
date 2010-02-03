@@ -423,9 +423,11 @@ public class PartServiceImpl implements EPartService {
 	 */
 	public Collection<MPart> getDirtyParts() {
 		List<MPart> dirtyParts = new ArrayList<MPart>();
-		for (MSaveablePart part : getSaveableParts()) {
-			if (part.isDirty()) {
-				dirtyParts.add(part);
+		for (MPart part : getParts()) {
+			if (part instanceof MDirtyable) {
+				if (((MDirtyable) part).isDirty()) {
+					dirtyParts.add(part);
+				}
 			}
 		}
 		return dirtyParts;
@@ -493,7 +495,7 @@ public class PartServiceImpl implements EPartService {
 
 		boolean success = true;
 		for (MPart dirtyPart : dirtyParts) {
-			if (!savePart((MSaveablePart) dirtyPart, false)) {
+			if (!savePart(dirtyPart, false)) {
 				success = false;
 			}
 		}
