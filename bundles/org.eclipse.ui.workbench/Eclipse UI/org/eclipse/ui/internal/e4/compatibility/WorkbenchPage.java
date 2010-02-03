@@ -23,7 +23,6 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
@@ -598,7 +597,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 
 		MPartDescriptor partDescriptor = getEditorDescriptor();
-		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		MPart editor = MApplicationFactory.eINSTANCE.createPart();
 		editor.setURI(partDescriptor.getURI());
 		editor.setId(editorId);
 
