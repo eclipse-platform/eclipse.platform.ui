@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.custom.CTabFolder;
@@ -168,7 +169,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		EPartService service = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		service.showPart(partB.getId());
+		service.showPart(partB.getId(), PartState.ACTIVATE);
 		assertEquals("Showing a part should alter the tab folder's selection",
 				1, tabFolder.getSelectionIndex());
 	}
@@ -202,7 +203,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		EPartService service = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		MPart shownPart = service.showPart("part");
+		MPart shownPart = service.showPart("part", PartState.ACTIVATE);
 
 		assertEquals(1, tabFolder.getItemCount());
 		assertEquals(0, tabFolder.getSelectionIndex());

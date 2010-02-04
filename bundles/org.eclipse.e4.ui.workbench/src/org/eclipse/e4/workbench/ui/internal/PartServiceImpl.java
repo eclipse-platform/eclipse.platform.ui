@@ -304,75 +304,82 @@ public class PartServiceImpl implements EPartService {
 			parent.setSelectedElement(null);
 			internalFixContext(null, oldSelectedElement);
 		}
-
 	}
 
-	public MPart showPart(String id) {
-		return showPart(id, PartState.ACTIVATE);
-	}
-
-	public MPart showPart(String id, PartState partState) {
-		Assert.isNotNull(id);
-
-		MPart part = findPart(id);
-		if (part != null) {
-			switch (partState) {
-			case ACTIVATE:
-				activate(part);
-				return part;
-			case VISIBLE:
-				MPart activePart = getActivePart();
-				if (activePart == part) {
-					part.setToBeRendered(true);
-				} else {
-					if (activePart.getParent() == part.getParent()) {
-						part.setToBeRendered(true);
-						engine.createGui(part);
-					} else {
-						bringToTop(part);
-					}
-				}
-				return part;
-			case CREATE:
-				part.setToBeRendered(true);
-				engine.createGui(part);
-				return part;
-			}
-			return part;
-		}
-
-		MPartDescriptor descriptorMatch = null;
+	private MPartDescriptor findDescriptor(String id) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getId().equals(id)) {
-				descriptorMatch = descriptor;
-				break;
+				return descriptor;
 			}
 		}
+		return null;
+	}
 
-		if (descriptorMatch == null) {
-			return null;
+	private MPart createPart(MPartDescriptor descriptor) {
+		return descriptor == null ? null : (MPart) EcoreUtil.copy((EObject) descriptor);
+	}
+
+	public MPart createPart(String id) {
+		MPartDescriptor descriptor = findDescriptor(id);
+		return createPart(descriptor);
+	}
+
+	private MPart addPart(MPart providedPart, MPart localPart) {
+		MPartDescriptor descriptor = findDescriptor(providedPart.getId());
+		if (descriptor == null) {
+			if (providedPart != localPart) {
+				MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+				stack.getChildren().add(providedPart);
+				rootContainer.getChildren().add(stack);
+			}
+		} else {
+			if (providedPart != localPart && !descriptor.isAllowMultiple()) {
+				return localPart;
+			}
+
+			String category = descriptor.getCategory();
+			MApplicationElement container = modelService.find(category, rootContainer);
+			if (container instanceof MElementContainer<?>) {
+				((MElementContainer<MPart>) container).getChildren().add(localPart);
+			} else {
+				MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+				stack.setId(category);
+				stack.getChildren().add(providedPart);
+				rootContainer.getChildren().add(stack);
+			}
 		}
-		// 2) add a child under the parent
-		// TBD only make a new one if multiple copies are allowed
+		return providedPart;
+	}
 
-		// TBD here we just copy descriptor for convenience; better would be to have an utility
-		// to make a part based on the descriptor.
-		// Create the part based on the descriptor
-		// MPart part = MApplicationFactory.eINSTANCE.createPart();
-		// part.setURI(descriptor.getURI());
-		// part.setLabel(descriptor.getLabel());
-		part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
-
-		MApplicationElement container = modelService.find(descriptorMatch.getCategory(),
-				rootContainer);
-		if (container instanceof MElementContainer<?>) {
-			((MElementContainer<MPart>) container).getChildren().add(part);
-		} else { // wrap it in a stack
-			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-			stack.setId(descriptorMatch.getCategory());
-			stack.getChildren().add(part);
-			rootContainer.getChildren().add(stack);
+	private MPart showExistingPart(PartState partState, MPart providedPart, MPart localPart) {
+		MPart part = addPart(providedPart, localPart);
+		switch (partState) {
+		case ACTIVATE:
+			activate(part);
+			return part;
+		case VISIBLE:
+			MPart activePart = getActivePart();
+			if (activePart == part) {
+				part.setToBeRendered(true);
+			} else {
+				if (activePart.getParent() == part.getParent()) {
+					part.setToBeRendered(true);
+					engine.createGui(part);
+				} else {
+					bringToTop(part);
+				}
+			}
+			return part;
+		case CREATE:
+			part.setToBeRendered(true);
+			engine.createGui(part);
+			return part;
 		}
+		return part;
+	}
+
+	private MPart showNewPart(MPart part, PartState partState) {
+		part = addPart(part, part);
 
 		MPart activePart = getActivePart();
 		if (activePart == null) {
@@ -380,7 +387,6 @@ public class PartServiceImpl implements EPartService {
 			return part;
 		}
 
-		// 3) make it visible / active / re-layout
 		switch (partState) {
 		case ACTIVATE:
 			activate(part);
@@ -389,9 +395,37 @@ public class PartServiceImpl implements EPartService {
 			if (activePart.getParent() != part.getParent()) {
 				bringToTop(part);
 			}
-			return part;
 		}
 		return part;
+	}
+
+	public MPart showPart(String id, PartState partState) {
+		Assert.isNotNull(id);
+		Assert.isNotNull(partState);
+
+		MPart part = findPart(id);
+		if (part != null) {
+			return showPart(part, partState);
+		}
+
+		MPartDescriptor descriptor = findDescriptor(id);
+		part = createPart(descriptor);
+		if (part == null) {
+			return null;
+		}
+
+		return showNewPart(part, partState);
+	}
+
+	public MPart showPart(MPart part, PartState partState) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(partState);
+
+		MPart localPart = findPart(part.getId());
+		if (localPart != null) {
+			return showExistingPart(partState, part, localPart);
+		}
+		return showNewPart(part, partState);
 	}
 
 	public void hidePart(MPart part) {

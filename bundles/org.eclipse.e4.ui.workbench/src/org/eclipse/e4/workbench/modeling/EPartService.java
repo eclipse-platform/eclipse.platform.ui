@@ -51,8 +51,25 @@ public interface EPartService {
 
 	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
 
+	/**
+	 * Adds the given listener for part lifecycle events. Has no effect if an identical listener has
+	 * already been registered.
+	 * <p>
+	 * <b>Note:</b> Listeners should be removed when no longer necessary.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to attach
+	 */
 	public void addPartListener(IPartListener listener);
 
+	/**
+	 * Removes the given listener so that it will no longer be notified of part lifecycle events.
+	 * Has no effect if an identical listener has not been registered.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
 	public void removePartListener(IPartListener listener);
 
 	/**
@@ -113,21 +130,27 @@ public interface EPartService {
 	public boolean isPartVisible(MPart part);
 
 	/**
-	 * Shows the part that is identified by the given id and grant it focus.
+	 * Creates a new part of the given id.
 	 * 
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
-	 * @return the shown part, or <code>null</code> if no parts or part descriptors can be found
+	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
 	 *         that match the specified id
 	 */
-	public MPart showPart(String id);
+	public MPart createPart(String id);
 
 	/**
-	 * Shows the part identified by the given id. The behavior of this method is dictated by the
-	 * supplied state. If <code>ACTIVATE</code> is supplied, then the part is made visible and
-	 * granted focus. If <code>VISIBLE</code> is supplied, then the part will be made visible but
-	 * not given focus. If <code>CREATE</code> is supplied, then the part will be instantiated
-	 * though its contents may not necessarily be visible to the end user.
+	 * Shows a part with the identified by the given id. In the event that there are multiple parts
+	 * with the specified id, the client is recommended to use {@link #getParts()} and iterate over
+	 * the collection to find the interested part and invoke {@link #showPart(MPart, PartState)} on
+	 * it.
+	 * <p>
+	 * The behavior of this method is dictated by the supplied state. If <code>ACTIVATE</code> is
+	 * supplied, then the part is made visible and granted focus. If <code>VISIBLE</code> is
+	 * supplied, then the part will be made visible but not given focus. If <code>CREATE</code> is
+	 * supplied, then the part will be instantiated though its contents may not necessarily be
+	 * visible to the end user.
+	 * </p>
 	 * 
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
@@ -137,6 +160,32 @@ public interface EPartService {
 	 *         that match the specified id
 	 */
 	public MPart showPart(String id, PartState partState);
+
+	/**
+	 * Shows the given part.
+	 * <p>
+	 * <ul>
+	 * <li>If there cannot be multiple parts of this type and a part already exists, the already
+	 * existing part will be shown and returned.</li>
+	 * <li>If multiple parts of this type is allowed, then the provided part will be shown and
+	 * returned</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * The behavior of this method is dictated by the supplied state. If <code>ACTIVATE</code> is
+	 * supplied, then the part is made visible and granted focus. If <code>VISIBLE</code> is
+	 * supplied, then the part will be made visible but not given focus. If <code>CREATE</code> is
+	 * supplied, then the part will be instantiated though its contents may not necessarily be
+	 * visible to the end user.
+	 * </p>
+	 * 
+	 * @param part
+	 *            the part to show
+	 * @param partState
+	 *            the desired state of the shown part to be in
+	 * @return the shown part
+	 */
+	public MPart showPart(MPart part, PartState partState);
 
 	/**
 	 * Hides the given part. The part must be a part managed by this service.
