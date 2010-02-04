@@ -695,10 +695,10 @@
          </enabledWhen>
       </page>
       <page
+            category="org.eclipse.ui.propertypages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceFilterPage"
             id="org.eclipse.ui.propertypages.resource.filters"
-            name="%PropertyPages.resource.filters"
-            >
+            name="%PropertyPages.resource.filters">
          <enabledWhen>
             <or>
             	<adapt type="org.eclipse.core.resources.IProject"/>
@@ -726,10 +726,10 @@
          </enabledWhen>
       </page>
       <page
+            category="org.eclipse.ui.propertypages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectLinkedResourcePage"
             id="org.eclipse.ui.propertypages.project.linkedResourcesPage"
-            name="%linked_resources"
-            >
+            name="%linked_resources">
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
          </enabledWhen>
