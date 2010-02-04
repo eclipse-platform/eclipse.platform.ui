@@ -17,6 +17,8 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
@@ -30,6 +32,7 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 public class PartRenderingEngineTests extends TestCase {
 	protected IEclipseContext appContext;
@@ -51,6 +54,25 @@ public class PartRenderingEngineTests extends TestCase {
 		if (appContext instanceof IDisposable) {
 			((IDisposable) appContext).dispose();
 		}
+	}
+
+	public void testV() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
+		application.getCommands().add(command);
+		application.getHandlers().add(handler);
+
+		command.setCommandName("commandName");
+		command.setId("commandId");
+		handler.setId("commandId");
+		handler.setCommand(command);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(application);
 	}
 
 	public void testCreateViewBug298415() {
@@ -302,6 +324,8 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(
 				"Adding a part to a stack should not cause the stack's active child to change",
 				partA, stack.getSelectedElement());
+		assertNull("The object should not have been instantiated", partB
+				.getObject());
 	}
 
 	public void testCreateGuiBug301021() throws Exception {
@@ -472,6 +496,113 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNull(part.getObject());
 		assertEquals(0, tabFolder.getItemCount());
 	}
+
+	public void testIEclipseContext_ActiveShell() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow windowA = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(windowA);
+
+		MWindow windowB = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(windowB);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(windowA);
+		wb.createAndRunUI(windowB);
+
+		Shell shellA = (Shell) windowA.getWidget();
+		Shell shellB = (Shell) windowB.getWidget();
+		assertNotNull(shellA);
+		assertNotNull(shellB);
+
+		application.setSelectedElement(windowA);
+		assertTrue(shellA.isFocusControl());
+		assertFalse(shellB.isFocusControl());
+
+		application.setSelectedElement(windowB);
+		assertFalse(shellA.isFocusControl());
+		assertTrue(shellB.isFocusControl());
+	}
+
+	// public void testPartStack_SetActiveChild7() throws Exception {
+	// MApplication application = MApplicationFactory.eINSTANCE
+	// .createApplication();
+	// application.setContext(appContext);
+	// appContext.set(MApplication.class.getName(), application);
+	//
+	// MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+	// application.getChildren().add(window);
+	//
+	// MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+	// window.getChildren().add(stack);
+	//
+	// MPart partA = MApplicationFactory.eINSTANCE.createPart();
+	// partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+	// stack.getChildren().add(partA);
+	//
+	// wb = new E4Workbench(application, appContext);
+	// wb.createAndRunUI(window);
+	//
+	// CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+	// assertEquals(0, tabFolder.getSelectionIndex());
+	// assertEquals(partA, stack.getActiveChild());
+	//
+	// MPart partB = MApplicationFactory.eINSTANCE.createPart();
+	// partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+	// stack.getChildren().add(partB);
+	//
+	// assertEquals(0, tabFolder.getSelectionIndex());
+	// assertEquals(partA, stack.getActiveChild());
+	//
+	// stack.setActiveChild(partB);
+	// assertEquals(1, tabFolder.getSelectionIndex());
+	// assertEquals(partB, stack.getActiveChild());
+	// }
+	//
+	// public void testY() {
+	// MApplication application = MApplicationFactory.eINSTANCE
+	// .createApplication();
+	// application.setContext(appContext);
+	// appContext.set(MApplication.class.getName(), application);
+	//
+	// MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+	// application.getChildren().add(window);
+	//
+	// MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+	// window.getChildren().add(stack);
+	//
+	// MPart partA = MApplicationFactory.eINSTANCE.createPart();
+	// partA.setId("partA");
+	// partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+	//
+	// MPart partB = MApplicationFactory.eINSTANCE.createPart();
+	// partB.setId("partB");
+	// partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+	//
+	// stack.getChildren().add(partA);
+	// stack.getChildren().add(partB);
+	//
+	// wb = new E4Workbench(application, appContext);
+	// wb.createAndRunUI(window);
+	//
+	// CTabFolder tabFolder = (CTabFolder) stack.getWidget();
+	// assertEquals(0, tabFolder.getSelectionIndex());
+	//
+	// EPartService service = (EPartService) window.getContext().get(
+	// EPartService.class.getName());
+	// service.activate(partB);
+	// assertEquals(1, tabFolder.getSelectionIndex());
+	//
+	// service.activate(partA);
+	//
+	// partA.setToBeRendered(false);
+	// assertEquals(1, tabFolder.getItemCount());
+	// assertEquals(0, tabFolder.getSelectionIndex());
+	// assertEquals(partB, stack.getActiveChild());
+	// }
 
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();

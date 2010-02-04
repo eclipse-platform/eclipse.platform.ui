@@ -340,7 +340,7 @@ public class PartServiceImpl implements EPartService {
 			String category = descriptor.getCategory();
 			MApplicationElement container = modelService.find(category, rootContainer);
 			if (container instanceof MElementContainer<?>) {
-				((MElementContainer<MPart>) container).getChildren().add(localPart);
+				((MElementContainer<MPart>) container).getChildren().add(providedPart);
 			} else {
 				MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 				stack.setId(category);
