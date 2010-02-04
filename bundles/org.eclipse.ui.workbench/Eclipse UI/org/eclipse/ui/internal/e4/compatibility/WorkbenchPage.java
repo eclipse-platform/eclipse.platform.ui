@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,14 +21,12 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -596,17 +594,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 
-		MPartDescriptor partDescriptor = getEditorDescriptor();
-		MPart editor = MApplicationFactory.eINSTANCE.createPart();
-		editor.setURI(partDescriptor.getURI());
-		editor.setId(editorId);
-
-		MUIElement element = findPrimaryDataStack(window);
-		if (element instanceof MPartStack) {
-			((MPartStack) element).getChildren().add(editor);
-		} else {
-			window.getChildren().add(editor);
-		}
+		MPart editor = partService.showPart(
+				"org.eclipse.e4.ui.compatibility.editor", PartState.CREATE); //$NON-NLS-1$
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
 		compatibilityEditor.set(input, descriptor);
@@ -618,37 +607,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		return compatibilityEditor.getEditor();
-	}
-
-	private MPartStack findPrimaryDataStack(MElementContainer<?> container) {
-		for (Object child : container.getChildren()) {
-			if (((MApplicationElement) child).getId().equals("org.eclipse.e4.primaryDataStack")) { //$NON-NLS-1$
-				return (MPartStack) child;
-			} else if (child instanceof MElementContainer<?>) {
-				MPartStack stack = findPrimaryDataStack((MElementContainer<?>) child);
-				if (stack != null) {
-					return stack;
-				}
-			}
-		}
-		return null;
-	}
-
-	private MPartDescriptor getEditorDescriptor() {
-		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor
-					.getURI()
-					.equals(
-							"platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor")) { //$NON-NLS-1$
-				return descriptor;
-			}
-		}
-
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
-		descriptor
-				.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor"); //$NON-NLS-1$
-		application.getDescriptors().add(descriptor);
-		return descriptor;
 	}
 
 	/* (non-Javadoc)
@@ -809,6 +767,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
+	private MPart findPart(String viewId, String secondaryId) {
+		if (secondaryId == null) {
+			return partService.findPart(viewId);
+		}
+
+		Collection<MPart> parts = partService.getParts();
+		for (MPart part : parts) {
+			if (part.getId().equals(viewId) && part.getTags().contains(secondaryId)) {
+				return part;
+			}
+		}
+		return null;
+	}
+
 	private IViewPart internalShowView(String viewId, String secondaryId, int mode)
 			throws PartInitException {
 		switch (mode) {
@@ -827,23 +799,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
-		MPart part = partService.findPart(viewId);
+		MPart part = findPart(viewId, secondaryId);
 		if (part == null) {
-			switch (mode) {
-			case VIEW_ACTIVATE:
-				part = partService.showPart(viewId, EPartService.PartState.ACTIVATE);
-				break;
-			case VIEW_VISIBLE:
-				part = partService.showPart(viewId, EPartService.PartState.VISIBLE);
-				break;
-			case VIEW_CREATE:
-				part = partService.showPart(viewId, EPartService.PartState.CREATE);
-				break;
+			part = partService.createPart(viewId);
+			if (part == null) {
+				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
+						viewId));
 			}
 
-			if (part == null) {
-				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple,
-						viewId));
+			partService.showPart(part, convert(mode));
+
+			if (secondaryId != null) {
+				part.getTags().add(secondaryId);
 			}
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
@@ -853,11 +820,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return compatibilityView.getView();
 		}
 
+		MPartDescriptor descriptor = findDescriptor(viewId);
+		if (!descriptor.isAllowMultiple() && secondaryId != null) {
+			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple, viewId));
+		}
+
 		boolean rendered = part.isToBeRendered();
 
-		part = partService.showPart(viewId, convert(mode));
-		if (part == null) {
-			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple, viewId));
+		part = partService.showPart(part, convert(mode));
+		if (secondaryId != null) {
+			part.getTags().add(secondaryId);
 		}
 
 		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
@@ -872,6 +844,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		compatibilityView = (CompatibilityView) part.getObject();
 		return compatibilityView.getView();
+	}
+
+	private MPartDescriptor findDescriptor(String id) {
+		for (MPartDescriptor descriptor : application.getDescriptors()) {
+			if (descriptor.getId().equals(id)) {
+				return descriptor;
+			}
+		}
+		return null;
 	}
 
 	private PartState convert(int mode) {
