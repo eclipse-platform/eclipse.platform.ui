@@ -28,6 +28,7 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
@@ -264,22 +265,7 @@ public class UIWizardsAuto extends TestCase {
         // Create wizard selection wizard.
         NewWizard wizard = new NewWizard();
         wizard.setProjectsOnly(true);
-        ISelection selection = getWorkbench().getActiveWorkbenchWindow()
-                .getSelectionService().getSelection();
-        IStructuredSelection selectionToPass = null;
-        if (selection instanceof IStructuredSelection)
-            selectionToPass = (IStructuredSelection) selection;
-        else
-            selectionToPass = StructuredSelection.EMPTY;
-        wizard.init(getWorkbench(), selectionToPass);
-        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-                .getDialogSettings();
-        IDialogSettings wizardSettings = workbenchSettings
-                .getSection("NewWizardAction");//$NON-NLS-1$
-        if (wizardSettings == null)
-            wizardSettings = workbenchSettings.addNewSection("NewWizardAction");//$NON-NLS-1$
-        wizard.setDialogSettings(wizardSettings);
-        wizard.setForcePreviousAndNextButtons(true);
+        initNewWizard(wizard);
 
         // Create wizard dialog.
         WizardDialog dialog = new WizardDialog(getShell(), wizard);
@@ -294,7 +280,44 @@ public class UIWizardsAuto extends TestCase {
 
     public void testNewResource() {
         NewWizard wizard = new NewWizard();
-        ISelection selection = getWorkbench().getActiveWorkbenchWindow()
+        initNewWizard(wizard);
+
+        WizardDialog dialog = new WizardDialog(getShell(), wizard);
+        dialog.create();
+        dialog.getShell().setSize(
+                Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
+                SIZING_WIZARD_HEIGHT_2);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
+        DialogCheck.assertDialogTexts(dialog, this);
+    }
+    
+    public void testWizardWindowTitle() {
+    	
+        checkWizardWindowTitle(null);
+        checkWizardWindowTitle("My New Wizard"); //$NON-NLS-1$
+        
+    }
+
+	private void checkWizardWindowTitle(String windowTitle) {
+		
+		NewWizard newWizard = new NewWizard();
+        newWizard.setWindowTitle(windowTitle);
+        
+        initNewWizard(newWizard);
+
+        WizardDialog dialog = new WizardDialog(getShell(), newWizard);
+        dialog.create();
+
+        if(windowTitle == null)
+        	windowTitle = WorkbenchMessages.NewWizard_title;
+        	
+        assertEquals(windowTitle, dialog.getShell().getText());
+        
+        dialog.close();
+	}
+
+	private void initNewWizard(NewWizard wizard) {
+		ISelection selection = getWorkbench().getActiveWorkbenchWindow()
                 .getSelectionService().getSelection();
         IStructuredSelection selectionToPass = null;
         if (selection instanceof IStructuredSelection)
@@ -310,15 +333,8 @@ public class UIWizardsAuto extends TestCase {
             wizardSettings = workbenchSettings.addNewSection("NewWizardAction");//$NON-NLS-1$
         wizard.setDialogSettings(wizardSettings);
         wizard.setForcePreviousAndNextButtons(true);
+	}
 
-        WizardDialog dialog = new WizardDialog(getShell(), wizard);
-        dialog.create();
-        dialog.getShell().setSize(
-                Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
-                SIZING_WIZARD_HEIGHT_2);
-        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
 
 }
 

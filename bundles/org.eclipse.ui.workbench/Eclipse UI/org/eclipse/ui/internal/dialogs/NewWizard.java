@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.StringTokenizer;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -105,11 +104,14 @@ public class NewWizard extends Wizard {
         this.workbench = aWorkbench;
         this.selection = currentSelection;
 
-        if (projectsOnly) {
-			setWindowTitle(WorkbenchMessages.NewProject_title);
-		} else {
-			setWindowTitle(WorkbenchMessages.NewWizard_title);
-		} 
+		if (getWindowTitle() == null) {
+			// No title supplied. Set the default title
+			if (projectsOnly) {
+				setWindowTitle(WorkbenchMessages.NewProject_title);
+			} else {
+				setWindowTitle(WorkbenchMessages.NewWizard_title);
+			}
+		}
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
         setNeedsProgressMonitor(true);
@@ -167,4 +169,5 @@ public class NewWizard extends Wizard {
 	    	}
 	    	return super.canFinish();
     }
+
 }
