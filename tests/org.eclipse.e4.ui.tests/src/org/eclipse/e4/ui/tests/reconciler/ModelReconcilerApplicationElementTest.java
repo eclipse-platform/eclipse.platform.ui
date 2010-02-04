@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -22,68 +24,63 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerApplicationElementTest extends
 		ModelReconcilerTest {
 
-	private void testApplicationElement_Style(String before, String after) {
+	private void testApplicationElement_Style(String[] originalTags,
+			String[] userTags, String[] newTags, String[] mergedTags) {
 		MApplication application = createApplication();
-		// application.setTags(before);
+		application.getTags().addAll(Arrays.asList(originalTags));
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		// application.setTags(after);
+		application.getTags().clear();
+		application.getTags().addAll(Arrays.asList(userTags));
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
+		application.getTags().clear();
+		List<String> newTagsList = Arrays.asList(newTags);
+		application.getTags().addAll(newTagsList);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, application.getTags());
+		assertEquals(newTagsList, application.getTags());
 
 		applyAll(deltas);
 
-		assertEquals(after, application.getTags());
+		List<String> mergedTagsList = Arrays.asList(mergedTags);
+		assertEquals(mergedTagsList.size(), application.getTags().size());
+		assertTrue(mergedTagsList.containsAll(application.getTags()));
+		assertTrue(application.getTags().containsAll(mergedTagsList));
 	}
 
-	public void testApplicationElement_Style_NullNull() {
-		testApplicationElement_Style(null, null);
+	public void testApplicationElement_Style() {
+		testApplicationElement_Style(new String[0], new String[0],
+				new String[0], new String[0]);
 	}
 
-	public void testApplicationElement_Style_NullEmpty() {
-		testApplicationElement_Style(null, "");
+	public void testApplicationElement_Style2() {
+		testApplicationElement_Style(new String[] { "cvs" }, new String[0],
+				new String[] { "cvs" }, new String[0]);
 	}
 
-	public void testApplicationElement_Style_NullString() {
-		testApplicationElement_Style(null, "editorStack");
+	public void testApplicationElement_Style3() {
+		testApplicationElement_Style(new String[] { "cvs" },
+				new String[] { "cvs" }, new String[] { "cvs" },
+				new String[] { "cvs" });
 	}
 
-	public void testApplicationElement_Style_EmptyNull() {
-		testApplicationElement_Style("", null);
+	public void testApplicationElement_Style4() {
+		testApplicationElement_Style(new String[] { "cvs" }, new String[] {
+				"cvs", "scm" }, new String[] { "cvs" }, new String[] { "cvs",
+				"scm" });
 	}
 
-	public void testApplicationElement_Style_EmptyEmpty() {
-		testApplicationElement_Style("", "");
-	}
-
-	public void testApplicationElement_Style_EmptyString() {
-		testApplicationElement_Style("", "editorStack");
-	}
-
-	public void testApplicationElement_Style_StringNull() {
-		testApplicationElement_Style("editorStack", null);
-	}
-
-	public void testApplicationElement_Style_StringEmpty() {
-		testApplicationElement_Style("editorStack", "");
-	}
-
-	public void testApplicationElement_Style_StringStringUnchanged() {
-		testApplicationElement_Style("editorStack", "editorStack");
-	}
-
-	public void testApplicationElement_Style_StringStringChanged() {
-		testApplicationElement_Style("editorStack", "viewStack");
+	public void testApplicationElement_Style5() {
+		testApplicationElement_Style(new String[0], new String[] { "cvs" },
+				new String[] { "scm" }, new String[] { "scm", "cvs" });
 	}
 
 	private void testApplicationElement_Id_New(boolean createIdFirst) {

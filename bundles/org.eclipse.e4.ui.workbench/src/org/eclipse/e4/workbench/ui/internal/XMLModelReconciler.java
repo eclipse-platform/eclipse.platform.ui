@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
@@ -149,7 +150,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static EStructuralFeature getStructuralFeature(EObject object, String featureName) {
 		if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
-		} else if (featureName.equals(APPLICATIONELEMENT_STYLE_ATTNAME)) {
+		} else if (featureName.equals(APPLICATIONELEMENT_TAGS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Tags();
 		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplication_Commands();
@@ -367,6 +368,10 @@ public class XMLModelReconciler extends ModelReconciler {
 				} else if (isIndirectReference(featureName)) {
 					ModelDelta delta = createIndirectReferenceDelta(references, object, feature,
 							innerElement);
+					deltas.add(delta);
+				} else if (isUnorderedChainedAttribute(featureName)) {
+					ModelDelta delta = createUnorderedChainedAttributeDelta(object, feature,
+							innerElement, featureName);
 					deltas.add(delta);
 				} else {
 					ModelDelta delta = createAttributeDelta(object, feature, innerElement,
@@ -705,6 +710,26 @@ public class XMLModelReconciler extends ModelReconciler {
 	private Object createObject(Collection<ModelDelta> deltas, Element reference,
 			List<Object> references) {
 		return createObject(deltas, reference.getAttribute(TYPE_ATTNAME), reference, references);
+	}
+
+	private ModelDelta createUnorderedChainedAttributeDelta(EObject object,
+			EStructuralFeature feature, Element node, String featureName) {
+		List<Object> values = new ArrayList<Object>();
+		NodeList attributes = (NodeList) node;
+		for (int j = 0; j < attributes.getLength(); j++) {
+			Element attribute = (Element) attributes.item(j);
+			Object value = getValue(feature, attribute.getAttribute(featureName));
+			values.add(value);
+		}
+
+		List<?> currentValues = (List<?>) object.eGet(feature);
+		Set<Object> sum = new HashSet<Object>();
+		sum.addAll(values);
+		sum.addAll(currentValues);
+		values.clear();
+		values.addAll(sum);
+
+		return new EMFModelDeltaSet(object, feature, values);
 	}
 
 	private ModelDelta createAttributeDelta(EObject eObject, EStructuralFeature feature,
@@ -1131,6 +1156,13 @@ public class XMLModelReconciler extends ModelReconciler {
 			// record what was originally referenced
 			appendOriginalReferenceElements(document, featureElement, (List<?>) featureChange
 					.getValue());
+		} else if (isUnorderedChainedAttribute(featureName)) {
+			List<?> attributes = (List<?>) value;
+			for (Object attribute : attributes) {
+				Element attributeElement = document.createElement(featureName);
+				attributeElement.setAttribute(featureName, String.valueOf(attribute));
+				featureElement.appendChild(attributeElement);
+			}
 		} else {
 			featureElement.setAttribute(featureName, String.valueOf(value));
 		}
@@ -1369,6 +1401,10 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME);
+	}
+
+	private static boolean isUnorderedChainedAttribute(String featureName) {
+		return featureName.equals(APPLICATIONELEMENT_TAGS_ATTNAME);
 	}
 
 	/**

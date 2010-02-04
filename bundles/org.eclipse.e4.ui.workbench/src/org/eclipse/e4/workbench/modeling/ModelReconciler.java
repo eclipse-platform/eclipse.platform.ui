@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ public abstract class ModelReconciler {
 			.getApplicationElement_Id().getName();
 
 	/**
-	 * Attribute defined by MApplicationElements (value is <code>style</code>).
+	 * Attribute defined by MApplicationElements (value is <code>tags</code>).
 	 */
-	public static final String APPLICATIONELEMENT_STYLE_ATTNAME = MApplicationPackage.eINSTANCE
+	public static final String APPLICATIONELEMENT_TAGS_ATTNAME = MApplicationPackage.eINSTANCE
 			.getApplicationElement_Tags().getName();
 
 	/**
