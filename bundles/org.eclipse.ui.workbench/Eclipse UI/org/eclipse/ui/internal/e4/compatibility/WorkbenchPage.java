@@ -594,8 +594,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 
-		MPart editor = partService.showPart(
-				"org.eclipse.e4.ui.compatibility.editor", PartState.CREATE); //$NON-NLS-1$
+		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		partService.showPart(editor, PartState.CREATE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
 		compatibilityEditor.set(input, descriptor);
