@@ -72,6 +72,7 @@ public class SearchServlet extends HttpServlet {
 			if (searchException == null) {
 				String response = serialize(results);
 				resp.getWriter().write(response);
+				return;
 			}
 		}
 
