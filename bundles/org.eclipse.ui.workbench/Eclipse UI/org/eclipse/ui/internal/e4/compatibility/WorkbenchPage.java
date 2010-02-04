@@ -797,6 +797,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 				throw new IllegalArgumentException(
 						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 			}
+
+			MPartDescriptor descriptor = findDescriptor(viewId);
+			if (!descriptor.isAllowMultiple()) {
+				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple,
+						viewId));
+			}
 		}
 
 		MPart part = findPart(viewId, secondaryId);
@@ -818,11 +824,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
 
 			return compatibilityView.getView();
-		}
-
-		MPartDescriptor descriptor = findDescriptor(viewId);
-		if (!descriptor.isAllowMultiple() && secondaryId != null) {
-			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple, viewId));
 		}
 
 		boolean rendered = part.isToBeRendered();
