@@ -24,14 +24,14 @@ public abstract class ModelReconcilerApplicationElementTest extends
 
 	private void testApplicationElement_Style(String before, String after) {
 		MApplication application = createApplication();
-		application.setTags(before);
+		// application.setTags(before);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setTags(after);
+		// application.setTags(after);
 
 		Object state = reconciler.serialize();
 

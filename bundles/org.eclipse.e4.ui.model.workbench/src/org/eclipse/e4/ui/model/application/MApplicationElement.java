@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -56,29 +58,19 @@ public interface MApplicationElement {
 	void setId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Tags</b></em>' attribute.
+	 * Returns the value of the '<em><b>Tags</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Style</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tags</em>' attribute.
-	 * @see #setTags(String)
+	 * @return the value of the '<em>Tags</em>' attribute list.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement_Tags()
-	 * @model
+	 * @model ordered="false"
 	 * @generated
 	 */
-	String getTags();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Tags</em>' attribute.
-	 * @see #getTags()
-	 * @generated
-	 */
-	void setTags(String value);
+	EList<String> getTags();
 
 } // MApplicationElement

@@ -10,15 +10,18 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,24 +59,14 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String TAGS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tags = TAGS_EDEFAULT;
+	protected EList<String> tags;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -120,20 +113,11 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTags() {
+	public EList<String> getTags() {
+		if (tags == null) {
+			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION_ELEMENT__TAGS);
+		}
 		return tags;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTags(String newTags) {
-		String oldTags = tags;
-		tags = newTags;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION_ELEMENT__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -157,6 +141,7 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -164,7 +149,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 				setId((String)newValue);
 				return;
 			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
-				setTags((String)newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -182,7 +168,7 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 				setId(ID_EDEFAULT);
 				return;
 			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
-				setTags(TAGS_EDEFAULT);
+				getTags().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -199,7 +185,7 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 			case MApplicationPackage.APPLICATION_ELEMENT__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
-				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
+				return tags != null && !tags.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -660,7 +660,7 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION_ELEMENT__ID = 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -687,7 +687,7 @@ public interface MApplicationPackage extends EPackage {
 	int CONTRIBUTION__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -777,7 +777,7 @@ public interface MApplicationPackage extends EPackage {
 	int UI_ELEMENT__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -948,7 +948,7 @@ public interface MApplicationPackage extends EPackage {
 	int ELEMENT_CONTAINER__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1056,7 +1056,7 @@ public interface MApplicationPackage extends EPackage {
 	int GENERIC_STACK__ID = ELEMENT_CONTAINER__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1164,7 +1164,7 @@ public interface MApplicationPackage extends EPackage {
 	int GENERIC_TILE__ID = ELEMENT_CONTAINER__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1290,7 +1290,7 @@ public interface MApplicationPackage extends EPackage {
 	int ITEM__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1434,7 +1434,7 @@ public interface MApplicationPackage extends EPackage {
 	int MENU__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1542,7 +1542,7 @@ public interface MApplicationPackage extends EPackage {
 	int MENU_ITEM__ID = MENU__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1704,7 +1704,7 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_MENU_ITEM__ID = CONTRIBUTION__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1893,7 +1893,7 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_ITEM__ID = ITEM__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2055,7 +2055,7 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__ID = CONTRIBUTION__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2244,7 +2244,7 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_BAR__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2388,7 +2388,7 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION__ID = CONTEXT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2532,7 +2532,7 @@ public interface MApplicationPackage extends EPackage {
 	int PSC_ELEMENT__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2622,7 +2622,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART__ID = CONTRIBUTION__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2838,7 +2838,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART_DESCRIPTOR__ID = PART__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3090,7 +3090,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART_STACK__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3198,7 +3198,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART_SASH_CONTAINER__ID = GENERIC_TILE__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3342,7 +3342,7 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW__ID = UI_LABEL_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3558,7 +3558,7 @@ public interface MApplicationPackage extends EPackage {
 	int MODEL_COMPONENT__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3666,7 +3666,7 @@ public interface MApplicationPackage extends EPackage {
 	int COMMAND__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3720,7 +3720,7 @@ public interface MApplicationPackage extends EPackage {
 	int COMMAND_PARAMETER__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3774,7 +3774,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLER__ID = CONTRIBUTION__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3855,7 +3855,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__ID = ITEM__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4026,7 +4026,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_MENU_ITEM__ID = MENU_ITEM__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4215,7 +4215,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_TOOL_ITEM__ID = ELEMENT_CONTAINER__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4431,7 +4431,7 @@ public interface MApplicationPackage extends EPackage {
 	int KEY_BINDING__ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4476,7 +4476,7 @@ public interface MApplicationPackage extends EPackage {
 	int PARAMETER__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4530,7 +4530,7 @@ public interface MApplicationPackage extends EPackage {
 	int TRIM_CONTAINER__ID = ELEMENT_CONTAINER__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4647,7 +4647,7 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW_TRIM__ID = TRIM_CONTAINER__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4773,7 +4773,7 @@ public interface MApplicationPackage extends EPackage {
 	int PLACEHOLDER__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4899,7 +4899,7 @@ public interface MApplicationPackage extends EPackage {
 	int PERSPECTIVE__ID = UI_LABEL_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5034,7 +5034,7 @@ public interface MApplicationPackage extends EPackage {
 	int PERSPECTIVE_STACK__ID = UI_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5151,7 +5151,7 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5503,10 +5503,10 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getApplicationElement_Id();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tags</em>'.
+	 * @return the meta object for the attribute list '<em>Tags</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTags()
 	 * @see #getApplicationElement()
 	 * @generated
@@ -6810,7 +6810,7 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute APPLICATION_ELEMENT__ID = eINSTANCE.getApplicationElement_Id();
 
 		/**
-		 * The meta object literal for the '<em><b>Tags</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Tags</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

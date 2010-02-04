@@ -269,12 +269,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// Re-parent the control
 				final Composite p = (Composite) parent;
 				Control c = (Control) element.getWidget();
+				c.setVisible(true);
 				c.setParent(p);
 				final Control[] changed = { c };
 
 				// Defer the layout in order to allow the rendering to finish
 				c.getDisplay().asyncExec(new Runnable() {
 					public void run() {
+						p.layout(changed, SWT.CHANGED | SWT.DEFER);
 						p.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
 					}
 				});

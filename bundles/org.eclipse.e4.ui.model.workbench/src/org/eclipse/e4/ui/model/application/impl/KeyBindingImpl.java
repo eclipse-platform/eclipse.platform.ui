@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -92,24 +93,14 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String TAGS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tags = TAGS_EDEFAULT;
+	protected EList<String> tags;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -197,20 +188,11 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTags() {
+	public EList<String> getTags() {
+		if (tags == null) {
+			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.KEY_BINDING__TAGS);
+		}
 		return tags;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTags(String newTags) {
-		String oldTags = tags;
-		tags = newTags;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.KEY_BINDING__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -316,7 +298,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				setId((String)newValue);
 				return;
 			case MApplicationPackage.KEY_BINDING__TAGS:
-				setTags((String)newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
@@ -344,7 +327,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				setId(ID_EDEFAULT);
 				return;
 			case MApplicationPackage.KEY_BINDING__TAGS:
-				setTags(TAGS_EDEFAULT);
+				getTags().clear();
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)null);
@@ -369,7 +352,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.KEY_BINDING__TAGS:
-				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
+				return tags != null && !tags.isEmpty();
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				return command != null;
 			case MApplicationPackage.KEY_BINDING__PARAMETERS:

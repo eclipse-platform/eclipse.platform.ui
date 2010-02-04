@@ -102,24 +102,14 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String TAGS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tags = TAGS_EDEFAULT;
+	protected EList<String> tags;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -456,20 +446,11 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTags() {
+	public EList<String> getTags() {
+		if (tags == null) {
+			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.WINDOW__TAGS);
+		}
 		return tags;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTags(String newTags) {
-		String oldTags = tags;
-		tags = newTags;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.WINDOW__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -1012,7 +993,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				setId((String)newValue);
 				return;
 			case MApplicationPackage.WINDOW__TAGS:
-				setTags((String)newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.WINDOW__WIDGET:
 				setWidget(newValue);
@@ -1091,7 +1073,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				setId(ID_EDEFAULT);
 				return;
 			case MApplicationPackage.WINDOW__TAGS:
-				setTags(TAGS_EDEFAULT);
+				getTags().clear();
 				return;
 			case MApplicationPackage.WINDOW__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
@@ -1165,7 +1147,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			case MApplicationPackage.WINDOW__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.WINDOW__TAGS:
-				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
+				return tags != null && !tags.isEmpty();
 			case MApplicationPackage.WINDOW__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.WINDOW__RENDERER:

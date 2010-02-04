@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -91,24 +92,14 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTags() <em>Tags</em>}' attribute.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String TAGS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tags = TAGS_EDEFAULT;
+	protected EList<String> tags;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -335,20 +326,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTags() {
+	public EList<String> getTags() {
+		if (tags == null) {
+			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__TAGS);
+		}
 		return tags;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTags(String newTags) {
-		String oldTags = tags;
-		tags = newTags;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__TAGS, oldTags, tags));
 	}
 
 	/**
@@ -730,7 +712,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				setId((String)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__TAGS:
-				setTags((String)newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(newValue);
@@ -792,7 +775,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				setId(ID_EDEFAULT);
 				return;
 			case MApplicationPackage.APPLICATION__TAGS:
-				setTags(TAGS_EDEFAULT);
+				getTags().clear();
 				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
@@ -848,7 +831,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.APPLICATION__TAGS:
-				return TAGS_EDEFAULT == null ? tags != null : !TAGS_EDEFAULT.equals(tags);
+				return tags != null && !tags.isEmpty();
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.APPLICATION__RENDERER:

@@ -146,9 +146,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class ElementContainerTester extends EventTester {
 		ElementContainerTester(IEventBroker eventBroker) {
-			super("ElementContainer", ElementContainer.TOPIC, new String[] {
-					ElementContainer.CHILDREN, ElementContainer.SELECTEDELEMENT },
-					eventBroker);
+			super("ElementContainer", ElementContainer.TOPIC,
+					new String[] { ElementContainer.CHILDREN,
+							ElementContainer.SELECTEDELEMENT }, eventBroker);
 		}
 	}
 
@@ -242,7 +242,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		String newId = "Some New Id";
 		allData.setId(newId);
-		allData.setTags("new Style");
+		allData.getTags().add("Testing");
+		// allData.setTags("new Style");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events
