@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -461,7 +461,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 */
 	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
 		HashSet configs = new HashSet();
-		boolean useDefault = false;
+		int voteDefault = 0;
 		if(selection != null) {
 			Object o = selection.getFirstElement();
 			LaunchShortcutExtension ext = null;
@@ -478,17 +478,18 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				if (cfgs == null) {
 					Set types = ext.getAssociatedConfigurationTypes();
 					addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations((String[]) types.toArray(new String[types.size()]), resource));
-					useDefault = true;
-				} else if(cfgs.length > 0) {
-					for(int j = 0; j < cfgs.length; j++) {
-						configs.add(cfgs[j]);
+					voteDefault++;
+				} else {
+					if(cfgs.length > 0) { 
+						for(int j = 0; j < cfgs.length; j++) { 
+							configs.add(cfgs[j]);
+						}
 					}
-					useDefault = false;
 				}
 			}
 		}
-		if (useDefault) {
-			// consider default configurations if the shortcuts did not contribute any
+		if (voteDefault == shortcuts.size()) {			
+			// consider default configurations if no configurations were contributed
 			addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
 		}
 		Iterator iterator = configs.iterator();
