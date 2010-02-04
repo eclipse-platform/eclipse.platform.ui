@@ -714,7 +714,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private ModelDelta createUnorderedChainedAttributeDelta(EObject object,
 			EStructuralFeature feature, Element node, String featureName) {
-		List<Object> values = new ArrayList<Object>();
+		Set<Object> values = new HashSet<Object>();
 		NodeList attributes = (NodeList) node;
 		for (int j = 0; j < attributes.getLength(); j++) {
 			Element attribute = (Element) attributes.item(j);
@@ -723,13 +723,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		List<?> currentValues = (List<?>) object.eGet(feature);
-		Set<Object> sum = new HashSet<Object>();
-		sum.addAll(values);
-		sum.addAll(currentValues);
-		values.clear();
-		values.addAll(sum);
+		values.addAll(currentValues);
 
-		return new EMFModelDeltaSet(object, feature, values);
+		return new EMFModelDeltaSet(object, feature, new ArrayList<Object>(values));
 	}
 
 	private ModelDelta createAttributeDelta(EObject eObject, EStructuralFeature feature,
