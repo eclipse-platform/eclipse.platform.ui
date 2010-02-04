@@ -120,7 +120,6 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
         variableItem.setControl(variableComposite);
         variableItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_pathVariableTabTitle);
 
-        /*
         TabItem linkedResourceItem = new TabItem(tabFolder, SWT.BORDER);
 
         Composite linkedResourceComposite = new Composite(tabFolder, 0);
@@ -131,7 +130,6 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
         linkedResourceItem.setControl(linkedResourceComposite);
         linkedResourceItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_linkedResourcesTabTitle);
 
-        */
         updateWidgetState(true);
         return pageComponent;
 	}

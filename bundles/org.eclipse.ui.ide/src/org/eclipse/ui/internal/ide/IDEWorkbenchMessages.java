@@ -611,6 +611,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourceEditor_unableToCreateVariable;
 	public static String LinkedResourceEditor_unableToFindCommonPathSegments;
 	public static String LinkedResourceEditor_convertAbsolutePathLocations;	
+	public static String LinkedResourceEditor_descriptionBlock;
 	
 	// ==============================================================================
 	// Editors
@@ -715,7 +716,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String PathVariablesBlock_removeVariableButton;
 	public static String PathVariablesBlock_nameColumn;
 	public static String PathVariablesBlock_valueColumn;
-	public static String PathVariablesBlock_resolvedValueColumn;
 
 	public static String PathVariableSelectionDialog_title;
 	public static String PathVariableSelectionDialog_extendButton;

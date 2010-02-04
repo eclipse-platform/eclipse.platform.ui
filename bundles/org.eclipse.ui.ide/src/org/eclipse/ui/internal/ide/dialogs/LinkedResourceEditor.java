@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -45,8 +47,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -72,7 +79,13 @@ public class LinkedResourceEditor {
 	private static int PATH_COLUMN = -1;
 	private static int LOCATION_COLUMN = 1;
 	
-	/**
+    // sizing constants
+    private static final int SIZING_SELECTION_PANE_WIDTH = 400;
+
+    // used to compute layout sizes
+    private FontMetrics fontMetrics;
+
+    /**
 	 * 
 	 */
 	public LinkedResourceEditor() {
@@ -96,16 +109,19 @@ public class LinkedResourceEditor {
 	}
 
 	protected void createButtons(Composite parent) {
-		Composite buttonParent = new Composite(parent, 0);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 4;
-		layout.marginWidth = 0;
-		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
-		buttonParent.setLayout(layout);
-		buttonParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Font font = parent.getFont();
+        Composite groupComponent = new Composite(parent, SWT.NULL);
+        GridLayout groupLayout = new GridLayout();
+        groupLayout.marginWidth = 0;
+        groupLayout.marginHeight = 0;
+        groupComponent.setLayout(groupLayout);
+        GridData data = new GridData();
+        data.verticalAlignment = GridData.FILL;
+        data.horizontalAlignment = GridData.FILL;
+        groupComponent.setLayoutData(data);
+        groupComponent.setFont(font);
 
-		fEditResourceButton = createButton(buttonParent,
+		fEditResourceButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_editLinkedLocation);
 		fEditResourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -113,23 +129,13 @@ public class LinkedResourceEditor {
 			}
 		});
 
-		fConvertAbsoluteButton = createButton(buttonParent,
+		fConvertAbsoluteButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_convertToVariableLocation);
 		fConvertAbsoluteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				convertLocation();
 			}
 		});
-
-		Label l = new Label(buttonParent, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.grabExcessHorizontalSpace = true;
-
-		l.setLayoutData(data);
-		layout = (GridLayout) parent.getLayout();
-		layout.numColumns++;
-		layout.makeColumnsEqualWidth = false;
-
 		updateSelection();
 	}
 
@@ -141,6 +147,13 @@ public class LinkedResourceEditor {
 	private Button createButton(Composite parent, String text) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(text);
+		button.setFont(parent.getFont());
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
+                IDialogConstants.BUTTON_WIDTH);
+        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
+                SWT.DEFAULT, true).x);
+        button.setLayoutData(data);
 		return button;
 	}
 
@@ -148,20 +161,40 @@ public class LinkedResourceEditor {
 	 * Creates the widget group. Callers must call <code>dispose</code> when the
 	 * group is no longer needed.
 	 * 
-	 * @param composite
+	 * @param parent
 	 *            the widget parent
 	 * @return container of the widgets
 	 */
-	public Control createContents(Composite composite) {
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 1;
-		layout.verticalSpacing = 9;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	public Control createContents(Composite parent) {
+        Font font = parent.getFont();
 
-		fTree = new TreeViewer(composite, SWT.MULTI | SWT.FULL_SELECTION);
+        initializeDialogUnits(parent);
+
+        // define container & its layout
+        Composite pageComponent = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        pageComponent.setLayout(layout);
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+        pageComponent.setLayoutData(data);
+        pageComponent.setFont(font);
+
+        // layout the table & its buttons
+        Label variableLabel = new Label(pageComponent, SWT.LEFT);
+        variableLabel.setText(NLS
+				.bind(IDEWorkbenchMessages.LinkedResourceEditor_descriptionBlock,
+						fProject != null? fProject.getName():new String()));
+
+        data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.horizontalSpan = 2;
+        variableLabel.setLayoutData(data);
+        variableLabel.setFont(font);
+
+		fTree = new TreeViewer(pageComponent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -169,9 +202,9 @@ public class LinkedResourceEditor {
 			}
 		});
 
-		GridData data = new GridData(GridData.FILL_BOTH);
+		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = fTree.getTree().getItemHeight() * 10;
-		data.horizontalSpan = 5;
+		data.horizontalSpan = 1;
 		fTree.getTree().setLayoutData(data);
 		fTree.getTree().setLinesVisible(true);
 
@@ -183,23 +216,41 @@ public class LinkedResourceEditor {
 		column.setText(IDEWorkbenchMessages.LinkedResourceEditor_resourceName);
 		column.setResizable(true);
 		column.setMoveable(false);
-		column.setWidth(200);
+		column.setWidth(170);
 
 		column = new TreeColumn(fTree.getTree(), SWT.LEFT, LOCATION_COLUMN);
 		column.setText(IDEWorkbenchMessages.LinkedResourceEditor_location);
 		column.setResizable(true);
 		column.setMoveable(false);
-		column.setWidth(300);
+		column.setWidth(260);
 
+		fTree.getTree().setFont(font);
 		fTree.getTree().setHeaderVisible(true);
-		createButtons(composite);
+		createButtons(pageComponent);
 
-		return composite;
+		fTree.getTree().addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+		        if (getSelectedResource().length == 1)
+		        	editLocation();
+			}
+			public void mouseDown(MouseEvent e) { }
+			public void mouseUp(MouseEvent e) { }
+        });
+
+        return pageComponent;
 	}
 
-	/**
- * 
- */
+    private void initializeDialogUnits(Control control) {
+        // Compute and store a font metric
+        GC gc = new GC(control);
+        gc.setFont(control.getFont());
+        fontMetrics = gc.getFontMetrics();
+        gc.dispose();
+    }
+
+    /**
+     * 
+    */
 	public void dispose() {
 		fixedImg.dispose();
 		brokenImg.dispose();
@@ -603,7 +654,7 @@ public class LinkedResourceEditor {
 		remaining = new ArrayList();
 		// try for each to match with an existing variable
 		String[] variables = fProject.getPathVariableManager()
-				.getPathVariableNames();
+				.getPathVariableNames(fProject);
 
 		it = resources.iterator();
 		int amountLeft = 0;
@@ -678,8 +729,8 @@ public class LinkedResourceEditor {
 			if (commonPath.segmentCount() > 1) {
 				String variableName = getSuitablePathVariable(commonPath);
 				try {
-					fProject.getPathVariableManager().setValue(variableName,
-							commonPath);
+					fProject.getPathVariableManager().setValue(variableName, fProject,
+							URIUtil.toURI(commonPath));
 				} catch (CoreException e) {
 					report
 							.add(NLS
@@ -734,8 +785,8 @@ public class LinkedResourceEditor {
 			IPath commonPath = resLocation.removeLastSegments(1);
 			String variableName = getSuitablePathVariable(commonPath);
 			try {
-				fProject.getPathVariableManager().setValue(variableName,
-						commonPath);
+				fProject.getPathVariableManager().setValue(variableName, fProject, 
+						URIUtil.toURI(commonPath));
 			} catch (CoreException e) {
 				report
 						.add(NLS
@@ -787,7 +838,7 @@ public class LinkedResourceEditor {
 		}
 		variableName = buf.toString();
 		int index = 1;
-		while (fProject.getPathVariableManager().isDefined(variableName)) {
+		while (fProject.getPathVariableManager().isDefined(variableName, fProject)) {
 			variableName += index;
 			index++;
 		}
