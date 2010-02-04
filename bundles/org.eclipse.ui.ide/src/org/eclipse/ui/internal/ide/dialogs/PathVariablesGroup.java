@@ -32,15 +32,26 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -50,8 +61,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -89,7 +98,7 @@ public class PathVariablesGroup {
 
     private Label variableLabel;
 
-    private Table variableTable;
+    private TableViewer variableTable;
 
     private Button addButton;
 
@@ -194,7 +203,7 @@ public class PathVariablesGroup {
         tempPathVariables.put(newVariableName, newVariableValue);
 
         // the UI must be updated
-        updateWidgetState(newVariableName);
+        updateWidgetState();
     }
 
     /**
@@ -249,8 +258,8 @@ public class PathVariablesGroup {
         if (multiSelect) {
             tableStyle |= SWT.MULTI;
         }
-        variableTable = new Table(pageComponent, tableStyle);
-        variableTable.addSelectionListener(new SelectionAdapter() {
+        variableTable = new TableViewer(pageComponent, tableStyle);
+        variableTable.getTable().addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnabledState();
                 if (selectionListener != null) {
@@ -259,30 +268,101 @@ public class PathVariablesGroup {
             }
         });
         
-        TableColumn tableColumn = new TableColumn(variableTable, SWT.NONE);
-        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
-        tableColumn.setWidth(150);
-        tableColumn = new TableColumn(variableTable, SWT.NONE);
-        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
-        tableColumn.setWidth(250);
-        tableColumn = new TableColumn(variableTable, SWT.NONE);
-        tableColumn.setText(IDEWorkbenchMessages.PathVariablesBlock_resolvedValueColumn);
-        tableColumn.setWidth(250);
+		ColumnViewerToolTipSupport.enableFor(variableTable, ToolTip.NO_RECREATE);
+
+		TableViewerColumn tableColumn = new TableViewerColumn(variableTable, SWT.NONE);
+        tableColumn.setLabelProvider(new NameLabelProvider());
+        tableColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
+        tableColumn.getColumn().setWidth(150);
+        tableColumn = new TableViewerColumn(variableTable, SWT.NONE);
+        tableColumn.setLabelProvider(new ValueLabelProvider());
+        tableColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
+        tableColumn.getColumn().setWidth(280);
         
-        variableTable.setHeaderVisible(true);
+        variableTable.getTable().setHeaderVisible(true);
         data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = variableTable.getItemHeight() * 7;
-        variableTable.setLayoutData(data);
-        variableTable.setFont(font);
+        data.heightHint = variableTable.getTable().getItemHeight() * 7;
+        variableTable.getTable().setLayoutData(data);
+        variableTable.getTable().setFont(font);
 
+        variableTable.getTable().addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+		        int itemsSelectedCount = variableTable.getTable().getSelectionCount();
+		        if (itemsSelectedCount == 1 && canChangeSelection())
+		        	editSelectedVariable();
+			}
+			public void mouseDown(MouseEvent e) { }
+			public void mouseUp(MouseEvent e) { }
+        });
+        variableTable.getTable().setToolTipText(null);
+        variableTable.setContentProvider(new ContentProvider());
+        variableTable.setInput(this);
         createButtonGroup(pageComponent);
-        // populate table with current internal state and set buttons' initial state
-        updateWidgetState(null);
-
         return pageComponent;
     }
 
-    /**
+    class NameLabelProvider extends CellLabelProvider
+    {
+		public String getToolTipText(Object element) {
+            return null;
+		}
+
+		public Point getToolTipShift(Object object) {
+			return new Point(5, 5);
+		}
+
+		public int getToolTipDisplayDelayTime(Object object) {
+			return 0;
+		}
+
+		public int getToolTipTimeDisplayed(Object object) {
+			return 15000;
+		}
+
+		public void update(ViewerCell cell) {
+			String varName = (String) cell.getElement();
+			cell.setText(varName);
+			IPath value = (IPath) tempPathVariables.get(varName);
+        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value), currentResource);
+        	IPath resolvedValue = URIUtil.toPath(resolvedURI);
+            IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
+            if (!isBuiltInVariable(varName))
+            	cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
+            else
+            	cell.setImage(BUILTIN_IMG);
+		}
+    	
+    }
+    
+    class ValueLabelProvider extends CellLabelProvider
+    {
+		public String getToolTipText(Object element) {
+            IPath value = (IPath) tempPathVariables.get(element);
+        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value), currentResource);
+        	IPath resolvedValue = URIUtil.toPath(resolvedURI);
+            return resolvedValue.toOSString();
+		}
+
+		public Point getToolTipShift(Object object) {
+			return new Point(5, 5);
+		}
+
+		public int getToolTipDisplayDelayTime(Object object) {
+			return 0;
+		}
+
+		public int getToolTipTimeDisplayed(Object object) {
+			return 15000;
+		}
+
+		public void update(ViewerCell cell) {
+            IPath value = (IPath) tempPathVariables.get(cell.getElement());
+			cell.setText(removeParentVariable(value.toOSString()));
+		}
+    	
+    }
+
+	/**
      * Disposes the group's resources. 
      */
     public void dispose() {
@@ -299,7 +379,7 @@ public class PathVariablesGroup {
      */
     private void editSelectedVariable() {
         // retrieves the name and value for the currently selected variable
-        TableItem item = variableTable.getItem(variableTable
+        TableItem item = variableTable.getTable().getItem(variableTable.getTable()
                 .getSelectionIndex());
         String variableName = (String) item.getData();
         IPath variableValue = (IPath) tempPathVariables.get(variableName);
@@ -328,8 +408,7 @@ public class PathVariablesGroup {
         tempPathVariables.put(newVariableName, newVariableValue);
 
         // now we must refresh the UI state
-        updateWidgetState(newVariableName);
-
+        updateWidgetState();
     }
 
     /**
@@ -341,8 +420,8 @@ public class PathVariablesGroup {
      * 	 <code>true</code> if called prior to calling <code>createContents</code>.
      */
     public boolean getEnabled() {
-        if (variableTable != null && !variableTable.isDisposed()) {
-            return variableTable.getEnabled();
+        if (variableTable != null && !variableTable.getTable().isDisposed()) {
+            return variableTable.getTable().getEnabled();
         }
         return true;
     }
@@ -358,7 +437,7 @@ public class PathVariablesGroup {
         if (variableTable == null) {
             return new PathVariableElement[0];
         }
-        TableItem[] items = variableTable.getSelection();
+        TableItem[] items = variableTable.getTable().getSelection();
         PathVariableElement[] selection = new PathVariableElement[items.length];
 
         for (int i = 0; i < items.length; i++) {
@@ -470,62 +549,23 @@ public class PathVariablesGroup {
      * variables in the table.
      */
     private void updateEnabledState() {
-        int itemsSelectedCount = variableTable.getSelectionCount();
+        int itemsSelectedCount = variableTable.getTable().getSelectionCount();
         editButton.setEnabled(itemsSelectedCount == 1 && canChangeSelection());
         removeButton.setEnabled(itemsSelectedCount > 0 && canChangeSelection());
     }
 
-    /**
-     * Rebuilds table widget state with the current list of variables (reflecting
-     * any changes, additions and removals), and selects the item corresponding to
-     * the given variable name. If the variable name is <code>null</code>, the
-     * first item (if any) will be selected.
-     * 
-     * @param selectedVarName the name for the variable to be selected (may be
-     * <code>null</code>)
-     * @see IPathVariableManager#getPathVariableNames(IResource)
-     * @see IPathVariableManager#getValue(String, IResource)
-     */
-    private void updateVariableTable(String selectedVarName) {
-        variableTable.removeAll();
-        int selectedVarIndex = 0;
-        for (Iterator varNames = tempPathVariables.keySet().iterator(); varNames
-                .hasNext();) {
-            TableItem item = new TableItem(variableTable, SWT.NONE);
-            String varName = (String) varNames.next();
-            IPath value = (IPath) tempPathVariables.get(varName);
-            IPath resolvedValue = value;
-            if (currentResource != null) {
-            	URI resolvedURI = currentResource.getProject().getPathVariableManager().resolveURI(URIUtil.toURI(resolvedValue), currentResource);
-            	resolvedValue = URIUtil.toPath(resolvedURI);
-            }
-            IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
+	private class ContentProvider implements IStructuredContentProvider {
 
-            item.setText(0, varName);
-            item.setText(1, removeParentVariable(value.toOSString()));
-            item.setText(2, resolvedValue.toOSString());
-            // the corresponding variable name is stored in each table widget item
-            item.setData(varName);
-            if (!isBuiltInVariable(varName)) {
-                item.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
-            } else
-                item.setImage(BUILTIN_IMG);
-            if (varName.equals(selectedVarName)) {
-				selectedVarIndex = variableTable.getItemCount() - 1;
-			}
-        }
-        if (variableTable.getItemCount() > selectedVarIndex) {
-            variableTable.setSelection(selectedVarIndex);
-            if (selectionListener != null) {
-				selectionListener.handleEvent(new Event());
-			}
-        } else if (variableTable.getItemCount() == 0
-                && selectionListener != null) {
-			selectionListener.handleEvent(new Event());
+		public Object[] getElements(Object inputElement) {
+			return tempPathVariables.keySet().toArray();
 		}
-    }
+		
+		public void dispose() { }
+		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { }
+	}
 
-    /**
+	/**
      * Converts the ${PARENT-COUNT-VAR} format to "VAR/../../" format
      * @param value
      * @return the converted value
@@ -577,20 +617,20 @@ public class PathVariablesGroup {
      */
     private void removeSelectedVariables() {
         // remove each selected element
-        int[] selectedIndices = variableTable.getSelectionIndices();
+        int[] selectedIndices = variableTable.getTable().getSelectionIndices();
         for (int i = 0; i < selectedIndices.length; i++) {
-            TableItem selectedItem = variableTable.getItem(selectedIndices[i]);
+            TableItem selectedItem = variableTable.getTable().getItem(selectedIndices[i]);
             String varName = (String) selectedItem.getData();
             removedVariableNames.add(varName);
             tempPathVariables.remove(varName);
         }
-        updateWidgetState(null);
+        updateWidgetState();
     }
 
     private boolean canChangeSelection() {
-        int[] selectedIndices = variableTable.getSelectionIndices();
+        int[] selectedIndices = variableTable.getTable().getSelectionIndices();
         for (int i = 0; i < selectedIndices.length; i++) {
-            TableItem selectedItem = variableTable.getItem(selectedIndices[i]);
+            TableItem selectedItem = variableTable.getTable().getItem(selectedIndices[i]);
             String varName = (String) selectedItem.getData();
             if (isBuiltInVariable(varName))
                 return false;
@@ -637,9 +677,9 @@ public class PathVariablesGroup {
      * @param enabled the new enabled state of the group's widgets
      */
     public void setEnabled(boolean enabled) {
-        if (variableTable != null && !variableTable.isDisposed()) {
+        if (variableTable != null && !variableTable.getTable().isDisposed()) {
             variableLabel.setEnabled(enabled);
-            variableTable.setEnabled(enabled);
+            variableTable.getTable().setEnabled(enabled);
             addButton.setEnabled(enabled);
             if (enabled) {
 				updateEnabledState();
@@ -656,10 +696,9 @@ public class PathVariablesGroup {
      * (selects the first item if <code>null</code> is provided) and updates 
      * the enabled state for the Add/Remove/Edit buttons.
      * 
-     * @param selectedVarName the name of the variable to be selected (may be null)
      */
-    private void updateWidgetState(String selectedVarName) {
-        updateVariableTable(selectedVarName);
+    private void updateWidgetState() {
+    	variableTable.refresh();
         updateEnabledState();
     }
 
@@ -686,6 +725,6 @@ public class PathVariablesGroup {
         tempPathVariables = new TreeMap();
 		initTemporaryState();
 		if (variableTable != null)
-	        updateWidgetState(null);
+	        updateWidgetState();
 	}
 }
