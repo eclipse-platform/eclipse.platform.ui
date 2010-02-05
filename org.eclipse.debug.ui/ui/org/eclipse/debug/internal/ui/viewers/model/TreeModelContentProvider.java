@@ -112,7 +112,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
 				updateHasChildren(childPath);
-				doRestore(childPath, modelIndex, false, false, false);
+				restorePendingStateOnUpdate(childPath, modelIndex, false, false, false);
 			}	        
 		} else {
 			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
@@ -462,7 +462,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
         for (int i = 0; i < count; i++) {
             Object data = getViewer().getChildElement(TreePath.EMPTY, i);
             if (data != null) {
-                doRestore(new TreePath(new Object[]{data}), i, false, false, false);
+                restorePendingStateOnUpdate(new TreePath(new Object[]{data}), i, false, false, false);
             }
         }
         
@@ -545,7 +545,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/**
 	 * @param delta
 	 */
-	void doRestore(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
+	void restorePendingStateNode(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
 		TreePath treePath = getViewerTreePath(delta);
 		ITreeModelContentProviderTarget viewer = getViewer();
 
@@ -634,8 +634,6 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
             }
             delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
         }
-        
-        checkIfRestoreComplete();
 	}
 
 }

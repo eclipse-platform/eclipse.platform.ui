@@ -52,7 +52,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 			System.out.println("setChildCount(" + getElement() + ", modelCount: " + fCount + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		getContentProvider().getViewer().setChildCount(elementPath, viewCount);
-		getContentProvider().doRestore(getElementPath(), -1, true, true, false);
+		getContentProvider().restorePendingStateOnUpdate(getElementPath(), -1, true, true, false);
 	}
 
 	public void setChildCount(int numChildren) {

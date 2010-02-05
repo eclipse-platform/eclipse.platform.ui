@@ -53,7 +53,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 			contentProvider.getViewer().autoExpand(elementPath);
 		}
 		if (elementPath.getSegmentCount() > 0) {
-			getContentProvider().doRestore(getElementPath(), -1, true, false, false);
+			getContentProvider().restorePendingStateOnUpdate(getElementPath(), -1, true, false, false);
 		}
 	}
 

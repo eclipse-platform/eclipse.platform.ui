@@ -78,12 +78,12 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 						}
 						TreePath childPath = elementPath.createChildPath(element);
 						provider.updateHasChildren(childPath);
-						provider.doRestore(childPath, modelIndex, false, false, false);
+						provider.restorePendingStateOnUpdate(childPath, modelIndex, false, false, false);
 					}
 				}
 			}
 			
-            provider.doRestore(elementPath, -1, true, true, true);
+            provider.restorePendingStateOnUpdate(elementPath, -1, true, true, true);
 		} else {
 			provider.updateHasChildren(elementPath);
 		}

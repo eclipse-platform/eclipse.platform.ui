@@ -181,134 +181,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     private final static String ELEMENT_REMOVED = "ELEMENT_REMOVED"; //$NON-NLS-1$
 
     /**
-     * Used to determine when restoration delta has been processed
-     */
-    protected class CheckState implements IModelDeltaVisitor {
-        private boolean complete = true;
-
-        private IModelDelta topDelta = null;
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor
-         * #visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta,
-         * int)
-         */
-        public boolean visit(IModelDelta delta, int depth) {
-            // Filster out the CONTENT flags from the delta flags, the content
-            // flag is only used as a marker indicating that all the sub-elements
-            // of a given delta have been retrieved.  
-            int flags = (delta.getFlags() & ~IModelDelta.CONTENT);
-            
-            if (flags != IModelDelta.NO_CHANGE) {
-                IModelDelta parentDelta = delta.getParentDelta();
-                // Remove the delta if :
-                // - The parent delta has no more flags on it (the content flag is removed as well), 
-                // which means that parent element's children have been completely exposed.
-                // - There are no more pending updates for the element.
-                // - If element is a memento, there are no state requests pending.
-                if (parentDelta != null && parentDelta.getFlags() == IModelDelta.NO_CHANGE) {
-                    TreePath deltaPath = getViewerTreePath(delta);
-                    if ( !areElementUpdatesPending(deltaPath) &&
-                         (!(delta.getElement() instanceof IMemento) || !areMementoUpdatesPending(delta)) ) 
-                    {
-                        removeDelta(delta);
-                        return false;
-                    }
-                }
-
-                if (flags == IModelDelta.REVEAL && !(delta.getElement() instanceof IMemento)) {
-                    topDelta = delta;
-                } else {
-                    complete = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public boolean isComplete() {
-            return complete;
-        }
-
-        public IModelDelta getTopItemDelta() {
-            return topDelta;
-        }
-
-        private boolean areElementUpdatesPending(TreePath path) {
-            synchronized (fRequestsInProgress) {
-                TreePath parentPath = path.getParentPath();
-                List requests = (List) fWaitingRequests.get(path);
-                if (requests != null) {
-                    for (int i = 0; i < requests.size(); i++) {
-                        ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
-                        if (update instanceof ChildrenUpdate) {
-                            return true;
-                        }
-                    }
-                }
-                requests = (List) fWaitingRequests.get(parentPath);
-                if (requests != null) {
-                    for (int i = 0; i < requests.size(); i++) {
-                        ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
-                        if (update.containsUpdate(path)) {
-                            return true;
-                        }
-                    }
-                }
-                requests = (List) fRequestsInProgress.get(path);
-                if (requests != null) {
-                    for (int i = 0; i < requests.size(); i++) {
-                        ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
-                        if (update instanceof ChildrenUpdate) {
-                            return true;
-                        }
-                    }
-                }
-                requests = (List) fRequestsInProgress.get(parentPath);
-                if (requests != null) {
-                    for (int i = 0; i < requests.size(); i++) {
-                        ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
-                        if (update.getElement().equals(path.getLastSegment())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        private boolean areMementoUpdatesPending(IModelDelta delta) {
-            for (Iterator itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext();) {
-                CompareRequestKey key = (CompareRequestKey) itr.next();
-                if (delta.getElement().equals(key.fDelta.getElement())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void removeDelta(IModelDelta delta) {
-            if (DEBUG_STATE_SAVE_RESTORE
-                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
-            }
-
-            delta.accept(new IModelDeltaVisitor() {
-                public boolean visit(IModelDelta _visitorDelta, int depth) {
-                    ModelDelta visitorDelta = (ModelDelta) _visitorDelta;
-                    visitorDelta.setElement(ELEMENT_REMOVED);
-                    visitorDelta.setFlags(IModelDelta.NO_CHANGE);
-                    return true;
-                }
-            });
-
-        }
-    }
-
-    /**
      * LRU cache for viewer states
      */
     class LRUMap extends LinkedHashMap {
@@ -587,7 +459,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * @param delta
      */
-    abstract void doRestore(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount,
+    abstract void restorePendingStateNode(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount,
         boolean checkChildrenRealized);
 
     public void cancelRestore(final TreePath path, final int flags) {
@@ -663,7 +535,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         }
 
         if (!fViewer.saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT)) {
-            // Path to save the state was not found!  Abort the save.
+            // Path to save the state was not found or there was no 
+            // (expansion) state to save!  Abort.
             if (DEBUG_STATE_SAVE_RESTORE
                 && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -786,7 +659,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * 
      * @param path
      */
-    protected synchronized void doRestore(final TreePath path, final int modelIndex, final boolean knowsHasChildren,
+    protected synchronized void restorePendingStateOnUpdate(final TreePath path, final int modelIndex, final boolean knowsHasChildren,
         final boolean knowsChildCount, final boolean checkChildrenRealized) {
         if (fPendingState == null) {
             return;
@@ -827,7 +700,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                         .equals(getPresentationContext().getId()))) {
                                     System.out.println("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
                                 }
-                                notifyStateUpdate(fPendingState.getElement(), UPDATE_BEGINS, compareRequest);
+                                notifyStateUpdate(element, UPDATE_BEGINS, compareRequest);
                                 provider.compareElements(new IElementCompareRequest[] { compareRequest });
                             }
                         }
@@ -835,7 +708,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                         // Element comparison already succeeded, and it matches
                         // our element.
                         // Call restore with delta to process the delta flags.
-                        doRestore((ModelDelta) delta, knowsHasChildren, knowsChildCount, checkChildrenRealized);
+                        restorePendingStateNode((ModelDelta) delta, knowsHasChildren, knowsChildCount, checkChildrenRealized);
                     }
                     return false;
                 }
@@ -843,6 +716,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 return element.equals(potentialMatch);
             }
         };
+
         try {
         	fInStateRestore = true;
         	fPendingState.accept(visitor);
@@ -850,6 +724,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         finally {
         	fInStateRestore = false;
         }
+        checkIfRestoreComplete();
     }
 
     void compareFinished(ElementCompareRequest request, ModelDelta delta) {
@@ -859,25 +734,23 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             System.out.println("\tSTATE END: " + request + " = " + false); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        fCompareRequestsInProgress.remove(request);
+        fCompareRequestsInProgress.remove(new CompareRequestKey(request.getElementPath(), delta));
         if (!request.isCanceled()) {
             if (request.isEqual()) {
                 delta.setElement(request.getElement());
-                doRestore(delta, request.knowsHasChildren(), request.knowChildCount(), request.checkChildrenRealized());
+                restorePendingStateNode(delta, request.knowsHasChildren(), request.knowChildCount(), request.checkChildrenRealized());
             } else if (request.getModelIndex() != -1) {
                 // Comparison failed.
-                // Check if the delta has a reveal flag, and if its index
-                // matches the index
-                // of the element that it was compared against. If this is the
-                // case,
-                // strip the reveal flag from the delta as it is most likely not
-                // applicable
-                // anymore.
+                // Check if the delta has a reveal flag, and if its index 
+                // matches the index of the element that it was compared 
+                // against. If this is the case, strip the reveal flag from 
+                // the delta as it is most likely not applicable anymore.
                 if ((delta.getFlags() & IModelDelta.REVEAL) != 0 && delta.getIndex() == request.getModelIndex()) {
                     delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
                 }
             }
         }
+        checkIfRestoreComplete();
     }
 
     /**
@@ -1737,6 +1610,127 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         if (fPendingState == null) {
             return;
         }
+        
+        /**
+         * Used to determine when restoration delta has been processed
+         */
+        class CheckState implements IModelDeltaVisitor {
+            private boolean complete = true;
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see
+             * org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor
+             * #visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta,
+             * int)
+             */
+            public boolean visit(IModelDelta delta, int depth) {
+                // Filster out the CONTENT flags from the delta flags, the content
+                // flag is only used as a marker indicating that all the sub-elements
+                // of a given delta have been retrieved.  
+                int flags = (delta.getFlags() & ~IModelDelta.CONTENT);
+                
+                if (flags != IModelDelta.NO_CHANGE) {
+                    IModelDelta parentDelta = delta.getParentDelta();
+                    // Remove the delta if :
+                    // - The parent delta has no more flags on it (the content flag is removed as well), 
+                    // which means that parent element's children have been completely exposed.
+                    // - There are no more pending updates for the element.
+                    // - If element is a memento, there are no state requests pending.
+                    if (parentDelta != null && parentDelta.getFlags() == IModelDelta.NO_CHANGE) {
+                        TreePath deltaPath = getViewerTreePath(delta);
+                        if ( !areElementUpdatesPending(deltaPath) &&
+                             (!(delta.getElement() instanceof IMemento) || !areMementoUpdatesPending(delta)) ) 
+                        {
+                            removeDelta(delta);
+                            return false;
+                        }
+                    }
+
+                    if (flags != IModelDelta.REVEAL || (delta.getElement() instanceof IMemento)) {
+                        complete = false;
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            public boolean isComplete() {
+                return complete;
+            }
+
+            private boolean areElementUpdatesPending(TreePath path) {
+                synchronized (fRequestsInProgress) {
+                    TreePath parentPath = path.getParentPath();
+                    List requests = (List) fWaitingRequests.get(path);
+                    if (requests != null) {
+                        for (int i = 0; i < requests.size(); i++) {
+                            ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                            if (update instanceof ChildrenUpdate) {
+                                return true;
+                            }
+                        }
+                    }
+                    requests = (List) fWaitingRequests.get(parentPath);
+                    if (requests != null) {
+                        for (int i = 0; i < requests.size(); i++) {
+                            ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                            if (update.containsUpdate(path)) {
+                                return true;
+                            }
+                        }
+                    }
+                    requests = (List) fRequestsInProgress.get(path);
+                    if (requests != null) {
+                        for (int i = 0; i < requests.size(); i++) {
+                            ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                            if (update instanceof ChildrenUpdate) {
+                                return true;
+                            }
+                        }
+                    }
+                    requests = (List) fRequestsInProgress.get(parentPath);
+                    if (requests != null) {
+                        for (int i = 0; i < requests.size(); i++) {
+                            ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                            if (update.getElement().equals(path.getLastSegment())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            private boolean areMementoUpdatesPending(IModelDelta delta) {
+                for (Iterator itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext();) {
+                    CompareRequestKey key = (CompareRequestKey) itr.next();
+                    if (delta.getElement().equals(key.fDelta.getElement())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            private void removeDelta(IModelDelta delta) {
+                if (DEBUG_STATE_SAVE_RESTORE
+                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                    System.out.println("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
+                }
+
+                delta.accept(new IModelDeltaVisitor() {
+                    public boolean visit(IModelDelta _visitorDelta, int depth) {
+                        ModelDelta visitorDelta = (ModelDelta) _visitorDelta;
+                        visitorDelta.setElement(ELEMENT_REMOVED);
+                        visitorDelta.setFlags(IModelDelta.NO_CHANGE);
+                        return true;
+                    }
+                });
+
+            }
+        }
+
         CheckState state = new CheckState();
         fPendingState.accept(state);
         if (state.isComplete()) {
