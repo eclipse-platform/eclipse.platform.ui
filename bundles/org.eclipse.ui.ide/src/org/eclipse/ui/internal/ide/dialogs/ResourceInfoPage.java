@@ -16,6 +16,7 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
@@ -38,6 +39,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -47,6 +49,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -69,6 +74,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private Button derivedBox;
 
+	private Button permissionBoxes[];
+
 	private boolean previousReadOnlyValue;
 
 	private boolean previousExecutableValue;
@@ -76,6 +83,8 @@ public class ResourceInfoPage extends PropertyPage {
 	private boolean previousArchiveValue;
 
 	private boolean previousDerivedValue;
+
+	private int previousPermissionValues;
 
 	private IContentDescription cachedContentDescription;
 
@@ -280,6 +289,18 @@ public class ResourceInfoPage extends PropertyPage {
 					SWT.COLOR_WIDGET_BACKGROUND));
 		}
 
+		Label timeStampLabel = new Label(basicInfoComposite, SWT.NONE);
+		timeStampLabel.setText(TIMESTAMP_TITLE);
+
+		// timeStamp value label
+		Text timeStampValue = new Text(basicInfoComposite, SWT.READ_ONLY);
+		timeStampValue.setText(IDEResourceInfoUtils
+				.getDateStringValue(resource));
+		timeStampValue.setBackground(timeStampValue.getDisplay()
+				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		timeStampValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
+
 		return basicInfoComposite;
 	}
 
@@ -370,9 +391,18 @@ public class ResourceInfoPage extends PropertyPage {
 		composite.setLayoutData(data);
 
 		createBasicInfoGroup(composite, resource);
-		createSeparator(composite);
-		createStateGroup(composite, resource);
-		new Label(composite, SWT.NONE); // a vertical spacer
+		// Attributes are not relevant to projects
+		if (resource.getType() != IResource.PROJECT) {
+			createSeparator(composite);
+			int fsAttributes = getFileSystemAttributes(resource);
+			createStateGroup(composite, resource, fsAttributes);
+			if (isPermissionSupport(fsAttributes)) {
+				previousPermissionValues = fetchPermissions(resource);
+				createSeparator(composite);
+				createPermissionGroup(composite);
+				setPermissionsTableSelection(previousPermissionValues);
+			}
+		}
 		encodingEditor = new ResourceEncodingFieldEditor(
 				getFieldEditorLabel(resource), composite, resource);
 		encodingEditor.setPage(this);
@@ -410,6 +440,101 @@ public class ResourceInfoPage extends PropertyPage {
 		return composite;
 	}
 
+	private int fetchPermissions(IResource resource) {
+		IFileStore store = null;
+		try {
+			store = EFS.getStore(resource.getLocationURI());
+		} catch (CoreException e) {
+			return 0;
+		}
+		IFileInfo info = store.fetchInfo();
+		int permissions = 0;
+		if (info.exists()) {
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OWNER_READ) ? EFS.ATTRIBUTE_OWNER_READ
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OWNER_WRITE) ? EFS.ATTRIBUTE_OWNER_WRITE
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE) ? EFS.ATTRIBUTE_OWNER_EXECUTE
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_GROUP_READ) ? EFS.ATTRIBUTE_GROUP_READ
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_GROUP_WRITE) ? EFS.ATTRIBUTE_GROUP_WRITE
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE) ? EFS.ATTRIBUTE_GROUP_EXECUTE
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OTHER_READ) ? EFS.ATTRIBUTE_OTHER_READ
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OTHER_WRITE) ? EFS.ATTRIBUTE_OTHER_WRITE
+					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE) ? EFS.ATTRIBUTE_OTHER_EXECUTE
+					: 0;
+		}
+		return permissions;
+	}
+
+	private int getDefaulPermissions(boolean folder) {
+		int permissions = EFS.ATTRIBUTE_OWNER_READ | EFS.ATTRIBUTE_OWNER_WRITE
+				| EFS.ATTRIBUTE_GROUP_READ | EFS.ATTRIBUTE_GROUP_WRITE
+				| EFS.ATTRIBUTE_OTHER_READ;
+		if (folder)
+			permissions |= EFS.ATTRIBUTE_OWNER_EXECUTE
+					| EFS.ATTRIBUTE_GROUP_EXECUTE | EFS.ATTRIBUTE_OTHER_EXECUTE;
+		return permissions;
+	}
+
+	private void setPermissionsTableSelection(int permissionsValue) {
+		permissionBoxes[0].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_READ) != 0);
+		permissionBoxes[1].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_WRITE) != 0);
+		permissionBoxes[2].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_EXECUTE) != 0);
+		permissionBoxes[3].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_READ) != 0);
+		permissionBoxes[4].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_WRITE) != 0);
+		permissionBoxes[5].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_EXECUTE) != 0);
+		permissionBoxes[6].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_READ) != 0);
+		permissionBoxes[7].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
+		permissionBoxes[8].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
+	}
+
+	private int getPermissionTableSelection() {
+		int permissions = 0;
+		permissions |= permissionBoxes[0].getSelection() ? EFS.ATTRIBUTE_OWNER_READ : 0;
+		permissions |= permissionBoxes[1].getSelection() ? EFS.ATTRIBUTE_OWNER_WRITE : 0;
+		permissions |= permissionBoxes[2].getSelection() ? EFS.ATTRIBUTE_OWNER_EXECUTE : 0;
+		permissions |= permissionBoxes[3].getSelection() ? EFS.ATTRIBUTE_GROUP_READ : 0;
+		permissions |= permissionBoxes[4].getSelection() ? EFS.ATTRIBUTE_GROUP_WRITE : 0;
+		permissions |= permissionBoxes[5].getSelection() ? EFS.ATTRIBUTE_GROUP_EXECUTE : 0;
+		permissions |= permissionBoxes[6].getSelection() ? EFS.ATTRIBUTE_OTHER_READ : 0;
+		permissions |= permissionBoxes[7].getSelection() ? EFS.ATTRIBUTE_OTHER_WRITE : 0;
+		permissions |= permissionBoxes[8].getSelection() ? EFS.ATTRIBUTE_OTHER_EXECUTE : 0;
+		return permissions;
+	}
+
+	private boolean putPermissions(IResource resource, int permissions) {
+		IFileStore store = null;
+		try {
+			store = EFS.getStore(resource.getLocationURI());
+		} catch (CoreException e) {
+			return false;
+		}
+		IFileInfo fileInfo = store.fetchInfo();
+		if (!fileInfo.exists())
+			return false;
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_READ, (permissions & EFS.ATTRIBUTE_OWNER_READ) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_WRITE, (permissions & EFS.ATTRIBUTE_OWNER_WRITE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, (permissions & EFS.ATTRIBUTE_OWNER_EXECUTE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_READ, (permissions & EFS.ATTRIBUTE_GROUP_READ) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_WRITE, (permissions & EFS.ATTRIBUTE_GROUP_WRITE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, (permissions & EFS.ATTRIBUTE_GROUP_EXECUTE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (permissions & EFS.ATTRIBUTE_OTHER_READ) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, (permissions & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, (permissions & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
+		try {
+			store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
+		} catch (CoreException e) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Return the label for the encoding field editor for the resource.
 	 * 
@@ -438,9 +563,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.editableBox.setAlignment(SWT.LEFT);
 		this.editableBox.setText(READ_ONLY);
 		this.editableBox.setSelection(this.previousReadOnlyValue);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		this.editableBox.setLayoutData(data);
 	}
 
 	/**
@@ -457,9 +579,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.executableBox.setAlignment(SWT.LEFT);
 		this.executableBox.setText(EXECUTABLE);
 		this.executableBox.setSelection(this.previousExecutableValue);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		this.executableBox.setLayoutData(data);
 	}
 
 	/**
@@ -476,9 +595,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.archiveBox.setAlignment(SWT.LEFT);
 		this.archiveBox.setText(ARCHIVE);
 		this.archiveBox.setSelection(this.previousArchiveValue);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		this.archiveBox.setLayoutData(data);
 	}
 
 	/**
@@ -495,9 +611,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.derivedBox.setAlignment(SWT.LEFT);
 		this.derivedBox.setText(DERIVED);
 		this.derivedBox.setSelection(this.previousDerivedValue);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		this.derivedBox.setLayoutData(data);
 	}
 
 	/**
@@ -523,13 +636,12 @@ public class ResourceInfoPage extends PropertyPage {
 	 * @param resource
 	 *            the resource the information is being taken from.
 	 */
-	private void createStateGroup(Composite parent, IResource resource) {
-
+	private void createStateGroup(Composite parent, IResource resource, int fsAttributes) {
 		Font font = parent.getFont();
 
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
@@ -537,52 +649,131 @@ public class ResourceInfoPage extends PropertyPage {
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
 
-		Label timeStampLabel = new Label(composite, SWT.NONE);
-		timeStampLabel.setText(TIMESTAMP_TITLE);
+		Label attributesLabel = new Label(composite, SWT.LEFT);
+		attributesLabel.setText(IDEWorkbenchMessages.ResourceInfo_attributes);
 
-		// timeStamp value label
-		Text timeStampValue = new Text(composite, SWT.READ_ONLY);
-		timeStampValue.setText(IDEResourceInfoUtils
-				.getDateStringValue(resource));
-		timeStampValue.setBackground(timeStampValue.getDisplay()
-				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		timeStampValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
-
-		// Not relevant to projects
-		if (resource.getType() != IResource.PROJECT) {
-			if (!resource.isVirtual()) {
-				URI location = resource.getLocationURI();
-				if (location != null && location.getScheme() != null) {
-					try {
-						IFileSystem fs = EFS.getFileSystem(location.getScheme());
-						int attributes = fs.attributes();
-						if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0) {
-							createEditableButton(composite);
-						}
-						if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0) {
-							createExecutableButton(composite);
-						}
-						if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0) {
-							createArchiveButton(composite);
-						}
-					} catch (CoreException e) {
-						// ignore if we can't access the file system for this
-						// resource
-					}
-				}
-			}
-			createDerivedButton(composite);
-			// create warning for executable flag
-			if (executableBox != null && resource.getType() == IResource.FOLDER) {
-				Composite noteComposite = createNoteComposite(font, composite,
-						IDEWorkbenchMessages.Preference_note,
-						IDEWorkbenchMessages.ResourceInfo_exWarning);
-				GridData noteData = new GridData();
-				noteData.horizontalSpan = 2;
-				noteComposite.setLayoutData(noteData);
-			}
+		if (!resource.isVirtual()) {
+			if ((fsAttributes & EFS.ATTRIBUTE_READ_ONLY) != 0
+					&& !isPermissionSupport(fsAttributes))
+				createEditableButton(composite);
+			if ((fsAttributes & EFS.ATTRIBUTE_EXECUTABLE) != 0
+					&& !isPermissionSupport(fsAttributes))
+				createExecutableButton(composite);
+			if ((fsAttributes & EFS.ATTRIBUTE_ARCHIVE) != 0)
+				createArchiveButton(composite);
 		}
+		createDerivedButton(composite);
+		// create warning for executable flag
+		if (executableBox != null && resource.getType() == IResource.FOLDER)
+			createExecutableWarning(composite, font);
+	}
+
+	private void createPermissionGroup(Composite parent) {
+		Font font = parent.getFont();
+
+		permissionBoxes = new Button[9];
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		composite.setLayoutData(data);
+
+		Label permissionsLabel = new Label(composite, SWT.NONE);
+		permissionsLabel.setText(IDEWorkbenchMessages.ResourceInfo_permissions);
+
+		Table table = new Table(composite, SWT.BORDER);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		for (int i = 0; i < 4; i++) {
+			new TableColumn(table, SWT.NONE).setResizable(false);
+		}
+		table.getColumn(1).setText(IDEWorkbenchMessages.ResourceInfo_read);
+		table.getColumn(2).setText(IDEWorkbenchMessages.ResourceInfo_write);
+		table.getColumn(3).setText(IDEWorkbenchMessages.ResourceInfo_execute);
+
+		table.getColumn(3).pack();
+		int columnWidth = table.getColumn(3).getWidth();
+		table.getColumn(0).setWidth(columnWidth);
+		table.getColumn(1).setWidth(columnWidth);
+		table.getColumn(2).setWidth(columnWidth);
+
+		TableItem ownerItem = new TableItem(table, SWT.NONE);
+		ownerItem.setText(IDEWorkbenchMessages.ResourceInfo_owner);
+		permissionBoxes[0] = createPermissionEditor(table, ownerItem, 1);
+		permissionBoxes[1] = createPermissionEditor(table, ownerItem, 2);
+		permissionBoxes[2] = createPermissionEditor(table, ownerItem, 3);
+
+		TableItem groupItem = new TableItem(table, SWT.NONE);
+		groupItem.setText(IDEWorkbenchMessages.ResourceInfo_group);
+		permissionBoxes[3] = createPermissionEditor(table, groupItem, 1);
+		permissionBoxes[4] = createPermissionEditor(table, groupItem, 2);
+		permissionBoxes[5] = createPermissionEditor(table, groupItem, 3);
+
+		TableItem otherItem = new TableItem(table, SWT.NONE);
+		otherItem.setText(IDEWorkbenchMessages.ResourceInfo_other);
+		permissionBoxes[6] = createPermissionEditor(table, otherItem, 1);
+		permissionBoxes[7] = createPermissionEditor(table, otherItem, 2);
+		permissionBoxes[8] = createPermissionEditor(table, otherItem, 3);
+
+		GridData tableData = new GridData();
+		tableData.heightHint = table.getHeaderHeight() + 3 * table.getItemHeight();
+		table.setLayoutData(tableData);
+		table.setBackgroundMode(SWT.INHERIT_FORCE);
+
+		createExecutableWarning(composite, font);
+	}
+
+	private Button createPermissionEditor(Table table, TableItem item, int index) {
+		Button button = new Button(table, SWT.CHECK);
+		button.pack();
+		TableEditor editor = new TableEditor(table);
+		editor.grabVertical = true;
+		editor.verticalAlignment = SWT.CENTER;
+		editor.minimumWidth = button.getSize().x;
+		editor.setEditor(button, item, index);
+		editor.getEditor();
+		return button;
+	}
+
+	private Composite createExecutableWarning(Composite composite, Font font) {
+		Composite noteComposite = createNoteComposite(font, composite,
+				IDEWorkbenchMessages.Preference_note,
+				IDEWorkbenchMessages.ResourceInfo_exWarning);
+		GridData data = new GridData();
+		data.widthHint = convertWidthInCharsToPixels(IDEWorkbenchMessages.ResourceInfo_exWarning.length());
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = GridData.FILL;
+		noteComposite.setLayoutData(data);
+		return noteComposite;
+	}
+
+	private int getFileSystemAttributes(IResource resource) {
+		URI location = resource.getLocationURI();
+		if (location == null || location.getScheme() == null)
+			return 0;
+		IFileSystem fs;
+		try {
+			fs = EFS.getFileSystem(location.getScheme());
+		} catch (CoreException e) {
+			return 0;
+		}
+		return fs.attributes();
+	}
+
+	private boolean isPermissionSupport(int fsAttributes) {
+		int unixPermissions = EFS.ATTRIBUTE_OWNER_READ
+				| EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_EXECUTE
+				| EFS.ATTRIBUTE_GROUP_READ | EFS.ATTRIBUTE_GROUP_WRITE
+				| EFS.ATTRIBUTE_GROUP_EXECUTE | EFS.ATTRIBUTE_OTHER_READ
+				| EFS.ATTRIBUTE_OTHER_WRITE | EFS.ATTRIBUTE_OTHER_EXECUTE;
+		if ((fsAttributes & unixPermissions) == unixPermissions)
+			return true;
+		return false;
 	}
 
 	private IContentDescription getContentDescription(IResource resource) {
@@ -664,6 +855,11 @@ public class ResourceInfoPage extends PropertyPage {
 			this.derivedBox.setSelection(false);
 		}
 
+		if (permissionBoxes != null) {
+			int defaultPermissionValues = getDefaulPermissions(resource.getType() == IResource.FOLDER);
+			setPermissionsTableSelection(defaultPermissionValues);
+		}
+
 		encodingEditor.loadDefault();
 
 		if (lineDelimiterEditor != null) {
@@ -734,6 +930,18 @@ public class ResourceInfoPage extends PropertyPage {
 						if (archiveBox != null) {
 							archiveBox.setSelection(attrs.isArchive());
 						}
+					}
+				}
+			}
+
+			if (permissionBoxes != null) {
+				int permissionValues = getPermissionTableSelection();
+				if (previousPermissionValues != permissionValues) {
+					putPermissions(resource, permissionValues);
+					previousPermissionValues = fetchPermissions(resource);
+					if (previousPermissionValues != permissionValues) {
+						// We failed to set some of the permissions
+						setPermissionsTableSelection(previousPermissionValues);
 					}
 				}
 			}

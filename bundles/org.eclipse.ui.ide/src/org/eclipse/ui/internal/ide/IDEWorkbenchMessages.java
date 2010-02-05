@@ -585,6 +585,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_exWarning;
 	public static String ResourceInfo_isGroup;
 	public static String ResourceInfo_edit;
+	public static String ResourceInfo_attributes;
+	public static String ResourceInfo_permissions;
+	public static String ResourceInfo_owner;
+	public static String ResourceInfo_group;
+	public static String ResourceInfo_other;
+	public static String ResourceInfo_read;
+	public static String ResourceInfo_write;
+	public static String ResourceInfo_execute;
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
