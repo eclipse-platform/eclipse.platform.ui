@@ -805,7 +805,9 @@ public class Workbench implements IWorkbench {
 
 	public WorkbenchAdvisor getAdvisor() {
 		// TODO compat: we need one of these eventually
-		E4Util.unsupported("getAdvisor"); //$NON-NLS-1$
+		System.err.println("getAdvisor() called on Workbench, unimplemented"); //$NON-NLS-1$
+		// using E4Util can cause an infinite loop
+		//E4Util.unsupported("getAdvisor"); //$NON-NLS-1$
 		return null;
 	}
 
