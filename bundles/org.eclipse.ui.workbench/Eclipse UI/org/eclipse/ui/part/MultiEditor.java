@@ -143,7 +143,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
         WorkbenchWindow window = (WorkbenchWindow) getSite().getPage()
                 .getWorkbenchWindow();
 		MWindow mwindow = window.getModel();
-		return mwindow.getParent().getActiveChild() == mwindow;
+		return mwindow.getParent().getSelectedElement() == mwindow;
     }
 
 	public Composite getInnerEditorContainer(
