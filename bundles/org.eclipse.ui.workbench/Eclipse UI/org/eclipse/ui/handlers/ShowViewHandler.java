@@ -11,7 +11,6 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -20,12 +19,10 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.e4.compatibility.WorkbenchPage;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
 
 /**
@@ -118,33 +115,38 @@ public final class ShowViewHandler extends AbstractHandler {
 		}
 
         if (makeFast) {
-            WorkbenchPage wp = (WorkbenchPage) activePage;
-        	Perspective persp = wp.getActivePerspective();
-
-            // If we're making a fast view then use the new mechanism directly
-            boolean useNewMinMax = Perspective.useNewMinMax(persp);
-            if (useNewMinMax) {
-            	IViewReference ref = persp.getViewReference(viewId, null);
-            	if (ref == null)
-            		return;
-
-            	persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
-        		wp.activate(ref.getPart(true));
-        		
-        		return;
-            }
-            
-            IViewReference ref = wp.findViewReference(viewId);
-            
-            if (ref == null) {
-                IViewPart part = wp.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
-                ref = (IViewReference)wp.getReference(part); 
-            }
-            
-            if (!wp.isFastView(ref)) {
-                wp.addFastView(ref);
-            }
-            wp.activate(ref.getPart(true));
+			// TODO compat: we need to do something about fast views
+			E4Util.unsupported("ShowViewHandler: makeFast"); //$NON-NLS-1$
+			// WorkbenchPage wp = (WorkbenchPage) activePage;
+			// Perspective persp = wp.getActivePerspective();
+			//
+			// // If we're making a fast view then use the new mechanism
+			// directly
+			// boolean useNewMinMax = Perspective.useNewMinMax(persp);
+			// if (useNewMinMax) {
+			// IViewReference ref = persp.getViewReference(viewId, null);
+			// if (ref == null)
+			// return;
+			//
+			// persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID,
+			// -1, ref, true);
+			// wp.activate(ref.getPart(true));
+			//        		
+			// return;
+			// }
+			//            
+			// IViewReference ref = wp.findViewReference(viewId);
+			//            
+			// if (ref == null) {
+			// IViewPart part = wp.showView(viewId, null,
+			// IWorkbenchPage.VIEW_CREATE);
+			// ref = (IViewReference)wp.getReference(part);
+			// }
+			//            
+			// if (!wp.isFastView(ref)) {
+			// wp.addFastView(ref);
+			// }
+			// wp.activate(ref.getPart(true));
         } else {
             activePage.showView(viewId);
         }
