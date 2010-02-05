@@ -12,8 +12,6 @@
 package org.eclipse.e4.ui.examples.css.editor;
 
 import org.eclipse.e4.ui.css.swt.dom.SWTElement;
-import org.eclipse.e4.ui.widgets.ETabFolder;
-import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -94,15 +92,15 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 		}
 		// Create ETabFolder
 		{
-			ETabFolder etabFolder = new ETabFolder(composite, SWT.CLOSE);
+			CTabFolder etabFolder = new CTabFolder(composite, SWT.CLOSE);
 			etabFolder.setUnselectedCloseVisible(true);
 			etabFolder.setUnselectedImageVisible(true);
 					
-			ETabItem etabItem1 = new ETabItem(etabFolder, SWT.NONE);
+			CTabItem etabItem1 = new CTabItem(etabFolder, SWT.NONE);
 			etabItem1.setText("Busy");
 			SWTElement.setCSSClass(etabItem1, "busy");
 			
-			ETabItem etabItem2 = new ETabItem(etabFolder, SWT.NONE);
+			CTabItem etabItem2 = new CTabItem(etabFolder, SWT.NONE);
 			etabItem2.setText("Modified");
 			SWTElement.setCSSClass(etabItem2, "modified");
 			
