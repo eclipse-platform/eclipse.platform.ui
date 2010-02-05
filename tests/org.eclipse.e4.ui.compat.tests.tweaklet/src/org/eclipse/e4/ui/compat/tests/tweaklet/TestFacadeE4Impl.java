@@ -10,6 +10,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -98,6 +99,8 @@ public class TestFacadeE4Impl extends TestFacade {
 			case 0: return Save.YES;
 			case 1: return Save.NO;
 			case 2: return Save.CANCEL;
+			case ISaveablePart2.DEFAULT:
+				return Save.YES;
 			}
 			throw new RuntimeException();
 		}

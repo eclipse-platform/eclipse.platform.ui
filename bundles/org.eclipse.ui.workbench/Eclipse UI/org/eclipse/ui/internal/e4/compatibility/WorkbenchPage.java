@@ -338,13 +338,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 		case MATCH_INPUT:
 			List<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
 			for (IEditorReference editorRef : editorReferences) {
-				try {
-					if (input.equals(editorRef.getEditorInput())) {
-						editorRefs.add(editorRef);
+				IEditorPart editor = editorRef.getEditor(false);
+				if (editor == null) {
+					try {
+						if (input.equals(editorRef.getEditorInput())) {
+							editorRefs.add(editorRef);
+						}
+					} catch (PartInitException e) {
+						WorkbenchPlugin.log(e);
 					}
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} else if (editor.getEditorInput().equals(input)) {
+					editorRefs.add(editorRef);
 				}
 			}
 			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
@@ -901,10 +905,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorReuseThreshold(int)
 	 */
 	public void setEditorReuseThreshold(int openEditors) {
-		// FIXME compat setEditorReuseThreshold, this is an empty implementation
-		// in 3.x, see IPageLayout's setEditorReuseThreshold
-		E4Util.unsupported("setEditorReuseThreshold"); //$NON-NLS-1$
-
+		// this is an empty implementation in 3.x, see IPageLayout's
+		// setEditorReuseThreshold
 	}
 
 	/* (non-Javadoc)
