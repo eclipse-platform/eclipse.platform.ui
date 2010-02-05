@@ -325,6 +325,10 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MPart addPart(MPart providedPart, MPart localPart) {
+		if (providedPart == localPart && isInContainer(providedPart)) {
+			return providedPart;
+		}
+
 		MPartDescriptor descriptor = findDescriptor(providedPart.getId());
 		if (descriptor == null) {
 			if (providedPart != localPart) {

@@ -1598,6 +1598,110 @@ public class EPartServiceTest extends TestCase {
 		testShowPart_Part_MultipleNonexistent(false, PartState.CREATE);
 	}
 
+	public void testShowPart_Part_MultipleWithoutCategory() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setAllowMultiple(true);
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart createdPart = partService.createPart("partId");
+		MPart shownPart = partService.showPart(createdPart, PartState.ACTIVATE);
+		assertNotNull(shownPart);
+		assertEquals(createdPart, shownPart);
+
+		MPart createdPart2 = partService.createPart("partId");
+		MPart shownPart2 = partService.showPart(createdPart2,
+				PartState.ACTIVATE);
+		assertFalse(shownPart.equals(shownPart2));
+	}
+
+	public void testShowPart_Part_MultipleWithCategory() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("categoryId");
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		descriptor.setAllowMultiple(true);
+		descriptor.setId("partId");
+		descriptor.setCategory("categoryId");
+		application.getDescriptors().add(descriptor);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart createdPart = partService.createPart("partId");
+		MPart shownPart = partService.showPart(createdPart, PartState.ACTIVATE);
+		assertNotNull(shownPart);
+		assertEquals(createdPart, shownPart);
+
+		MPart createdPart2 = partService.createPart("partId");
+		MPart shownPart2 = partService.showPart(createdPart2,
+				PartState.ACTIVATE);
+		assertFalse(shownPart.equals(shownPart2));
+
+		assertTrue(stack.getChildren().contains(shownPart));
+		assertTrue(stack.getChildren().contains(shownPart2));
+	}
+
+	public void testShowPart_Part_ExistingInNonstandardCategory() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("categoryId2");
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId("partId");
+		stack.getChildren().add(part);
+		stack.setSelectedElement(part);
+
+		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		descriptor.setAllowMultiple(true);
+		descriptor.setId("partId");
+		descriptor.setCategory("categoryId");
+		application.getDescriptors().add(descriptor);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart shownPart = partService.showPart("partId", PartState.ACTIVATE);
+		assertEquals(part, shownPart);
+		assertEquals(stack, part.getParent());
+	}
+
 	public void testHidePart_PartInAnotherWindow() {
 		MApplication application = createApplication(
 				new String[] { "partInWindow1" },
