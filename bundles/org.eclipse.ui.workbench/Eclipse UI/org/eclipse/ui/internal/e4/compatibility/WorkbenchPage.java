@@ -577,6 +577,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate,
 			int matchFlags) throws PartInitException {
+		try {
+			return internalOpenEditor(input, editorId, activate, matchFlags);
+		} finally {
+			processEventLoop(); // FIXME: remove when bug 299529 is fixed
+		}
+	}
+
+	private IEditorPart internalOpenEditor(IEditorInput input, String editorId, boolean activate,
+			int matchFlags) throws PartInitException {
 		if (matchFlags == MATCH_INPUT) {
 			IEditorPart editor = findEditor(input);
 			if (editor != null) {
@@ -595,7 +604,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 
 		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
-		partService.showPart(editor, PartState.CREATE);
+		partService.showPart(editor, PartState.VISIBLE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
 		compatibilityEditor.set(input, descriptor);
