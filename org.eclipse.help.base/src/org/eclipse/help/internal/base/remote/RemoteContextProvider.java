@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2006, 2008, 2010 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -38,6 +38,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 		String host[] = prefHandler.getHostEntries();
 		String port[] = prefHandler.getPortEntries();
 		String path[] = prefHandler.getPathEntries();
+		String [] protocols = prefHandler.getProtocolEntries();
 		String isEnabled[] = prefHandler.isEnabled();
 
 		// InfoCenters ignore remote content
@@ -45,23 +46,34 @@ public class RemoteContextProvider extends AbstractContextProvider {
 
 			int numICs = host.length; // Total number of hosts
 		    //Loop through remote InfoCenters and return first CSH match found
+			URL url=null;
 			for (int i = 0; i < numICs; i++) {
 
 				if (isEnabled[i].equals("true")) { //$NON-NLS-1$
 					InputStream in = null;
 					try {
-
-						URL url = new URL(PROTOCOL, host[i], new Integer(port[i]).intValue(), path[i]
-								+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
-						HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-						if (connection.getResponseCode() == 200) {
-							in = connection.getInputStream();
-							if (reader == null) {
-								reader = new DocumentReader();
+						
+						HttpURLConnection connection;
+						if(protocols[i].equals(PROTOCOL))
+						{
+							url = new URL(PROTOCOL, host[i], new Integer(port[i]).intValue(), path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
+							connection = (HttpURLConnection) url.openConnection();
+							if (connection.getResponseCode() == 200) {
+								in = connection.getInputStream();
+								
 							}
-							return (Context) reader.read(in);
 						}
-
+						else
+						{
+							url = HttpsUtility.getHttpsURL(protocols[i], host[i], port[i], path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
+							in = HttpsUtility.getHttpsStream(url);
+						}
+						
+						if (reader == null) {
+							reader = new DocumentReader();
+						}
+						return (Context) reader.read(in);
+						
 					} catch (IOException e) {
 						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
 						HelpBasePlugin.logError(msg, e);

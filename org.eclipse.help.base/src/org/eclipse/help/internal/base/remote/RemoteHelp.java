@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 public class RemoteHelp {
 
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
 	private static ListenerList listeners;
 	private static Throwable error;
 
@@ -66,13 +67,20 @@ public class RemoteHelp {
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		String host = handler.getHostEntries()[ic];
 		String path = handler.getPathEntries()[ic] + pathSuffix;
+		String protocol = handler.getProtocolEntries()[ic];
 		int port;
+		URL url =null;
 		try {
 			port = Integer.parseInt(handler.getPortEntries()[ic]);
 		} catch (NumberFormatException e) {
 			throw new MalformedURLException();
-		}
-		return new URL(PROTOCOL_HTTP, host, port, path);
+		} 
+		if(protocol.equalsIgnoreCase(PROTOCOL_HTTPS))
+			url = HttpsUtility.getHttpsURL(protocol,host,port,path);
+		else
+			url = new URL(PROTOCOL_HTTP, host, port, path);
+		
+		return url;
 	}
 	
 	/*

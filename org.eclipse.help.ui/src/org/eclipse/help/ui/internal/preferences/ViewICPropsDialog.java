@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,10 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 	private Label pathLabel;
 
 	private Label pathText;
+	
+	private Label protocolLabel;
+
+	private Label protocolText;
 
 	private Label portLabel;
 
@@ -66,6 +70,8 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 	private String selectedPort = ""; //$NON-NLS-1$
 
 	private String selectedPath = ""; //$NON-NLS-1$
+	
+	private String selectedProtocol = ""; //$NON-NLS-1$
 
 	private boolean selectedEnabled;
 
@@ -98,6 +104,7 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 		createNameSection(topGroup);
 		createHostSection(topGroup);
 		createPathSection(topGroup);
+		createProtocolSection(topGroup);
 		createPortSection(topGroup);
 		createURLValidateSection(topGroup);
 		createEnabledSection(topGroup);
@@ -161,6 +168,18 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 		pathText.setText(selectedPath);
 
 	}
+	
+	/*
+	 * Create the "Protocol:" label and text field.
+	 */
+	private void createProtocolSection(Composite parent) {
+		protocolLabel = new Label(parent, SWT.NONE);
+		protocolLabel.setText(Messages.ViewICPropsDialog_14);
+		protocolText = new Label(parent, SWT.NONE);
+		protocolText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		protocolText.setText(selectedProtocol);
+
+	}
 
 	/*
 	 * Create the port radio buttons, and text field.
@@ -178,11 +197,11 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 		urlValue = new Label(parent, SWT.NONE);
 		if(selectedPort.equals("80")) //$NON-NLS-1$
 		{
-			urlValue.setText("http://"+selectedHost + selectedPath); //$NON-NLS-1$
+			urlValue.setText(selectedProtocol+"://"+selectedHost + selectedPath); //$NON-NLS-1$
 		}
 		else
 		{
-			urlValue.setText("http://"+selectedHost + ":" + selectedPort + selectedPath); //$NON-NLS-1$ //$NON-NLS-2$
+			urlValue.setText(selectedProtocol+"://"+selectedHost + ":" + selectedPort + selectedPath); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 	}
@@ -201,12 +220,13 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 	}
 
 	public void setTextValues(String icName, String host, String port,
-			String path, boolean isEnabled) {
+			String path, String protocol, boolean isEnabled) {
 
 		selectedName = icName;
 		selectedHost = host;
 		selectedPort = port;
 		selectedPath = path;
+		selectedProtocol = protocol;
 		selectedEnabled = isEnabled;
 		
 		
@@ -217,7 +237,7 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 		StatusInfo status = new StatusInfo(); 
 		
 		// Check to see if connection is valid
-		boolean isConnection=TestConnectionUtility.testConnection(selectedHost,selectedPort, selectedPath);
+		boolean isConnection=TestConnectionUtility.testConnection(selectedHost,selectedPort, selectedPath,selectedProtocol);
 		
 		if(isConnection)
 			status.setInfo(Messages.ViewICPropsDialog_23);

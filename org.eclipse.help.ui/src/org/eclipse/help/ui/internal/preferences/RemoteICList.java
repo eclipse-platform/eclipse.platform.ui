@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class RemoteICList {
 		// Load the preferences in org.eclipse.help.base/preferences.ini
 		prefsFileHandler = new PreferenceFileHandler();
 		int totalICs = prefsFileHandler.getTotalRemoteInfocenters();
-		String host,name,path,port,enabledDisabled;
+		String host,name,path,protocol,port,enabledDisabled;
 		boolean currEnabled;
 		
 		for (int i = 0; i < totalICs; i++) {
@@ -56,6 +56,7 @@ public class RemoteICList {
 			name = (prefsFileHandler.getNameEntries())[i];
 			path = (prefsFileHandler.getPathEntries())[i];
 			port = (prefsFileHandler.getPortEntries())[i];
+			protocol = (prefsFileHandler.getProtocolEntries())[i];
 			enabledDisabled=(prefsFileHandler.getEnabledEntries())[i];
 			if(enabledDisabled.equals("true")) //$NON-NLS-1$
 			{
@@ -68,7 +69,7 @@ public class RemoteICList {
 			
 			// Add preferences to the model
 			RemoteIC initRemoteIC;
-			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
+			initRemoteIC = new RemoteIC(currEnabled, name, host, path, protocol, port);
 			remote_ics.add(initRemoteIC);
 		}
 	}
@@ -78,7 +79,7 @@ public class RemoteICList {
 		// Load the preferences in org.eclipse.help.base/preferences.ini
 		DefaultPreferenceFileHandler handler = new DefaultPreferenceFileHandler();
 		int totalICs = handler.getTotalRemoteInfocenters();
-		String host,name,path,port,enabledDisabled;
+		String host,name,path,protocol,port,enabledDisabled;
 		boolean currEnabled;
 		
 		for (int i = 0; i < totalICs; i++) {
@@ -86,6 +87,7 @@ public class RemoteICList {
 			host = (handler.getHostEntries())[i];
 			name = (handler.getNameEntries())[i];
 			path = (handler.getPathEntries())[i];
+			protocol = (handler.getProtocolEntries())[i];
 			port = (handler.getPortEntries())[i];
 			enabledDisabled=(handler.getEnabledEntries())[i];
 			if(enabledDisabled.equals("true")) //$NON-NLS-1$
@@ -99,7 +101,7 @@ public class RemoteICList {
 			
 			// Add preferences to the model
 			RemoteIC initRemoteIC;
-			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
+			initRemoteIC = new RemoteIC(currEnabled, name, host, path, protocol, port);
 
 			addRemoteIC(initRemoteIC);
 		}

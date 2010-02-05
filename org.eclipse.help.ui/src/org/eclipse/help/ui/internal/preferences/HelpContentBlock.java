@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class HelpContentBlock {
 					.getControl().getShell(), remoteic.getName());
 
 			dialog.setTextValues(remoteic.getName(), remoteic.getHost(),
-					remoteic.getPort(), remoteic.getPath(), true);
+					remoteic.getPort(), remoteic.getPath(), remoteic.getProtocol(),remoteic.isEnabled());
 			remoteICviewer.getTable().setSelection(indexSelected);
 
 			if (dialog.open() == Window.OK) {
@@ -159,7 +159,7 @@ public class HelpContentBlock {
 					.getShell(), remoteic.getName());
 
 			dialog.setTextValues(remoteic.getName(), remoteic.getHost(),
-					remoteic.getPort(), remoteic.getPath());
+					remoteic.getPort(), remoteic.getPath(),remoteic.getProtocol());
 
 			remoteICviewer.getTable().setSelection(indexSelected);
 
@@ -180,6 +180,7 @@ public class HelpContentBlock {
 				remoteic.setHost(host);
 				remoteic.setPath(dialog.getEnteredPath());
 				remoteic.setPort(dialog.getEnteredPort());
+				remoteic.setProtocol(dialog.getEnteredProtocol());
 
 				remoteICviewer.getRemoteICList().updateRemoteIC(remoteic);
 			}
@@ -205,7 +206,7 @@ public class HelpContentBlock {
 				host = host.substring(7);
 			
 			RemoteIC remoteic = new RemoteIC(true, dialog.getEnteredName(),
-					host, dialog.getEnteredPath(), dialog
+					host, dialog.getEnteredPath(), dialog.getEnteredProtocol(),dialog
 							.getEnteredPort());
 			remoteICviewer.getRemoteICList().addRemoteIC(remoteic);
 			rowCount = remoteICviewer.getTable().getItemCount();
@@ -238,7 +239,7 @@ public class HelpContentBlock {
 
 		if (remoteic != null) {
 			isConnected = TestConnectionUtility.testConnection(remoteic.getHost(),
-					remoteic.getPort(), remoteic.getPath());
+					remoteic.getPort(), remoteic.getPath(),remoteic.getProtocol());
 			TestConnectionDialog dialog = new TestConnectionDialog(
 					remoteICviewer.getControl().getShell());
 			dialog.setValues(remoteic.getName(), remoteic.getHost(), remoteic

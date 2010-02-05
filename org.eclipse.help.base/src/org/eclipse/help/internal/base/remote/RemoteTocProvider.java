@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,9 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class RemoteTocProvider extends AbstractTocProvider {
 
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
-	private static final String PROTOCOL = "http://"; //$NON-NLS-1$
+	private static final String PROTOCOL = "http"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
 
 	/*
 	 * Constructs a new remote toc provider, which listens for remote
@@ -65,6 +66,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			String host[] = prefHandler.getHostEntries();
 			String port[] = prefHandler.getPortEntries();
 			String path[] = prefHandler.getPathEntries();
+			String protocol[] = prefHandler.getProtocolEntries();
 			String isEnabled[] = prefHandler.isEnabled();
 
 			ITocContribution[] currentContributions = new ITocContribution[0];
@@ -80,14 +82,23 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			for (int i = numICs-1; i >= 0; i--) {
 				if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$
 					try {
-						url = new URL("http", host[i], new Integer(port[i]) .intValue(),  //$NON-NLS-1$
-								path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
-						in = url.openStream();
+						
+						if(protocol[i].equalsIgnoreCase(PROTOCOL))
+						{
+							url = new URL(protocol[i], host[i], new Integer(port[i]) .intValue(), 
+									path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
+							
+							in = url.openStream();
+							urlStr = PROTOCOL + "://"+host[i] + ":" + port[i] + path[i]; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						else
+						{
+							in = HttpsUtility.getHttpsInputStream(protocol[i],host[i],port[i],path[i],locale);
+							urlStr = PROTOCOL_HTTPS + "://"+host[i] + ":" + port[i] + path[i]; //$NON-NLS-1$ //$NON-NLS-2$
+						}
 
 						if (in != null) {
 							// pass URL to parser
-							urlStr = PROTOCOL + host[i] + ":" + port[i] //$NON-NLS-1$
-									+ path[i];
 							currentContributions = parser.parse(in, urlStr);
 							/*
 							 * Save previous contributed tocs to a temp variable
@@ -133,6 +144,8 @@ public class RemoteTocProvider extends AbstractTocProvider {
 		return new ITocContribution[0];
 	}
 
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
 	 */

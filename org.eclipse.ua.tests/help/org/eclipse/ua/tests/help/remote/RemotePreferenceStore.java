@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public class RemotePreferenceStore {
 	private static String namePreference;
 	private static String hostPreference;
 	private static String pathPreference;
+	private static String protocolPreference;
 	private static String portPreference;
 	private static String icEnabledPreference;
 	private static String helpOn;
@@ -38,6 +39,9 @@ public class RemotePreferenceStore {
 			      "", null);
 		pathPreference = Platform.getPreferencesService().getString
 	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH,
+			      "", null);
+		protocolPreference = Platform.getPreferencesService().getString
+	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL,
 			      "", null);
 		portPreference = Platform.getPreferencesService().getString
 	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT,
@@ -65,6 +69,7 @@ public class RemotePreferenceStore {
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, namePreference);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, hostPreference);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, pathPreference);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, protocolPreference);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, portPreference);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, defaultPort);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
@@ -78,6 +83,7 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help");
+		RemotePreferenceTest.setPreference("remoteHelpProtocol", "http");
 		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", "");
 		RemotePreferenceTest.setPreference("remoteHelpPort", "" + TestServerManager.getPort(0));
 		RemotePreferenceTest.setPreference("remoteHelpName", "uatest");
@@ -91,6 +97,7 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");
+		RemotePreferenceTest.setPreference("remoteHelpProtocol", "http,http");
 		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", ",");
 		RemotePreferenceTest.setPreference("remoteHelpPort", "" 
 				+ TestServerManager.getPort(0) + ',' + TestServerManager.getPort(1));
@@ -104,6 +111,7 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");
+		RemotePreferenceTest.setPreference("remoteHelpProtocol", "http,http");
 		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", "true,true");
 		RemotePreferenceTest.setPreference("remoteHelpPort", "" 
 				+ TestServerManager.getPort(1) + ',' + TestServerManager.getPort(0));

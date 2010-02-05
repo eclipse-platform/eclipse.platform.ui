@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 
 	private static final String PATH_INDEX = "/index"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
 	
 	/*
 	 * Constructs a new remote index provider, which listens for remote
@@ -51,12 +52,27 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 			List contributions = new ArrayList();
 			PreferenceFileHandler handler = new PreferenceFileHandler();
 			String isEnabled[] = handler.isEnabled();
+			String [] protocol = handler.getProtocolEntries();
+			String [] host = handler.getHostEntries();
+			String [] port = handler.getPortEntries();
+			String [] path = handler.getPathEntries();
 			for (int ic = 0; ic < handler.getTotalRemoteInfocenters(); ic++) {
 				if (isEnabled[ic].equalsIgnoreCase("true")) { //$NON-NLS-1$
 					InputStream in = null;
 					try {
-						URL url = RemoteHelp.getURL(ic, PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
-						in = url.openStream();
+						URL url;
+						
+						if(protocol[ic].equals(PROTOCOL_HTTP))
+						{
+							url = RemoteHelp.getURL(ic, PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
+							in = url.openStream();
+						}
+						else
+						{
+							url = HttpsUtility.getHttpsURL(protocol[ic], host[ic], port[ic], path[ic]+PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
+							in = HttpsUtility.getHttpsStream(url);
+						}
+						
 						RemoteIndexParser parser = new RemoteIndexParser();
 						IIndexContribution[] result = parser.parse(in);
 						for (int contrib = 0; contrib < result.length; contrib++) {

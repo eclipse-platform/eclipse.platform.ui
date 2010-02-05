@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,15 +20,18 @@ public class RemoteIC {
 
 	private String path = ""; //$NON-NLS-1$
 	
+	private String protocol = ""; //$NON-NLS-1$
+	
 	private String port;
 	
 	
-    public RemoteIC(boolean enabled, String name, String host, String path, String port){
+    public RemoteIC(boolean enabled, String name, String host, String path, String protocol, String port){
 		
     	this.enabled = enabled;
 	    this.name    = name;
 	    this.host    = host;
 	    this.path    = path;
+	    this.protocol = protocol;
 	    this.port    = port;
 	   
 	}
@@ -38,6 +41,10 @@ public class RemoteIC {
 
 	public String getPath() {
 		return path;
+	}
+	
+	public String getProtocol() {
+		return protocol;
 	}
 
 	public String getPort() {
@@ -67,6 +74,10 @@ public class RemoteIC {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
 
 	public void setPort(String port) {
 		this.port = port;
@@ -83,6 +94,8 @@ public class RemoteIC {
         if ( !(((RemoteIC) anotherObject).getHost().equals(this.getHost())))
         	return false;
         if ( !(((RemoteIC) anotherObject).getPath().equals(this.getPath())))
+        	return false;
+        if ( !(((RemoteIC) anotherObject).getProtocol().equals(this.getProtocol())))
         	return false;
         if ( !(((RemoteIC) anotherObject).getPort().equals(this.getPort())))
             return false;    	

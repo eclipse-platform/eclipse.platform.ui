@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceFileHandler {
 
-	protected String[] nameEntries, hostEntries, pathEntries, portEntries, isICEnabled = null;
+	protected String[] nameEntries, hostEntries, pathEntries, protocolEntries, portEntries, isICEnabled = null;
 
-	protected String namePreference, hostPreference, pathPreference, portPreference, icEnabledPreference;
+	protected String namePreference, hostPreference, pathPreference, protocolPreference, portPreference, icEnabledPreference;
 
 	protected int numEntries = 0, numHostEntries=0;
 
@@ -49,6 +49,8 @@ public class PreferenceFileHandler {
 		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, "", null); //$NON-NLS-1$
 		pathPreference = Platform.getPreferencesService().getString
 		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, "", null); //$NON-NLS-1$
+		protocolPreference = Platform.getPreferencesService().getString
+	    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, "", null); //$NON-NLS-1$
 		portPreference = Platform.getPreferencesService().getString
 		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null); //$NON-NLS-1$
 		icEnabledPreference =Platform.getPreferencesService().getString
@@ -69,6 +71,7 @@ public class PreferenceFileHandler {
 		// Get the preference values
 		this.nameEntries = getValues(namePreference, ""); //$NON-NLS-1$
 		this.pathEntries = getValues(pathPreference, "/"); //$NON-NLS-1$
+		this.protocolEntries = getValues(protocolPreference, "http"); //$NON-NLS-1$
 		this.portEntries = getValues(portPreference, "80"); //$NON-NLS-1$
 		this.isICEnabled = getValues(icEnabledPreference, "true"); //$NON-NLS-1$
 		
@@ -78,7 +81,6 @@ public class PreferenceFileHandler {
 			this.numEntries = 0;
 		else
 			this.numEntries = this.nameEntries.length;
-
 	}
 
 	protected String[] getValues(String preferenceEntry, String appendString) {
@@ -136,7 +138,7 @@ public class PreferenceFileHandler {
 	public static void commitRemoteICs(RemoteIC[] remoteICs) {
 
 		RemoteIC remote_ic = null;
-		String name = "", host = "", path = "", port = "", enabledString = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+		String name = "", host = "", path = "", protocol="", port = "", enabledString = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		boolean enabled;
 
 		int numICs = remoteICs.length;
@@ -147,6 +149,7 @@ public class PreferenceFileHandler {
 			name = remote_ic.getName();
 			host = remote_ic.getHost();
 			path = remote_ic.getPath();
+			protocol = remote_ic.getProtocol();
 			port = remote_ic.getPort();
 			enabled = remote_ic.isEnabled();
 			enabledString = enabled + ""; //$NON-NLS-1$
@@ -156,6 +159,7 @@ public class PreferenceFileHandler {
 				name = name + PREFERENCE_ENTRY_DELIMITER + remote_ic.getName();
 				host = host + PREFERENCE_ENTRY_DELIMITER + remote_ic.getHost();
 				path = path + PREFERENCE_ENTRY_DELIMITER + remote_ic.getPath();
+				protocol = protocol + PREFERENCE_ENTRY_DELIMITER + remote_ic.getProtocol();
 				port = port + PREFERENCE_ENTRY_DELIMITER + remote_ic.getPort();
 				enabledString = enabledString + PREFERENCE_ENTRY_DELIMITER + remote_ic.isEnabled();
 			}
@@ -170,6 +174,7 @@ public class PreferenceFileHandler {
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, name);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, host);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, path);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, protocol);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, port);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, enabledString);
 		try {
@@ -189,7 +194,7 @@ public class PreferenceFileHandler {
 		// Load the preferences in org.eclipse.help.base/preferences.ini
 		RemoteIC initRemoteIC;
 		int totalICs = this.getTotalRemoteInfocenters();
-		String host, name, path, port, enabledDisabled;
+		String host, name, path, protocol, port, enabledDisabled;
 		boolean currEnabled;
 
 		for (int i = 0; i < totalICs; i++) {
@@ -197,6 +202,7 @@ public class PreferenceFileHandler {
 			host = (this.getHostEntries())[i];
 			name = (this.getNameEntries())[i];
 			path = (this.getPathEntries())[i];
+			protocol = (this.getProtocolEntries())[i];
 			port = (this.getPortEntries())[i];
 			enabledDisabled = (this.getEnabledEntries())[i];
 			if (enabledDisabled.equalsIgnoreCase("true")) //$NON-NLS-1$
@@ -206,7 +212,7 @@ public class PreferenceFileHandler {
 				currEnabled = false;
 			}
 
-			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
+			initRemoteIC = new RemoteIC(currEnabled, name, host, path, protocol,port);
 			remoteICList.add(initRemoteIC);
 
 		}
@@ -246,6 +252,10 @@ public class PreferenceFileHandler {
 
 	public String[] getPathEntries() {
 		return pathEntries;
+	}
+	
+	public String[] getProtocolEntries() {
+		return protocolEntries;
 	}
 
 	public String[] getPortEntries() {

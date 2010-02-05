@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public class RemoteStatusData {
 
 
 	private static final String INDEXJSP = "/index.jsp"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
 	
 	/*
 	 * Convience method to see if any remote help
@@ -57,9 +58,18 @@ public class RemoteStatusData {
 			URL baseURL = (URL)sites.get(i);
 			try{
 				URL indexURL = new URL(baseURL.toExternalForm()+INDEXJSP);
+				InputStream in;
+				if(indexURL.getProtocol().equalsIgnoreCase(PROTOCOL_HTTP))
+				{
+					in = indexURL.openStream();
+					in.close();
+				}
+				else
+				{
+					in = HttpsUtility.getHttpsStream(indexURL);
+					in.close();
+				}
 				
-				InputStream in = indexURL.openStream();
-				in.close();
 			
 			}catch(Exception ex)
 			{
@@ -90,6 +100,8 @@ public class RemoteStatusData {
 				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		String paths[] = Platform.getPreferencesService().getString(
 				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
+		String protocols[] = Platform.getPreferencesService().getString(
+				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		String ports[] = Platform.getPreferencesService().getString(
 				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		String enableds[] = Platform.getPreferencesService().getString(
@@ -102,7 +114,7 @@ public class RemoteStatusData {
 				if (enableds[i].equalsIgnoreCase("true")) //$NON-NLS-1$
 				{
 					URL url = new URL(
-							"http://"+hosts[i]+':'+ports[i]+paths[i]); //$NON-NLS-1$
+							protocols[i]+"://"+hosts[i]+':'+ports[i]+paths[i]); //$NON-NLS-1$
 					sites.add(url);
 				}
 			}

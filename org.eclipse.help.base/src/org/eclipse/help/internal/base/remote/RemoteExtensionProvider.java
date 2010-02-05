@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,8 @@ import org.eclipse.help.internal.dynamic.DocumentReader;
 public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	private static final String PATH_EXTENSIONS = "/extension"; //$NON-NLS-1$
-
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
+	
 	private DocumentReader reader;
 
 	public RemoteExtensionProvider() {
@@ -48,7 +49,16 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 					InputStream in = null;
 					try {
 						URL url = RemoteHelp.getURL(ic, PATH_EXTENSIONS);
-						in = url.openStream();
+						
+						if(url.getProtocol().equalsIgnoreCase(PROTOCOL_HTTP))
+						{
+							in = url.openStream();
+						}
+						else
+						{
+							in = HttpsUtility.getHttpsStream(url);
+						}
+						
 						if (reader == null) {
 							reader = new DocumentReader();
 						}

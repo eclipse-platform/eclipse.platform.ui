@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2009, 2010 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.remote.HttpsUtility;
 import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteContentLocator;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
@@ -42,6 +43,8 @@ public class HelpURLConnection extends URLConnection {
 	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
 	public final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTP = "http://"; //$NON-NLS-1$
+	
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
@@ -385,9 +388,17 @@ public class HelpURLConnection extends URLConnection {
 		URL url;
 		InputStream in = null;
 		try {
-			url = new URL(remoteURL + pathSuffix);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			in = connection.getInputStream();
+			if(remoteURL.startsWith(PROTOCOL_HTTP))
+			{
+				url = new URL(remoteURL + pathSuffix);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				in = connection.getInputStream();
+			}
+			else
+			{
+				url = HttpsUtility.getHttpsURL(remoteURL + pathSuffix);
+				in = HttpsUtility.getHttpsStream(url);
+			}
 		} catch (Exception e) {
 			// File not found on this server
 		}
@@ -398,6 +409,7 @@ public class HelpURLConnection extends URLConnection {
 		PreferenceFileHandler prefHandler = new PreferenceFileHandler();
 		String host[] = prefHandler.getHostEntries();
 		String port[] = prefHandler.getPortEntries();
+		String protocol[] = prefHandler.getProtocolEntries();
 		String path[] = prefHandler.getPathEntries();
 		String isEnabled[] = prefHandler.isEnabled();
 
@@ -405,8 +417,7 @@ public class HelpURLConnection extends URLConnection {
 
 		for (int i = 0; i < numICs; i++) {
 			if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$		
-				String urlStr = "http://" + host[i] + ':' + port[i] //$NON-NLS-1$
-						+ path[i];
+				String urlStr = protocol[i]+"://" + host[i] + ':' + port[i] + path[i]; //$NON-NLS-1$
 				InputStream is = openRemoteStream(urlStr, pathSuffix);
 				if (is != null) {
 					return is;

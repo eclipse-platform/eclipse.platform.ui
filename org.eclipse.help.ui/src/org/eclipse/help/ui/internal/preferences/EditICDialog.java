@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -43,6 +44,10 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	private Label pathLabel;
 
 	private Text pathText;
+	
+	private Label protocolLabel;
+
+	private Combo protocolCombo;
 
 	private Button radio1;
 
@@ -63,6 +68,8 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	private String selectedPort = ""; //$NON-NLS-1$
 
 	private String selectedPath = ""; //$NON-NLS-1$
+	
+	private String selectedProtocol = ""; //$NON-NLS-1$
 
 	private String enteredHost;
 
@@ -71,11 +78,15 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	private String enteredPort;
 
 	private String enteredPath;
+	
+	private String enteredProtocol;
 
 	private String enteredUseDefault;
 		
 	private StatusInfo dialogStatus;
 	
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
+	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
 	
 	public EditICDialog(Shell parentShell, String infoCenterName) {
 
@@ -116,6 +127,7 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		createNameSection(topGroup);
 		createHostSection(topGroup);
 		createPathSection(topGroup);
+		createProtocolSection(topGroup);
 		createPortSection(topGroup);
 	
 		//Initialize validator and setup for User Input
@@ -178,6 +190,22 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	}
 
 	/*
+	 * Create the "Protocol:" label and combo box.
+	 */
+	private void createProtocolSection(Composite parent) {
+		protocolLabel = new Label(parent, SWT.NONE);
+		protocolLabel.setText(Messages.EditICDialog_15);
+		protocolCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+		protocolCombo.add("http"); //$NON-NLS-1$
+		protocolCombo.add(PROTOCOL_HTTPS);
+		
+		if(selectedProtocol.equalsIgnoreCase(PROTOCOL_HTTP))
+			protocolCombo.select(0);
+		else if(selectedProtocol.equalsIgnoreCase(PROTOCOL_HTTPS))
+			protocolCombo.select(1);
+	}
+	
+	/*
 	 * Create the port radio buttons, and text field.
 	 */
 	private void createPortSection(Composite parent) {
@@ -216,13 +244,13 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	}
 
 	public void setTextValues(String icName, String host, String port,
-			String path) {
+			String path,String protocol) {
 
 		selectedName = icName;
 		selectedHost = host;
 		selectedPort = port;
 		selectedPath = path;
-
+		selectedProtocol=protocol;
 	}
 
 	public String getEnteredHost() {
@@ -233,6 +261,11 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 	public String getEnteredPath() {
 
 		return enteredPath;
+	}
+	
+	public String getEnteredProtocol() {
+
+		return enteredProtocol;
 	}
 
 	public String getEnteredPort() {
@@ -253,6 +286,7 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		enteredHost = hostText.getText();
 		enteredName = nameText.getText();
 		enteredPath = pathText.getText();
+		enteredProtocol = protocolCombo.getText();
 
 		//Logic here for setting port values
 		if (radio1.getSelection()) //Use Default
@@ -341,7 +375,4 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 			
 		}
 	}
-	
-	
-
 }

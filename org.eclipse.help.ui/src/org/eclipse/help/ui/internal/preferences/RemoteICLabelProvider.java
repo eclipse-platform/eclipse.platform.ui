@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 public class RemoteICLabelProvider extends LabelProvider implements
 		ITableLabelProvider {
 
-	private final String PROTOCOL = "http://"; //$NON-NLS-1$
+	private final String PROTOCOL = "://"; //$NON-NLS-1$
 
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
@@ -37,11 +37,11 @@ public class RemoteICLabelProvider extends LabelProvider implements
 			
 			if(remoteic.getPort().equals("80")) //$NON-NLS-1$
 			{
-				result = PROTOCOL + remoteic.getHost() + remoteic.getPath();
+				result = remoteic.getProtocol() + PROTOCOL + remoteic.getHost() + remoteic.getPath();
 			}
 			else
 			{
-				result = PROTOCOL + remoteic.getHost() + ":" + remoteic.getPort() //$NON-NLS-1$
+				result = remoteic.getProtocol() + PROTOCOL + remoteic.getHost() + ":" + remoteic.getPort() //$NON-NLS-1$
 				+ remoteic.getPath();
 			}
 			break;

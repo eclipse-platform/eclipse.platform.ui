@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2009, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -204,7 +204,7 @@ public class RemotePreferenceTest extends TestCase {
 	}
 
 	public void testWriteOneRemote() {
-		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080")};
+		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "http","8080")};
 		PreferenceFileHandler.commitRemoteICs(ic);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		assertEquals(1, handler.getTotalRemoteInfocenters());
@@ -219,8 +219,8 @@ public class RemotePreferenceTest extends TestCase {
 	}
 	
 	public void testWriteTwoRemote() {
-		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080"),
-				new RemoteIC(false, "remote", "remotehost", "/help2", "8081")};
+		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "http", "8080"),
+				new RemoteIC(false, "remote", "remotehost", "/help2", "http", "8081")};
 		PreferenceFileHandler.commitRemoteICs(ic);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		assertEquals(2, handler.getTotalRemoteInfocenters());

@@ -189,6 +189,8 @@ public final class Messages extends NLS {
 
 	public static String AddICDialog_7;
 
+	public static String AddICDialog_8;
+	
 	public static String AddICDialog_9;
 
 	public static String EditICDialog_10;
@@ -200,6 +202,8 @@ public final class Messages extends NLS {
 	public static String EditICDialog_13;
 
 	public static String EditICDialog_14;
+	
+	public static String EditICDialog_15;
 
 	public static String EditICDialog_7;
 
@@ -243,6 +247,8 @@ public final class Messages extends NLS {
 
 	public static String ViewICPropsDialog_13;
 
+	public static String ViewICPropsDialog_14;
+	
 	public static String ViewICPropsDialog_19;
 
 	public static String ViewICPropsDialog_20;
