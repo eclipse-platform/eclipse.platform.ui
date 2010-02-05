@@ -13,7 +13,6 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -28,6 +27,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
@@ -122,9 +122,10 @@ public class PageSite implements IPageSite, INestable {
 		if (menuExtenders != null) {
 			HashSet managers = new HashSet(menuExtenders.size());
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
-				managers.add(ext.getManager());
-				ext.dispose();
+				// PopupMenuExtender ext = (PopupMenuExtender)
+				// menuExtenders.get(i);
+				// managers.add(ext.getManager());
+				// ext.dispose();
 			}
 			if (managers.size()>0) {
 				for (Iterator iterator = managers.iterator(); iterator
@@ -210,8 +211,10 @@ public class PageSite implements IPageSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuID, menuMgr, selProvider, false,
-				parentSite.getPart(), menuExtenders);
+		// TODO compat: registerContextMenu
+		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
+		// PartSite.registerContextMenu(menuID, menuMgr, selProvider, false,
+		// parentSite.getPart(), menuExtenders);
 	}
 
 	/*

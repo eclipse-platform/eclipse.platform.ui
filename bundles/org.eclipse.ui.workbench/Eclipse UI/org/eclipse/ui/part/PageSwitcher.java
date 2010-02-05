@@ -12,11 +12,8 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.handlers.CyclePageHandler;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * Provides the implementation for switching pages in a view. A view may track
@@ -35,11 +32,17 @@ public abstract class PageSwitcher {
 	 *            The part to register against.
 	 */
 	public PageSwitcher(IWorkbenchPart part) {
-		IHandlerService service = (IHandlerService) part.getSite().getService(
-				IHandlerService.class);
-		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE, new CyclePageHandler(this));
-		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS_PAGE, new CyclePageHandler(
-				this));
+		// TODO compat: we don't support page switching here
+		E4Util.unsupported("PageSwitcher"); //$NON-NLS-1$
+
+		// IHandlerService service = (IHandlerService)
+		// part.getSite().getService(
+		// IHandlerService.class);
+		// service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE,
+		// new CyclePageHandler(this));
+		// service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS_PAGE,
+		// new CyclePageHandler(
+		// this));
 	}
 
 	/**

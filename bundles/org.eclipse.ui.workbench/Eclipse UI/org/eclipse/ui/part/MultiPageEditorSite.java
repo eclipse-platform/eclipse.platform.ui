@@ -11,7 +11,6 @@
 package org.eclipse.ui.part;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
@@ -31,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
@@ -175,7 +175,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	public void dispose() {
 		if (menuExtenders != null) {
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				((PopupMenuExtender) menuExtenders.get(i)).dispose();
+				// ((PopupMenuExtender) menuExtenders.get(i)).dispose();
 			}
 			menuExtenders = null;
 		}
@@ -502,8 +502,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
-				editor, menuExtenders);
+		// TODO compat: registerContextMenu
+		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
+		// PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
+		// editor, menuExtenders);
 	}
 
 	public final void registerContextMenu(final String menuId,
@@ -513,8 +515,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
-				includeEditorInput, editor, menuExtenders);
+		// TODO compat: registerContextMenu
+		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
+		// PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+		// includeEditorInput, editor, menuExtenders);
 	}
 
 	/**
