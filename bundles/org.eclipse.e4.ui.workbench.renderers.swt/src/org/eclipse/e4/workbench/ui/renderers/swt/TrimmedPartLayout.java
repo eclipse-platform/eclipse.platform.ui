@@ -118,8 +118,8 @@ public class TrimmedPartLayout extends Layout {
 				caRect.width -= leftSize.x;
 
 				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(caRect.x, caRect.y,
-						leftSize.x, caRect.height);
+				Rectangle newBounds = new Rectangle(caRect.x - leftSize.x,
+						caRect.y, leftSize.x, caRect.height);
 				if (!newBounds.equals(left.getBounds())) {
 					left.setBounds(newBounds);
 				}
@@ -135,8 +135,7 @@ public class TrimmedPartLayout extends Layout {
 				Rectangle newBounds = new Rectangle(caRect.x + caRect.width,
 						caRect.y, rightSize.x, caRect.height);
 				if (!newBounds.equals(right.getBounds())) {
-					right.setBounds(caRect.x + caRect.width, caRect.y,
-							rightSize.x, caRect.height);
+					right.setBounds(newBounds);
 				}
 			}
 
