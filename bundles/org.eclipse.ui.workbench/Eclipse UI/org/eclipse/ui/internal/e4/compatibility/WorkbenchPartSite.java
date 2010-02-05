@@ -48,6 +48,10 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 		this.element = element;
 	}
 
+	public MPart getModel() {
+		return model;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */

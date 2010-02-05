@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -55,8 +57,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
@@ -646,10 +648,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 						.getService(IServiceLocatorCreator.class);
 				IServiceLocator sl = slc.createServiceLocator(getSite(), null, new IDisposable(){
 					public void dispose() {
-						final Control control = ((PartSite)getSite()).getPane().getControl();
-						if (control != null && !control.isDisposed()) {
-							((PartSite)getSite()).getPane().doHide();
-						}
+						close();
 					}
 				});
 				item.setData(sl);
@@ -658,6 +657,16 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			}
 		}
 		return null;
+	}
+
+	private void close() {
+		// 3.x implementation closes the editor when the ISL is disposed
+		WorkbenchPartSite partSite = (WorkbenchPartSite) getSite();
+		MPart model = partSite.getModel();
+		Widget widget = (Widget) model.getWidget();
+		if (widget != null && !widget.isDisposed()) {
+			getSite().getPage().closeEditor(MultiPageEditorPart.this, true);
+		}
 	}
 
 	/**
@@ -673,10 +682,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 					.getService(IServiceLocatorCreator.class);
 			pageContainerSite = slc.createServiceLocator(getSite(), null, new IDisposable(){
 				public void dispose() {
-					final Control control = ((PartSite)getSite()).getPane().getControl();
-					if (control != null && !control.isDisposed()) {
-						((PartSite)getSite()).getPane().doHide();
-					}
+					close();
 				}
 			});
 		}
