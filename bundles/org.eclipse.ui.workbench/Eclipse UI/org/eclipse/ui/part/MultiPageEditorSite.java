@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -30,15 +30,12 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.KeyBindingService;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
@@ -99,7 +96,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * The local service locator for this multi-page editor site. This value is
 	 * never <code>null</code>.
 	 */
-	private final ServiceLocator serviceLocator;
+	private final IServiceLocator serviceLocator;
 
 	/**
 	 * Creates a site for the given editor nested within the given multi-page
@@ -120,13 +117,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		final IServiceLocator parentServiceLocator = multiPageEditor.getSite();
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
 				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+		this.serviceLocator = slc.createServiceLocator(
 				multiPageEditor.getSite(), null, new IDisposable(){
 					public void dispose() {
-						final Control control = ((PartSite)getMultiPageEditor().getSite()).getPane().getControl();
-						if (control != null && !control.isDisposed()) {
-							((PartSite)getMultiPageEditor().getSite()).getPane().doHide();
-						}
+						getMultiPageEditor().close();
 					}});
 
 		initializeDefaultServices();
@@ -136,12 +130,14 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		serviceLocator.registerService(IWorkbenchLocationService.class,
+		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
+		IEclipseContext context = partSite.getModel().getContext();
+		context.set(IWorkbenchLocationService.class.getName(),
 				new WorkbenchLocationService(IServiceScopes.MPESITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), getMultiPageEditor().getSite(),
 						this, null, 3));
-		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
+		context.set(IMultiPageEditorSiteHolder.class.getName(),
 				new IMultiPageEditorSiteHolder() {
 					public MultiPageEditorSite getSite() {
 						return MultiPageEditorSite.this;
@@ -156,7 +152,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void activate() {
-		serviceLocator.activate();
+		if (serviceLocator instanceof INestable) {
+			((INestable) serviceLocator).activate();
+		}
 	}
 
 	/**
@@ -166,7 +164,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void deactivate() {
-		serviceLocator.deactivate();
+		if (serviceLocator instanceof INestable) {
+			((INestable) serviceLocator).deactivate();
+		}
 	}
 
 	/**
@@ -188,15 +188,20 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 				INestableKeyBindingService nestableParent = (INestableKeyBindingService) parentService;
 				nestableParent.removeKeyBindingService(this);
 			}
-			if (service instanceof KeyBindingService) {
-				((KeyBindingService) service).dispose();
+			if (service instanceof IDisposable) {
+				((IDisposable) service).dispose();
 			}
 			service = null;
 		}
 
-		if (serviceLocator != null) {
-			serviceLocator.dispose();
+		if (serviceLocator instanceof IDisposable) {
+			((IDisposable) serviceLocator).dispose();
 		}
+
+		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
+		IEclipseContext context = partSite.getModel().getContext();
+		context.remove(IWorkbenchLocationService.class.getName());
+		context.remove(IMultiPageEditorSiteHolder.class.getName());
 	}
 
 	/**

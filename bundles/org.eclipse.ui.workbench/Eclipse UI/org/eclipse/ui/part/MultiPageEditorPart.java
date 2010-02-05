@@ -659,7 +659,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		return null;
 	}
 
-	private void close() {
+	void close() {
 		// 3.x implementation closes the editor when the ISL is disposed
 		WorkbenchPartSite partSite = (WorkbenchPartSite) getSite();
 		MPart model = partSite.getModel();
