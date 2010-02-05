@@ -12,7 +12,6 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -21,15 +20,14 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 
 /**
  * Shows the given perspective. If no perspective is specified in the
@@ -39,15 +37,6 @@ import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
  */
 public final class ShowPerspectiveHandler extends AbstractHandler {
 
-	/**
-	 * The name of the parameter providing the perspective identifier.
-	 */
-	private static final String PARAMETER_NAME_VIEW_ID = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
-
-	/**
-	 * True/false value to open the perspective in a new window.
-	 */
-	private static final String PARAMETER_NEW_WINDOW = "org.eclipse.ui.perspectives.showPerspective.newWindow"; //$NON-NLS-1$
 
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
@@ -56,8 +45,10 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
-		final Object value = parameters.get(PARAMETER_NAME_VIEW_ID);
-		final String newWindow = (String) parameters.get(PARAMETER_NEW_WINDOW);
+		final Object value = parameters
+				.get(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID);
+		final String newWindow = (String) parameters
+				.get(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_NEWWINDOW);
 
 		if (value == null) {
 			openOther(window);
