@@ -88,7 +88,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
@@ -245,7 +245,9 @@ public class WorkbenchStatusDialogManager {
 							.createFromURL((URL) property));
 				} else {
 					// Let the progress manager handle the resource management
-					return ProgressManager.getInstance().getIconFor(job);
+					// TODO compat: return progress manager icons for job
+					// return ProgressManager.getInstance().getIconFor(job);
+					E4Util.unsupported("org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager.DefaultLabelProvider.getIcon(Job)"); //$NON-NLS-1$
 				}
 			}
 			return null;

@@ -11,10 +11,20 @@
 
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
+
 /**
  * @since 3.5
  *
  */
 public class ProgressMonitorJobsDialog {
+
+	/**
+	 * 
+	 */
+	public void watchTicks() {
+		// TODO compat: the progress monitor jobs dialog needs some work
+		E4Util.unsupported("watchTicks"); //$NON-NLS-1$
+	}
 
 }

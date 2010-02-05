@@ -56,6 +56,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
@@ -800,6 +801,12 @@ public class Workbench implements IWorkbench {
 	private static void initializeLegacyServices(IEclipseContext appContext) {
 		appContext.set(ICommandService.class.getName(), new FakeCommandService());
 		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
+	}
+
+	public WorkbenchAdvisor getAdvisor() {
+		// TODO compat: we need one of these eventually
+		E4Util.unsupported("getAdvisor"); //$NON-NLS-1$
+		return null;
 	}
 
 }

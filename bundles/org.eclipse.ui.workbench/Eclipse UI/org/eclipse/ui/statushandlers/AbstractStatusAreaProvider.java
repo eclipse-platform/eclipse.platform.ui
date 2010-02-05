@@ -56,4 +56,25 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 	public final Control createSupportArea(Composite parent, IStatus status) {
 		return createSupportArea(parent, new StatusAdapter(status));
 	}
+
+	/**
+	 * This method is called before
+	 * {@link #createSupportArea(Composite, StatusAdapter)} to check if it will
+	 * display any significant implementation.
+	 * <p>
+	 * <b>Important</b>: This API is a part of work in progress and therefore is
+	 * suitable only for support area providers (which are presented in the
+	 * status dialog tray).
+	 * </p>
+	 * 
+	 * @param statusAdapter
+	 *            - {@link StatusAdapter} for which status are will be
+	 *            requested.
+	 * @return true if provider is able to process particular
+	 *         {@link StatusAdapter}
+	 * @since 3.6
+	 */
+	public boolean validFor(StatusAdapter statusAdapter) {
+		return true;
+	}
 }
