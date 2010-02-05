@@ -37,8 +37,12 @@ public class ViewSite extends WorkbenchPartSite implements IViewSite {
 	 * @see org.eclipse.ui.IViewSite#getSecondaryId()
 	 */
 	public String getSecondaryId() {
-		// FIXME compat getSecondaryId
-		E4Util.unsupported("getSecondaryId"); //$NON-NLS-1$
+		for (String tag : model.getTags()) {
+			if (tag.startsWith(WorkbenchPage.SECONDARY_ID_HEADER)) {
+				return tag.substring(WorkbenchPage.SECONDARY_ID_HEADER.length());
+			}
+
+		}
 		return null;
 	}
 

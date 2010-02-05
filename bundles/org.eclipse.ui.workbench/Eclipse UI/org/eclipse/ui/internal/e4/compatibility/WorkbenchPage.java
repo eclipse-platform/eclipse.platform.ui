@@ -72,6 +72,8 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
  *
  */
 public class WorkbenchPage implements IWorkbenchPage {
+	
+	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
 
 	private WorkbenchWindow workbenchWindow;
 	private IAdaptable input;
@@ -806,6 +808,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				throw new IllegalArgumentException(
 						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 			}
+
+			secondaryId = SECONDARY_ID_HEADER + secondaryId;
 
 			MPartDescriptor descriptor = findDescriptor(viewId);
 			if (!descriptor.isAllowMultiple()) {

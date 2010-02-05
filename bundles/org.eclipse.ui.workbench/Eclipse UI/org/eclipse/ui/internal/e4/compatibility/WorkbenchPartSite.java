@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class WorkbenchPartSite implements IWorkbenchPartSite {
 
-	private MPart model;
+	MPart model;
 	private IWorkbenchPart part;
 	private IConfigurationElement element;
 
