@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,21 +15,18 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.FastViewBar;
-import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchPage;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
 
 /**
  * Shows the given view. If no view is specified in the parameters, then this
@@ -89,31 +86,18 @@ public final class ShowViewHandler extends AbstractHandler {
 	/**
 	 * Opens a view selection dialog, allowing the user to chose a view.
 	 */
-	private final void openOther(final IWorkbenchWindow window) {
-		final IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
+	private final void openOther(IWorkbenchWindow window) {
+		if (window.getActivePage() == null) {
 			return;
 		}
-		
-		final ShowViewDialog dialog = new ShowViewDialog(window,
-				WorkbenchPlugin.getDefault().getViewRegistry());
-		dialog.open();
-		
-		if (dialog.getReturnCode() == Window.CANCEL) {
-			return;
-		}
-		
-		final IViewDescriptor[] descriptors = dialog.getSelection();
-		for (int i = 0; i < descriptors.length; ++i) {
-			try {
-                openView(descriptors[i].getId(), window);
-			} catch (PartInitException e) {
-				StatusUtil.handleStatus(e.getStatus(),
-						WorkbenchMessages.ShowView_errorTitle
-								+ ": " + e.getMessage(), //$NON-NLS-1$
-						StatusManager.SHOW);
-			}
-		}
+
+		MWindow model = ((WorkbenchWindow) window).getModel();
+		IEclipseContext context = model.getContext();
+		ECommandService commandService = (ECommandService) context.get(ECommandService.class.getName());
+		EHandlerService handlerService = (EHandlerService) model.getContext().get(
+				EHandlerService.class.getName());
+		handlerService.executeHandler(new ParameterizedCommand(commandService
+				.getCommand("e4.show.view"), null)); //$NON-NLS-1$
 	}
 
 	/**
