@@ -33,7 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
@@ -96,10 +95,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void disposeWidget(MUIElement element) {
 		Widget curWidget = (Widget) element.getWidget();
 
-		// If we're disposing a control find its 'outermost'
-		if (curWidget instanceof Control)
-			curWidget = getOutermost((Control) curWidget);
-
 		if (curWidget != null && !curWidget.isDisposed()) {
 			unbindWidget(element);
 			curWidget.dispose();
@@ -143,21 +138,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				return desc.createImage();
 		}
 		return null;
-	}
-
-	protected Control getOutermost(Control ctrl) {
-		// Find the 'outermost' Composite that is *not* bound
-		// to a model element
-		Composite curComposite = ctrl.getParent();
-		Control outerMost = ctrl;
-		while (curComposite != null
-				&& curComposite.getData(AbstractPartRenderer.OWNING_ME) == null
-				&& !(curComposite instanceof Shell)) {
-			outerMost = curComposite;
-			curComposite = curComposite.getParent();
-		}
-
-		return outerMost;
 	}
 
 	/**

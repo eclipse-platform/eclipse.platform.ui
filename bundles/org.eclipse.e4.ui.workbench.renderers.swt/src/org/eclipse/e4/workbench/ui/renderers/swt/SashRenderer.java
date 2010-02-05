@@ -245,8 +245,7 @@ public class SashRenderer extends SWTPartRenderer {
 		for (MUIElement part : psc.getChildren()) {
 			Control partCtrl = (Control) part.getWidget();
 			if (partCtrl != null) {
-				Control outerMost = getOutermost(partCtrl);
-				outerMost.moveBelow(null);
+				partCtrl.moveBelow(null);
 			}
 		}
 
