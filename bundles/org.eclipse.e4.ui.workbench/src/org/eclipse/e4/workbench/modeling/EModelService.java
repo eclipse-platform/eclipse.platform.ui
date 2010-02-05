@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.workbench.modeling;
 
+import java.util.Collection;
+import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
@@ -31,6 +33,28 @@ public interface EModelService {
 	 * @return The element whose id matches the parameter
 	 */
 	public MUIElement find(String id, MUIElement searchRoot);
+
+	/**
+	 * Adds any element that passes the given search criteria into the supplied collection. Any of
+	 * the search criteria may be null, indicating not to check that field.
+	 * <p>
+	 * The search is recursive, including the searchRoot.
+	 * </p>
+	 * 
+	 * @param element
+	 *            The element to test
+	 * @param id
+	 *            The id to match
+	 * @param type
+	 *            The model element type. This is the element's type (i.e. MPartStack)
+	 * @param tagsToMatch
+	 *            The tags to check. In order to be a match all the tags in this list must be
+	 *            defined in the element's tags list.
+	 * 
+	 * @return True iff all non-null test fields match
+	 */
+	public void findAllElements(MUIElement searchRoot, String id, String type,
+			List<String> tagsToMatch, Collection<MUIElement> elements);
 
 	/**
 	 * Locate the context that is closest to the given element in the parent hierarchy. It does not

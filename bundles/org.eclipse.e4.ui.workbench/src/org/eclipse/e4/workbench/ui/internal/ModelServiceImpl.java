@@ -12,6 +12,7 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -24,11 +25,70 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  *
  */
 public class ModelServiceImpl implements EModelService {
+
+	/**
+	 * Returns true if the given element matches the required search criteria. Any of the search
+	 * criteria may be null, indicating not to check that field.
+	 * 
+	 * @param element
+	 *            The element to test
+	 * @param id
+	 *            The id to match
+	 * @param type
+	 *            The model element type. This is the element's type (i.e. MPartStack)
+	 * @param tagsToMatch
+	 *            The tags to check. In order to be a match all the tags in this list must be
+	 *            defined in the element's tags list.
+	 * 
+	 * @return True iff all non-null test fields match
+	 */
+	private boolean match(MUIElement element, String id, String type, List<String> tagsToMatch) {
+		if (id != null && !id.equals(element.getId()))
+			return false;
+
+		EObject eObj = (EObject) element;
+		String clsName = 'M' + eObj.eClass().getName();
+		if (type != null && !type.equals(clsName))
+			return false;
+
+		if (tagsToMatch != null) {
+			EList<String> elementTags = element.getTags();
+			for (String tag : tagsToMatch) {
+				if (!elementTags.contains(tag))
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.modeling.EModelService#findAllElements(org.eclipse.e4.ui.model.
+	 * application.MUIElement, java.lang.String, java.lang.String, java.util.List,
+	 * java.util.Collection)
+	 */
+	public void findAllElements(MUIElement searchRoot, String id, String type,
+			List<String> tagsToMatch, Collection<MUIElement> elements) {
+		if (match(searchRoot, id, type, tagsToMatch)) {
+			elements.add(searchRoot);
+		}
+
+		if (searchRoot instanceof MElementContainer<?>) {
+			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
+			EList<MUIElement> children = container.getChildren();
+			for (MUIElement child : children) {
+				findAllElements(child, id, type, tagsToMatch, elements);
+			}
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -40,20 +100,10 @@ public class ModelServiceImpl implements EModelService {
 		if (id == null || id.length() == 0)
 			return null;
 
-		if (id.equals(searchRoot.getId())) {
-			return searchRoot;
-		}
-
-		if (searchRoot instanceof MElementContainer<?>) {
-			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
-			EList<MUIElement> children = container.getChildren();
-			for (MUIElement child : children) {
-				MUIElement foundElement = find(id, child);
-				if (foundElement != null)
-					return foundElement;
-			}
-		}
-
+		List<MUIElement> elements = new ArrayList<MUIElement>();
+		findAllElements(searchRoot, id, null, null, elements);
+		if (elements.size() > 0)
+			return elements.get(0);
 		return null;
 	}
 
