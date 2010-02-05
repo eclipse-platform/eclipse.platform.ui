@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,24 +16,26 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -63,7 +65,7 @@ public class PageSite implements IPageSite, INestable {
 	 * The localized service locator for this page site. This locator is never
 	 * <code>null</code>.
 	 */
-	private final ServiceLocator serviceLocator;
+	private final IServiceLocator serviceLocator;
 
 	/**
 	 * The action bars for this site
@@ -84,15 +86,16 @@ public class PageSite implements IPageSite, INestable {
 		// Initialize the service locator.
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
 				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+		this.serviceLocator = slc.createServiceLocator(
 				parentViewSite, null, new IDisposable(){
 					public void dispose() {
-						final Control control = ((PartSite)parentViewSite).getPane().getControl();
-						if (control != null && !control.isDisposed()) {
-							((PartSite)parentViewSite).getPane().doHide();
-						}
-					}
-				});
+				// 3.x implementation closes the view when disposed
+				WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
+				MPart model = partSite.getModel();
+				Widget widget = (Widget) model.getWidget();
+				if (widget != null && !widget.isDisposed()) {
+					parentSite.getPage().hideView((IViewPart) parentSite.getPart());
+				}}});
 		initializeDefaultServices();
 	}
 
@@ -100,16 +103,16 @@ public class PageSite implements IPageSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		serviceLocator.registerService(IWorkbenchLocationService.class,
-				new WorkbenchLocationService(IServiceScopes.PAGESITE_SCOPE,
-						getWorkbenchWindow().getWorkbench(),
-						getWorkbenchWindow(), parentSite, null, this, 3));
-		serviceLocator.registerService(IPageSiteHolder.class,
-				new IPageSiteHolder() {
-					public IPageSite getSite() {
-						return PageSite.this;
-					}
-				});
+		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
+		IEclipseContext context = partSite.getModel().getContext();
+		context.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
+				IServiceScopes.PAGESITE_SCOPE, getWorkbenchWindow().getWorkbench(),
+				getWorkbenchWindow(), parentSite, null, this, 3));
+		context.set(IPageSiteHolder.class.getName(), new IPageSiteHolder() {
+			public IPageSite getSite() {
+				return PageSite.this;
+			}
+		});
 	}
 
 	/**
@@ -133,7 +136,15 @@ public class PageSite implements IPageSite, INestable {
 			menuExtenders = null;
 		}
 		subActionBars.dispose();
-		serviceLocator.dispose();
+
+		if (serviceLocator instanceof IDisposable) {
+			((IDisposable) serviceLocator).dispose();
+		}
+
+		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
+		IEclipseContext context = partSite.getModel().getContext();
+		context.remove(IWorkbenchLocationService.class.getName());
+		context.remove(IPageSiteHolder.class.getName());
 	}
 
 	/**
@@ -218,7 +229,9 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
-		serviceLocator.activate();
+		if (serviceLocator instanceof INestable) {
+			((INestable) serviceLocator).activate();
+		}
 	}
 
 	/*
@@ -229,6 +242,8 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
-		serviceLocator.deactivate();
+		if (serviceLocator instanceof INestable) {
+			((INestable) serviceLocator).deactivate();
+		}
 	}
 }
