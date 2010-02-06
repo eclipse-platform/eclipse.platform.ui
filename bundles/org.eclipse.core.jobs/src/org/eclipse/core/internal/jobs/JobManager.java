@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,14 +24,20 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Implementation of API type IJobManager
  * 
- * Implementation note: all the data structures of this class are protected
- * by a single lock object held as a private field in this class.  The JobManager
- * instance itself is not used because this class is publicly reachable, and third
- * party clients may try to synchronize on it.
+ * Implementation note: all the data structures of this class are protected by a
+ * single lock object held as a private field in this class. The JobManager
+ * instance itself is not used because this class is publicly reachable, and
+ * third party clients may try to synchronize on it.
  * 
- * The WorkerPool class uses its own monitor for synchronizing its data
- * structures. To avoid deadlock between the two classes, the JobManager
- * must NEVER call the worker pool while its own monitor is held.
+ * There are various locks used and held throughout the JobManager
+ * implementation. When multiple locks interact, circular hold and waits must
+ * never happen, or a deadlock will occur. To prevent deadlocks, this is the
+ * order that locks must be acquired.
+ * 
+ * WorkerPool -> JobManager.implicitJobs -> JobManager.lock -> 
+ * InternalJob.jobStateLock
+ * 
+ * @ThreadSafe
  */
 public class JobManager implements IJobManager {
 
@@ -48,6 +54,8 @@ public class JobManager implements IJobManager {
 
 	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_YIELDING = PI_JOBS + "/jobs/yielding"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_YIELDING_DETAILED = PI_JOBS + "/jobs/yielding/detailed"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS = PI_JOBS + "/jobs"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS_TIMING = PI_JOBS + "/jobs/timing"; //$NON-NLS-1$
 	private static final String OPTION_LOCKS = PI_JOBS + "/jobs/locks"; //$NON-NLS-1$
@@ -55,6 +63,8 @@ public class JobManager implements IJobManager {
 
 	static boolean DEBUG = false;
 	static boolean DEBUG_BEGIN_END = false;
+	static boolean DEBUG_YIELDING = false;
+	static boolean DEBUG_YIELDING_DETAILED = false;
 	static boolean DEBUG_DEADLOCK = false;
 	static boolean DEBUG_LOCKS = false;
 	static boolean DEBUG_TIMING = false;
@@ -94,6 +104,7 @@ public class JobManager implements IJobManager {
 	 * The lock for synchronizing all activity in the job manager.  To avoid deadlock,
 	 * this lock must never be held for extended periods, and must never be
 	 * held while third party code is being called.
+	 * @GuardedBy("itself")
 	 */
 	private final Object lock = new Object();
 
@@ -104,16 +115,27 @@ public class JobManager implements IJobManager {
 	 */
 	private WorkerPool pool;
 
+	/**
+	 * @GuardedBy("lock")
+	 */
 	private ProgressProvider progressProvider = null;
 	/**
 	 * Jobs that are currently running. Should only be modified from changeState
+	 * @GuardedBy("lock")
 	 */
 	private final HashSet running;
+
+	/**
+	 * Jobs that are currently yielding. Should only be modified from changeState
+	 * @GuardedBy("lock")
+	 */
+	private final HashSet yielding;
 
 	/**
 	 * Jobs that are sleeping.  Some sleeping jobs are scheduled to wake
 	 * up at a given start time, while others will sleep indefinitely until woken.
 	 * Should only be modified from changeState
+	 * @GuardedBy("lock")
 	 */
 	private final JobQueue sleeping;
 	/**
@@ -121,18 +143,35 @@ public class JobManager implements IJobManager {
 	 * starts out not suspended, and becomes suspended when <code>suspend</code>
 	 * is invoked. Once suspended, no jobs will start running until <code>resume</code>
 	 * is called.
+	 * @GuardedBy("lock")
 	 */
 	private boolean suspended = false;
 
 	/**
 	 * jobs that are waiting to be run. Should only be modified from changeState
+	 * @GuardedBy("lock")
 	 */
 	private final JobQueue waiting;
 
 	/**
-	 * Counter to record wait queue insertion order.
+	 * ThreadJobs that are waiting to be run. Should only be modified from changeState
+	 * @GuardedBy("lock")
 	 */
-	private long waitQueueCounter;
+	final JobQueue waitingThreadJobs;
+
+	/**
+	 * Counter to record wait queue insertion order.
+	 * @GuardedBy("lock")
+	 */
+	Counter waitQueueCounter = new Counter();
+
+	/**
+	 * A set of progress monitors we must track cancellation requests for.
+	 * @GuardedBy("itself")
+	 */
+	final List monitorStack = new ArrayList();
+
+	private final InternalWorker internalWorker;
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
@@ -172,6 +211,13 @@ public class JobManager implements IJobManager {
 	/**
 	 * For debugging purposes only
 	 */
+	public static String printState(Job job) {
+		return printState(((InternalJob) job).internalGetState());
+	}
+
+	/**
+	* For debugging purposes only
+	*/
 	public static String printState(int state) {
 		switch (state) {
 			case Job.NONE :
@@ -184,6 +230,8 @@ public class JobManager implements IJobManager {
 				return "RUNNING"; //$NON-NLS-1$
 			case InternalJob.BLOCKED :
 				return "BLOCKED"; //$NON-NLS-1$
+			case InternalJob.YIELDING :
+				return "YIELDING"; //$NON-NLS-1$
 			case InternalJob.ABOUT_TO_RUN :
 				return "ABOUT_TO_RUN"; //$NON-NLS-1$
 			case InternalJob.ABOUT_TO_SCHEDULE :
@@ -210,11 +258,16 @@ public class JobManager implements IJobManager {
 		initDebugOptions();
 		synchronized (lock) {
 			waiting = new JobQueue(false);
+			waitingThreadJobs = new JobQueue(false, false);
 			sleeping = new JobQueue(true);
 			running = new HashSet(10);
+			yielding = new HashSet(10);
 			pool = new WorkerPool(this);
 		}
 		pool.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
+		internalWorker = new InternalWorker(this);
+		internalWorker.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
+		internalWorker.start();
 	}
 
 	/* (non-Javadoc)
@@ -288,73 +341,82 @@ public class JobManager implements IJobManager {
 	private void changeState(InternalJob job, int newState) {
 		boolean blockedJobs = false;
 		synchronized (lock) {
-			int oldState = job.internalGetState();
-			switch (oldState) {
-				case Job.NONE :
-				case InternalJob.ABOUT_TO_SCHEDULE :
-					break;
-				case InternalJob.BLOCKED :
-					//remove this job from the linked list of blocked jobs
-					job.remove();
-					break;
-				case Job.WAITING :
-					try {
-						waiting.remove(job);
-					} catch (RuntimeException e) {
-						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
-					}
-					break;
-				case Job.SLEEPING :
-					try {
-						sleeping.remove(job);
-					} catch (RuntimeException e) {
-						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
-					}
-					break;
-				case Job.RUNNING :
-				case InternalJob.ABOUT_TO_RUN :
-					running.remove(job);
-					//add any blocked jobs back to the wait queue
-					InternalJob blocked = job.previous();
-					job.remove();
-					blockedJobs = blocked != null;
-					while (blocked != null) {
-						InternalJob previous = blocked.previous();
-						changeState(blocked, Job.WAITING);
-						blocked = previous;
-					}
-					break;
-				default :
-					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + oldState); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			job.internalSetState(newState);
-			switch (newState) {
-				case Job.NONE :
-					job.setStartTime(InternalJob.T_NONE);
-					job.setWaitQueueStamp(InternalJob.T_NONE);
-					job.setRunCanceled(false);
-				case InternalJob.BLOCKED :
-					break;
-				case Job.WAITING :
-					waiting.enqueue(job);
-					break;
-				case Job.SLEEPING :
-					try {
-						sleeping.enqueue(job);
-					} catch (RuntimeException e) {
-						throw new RuntimeException("Error changing from state: " + oldState); //$NON-NLS-1$
-					}
-					break;
-				case Job.RUNNING :
-				case InternalJob.ABOUT_TO_RUN :
-					job.setStartTime(InternalJob.T_NONE);
-					job.setWaitQueueStamp(InternalJob.T_NONE);
-					running.add(job);
-					break;
-				case InternalJob.ABOUT_TO_SCHEDULE :
-					break;
-				default :
-					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
+			synchronized (job.jobStateLock) {
+				job.jobStateLock.notifyAll();
+				int oldState = job.internalGetState();
+				switch (oldState) {
+					case InternalJob.YIELDING :
+						yielding.remove(job);
+					case Job.NONE :
+					case InternalJob.ABOUT_TO_SCHEDULE :
+						break;
+					case InternalJob.BLOCKED :
+						//remove this job from the linked list of blocked jobs
+						job.remove();
+						break;
+					case Job.WAITING :
+						try {
+							waiting.remove(job);
+						} catch (RuntimeException e) {
+							Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
+						}
+						break;
+					case Job.SLEEPING :
+						try {
+							sleeping.remove(job);
+						} catch (RuntimeException e) {
+							Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
+						}
+						break;
+					case Job.RUNNING :
+					case InternalJob.ABOUT_TO_RUN :
+						running.remove(job);
+						//add any blocked jobs back to the wait queue
+						InternalJob blocked = job.previous();
+						job.remove();
+						blockedJobs = blocked != null;
+						while (blocked != null) {
+							InternalJob previous = blocked.previous();
+							changeState(blocked, Job.WAITING);
+							blocked = previous;
+						}
+						break;
+					default :
+						Assert.isLegal(false, "Invalid job state: " + job + ", state: " + oldState); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				job.internalSetState(newState);
+				switch (newState) {
+					case Job.NONE :
+						job.setStartTime(InternalJob.T_NONE);
+						job.setWaitQueueStamp(InternalJob.T_NONE);
+						job.setRunCanceled(false);
+					case InternalJob.BLOCKED :
+						break;
+					case Job.WAITING :
+						waiting.enqueue(job);
+						break;
+					case Job.SLEEPING :
+						try {
+							sleeping.enqueue(job);
+						} catch (RuntimeException e) {
+							throw new RuntimeException("Error changing from state: " + oldState); //$NON-NLS-1$
+						}
+						break;
+					case Job.RUNNING :
+					case InternalJob.ABOUT_TO_RUN :
+						if (oldState != InternalJob.YIELDING) {
+							job.setStartTime(InternalJob.T_NONE);
+							job.setWaitQueueStamp(InternalJob.T_NONE);
+						}
+						running.add(job);
+						break;
+					case InternalJob.YIELDING :
+						yielding.add(job);
+					case InternalJob.ABOUT_TO_SCHEDULE :
+						break;
+					default :
+						Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 		//notify queue outside sync block
@@ -384,6 +446,7 @@ public class JobManager implements IJobManager {
 
 	/**
 	 * Returns a new progress monitor for this job.  Never returns null.
+	 * @GuardedBy("lock")
 	 */
 	private IProgressMonitor createMonitor(Job job) {
 		IProgressMonitor monitor = null;
@@ -462,7 +525,7 @@ public class JobManager implements IJobManager {
 				changeState(job, Job.SLEEPING);
 			} else {
 				job.setStartTime(System.currentTimeMillis() + delayFor(job.getPriority()));
-				job.setWaitQueueStamp(waitQueueCounter++);
+				job.setWaitQueueStamp(waitQueueCounter.increment());
 				changeState(job, Job.WAITING);
 			}
 		}
@@ -523,7 +586,7 @@ public class JobManager implements IJobManager {
 				toCancel = (Job[]) running.toArray(new Job[running.size()]);
 			}
 		}
-
+		internalWorker.cancel();
 		if (toCancel != null) {
 			for (int i = 0; i < toCancel.length; i++) {
 				String jobName = printJobName(toCancel[i]);
@@ -630,6 +693,34 @@ public class JobManager implements IJobManager {
 		return null;
 	}
 
+	/**
+	 * Returns a job from the given collection whose scheduling rule conflicts
+	 * with the scheduling rule of the given job.  Returns null if there are no 
+	 * conflicting jobs.  
+	 */
+	InternalJob findBlockedJob(InternalJob job, Iterator jobs) {
+		synchronized (lock) {
+			while (jobs.hasNext()) {
+				InternalJob waitingJob = (InternalJob) jobs.next();
+				if (waitingJob.isConflicting(job))
+					return waitingJob;
+			}
+			return null;
+		}
+	}
+
+	void dequeue(JobQueue queue, InternalJob job) {
+		synchronized (lock) {
+			queue.remove(job);
+		}
+	}
+
+	void enqueue(JobQueue queue, InternalJob job) {
+		synchronized (lock) {
+			queue.enqueue(job);
+		}
+	}
+
 	public LockManager getLockManager() {
 		return lockManager;
 	}
@@ -646,6 +737,8 @@ public class JobManager implements IJobManager {
 	private void initDebugOptions() {
 		DEBUG = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
 		DEBUG_BEGIN_END = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
+		DEBUG_YIELDING = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_YIELDING, false);
+		DEBUG_YIELDING_DETAILED = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_YIELDING_DETAILED, false);
 		DEBUG_DEADLOCK = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
 		DEBUG_LOCKS = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
 		DEBUG_TIMING = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
@@ -869,7 +962,7 @@ public class JobManager implements IJobManager {
 			InternalJob job = sleeping.peek();
 			while (job != null && job.getStartTime() < now) {
 				job.setStartTime(now + delayFor(job.getPriority()));
-				job.setWaitQueueStamp(waitQueueCounter++);
+				job.setWaitQueueStamp(waitQueueCounter.increment());
 				changeState(job, Job.WAITING);
 				job = sleeping.peek();
 			}
@@ -956,21 +1049,37 @@ public class JobManager implements IJobManager {
 	}
 
 	/**
-	 * Attempts to immediately start a given job.  Returns true if the job was
-	 * successfully started, and false if it could not be started immediately
+	 * Attempts to immediately start a given job.  Returns null if the job was
+	 * successfully started, and the blocking job if it could not be started immediately
 	 * due to a currently running job with a conflicting rule.  Listeners will never
 	 * be notified of jobs that are run in this way.
 	 */
-	protected boolean runNow(InternalJob job) {
-		synchronized (lock) {
-			//cannot start if there is a conflicting job
-			if (findBlockingJob(job) != null)
-				return false;
-			changeState(job, Job.RUNNING);
-			job.setProgressMonitor(new NullProgressMonitor());
-			job.run(null);
+	protected InternalJob runNow(ThreadJob job, boolean releaseWaiting) {
+		if (releaseWaiting) {
+			synchronized (implicitJobs) {
+				synchronized (lock) {
+					return doRunNow(job, releaseWaiting);
+				}
+			}
 		}
-		return true;
+		synchronized (lock) {
+			return doRunNow(job, releaseWaiting);
+		}
+	}
+
+	private InternalJob doRunNow(ThreadJob job, boolean releaseWaiting) {
+		InternalJob blocking = findBlockingJob(job);
+		//cannot start if there is a conflicting job
+		if (blocking == null) {
+			changeState(job, Job.RUNNING);
+			((InternalJob) job).setProgressMonitor(new NullProgressMonitor());
+			job.run(null);
+			if (releaseWaiting) {
+				// atomically release waiting
+				implicitJobs.removeWaiting(job);
+			}
+		}
+		return blocking;
 	}
 
 	/* (non-Javadoc)
@@ -1038,8 +1147,12 @@ public class JobManager implements IJobManager {
 					select(members, family, (InternalJob) it.next(), stateMask);
 				}
 			}
-			if ((stateMask & Job.WAITING) != 0)
+			if ((stateMask & Job.WAITING) != 0) {
 				select(members, family, waiting.peek(), stateMask);
+				for (Iterator it = yielding.iterator(); it.hasNext();) {
+					select(members, family, (InternalJob) it.next(), stateMask);
+				}
+			}
 			if ((stateMask & Job.SLEEPING) != 0)
 				select(members, family, sleeping.peek(), stateMask);
 		}
@@ -1152,6 +1265,151 @@ public class JobManager implements IJobManager {
 	}
 
 	/**
+	 * Implementation of {@link Job#yieldRule(IProgressMonitor)}
+	 */
+	protected Job yieldRule(InternalJob job, IProgressMonitor monitor) {
+		Thread currentThread = Thread.currentThread();
+		Assert.isLegal(job.getState() == Job.RUNNING, "Cannot yieldRule job that is " + printState(job.internalGetState())); //$NON-NLS-1$
+		Assert.isLegal(currentThread == job.getThread(), "Cannot yieldRule from outside job's thread"); //$NON-NLS-1$
+
+		InternalJob unblocked;
+		// If job is not a ThreadJob, and it has implicitly started rules, likeThreadJob 
+		// is the corresponding ThreadJob. Similarly, if likeThreadJob is not null, then 
+		// job is not a ThreadJob
+		ThreadJob likeThreadJob;
+		synchronized (implicitJobs) {
+			synchronized (lock) {
+				unblocked = job.previous();
+				// if unblocked is not null, it was a blocked job. It is guaranteed
+				// that it will be the next job run by the worker threads once this 
+				// lock is released. 
+				if (unblocked == null) {
+					// look for any implicit (or yielding) jobs we may be blocking. 
+					unblocked = implicitJobs.findBlockedJob(job);
+				}
+				// optimization: do nothing if we don't unblock any job
+				if (unblocked == null)
+					return null;
+
+				likeThreadJob = implicitJobs.getThreadJob(currentThread);
+
+				// "release" our rule by exiting RUNNING state
+				changeState(job, InternalJob.YIELDING);
+				if (DEBUG_YIELDING)
+					JobManager.debug(job + " will yieldRule to " + unblocked); //$NON-NLS-1$
+
+				if (likeThreadJob != null && likeThreadJob != job) {
+					// if there is a corresponding thread job, it needs yield as well
+					changeState(likeThreadJob, InternalJob.YIELDING);
+					if (DEBUG_YIELDING)
+						JobManager.debug(job + " will yieldRule to " + unblocked); //$NON-NLS-1$
+				}
+
+				if (likeThreadJob != null)
+					// only null-out threads out for non-ThreadJobs
+					job.setThread(null);
+
+				if ((job.getRule() != null) && !(job instanceof ThreadJob))
+					getLockManager().removeLockThread(currentThread, job.getRule());
+
+			}
+		}
+		// To prevent this job from immediately re-grabbing the scheduling rule wait until 
+		// the unblocked job changes state. This unblocked job is guaranteed to be the 
+		// next job of the set of similar conflicting rules to attempt to run. 
+		if (DEBUG_YIELDING_DETAILED)
+			JobManager.debug(job + " is waiting for " + unblocked + " to transition from WAITING state"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		waitForUnblocked(unblocked);
+
+		// restart this job, unless we've been restarted already
+		// This is the same as ThreadJob begin, except that cancelation CAN NOT be supported
+		// throwing the OperationCanceledException will return execution to the caller. 
+		IProgressMonitor mon = monitorFor(monitor);
+		ProgressMonitorWrapper nonCanceling = new ProgressMonitorWrapper(mon) {
+			public boolean isCanceled() {
+				// pass-through request
+				getWrappedProgressMonitor().isCanceled();
+				// ignore result
+				return false;
+			}
+		};
+
+		if (DEBUG_YIELDING)
+			JobManager.debug(job + " waiting to resume"); //$NON-NLS-1$
+
+		// this yielding job becomes an implicit job, unless it is one already
+		if (likeThreadJob == null) {
+			// Create a Threadjob proxy. This is strictly an internal job, but its not 
+			// preventing from "leaking" out to clients in the form of listener 
+			// notifications, and via IJobManager API usage like find(). 
+			// Set a flag to differentiate it from regular ThreadJobs. 
+			ThreadJob threadJob = new ThreadJob(job.getRule()) {
+				boolean isResumingAfterYield() {
+					return true;
+				}
+			};
+			threadJob.setRealJob((Job) job);
+			ThreadJob.joinRun(threadJob, nonCanceling);
+			// the following state changes are atomic
+			synchronized (lock) {
+				// Must end the temporary threadJob to remove from running list
+				changeState(threadJob, Job.NONE);
+				changeState(job, Job.RUNNING);
+				job.setThread(currentThread);
+			}
+		} else {
+			ThreadJob.joinRun(likeThreadJob, nonCanceling);
+		}
+		if (DEBUG_YIELDING) {
+			// extra assert: make sure no other conflicting jobs are running now
+			synchronized (lock) {
+				for (Iterator it = running.iterator(); it.hasNext();) {
+					InternalJob other = (InternalJob) it.next();
+					if (other == job)
+						continue;
+					Assert.isTrue(!other.isConflicting(job), other + " conflicts and ran simultaneously with " + job); //$NON-NLS-1$
+				}
+			}
+			JobManager.debug(job + " resumed"); //$NON-NLS-1$
+		}
+		if (unblocked instanceof ThreadJob && ((ThreadJob) unblocked).isResumingAfterYield()) {
+			// if the unblocked job is a proxy for a yielding job to start, return
+			// the original job. No need to expose the proxy ThreadJob. 
+			return ((ThreadJob) unblocked).realJob;
+		}
+		return (Job) unblocked;
+	}
+
+	private void waitForUnblocked(InternalJob theJob) {
+		// wait until theJob leaves WAITING state
+		boolean interrupted = false;
+		synchronized (theJob.jobStateLock) {
+			if (theJob instanceof ThreadJob) {
+				// We can't acquire the implicitJob lock while holding jobStateLock,
+				// so use isWaiting instead.
+				while (((ThreadJob) theJob).isWaiting) {
+					try {
+						theJob.jobStateLock.wait();
+					} catch (InterruptedException e) {
+						interrupted = true;
+					}
+				}
+			} else {
+				while (theJob.internalGetState() == Job.WAITING) {
+					try {
+						theJob.jobStateLock.wait();
+					} catch (InterruptedException e) {
+						interrupted = true;
+					}
+				}
+			}
+		}
+		if (interrupted)
+			Thread.currentThread().interrupt();
+	}
+
+	/**
 	 * Returns the next job to be run, or null if no jobs are waiting to run.
 	 * The worker must call endJob when the job is finished running.  
 	 */
@@ -1170,16 +1428,19 @@ public class JobManager implements IJobManager {
 			boolean endJob = false;
 			synchronized (lock) {
 				InternalJob internal = job;
-				if (internal.internalGetState() == InternalJob.ABOUT_TO_RUN) {
-					if (shouldRun && !internal.isAboutToRunCanceled()) {
-						internal.setProgressMonitor(createMonitor(job));
-						//change from ABOUT_TO_RUN to RUNNING
-						internal.internalSetState(Job.RUNNING);
-						break;
+				synchronized (internal.jobStateLock) {
+					if (internal.internalGetState() == InternalJob.ABOUT_TO_RUN) {
+						if (shouldRun && !internal.isAboutToRunCanceled()) {
+							internal.setProgressMonitor(createMonitor(job));
+							//change from ABOUT_TO_RUN to RUNNING
+							internal.internalSetState(Job.RUNNING);
+							internal.jobStateLock.notifyAll();
+							break;
+						}
+						internal.setAboutToRunCanceled(false);
+						endJob = true;
+						//fall through and end the job below
 					}
-					internal.setAboutToRunCanceled(false);
-					endJob = true;
-					//fall through and end the job below
 				}
 			}
 			if (endJob) {
@@ -1263,6 +1524,25 @@ public class JobManager implements IJobManager {
 		//don't synchronize because wakeUp calls listeners
 		for (Iterator it = select(family).iterator(); it.hasNext();) {
 			wakeUp((InternalJob) it.next(), 0L);
+		}
+	}
+
+	void endMonitoring(ThreadJob threadJob) {
+		synchronized (monitorStack) {
+			for (int i = monitorStack.size() - 1; i >= 0; i--) {
+				if (((Object[]) monitorStack.get(i))[0] == threadJob) {
+					monitorStack.remove(i);
+					monitorStack.notifyAll();
+					break;
+				}
+			}
+		}
+	}
+
+	void beginMonitoring(ThreadJob threadJob, IProgressMonitor monitor) {
+		synchronized (monitorStack) {
+			monitorStack.add(new Object[] {threadJob, monitor});
+			monitorStack.notifyAll();
 		}
 	}
 }

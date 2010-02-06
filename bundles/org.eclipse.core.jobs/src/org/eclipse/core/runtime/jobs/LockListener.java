@@ -51,6 +51,20 @@ public class LockListener {
 	public void aboutToRelease() {
 		//do nothing
 	}
+	
+	/**
+	 * Returns if it is safe for the calling thread to block while waiting to obtain
+	 * a lock. When blocking in the calling thread is not safe, the caller will ensure
+	 * that the thread is kept alive and responsive to cancellation while waiting.
+	 * 
+	 * @return <code>true</code> if this thread can block, and
+	 * <code>false</code> otherwise.
+	 * 
+	 * @since org.eclipse.core.jobs 3.5
+	 */
+	public boolean canBlock() {
+		return true;
+	}
 
 	/**
 	 * Returns whether this thread currently owns any locks

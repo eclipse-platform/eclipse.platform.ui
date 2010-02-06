@@ -10,30 +10,40 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 
 /**
- * A linked list based priority queue. Either the elements in the queue must
- * implement Comparable, or a Comparator must be provided.
+ * A linked list based priority queue. 
  */
-public class JobQueue {
+public final class JobQueue {
 	/**
 	 * The dummy entry sits between the head and the tail of the queue.
 	 * dummy.previous() is the head, and dummy.next() is the tail.
 	 */
-	private final InternalJob dummy;
+	protected final InternalJob dummy;
 
 	/**
 	 * If true, conflicting jobs will be allowed to overtake others in the
 	 * queue that have lower priority. If false, higher priority jumps can only
 	 * move up the queue by overtaking jobs that they don't conflict with.
 	 */
-	private boolean allowConflictOvertaking;
+	private final boolean allowConflictOvertaking;
+
+	private final boolean allowPriorityOvertaking;
 
 	/**
 	 * Create a new job queue. 
 	 */
 	public JobQueue(boolean allowConflictOvertaking) {
+		this(allowConflictOvertaking, true);
+	}
+
+	/**
+	 * Create a new job queue. 
+	 */
+	public JobQueue(boolean allowConflictOvertaking, boolean allowPriorityOvertaking) {
+		this.allowPriorityOvertaking = allowPriorityOvertaking;
 		//compareTo on dummy is never called
 		dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
 			public IStatus run(IProgressMonitor m) {
@@ -95,7 +105,7 @@ public class JobQueue {
 		if (newEntry.getWaitQueueStamp() > 0 && newEntry.getWaitQueueStamp() < queueEntry.getWaitQueueStamp())
 			return true;
 		//if the new entry has lower priority, there is no need to overtake the existing entry
-		if (queueEntry.compareTo(newEntry) >= 0)
+		if (allowPriorityOvertaking && queueEntry.compareTo(newEntry) >= 0)
 			return false;
 		//the new entry has higher priority, but only overtake the existing entry if the queue allows it
 		return allowConflictOvertaking || !newEntry.isConflicting(queueEntry);
@@ -130,5 +140,28 @@ public class JobQueue {
 	 */
 	public InternalJob peek() {
 		return dummy.previous() == dummy ? null : dummy.previous();
+	}
+
+	public Iterator iterator() {
+		return new Iterator() {
+			InternalJob pointer = dummy;
+
+			public boolean hasNext() {
+				if (pointer.previous() == dummy)
+					pointer = null;
+				else
+					pointer = pointer.previous();
+				return pointer != null;
+			}
+
+			public Object next() {
+				return pointer;
+			}
+
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+
+		};
 	}
 }

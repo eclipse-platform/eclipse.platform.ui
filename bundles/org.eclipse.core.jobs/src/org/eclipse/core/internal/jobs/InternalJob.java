@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * running job.  From an API point of view, this is the same as WAITING.
 	 */
 	static final int BLOCKED = 0x08;
+	/** 
+	 * Job state code (value 64) indicating that a job is yielding.
+	 * From an API point of view, this is the same as WAITING.
+	 */
+	static final int YIELDING = 0x40;
 
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
@@ -56,8 +61,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	private static final int M_RUN_CANCELED = 0x0800;
 
-	protected static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
+	protected static final JobManager manager = JobManager.getInstance();
 
 	/**
 	 * Start time constant indicating a job should be started at
@@ -70,16 +75,18 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	static final long T_NONE = -1;
 
 	private volatile int flags = Job.NONE;
-	private final int jobNumber = nextJobNumber++;
+	private final int jobNumber = getNextJobNumber();
 	private ListenerList listeners = null;
-	private IProgressMonitor monitor;
+	private volatile IProgressMonitor monitor;
 	private String name;
 	/**
 	 * The job ahead of me in a queue or list.
+	 * @GuardedBy("manager.lock")
 	 */
 	private InternalJob next;
 	/**
 	 * The job behind me in a queue or list.
+	 * @GuardedBy("manager.lock")
 	 */
 	private InternalJob previous;
 	private int priority = Job.LONG;
@@ -88,13 +95,22 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * to a job instance by a third party.
 	 */
 	private ObjectMap properties;
-	private IStatus result;
+
+	/**
+	 * Volatile because it is usually set via a Worker thread and is read via a 
+	 * client thread. 
+	 */
+	private volatile IStatus result;
+	/**
+	 * @GuardedBy("manager.lock")
+	 */
 	private ISchedulingRule schedulingRule;
 	/**
 	 * If the job is waiting, this represents the time the job should start by.  
 	 * If this job is sleeping, this represents the time the job should wake up.
 	 * If this job is running, this represents the delay automatic rescheduling,
 	 * or -1 if the job should not be rescheduled.
+	 * @GuardedBy("manager.lock")
 	 */
 	private long startTime;
 
@@ -102,6 +118,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Stamp added when a job is added to the wait queue. Used to ensure
 	 * jobs in the wait queue maintain their insertion order even if they are
 	 * removed from the wait queue temporarily while blocked
+	 * @GuardedBy("manager.lock")
 	 */
 	private long waitQueueStamp = T_NONE;
 
@@ -109,6 +126,23 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * The thread that is currently running this job
 	 */
 	private volatile Thread thread = null;
+
+	/**
+	 * This lock will be held while performing state changes on this job. It is 
+	 * also used as a notifier used to wake up yielding jobs or waiting ThreadJobs
+	 * when 1) a conflicting job completes and releases a scheduling rule, or 2)
+	 * when a this job changes state. 
+	 * 
+	 * See also the lock ordering protocol explanation in JobManager's 
+	 * documentation.
+	 * 
+	 * @GuardedBy("itself")
+	 */
+	final Object jobStateLock = new Object();
+
+	private static synchronized int getNextJobNumber() {
+		return nextJobNumber++;
+	}
 
 	protected InternalJob(String name) {
 		Assert.isNotNull(name);
@@ -126,6 +160,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	/**
 	 * Adds an entry at the end of the list of which this item is the head.
+	 * @GuardedBy("manager.lock")
 	 */
 	final void addLast(InternalJob entry) {
 		InternalJob last = this;
@@ -242,7 +277,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected int getState() {
 		int state = flags & M_STATE;
 		switch (state) {
-			//blocked state is equivalent to waiting state for clients
+			//blocked and yielding state is equivalent to waiting state for clients
+			case YIELDING :
 			case BLOCKED :
 				return Job.WAITING;
 			case ABOUT_TO_RUN :
@@ -494,6 +530,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/**
 	 * Sets or clears the result of an execution of this job.
 	 * @param result a result status, or <code>null</code>
+	 * @GuardedBy("manager.lock")
 	 */
 	final void setResult(IStatus result) {
 		this.result = result;
@@ -501,6 +538,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	/* (non-Javadoc)
 	 * @see Job#setRule(ISchedulingRule)
+	 * @GuardedBy("manager.lock")
 	 */
 	protected void setRule(ISchedulingRule rule) {
 		manager.setRule(this, rule);
@@ -510,6 +548,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Sets a time to start, wake up, or schedule this job, 
 	 * depending on the current state
 	 * @param time a time in milliseconds
+	 * @GuardedBy("manager.lock")
 	 */
 	final void setStartTime(long time) {
 		startTime = time;
@@ -555,6 +594,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 
 	/* (non-Javadoc)
+	 * @see Job#yieldRule()
+	 */
+	protected Job yieldRule(IProgressMonitor progressMonitor) {
+		return manager.yieldRule(this, progressMonitor);
+	}
+
+	/* (non-Javadoc)
 	 * Prints a string-based representation of this job instance. 
 	 * For debugging purposes only.
 	 */
@@ -571,6 +617,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	/**
 	 * @param waitQueueStamp The waitQueueStamp to set.
+	 * @GuardedBy("manager.lock")
 	 */
 	void setWaitQueueStamp(long waitQueueStamp) {
 		this.waitQueueStamp = waitQueueStamp;
@@ -578,6 +625,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	/**
 	 * @return Returns the waitQueueStamp.
+	 * @GuardedBy("manager.lock")
 	 */
 	long getWaitQueueStamp() {
 		return waitQueueStamp;

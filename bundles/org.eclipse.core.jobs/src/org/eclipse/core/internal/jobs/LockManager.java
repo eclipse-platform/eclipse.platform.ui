@@ -100,6 +100,22 @@ public class LockManager {
 	/* (non-Javadoc)
 	 * Method declared on LockListener
 	 */
+	public boolean canBlock() {
+		if (lockListener == null)
+			return true;
+		try {
+			return lockListener.canBlock();
+		} catch (Exception e) {
+			handleException(e);
+		} catch (LinkageError e) {
+			handleException(e);
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on LockListener
+	 */
 	public boolean aboutToWait(Thread lockOwner) {
 		if (lockListener == null)
 			return false;

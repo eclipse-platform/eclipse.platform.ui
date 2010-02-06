@@ -118,9 +118,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public static final int SLEEPING = 0x01;
 	/** 
-	 * Job state code (value 2) indicating that a job is waiting to be run.
+	 * Job state code (value 2) indicating that a job is waiting to run.
 	 * 
 	 * @see #getState()
+	 * @see #yieldRule(IProgressMonitor)
 	 */
 	public static final int WAITING = 0x02;
 	/** 
@@ -645,6 +646,14 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
+	 * Returns a string representation of this job to be used for debugging purposes only.
+	 * @since org.eclipse.core.jobs 3.5
+	 */
+	public String toString() {
+		return super.toString();
+	}
+
+	/**
 	 * Puts this job immediately into the {@link #WAITING} state so that it is 
 	 * eligible for immediate execution. If this job is not currently sleeping, 
 	 * the request is ignored.
@@ -669,5 +678,34 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void wakeUp(long delay) {
 		super.wakeUp(delay);
+	}
+
+	/**
+	 * Temporarily puts this <code>Job</code> back into {@link #WAITING} state and
+	 * relinquishes the job's scheduling rule so that any {@link #WAITING} jobs that 
+	 * conflict with this job's scheduling rule have an opportunity to start. This 
+	 * method will wait until the rule this job held prior to invoking this method is
+	 * re-acquired. This method has no effect and returns <tt>null</tt> if there are no
+	 * {@link #WAITING} jobs that conflict with this job's scheduling rule. <p>Note: 
+	 * If this job has acquired any other locks, implicit or explicit, they will 
+	 * <i>not</i> be  released. This may increase the risk of deadlock, so this method 
+	 * should only be used when it is known that the environment is safe. <p> This 
+	 * method must be invoked by this job's <code>Thread</code>, and only when it is 
+	 * {@link #RUNNING} state.
+	 * <p>
+	 * @param monitor a progress monitor, or <tt>null</tt> if progress
+	 * reporting is not desired. Cancellation attempts will be ignored.
+	 * @return The Job that was {@link #WAITING}, and blocked by this <code>Job</code> 
+	 * (at the time this method was  invoked) that was unblocked and allowed a chance 
+	 * to run, or <tt>null</tt> if no jobs were unblocked. Note: it is not guaranteed
+	 * that this <code>Job</code> resume immediately if other conflicting jobs are 
+	 * also waiting after the unblocked job ends.  
+	 * 
+	 * @since org.eclipse.core.jobs 3.5
+	 * @see Job#getRule()
+	 * @see Job#isBlocking()
+	 */
+	public Job yieldRule(IProgressMonitor monitor) {
+		return super.yieldRule(monitor);
 	}
 }
