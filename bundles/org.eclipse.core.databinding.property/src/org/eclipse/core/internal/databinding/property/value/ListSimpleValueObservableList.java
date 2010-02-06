@@ -170,16 +170,22 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	}
 
 	protected void lastListenerRemoved() {
-		masterList.removeListChangeListener(masterListener);
-		masterList.removeStaleListener(staleListener);
+		if (masterList != null) {
+			masterList.removeListChangeListener(masterListener);
+			masterList.removeStaleListener(staleListener);
+		}
 		if (knownMasterElements != null) {
 			knownMasterElements.dispose();
 			knownMasterElements = null;
 		}
-		cachedValues.clear();
-		cachedValues = null;
-		staleElements.clear();
-		staleElements = null;
+		if (cachedValues != null) {
+			cachedValues.clear();
+			cachedValues = null;
+		}
+		if (staleElements != null) {
+			staleElements.clear();
+			staleElements = null;
+		}
 	}
 
 	protected int doGetSize() {
@@ -450,14 +456,15 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	}
 
 	public synchronized void dispose() {
-		if (masterList != null) {
-			masterList.removeListChangeListener(masterListener);
-			masterList = null;
-		}
 		if (knownMasterElements != null) {
 			knownMasterElements.clear(); // detaches listeners
 			knownMasterElements.dispose();
 			knownMasterElements = null;
+		}
+
+		if (masterList != null) {
+			masterList.removeListChangeListener(masterListener);
+			masterList = null;
 		}
 
 		masterListener = null;

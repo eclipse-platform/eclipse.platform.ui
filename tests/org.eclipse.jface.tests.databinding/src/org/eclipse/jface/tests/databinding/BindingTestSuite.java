@@ -140,6 +140,7 @@ import org.eclipse.core.tests.internal.databinding.observable.masterdetail.Detai
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.property.value.ListSimpleValueObservableListTest;
 import org.eclipse.core.tests.internal.databinding.property.value.MapSimpleValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.property.value.SetSimpleValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.validation.AbstractStringToNumberValidatorTest;
@@ -381,6 +382,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.internal.databinding.property.value
 		addTestSuite(MapSimpleValueObservableMapTest.class);
 		addTestSuite(SetSimpleValueObservableMapTest.class);
+		addTestSuite(ListSimpleValueObservableListTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.validation
 		addTestSuite(AbstractStringToNumberValidatorTest.class);
