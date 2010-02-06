@@ -137,6 +137,15 @@ public class UILockListener extends LockListener {
         pendingWork.add(work);
     }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.jobs.LockListener#canBlock()
+	 */
+	public boolean canBlock() {
+		return !isUI();
+	}
+
     /**
      * Should always be called from the UI thread.
      */
