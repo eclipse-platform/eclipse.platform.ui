@@ -200,7 +200,7 @@ public class HttpsUtility {
 	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 	            
 			HttpsURLConnection testConnection = (HttpsURLConnection)new URL(urlConnection).openConnection();
-			testConnection.setReadTimeout(5000);
+			// testConnection.setReadTimeout(5000); // TODO recode to compile with Java 1.4
 			testConnection.connect();
 			testConnection.getContent();
 		}
