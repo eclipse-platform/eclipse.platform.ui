@@ -693,10 +693,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			hideDetailPane();
 		} else {
 			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
-			fSashForm.setOrientation(vertOrHoriz);	
-			if (IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN.equals(fCurrentDetailPaneOrientation)) {
-				showDetailPane();	
-			}
+			fSashForm.setOrientation(vertOrHoriz);
+			// force update so detail pane can adapt to orientation change
+			showDetailPane();
 		}
 		fCurrentDetailPaneOrientation  = orientation;
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
