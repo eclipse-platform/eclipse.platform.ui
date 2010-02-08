@@ -36,6 +36,10 @@ public abstract class CompatibilityPart {
 	@Inject
 	Composite composite;
 
+	@Inject
+	@Optional
+	Logger logger;
+
 	IWorkbenchPart wrapped;
 
 	MPart part;
@@ -50,20 +54,19 @@ public abstract class CompatibilityPart {
 
 	protected void createPartControl(final IWorkbenchPart part, Composite parent) {
 		try {
-			part.createPartControl(parent);
 			parent.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
 					try {
 						ContextInjectionFactory.invoke(part, "dispose", CompatibilityPart.this.part //$NON-NLS-1$
 								.getContext(), null);
 					} catch (InvocationTargetException e) {
-						Logger logger = (Logger) CompatibilityPart.this.part.getContext().get(
-								Logger.class.getName());
-						if (logger != null)
+						if (logger != null) {
 							logger.error(e);
+						}
 					}
 				}
 			});
+			part.createPartControl(parent);
 		} catch (Throwable ex) {
 			ex.printStackTrace(System.err);
 		}
