@@ -381,7 +381,29 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// unset the client object
 		if (element instanceof MContribution) {
-			((MContribution) element).setObject(null);
+			MContribution contrib = (MContribution) element;
+			Object impl = contrib.getObject();
+			if (impl != null) {
+				IEclipseContext ctxt = null;
+				if (element instanceof MContext) {
+					ctxt = ((MContext) element).getContext();
+				} else {
+					ctxt = getContext(element.getParent());
+				}
+				if (ctxt != null) {
+					try {
+						ContextInjectionFactory.invoke(impl, "dispose", ctxt, //$NON-NLS-1$
+								null);
+					} catch (InvocationTargetException e) {
+						Logger logger = (Logger) ctxt.get(Logger.class
+								.getName());
+						if (logger != null) {
+							logger.error(e);
+						}
+					}
+				}
+				contrib.setObject(null);
+			}
 		}
 
 		// dispose the context
