@@ -737,8 +737,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return;
 		this.perspective = perspective;
 		
-		sortedPerspectives.remove(perspective);
-		sortedPerspectives.add(0, perspective);
+		if (sortedPerspectives.contains(perspective)) {
+			sortedPerspectives.remove(perspective);
+		}
+		sortedPerspectives.add(perspective);
 
 		if (!openedPerspectives.contains(perspective)) {
 			openedPerspectives.add(perspective);
