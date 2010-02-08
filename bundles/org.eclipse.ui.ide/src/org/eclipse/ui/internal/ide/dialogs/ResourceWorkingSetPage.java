@@ -83,6 +83,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     private IWorkingSet workingSet;
 
+    private boolean firstCheck = false; // set to true if selection is set in setSelection
+
     /**
      * Creates a new instance of the receiver.
      */
@@ -253,10 +255,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
         if (workingSet != null) {
             text.setText(workingSet.getName());
         }
+        setPageComplete(false);
         
         Dialog.applyDialogFont(composite);
-        
-        validateInput();
     }
 
     /**
@@ -450,6 +451,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         }
         this.workingSet = workingSet;
         if (getShell() != null && text != null) {
+            firstCheck = true;
             initializeCheckedState();
             text.setText(workingSet.getName());
         }
@@ -545,6 +547,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
         if (newText.equals(newText.trim()) == false) {
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace; 
+        } else if (firstCheck) {
+            firstCheck = false;
+            return;
         }
         if (newText.equals("")) { //$NON-NLS-1$
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
