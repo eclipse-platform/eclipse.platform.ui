@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MDirtyable;
@@ -25,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 
-public abstract class CompatibilityPart {
+public abstract class CompatibilityPart implements IDisposable {
 
 	@Inject
 	Composite composite;
@@ -54,7 +55,7 @@ public abstract class CompatibilityPart {
 		wrapped.setFocus();
 	}
 
-	public void delegateDispose() {
+	public void dispose() {
 		wrapped.dispose();
 	}
 
