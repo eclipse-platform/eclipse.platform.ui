@@ -12,6 +12,7 @@
  package org.eclipse.help.ui.internal.preferences;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -22,6 +23,8 @@ public class TestConnectionUtility {
 	//This class provides a utility for testing if a connection
 	//can be made to a given URL
 	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
+	
+	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
 	
 	public static boolean testConnection(String thisHost, String thisPort,
 			String thisPath, String thisProtocol) {
@@ -44,7 +47,7 @@ public class TestConnectionUtility {
 				testURL = new URL(urlConnection);
 	
 				URLConnection testConnect = testURL.openConnection();
-				//TODO: Add some time out for the connection test
+				setTimeout(testConnect,SOCKET_TIMEOUT);
 				testConnect.connect();
 	
 			} catch (MalformedURLException e) {
@@ -60,4 +63,14 @@ public class TestConnectionUtility {
 		return validConnection;
 	}
 
+	private static void setTimeout(URLConnection conn, int milliseconds) {
+		Class conClass = conn.getClass();
+		try {
+			Method timeoutMethod = conClass.getMethod(
+					"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+		} catch (Exception e) {
+		     // If running on a 1.4 JRE an exception is expected, fall through
+		} 
+	}
 }

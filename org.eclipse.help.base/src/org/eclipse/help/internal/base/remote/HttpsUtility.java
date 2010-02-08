@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -24,6 +30,8 @@ public class HttpsUtility {
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
+	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
+	
 	public static InputStream getHttpsStream(URL httpsURL)
 	{
 		InputStream in =null; 
@@ -200,15 +208,32 @@ public class HttpsUtility {
 	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 	            
 			HttpsURLConnection testConnection = (HttpsURLConnection)new URL(urlConnection).openConnection();
-			// testConnection.setReadTimeout(5000); // TODO recode to compile with Java 1.4
+			setTimeout(testConnection,SOCKET_TIMEOUT);
 			testConnection.connect();
-			testConnection.getContent();
 		}
-		catch(Exception e)
-		{
-			validConnection=false;
+		catch (MalformedURLException e) {
+			validConnection = false;
+		} catch (IOException e) {
+			validConnection = false;
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			validConnection = false;
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			validConnection = false;
 		}
 		
 		return validConnection;
+	}
+	
+	private static void setTimeout(URLConnection conn, int milliseconds) {
+		Class conClass = conn.getClass();
+		try {
+			Method timeoutMethod = conClass.getMethod(
+					"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+		} catch (Exception e) {
+		     // If running on a 1.4 JRE an exception is expected, fall through
+		} 
 	}
 }
