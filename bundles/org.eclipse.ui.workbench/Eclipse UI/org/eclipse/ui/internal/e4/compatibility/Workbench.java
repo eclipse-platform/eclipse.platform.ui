@@ -67,9 +67,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -128,6 +131,11 @@ public class Workbench implements IWorkbench {
 					}
 				}
 			});
+
+			application.getContext().set(
+					IWorkbenchLocationService.class.getName(),
+					new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, this, null, null,
+							null, null, 0));
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

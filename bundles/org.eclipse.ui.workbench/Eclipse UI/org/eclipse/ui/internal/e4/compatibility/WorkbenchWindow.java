@@ -35,6 +35,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.5
@@ -70,6 +73,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
+
+		windowContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
+				IServiceScopes.PARTSITE_SCOPE, getWorkbench(), this, null, null, null, 1));
 	}
 
 	public MWindow getModel() {

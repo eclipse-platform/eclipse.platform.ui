@@ -28,6 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.5
@@ -46,6 +49,11 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 		this.model = model;
 		this.part = part;
 		this.element = element;
+		
+		model.getContext().set(
+				IWorkbenchLocationService.class.getName(),
+				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, getWorkbenchWindow()
+						.getWorkbench(), getWorkbenchWindow(), this, null, null, 2));
 	}
 
 	public MPart getModel() {
