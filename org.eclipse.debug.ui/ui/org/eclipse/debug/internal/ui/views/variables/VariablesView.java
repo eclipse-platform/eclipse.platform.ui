@@ -84,6 +84,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -96,6 +97,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -1077,6 +1080,19 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IAction action = getAction(DOUBLE_CLICK_ACTION);
 		if (action != null && action.isEnabled()) {
 			action.run();
+		} else {
+			ISelection selection = getVariablesViewer().getSelection();
+			if (selection instanceof TreeSelection) {
+				TreeSelection ss = (TreeSelection) selection;
+				if (ss.size() == 1) {
+					Widget item = getVariablesViewer().findItem(ss.getPaths()[0]);
+					if (item instanceof TreeItem) {
+						TreeItem ti = (TreeItem) item;
+						ti.setExpanded(!ti.getExpanded());
+					}
+					
+				}
+			}
 		}
 	}	
 
