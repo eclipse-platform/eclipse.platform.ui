@@ -11,14 +11,20 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -42,9 +48,22 @@ public abstract class CompatibilityPart {
 
 	protected abstract void initialize(IWorkbenchPart part) throws PartInitException;
 
-	protected void createPartControl(IWorkbenchPart part, Composite parent) {
+	protected void createPartControl(final IWorkbenchPart part, Composite parent) {
 		try {
 			part.createPartControl(parent);
+			parent.addListener(SWT.Dispose, new Listener() {
+				public void handleEvent(Event event) {
+					try {
+						ContextInjectionFactory.invoke(part, "dispose", CompatibilityPart.this.part //$NON-NLS-1$
+								.getContext(), null);
+					} catch (InvocationTargetException e) {
+						Logger logger = (Logger) CompatibilityPart.this.part.getContext().get(
+								Logger.class.getName());
+						if (logger != null)
+							logger.error(e);
+					}
+				}
+			});
 		} catch (Throwable ex) {
 			ex.printStackTrace(System.err);
 		}
@@ -52,10 +71,6 @@ public abstract class CompatibilityPart {
 
 	public void delegateSetFocus() {
 		wrapped.setFocus();
-	}
-
-	public void dispose() {
-		wrapped.dispose();
 	}
 
 	@PostConstruct
