@@ -12,9 +12,10 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.internal.ViewSite;
-import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
@@ -33,19 +34,15 @@ public final class ViewUtils {
     }
 
     public static boolean isCloseable(IViewPart part) {
-        ViewSite viewSite = (ViewSite) part.getSite();
-        String id = viewSite.getId();
-        IViewReference ref = viewSite.getPage().findViewReference(id);
-        return ((WorkbenchPage) viewSite.getPage()).getActivePerspective()
-                .isCloseable(ref);
+        IWorkbenchPartSite viewSite = part.getSite();
+        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
+        return ((TestFacade)Tweaklets.get(TestFacade.KEY)).isClosableInPerspective(ref);
     }
 
     public static boolean isMoveable(IViewPart part) {
-        ViewSite viewSite = (ViewSite) part.getSite();
-        String id = viewSite.getId();
-        IViewReference ref = viewSite.getPage().findViewReference(id);
-        return ((WorkbenchPage) viewSite.getPage()).getActivePerspective()
-                .isMoveable(ref);
+    	IWorkbenchPartSite viewSite = part.getSite();
+        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
+        return ((TestFacade)Tweaklets.get(TestFacade.KEY)).isMoveableInPerspective(ref);
     }
 
     public static boolean isSticky(IViewPart part) {

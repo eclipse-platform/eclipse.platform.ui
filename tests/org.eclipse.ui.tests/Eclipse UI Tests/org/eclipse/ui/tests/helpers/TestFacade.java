@@ -59,6 +59,10 @@ public abstract class TestFacade {
 	
 	public abstract ArrayList getPerspectivePartIds(IWorkbenchPage page, String folderId);
 	
+	public abstract boolean isClosableInPerspective(IViewReference ref);
+	
+	public abstract boolean isMoveableInPerspective(IViewReference ref);
+	
 	public abstract boolean isFastView(IWorkbenchPage page, IViewReference ref);
 
 	public abstract void saveableHelperSetAutomatedResponse(int response);

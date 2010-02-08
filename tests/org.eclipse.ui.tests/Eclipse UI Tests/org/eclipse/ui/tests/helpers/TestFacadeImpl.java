@@ -158,41 +158,88 @@ public class TestFacadeImpl extends TestFacade {
 		return fastViewBar.testContextMenu();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.helpers.TestFacade#setFVBTarget(org.eclipse.jface.action.IContributionItem, org.eclipse.ui.IViewReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#setFVBTarget(org.eclipse.jface
+	 * .action.IContributionItem, org.eclipse.ui.IViewReference)
 	 */
 	public void setFVBTarget(IContributionItem menuContribution,
 			IViewReference viewRef) {
-		((FastViewBarContextMenuContribution)menuContribution).setTarget(viewRef);
+		((FastViewBarContextMenuContribution) menuContribution)
+				.setTarget(viewRef);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.helpers.TestFacade#isViewPaneVisible(org.eclipse.ui.IViewReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isViewPaneVisible(org.eclipse
+	 * .ui.IViewReference)
 	 */
 	public boolean isViewPaneVisible(IViewReference viewRef) {
-		return ((PartSite)viewRef.getPart(true).getSite()).getPane().isVisible();
+		return ((PartSite) viewRef.getPart(true).getSite()).getPane()
+				.isVisible();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.helpers.TestFacade#isViewToolbarVisible(org.eclipse.ui.IViewReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isViewToolbarVisible(org.eclipse
+	 * .ui.IViewReference)
 	 */
 	public boolean isViewToolbarVisible(IViewReference viewRef) {
-		Control toolBar = ((PartSite)viewRef.getPart(true).getSite()).getPane().getToolBar();
+		Control toolBar = ((PartSite) viewRef.getPart(true).getSite())
+				.getPane().getToolBar();
 		Assert.assertNotNull("This view must have a toolbar", toolBar);
 		return toolBar.isVisible();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.helpers.TestFacade#isSlavePartService(org.eclipse.ui.IPartService)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isSlavePartService(org.eclipse
+	 * .ui.IPartService)
 	 */
 	public boolean isSlavePartService(IPartService slaveService) {
 		return slaveService instanceof SlavePartService;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.helpers.TestFacade#isSlaveSelectionService(org.eclipse.ui.ISelectionService)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isSlaveSelectionService(org.eclipse
+	 * .ui.ISelectionService)
 	 */
 	public boolean isSlaveSelectionService(ISelectionService slaveService) {
 		return slaveService instanceof SlaveSelectionService;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isClosableInPerspective(org.eclipse
+	 * .ui.IWorkbenchPartReference)
+	 */
+	public boolean isClosableInPerspective(IViewReference ref) {
+		return ((WorkbenchPage) ref.getPage()).getActivePerspective()
+				.isCloseable(ref);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.tests.helpers.TestFacade#isMoveableInPerspective(org.eclipse
+	 * .ui.IWorkbenchPartReference)
+	 */
+	public boolean isMoveableInPerspective(IViewReference ref) {
+		return ((WorkbenchPage) ref.getPage()).getActivePerspective()
+				.isMoveable(ref);
 	}
 }
