@@ -201,19 +201,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public Collection<MPart> getParts() {
-		return getParts(new ArrayList<MPart>(), rootContainer);
-	}
-
-	private Collection<MPart> getParts(Collection<MPart> parts,
-			MElementContainer<?> elementContainer) {
-		for (Object child : elementContainer.getChildren()) {
-			if (child instanceof MPart) {
-				parts.add((MPart) child);
-			} else if (child instanceof MElementContainer<?>) {
-				getParts(parts, (MElementContainer<?>) child);
-			}
-		}
-		return parts;
+		return modelService.findElements(rootContainer, null, MPart.class, null);
 	}
 
 	public boolean isPartVisible(MPart part) {
