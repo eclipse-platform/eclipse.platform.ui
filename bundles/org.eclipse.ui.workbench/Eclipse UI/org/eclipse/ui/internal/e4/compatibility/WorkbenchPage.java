@@ -1020,7 +1020,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getOpenPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
-		return sortedPerspectives.toArray(new IPerspectiveDescriptor[sortedPerspectives.size()]);
+		return openedPerspectives.toArray(new IPerspectiveDescriptor[openedPerspectives.size()]);
 	}
 
 	/* (non-Javadoc)
