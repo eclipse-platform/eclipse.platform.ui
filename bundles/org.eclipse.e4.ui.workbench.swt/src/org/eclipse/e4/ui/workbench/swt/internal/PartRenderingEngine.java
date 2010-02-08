@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -119,8 +120,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
 
 				// OK, we have a new -visible- part we either have to create
-				// it or host it under the correct parent
-				if (added.getWidget() == null) {
+				// it or host it under the correct parent. Note that we
+				// explicitly do *not* render non-selected elements in
+				// stacks (to support lazy loading).
+				boolean isStack = changedObj instanceof MGenericStack<?>;
+				boolean renderIt = !isStack
+						|| added == changedElement.getSelectedElement();
+				if (added.getWidget() == null && renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
 					Widget w = (Widget) createGui(added);
 					if (w instanceof Control) {

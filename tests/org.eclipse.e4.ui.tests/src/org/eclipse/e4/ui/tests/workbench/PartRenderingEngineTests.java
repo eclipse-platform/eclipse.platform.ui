@@ -302,6 +302,8 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(
 				"Adding a part to a stack should not cause the stack's active child to change",
 				partA, stack.getSelectedElement());
+		assertNull("The object should not have been instantiated", partB
+				.getObject());
 	}
 
 	public void testPartStack_SetActiveChild7Bug298797() throws Exception {
