@@ -34,6 +34,14 @@ import org.eclipse.jface.util.Util;
 public class StatusLineContributionItem extends ContributionItem {
 
 	private final static int DEFAULT_CHAR_WIDTH = 40;
+	
+	/**
+	 * constant indicating that the contribution should compute its actual size
+	 * depending on the text. It will grab all space necessary to display the whole text.
+	 *
+	 * @since 3.6
+	 */
+	public final static int CALC_TRUE_WIDTH = -1;
 
 	private int charWidth;
 
@@ -71,7 +79,10 @@ public class StatusLineContributionItem extends ContributionItem {
 	 *            the contribution item's id, or <code>null</code> if it is to
 	 *            have no id
 	 * @param charWidth
-	 *            the number of characters to display
+	 *            the number of characters to display. If the value is
+	 *            CALC_TRUE_WIDTH then the contribution will compute the
+	 *            preferred size exactly. Otherwise the size will be based on the
+	 *            average character size * 'charWidth'
 	 */
 	public StatusLineContributionItem(String id, int charWidth) {
 		super(id);
@@ -84,8 +95,15 @@ public class StatusLineContributionItem extends ContributionItem {
 
 		Label sep = new Label(parent, SWT.SEPARATOR);
 		label = new CLabel(statusLine, SWT.SHADOW_NONE);
-
-		if (widthHint < 0) {
+		label.setText(text);		
+		
+		if (charWidth == CALC_TRUE_WIDTH) {
+			// compute the size of the label to get the width hint for the contribution
+			Point preferredSize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			widthHint = preferredSize.x;
+			heightHint = preferredSize.y;
+		} else if (widthHint < 0) {
+			// Compute the size base on 'charWidth' average char widths
 			GC gc = new GC(statusLine);
 			gc.setFont(statusLine.getFont());
 			FontMetrics fm = gc.getFontMetrics();
@@ -97,7 +115,6 @@ public class StatusLineContributionItem extends ContributionItem {
 		StatusLineLayoutData data = new StatusLineLayoutData();
 		data.widthHint = widthHint;
 		label.setLayoutData(data);
-		label.setText(text);
 
 		data = new StatusLineLayoutData();
 		data.heightHint = heightHint;
@@ -153,7 +170,8 @@ public class StatusLineContributionItem extends ContributionItem {
 				}
 			}
 		} else {
-			if (!isVisible()) {
+			// Always update if using 'CALC_TRUE_WIDTH'
+			if (!isVisible() || charWidth == CALC_TRUE_WIDTH) {
 				setVisible(true);
 				IContributionManager contributionManager = getParent();
 
