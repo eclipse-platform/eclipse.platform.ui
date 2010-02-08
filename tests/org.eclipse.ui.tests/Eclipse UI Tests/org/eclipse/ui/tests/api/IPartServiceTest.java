@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
@@ -143,7 +142,7 @@ public class IPartServiceTest extends UITestCase {
     }
 
     private IWorkbenchPartReference getRef(IWorkbenchPart part) {
-        return ((PartSite) part.getSite()).getPartReference();
+    	return fPage.getReference(part);
     }
 
     /**
