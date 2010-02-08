@@ -174,6 +174,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         	}
         	delta = subDelta;
         }
+        delta.setChildCount(getRootElement().getChildren().length);
         return delta;
     }
 
