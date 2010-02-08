@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -319,13 +320,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#findEditor(org.eclipse.ui.IEditorInput)
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
-		for (IEditorReference editorRef : editorReferences) {
-			IEditorPart editor = editorRef.getEditor(false);
-			if (editor.getEditorInput().equals(input)) {
-				return editor;
-			}
-		}
-		return null;
+		IEditorReference[] references = findEditors(input, null, MATCH_INPUT);
+		return references.length == 0 ? null : references[0].getEditor(true);
 	}
 
 	/* (non-Javadoc)
@@ -613,13 +609,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 		partService.showPart(editor, PartState.VISIBLE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
-		compatibilityEditor.set(input, descriptor);
-
-		editorReferences.add(new EditorReference(this, editor, input));
 
 		if (activate) {
+			compatibilityEditor.set(input, descriptor);
 			partService.activate(editor);
 		}
+
+		editorReferences.add(new EditorReference(this, editor, input, descriptor));
 
 		return compatibilityEditor.getEditor();
 	}
@@ -1189,6 +1185,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags)
 			throws MultiPartInitException {
+		Assert.isTrue(inputs.length == editorIDs.length);
+
 		PartInitException[] exceptions = new PartInitException[inputs.length];
 		IEditorReference[] references = new IEditorReference[inputs.length];
 		boolean hasFailures = false;

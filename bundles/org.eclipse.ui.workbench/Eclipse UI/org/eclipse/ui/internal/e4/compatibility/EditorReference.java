@@ -17,14 +17,18 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
 
 	private IEditorInput input;
+	private EditorDescriptor descriptor;
 
-	EditorReference(IWorkbenchPage page, MPart part, IEditorInput input) {
+	EditorReference(IWorkbenchPage page, MPart part, IEditorInput input, EditorDescriptor descriptor) {
 		super(page, part);
 		this.input = input;
+		this.descriptor = descriptor;
 	}
 
 	public String getFactoryId() {
@@ -38,7 +42,17 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	public IEditorPart getEditor(boolean restore) {
-		return (IEditorPart) getPart(restore);
+		IEditorPart part = (IEditorPart) super.getPart(restore);
+		if (part == null && restore) {
+			CompatibilityEditor editor = (CompatibilityEditor) getModel().getObject();
+			try {
+				editor.set(input, descriptor);
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log(e);
+			}
+			return editor.getEditor();
+		}
+		return part;
 	}
 
 	/*
