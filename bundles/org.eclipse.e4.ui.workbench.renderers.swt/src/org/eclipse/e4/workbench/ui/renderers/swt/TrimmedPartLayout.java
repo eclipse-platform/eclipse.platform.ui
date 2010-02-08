@@ -72,10 +72,6 @@ public class TrimmedPartLayout extends Layout {
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
-		if (composite.isDisposed() || clientArea.isDisposed()) {
-			return;
-		}
-
 		composite.setRedraw(false);
 		try {
 			Rectangle ca = composite.getClientArea();
