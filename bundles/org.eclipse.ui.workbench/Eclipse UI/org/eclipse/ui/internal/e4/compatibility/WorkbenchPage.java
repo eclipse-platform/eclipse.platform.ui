@@ -983,6 +983,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 				return stack.toArray(new IViewPart[stack.size()]);
 			}
+
+			// not in a stack, standalone
+			return new IViewPart[] { part };
 		}
 		return null;
 	}
