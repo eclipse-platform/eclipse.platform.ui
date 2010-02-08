@@ -159,4 +159,16 @@ public class TestFacadeE4Impl extends TestFacade {
 		
 	}
 
+	@Override
+	public boolean isClosableInPerspective(IViewReference ref) {
+		E4Util.unsupported("isClosableInPerspective");
+		return false;
+	}
+
+	@Override
+	public boolean isMoveableInPerspective(IViewReference ref) {
+		E4Util.unsupported("isMoveableInPerspective");
+		return false;
+	}
+
 }
