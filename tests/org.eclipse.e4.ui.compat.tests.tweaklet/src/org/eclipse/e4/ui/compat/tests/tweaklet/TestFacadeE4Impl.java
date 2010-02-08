@@ -9,8 +9,12 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -58,6 +62,47 @@ public class TestFacadeE4Impl extends TestFacade {
 	@Override
 	public boolean isFastView(IWorkbenchPage page, IViewReference ref) {
 		E4Util.unsupported("assertActionSetId");
+		return false;
+	}
+
+	@Override
+	public void isSlavePageService(IPageService slaveService) {
+		E4Util.unsupported("isSlavePageService");
+	}
+
+	@Override
+	public IContributionItem getFVBContribution(IWorkbenchPage page) {
+		E4Util.unsupported("getFVBContribution");
+		return null;
+	}
+
+	@Override
+	public void setFVBTarget(IContributionItem menuContribution,
+			IViewReference viewRef) {
+		E4Util.unsupported("setFVBTarget");
+	}
+
+	@Override
+	public boolean isViewPaneVisible(IViewReference viewRef) {
+		E4Util.unsupported("isViewPaneVisible");
+		return false;
+	}
+
+	@Override
+	public boolean isViewToolbarVisible(IViewReference viewRef) {
+		E4Util.unsupported("isViewToolbarVisible");
+		return false;
+	}
+
+	@Override
+	public boolean isSlavePartService(IPartService slaveService) {
+		E4Util.unsupported("isSlavePartService");
+		return false;
+	}
+
+	@Override
+	public boolean isSlaveSelectionService(ISelectionService slaveService) {
+		E4Util.unsupported("isSlaveSelectionService");
 		return false;
 	}
 
