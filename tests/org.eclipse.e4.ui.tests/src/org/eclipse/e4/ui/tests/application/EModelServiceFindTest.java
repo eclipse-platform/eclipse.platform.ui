@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -86,20 +87,17 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		List<MUIElement> elements = new ArrayList<MUIElement>();
-		modelService.findAllElements(application, "singleValidId", null, null,
-				elements);
-		assertEquals(elements.size(), 1);
+		List<MUIElement> elements1 = modelService.findElements(application,
+				"singleValidId", null, null);
+		assertEquals(elements1.size(), 1);
 
-		elements.clear();
-		modelService.findAllElements(application, "twoValidIds", null, null,
-				elements);
-		assertEquals(elements.size(), 2);
+		List<MUIElement> elements2 = modelService.findElements(application,
+				"twoValidIds", null, null);
+		assertEquals(elements2.size(), 2);
 
-		elements.clear();
-		modelService.findAllElements(application, "invalidId", null, null,
-				elements);
-		assertEquals(elements.size(), 0);
+		List<MUIElement> elements3 = modelService.findElements(application,
+				"invalidId", null, null);
+		assertEquals(elements3.size(), 0);
 	}
 
 	public void testFindElementsTypeOnly() {
@@ -109,20 +107,27 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		List<MUIElement> elements = new ArrayList<MUIElement>();
-		modelService
-				.findAllElements(application, null, "MPart", null, elements);
-		assertEquals(elements.size(), 3);
+		List<MPart> parts = modelService.findElements(application, null,
+				MPart.class, null);
+		assertEquals(parts.size(), 3);
 
-		elements.clear();
-		modelService.findAllElements(application, null, "MPartStack", null,
-				elements);
-		assertEquals(elements.size(), 1);
+		List<MPartStack> stacks = modelService.findElements(application, null,
+				MPartStack.class, null);
+		assertEquals(stacks.size(), 1);
 
-		elements.clear();
-		modelService.findAllElements(application, null, "invalidType", null,
-				elements);
-		assertEquals(elements.size(), 0);
+		List<MDirtyable> dirtyableElements = modelService.findElements(
+				application, null, MDirtyable.class, null);
+		assertEquals(dirtyableElements.size(), 3);
+
+		// Should find all the elements
+		List<MUIElement> uiElements = modelService.findElements(application,
+				null, null, null);
+		assertEquals(uiElements.size(), 7);
+
+		// Should match 0 since String is not an MUIElement
+		List<String> strings = modelService.findElements(application, null,
+				String.class, null);
+		assertEquals(strings.size(), 0);
 	}
 
 	public void testFindElementsTagsOnly() {
@@ -132,38 +137,38 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		List<MUIElement> elements = new ArrayList<MUIElement>();
-
 		List<String> tags = new ArrayList<String>();
 		tags.add("oneValidTag");
-		modelService.findAllElements(application, null, null, tags, elements);
-		assertEquals(elements.size(), 1);
 
-		elements.clear();
+		List<MUIElement> oneTags = modelService.findElements(application, null,
+				null, tags);
+		assertEquals(oneTags.size(), 1);
+
 		tags.clear();
 		tags.add("twoValidTags");
-		modelService.findAllElements(application, null, null, tags, elements);
-		assertEquals(elements.size(), 2);
+		List<MUIElement> twoTags = modelService.findElements(application, null,
+				null, tags);
+		assertEquals(twoTags.size(), 2);
 
-		elements.clear();
 		tags.clear();
 		tags.add("invalidTag");
-		modelService.findAllElements(application, null, null, tags, elements);
-		assertEquals(elements.size(), 0);
+		List<MUIElement> invalidTags = modelService.findElements(application,
+				null, null, tags);
+		assertEquals(invalidTags.size(), 0);
 
-		elements.clear();
 		tags.clear();
 		tags.add("twoValidTags");
 		tags.add("secondTag");
-		modelService.findAllElements(application, null, null, tags, elements);
-		assertEquals(elements.size(), 1);
+		List<MUIElement> combinedTags = modelService.findElements(application,
+				null, null, tags);
+		assertEquals(combinedTags.size(), 1);
 
-		elements.clear();
 		tags.clear();
 		tags.add("oneValidTag");
 		tags.add("secondTag");
-		modelService.findAllElements(application, null, null, tags, elements);
-		assertEquals(elements.size(), 0);
+		List<MUIElement> unmatchedTags = modelService.findElements(application,
+				null, null, tags);
+		assertEquals(unmatchedTags.size(), 0);
 	}
 
 	public void testFindElementsCombinations() {
@@ -176,24 +181,25 @@ public class EModelServiceFindTest extends TestCase {
 		List<String> tags = new ArrayList<String>();
 		tags.add("oneValidTag");
 
-		List<MUIElement> elements = new ArrayList<MUIElement>();
-		modelService.findAllElements(application, "twoValidIds",
-				"MPartSashContainer", tags, elements);
-		assertEquals(elements.size(), 1);
+		List<MPartSashContainer> idAndType = modelService.findElements(
+				application, "twoValidIds", MPartSashContainer.class, tags);
+		assertEquals(idAndType.size(), 1);
 
-		elements.clear();
-		modelService.findAllElements(application, null, "MPartSashContainer",
-				tags, elements);
-		assertEquals(elements.size(), 1);
+		List<MPartSashContainer> typeAndTag = modelService.findElements(
+				application, null, MPartSashContainer.class, tags);
+		assertEquals(typeAndTag.size(), 1);
 
-		elements.clear();
-		modelService.findAllElements(application, "twoValidIds", null, tags,
-				elements);
-		assertEquals(elements.size(), 1);
+		List<MUIElement> idAndTag = modelService.findElements(application,
+				"twoValidIds", null, tags);
+		assertEquals(idAndTag.size(), 1);
 
-		elements.clear();
-		modelService.findAllElements(application, "twoValidIds",
-				"MPartSashContainer", null, elements);
-		assertEquals(elements.size(), 1);
+		List<MPartSashContainer> idAndTypeAndTags = modelService.findElements(
+				application, "twoValidIds", MPartSashContainer.class, null);
+		assertEquals(idAndTypeAndTags.size(), 1);
+
+		List<MPartSashContainer> badIdAndTypeAndTags = modelService
+				.findElements(application, "invalidId",
+						MPartSashContainer.class, null);
+		assertEquals(badIdAndTypeAndTags.size(), 0);
 	}
 }

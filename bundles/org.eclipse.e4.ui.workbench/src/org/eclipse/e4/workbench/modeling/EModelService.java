@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.workbench.modeling;
 
-import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -23,38 +22,45 @@ import org.eclipse.e4.ui.model.application.MUIElement;
  */
 public interface EModelService {
 	/**
-	 * Find an element within a part of the model hierarchy.
-	 * 
-	 * @param id
-	 *            The id to search for
-	 * @param searchRoot
-	 *            The element to search. If the element is a container then its children are also
-	 *            searched (recursively).
-	 * @return The element whose id matches the parameter
-	 */
-	public MUIElement find(String id, MUIElement searchRoot);
-
-	/**
-	 * Adds any element that passes the given search criteria into the supplied collection. Any of
-	 * the search criteria may be null, indicating not to check that field.
+	 * Return a list of any elements that match the given search criteria. The search is recursive
+	 * and includes the specified search root. Any of the search parameters may be specified as
+	 * <code>null</code> in which case that field will always 'match'.
 	 * <p>
-	 * The search is recursive, including the searchRoot.
+	 * NOTE: This is a generically typed method with the List's generic type expected to be the
+	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
+	 * untyped but may safely be assigned to List&lt;MUIElement&gt;.
 	 * </p>
 	 * 
-	 * @param element
-	 *            The element to test
+	 * @param <T>
+	 *            The generic type of the returned list
+	 * @param searchRoot
+	 *            The element at which to start the search. This element must be non-null and is
+	 *            included in the search.
 	 * @param id
-	 *            The id to match
-	 * @param type
-	 *            The model element type. This is the element's type (i.e. MPartStack)
+	 *            The ID of the element. May be null to omit the test for this field.
+	 * @param clazz
+	 *            The class specifier determining the 'instanceof' type of the elements to be found.
+	 *            If specified then the returned List will be generically specified as being of this
+	 *            type.
 	 * @param tagsToMatch
-	 *            The tags to check. In order to be a match all the tags in this list must be
-	 *            defined in the element's tags list.
+	 *            The list of tags to match. All the tags specified in this list must be defined in
+	 *            the search element's tags in order to be a match.
 	 * 
-	 * @return True iff all non-null test fields match
+	 * @return The generically typed list of matching elements.
 	 */
-	public void findAllElements(MUIElement searchRoot, String id, String type,
-			List<String> tagsToMatch, Collection<MUIElement> elements);
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch);
+
+	/**
+	 * Returns the first element, recursively searching under the specified search root (inclusive)
+	 * 
+	 * @param id
+	 *            The id to search for, must not be null
+	 * @param searchRoot
+	 *            The element at which to start the search
+	 * @return The first element with a matching id or <code>null</code> if one is not found
+	 */
+	public MUIElement find(String id, MUIElement searchRoot);
 
 	/**
 	 * Locate the context that is closest to the given element in the parent hierarchy. It does not
