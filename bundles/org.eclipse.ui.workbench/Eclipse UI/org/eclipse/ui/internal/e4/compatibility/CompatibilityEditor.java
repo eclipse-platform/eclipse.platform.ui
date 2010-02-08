@@ -11,11 +11,13 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import javax.inject.Inject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -27,6 +29,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
+
+	@Inject
+	CompatibilityEditor(MPart part) {
+		super(part);
+	}
 
 	void set(IEditorInput input, EditorDescriptor descriptor) throws PartInitException {
 		this.input = input;

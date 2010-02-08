@@ -28,12 +28,15 @@ import org.eclipse.ui.PartInitException;
 public abstract class CompatibilityPart {
 
 	@Inject
-	MPart part;
-
-	@Inject
 	Composite composite;
 
 	IWorkbenchPart wrapped;
+
+	MPart part;
+
+	CompatibilityPart(MPart part) {
+		this.part = part;
+	}
 
 	protected abstract IWorkbenchPart createPart() throws PartInitException;
 

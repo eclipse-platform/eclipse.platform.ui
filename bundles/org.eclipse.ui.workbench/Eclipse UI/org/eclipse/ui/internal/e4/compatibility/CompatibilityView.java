@@ -11,11 +11,13 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import javax.inject.Inject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -25,6 +27,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class CompatibilityView extends CompatibilityPart {
 
 	private ViewDescriptor descriptor;
+
+	@Inject
+	CompatibilityView(MPart part) {
+		super(part);
+	}
 
 	ViewDescriptor getDescriptor() {
 		return descriptor;
