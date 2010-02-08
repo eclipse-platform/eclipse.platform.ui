@@ -17,9 +17,10 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.SlaveSelectionService;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.helpers.TestFacade;
 
 /**
  * Tests the ISelectionService class.
@@ -137,7 +138,7 @@ public class ISelectionServiceTest extends UITestCase implements
 		assertEquals(service, windowService);
 		assertNotNull(service);
 		assertNotNull(slaveService);
-		assertTrue(slaveService instanceof SlaveSelectionService);
+		assertTrue(((TestFacade)Tweaklets.get(TestFacade.KEY)).isSlaveSelectionService(slaveService));
 
 		slaveService.addSelectionListener(this);
 		view.setSelection(sel1);

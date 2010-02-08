@@ -23,12 +23,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.SlavePartService;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.helpers.TestFacade;
 
 /**
  * Tests the IPartService, IPartListener and IPartListener2 interfaces.
@@ -121,6 +122,8 @@ public class IPartServiceTest extends UITestCase {
 
     private CallHistory history2 = new CallHistory(partListener2);
 
+	private TestFacade facade;
+
     public IPartServiceTest(String testName) {
         super(testName);
     }
@@ -139,6 +142,7 @@ public class IPartServiceTest extends UITestCase {
         super.doSetUp();
         fWindow = openTestWindow();
         fPage = fWindow.getActivePage();
+        facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
     }
 
     private IWorkbenchPartReference getRef(IWorkbenchPart part) {
@@ -193,7 +197,7 @@ public class IPartServiceTest extends UITestCase {
 		assertTrue(service != slaveService);
 		assertNotNull(slaveService);
 		assertNotNull(service);
-		assertTrue(slaveService instanceof SlavePartService);
+		assertTrue(facade.isSlavePartService(slaveService));
 
 		// Add listener, should receive events
 		slaveService.addPartListener(partListener);

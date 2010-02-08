@@ -14,6 +14,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -28,17 +29,13 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.FastViewBar;
-import org.eclipse.ui.internal.FastViewBarContextMenuContribution;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.ViewPane;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
@@ -57,6 +54,8 @@ public class StickyViewTest extends UITestCase {
     private IWorkbenchWindow window;
 
     private IWorkbenchPage page;
+
+	private TestFacade facade;
 
     /**
      * @param testName
@@ -276,29 +275,27 @@ public class StickyViewTest extends UITestCase {
 			IViewReference viewRef = page
 					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
 
-			WorkbenchPage wpage = (WorkbenchPage) page;
-			assertFalse(wpage.isFastView(stickyRef));
+			assertFalse(facade.isFastView(page, stickyRef));
 
-			wpage.addFastView(stickyRef);
-			assertTrue(wpage.isFastView(stickyRef));
+			facade.addFastView(page, stickyRef);
+			assertTrue(facade.isFastView(page, stickyRef));
 
-			wpage.addFastView(viewRef);
-			assertTrue(wpage.isFastView(viewRef));
+			facade.addFastView(page, viewRef);
+			assertTrue(facade.isFastView(page, viewRef));
 
-			FastViewBar fastViewBar = ((WorkbenchWindow) page
-					.getWorkbenchWindow()).getFastViewBar();
-			FastViewBarContextMenuContribution menuContribution = fastViewBar
-					.testContextMenu();
+			
+			
+			IContributionItem menuContribution = facade.getFVBContribution(page);
 
 			// set the target of a normal view that is now a fast view
 			// close should be enabled
-			menuContribution.setTarget(viewRef);
-			checkEnabledMenuItem(wpage, menuContribution, "Close", true);
+			facade.setFVBTarget(menuContribution, viewRef);
+			checkEnabledMenuItem(page, menuContribution, "Close", true);
 
 			// set the target of our non-closeable fast view
 			// close should not be enabled
-			menuContribution.setTarget(stickyRef);
-			checkEnabledMenuItem(wpage, menuContribution, "Close", false);
+			facade.setFVBTarget(menuContribution, stickyRef);
+			checkEnabledMenuItem(page, menuContribution, "Close", false);
 		} finally {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
@@ -323,27 +320,23 @@ public class StickyViewTest extends UITestCase {
 			IViewReference viewRef = page
 					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
 
-			WorkbenchPage wpage = (WorkbenchPage) page;
-			assertFalse(wpage.isFastView(viewRef));
-			assertTrue(wpage.isFastView(stickyRef));
+			assertFalse(facade.isFastView(page, viewRef));
+			assertTrue(facade.isFastView(page, stickyRef));
 
-			wpage.addFastView(viewRef);
-			assertTrue(wpage.isFastView(viewRef));
+			facade.addFastView(page, viewRef);
+			assertTrue(facade.isFastView(page, viewRef));
 
-			FastViewBar fastViewBar = ((WorkbenchWindow) page
-					.getWorkbenchWindow()).getFastViewBar();
-			FastViewBarContextMenuContribution menuContribution = fastViewBar
-					.testContextMenu();
+			IContributionItem menuContribution = facade.getFVBContribution(page);
 
 			// set the target of a normal view that is now a fast view
 			// Fast View should be enabled
-			menuContribution.setTarget(viewRef);
-			checkEnabledMenuItem(wpage, menuContribution, "Fast View", true);
+			facade.setFVBTarget(menuContribution, viewRef);
+			checkEnabledMenuItem(page, menuContribution, "Fast View", true);
 
 			// set the target of our non-closeable fast view
 			// Fast View should not be enabled
-			menuContribution.setTarget(stickyRef);
-			checkEnabledMenuItem(wpage, menuContribution, "Fast View", false);
+			facade.setFVBTarget(menuContribution, stickyRef);
+			checkEnabledMenuItem(page, menuContribution, "Fast View", false);
 		} finally {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
@@ -357,8 +350,8 @@ public class StickyViewTest extends UITestCase {
 	 * @param isEnabled should the item be enabled
 	 * @since 3.1.1
 	 */
-	private void checkEnabledMenuItem(WorkbenchPage wpage,
-			FastViewBarContextMenuContribution menuContribution,
+	private void checkEnabledMenuItem(IWorkbenchPage wpage,
+			IContributionItem menuContribution,
 			String itemName,
 			boolean isEnabled) {
 		Menu m = new Menu(wpage.getWorkbenchWindow().getShell());
@@ -416,12 +409,10 @@ public class StickyViewTest extends UITestCase {
 			// make sure the view is active
 			assertNotNull("The view must exist", viewRef.getPart(true));
 			page.activate(viewRef.getPart(true));
-			PartSite site = (PartSite) viewRef.getPart(true).getSite();
-			ViewPane pane = (ViewPane) site.getPane();
 
-			assertTrue(pane.isVisible());
-			assertNotNull("This view must have a toolbar", pane.getToolBar());
-			assertTrue(pane.getToolBar().isVisible());
+			
+			assertTrue(facade.isViewPaneVisible(viewRef));
+			assertTrue(facade.isViewToolbarVisible(viewRef));
 
 			// open the editor and zoom it.
 			editor = page.openEditor(new FileEditorInput(test01), registry
@@ -430,21 +421,21 @@ public class StickyViewTest extends UITestCase {
 
 			IWorkbenchPartReference ref = page.getReference(editor);
 			page.toggleZoom(ref);
-			assertFalse(pane.isVisible());
-			assertFalse(pane.getToolBar().isVisible());
+			assertFalse(facade.isViewPaneVisible(viewRef));
+			assertFalse(facade.isViewToolbarVisible(viewRef));
 
 			// switch to another perspective, and then switch back.
 			page.setPerspective(secondPerspective);
 
-			assertFalse(pane.isVisible());
-			assertFalse(pane.getToolBar().isVisible());
+			assertFalse(facade.isViewPaneVisible(viewRef));
+			assertFalse(facade.isViewToolbarVisible(viewRef));
 
 			page.setPerspective(perspective);
 			processEvents();
 
 			// both the view and the toolbar must be not visible
-			assertFalse(pane.isVisible());
-			assertFalse(pane.getToolBar().isVisible());
+			assertFalse(facade.isViewPaneVisible(viewRef));
+			assertFalse(facade.isViewToolbarVisible(viewRef));
 
 		} finally {
 			if (editor != null) {
@@ -466,5 +457,6 @@ public class StickyViewTest extends UITestCase {
     protected void doSetUp() throws Exception {
         window = openTestWindow();
         page = window.getActivePage();
+        facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
     }
 }

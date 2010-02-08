@@ -14,7 +14,11 @@ package org.eclipse.ui.tests.helpers;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
@@ -56,5 +60,21 @@ public abstract class TestFacade {
 	public abstract ArrayList getPerspectivePartIds(IWorkbenchPage page, String folderId);
 	
 	public abstract boolean isFastView(IWorkbenchPage page, IViewReference ref);
-	public abstract void saveableHelperSetAutomatedResponse(int response); 
+
+	public abstract void saveableHelperSetAutomatedResponse(int response);
+
+	public abstract void isSlavePageService(IPageService slaveService);
+
+	public abstract IContributionItem getFVBContribution(IWorkbenchPage page);
+
+	public abstract void setFVBTarget(IContributionItem menuContribution,
+			IViewReference viewRef);
+
+	public abstract boolean isViewPaneVisible(IViewReference viewRef);
+
+	public abstract boolean isViewToolbarVisible(IViewReference viewRef);
+
+	public abstract boolean isSlavePartService(IPartService slaveService);
+
+	public abstract boolean isSlaveSelectionService(ISelectionService slaveService);
 }
