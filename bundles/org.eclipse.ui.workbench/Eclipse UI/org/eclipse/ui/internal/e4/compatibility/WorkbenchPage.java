@@ -488,7 +488,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
 				partService.hidePart(part);
-				compatibilityPart.delegateDispose();
 				return true;
 			}
 		}
@@ -498,7 +497,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
 				partService.hidePart(part);
-				compatibilityPart.delegateDispose();
 				return true;
 			}
 		}
