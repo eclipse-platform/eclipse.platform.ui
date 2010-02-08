@@ -164,7 +164,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
-		return openPage(null, input);
+		return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 
 	/* (non-Javadoc)
