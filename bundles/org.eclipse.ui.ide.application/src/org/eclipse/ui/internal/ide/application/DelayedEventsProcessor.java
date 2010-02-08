@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -103,6 +104,12 @@ public class DelayedEventsProcessor implements Listener {
 					}
 					try {
 						IDE.openInternalEditorOnFileStore(page, fileStore);
+						Shell shell = window.getShell();
+						if (shell != null) {
+							if (shell.getMinimized())
+								shell.setMinimized(false);
+							shell.forceActive();
+						}
 					} catch (PartInitException e) {
 						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_errorOnOpen,
 										fileStore.getName());
