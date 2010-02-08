@@ -439,7 +439,49 @@ public class EPartServiceTest extends TestCase {
 		}
 	}
 
-	public void testIsVisible_ViewVisible() {
+	public void testIsPartVisible_NotInStack(boolean selected, boolean visible) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setVisible(visible);
+		window.getChildren().add(part);
+
+		if (selected) {
+			window.setSelectedElement(part);
+		}
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(visible, partService.isPartVisible(part));
+		partService = (EPartService) part.getContext().get(
+				EPartService.class.getName());
+		assertEquals(visible, partService.isPartVisible(part));
+	}
+
+	public void testIsPartVisible_NotInStackTrueTrue() {
+		testIsPartVisible_NotInStack(true, true);
+	}
+
+	public void testIsPartVisible_NotInStackTrueFalse() {
+		testIsPartVisible_NotInStack(true, false);
+	}
+
+	public void testIsPartVisible_NotInStackFalseTrue() {
+		testIsPartVisible_NotInStack(false, true);
+	}
+
+	public void testIsPartVisible_NotInStackFalseFalse() {
+		testIsPartVisible_NotInStack(false, false);
+	}
+
+	public void testIsPartVisible_ViewVisible() {
 		MApplication application = createApplication("partId");
 
 		MWindow window = application.getChildren().get(0);
@@ -454,7 +496,7 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partService.isPartVisible(part));
 	}
 
-	public void testIsVisible_ViewVisible_myService() {
+	public void testIsPartVisible_ViewVisible_myService() {
 		MApplication application = createApplication("partId");
 
 		MWindow window = application.getChildren().get(0);
@@ -469,7 +511,7 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partService.isPartVisible(part));
 	}
 
-	public void testIsVisible_ViewNotVisible() {
+	public void testIsPartVisible_ViewNotVisible() {
 		MApplication application = createApplication("partId", "partId2");
 
 		MWindow window = application.getChildren().get(0);
@@ -485,7 +527,7 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partService.isPartVisible(part));
 	}
 
-	public void testIsVisible_ViewNotVisible_myService() {
+	public void testIsPartVisible_ViewNotVisible_myService() {
 		MApplication application = createApplication("partId", "partId2");
 
 		MWindow window = application.getChildren().get(0);
@@ -512,7 +554,7 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partService2.isPartVisible(part2));
 	}
 
-	public void testIsVisible_ViewInAnotherWindow() {
+	public void testIsPartVisible_ViewInAnotherWindow() {
 		MApplication application = createApplication(new String[] {
 				"partFrontA", "partBackA" }, new String[] { "partFrontB",
 				"partBackB" });
@@ -548,7 +590,7 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceB.isPartVisible(partBackB));
 	}
 
-	public void testIsVisible_ViewInAnotherWindow_myService() {
+	public void testIsPartVisible_ViewInAnotherWindow_myService() {
 		MApplication application = createApplication(new String[] {
 				"partFrontA", "partBackA" }, new String[] { "partFrontB",
 				"partBackB" });
@@ -1490,6 +1532,41 @@ public class EPartServiceTest extends TestCase {
 
 	public void testShowPart_Id_MultipleExists_FalseCREATE() {
 		testShowPart_Id_MultipleExists(false, PartState.CREATE);
+	}
+
+	private void testShowPart_Part(PartState partState) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		application.setSelectedElement(window);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.createPart("partId");
+		partService.showPart(part, partState);
+	}
+
+	public void testShowPart_Part_ACTIVATE() {
+		testShowPart_Part(PartState.ACTIVATE);
+	}
+
+	public void testShowPart_Part_VISIBLE() {
+		testShowPart_Part(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Part_CREATE() {
+		testShowPart_Part(PartState.CREATE);
 	}
 
 	private void testShowPart_Part_MultipleExists(boolean multipleAllowed,
