@@ -243,6 +243,7 @@ public class DetailPaneManager {
 	
 	private DetailPaneManager(){
 		fFactoriesByPaneID = new HashMap();
+		fFactoriesByPaneID.put(MessageDetailPane.ID, new DefaultDetailPaneFactory());
 	}
 	
 	public static DetailPaneManager getDefault(){

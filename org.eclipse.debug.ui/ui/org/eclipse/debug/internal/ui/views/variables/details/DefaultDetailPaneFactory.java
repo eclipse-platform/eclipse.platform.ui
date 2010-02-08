@@ -33,7 +33,11 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
 	 */
 	public IDetailPane createDetailPane(String id) {
-		return new DefaultDetailPane();
+		if (MessageDetailPane.ID.equals(id)) {
+			return new MessageDetailPane();
+		} else {
+			return new DefaultDetailPane();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -60,6 +64,9 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 		if (id.equals(DefaultDetailPane.ID)){
 			return DefaultDetailPane.NAME;
 		}
+		if (id.equals(MessageDetailPane.ID)) {
+			return MessageDetailPane.NAME;
+		}
 		return null;
 	}
 	
@@ -70,6 +77,9 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 	public String getDetailPaneDescription(String id) {
 		if (id.equals(DefaultDetailPane.ID)){
 			return DefaultDetailPane.DESCRIPTION;
+		}
+		if (id.equals(MessageDetailPane.ID)) {
+			return MessageDetailPane.DESCRIPTION;
 		}
 		return null;
 	}

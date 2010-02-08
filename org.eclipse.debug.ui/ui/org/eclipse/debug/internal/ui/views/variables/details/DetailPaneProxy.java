@@ -24,6 +24,7 @@ import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IDetailPane3;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
@@ -106,9 +107,13 @@ public class DetailPaneProxy implements ISaveablePart {
 		}
 		
 		String preferredPaneID = DetailPaneManager.getDefault().getPreferredPaneFromSelection(selection);
+		if (preferredPaneID == null) {
+			preferredPaneID = MessageDetailPane.ID;
+			selection = new StructuredSelection(DetailMessages.DetailPaneProxy_1);
+		}
 		
 		// Don't change anything if the preferred pane is the current pane
-		if (fCurrentPane != null && preferredPaneID != null && preferredPaneID.equals(fCurrentPane.getID())){
+		if (fCurrentPane != null && preferredPaneID.equals(fCurrentPane.getID())){
 			fCurrentPane.display(selection);
 			if (clean) {
 				fireDirty();
@@ -193,42 +198,38 @@ public class DetailPaneProxy implements ISaveablePart {
 		if (fCurrentPane != null) fCurrentPane.dispose();
 		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
 		fCurrentPane = null;
-		if (paneID != null){
-			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
-			if (fCurrentPane != null){
-				final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
-				fCurrentPane.init(workbenchPartSite);
-				IDetailPane3 saveable = getSaveable();
-				if (saveable != null) {
-					Object[] listeners = fListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						saveable.addPropertyListener((IPropertyListener) listeners[i]);
-					}
+		fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
+		if (fCurrentPane != null){
+			final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
+			fCurrentPane.init(workbenchPartSite);
+			IDetailPane3 saveable = getSaveable();
+			if (saveable != null) {
+				Object[] listeners = fListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					saveable.addPropertyListener((IPropertyListener) listeners[i]);
 				}
-				fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
-				if (fCurrentControl != null){
-					fParentContainer.getParentComposite().layout(true);
-					fCurrentPane.display(selection);
-					if (fParentContainer instanceof IDetailPaneContainer2) {
-						fCurrentControl.addFocusListener(new FocusAdapter() {
-							public void focusGained(FocusEvent e) {
-								updateSelectionProvider(true);
-							}
-							public void focusLost(FocusEvent e) {
-								updateSelectionProvider(false);
-							}
-						});
-					}					
-				} else{
-					createErrorLabel(DetailMessages.DetailPaneProxy_0);
-					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
-				}
-			} else {
+			}
+			fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
+			if (fCurrentControl != null){
+				fParentContainer.getParentComposite().layout(true);
+				fCurrentPane.display(selection);
+				if (fParentContainer instanceof IDetailPaneContainer2) {
+					fCurrentControl.addFocusListener(new FocusAdapter() {
+						public void focusGained(FocusEvent e) {
+							updateSelectionProvider(true);
+						}
+						public void focusLost(FocusEvent e) {
+							updateSelectionProvider(false);
+						}
+					});
+				}					
+			} else{
 				createErrorLabel(DetailMessages.DetailPaneProxy_0);
-				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
+				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
 			}
 		} else {
-			createErrorLabel(DetailMessages.DetailPaneProxy_1);
+			createErrorLabel(DetailMessages.DetailPaneProxy_0);
+			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
 		}
 	}
 
