@@ -62,25 +62,15 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				selectStackElement(stack, oldSel);
 				MUIElement selPart = stack.getSelectedElement();
-				if (selPart != null && selPart.getWidget() == null) {
-					IPresentationEngine renderer = (IPresentationEngine) context
-							.get(IPresentationEngine.class.getName());
-					renderer.createGui(selPart);
-					// activate(selPart);
+				if (selPart != null) {
+					if (selPart.getWidget() == null) {
+						IPresentationEngine renderer = (IPresentationEngine) context
+								.get(IPresentationEngine.class.getName());
+						renderer.createGui(selPart);
+					} else {
+						showChild(stack, selPart);
+					}
 				}
-				// else {
-				// // HACK!! Should be in StackRenderer
-				// if (stack.getWidget() instanceof CTabFolder) {
-				// CTabFolder ctf = (CTabFolder) stack.getWidget();
-				// CTabItem[] ctis = ctf.getItems();
-				// for (int i = 0; i < ctis.length; i++) {
-				// if (ctis[i].getData(OWNING_ME) == selPart) {
-				// ctf.setSelection(ctis[i]);
-				// break;
-				// }
-				// }
-				// }
-				// }
 			}
 		};
 
