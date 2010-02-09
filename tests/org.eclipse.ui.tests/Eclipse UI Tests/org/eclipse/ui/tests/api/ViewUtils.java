@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.views.IStickyViewDescriptor;
@@ -47,7 +47,7 @@ public final class ViewUtils {
 
     public static boolean isSticky(IViewPart part) {
         String id = part.getSite().getId();
-        IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
+        IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
                 .getViewRegistry().getStickyViews();
         for (int i = 0; i < descs.length; i++) {
             if (descs[i].getId().equals(id))
