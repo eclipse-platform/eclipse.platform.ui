@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
 import org.eclipse.debug.internal.ui.actions.ConfigureColumnsAction;
@@ -93,9 +94,12 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -217,6 +221,22 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * and the detail pane.
 	 */
 	private SashForm fSashForm;
+	
+	/**
+	 * Composite that holds the details pane and always remains
+	 */
+	private Composite fDetailsAnchor;
+	
+	/**
+	 * Composite that holds the separator container and detail pane control.
+	 * Gets disposed/created as the layout changes.
+	 */
+	private Composite fDetailsComposiste;
+	
+	/**
+	 * Separator used when detail pane background colors of tree/detail pane are different.
+	 */
+	private Label fSepearator;
 	
 	/**
 	 * The detail pane that displays detailed information about the current selection
@@ -466,17 +486,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fInputService = new ViewerInputService(variablesViewer, fRequester);
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
-
+		fDetailsAnchor = SWTFactory.createComposite(fSashForm, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+		fSashForm.setWeights(getLastSashWeights());
+		
 		fSelectionProvider = new SelectionProviderWrapper(variablesViewer);
 		getSite().setSelectionProvider(fSelectionProvider);
-
-		fDetailPane = new DetailPaneProxy(this);
-		fDetailPane.addProperyListener(new IPropertyListener() {
-			public void propertyChanged(Object source, int propId) {
-				firePropertyChange(propId);
-			}
-		});
-		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 		
 		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -484,7 +498,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		for (int i = 0; i < fToggleDetailPaneActions.length; i++) {
 			fToggleDetailPaneActions[i].setChecked(fToggleDetailPaneActions[i].getOrientation().equals(orientation));
 		}
+		
+		fDetailPane = new DetailPaneProxy(this);
+		fDetailPane.addProperyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int propId) {
+				firePropertyChange(propId);
+			}
+		});
 		setDetailPaneOrientation(orientation);
+		
 		IMemento memento = getMemento();
 		if (memento != null) {
 			variablesViewer.initState(memento);
@@ -696,12 +718,39 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			hideDetailPane();
 		} else {
 			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
-			fSashForm.setOrientation(vertOrHoriz);
-			// force update so detail pane can adapt to orientation change
-			showDetailPane();
+			buildDetailPane(vertOrHoriz);
 		}
 		fCurrentDetailPaneOrientation  = orientation;
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
+	}
+	
+	private void buildDetailPane(int orientation) {
+		try {
+			fDetailsAnchor.setRedraw(false);
+			if (fDetailsComposiste != null) {
+				fDetailPane.dispose();
+				fDetailsComposiste.dispose();
+			}
+			fSashForm.setOrientation(orientation);
+			if (orientation == SWT.VERTICAL) {
+				fDetailsComposiste = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+				GridLayout layout = (GridLayout) fDetailsComposiste.getLayout();
+				layout.verticalSpacing = 0;
+				fSepearator = new Label(fDetailsComposiste, SWT.SEPARATOR| SWT.HORIZONTAL);
+				fSepearator.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			} else {
+				fDetailsComposiste = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+				GridLayout layout = (GridLayout) fDetailsComposiste.getLayout();
+				layout.horizontalSpacing = 0;
+				fSepearator= new Label(fDetailsComposiste, SWT.SEPARATOR | SWT.VERTICAL);
+				fSepearator.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
+			}
+			// force update so detail pane can adapt to orientation change
+			showDetailPane();
+		} finally {
+			fDetailsAnchor.layout(true);
+			fDetailsAnchor.setRedraw(true);
+		}
 	}
 	
 	/**
@@ -950,7 +999,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 	 */
 	public Composite getParentComposite() {
-		return fSashForm;
+		return fDetailsComposiste;
 	}
 
 	/* (non-Javadoc)
@@ -969,6 +1018,27 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			fLastSashWeights = fSashForm.getWeights();
 		}
 		fDetailPane.display(getCurrentSelection());
+		// Adjust sash background color settings and separator based on detail pane background color:
+		//   When the backgrounds are the same, the sash should have a default background, else it should be
+		//   invisible and the label separator should appear with the same background color as the detail pane
+		Control control = fDetailPane.getCurrentControl();
+		if (control.getBackground().equals(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND))) {
+			// don't show the label separator
+			if (!fSepearator.isDisposed()) {
+				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+				fSepearator.dispose();
+				fDetailsComposiste.layout(true);
+			}
+		} else {
+			// show the label separator and make sash invisible
+			if (fSepearator.isDisposed()) {
+				// re-build the detail pane with the separator
+				buildDetailPane(fSashForm.getOrientation());
+				return;
+			}
+			getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			fSepearator.setBackground(control.getBackground());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -983,11 +1053,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			};
 		}
 		fDetailPane.getCurrentControl().addListener(SWT.Activate, fDetailPaneActivatedListener);
-		if (newPaneID != null) {
-			if (fLastSashWeights != null) {
-				fSashForm.setWeights(fLastSashWeights);
-			}
-		}
 	}
 	
 	/**

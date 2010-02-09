@@ -14,10 +14,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -35,23 +32,8 @@ public class MessageDetailPane implements IDetailPane {
 	public static final String NAME = DetailMessages.MessageDetailPane_0;
 	public static final String DESCRIPTION = DetailMessages.MessageDetailPane_1;
 		
-	private SashForm fSash;
 	/**
-	 * Top level composite that remains as orientation changes.
-	 */
-	private Composite fDetailsContainer;
-	/**
-	 * Inner composite containing separator and editor composite that gets
-	 * disposed/created as orientation changes with *no* margins (so separator
-	 * spans entire width/height of the pane).
-	 */
-	private Composite fSeparatorContainer; 
-	/**
-	 * Cached orientation currently being displayed
-	 */
-	private int fOrientation = -1;
-	/**
-	 * Composite that contains the editor that has margins.
+	 * Composite that contains the label that has margins.
 	 */
 	private Composite fControlParent;
 	
@@ -70,60 +52,16 @@ public class MessageDetailPane implements IDetailPane {
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
 	public void dispose() {
-		fSash = null;
-		fDetailsContainer.dispose();
+		fControlParent.dispose();
 	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		fDetailsContainer = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-		if (parent instanceof SashForm) {
-			fSash = (SashForm) parent;
-		}
-		createDetails();
-		return fDetailsContainer;
-	}
-	
-	/**
-	 * Creates the details area with a separator based on orientation.
-	 */
-	protected void createDetails() {
-		int parentOrientation = SWT.HORIZONTAL;
-		if (fSash != null) {
-			parentOrientation = fSash.getOrientation();
-		}
-		String message = ""; //$NON-NLS-1$
-		if (fLabel != null) {
-			message = fLabel.getText();
-		}
-		if (parentOrientation == fOrientation) {
-			return;
-		}
-		if (fSeparatorContainer != null) {
-			fSeparatorContainer.dispose();
-		}
-		if (parentOrientation == SWT.VERTICAL) {
-			fSeparatorContainer = SWTFactory.createComposite(fDetailsContainer, fDetailsContainer.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-			Label sep = new Label(fSeparatorContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-			sep.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-			GridLayout layout= (GridLayout)fSeparatorContainer.getLayout();
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			fControlParent = SWTFactory.createComposite(fSeparatorContainer, 1, 1, GridData.FILL_BOTH);
-		} else {
-			fSeparatorContainer = SWTFactory.createComposite(fDetailsContainer, fDetailsContainer.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-			Label sep= new Label(fSeparatorContainer, SWT.SEPARATOR | SWT.VERTICAL);
-			sep.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
-			GridLayout layout= (GridLayout)fSeparatorContainer.getLayout();
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			fControlParent = SWTFactory.createComposite(fSeparatorContainer, 1, 1, GridData.FILL_BOTH);
-		}
-		fOrientation = parentOrientation;
-		fLabel = SWTFactory.createWrapLabel(fControlParent, message, 1);
-		fDetailsContainer.layout(true);
+		fControlParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		fLabel = SWTFactory.createWrapLabel(fControlParent, "", 1); //$NON-NLS-1$
+		return fControlParent;
 	}
 	
 	/* (non-Javadoc)
@@ -141,10 +79,9 @@ public class MessageDetailPane implements IDetailPane {
 		if (selection != null && selection.size() == 1) {
 			Object input = selection.getFirstElement();
 			if (input instanceof String) {
-				createDetails();
 				String message = (String) input;
 				fLabel.setText(message);
-				fDetailsContainer.layout(true);
+				fControlParent.layout(true);
 			}
 		}
 	}

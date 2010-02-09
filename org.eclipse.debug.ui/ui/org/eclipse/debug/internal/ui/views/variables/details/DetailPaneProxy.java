@@ -157,8 +157,14 @@ public class DetailPaneProxy implements ISaveablePart {
 	 * Disposes of the current pane.
 	 */
 	public void dispose(){
-		if (fCurrentPane != null)	fCurrentPane.dispose();
-		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
+		if (fCurrentPane != null)	{
+			fCurrentPane.dispose();
+			fCurrentPane = null;
+		}
+		if (fCurrentControl != null && !fCurrentControl.isDisposed()) {
+			fCurrentControl.dispose();
+			fCurrentControl = null;
+		}
 	}
 	
 	/**
@@ -195,41 +201,46 @@ public class DetailPaneProxy implements ISaveablePart {
 	 * @param selection the selection to display
 	 */
 	private void setupPane(String paneID, IStructuredSelection selection) {
-		if (fCurrentPane != null) fCurrentPane.dispose();
-		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
-		fCurrentPane = null;
-		fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
-		if (fCurrentPane != null){
-			final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
-			fCurrentPane.init(workbenchPartSite);
-			IDetailPane3 saveable = getSaveable();
-			if (saveable != null) {
-				Object[] listeners = fListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					saveable.addPropertyListener((IPropertyListener) listeners[i]);
+		try {
+			fParentContainer.getParentComposite().setRedraw(false);
+			if (fCurrentPane != null) fCurrentPane.dispose();
+			if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
+			fCurrentPane = null;
+			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
+			if (fCurrentPane != null){
+				final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
+				fCurrentPane.init(workbenchPartSite);
+				IDetailPane3 saveable = getSaveable();
+				if (saveable != null) {
+					Object[] listeners = fListeners.getListeners();
+					for (int i = 0; i < listeners.length; i++) {
+						saveable.addPropertyListener((IPropertyListener) listeners[i]);
+					}
 				}
-			}
-			fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
-			if (fCurrentControl != null){
-				fParentContainer.getParentComposite().layout(true);
-				fCurrentPane.display(selection);
-				if (fParentContainer instanceof IDetailPaneContainer2) {
-					fCurrentControl.addFocusListener(new FocusAdapter() {
-						public void focusGained(FocusEvent e) {
-							updateSelectionProvider(true);
-						}
-						public void focusLost(FocusEvent e) {
-							updateSelectionProvider(false);
-						}
-					});
-				}					
-			} else{
+				fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
+				if (fCurrentControl != null){
+					fParentContainer.getParentComposite().layout(true);
+					fCurrentPane.display(selection);
+					if (fParentContainer instanceof IDetailPaneContainer2) {
+						fCurrentControl.addFocusListener(new FocusAdapter() {
+							public void focusGained(FocusEvent e) {
+								updateSelectionProvider(true);
+							}
+							public void focusLost(FocusEvent e) {
+								updateSelectionProvider(false);
+							}
+						});
+					}					
+				} else{
+					createErrorLabel(DetailMessages.DetailPaneProxy_0);
+					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
+				}
+			} else {
 				createErrorLabel(DetailMessages.DetailPaneProxy_0);
-				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
+				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
 			}
-		} else {
-			createErrorLabel(DetailMessages.DetailPaneProxy_0);
-			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
+		} finally {
+			fParentContainer.getParentComposite().setRedraw(true);
 		}
 	}
 
