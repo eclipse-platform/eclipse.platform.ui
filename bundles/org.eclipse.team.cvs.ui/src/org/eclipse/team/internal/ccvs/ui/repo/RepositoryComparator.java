@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.model.*;
+import org.eclipse.ui.progress.PendingUpdateAdapter;
 
 public class RepositoryComparator extends ViewerComparator {
 	
@@ -99,6 +100,9 @@ public class RepositoryComparator extends ViewerComparator {
 		} 
 		if (element instanceof DateTagCategory){
 			return 6;
+		}
+		if (element instanceof PendingUpdateAdapter) {
+			return 10000;
 		}
 		return 0;
 	}
