@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -51,6 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -346,6 +348,21 @@ public class WBWRenderer extends SWTPartRenderer {
 							.getContext().get(EPartService.class.getName());
 					if (partService != null) {
 						e.doit = partService.saveAll(true);
+					}
+				}
+			});
+			shell.addListener(SWT.Activate, new Listener() {
+				public void handleEvent(org.eclipse.swt.widgets.Event event) {
+					IEclipseContext parentContext = getContextForParent(w);
+					MApplication app = (MApplication) w.getContext().get(
+							MApplication.class.getName());
+					if (app != null && parentContext != null) {
+						if (app.getSelectedElement() == w) {
+							return;
+						}
+						app.setSelectedElement(w);
+						parentContext.set(IContextConstants.ACTIVE_CHILD, w
+								.getContext());
 					}
 				}
 			});
