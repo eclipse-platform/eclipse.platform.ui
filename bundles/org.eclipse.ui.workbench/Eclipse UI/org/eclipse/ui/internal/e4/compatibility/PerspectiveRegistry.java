@@ -47,7 +47,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 */
 	public IPerspectiveDescriptor clonePerspective(String id, String label,
 			IPerspectiveDescriptor desc) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+		// FIXME: compat clonePerspective
+		E4Util.unsupported("clonePerspective"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -55,8 +56,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#deletePerspective(org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void deletePerspective(IPerspectiveDescriptor persp) {
-		// TODO Auto-generated method stub
-
+		// FIXME: compat deletePerspective
+		E4Util.unsupported("deletePerspective"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -108,8 +109,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#revertPerspective(org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
-		// TODO Auto-generated method stub
-
+		// FIXME: compat revertPerspective
+		E4Util.unsupported("revertPerspective"); //$NON-NLS-1$
 	}
 
 }

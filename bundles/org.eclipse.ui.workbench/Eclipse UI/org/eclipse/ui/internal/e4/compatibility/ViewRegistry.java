@@ -92,7 +92,8 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getCategories()
 	 */
 	public IViewCategory[] getCategories() {
-		// TODO Auto-generated method stub
+		// FIXME: compat getCategories
+		E4Util.unsupported("getCategories"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -107,7 +108,8 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getStickyViews()
 	 */
 	public IStickyViewDescriptor[] getStickyViews() {
-		// TODO Auto-generated method stub
+		// FIXME: compat getStickyViews
+		E4Util.unsupported("getStickyViews"); //$NON-NLS-1$
 		return null;
 	}
 
