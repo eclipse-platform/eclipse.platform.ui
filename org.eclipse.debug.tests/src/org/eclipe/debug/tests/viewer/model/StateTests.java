@@ -223,7 +223,6 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
                 index = 0;
             }
         }
-        ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)fViewer; 
         model.postDelta(rootDelta);
 
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
