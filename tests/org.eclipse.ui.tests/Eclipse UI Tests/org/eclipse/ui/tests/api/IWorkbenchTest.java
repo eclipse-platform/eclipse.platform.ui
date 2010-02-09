@@ -54,10 +54,12 @@ public class IWorkbenchTest extends UITestCase {
 
         // Test set focus.
         win1.getShell().forceFocus();
+        processEvents();
         assertEquals(win1, fWorkbench.getActiveWorkbenchWindow());
 
         // Test set focus.
         win2.getShell().forceFocus();
+        processEvents();
         assertEquals(win2, fWorkbench.getActiveWorkbenchWindow());
 
         // Cleanup in tearDown.
