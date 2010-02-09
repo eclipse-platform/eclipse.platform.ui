@@ -60,7 +60,6 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -812,22 +811,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //        }
 //        return themeRegistry;
 //    }
-
-    /**
-     * Answer the view registry.
-     * @return IViewRegistry the view registry for the
-     * receiver.
-     */
-    public IViewRegistry getViewRegistry() {
-		// TODO commented out for e4 compatibility
-//        if (viewRegistry == null) {
-//            viewRegistry = new ViewRegistry();
-//        }
-//        return viewRegistry;
-		// FIXME compat: add view registry support
-		E4Util.unsupported("getViewRegistry"); //$NON-NLS-1$
-		return null;
-    }
 
     /**
      * Answer the workbench.

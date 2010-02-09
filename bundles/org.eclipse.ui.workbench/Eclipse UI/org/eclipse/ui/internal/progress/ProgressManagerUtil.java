@@ -117,7 +117,7 @@ public class ProgressManagerUtil {
 			return;
 		}
 		try {
-			IViewDescriptor reference = WorkbenchPlugin.getDefault()
+			IViewDescriptor reference = window.getWorkbench()
 					.getViewRegistry()
 					.find(IProgressConstants.PROGRESS_VIEW_ID);
 
