@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,14 +30,14 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.5
  *
  */
-public class WorkbenchPartSite implements IWorkbenchPartSite {
+public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchPartSite {
 
 	MPart model;
 	private IWorkbenchPart part;
@@ -50,10 +51,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 		this.part = part;
 		this.element = element;
 		
-		model.getContext().set(
-				IWorkbenchLocationService.class.getName(),
-				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, getWorkbenchWindow()
-						.getWorkbench(), getWorkbenchWindow(), this, null, null, 2));
+		model.getContext().set(IWorkbenchLocationService.class.getName(), this);
 	}
 
 	public MPart getModel() {
@@ -190,6 +188,68 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 */
 	public boolean hasService(Class api) {
 		return model.getContext().containsKey(api.getName());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceScope
+	 * ()
+	 */
+	public String getServiceScope() {
+		return IServiceScopes.PARTSITE_SCOPE;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceLevel
+	 * ()
+	 */
+	public int getServiceLevel() {
+		return 2;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbench()
+	 */
+	public IWorkbench getWorkbench() {
+		return getWorkbenchWindow().getWorkbench();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPartSite()
+	 */
+	public IWorkbenchPartSite getPartSite() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.services.IWorkbenchLocationService#
+	 * getMultiPageEditorSite()
+	 */
+	public IEditorSite getMultiPageEditorSite() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPageSite()
+	 */
+	public IPageSite getPageSite() {
+		return null;
 	}
 
 }

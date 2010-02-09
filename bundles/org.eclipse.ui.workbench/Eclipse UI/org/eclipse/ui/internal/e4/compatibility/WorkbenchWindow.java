@@ -68,14 +68,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	void contextSet() {
 		IEclipseContext windowContext = model.getContext();
 		page = new WorkbenchPage(this, input);
-		ContextInjectionFactory.inject(page, windowContext);
-		page.setPerspective(perspective);
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
 
 		windowContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
 				IServiceScopes.PARTSITE_SCOPE, getWorkbench(), this, null, null, null, 1));
+
+		ContextInjectionFactory.inject(page, windowContext);
+		page.setPerspective(perspective);
 	}
 
 	public MWindow getModel() {
