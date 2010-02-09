@@ -78,7 +78,7 @@ public class PatchReader {
 	 */
 	public PatchReader(DateFormat[] dateFormats) {
 		this();
-		fDateFormats = dateFormats;
+		this.fDateFormats = dateFormats;
 	}
 	
 	public void parse(BufferedReader reader) throws IOException {
@@ -91,7 +91,7 @@ public class PatchReader {
 		// no project means this is a single patch,create a placeholder project for now
 		// which will be replaced by the target selected by the user in the preview pane
 		String projectName= ""; //$NON-NLS-1$
-		fIsWorkspacePatch= false;
+		this.fIsWorkspacePatch= false;
 
 		LineReader lr= new LineReader(reader);
 		if (!Platform.WS_CARBON.equals(Platform.getWS()))
@@ -100,7 +100,7 @@ public class PatchReader {
 		// Test for our format
 		line= lr.readLine();
 		if (line != null && line.startsWith(PatchReader.MULTIPROJECTPATCH_HEADER)) {
-			fIsWorkspacePatch= true;
+			this.fIsWorkspacePatch= true;
 		} else {
 			parse(lr, line);
 			return;
@@ -151,8 +151,8 @@ public class PatchReader {
 
 		lr.close();
 
-		fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
-		fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
+		this.fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
+		this.fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
 	}
 
 	protected FilePatch2 createFileDiff(IPath oldPath, long oldDate,
@@ -215,7 +215,7 @@ public class PatchReader {
 		
 		lr.close();
 		
-		fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
+		this.fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
 	}
 	
 	private void setHeader(FilePatch2 diff, List headerLines) {
@@ -575,10 +575,10 @@ public class PatchReader {
 	private long extractDate(String[] args, int n) {
 		if (n < args.length) {
 			String line= args[n];
-			for (int i= 0; i < fDateFormats.length; i++) {
-				fDateFormats[i].setLenient(true);
+			for (int i= 0; i < this.fDateFormats.length; i++) {
+				this.fDateFormats[i].setLenient(true);
 				try {
-					Date date= fDateFormats[i].parse(line);
+					Date date= this.fDateFormats[i].parse(line);
 					return date.getTime();		
 				} catch (ParseException ex) {
 					// silently ignored
@@ -658,23 +658,23 @@ public class PatchReader {
 	}
 
 	public boolean isWorkspacePatch() {
-		return fIsWorkspacePatch;
+		return this.fIsWorkspacePatch;
 	}
 
 	public DiffProject[] getDiffProjects() {
-		return fDiffProjects;
+		return this.fDiffProjects;
 	}
 
 	public FilePatch2[] getDiffs() {
-		return fDiffs;
+		return this.fDiffs;
 	}
 	
 	public FilePatch2[] getAdjustedDiffs() {
-		if (!isWorkspacePatch() || fDiffs.length == 0)
-			return fDiffs;
+		if (!isWorkspacePatch() || this.fDiffs.length == 0)
+			return this.fDiffs;
 		List result = new ArrayList();
-		for (int i = 0; i < fDiffs.length; i++) {
-			FilePatch2 diff = fDiffs[i];
+		for (int i = 0; i < this.fDiffs.length; i++) {
+			FilePatch2 diff = this.fDiffs[i];
 			result.add(diff.asRelativeDiff());
 		}
 		return (FilePatch2[]) result.toArray(new FilePatch2[result.size()]);

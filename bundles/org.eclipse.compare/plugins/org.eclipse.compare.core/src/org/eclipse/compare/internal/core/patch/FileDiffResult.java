@@ -43,17 +43,17 @@ public class FileDiffResult implements IFilePatchResult {
 	
 	public FileDiffResult(FilePatch2 diff, PatchConfiguration configuration) {
 		super();
-		fDiff = diff;
+		this.fDiff = diff;
 		this.configuration = configuration;
 	}
 	
 	public PatchConfiguration getConfiguration() {
-		return configuration;
+		return this.configuration;
 	}
 	
 	public boolean canApplyHunk(Hunk hunk) {
 		HunkResult result = getHunkResult(hunk);
-		return result.isOK() && !fDiffProblem;
+		return result.isOK() && !this.fDiffProblem;
 	}
 	
 	/**
@@ -67,42 +67,42 @@ public class FileDiffResult implements IFilePatchResult {
 	 * @param monitor a progress monitor or <code>null</code> if no progress monitoring is desired
 	 */
 	 public void refresh(ReaderCreator content, IProgressMonitor monitor) {
-		fMatches= false;
-		fDiffProblem= false;
+		this.fMatches= false;
+		this.fDiffProblem= false;
 		boolean create= false;
-		charset = Utilities.getCharset(content);
+		this.charset = Utilities.getCharset(content);
 		//If this diff is an addition, make sure that it doesn't already exist
 		boolean exists = targetExists(content);
-		if (fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
+		if (this.fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
 			if ((!exists || isEmpty(content)) && canCreateTarget(content)) {
-				fMatches= true;
+				this.fMatches= true;
 			} else {
 				// file already exists
-				fDiffProblem= true;
-				fErrorMessage= Messages.FileDiffResult_0;
+				this.fDiffProblem= true;
+				this.fErrorMessage= Messages.FileDiffResult_0;
 			}
 			create= true;
 		} else { //This diff is not an addition, try to find a match for it
 			//Ensure that the file described by the path exists and is modifiable
 			if (exists) {
-				fMatches= true;
+				this.fMatches= true;
 			} else {
 				// file doesn't exist
-				fDiffProblem= true;
-				fErrorMessage= Messages.FileDiffResult_1;
+				this.fDiffProblem= true;
+				this.fErrorMessage= Messages.FileDiffResult_1;
 			}
 		}
 
-		if (fDiffProblem) {
+		if (this.fDiffProblem) {
 			// We couldn't find the target file or the patch is trying to add a
 			// file that already exists but we need to initialize the hunk
 			// results for display
-			fBeforeLines = new ArrayList(getLines(content, false));
-			fAfterLines = fMatches ? new ArrayList() : fBeforeLines;
-			IHunk[] hunks = fDiff.getHunks();
+			this.fBeforeLines = new ArrayList(getLines(content, false));
+			this.fAfterLines = this.fMatches ? new ArrayList() : this.fBeforeLines;
+			IHunk[] hunks = this.fDiff.getHunks();
 			for (int i = 0; i < hunks.length; i++) {
 				Hunk hunk = (Hunk) hunks[i];
-				hunk.setCharset(charset);
+				hunk.setCharset(this.charset);
 				HunkResult result = getHunkResult(hunk);
 				result.setMatches(false);
 			}
@@ -112,15 +112,15 @@ public class FileDiffResult implements IFilePatchResult {
 		}
 
 		if (containsProblems()) {
-			if (fMatches) {
+			if (this.fMatches) {
 				// Check to see if we have at least one hunk that matches
-				fMatches = false;
-				IHunk[] hunks = fDiff.getHunks();
+				this.fMatches = false;
+				IHunk[] hunks = this.fDiff.getHunks();
 				for (int i = 0; i < hunks.length; i++) {
 					Hunk hunk = (Hunk) hunks[i];
 					HunkResult result = getHunkResult(hunk);
 					if (result.isOK()) {
-						fMatches = true;
+						this.fMatches = true;
 						break;
 					}
 				}
@@ -152,27 +152,27 @@ public class FileDiffResult implements IFilePatchResult {
 	 * Any hunk that couldn't be applied is returned in the list failedHunks.
 	 */
 	public void patch(List lines, IProgressMonitor monitor) {
-		fBeforeLines = new ArrayList();
-		fBeforeLines.addAll(lines);
+		this.fBeforeLines = new ArrayList();
+		this.fBeforeLines.addAll(lines);
 		if (getConfiguration().getFuzz() != 0) {
-			calculateFuzz(fBeforeLines, monitor);
+			calculateFuzz(this.fBeforeLines, monitor);
 		}
 		int shift= 0;
-		IHunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = this.fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
 			Hunk hunk = (Hunk) hunks[i];
-			hunk.setCharset(charset);
+			hunk.setCharset(this.charset);
 			HunkResult result = getHunkResult(hunk);
 			result.setShift(shift);
 			if (result.patch(lines)) {
 				shift = result.getShift();
 			}
 		}
-		fAfterLines = lines;
+		this.fAfterLines = lines;
 	}
 	
 	public boolean getDiffProblem() {
-		return fDiffProblem;
+		return this.fDiffProblem;
 	}
 
 	/**
@@ -180,9 +180,9 @@ public class FileDiffResult implements IFilePatchResult {
 	 * @return true if this Diff or any of its children Hunks have a problem, false if it doesn't
 	 */
 	public boolean containsProblems() {
-		if (fDiffProblem)
+		if (this.fDiffProblem)
 			return true;
-		for (Iterator iterator = fHunkResults.values().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = this.fHunkResults.values().iterator(); iterator.hasNext();) {
 			HunkResult result = (HunkResult) iterator.next();
 			if (!result.isOK())
 				return true;
@@ -193,12 +193,12 @@ public class FileDiffResult implements IFilePatchResult {
 	public String getLabel() {
 		String label= getTargetPath().toString();
 		if (this.fDiffProblem)
-			return NLS.bind(Messages.FileDiffResult_2, new String[] {label, fErrorMessage});
+			return NLS.bind(Messages.FileDiffResult_2, new String[] {label, this.fErrorMessage});
 		return label;
 	}
 	
 	public boolean hasMatches() {
-		return fMatches;
+		return this.fMatches;
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class FileDiffResult implements IFilePatchResult {
 	 * @return the lines of the target file with all matched hunks applied
 	 */
 	public List getLines() {
-		return fAfterLines;
+		return this.fAfterLines;
 	}
 
 	/**
@@ -218,9 +218,9 @@ public class FileDiffResult implements IFilePatchResult {
 	public int calculateFuzz(List lines, IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
-		fBeforeLines = new ArrayList(lines);
+		this.fBeforeLines = new ArrayList(lines);
 		// TODO: What about deletions?
-		if (fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
+		if (this.fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
 			// Additions don't need to adjust the fuzz factor
 			// TODO: What about the after lines?
 			return -1;
@@ -228,7 +228,7 @@ public class FileDiffResult implements IFilePatchResult {
 		int shift= 0;
 		int highestFuzz = -1; // the maximum fuzz factor for all hunks
 		String name = getTargetPath() != null ? getTargetPath().lastSegment() : ""; //$NON-NLS-1$
-		IHunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = this.fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
 			Hunk h = (Hunk) hunks[j];
 			monitor.subTask(NLS.bind(Messages.FileDiffResult_3, new String[] {name, Integer.toString(j + 1)}));
@@ -240,28 +240,28 @@ public class FileDiffResult implements IFilePatchResult {
 				highestFuzz = fuzz;
 			monitor.worked(1);
 		}
-		fAfterLines = lines;
+		this.fAfterLines = lines;
 		return highestFuzz;
 	}
 	
 	public IPath getTargetPath() {
-		return fDiff.getStrippedPath(getConfiguration().getPrefixSegmentStripCount(), getConfiguration().isReversed());
+		return this.fDiff.getStrippedPath(getConfiguration().getPrefixSegmentStripCount(), getConfiguration().isReversed());
 	}
 
 	private HunkResult getHunkResult(Hunk hunk) {
-		HunkResult result = (HunkResult)fHunkResults.get(hunk);
+		HunkResult result = (HunkResult)this.fHunkResults.get(hunk);
 		if (result == null) {
 			result = new HunkResult(this, hunk);
-			fHunkResults .put(hunk, result);
+			this.fHunkResults .put(hunk, result);
 		}
 		return result;
 	}
 
 	public List getFailedHunks() {
 		List failedHunks = new ArrayList();
-		IHunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = this.fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
-			HunkResult result = (HunkResult) fHunkResults.get(hunks[i]);
+			HunkResult result = (HunkResult) this.fHunkResults.get(hunks[i]);
 			if (result != null && !result.isOK())
 				failedHunks.add(result.getHunk());
 		}
@@ -269,23 +269,23 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public FilePatch2 getDiff() {
-		return fDiff;
+		return this.fDiff;
 	}
 
 	public List getBeforeLines() {
-		return fBeforeLines;
+		return this.fBeforeLines;
 	}
 
 	public List getAfterLines() {
-		return fAfterLines;
+		return this.fAfterLines;
 	}
 
 	public HunkResult[] getHunkResults() {
 		// return hunk results in the same order as hunks are placed in file diff 
 		List results = new ArrayList();
-		IHunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = this.fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
-			HunkResult result = (HunkResult) fHunkResults.get(hunks[i]);
+			HunkResult result = (HunkResult) this.fHunkResults.get(hunks[i]);
 			if (result != null) {
 				results.add(result);
 			}
@@ -304,7 +304,7 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public String getCharset() {
-		return charset;
+		return this.charset;
 	}
 
 	public boolean isPreserveLineDelimeters() {

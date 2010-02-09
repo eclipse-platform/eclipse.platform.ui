@@ -59,16 +59,16 @@ public class Hunk implements IHunk {
 	
 	public Hunk(FilePatch2 parent, int hunkType, int oldStart, int oldLength,
 			int newStart, int newLength, String[] lines) {
-		fParent = parent;
-        if (fParent != null) {
-            fParent.add(this);
+		this.fParent = parent;
+        if (this.fParent != null) {
+            this.fParent.add(this);
         }
 		this.hunkType = hunkType;
-		fOldLength = oldLength;
-		fOldStart = oldStart;
-		fNewLength = newLength;
-		fNewStart = newStart;
-		fLines = lines;
+		this.fOldLength = oldLength;
+		this.fOldStart = oldStart;
+		this.fNewLength = newLength;
+		this.fNewStart = newStart;
+		this.fLines = lines;
 	}
 	
     public Hunk(FilePatch2 parent, Hunk toCopy) {
@@ -89,8 +89,8 @@ public class Hunk implements IHunk {
 	 */
 	public String getContent() {
 		StringBuffer sb= new StringBuffer();
-		for (int i= 0; i < fLines.length; i++) {
-			String line= fLines[i];
+		for (int i= 0; i < this.fLines.length; i++) {
+			String line= this.fLines[i];
 			sb.append(line.substring(0, LineReader.length(line)));
 			sb.append('\n');
 		}
@@ -103,38 +103,38 @@ public class Hunk implements IHunk {
 	 */
 	String getDescription() {
 		StringBuffer sb= new StringBuffer();
-		sb.append(Integer.toString(fOldStart));
+		sb.append(Integer.toString(this.fOldStart));
 		sb.append(',');
-		sb.append(Integer.toString(fOldLength));
+		sb.append(Integer.toString(this.fOldLength));
 		sb.append(" -> "); //$NON-NLS-1$
-		sb.append(Integer.toString(fNewStart));
+		sb.append(Integer.toString(this.fNewStart));
 		sb.append(',');
-		sb.append(Integer.toString(fNewLength));
+		sb.append(Integer.toString(this.fNewLength));
 		return sb.toString();
 	}
 	
 	public String getRejectedDescription() {
 		StringBuffer sb= new StringBuffer();
 		sb.append("@@ -"); //$NON-NLS-1$
-		sb.append(Integer.toString(fOldStart));
+		sb.append(Integer.toString(this.fOldStart));
 		sb.append(',');
-		sb.append(Integer.toString(fOldLength));
+		sb.append(Integer.toString(this.fOldLength));
 		sb.append(" +"); //$NON-NLS-1$
-		sb.append(Integer.toString(fNewStart));
+		sb.append(Integer.toString(this.fNewStart));
 		sb.append(',');
-		sb.append(Integer.toString(fNewLength));
+		sb.append(Integer.toString(this.fNewLength));
 		sb.append(" @@"); //$NON-NLS-1$
 		return sb.toString();
 	}
 	
 	public int getHunkType(boolean reverse) {
 		if (reverse) {
-			if (hunkType == FilePatch2.ADDITION)
+			if (this.hunkType == FilePatch2.ADDITION)
 				return FilePatch2.DELETION;
-			if (hunkType == FilePatch2.DELETION)
+			if (this.hunkType == FilePatch2.DELETION)
 				return FilePatch2.ADDITION;
 		}
-		return hunkType;
+		return this.hunkType;
 	}
 
 	void setHunkType(int hunkType) {
@@ -142,12 +142,12 @@ public class Hunk implements IHunk {
 	}
 
 	public String[] getLines() {
-		return fLines;
+		return this.fLines;
 	}
 
 	public String[] getUnifiedLines() {
-		String[] ret = new String[fLines.length];
-		System.arraycopy(fLines, 0, ret, 0, fLines.length);
+		String[] ret = new String[this.fLines.length];
+		System.arraycopy(this.fLines, 0, ret, 0, this.fLines.length);
 		return ret;
 	}
 
@@ -157,15 +157,15 @@ public class Hunk implements IHunk {
 	 * @param diff the parent of this hunk
 	 */
 	void setParent(FilePatch2 diff) {
-		if (fParent == diff)
+		if (this.fParent == diff)
 			return;
-		if (fParent != null)
-			fParent.remove(this);
-		fParent = diff;	
+		if (this.fParent != null)
+			this.fParent.remove(this);
+		this.fParent = diff;	
 	}
 
 	public FilePatch2 getParent() {
-		return fParent;
+		return this.fParent;
 	}
 	
 	/*
@@ -180,8 +180,8 @@ public class Hunk implements IHunk {
 		List contextLines = new ArrayList();
 		boolean contextLinesMatched = true;
 		boolean precedingLinesChecked = false;
-		for (int i= 0; i < fLines.length; i++) {
-			String s = fLines[i];
+		for (int i= 0; i < this.fLines.length; i++) {
+			String s = this.fLines[i];
 			Assert.isTrue(s.length() > 0);
 			String line = s.substring(1);
 			char controlChar = s.charAt(0);
@@ -299,31 +299,31 @@ public class Hunk implements IHunk {
 	
 	public int getStart(boolean after) {
 		if (after) {
-			return fNewStart;
+			return this.fNewStart;
 		}
-		return fOldStart;
+		return this.fOldStart;
 	}
 
 	public void setStart(int start, boolean after) {
 		if (after) {
-			fNewStart = start;
+			this.fNewStart = start;
 		} else {
-			fOldStart = start;
+			this.fOldStart = start;
 		}
 	}
 
 	public int getLength(boolean after) {
 		if (after) {
-			return fNewLength;
+			return this.fNewLength;
 		}
-		return fOldLength;
+		return this.fOldLength;
 	}
 	
 	private int getShift(boolean reverse) {
 		if (reverse) {
-			return fOldLength - fNewLength;
+			return this.fOldLength - this.fNewLength;
 		}
-		return fNewLength - fOldLength;
+		return this.fNewLength - this.fOldLength;
 	}
 	
 	int doPatch(PatchConfiguration configuration, List lines, int shift, int fuzz) {
@@ -334,8 +334,8 @@ public class Hunk implements IHunk {
 		boolean precedingLinesChecked = false;
 		String lineDelimiter = getLineDelimiter(lines);
 
-		for (int i= 0; i < fLines.length; i++) {
-			String s= fLines[i];
+		for (int i= 0; i < this.fLines.length; i++) {
+			String s= this.fLines[i];
 			Assert.isTrue(s.length() > 0);
 			String line= s.substring(1);
 			char controlChar= s.charAt(0);
@@ -441,9 +441,9 @@ public class Hunk implements IHunk {
 			// get a line separator from the file being patched
 			String line0 = (String) lines.get(0);
 			return line0.substring(LineReader.length(line0));
-		} else if (fLines.length > 0) {
+		} else if (this.fLines.length > 0) {
 			// if the file doesn't exist use a line separator from the patch
-			return fLines[0].substring(LineReader.length(fLines[0]));
+			return this.fLines[0].substring(LineReader.length(this.fLines[0]));
 		}
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
@@ -465,8 +465,8 @@ public class Hunk implements IHunk {
 	
 	public String getContents(boolean isAfterState, boolean reverse) {
 		StringBuffer result= new StringBuffer();
-		for (int i= 0; i<fLines.length; i++) {
-			String line= fLines[i];
+		for (int i= 0; i<this.fLines.length; i++) {
+			String line= this.fLines[i];
 			String rest= line.substring(1);
 			char c = line.charAt(0);
 			if (c == ' ') {
@@ -516,7 +516,7 @@ public class Hunk implements IHunk {
 	 *             obtain charset.
 	 */
 	public String getCharset() {
-		return charset;
+		return this.charset;
 	}
 
 }

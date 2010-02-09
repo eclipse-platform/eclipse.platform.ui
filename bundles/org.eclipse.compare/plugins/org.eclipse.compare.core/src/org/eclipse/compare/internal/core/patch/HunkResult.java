@@ -40,8 +40,8 @@ public class HunkResult {
 	 * @param hunk the hunk
 	 */
 	public HunkResult(FileDiffResult diffResult, Hunk hunk) {
-		fDiffResult = diffResult;
-		fHunk = hunk;
+		this.fDiffResult = diffResult;
+		this.fHunk = hunk;
 	}
 
 	/**
@@ -52,24 +52,24 @@ public class HunkResult {
 	 * @return whether the hunk could be applied
 	 */
 	public boolean patch(List lines) {
-		fMatches = false;
+		this.fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
 		// if the fuzz is not set for the current hunk use the one from fDiffResult
-		int fuzz = fFuzz != -1 ? fFuzz : configuration.getFuzz();
+		int fuzz = this.fFuzz != -1 ? this.fFuzz : configuration.getFuzz();
 		if (isEnabled(configuration)) {
-			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
+			if (this.fHunk.tryPatch(configuration, lines, this.fShift, fuzz)) {
 				// it's a perfect match, no shifting is needed
-				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
-				fMatches = true;
+				this.fShift += this.fHunk.doPatch(configuration, lines, this.fShift, fuzz);
+				this.fMatches = true;
 			} else {
 				boolean found= false;
-				int oldShift= fShift;
+				int oldShift= this.fShift;
 				
 				int hugeShift = lines.size();
 				for (int i = 1; i <= hugeShift; i++) {
-					if (fHunk.tryPatch(configuration, lines, fShift - i, fuzz)) {
+					if (this.fHunk.tryPatch(configuration, lines, this.fShift - i, fuzz)) {
 						if (isAdjustShift())
-							fShift -= i;
+							this.fShift -= i;
 						found = true;
 						break;
 					}
@@ -77,9 +77,9 @@ public class HunkResult {
 				
 				if (!found) {
 					for (int i = 1; i <= hugeShift; i++) {
-						if (fHunk.tryPatch(configuration, lines, fShift + i, fuzz)) {
+						if (this.fHunk.tryPatch(configuration, lines, this.fShift + i, fuzz)) {
 							if (isAdjustShift())
-								fShift += i;
+								this.fShift += i;
 							found = true;
 							break;
 						}
@@ -87,13 +87,13 @@ public class HunkResult {
 				}
 				
 				if (found) {
-					if (DEBUG) System.out.println("patched hunk at offset: " + (fShift-oldShift)); //$NON-NLS-1$
-					fShift+= fHunk.doPatch(configuration, lines, fShift, fuzz);
-					fMatches = true;
+					if (DEBUG) System.out.println("patched hunk at offset: " + (this.fShift-oldShift)); //$NON-NLS-1$
+					this.fShift+= this.fHunk.doPatch(configuration, lines, this.fShift, fuzz);
+					this.fMatches = true;
 				}
 			}
 		}
-		return fMatches;
+		return this.fMatches;
 	}
 
 	private boolean isAdjustShift() {
@@ -116,17 +116,17 @@ public class HunkResult {
 	 * @return the fuzz factor or -1 if the hunk could not be matched
 	 */
 	public int calculateFuzz(List lines, IProgressMonitor monitor) {
-		fMatches = false;
+		this.fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
 		int fuzz = 0;
 		int maxFuzz = configuration.getFuzz() == -1 ? MAXIMUM_FUZZ_FACTOR
 				: configuration.getFuzz();
 		for (; fuzz <= maxFuzz; fuzz++) {
 			// try to apply using lines coordinates from the patch
-			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
+			if (this.fHunk.tryPatch(configuration, lines, this.fShift, fuzz)) {
 				// it's a perfect match, no adjustment is needed
-				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
-				fMatches = true;
+				this.fShift += this.fHunk.doPatch(configuration, lines, this.fShift, fuzz);
+				this.fMatches = true;
 				break;
 			}
 			
@@ -141,37 +141,37 @@ public class HunkResult {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				if (fHunk.tryPatch(configuration, lines, fShift - i, fuzz)) {
+				if (this.fHunk.tryPatch(configuration, lines, this.fShift - i, fuzz)) {
 					if (isAdjustShift())
-						fShift -= i;
-					fMatches = true;
+						this.fShift -= i;
+					this.fMatches = true;
 					break;
 				}
 			}
 
 			// shift down
-			if (!fMatches) {
+			if (!this.fMatches) {
 				for (int i = 1; i <= hugeShift; i++) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					if (fHunk.tryPatch(configuration, lines, fShift + i, fuzz)) {
+					if (this.fHunk.tryPatch(configuration, lines, this.fShift + i, fuzz)) {
 						if (isAdjustShift())
-							fShift += i;
-						fMatches = true;
+							this.fShift += i;
+						this.fMatches = true;
 						break;
 					}
 				}
 			}
 
-			if (fMatches) {
-				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
+			if (this.fMatches) {
+				this.fShift += this.fHunk.doPatch(configuration, lines, this.fShift, fuzz);
 				break;
 			}
 		}
 		// set fuzz for the current hunk
-		fFuzz = fMatches ? fuzz : -1;
-		return fFuzz;
+		this.fFuzz = this.fMatches ? fuzz : -1;
+		return this.fFuzz;
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class HunkResult {
 	 * @return the amount that this hunk should be shifted when applied
 	 */
 	public int getShift() {
-		return fShift;
+		return this.fShift;
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class HunkResult {
 	 * @param shift the amount to shift this hunk
 	 */
 	public void setShift(int shift) {
-		fShift = shift;
+		this.fShift = shift;
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class HunkResult {
 	 * @return the hunk to which this result applies
 	 */
 	public Hunk getHunk() {
-		return fHunk;
+		return this.fHunk;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class HunkResult {
 	 * @return the parent diff result
 	 */
 	public FileDiffResult getDiffResult() {
-		return fDiffResult;
+		return this.fDiffResult;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class HunkResult {
 	 * @return whether the hunk was matched with the target file
 	 */
 	public boolean isOK() {
-		return fMatches;
+		return this.fMatches;
 	}
 
 	/**
@@ -231,12 +231,12 @@ public class HunkResult {
 			List lines = getDiffResult().getBeforeLines();
 			if (afterState) {
 				if (isOK()) {
-					int oldShift = fShift;
+					int oldShift = this.fShift;
 					try {
-						fShift = 0;
+						this.fShift = 0;
 						problemFound = !patch(lines);
 					} finally {
-						fShift = oldShift;
+						this.fShift = oldShift;
 					}
 				} else {
 					problemFound = true;
@@ -244,7 +244,7 @@ public class HunkResult {
 			}
 			// Only return the full context if we could apply the hunk
 			if (!problemFound)
-				return LineReader.createString(fDiffResult.isPreserveLineDelimeters(), lines);
+				return LineReader.createString(this.fDiffResult.isPreserveLineDelimeters(), lines);
 		}
 		return getHunk().getContents(afterState, getConfiguration().isReversed());
 	}
@@ -252,7 +252,7 @@ public class HunkResult {
 	private boolean isEnabled(PatchConfiguration configuration) {
 		IHunkFilter[] filters = configuration.getHunkFilters();
 		for (int i = 0; i < filters.length; i++) {
-			if (!filters[i].select(fHunk)) {
+			if (!filters[i].select(this.fHunk)) {
 				return false;
 			}
 		}
@@ -260,14 +260,14 @@ public class HunkResult {
 	}
 
 	public void setMatches(boolean matches) {
-		fMatches = matches;
+		this.fMatches = matches;
 	}
 
 	public String getCharset() {
-		return fDiffResult.getCharset();
+		return this.fDiffResult.getCharset();
 	}
 	
 	public int getFuzz() {
-		return fFuzz;
+		return this.fFuzz;
 	}
 }

@@ -37,7 +37,7 @@ public class PatchConfiguration {
 	 * @return whether the patch should be reversed when applied
 	 */
 	public boolean isReversed() {
-		return fReverse;
+		return this.fReverse;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class PatchConfiguration {
 	 * to apply a patch
 	 */
 	public int getPrefixSegmentStripCount() {
-		return fStripPrefixSegments;
+		return this.fStripPrefixSegments;
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class PatchConfiguration {
 	 * @return the fuzz factor to be used when applying a patch.
 	 */
 	public int getFuzz() {
-		return fFuzz;
+		return this.fFuzz;
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class PatchConfiguration {
 	 * @param fuzz the fuzz factor to be used when applying a patch.
 	 */
 	public void setFuzz(int fuzz) {
-		fFuzz = fuzz;
+		this.fFuzz = fuzz;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class PatchConfiguration {
 	 * @return whether whitespace should be ignored
 	 */
 	public boolean isIgnoreWhitespace() {
-		return fIgnoreWhitespace;
+		return this.fIgnoreWhitespace;
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public class PatchConfiguration {
 	 * @param ignoreWhitespace whether whitespace should be ignored
 	 */
 	public void setIgnoreWhitespace(boolean ignoreWhitespace) {
-		fIgnoreWhitespace = ignoreWhitespace;
+		this.fIgnoreWhitespace = ignoreWhitespace;
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class PatchConfiguration {
 	 * <code>null</code>
 	 */
 	public Object getProperty(String key) {
-		return properties.get(key);
+		return this.properties.get(key);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class PatchConfiguration {
 	 * @param value the value to be associated with the key
 	 */
 	public void setProperty(String key, Object value) {
-		properties.put(key, value);
+		this.properties.put(key, value);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class PatchConfiguration {
 	 * @since org.eclipse.compare.core 3.5
 	 */
 	public void addHunkFilter(IHunkFilter filter) {
-		hunkFilters.add(filter);
+		this.hunkFilters.add(filter);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class PatchConfiguration {
 	 * @since org.eclipse.compare.core 3.5
 	 */
 	public void removeHunkFilter(IHunkFilter filter) {
-		hunkFilters.remove(filter);
+		this.hunkFilters.remove(filter);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class PatchConfiguration {
 	 * @since org.eclipse.compare.core 3.5
 	 */
 	public IHunkFilter[] getHunkFilters() {
-		return (IHunkFilter[]) hunkFilters.toArray(new IHunkFilter[hunkFilters
+		return (IHunkFilter[]) this.hunkFilters.toArray(new IHunkFilter[this.hunkFilters
 				.size()]);
 	}
 

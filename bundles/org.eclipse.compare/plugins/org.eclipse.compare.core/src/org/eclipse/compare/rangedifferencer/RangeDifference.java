@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public class RangeDifference {
 	 * @return the number of entities on the right side
 	 */
 	public int rightLength() {
-		return rightLength;
+		return this.rightLength;
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class RangeDifference {
 	 * @return the end index of the entity range on the right side
 	 */
 	public int rightEnd() {
-		return this.rightStart + rightLength;
+		return this.rightStart + this.rightLength;
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class RangeDifference {
 	 * @return the maximum number of entities in the left, right, and ancestor sides of this range
 	 */
 	public int maxLength() {
-		return Math.max(rightLength, Math.max(this.leftLength, this.ancestorLength));
+		return Math.max(this.rightLength, Math.max(this.leftLength, this.ancestorLength));
 	}
 	
 	public boolean equals(Object obj) {
@@ -264,13 +264,26 @@ public class RangeDifference {
 				&& this.leftStart == other.leftStart
 				&& this.leftLength == other.leftLength
 				&& this.rightStart == other.rightStart
-				&& rightLength == other.rightLength
+				&& this.rightLength == other.rightLength
 				&& this.ancestorStart == other.ancestorStart
 				&& this.ancestorLength == other.ancestorLength;
 		}
 		return super.equals(obj);
 	}
-	
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + this.kind;
+		result = prime * result + this.leftStart;
+		result = prime * result + this.leftLength;
+		result = prime * result + this.rightStart;
+		result = prime * result + this.rightLength;
+		result = prime * result + this.ancestorStart;
+		result = prime * result + this.ancestorLength;
+		return result;
+	}
+
 	public String toString() {
 		StringBuffer buf = new StringBuffer("RangeDifference {"); //$NON-NLS-1$
 		switch (this.kind) {

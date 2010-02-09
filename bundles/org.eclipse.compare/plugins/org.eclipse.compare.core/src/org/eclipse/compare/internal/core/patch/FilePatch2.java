@@ -57,9 +57,9 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @param newDate the timestamp of the after state
 	 */
  	public FilePatch2(IPath oldPath, long oldDate, IPath newPath, long newDate) {
-		fOldPath= oldPath;
+		this.fOldPath= oldPath;
 		this.oldDate = oldDate;
-		fNewPath= newPath;
+		this.fNewPath= newPath;
 		this.newDate = newDate;
 	}
 	
@@ -68,7 +68,7 @@ public class FilePatch2 implements IFilePatch2 {
  	 * @return the parent project or <code>null</code>
  	 */
 	public DiffProject getProject() {
-		return fProject;
+		return this.fProject;
 	}
 	
 	/**
@@ -78,10 +78,10 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @param diffProject the parent project
 	 */
 	void setProject(DiffProject diffProject) {
-		if (fProject == diffProject)
+		if (this.fProject == diffProject)
 			return;
-		if (fProject != null)
-			fProject.remove(this);
+		if (this.fProject != null)
+			this.fProject.remove(this);
 		this.fProject= diffProject;
 	}
 	
@@ -94,14 +94,14 @@ public class FilePatch2 implements IFilePatch2 {
 	public IPath getPath(boolean reverse) {
 		if (getDiffType(reverse) == ADDITION) {
 			if (reverse)
-				return fOldPath;
-			return fNewPath;
+				return this.fOldPath;
+			return this.fNewPath;
 		}
-		if (reverse && fNewPath != null)
-			return fNewPath;
-		if (fOldPath != null)
-			return fOldPath;
-		return fNewPath;
+		if (reverse && this.fNewPath != null)
+			return this.fNewPath;
+		if (this.fOldPath != null)
+			return this.fOldPath;
+		return this.fNewPath;
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @param hunk the hunk
 	 */
 	public void add(Hunk hunk) {
-		fHunks.add(hunk);
+		this.fHunks.add(hunk);
 		hunk.setParent(this);
 	}
 	
@@ -118,7 +118,7 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @param hunk the hunk
 	 */
 	protected void remove(Hunk hunk) {
-		fHunks.remove(hunk);
+		this.fHunks.remove(hunk);
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @return the hunks associated with this file diff
 	 */
 	public IHunk[] getHunks() {
-		return (IHunk[]) fHunks.toArray(new IHunk[fHunks.size()]);
+		return (IHunk[]) this.fHunks.toArray(new IHunk[this.fHunks.size()]);
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @return the number of hunks associated with this file diff
 	 */
 	public int getHunkCount() {
-		return fHunks.size();
+		return this.fHunks.size();
 	}
 	
 	/**
@@ -143,10 +143,10 @@ public class FilePatch2 implements IFilePatch2 {
 	 * @return the type of this file diff
 	 */
 	public int getDiffType(boolean reverse) {
-		if (fHunks.size() == 1) {
+		if (this.fHunks.size() == 1) {
 			boolean add = false;
 			boolean delete = false;
-			Iterator iter = fHunks.iterator();
+			Iterator iter = this.fHunks.iterator();
 			while (iter.hasNext()){
 				Hunk hunk = (Hunk) iter.next();
 				int type =hunk.getHunkType(reverse);
@@ -188,10 +188,10 @@ public class FilePatch2 implements IFilePatch2 {
 		//Update prefix count - go through all of the diffs and find the smallest
 		//path segment contained in all diffs.
 		int length= 99;
-		if (fOldPath != null)
-			length= Math.min(length, fOldPath.segmentCount());
-		if (fNewPath != null)
-			length= Math.min(length, fNewPath.segmentCount());
+		if (this.fOldPath != null)
+			length= Math.min(length, this.fOldPath.segmentCount());
+		if (this.fNewPath != null)
+			length= Math.min(length, this.fNewPath.segmentCount());
 		return length;
 	}
 	
@@ -207,18 +207,18 @@ public class FilePatch2 implements IFilePatch2 {
 	}
 
 	public FilePatch2 asRelativeDiff() {
-		if (fProject == null)
+		if (this.fProject == null)
 			return this;
 		IPath adjustedOldPath = null;
-		if (fOldPath != null) {
-			adjustedOldPath = new Path(null, fProject.getName()).append(fOldPath);
+		if (this.fOldPath != null) {
+			adjustedOldPath = new Path(null, this.fProject.getName()).append(this.fOldPath);
 		}
 		IPath adjustedNewPath = null;
-		if (fNewPath != null) {
-			adjustedNewPath = new Path(null, fProject.getName()).append(fNewPath);
+		if (this.fNewPath != null) {
+			adjustedNewPath = new Path(null, this.fProject.getName()).append(this.fNewPath);
 		}
 		FilePatch2 diff = create(adjustedOldPath, 0, adjustedNewPath, 0);
-		for (Iterator iterator = fHunks.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = this.fHunks.iterator(); iterator.hasNext();) {
 			Hunk hunk = (Hunk) iterator.next();
 			// Creating the hunk adds it to the parent diff
 			new Hunk(diff, hunk);
@@ -236,15 +236,15 @@ public class FilePatch2 implements IFilePatch2 {
 	}
 
 	public String getHeader() {
-		return header;
+		return this.header;
 	}
 
 	public long getBeforeDate() {
-		return oldDate;
+		return this.oldDate;
 	}
 
 	public long getAfterDate() {
-		return newDate;
+		return this.newDate;
 	}
 
 	public void setAddedLines(int addedLines) {
@@ -256,11 +256,11 @@ public class FilePatch2 implements IFilePatch2 {
 	}
 
 	public int getAddedLines() {
-		return addedLines;
+		return this.addedLines;
 	}
 	
 	public int getRemovedLines() {
-		return removedLines;
+		return this.removedLines;
 	}
 
 }

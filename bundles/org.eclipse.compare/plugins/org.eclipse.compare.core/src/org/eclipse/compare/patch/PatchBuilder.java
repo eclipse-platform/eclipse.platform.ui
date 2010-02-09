@@ -179,7 +179,7 @@ public class PatchBuilder {
 					}
 					break;
 				default:
-					throw new IllegalArgumentException("");
+					throw new IllegalArgumentException(""); //$NON-NLS-1$
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,25 +42,25 @@ import org.eclipse.core.runtime.SubMonitor;
 	}
 	
 	protected int getLength1() {
-		return comparator1.getRangeCount();
+		return this.comparator1.getRangeCount();
 	}
 
 	protected int getLength2() {
-		return comparator2.getRangeCount();
+		return this.comparator2.getRangeCount();
 	}
 
 	protected void initializeLcs(int lcsLength) {
-		lcs = new int[2][lcsLength];
+		this.lcs = new int[2][lcsLength];
 	}
 
 	protected boolean isRangeEqual(int i1, int i2) {
-		return comparator1.rangesEqual(i1, comparator2, i2);
+		return this.comparator1.rangesEqual(i1, this.comparator2, i2);
 	}
 
 	protected void setLcs(int sl1, int sl2) {
 		// Add one to the values so that 0 can mean that the slot is empty
-		lcs[0][sl1] = sl1 + 1;
-		lcs[1][sl1] = sl2 + 1;
+		this.lcs[0][sl1] = sl1 + 1;
+		this.lcs[1][sl1] = sl2 + 1;
 	}
 	
 	public RangeDifference[] getDifferences(SubMonitor subMonitor, AbstractRangeDifferenceFactory factory) {
@@ -68,7 +68,7 @@ import org.eclipse.core.runtime.SubMonitor;
 			List differences = new ArrayList();
 			int length = getLength();
 			if (length == 0) {
-				differences.add(factory.createRangeDifference(RangeDifference.CHANGE, 0, comparator2.getRangeCount(), 0, comparator1.getRangeCount()));
+				differences.add(factory.createRangeDifference(RangeDifference.CHANGE, 0, this.comparator2.getRangeCount(), 0, this.comparator1.getRangeCount()));
 			} else {
 				subMonitor.beginTask(null, length);
 				int index1, index2;
@@ -76,21 +76,21 @@ import org.eclipse.core.runtime.SubMonitor;
 				int l1, l2;
 				int s1 = -1;
 				int s2 = -1;
-				while(index1 < lcs[0].length && index2 < lcs[1].length) {
+				while(index1 < this.lcs[0].length && index2 < this.lcs[1].length) {
 					// Move both LCS lists to the next occupied slot
-					while ((l1= lcs[0][index1]) == 0) {
+					while ((l1= this.lcs[0][index1]) == 0) {
 						index1++;
-						if (index1 >= lcs[0].length)
+						if (index1 >= this.lcs[0].length)
 							break;
 					}
-					if (index1 >= lcs[0].length)
+					if (index1 >= this.lcs[0].length)
 						break;
-					while ((l2= lcs[1][index2]) == 0) {
+					while ((l2= this.lcs[1][index2]) == 0) {
 						index2++;
-						if (index2 >= lcs[1].length)
+						if (index2 >= this.lcs[1].length)
 							break;
 					}
-					if (index2 >= lcs[1].length)
+					if (index2 >= this.lcs[1].length)
 						break;
 					// Convert the entry to an array index (see setLcs(int, int))
 					int end1 = l1 - 1;
@@ -114,12 +114,12 @@ import org.eclipse.core.runtime.SubMonitor;
 					index2++;
 					worked(subMonitor, 1);
 				}
-				if (s1 != -1 && (s1 + 1 < comparator1.getRangeCount() || s2 + 1 < comparator2.getRangeCount())) {
+				if (s1 != -1 && (s1 + 1 < this.comparator1.getRangeCount() || s2 + 1 < this.comparator2.getRangeCount())) {
 					// TODO: we need to find the proper way of representing an append
-					int leftStart = s1 < comparator1.getRangeCount() ? s1 + 1 : s1;
-					int rightStart = s2 < comparator2.getRangeCount() ? s2 + 1 : s2;
+					int leftStart = s1 < this.comparator1.getRangeCount() ? s1 + 1 : s1;
+					int rightStart = s2 < this.comparator2.getRangeCount() ? s2 + 1 : s2;
 					// TODO: We need to confirm that this is the proper order
-					differences.add(factory.createRangeDifference(RangeDifference.CHANGE, rightStart, comparator2.getRangeCount() - (s2 + 1), leftStart, comparator1.getRangeCount() - (s1 + 1)));
+					differences.add(factory.createRangeDifference(RangeDifference.CHANGE, rightStart, this.comparator2.getRangeCount() - (s2 + 1), leftStart, this.comparator1.getRangeCount() - (s1 + 1)));
 				}
 				
 			}
@@ -184,9 +184,9 @@ import org.eclipse.core.runtime.SubMonitor;
 	 */
 	public void longestCommonSubsequence(SubMonitor subMonitor) {
 		super.longestCommonSubsequence(subMonitor);
-		if (lcs != null) { // The LCS can be null if one of the sides is empty
-			compactAndShiftLCS(lcs[0], getLength(), comparator1);
-			compactAndShiftLCS(lcs[1], getLength(), comparator2);
+		if (this.lcs != null) { // The LCS can be null if one of the sides is empty
+			compactAndShiftLCS(this.lcs[0], getLength(), this.comparator1);
+			compactAndShiftLCS(this.lcs[1], getLength(), this.comparator2);
 		}
 	}
 }

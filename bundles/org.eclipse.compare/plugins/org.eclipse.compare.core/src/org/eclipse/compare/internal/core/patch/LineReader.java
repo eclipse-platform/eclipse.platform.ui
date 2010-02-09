@@ -114,12 +114,12 @@ public class LineReader {
 	private StringBuffer fBuffer= new StringBuffer();
 	
 	public LineReader(BufferedReader reader) {
-		fReader= reader;
+		this.fReader= reader;
 		Assert.isNotNull(reader);
 	}
 
 	public void ignoreSingleCR() {
-		fIgnoreSingleCR= true;
+		this.fIgnoreSingleCR= true;
 	}
 	
     /**
@@ -133,46 +133,46 @@ public class LineReader {
      */
 	/* package */ String readLine() throws IOException {
 		try {
-			while (!fSawEOF) {
+			while (!this.fSawEOF) {
 				int c= readChar();
 				if (c == -1) {
-					fSawEOF= true;
+					this.fSawEOF= true;
 					break;
 				}
-				fBuffer.append((char)c);
+				this.fBuffer.append((char)c);
 				if (c == '\n')
 					break;
 				if (c == '\r') {
 					c= readChar();
 					if (c == -1) {
-						fSawEOF= true;
+						this.fSawEOF= true;
 						break;	// EOF
 					}
 					if (c != '\n') {
-						if (fIgnoreSingleCR) {
-							fBuffer.append((char)c);	
+						if (this.fIgnoreSingleCR) {
+							this.fBuffer.append((char)c);	
 							continue;
 						}
-						fHaveChar= true;
-						fLastChar= c;
+						this.fHaveChar= true;
+						this.fLastChar= c;
 					} else
-						fBuffer.append((char)c);	
+						this.fBuffer.append((char)c);	
 					break;
 				}
 			}
 			
-			if (fBuffer.length() != 0) {
-				return fBuffer.toString();
+			if (this.fBuffer.length() != 0) {
+				return this.fBuffer.toString();
 			}
 			return null;
 		} finally {
-			fBuffer.setLength(0);
+			this.fBuffer.setLength(0);
 		}
 	}
 	
 	/* package */ void close() {
 		try {
-			fReader.close();
+			this.fReader.close();
 		} catch (IOException ex) {
 			// silently ignored
 		}
@@ -215,10 +215,10 @@ public class LineReader {
 	//---- private
 	
 	private int readChar() throws IOException {
-		if (fHaveChar) {
-			fHaveChar= false;
-			return fLastChar;
+		if (this.fHaveChar) {
+			this.fHaveChar= false;
+			return this.fLastChar;
 		}
-		return fReader.read();
+		return this.fReader.read();
 	}
 }

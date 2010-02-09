@@ -29,32 +29,32 @@ import java.util.List;
 	 */
 	DifferencesIterator(RangeDifference[] differenceRanges) {
 		
-		fArray= differenceRanges;
-		fIndex= 0;
-		fRange= new ArrayList();
-		if (fIndex < fArray.length)
-			fDifference= fArray[fIndex++];
+		this.fArray= differenceRanges;
+		this.fIndex= 0;
+		this.fRange= new ArrayList();
+		if (this.fIndex < this.fArray.length)
+			this.fDifference= this.fArray[this.fIndex++];
 		else
-			fDifference= null;
+			this.fDifference= null;
 	}
 
 	/*
 	  * Returns the number of RangeDifferences
 	  */
 	int getCount() {
-		return fRange.size();
+		return this.fRange.size();
 	}
 
 	/*
 	 * Appends the edit to its list and moves to the next <code>RangeDifference</code>.
 	 */
 	void next() {
-		fRange.add(fDifference);
-		if (fDifference != null) {
-			if (fIndex < fArray.length)
-				fDifference= fArray[fIndex++];
+		this.fRange.add(this.fDifference);
+		if (this.fDifference != null) {
+			if (this.fIndex < this.fArray.length)
+				this.fDifference= this.fArray[this.fIndex++];
 			else
-				fDifference= null;
+				this.fDifference= null;
 		}
 	}
 
@@ -72,6 +72,6 @@ import java.util.List;
 	  * Removes all <code>RangeDifference</code>s
 	  */
 	void removeAll() {
-		fRange.clear();
+		this.fRange.clear();
 	}
 }

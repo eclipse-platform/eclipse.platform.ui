@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,14 +47,14 @@ public abstract class LCS {
 		int length1 = getLength1();
 		int length2 = getLength2();
 		if (length1 == 0 || length2 == 0) {
-			length = 0;
+			this.length = 0;
 			return;
 		}
 
-		max_differences = (length1 + length2 + 1) / 2; // ceil((N+M)/2)
+		this.max_differences = (length1 + length2 + 1) / 2; // ceil((N+M)/2)
 		if ((double) length1 * (double) length2 > TOO_LONG) {
 			// limit complexity to D^POW_LIMIT for long sequences
-			max_differences = (int) Math.pow(max_differences, POW_LIMIT - 1.0);
+			this.max_differences = (int) Math.pow(this.max_differences, POW_LIMIT - 1.0);
 		}
 
 		initializeLcs(length1);
@@ -84,7 +84,7 @@ public abstract class LCS {
 			worked(subMonitor, 1);
 		}
 
-		length = forwardBound
+		this.length = forwardBound
 				+ length1
 				- backBoundL1
 				- 1
@@ -205,7 +205,7 @@ public abstract class LCS {
 			isEven = true;
 		}
 
-		int limit = Math.min(max_differences, (N + M + 1) / 2); // ceil((N+M)/2)
+		int limit = Math.min(this.max_differences, (N + M + 1) / 2); // ceil((N+M)/2)
 
 		int value_to_add_forward; // a 0 or 1 that we add to the start offset
 									// to make it odd/even
@@ -449,6 +449,6 @@ public abstract class LCS {
 	protected abstract void initializeLcs(int lcsLength);
 
 	public int getLength() {
-		return length;
+		return this.length;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,31 +32,31 @@ public class TextLineLCS extends LCS {
 		TextLine[][] result = new TextLine[2][];
 
 		// compact and shift the result
-		result[0] = compactAndShiftLCS(lcs[0], length, lines1);
-		result[1] = compactAndShiftLCS(lcs[1], length, lines2);
+		result[0] = compactAndShiftLCS(this.lcs[0], length, this.lines1);
+		result[1] = compactAndShiftLCS(this.lcs[1], length, this.lines2);
 
 		return result;
 	}
 
 	protected int getLength2() {
-		return lines2.length;
+		return this.lines2.length;
 	}
 
 	protected int getLength1() {
-		return lines1.length;
+		return this.lines1.length;
 	}
 	
 	protected boolean isRangeEqual(int i1, int i2) {
-		return lines1[i1].sameText(lines2[i2]);
+		return this.lines1[i1].sameText(this.lines2[i2]);
 	}
 	
 	protected void setLcs(int sl1, int sl2) {
-		lcs[0][sl1] = lines1[sl1];
-		lcs[1][sl1] = lines2[sl2];
+		this.lcs[0][sl1] = this.lines1[sl1];
+		this.lcs[1][sl1] = this.lines2[sl2];
 	}
 	
 	protected void initializeLcs(int length) {
-		lcs = new TextLine[2][length];
+		this.lcs = new TextLine[2][length];
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class TextLineLCS extends LCS {
 		public boolean sameText(TextLine l) {
 			// compare the hashCode() first since that is much faster and most
 			// of the time the text lines won't match
-			return text.hashCode() == l.text.hashCode() && l.text.equals(text);
+			return this.text.hashCode() == l.text.hashCode() && l.text.equals(this.text);
 		}
 
 		/**
@@ -197,11 +197,11 @@ public class TextLineLCS extends LCS {
 		 * @return the line number
 		 */
 		public int lineNumber() {
-			return number;
+			return this.number;
 		}
 
 		public String toString() {
-			return "" + number + " " + text + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return "" + this.number + " " + this.text + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 }
