@@ -29,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -158,7 +159,7 @@ public class StickyViewTest extends UITestCase {
             assertTrue(ViewUtils.isSticky(part));
 
             //tests to ensure that the XML was read correctly            
-            IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
+            IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
                     .getViewRegistry().getStickyViews();
             for (int i = 0; i < descs.length; i++) {
                 if (descs[i].getId().equals(id)) {
@@ -186,7 +187,7 @@ public class StickyViewTest extends UITestCase {
             assertTrue(ViewUtils.isSticky(part));
 
             //tests to ensure that the XML was read correctly            
-            IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
+            IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
                     .getViewRegistry().getStickyViews();
             for (int i = 0; i < descs.length; i++) {
                 if (descs[i].getId().equals(id)) {
