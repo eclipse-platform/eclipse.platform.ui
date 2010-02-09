@@ -126,16 +126,18 @@ public class IntroSearchParticipant extends SearchParticipant {
 		IntroPage[] pages = model.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			IntroPage page = pages[i];
-			Bundle bundle = page.getBundle();
-			String bundleId = bundle.getSymbolicName();
-			String content = page.getRawContent();
-			String pageId = page.getId();
-			String href;
-			if (content != null)
-				href = resolveVariables(bundleId, content, locale);
-			else
-				href = pageId;
-			set.add("/" + bundleId + "/" + href + "?id=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (page.isDynamic()) {
+				Bundle bundle = page.getBundle();
+				String bundleId = bundle.getSymbolicName();
+				String content = page.getRawContent();
+				String pageId = page.getId();
+				String href;
+				if (content != null)
+					href = resolveVariables(bundleId, content, locale);
+				else
+					href = pageId;
+				set.add("/" + bundleId + "/" + href + "?id=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 		}
 	}
 
