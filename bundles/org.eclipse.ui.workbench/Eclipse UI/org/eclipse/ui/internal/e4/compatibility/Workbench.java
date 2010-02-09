@@ -36,6 +36,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -63,6 +64,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
@@ -107,42 +109,33 @@ public class Workbench implements IWorkbench {
 	}
 
 	@PostConstruct
-	void postConstruct() {
-		try {
-			viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
-					application.getContext());
-			perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
-					PerspectiveRegistry.class, application.getContext());
-			
-			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-					UIEvents.ElementContainer.CHILDREN), new EventHandler() {
-				public void handleEvent(Event event) {
-					if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
-						if (UIEvents.EventTypes.REMOVE.equals(event
-								.getProperty(UIEvents.EventTags.TYPE))) {
-							MWindow window = (MWindow) event
-									.getProperty(UIEvents.EventTags.OLD_VALUE);
-							IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
-									IWorkbenchWindow.class.getName());
-							if (wwindow != null) {
-								fireWindowClosed(wwindow);
-							}
+	void postConstruct() throws InstantiationException, InvocationTargetException {
+		viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class, application
+				.getContext());
+		perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
+				PerspectiveRegistry.class, application.getContext());
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
+			public void handleEvent(Event event) {
+				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
+					if (UIEvents.EventTypes.REMOVE.equals(event
+							.getProperty(UIEvents.EventTags.TYPE))) {
+						MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+						IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
+								IWorkbenchWindow.class.getName());
+						if (wwindow != null) {
+							fireWindowClosed(wwindow);
 						}
 					}
 				}
-			});
+			}
+		});
 
-			application.getContext().set(
-					IWorkbenchLocationService.class.getName(),
-					new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, this, null, null,
-							null, null, 0));
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		application.getContext().set(
+				IWorkbenchLocationService.class.getName(),
+				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, this, null, null, null,
+						null, 0));
 	}
 
 	/*
@@ -430,8 +423,8 @@ public class Workbench implements IWorkbench {
 		IPerspectiveDescriptor descriptor = getPerspectiveRegistry().findPerspectiveWithId(
 				perspectiveId);
 		if (descriptor == null) {
-			// FIXME: NLS
-			throw new WorkbenchException("Could not find perspective with id " + perspectiveId); //$NON-NLS-1$
+			throw new WorkbenchException(NLS.bind(
+					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
@@ -491,8 +484,8 @@ public class Workbench implements IWorkbench {
 		Assert.isNotNull(perspectiveId);
 		IPerspectiveDescriptor targetPerspective = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 		if (targetPerspective == null) {
-			// FIXME: NLS
-			throw new WorkbenchException("Could not find perspective with id " + perspectiveId); //$NON-NLS-1$			
+			throw new WorkbenchException(NLS.bind(
+					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 		
 		if (targetWindow != null) {
@@ -569,9 +562,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getElementFactory(java.lang.String)
 	 */
 	public IElementFactory getElementFactory(String factoryId) {
-		// FIXME compat getElementFactory
-		E4Util.unsupported("getElementFactory"); //$NON-NLS-1$
-		return null;
+		return WorkbenchPlugin.getDefault().getElementFactory(factoryId);
 	}
 
 	/*
@@ -748,9 +739,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// FIXME compat getAdapter
-		E4Util.unsupported("getAdapter"); //$NON-NLS-1$
-		return null;
+		return application.getContext().get(adapter.getName());
 	}
 
 	/*

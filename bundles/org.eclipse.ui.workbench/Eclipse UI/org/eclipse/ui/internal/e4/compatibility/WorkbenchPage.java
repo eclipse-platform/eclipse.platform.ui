@@ -67,6 +67,8 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * @since 3.5
@@ -116,6 +118,41 @@ public class WorkbenchPage implements IWorkbenchPage {
 	void postConstruct() {
 		partService.addPartListener(e4PartListener);
 		window.getContext().set(IPartService.class.getName(), this);
+
+		Collection<MPart> parts = partService.getParts();
+		for (MPart part : parts) {
+			String uri = part.getURI();
+			if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
+				CompatibilityView view = (CompatibilityView) part.getObject();
+				if (view == null) {
+					IViewRegistry registry = getWorkbenchWindow().getWorkbench().getViewRegistry();
+					IViewDescriptor descriptor = registry.find(part.getId());
+					if (descriptor != null) {
+						ViewReference ref = new ViewReference(this, part, descriptor);
+						viewReferences.add(ref);
+					}
+				} else {
+					ViewReference ref = new ViewReference(this, part, view.getDescriptor());
+					viewReferences.add(ref);
+				}
+			} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+				CompatibilityEditor view = (CompatibilityEditor) part.getObject();
+				if (view == null) {
+					IEditorRegistry registry = getWorkbenchWindow().getWorkbench()
+							.getEditorRegistry();
+					EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(part
+							.getId());
+					if (descriptor != null) {
+						EditorReference ref = new EditorReference(this, part, null, null);
+						editorReferences.add(ref);
+					}
+				} else {
+					EditorReference ref = new EditorReference(this, part, view.getEditor()
+							.getEditorInput(), view.getDescriptor());
+					editorReferences.add(ref);
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -313,7 +350,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getActiveEditor()
 	 */
 	public IEditorPart getActiveEditor() {
-		return (IEditorPart) getActivePart();
+		IWorkbenchPart part = getActivePart();
+		return (IEditorPart) (part instanceof IEditorPart ? part : null);
 	}
 
 	/* (non-Javadoc)

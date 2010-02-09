@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -41,8 +42,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return input.getName();
 	}
 
-	public IEditorPart getEditor(boolean restore) {
-		IEditorPart part = (IEditorPart) super.getPart(restore);
+	@Override
+	public IWorkbenchPart getPart(boolean restore) {
+		IWorkbenchPart part = super.getPart(restore);
 		if (part == null && restore) {
 			CompatibilityEditor editor = (CompatibilityEditor) getModel().getObject();
 			try {
@@ -53,6 +55,15 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			return editor.getEditor();
 		}
 		return part;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IEditorReference#getEditor(boolean)
+	 */
+	public IEditorPart getEditor(boolean restore) {
+		return (IEditorPart) getPart(restore);
 	}
 
 	/*

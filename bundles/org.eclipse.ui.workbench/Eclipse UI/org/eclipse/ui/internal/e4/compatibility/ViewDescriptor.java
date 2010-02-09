@@ -26,10 +26,16 @@ public class ViewDescriptor implements IViewDescriptor {
 
 	private MPartDescriptor descriptor;
 	private IConfigurationElement element;
+	private String[] categoryPath;
 
 	public ViewDescriptor(MPartDescriptor descriptor, IConfigurationElement element) {
 		this.descriptor = descriptor;
 		this.element = element;
+
+		String category = descriptor.getCategory();
+		if (category != null) {
+			categoryPath = category.split("/"); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)
@@ -47,8 +53,7 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getCategoryPath()
 	 */
 	public String[] getCategoryPath() {
-		// TODO Auto-generated method stub
-		return null;
+		return categoryPath;
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +112,9 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
+		if (adapter != null && adapter.equals(IConfigurationElement.class)) {
+			return getConfigurationElement();
+		}
 		return null;
 	}
 

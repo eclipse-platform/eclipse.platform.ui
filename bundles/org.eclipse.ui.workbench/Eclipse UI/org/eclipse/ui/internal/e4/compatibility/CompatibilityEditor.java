@@ -35,6 +35,10 @@ public class CompatibilityEditor extends CompatibilityPart {
 		super(part);
 	}
 
+	public EditorDescriptor getDescriptor() {
+		return descriptor;
+	}
+
 	void set(IEditorInput input, EditorDescriptor descriptor) throws PartInitException {
 		this.input = input;
 		this.descriptor = descriptor;

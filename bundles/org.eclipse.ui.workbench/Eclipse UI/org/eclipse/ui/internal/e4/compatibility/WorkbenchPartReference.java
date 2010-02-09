@@ -77,7 +77,7 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 */
 	public IWorkbenchPart getPart(boolean restore) {
 		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
-		return compatibilityPart.getPart();
+		return compatibilityPart == null ? null : compatibilityPart.getPart();
 	}
 
 	/* (non-Javadoc)
