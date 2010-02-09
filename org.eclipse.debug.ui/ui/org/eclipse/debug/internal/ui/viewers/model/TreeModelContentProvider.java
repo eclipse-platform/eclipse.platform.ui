@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 
@@ -566,13 +567,36 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                 delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
             }
 		}
+		
 		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
+            delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
-			viewer.setSelection(new TreeSelection(treePath), false, false);
-            delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
+            ITreeSelection currentSelection = (ITreeSelection)viewer.getSelection();
+            if (currentSelection == null || currentSelection.isEmpty()) {
+                viewer.setSelection(new TreeSelection(treePath), false, false);
+            } else {
+                TreePath[] currentPaths = currentSelection.getPaths();
+                boolean pathInSelection = false;
+                for (int i = 0; i < currentPaths.length; i++) {
+                    if (currentPaths[i].equals(treePath)) {
+                        pathInSelection = true;
+                        break;
+                    }
+                }
+                // Only set the selection if the element is not yet in 
+                // selection.  Otherwise the setSelection() call will 
+                // update selection listeners needlessly. 
+                if (!pathInSelection) {
+                    TreePath[] newPaths = new TreePath[currentPaths.length + 1];
+                    System.arraycopy(currentPaths, 0, newPaths, 0, currentPaths.length);
+                    newPaths[newPaths.length - 1] = treePath;
+                    viewer.setSelection(new TreeSelection(newPaths), false, false);
+                }
+            }
 		}
+		
         if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
             // Look for the reveal flag in the child deltas.  If 

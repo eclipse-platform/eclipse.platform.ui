@@ -27,6 +27,6 @@ public class JFaceViewerStateTests extends StateTests {
     }
 
     protected ITreeModelViewer createViewer(Display display, Shell shell) {
-        return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+        return new TreeModelViewer(fShell, SWT.VIRTUAL | SWT.MULTI, new PresentationContext("TestViewer"));
     }
 }

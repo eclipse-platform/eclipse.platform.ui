@@ -197,7 +197,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
     }
 
     
-    private void expandAlternateElements(TestModel model) {
+    private void expandAlternateElements(TestModel model, boolean waitForAllUpdates) {
         fListener.reset(); 
         fListener.setFailOnRedundantUpdates(false);
         
@@ -217,7 +217,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             int index = i;
             while (element.getChildren().length != 0) {
                 TreePath elementPath = model.findElement(element.getLabel());
-                fListener.addUpdates(elementPath, element, 1, CHILDREN_COUNT_UPDATES);
+                fListener.addUpdates(
+                    elementPath, element, 1, 
+                    CHILDREN_COUNT_UPDATES | (waitForAllUpdates ? CHILDREN_UPDATES : 0) );
                 delta = delta.addNode(element, index, IModelDelta.EXPAND, element.getChildren().length);
                 element = element.getChildren()[0];
                 index = 0;
@@ -243,10 +245,10 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, true);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
+        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1"));
         fViewer.setSelection(originalSelection);
 
         // Update the model
@@ -284,10 +286,10 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, true);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
+        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1"));
         fViewer.setSelection(originalSelection);
         
         // Update the model
@@ -330,11 +332,14 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, true);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
+        // Set a selection in view
+        TreeSelection originalSelection = new TreeSelection(
+            new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
         fViewer.setSelection(originalSelection);
+        Assert.assertEquals(originalSelection, fViewer.getSelection());
 
         // Update the model
         model.removeElementChild(TreePath.EMPTY, 0);
@@ -431,10 +436,11 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, true);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
+        TreeSelection originalSelection = new TreeSelection(
+            new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
         fViewer.setSelection(originalSelection);
         Assert.assertEquals(originalSelection, fViewer.getSelection());
 
@@ -499,7 +505,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 //        model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
@@ -543,6 +549,11 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertEquals(originalSelection, fViewer.getSelection());
     }
     
+    /**
+     * This test verifies that if the model selects a new element 
+     * following a content refresh, the state restore logic will
+     * not override the selection requested by the model.
+     */
     public void testPreserveSelectionDeltaAfterContent() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
@@ -565,7 +576,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         
         // Refresh content.
-        // Note: Wait only for the processing of the delta, nto for all updates
+        // Note: Wait only for the processing of the delta, not for all updates
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
@@ -573,13 +584,13 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Update the viewer with new selection delta to something new in the view
         ModelDelta selectDelta = model.makeElementDelta(model.findElement("2.1"), IModelDelta.SELECT);
 
-        // Wait for the second model dleta to process
+        // Wait for the second model delta to process
         fListener.resetModelChanged();
         model.postDelta(selectDelta);
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         
-        // Wait for all the updates to cimplete (note: we're not resetting the listener.
+        // Wait for all the updates to complete (note: we're not resetting the listener.
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
@@ -703,10 +714,10 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand some, but not all elements
-        expandAlternateElements(model);
+        expandAlternateElements(model, true);
 
         // Set a selection in view
-        fViewer.setSelection(new TreeSelection(model.findElement("5.1.1")));
+        fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("5.1"), model.findElement("5.1.1"), model.findElement("6.1.1") } ));
         
         // Extract the original state from viewer
         ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -734,7 +745,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             Assert.fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState);
         }
     }
-
+    
     public void testSaveAndRestore2() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
@@ -751,6 +762,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Set a selection in view
+        fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("3.2"), model.findElement("3.2.1"), model.findElement("2") } ));
         fViewer.setSelection(new TreeSelection(model.findElement("3.2.3")));
                 
         // Turn off the auto-expand now since we want to text the auto-expand logic
@@ -798,7 +810,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
@@ -850,7 +862,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
-        expandAlternateElements(model);
+        expandAlternateElements(model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
