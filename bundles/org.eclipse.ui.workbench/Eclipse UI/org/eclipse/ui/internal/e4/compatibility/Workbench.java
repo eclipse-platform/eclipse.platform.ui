@@ -276,8 +276,7 @@ public class Workbench implements IWorkbench {
 			return null;
 		}
 
-		Object activeChild = application.getSelectedElement();
-		MWindow activeWindow = (MWindow) activeChild;
+		MWindow activeWindow = application.getSelectedElement();
 		if (activeWindow == null && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
 		}
