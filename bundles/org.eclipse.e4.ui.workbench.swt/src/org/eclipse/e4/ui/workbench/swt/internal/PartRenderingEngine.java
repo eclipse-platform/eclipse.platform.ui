@@ -129,7 +129,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (added.getWidget() == null && renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
 					Widget w = (Widget) createGui(added);
-					if (w instanceof Control) {
+					if (w instanceof Control && !(w instanceof Shell)) {
 						((Control) w).getShell().layout(
 								new Control[] { (Control) w }, SWT.DEFER);
 					}
