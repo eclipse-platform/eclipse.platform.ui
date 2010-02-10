@@ -378,7 +378,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                 UIJob job = new UIJob("restore state") { //$NON-NLS-1$
                                     public IStatus runInUIThread(IProgressMonitor monitor) {
                                         if (!isDisposed() && input.equals(getViewer().getInput())) {
-                                            ModelDelta stateDelta2 = (ModelDelta) fViewerStates.get(keyMementoString);
+                                            ModelDelta stateDelta2 = (ModelDelta) fViewerStates.remove(keyMementoString);
                                             if (stateDelta2 != null) {
                                                 if (DEBUG_STATE_SAVE_RESTORE
                                                     && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID
