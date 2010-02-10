@@ -657,6 +657,12 @@
             sequence="M1+M2+NUMPAD_DIVIDE">
       </key>
       <key
+            commandId="org.eclipse.ui.navigate.expandAll"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+NUMPAD_MULTIPLY">
+      </key>
+      <key
             commandId="org.eclipse.ui.navigate.nextSubTab"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1226,6 +1232,12 @@
                values="org.eclipse.ui.internal.registry.ViewParameterValues">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%command.expandAll.description"
+            id="org.eclipse.ui.navigate.expandAll"
+            name="%command.expandAll.name">
+      </command>
    </extension>
    
    <extension
@@ -1288,6 +1300,10 @@
             commandId="org.eclipse.ui.navigate.collapseAll"
             disabledIcon="$nl$/icons/full/dlcl16/collapseall.gif"
             icon="$nl$/icons/full/elcl16/collapseall.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.navigate.expandAll"
+            icon="$nl$/icons/full/elcl16/expandall.gif">
       </image>
       <image
             commandId="org.eclipse.ui.newWizard"
