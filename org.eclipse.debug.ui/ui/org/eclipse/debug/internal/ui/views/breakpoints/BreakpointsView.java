@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009 Texas Instruments and others
+ * Copyright (c) 2009, 2010 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -595,32 +595,25 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	public void expandAllElementsInViewer() {
         Display display = getSite().getShell().getDisplay(); 
         
-        VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
+        final VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
             display, 0, ((ITreeModelViewer)getViewer()).getPresentationContext());
         
-        final Boolean[] finishedExpanding = new Boolean[] { Boolean.FALSE };
         virtualViewer.setAutoExpandLevel(-1);
         virtualViewer.addViewerUpdateListener(new IViewerUpdateListener() {
             public void viewerUpdatesComplete() {
-                finishedExpanding[0] = Boolean.TRUE;
+            	ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
+                virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
+                ITreeModelViewer treeModelViewer = ((ITreeModelViewer) getViewer());
+                if (treeModelViewer != null) {
+                    ((ITreeModelViewer) getViewer()).updateViewer(stateDelta);
+                }
+                virtualViewer.dispose();
             }
-            
             public void viewerUpdatesBegin() {}
             public void updateStarted(IViewerUpdate update) {}
             public void updateComplete(IViewerUpdate update) {}
         });
-        
         virtualViewer.setInput(getViewer().getInput());
-        
-        while (finishedExpanding[0] == Boolean.FALSE) {
-           if (!display.readAndDispatch ()) display.sleep ();
-        }
-
-        ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
-        virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
-        ((ITreeModelViewer) getViewer()).updateViewer(stateDelta);
-        
-        virtualViewer.dispose();
 	}
 	
 	
