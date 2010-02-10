@@ -23,11 +23,14 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 
-public class WorkbenchPartReference implements IWorkbenchPartReference {
+public abstract class WorkbenchPartReference implements IWorkbenchPartReference {
 
 	private IWorkbenchPage page;
 	private MPart part;
+	private IWorkbenchPart legacyPart;
 
 	private ListenerList propertyListeners = new ListenerList();
 	private ListenerList partPropertyListeners = new ListenerList();
@@ -35,7 +38,9 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	WorkbenchPartReference(IWorkbenchPage page, MPart part) {
 		this.page = page;
 		this.part = part;
+	}
 
+	private void addPropertyListeners() {
 		IWorkbenchPart workbenchPart = getPart(false);
 		if (workbenchPart != null) {
 			workbenchPart.addPropertyListener(new IPropertyListener() {
@@ -55,6 +60,10 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 			}
 		}
 	}
+
+	protected abstract IWorkbenchPart createPart() throws PartInitException;
+
+	protected abstract void initialize(IWorkbenchPart part) throws PartInitException;
 
 	private void firePropertyListeners(Object source, int propId) {
 		for (Object listener : propertyListeners.getListeners()) {
@@ -76,8 +85,17 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
 	 */
 	public IWorkbenchPart getPart(boolean restore) {
-		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
-		return compatibilityPart == null ? null : compatibilityPart.getPart();
+		if (legacyPart == null && restore) {
+			try {
+				legacyPart = createPart();
+				initialize(legacyPart);
+				addPropertyListeners();
+			} catch (PartInitException e) {
+				legacyPart = null;
+				e.printStackTrace();
+			}
+		}
+		return legacyPart;
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +118,7 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 */
 	public String getTitleToolTip() {
 		String toolTip = part.getTooltip();
-		return toolTip == null ? "" : toolTip; //$NON-NLS-1$
+		return Util.safeString(toolTip);
 	}
 
 	/* (non-Javadoc)
@@ -142,8 +160,7 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getContentDescription()
 	 */
 	public String getContentDescription() {
-		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
-		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
+		IWorkbenchPart workbenchPart = getPart(false);
 		if (workbenchPart instanceof IWorkbenchPart2) {
 			return ((IWorkbenchPart2) workbenchPart).getContentDescription();
 		}
@@ -158,7 +175,6 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 		if (part instanceof ISaveablePart) {
 			return ((ISaveablePart) part).isDirty();
 		}
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -170,7 +186,6 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 		if (part instanceof IWorkbenchPart3) {
 			return ((IWorkbenchPart3) part).getPartProperty(key);
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 

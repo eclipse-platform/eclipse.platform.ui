@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -171,9 +173,10 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// FIXME compat getAdapter
-		E4Util.unsupported("getAdapter"); //$NON-NLS-1$
-		return null;
+		if (IWorkbenchSiteProgressService.class == adapter) {
+			return getService(adapter);
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/* (non-Javadoc)

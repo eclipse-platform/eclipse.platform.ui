@@ -12,41 +12,20 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 public class CompatibilityView extends CompatibilityPart {
 
-	private ViewDescriptor descriptor;
+	private ViewReference reference;
 
 	@Inject
-	CompatibilityView(MPart part) {
+	CompatibilityView(MPart part, ViewReference ref) {
 		super(part);
-	}
-
-	ViewDescriptor getDescriptor() {
-		return descriptor;
-	}
-
-	protected IWorkbenchPart createPart() throws PartInitException {
-		try {
-			descriptor = (ViewDescriptor) PlatformUI.getWorkbench().getViewRegistry().find(
-					part.getId());
-			return descriptor.createView();
-		} catch (CoreException e) {
-			IStatus status = e.getStatus();
-			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					status.getCode(), status.getMessage(), status.getException()));
-		}
+		reference = ref;
 	}
 
 	// FIXME: remove me when bug 299760 is fixed
@@ -54,13 +33,18 @@ public class CompatibilityView extends CompatibilityPart {
 		super.doSave(monitor);
 	}
 
-	protected void initialize(IWorkbenchPart part) throws PartInitException {
-		((IViewPart) part).init(
-				new ViewSite(this.part, part, descriptor.getConfigurationElement()), null);
-	}
-
 	public IViewPart getView() {
 		return (IViewPart) getPart();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#getReference()
+	 */
+	@Override
+	public IWorkbenchPartReference getReference() {
+		return reference;
+	}
 }

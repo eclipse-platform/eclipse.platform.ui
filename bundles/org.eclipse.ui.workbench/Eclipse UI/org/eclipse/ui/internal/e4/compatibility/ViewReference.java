@@ -11,17 +11,22 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-	private IViewDescriptor descriptor;
+	private ViewDescriptor descriptor;
 
-	ViewReference(IWorkbenchPage page, MPart part, IViewDescriptor descriptor) {
+	ViewReference(IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
 		super(page, part);
 		this.descriptor = descriptor;
 	}
@@ -44,4 +49,34 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#createPart
+	 * ()
+	 */
+	@Override
+	protected IWorkbenchPart createPart() throws PartInitException {
+		try {
+			return descriptor.createView();
+		} catch (CoreException e) {
+			IStatus status = e.getStatus();
+			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					status.getCode(), status.getMessage(), status.getException()));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#initialize
+	 * (org.eclipse.ui.IWorkbenchPart)
+	 */
+	@Override
+	protected void initialize(IWorkbenchPart part) throws PartInitException {
+		((IViewPart) part).init(
+				new ViewSite(getModel(), part, descriptor.getConfigurationElement()), null);
+	}
 }

@@ -38,6 +38,7 @@ public class ModeledPageLayout implements IPageLayout {
 	private MApplication application;
 	EModelService modelService;
 	MWindow window;
+	WorkbenchPage page;
 	private MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
 
@@ -51,10 +52,11 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public ModeledPageLayout(MApplication application, EModelService modelService, MWindow window,
 			MPerspective perspModel,
-			IPerspectiveDescriptor descriptor) {
+ IPerspectiveDescriptor descriptor, WorkbenchPage page) {
 		this.application = application;
 		this.modelService = modelService;
 		this.window = window;
+		this.page = page;
 		// Create the editor area stack
 		this.perspModel = perspModel;
 		this.descriptor = descriptor;
@@ -135,14 +137,14 @@ public class ModeledPageLayout implements IPageLayout {
 			float ratio, String refId) {
 		MPartStack stack = insertStack(folderId, relationship, ratio, refId,
 				true);
-		return new ModeledFolderLayout(application, stack);
+		return new ModeledFolderLayout(this, application, stack);
 	}
 
 	public IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
 			int relationship, float ratio, String refId) {
 		MPartStack Stack = insertStack(folderId, relationship, ratio, refId,
 				false);
-		return new ModeledPlaceholderFolderLayout(application, Stack);
+		return new ModeledPlaceholderFolderLayout(this, application, Stack);
 	}
 
 	public IPerspectiveDescriptor getDescriptor() {
@@ -170,7 +172,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (stack == null || !(stack instanceof MPartStack))
 			return null;
 
-		return new ModeledPlaceholderFolderLayout(application, (MPartStack) stack);
+		return new ModeledPlaceholderFolderLayout(this, application, (MPartStack) stack);
 	}
 
 	public IViewLayout getViewLayout(String id) {
@@ -215,56 +217,18 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
-	public static MPart createViewModel(MApplication application, String id, boolean visible) {
+	public static MPart createViewModel(MApplication application, String id, boolean visible,
+			WorkbenchPage page) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getId().equals(id)) {
 				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
 				part.setToBeRendered(visible);
+				page.createViewReferenceForPart(part, id);
 				return part;
 			}
 		}
 
 		throw new RuntimeException("Unknown id: " + id); //$NON-NLS-1$
-		// MPart viewModel = MApplicationFactory.eINSTANCE.createPart();
-		//
-		// // HACK!! allow Contributed parts in a perspective
-		//		if (id.indexOf("platform:") >= 0) { //$NON-NLS-1$
-		// viewModel.setURI(id);
-		//			viewModel.setLabel("Contrib View"); //$NON-NLS-1$
-		// return viewModel;
-		// }
-		//
-		// viewModel
-		// .setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView");
-		// viewModel.setId(id);
-		//
-		// // Get the actual view name from the extension registry
-		// IConfigurationElement[] views = ExtensionUtils
-		// .getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
-		// IConfigurationElement viewContribution =
-		// ExtensionUtils.findExtension(
-		// views, id);
-		// if (viewContribution != null) {
-		//			viewModel.setLabel(viewContribution.getAttribute("name")); //$NON-NLS-1$
-		//
-		// // Convert the relative path into a bundle URI
-		//			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
-		// if (imagePath != null) {
-		//				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
-		// if (imagePath.charAt(0) != '/') {
-		// imagePath = '/' + imagePath;
-		// }
-		// String bundleId = viewContribution.getContributor().getName();
-		//				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
-		// viewModel.setIconURI(imageURI);
-		// }
-		// } else
-		// viewModel.setLabel(id); // No registered view, create error part?
-		//
-		// // sets its visibility (false == placeholder)
-		// viewModel.setVisible(visible);
-		//
-		// return viewModel;
 	}
 
 	public static MPartStack createStack(String id, boolean visible) {
@@ -281,7 +245,7 @@ public class ModeledPageLayout implements IPageLayout {
 			refModel = refModel.getParent();
 		}
 
-		MPart viewModel = createViewModel(application, viewId, visible);
+		MPart viewModel = createViewModel(application, viewId, visible, page);
 
 		if (withStack) {
 			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$

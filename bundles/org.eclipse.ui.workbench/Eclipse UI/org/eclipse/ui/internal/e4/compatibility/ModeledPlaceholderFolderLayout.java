@@ -20,14 +20,18 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 	protected MApplication application;
 	protected MPartStack folderModel;
+	protected ModeledPageLayout layout;
 
-	public ModeledPlaceholderFolderLayout(MApplication application, MPartStack stackModel) {
+	public ModeledPlaceholderFolderLayout(ModeledPageLayout l, MApplication application,
+			MPartStack stackModel) {
 		this.application = application;
 		folderModel = stackModel;
+		layout = l;
 	}
 
 	public void addPlaceholder(String viewId) {
-		MPart viewModel = ModeledPageLayout.createViewModel(application, viewId, false);
+		MPart viewModel = ModeledPageLayout
+				.createViewModel(application, viewId, false, layout.page);
 		folderModel.getChildren().add(viewModel);
 	}
 

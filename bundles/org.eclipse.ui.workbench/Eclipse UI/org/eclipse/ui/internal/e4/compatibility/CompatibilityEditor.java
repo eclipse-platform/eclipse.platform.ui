@@ -12,57 +12,20 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 public class CompatibilityEditor extends CompatibilityPart {
 
-	private IEditorInput input;
-	private EditorDescriptor descriptor;
+	private EditorReference reference;
 
 	@Inject
-	CompatibilityEditor(MPart part) {
+	CompatibilityEditor(MPart part, EditorReference ref) {
 		super(part);
-	}
-
-	public EditorDescriptor getDescriptor() {
-		return descriptor;
-	}
-
-	void set(IEditorInput input, EditorDescriptor descriptor) throws PartInitException {
-		this.input = input;
-		this.descriptor = descriptor;
-
-		initialized = true;
-		create();
-	}
-
-	@Override
-	protected IWorkbenchPart createPart() throws PartInitException {
-		try {
-			return descriptor.createEditor();
-		} catch (CoreException e) {
-			IStatus status = e.getStatus();
-			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					status.getCode(), status.getMessage(), status.getException()));
-		}
-	}
-
-	@Override
-	public void create() throws PartInitException {
-		if (initialized) {
-			super.create();
-		}
+		reference = ref;
 	}
 
 	// FIXME: remove me when bug 299760 is fixed
@@ -70,16 +33,18 @@ public class CompatibilityEditor extends CompatibilityPart {
 		super.doSave(monitor);
 	}
 
-	private boolean initialized = false;
-
-	@Override
-	protected void initialize(IWorkbenchPart part) throws PartInitException {
-		((IEditorPart) part).init(new EditorSite(this.part, part, descriptor
-				.getConfigurationElement()), input);
-	}
-
 	public IEditorPart getEditor() {
 		return (IEditorPart) getPart();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#getReference()
+	 */
+	@Override
+	public IWorkbenchPartReference getReference() {
+		return reference;
+	}
 }

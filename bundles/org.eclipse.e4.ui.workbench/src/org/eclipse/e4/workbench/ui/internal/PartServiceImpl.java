@@ -75,7 +75,9 @@ public class PartServiceImpl implements EPartService {
 		public void handleEvent(Event event) {
 			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			if (selected instanceof MPart) {
-				firePartBroughtToTop((MPart) selected);
+				if (((MPart) selected).isToBeRendered()) {
+					firePartBroughtToTop((MPart) selected);
+				}
 			}
 		}
 	};

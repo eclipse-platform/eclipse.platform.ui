@@ -18,12 +18,13 @@ import org.eclipse.ui.IFolderLayout;
 
 public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 		implements IFolderLayout {
-	public ModeledFolderLayout(MApplication application, MPartStack stackModel) {
-		super(application, stackModel);
+	public ModeledFolderLayout(ModeledPageLayout layout, MApplication application,
+			MPartStack stackModel) {
+		super(layout, application, stackModel);
 	}
 
 	public void addView(String viewId) {
-		MPart viewModel = ModeledPageLayout.createViewModel(application, viewId, true);
+		MPart viewModel = ModeledPageLayout.createViewModel(application, viewId, true, layout.page);
 		folderModel.getChildren().add(viewModel);
 	}
 }

@@ -29,6 +29,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 
 public abstract class CompatibilityPart {
@@ -52,9 +53,7 @@ public abstract class CompatibilityPart {
 		this.part = part;
 	}
 
-	protected abstract IWorkbenchPart createPart() throws PartInitException;
-
-	protected abstract void initialize(IWorkbenchPart part) throws PartInitException;
+	public abstract IWorkbenchPartReference getReference();
 
 	protected void createPartControl(final IWorkbenchPart part, Composite parent) {
 		try {
@@ -82,8 +81,7 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() throws PartInitException {
-		wrapped = createPart();
-		initialize(wrapped);
+		wrapped = getReference().getPart(true);
 		createPartControl(wrapped, composite);
 		delegateSetFocus();
 
@@ -117,4 +115,7 @@ public abstract class CompatibilityPart {
 		return wrapped;
 	}
 
+	public MPart getModel() {
+		return part;
+	}
 }

@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -42,21 +45,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return input.getName();
 	}
 
-	@Override
-	public IWorkbenchPart getPart(boolean restore) {
-		IWorkbenchPart part = super.getPart(restore);
-		if (part == null && restore) {
-			CompatibilityEditor editor = (CompatibilityEditor) getModel().getObject();
-			try {
-				editor.set(input, descriptor);
-			} catch (PartInitException e) {
-				WorkbenchPlugin.log(e);
-			}
-			return editor.getEditor();
-		}
-		return part;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -85,4 +73,34 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return input;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#createPart
+	 * ()
+	 */
+	@Override
+	protected IWorkbenchPart createPart() throws PartInitException {
+		try {
+			return descriptor.createEditor();
+		} catch (CoreException e) {
+			IStatus status = e.getStatus();
+			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					status.getCode(), status.getMessage(), status.getException()));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#initialize
+	 * (org.eclipse.ui.IWorkbenchPart)
+	 */
+	@Override
+	protected void initialize(IWorkbenchPart part) throws PartInitException {
+		((IEditorPart) part).init(new EditorSite(getModel(), part, descriptor
+				.getConfigurationElement()), input);
+	}
 }

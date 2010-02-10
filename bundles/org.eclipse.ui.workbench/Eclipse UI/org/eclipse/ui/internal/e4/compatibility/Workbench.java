@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IServiceScopes;
@@ -797,6 +798,7 @@ public class Workbench implements IWorkbench {
 	private static void initializeLegacyServices(IEclipseContext appContext) {
 		appContext.set(ICommandService.class.getName(), new FakeCommandService());
 		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
+		appContext.set(IMenuService.class.getName(), new FakeMenuService());
 	}
 
 	public WorkbenchAdvisor getAdvisor() {

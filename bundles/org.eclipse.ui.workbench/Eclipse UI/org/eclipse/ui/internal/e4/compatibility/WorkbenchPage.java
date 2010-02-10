@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,10 +31,12 @@ import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -68,7 +72,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
-import org.eclipse.ui.views.IViewRegistry;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * @since 3.5
@@ -123,34 +128,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		for (MPart part : parts) {
 			String uri = part.getURI();
 			if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
-				CompatibilityView view = (CompatibilityView) part.getObject();
-				if (view == null) {
-					IViewRegistry registry = getWorkbenchWindow().getWorkbench().getViewRegistry();
-					IViewDescriptor descriptor = registry.find(part.getId());
-					if (descriptor != null) {
-						ViewReference ref = new ViewReference(this, part, descriptor);
-						viewReferences.add(ref);
-					}
-				} else {
-					ViewReference ref = new ViewReference(this, part, view.getDescriptor());
-					viewReferences.add(ref);
-				}
+				createViewReferenceForPart(part, part.getId());
 			} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-				CompatibilityEditor view = (CompatibilityEditor) part.getObject();
-				if (view == null) {
-					IEditorRegistry registry = getWorkbenchWindow().getWorkbench()
-							.getEditorRegistry();
-					EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(part
-							.getId());
-					if (descriptor != null) {
-						EditorReference ref = new EditorReference(this, part, null, null);
-						editorReferences.add(ref);
-					}
-				} else {
-					EditorReference ref = new EditorReference(this, part, view.getEditor()
-							.getEditorInput(), view.getDescriptor());
-					editorReferences.add(ref);
-				}
+				// TODO compat: we need that editor input back, or we have squat
+				createEditorReferenceForPart(part, null, part.getId());
 			}
 		}
 	}
@@ -638,22 +619,41 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
-		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
-		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
+
 
 		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		createEditorReferenceForPart(editor, input, editorId);
 		partService.showPart(editor, PartState.VISIBLE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
 
 		if (activate) {
-			compatibilityEditor.set(input, descriptor);
 			partService.activate(editor);
 		}
 
-		editorReferences.add(new EditorReference(this, editor, input, descriptor));
 
 		return compatibilityEditor.getEditor();
+	}
+
+	private void createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId) {
+		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
+		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
+		final EditorReference ref = new EditorReference(this, part, input, descriptor);
+		editorReferences.add(ref);
+		final IEventBroker broker = (IEventBroker) application.getContext().get(
+				IEventBroker.class.getName());
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				new EventHandler() {
+					public void handleEvent(Event event) {
+						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+						if (element == part) {
+							if (part.getContext() != null) {
+								broker.unsubscribe(this);
+								part.getContext().set(EditorReference.class.getName(), ref);
+							}
+						}
+					}
+				});
 	}
 
 	/* (non-Javadoc)
@@ -783,8 +783,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		modelPerspective.setId(perspective.getId());
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
 		factory.createInitialLayout(new ModeledPageLayout(application, modelService, window,
-				modelPerspective,
-				perspective));
+				modelPerspective, perspective, this));
 
 		window.getChildren().add(modelPerspective);
 	}
@@ -864,6 +863,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 						viewId));
 			}
 
+			createViewReferenceForPart(part, viewId);
 			partService.showPart(part, convert(mode));
 
 			if (secondaryId != null) {
@@ -872,12 +872,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
-			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
 
 			return compatibilityView.getView();
 		}
-
-		boolean rendered = part.isToBeRendered();
 
 		part = partService.showPart(part, convert(mode));
 		if (secondaryId != null) {
@@ -890,12 +887,27 @@ public class WorkbenchPage implements IWorkbenchPage {
 			compatibilityView.delegateSetFocus();
 		}
 
-		if (!rendered) {
-			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
-		}
-
-		compatibilityView = (CompatibilityView) part.getObject();
 		return compatibilityView.getView();
+	}
+
+	public void createViewReferenceForPart(final MPart part, String viewId) {
+		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
+		final ViewReference ref = new ViewReference(this, part, (ViewDescriptor) desc);
+		final IEventBroker broker = (IEventBroker) application.getContext().get(
+				IEventBroker.class.getName());
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				new EventHandler() {
+					public void handleEvent(Event event) {
+						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+						if (element == part) {
+							if (part.getContext() != null) {
+								broker.unsubscribe(this);
+								part.getContext().set(ViewReference.class.getName(), ref);
+							}
+						}
+					}
+				});
+		viewReferences.add(ref);
 	}
 
 	private MPartDescriptor findDescriptor(String id) {
@@ -1006,18 +1018,31 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (mpart != null) {
 			MElementContainer<?> parent = mpart.getParent();
 			if (parent instanceof MPartStack) {
-				List<IViewPart> stack = new ArrayList<IViewPart>();
+				List<CompatibilityView> stack = new ArrayList<CompatibilityView>();
 
 				for (Object child : parent.getChildren()) {
 					MPart siblingPart = (MPart) child;
 					Object siblingObject = siblingPart.getObject();
 					if (siblingObject instanceof CompatibilityView) {
-						IViewPart view = ((CompatibilityView) siblingObject).getView();
-						stack.add(view);
+						stack.add((CompatibilityView) siblingObject);
 					}
 				}
 
-				return stack.toArray(new IViewPart[stack.size()]);
+				// sort the list by activation order (most recently activated
+				// first)
+				Collections.sort(stack, new Comparator<CompatibilityView>() {
+					public int compare(CompatibilityView o1, CompatibilityView o2) {
+						int pos1 = (-1) * activationList.indexOf(o1.getModel());
+						int pos2 = (-1) * activationList.indexOf(o2.getModel());
+						return pos1 - pos2;
+					}
+				});
+
+				IViewPart[] result = new IViewPart[stack.size()];
+				for (int i = 0; i < result.length; i++) {
+					result[i] = stack.get(i).getView();
+				}
+				return result;
 			}
 
 			// not in a stack, standalone
@@ -1403,13 +1428,51 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
+	ArrayList<MPart> activationList = new ArrayList<MPart>();
+
+	private void updateActivations(MPart part) {
+		activationList.remove(part);
+		activationList.add(part);
+		System.err.println("activate: " + part); //$NON-NLS-1$
+	}
+
+	private void updateBroughtToTop(MPart part) {
+		MElementContainer<?> parent = part.getParent();
+		if (parent instanceof MPartStack) {
+			int newIndex = lastIndexOfContainer(parent);
+			// New index can be -1 if there is no last index
+			if (newIndex >= 0 && part == activationList.get(newIndex)) {
+				return;
+			}
+			activationList.remove(part);
+			if (newIndex >= 0 && newIndex < activationList.size() - 1) {
+				activationList.add(newIndex + 1, part);
+			} else {
+				activationList.add(part);
+			}
+			System.err.println("broughtToTop: " + part); //$NON-NLS-1$
+		}
+	}
+
+	private int lastIndexOfContainer(MElementContainer<?> parent) {
+		for (int i = activationList.size() - 1; i >= 0; i--) {
+			MPart mPart = activationList.get(i);
+			if (mPart.getParent() == parent) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	class E4PartListener implements org.eclipse.e4.workbench.modeling.IPartListener {
 
 		public void partActivated(MPart part) {
+			updateActivations(part);
 			firePartActivated(part);
 		}
 
 		public void partBroughtToTop(MPart part) {
+			updateBroughtToTop(part);
 			firePartBroughtToTop(part);
 		}
 
