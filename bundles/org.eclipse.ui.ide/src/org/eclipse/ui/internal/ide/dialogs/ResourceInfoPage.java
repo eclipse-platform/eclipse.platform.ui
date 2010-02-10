@@ -140,6 +140,8 @@ public class ResourceInfoPage extends PropertyPage {
 	 * @return the composite for the group
 	 */
 	private Composite createBasicInfoGroup(Composite parent, IResource resource) {
+		initializeDialogUnits(parent);
+		
 		Composite basicInfoComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -200,6 +202,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
+			gd.verticalAlignment = SWT.TOP;
 			gd.horizontalAlignment = GridData.FILL;
 			locationComposite.setLayoutData(gd);
 
@@ -211,6 +214,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
+			gd.verticalAlignment = SWT.TOP;
 			gd.horizontalAlignment = GridData.FILL;
 			locationValue.setLayoutData(gd);
 			locationValue.setBackground(locationValue.getDisplay().getSystemColor(
@@ -218,12 +222,13 @@ public class ResourceInfoPage extends PropertyPage {
 
 			Button editButton = new Button(locationComposite, SWT.PUSH);
 			editButton.setText(EDIT_TITLE);
-			gd = new GridData();
-			gd.widthHint = convertWidthInCharsToPixels(EDIT_TITLE
-					.length()) * 2 + 40;
-			gd.grabExcessHorizontalSpace = true;
-			gd.horizontalAlignment = GridData.FILL;
-			editButton.setLayoutData(gd);
+			setButtonLayoutData(editButton);
+			((GridData) editButton.getLayoutData()).verticalAlignment = SWT.TOP;
+			int locationValueHeight = locationValue.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+			int editButtonHeight = editButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+			int verticalIndent = (editButtonHeight - locationValueHeight) / 2 ;
+			((GridData) locationTitle.getLayoutData()).verticalIndent = verticalIndent;
+			((GridData) locationValue.getLayoutData()).verticalIndent = verticalIndent;
 			editButton.addSelectionListener(new SelectionListener() {
 				public void widgetDefaultSelected(SelectionEvent e) {
 					editLinkLocation();
