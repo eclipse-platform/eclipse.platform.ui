@@ -36,6 +36,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -63,6 +65,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.dialogs.ResourceFilterEditDialog;
 import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
+import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -468,8 +471,24 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 		} else {
 			
-			Image folderImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-	                ISharedImages.IMG_OBJ_FOLDER).createImage();
+			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+	                ISharedImages.IMG_OBJ_FOLDER);
+
+			ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
+			linkedResourceOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+			"$nl$/icons/full/ovr16/link_ovr.gif")}; //$NON-NLS-1$
+			
+			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor, linkedResourceOverlayMap, new Point(16, 16)); 
+
+			ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
+			virtualFolderOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/ovr16/virt_ovr.gif")}; //$NON-NLS-1$
+
+			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor, virtualFolderOverlayMap, new Point(16, 16)); 
+
+			Image folderImage = folderDescriptor.createImage();
 			useDefaultLocation = new Button(advancedComposite, SWT.RADIO);
 
 			int indent = useDefaultLocation.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -482,9 +501,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			data.horizontalIndent = indent;
 			useDefaultLocation.setLayoutData(data);
 
-			Image virtualFolderImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH,
-					"$nl$/icons/full/obj16/virt_fldr_obj.gif").createImage(); //$NON-NLS-1$
+			Image virtualFolderImage = virtualFolderDescriptor.createImage();
 
 			useVirtualFolder = new Button(advancedComposite, SWT.RADIO);
 			useVirtualFolder.setFont(advancedComposite.getFont());
@@ -495,9 +512,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			data.horizontalIndent = indent;
 			useVirtualFolder.setLayoutData(data);
 
-			Image linkedFolderImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH,
-					"$nl$/icons/full/obj16/link_fldr_obj.gif").createImage(); //$NON-NLS-1$
+			Image linkedFolderImage = linkedFolderDescriptor.createImage();
 
 			useLinkedResource = new Button(advancedComposite, SWT.RADIO);
 			useLinkedResource.setFont(advancedComposite.getFont());
