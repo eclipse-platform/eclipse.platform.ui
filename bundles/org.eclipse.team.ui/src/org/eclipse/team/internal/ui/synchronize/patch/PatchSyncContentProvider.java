@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
+import org.eclipse.compare.internal.patch.HunkDiffNode;
 import org.eclipse.compare.internal.patch.PatchDiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -127,4 +128,11 @@ public class PatchSyncContentProvider extends SynchronizationContentProvider {
 			cv.removeFilter(ExcludedPatchDiffNodesFilter.getInstance());
 		}
 	}
+
+	public boolean hasChildren(final Object element) {
+		if (element instanceof HunkDiffNode)
+			return false;
+		return super.hasChildren(element);
+	}
+
 }
