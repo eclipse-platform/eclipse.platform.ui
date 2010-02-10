@@ -632,6 +632,14 @@
             <actionProvider
                   class="org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchSynchronizationActionProvider">
             </actionProvider>
+            <commonSorter
+                  class="org.eclipse.compare.internal.patch.DiffViewerComparator">
+               <parentExpression>
+                  <instanceof
+                        value="org.eclipse.compare.internal.patch.PatchFileDiffNode">
+                  </instanceof>
+               </parentExpression>
+            </commonSorter>
          </navigatorContent>
       </extension>
       <extension
