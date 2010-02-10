@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -125,7 +126,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Map of viewer states keyed by viewer input mementos
      */
-    private Map fViewerStates = new LRUMap(20);
+    private Map fViewerStates = Collections.synchronizedMap(new LRUMap(20));
 
     /**
      * Pending viewer state to be restored
@@ -256,7 +257,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * 
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
-    public synchronized void dispose() {
+    public void dispose() {
         // cancel pending updates
         synchronized (fRequestsInProgress) {
             Iterator iterator = fRequestsInProgress.values().iterator();
@@ -269,11 +270,18 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             }
             fWaitingRequests.clear();
         }
-        fModelListeners.clear();
-        fUpdateListeners.clear();
-        fStateUpdateListeners.clear();
-        disposeAllModelProxies();
-        fViewer = null;
+
+        synchronized(this) {
+            for (Iterator itr = fPendingStateSaves.iterator(); itr.hasNext(); ) {
+                ((IMementoManager)itr.next()).cancel();
+            }
+            
+            fModelListeners.clear();
+            fUpdateListeners.clear();
+            fStateUpdateListeners.clear();
+            disposeAllModelProxies();
+            fViewer = null;
+        }
     }
 
     public synchronized boolean isDisposed() {
@@ -350,7 +358,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                  * IMementoManager#requestComplete(org.eclipse.debug.internal.ui
                  * .viewers.model.provisional.IElementMementoRequest)
                  */
-                public synchronized void requestComplete(IElementMementoRequest request) {
+                public void requestComplete(IElementMementoRequest request) {
                     notifyStateUpdate(input, UPDATE_COMPLETE, request);
 
                     if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
@@ -359,28 +367,30 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                         try {
                             keyMemento.save(writer);
                             final String keyMementoString = writer.toString();
-                            final ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
+                            ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
                                 if (DEBUG_STATE_SAVE_RESTORE
                                     && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                                     System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
-                                stateDelta.setElement(input);
                                 // begin restoration
                                 UIJob job = new UIJob("restore state") { //$NON-NLS-1$
                                     public IStatus runInUIThread(IProgressMonitor monitor) {
                                         if (!isDisposed() && input.equals(getViewer().getInput())) {
-                                            if (DEBUG_STATE_SAVE_RESTORE
-                                                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID
-                                                    .equals(getPresentationContext().getId()))) {
-                                                System.out.println("STATE RESTORE BEGINS"); //$NON-NLS-1$
-                                                System.out.println("\tRESTORE: " + stateDelta.toString()); //$NON-NLS-1$
-                                                notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+                                            ModelDelta stateDelta2 = (ModelDelta) fViewerStates.get(keyMementoString);
+                                            if (stateDelta2 != null) {
+                                                if (DEBUG_STATE_SAVE_RESTORE
+                                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID
+                                                        .equals(getPresentationContext().getId()))) {
+                                                    System.out.println("STATE RESTORE BEGINS"); //$NON-NLS-1$
+                                                    System.out.println("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
+                                                    notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+                                                }
+                                                stateDelta2.setElement(input);
+                                                fPendingState = stateDelta2;
+                                                doInitialRestore(fPendingState);
                                             }
-                                            fViewerStates.remove(keyMementoString);
-                                            fPendingState = stateDelta;
-                                            doInitialRestore(fPendingState);
                                         } else {
                                             if (DEBUG_STATE_SAVE_RESTORE
                                                 && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
@@ -434,8 +444,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                  * IMementoManager#addRequest(org.eclipse.debug.internal.ui.viewers
                  * .model.provisional.IElementMementoRequest)
                  */
-                public synchronized void addRequest(IElementMementoRequest req) {
+                public void addRequest(IElementMementoRequest req) {
                     fRequest = req;
+                }
+                
+                public void cancel() {
+                    // not used
                 }
 
             };
@@ -938,7 +952,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
              */
             private List requests = new ArrayList();
 
-            private boolean abort = false;
+            private volatile boolean abort = false;
 
             /*
              * (non-Javadoc)
@@ -949,7 +963,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
              * #requestComplete(org.eclipse.debug.internal.ui.viewers
              * .model.provisional.IElementMementoRequest)
              */
-            public synchronized void requestComplete(IElementMementoRequest request) {
+            public void requestComplete(IElementMementoRequest request) {
                 notifyStateUpdate(input, UPDATE_COMPLETE, request);
                 if (DEBUG_STATE_SAVE_RESTORE
                     && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
@@ -958,8 +972,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
                 if (!abort) {
                     if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
-                        requests.remove(request);
-                        if (requests.isEmpty()) {
+                        boolean requestsEmpty = false; 
+                        synchronized(this) {
+                            requests.remove(request);
+                            requestsEmpty = requests.isEmpty();
+                        }
+                        if (requestsEmpty) {
                             XMLMemento keyMemento = (XMLMemento) rootDelta.getElement();
                             StringWriter writer = new StringWriter();
                             try {
@@ -977,22 +995,28 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                         }
                     } else {
                         abort = true;
-                        Iterator iterator = requests.iterator();
-                        while (iterator.hasNext()) {
-                            IElementMementoRequest req = (IElementMementoRequest) iterator.next();
-                            req.cancel();
-                        }
-                        requests.clear();
-                        if (DEBUG_STATE_SAVE_RESTORE
-                            && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
-                                .getId()))) {
-                            System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
-                        }
-                        stateSaveComplete(input, this);
+                        cancel();
                     }
                 }
             }
 
+            public void cancel() {
+                synchronized (this) {
+                    Iterator iterator = requests.iterator();
+                    while (iterator.hasNext()) {
+                        IElementMementoRequest req = (IElementMementoRequest) iterator.next();
+                        req.cancel();
+                    }
+                    requests.clear();
+                    if (DEBUG_STATE_SAVE_RESTORE
+                        && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
+                            .getId()))) {
+                        System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
+                    }
+                }
+                stateSaveComplete(input, this);
+            }
+            
             /*
              * (non-Javadoc)
              * 

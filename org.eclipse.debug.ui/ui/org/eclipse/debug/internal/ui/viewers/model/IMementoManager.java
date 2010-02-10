@@ -35,4 +35,9 @@ interface IMementoManager {
 	 * Process the queued requests. Accepts no more new requests.
 	 */
 	public void processReqeusts();
+
+    /**
+     * Cancels the requests in progress.
+     */
+    public void cancel();
 }
