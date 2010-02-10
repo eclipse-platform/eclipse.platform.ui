@@ -453,8 +453,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         expandAlternateElements(model, true);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(
-            new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
+//        TreeSelection originalSelection = new TreeSelection(
+//            new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
+        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
         fViewer.setSelection(originalSelection);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 
