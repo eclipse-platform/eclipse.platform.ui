@@ -21,12 +21,15 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -69,6 +72,13 @@ public abstract class CompatibilityPart {
 					}
 				}
 			});
+			// TODO compat: we need to hook into the view toolbar or view menu
+			// as appropriate
+			if (part instanceof IViewPart) {
+				IActionBars actionBars = ((IViewPart) part).getViewSite().getActionBars();
+				((ToolBarManager) actionBars.getToolBarManager()).createControl(parent).setVisible(
+						false);
+			}
 			part.createPartControl(parent);
 		} catch (Throwable ex) {
 			ex.printStackTrace(System.err);

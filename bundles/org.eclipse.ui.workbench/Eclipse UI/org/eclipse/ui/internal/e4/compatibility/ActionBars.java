@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.HashMap;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
@@ -35,6 +36,8 @@ public class ActionBars implements IActionBars {
 
 	private MPart part;
 
+	private HashMap<String, IAction> actions = new HashMap<String, IAction>();
+
 	ActionBars(MPart part) {
 		this.part = part;
 	}
@@ -45,9 +48,8 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#clearGlobalActionHandlers()
 	 */
 	public void clearGlobalActionHandlers() {
-		// FIXME compat clearGlobalActionHandlers
-		E4Util.unsupported("clearGlobalActionHandlers"); //$NON-NLS-1$
-
+		// TODO compat this really should be clearing registered handlers
+		actions.clear();
 	}
 
 	/*
@@ -57,8 +59,7 @@ public class ActionBars implements IActionBars {
 	 */
 	public IAction getGlobalActionHandler(String actionId) {
 		// FIXME compat getGlobalActionHandler
-		E4Util.unsupported("getGlobalActionHandler"); //$NON-NLS-1$
-		return null;
+		return actions.get(actionId);
 	}
 
 	/*
@@ -129,9 +130,9 @@ public class ActionBars implements IActionBars {
 	 * org.eclipse.jface.action.IAction)
 	 */
 	public void setGlobalActionHandler(String actionId, IAction handler) {
-		// FIXME compat setGlobalActionHandler
-		E4Util.unsupported("setGlobalActionHandler"); //$NON-NLS-1$
-
+		// FIXME compat setGlobalActionHandler: needs to actually register
+		// handlers
+		actions.put(actionId, handler);
 	}
 
 	/*
@@ -140,9 +141,12 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#updateActionBars()
 	 */
 	public void updateActionBars() {
-		// FIXME compat updateActionBars
-		E4Util.unsupported("updateActionBars"); //$NON-NLS-1$
-
+		// FIXME compat: updateActionBars : should do someting useful
+		getStatusLineManager().update(false);
+		getMenuManager().update(false);
+		if (manager != null) {
+			getToolBarManager().update(false);
+		}
 	}
 
 }
