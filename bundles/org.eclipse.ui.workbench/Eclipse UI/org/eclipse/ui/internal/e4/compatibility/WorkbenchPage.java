@@ -1433,7 +1433,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private void updateActivations(MPart part) {
 		activationList.remove(part);
 		activationList.add(part);
-		System.err.println("activate: " + part); //$NON-NLS-1$
 	}
 
 	private void updateBroughtToTop(MPart part) {
@@ -1450,7 +1449,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			} else {
 				activationList.add(part);
 			}
-			System.err.println("broughtToTop: " + part); //$NON-NLS-1$
 		}
 	}
 
