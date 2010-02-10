@@ -557,6 +557,7 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- Info ---
 	public static String ResourceInfo_readOnly;
 	public static String ResourceInfo_executable;
+	public static String ResourceInfo_locked;
 	public static String ResourceInfo_archive;
 	public static String ResourceInfo_derived;
 	public static String ResourceInfo_type;

@@ -74,6 +74,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private Button derivedBox;
 
+	private Button immutableBox;
+
 	private Button permissionBoxes[];
 
 	private boolean previousReadOnlyValue;
@@ -84,7 +86,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private boolean previousDerivedValue;
 
-	private int previousPermissionValues;
+	private int previousPermissionsValue;
 
 	private IContentDescription cachedContentDescription;
 
@@ -95,6 +97,8 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String READ_ONLY = IDEWorkbenchMessages.ResourceInfo_readOnly;
 
 	private static String EXECUTABLE = IDEWorkbenchMessages.ResourceInfo_executable;
+
+	private static String LOCKED = IDEWorkbenchMessages.ResourceInfo_locked;
 
 	private static String ARCHIVE = IDEWorkbenchMessages.ResourceInfo_archive;
 
@@ -395,12 +399,13 @@ public class ResourceInfoPage extends PropertyPage {
 		if (resource.getType() != IResource.PROJECT) {
 			createSeparator(composite);
 			int fsAttributes = getFileSystemAttributes(resource);
+			if (isPermissionsSupport(fsAttributes))
+				previousPermissionsValue = fetchPermissions(resource);
 			createStateGroup(composite, resource, fsAttributes);
-			if (isPermissionSupport(fsAttributes)) {
-				previousPermissionValues = fetchPermissions(resource);
+			if (isPermissionsSupport(fsAttributes)) {
 				createSeparator(composite);
-				createPermissionGroup(composite);
-				setPermissionsTableSelection(previousPermissionValues);
+				createPermissionsGroup(composite);
+				setPermissionsSelection(previousPermissionsValue);
 			}
 		}
 		encodingEditor = new ResourceEncodingFieldEditor(
@@ -468,6 +473,8 @@ public class ResourceInfoPage extends PropertyPage {
 					: 0;
 			permissions |= info.getAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE) ? EFS.ATTRIBUTE_OTHER_EXECUTE
 					: 0;
+			permissions |= info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE) ? EFS.ATTRIBUTE_IMMUTABLE
+					: 0;
 		}
 		return permissions;
 	}
@@ -482,19 +489,21 @@ public class ResourceInfoPage extends PropertyPage {
 		return permissions;
 	}
 
-	private void setPermissionsTableSelection(int permissionsValue) {
-		permissionBoxes[0].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_READ) != 0);
-		permissionBoxes[1].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_WRITE) != 0);
-		permissionBoxes[2].setSelection((permissionsValue & EFS.ATTRIBUTE_OWNER_EXECUTE) != 0);
-		permissionBoxes[3].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_READ) != 0);
-		permissionBoxes[4].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_WRITE) != 0);
-		permissionBoxes[5].setSelection((permissionsValue & EFS.ATTRIBUTE_GROUP_EXECUTE) != 0);
-		permissionBoxes[6].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_READ) != 0);
-		permissionBoxes[7].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
-		permissionBoxes[8].setSelection((permissionsValue & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
+	private void setPermissionsSelection(int permissions) {
+		permissionBoxes[0].setSelection((permissions & EFS.ATTRIBUTE_OWNER_READ) != 0);
+		permissionBoxes[1].setSelection((permissions & EFS.ATTRIBUTE_OWNER_WRITE) != 0);
+		permissionBoxes[2].setSelection((permissions & EFS.ATTRIBUTE_OWNER_EXECUTE) != 0);
+		permissionBoxes[3].setSelection((permissions & EFS.ATTRIBUTE_GROUP_READ) != 0);
+		permissionBoxes[4].setSelection((permissions & EFS.ATTRIBUTE_GROUP_WRITE) != 0);
+		permissionBoxes[5].setSelection((permissions & EFS.ATTRIBUTE_GROUP_EXECUTE) != 0);
+		permissionBoxes[6].setSelection((permissions & EFS.ATTRIBUTE_OTHER_READ) != 0);
+		permissionBoxes[7].setSelection((permissions & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
+		permissionBoxes[8].setSelection((permissions & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
+		if (immutableBox != null)
+			immutableBox.setSelection((permissions & EFS.ATTRIBUTE_IMMUTABLE) != 0);
 	}
 
-	private int getPermissionTableSelection() {
+	private int getPermissionsSelection() {
 		int permissions = 0;
 		permissions |= permissionBoxes[0].getSelection() ? EFS.ATTRIBUTE_OWNER_READ : 0;
 		permissions |= permissionBoxes[1].getSelection() ? EFS.ATTRIBUTE_OWNER_WRITE : 0;
@@ -505,6 +514,8 @@ public class ResourceInfoPage extends PropertyPage {
 		permissions |= permissionBoxes[6].getSelection() ? EFS.ATTRIBUTE_OTHER_READ : 0;
 		permissions |= permissionBoxes[7].getSelection() ? EFS.ATTRIBUTE_OTHER_WRITE : 0;
 		permissions |= permissionBoxes[8].getSelection() ? EFS.ATTRIBUTE_OTHER_EXECUTE : 0;
+		if (immutableBox != null)
+			permissions |= immutableBox.getSelection() ? EFS.ATTRIBUTE_IMMUTABLE : 0;
 		return permissions;
 	}
 
@@ -527,6 +538,7 @@ public class ResourceInfoPage extends PropertyPage {
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (permissions & EFS.ATTRIBUTE_OTHER_READ) != 0);
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, (permissions & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, (permissions & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_IMMUTABLE, (permissions & EFS.ATTRIBUTE_IMMUTABLE) != 0);
 		try {
 			store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
 		} catch (CoreException e) {
@@ -579,6 +591,21 @@ public class ResourceInfoPage extends PropertyPage {
 		this.executableBox.setAlignment(SWT.LEFT);
 		this.executableBox.setText(EXECUTABLE);
 		this.executableBox.setSelection(this.previousExecutableValue);
+	}
+
+	/**
+	 * Create the isLocked button and it's associated label as a child of
+	 * parent using the editableValue of the receiver. The Composite will be the
+	 * parent of the button.
+	 * 
+	 * @param composite
+	 *            the parent of the button
+	 */
+	private void createImmutableButton(Composite composite) {
+		this.immutableBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
+		this.immutableBox.setAlignment(SWT.LEFT);
+		this.immutableBox.setText(LOCKED);
+		this.immutableBox.setSelection((this.previousPermissionsValue & EFS.ATTRIBUTE_IMMUTABLE) != 0);
 	}
 
 	/**
@@ -654,13 +681,15 @@ public class ResourceInfoPage extends PropertyPage {
 
 		if (!resource.isVirtual()) {
 			if ((fsAttributes & EFS.ATTRIBUTE_READ_ONLY) != 0
-					&& !isPermissionSupport(fsAttributes))
+					&& !isPermissionsSupport(fsAttributes))
 				createEditableButton(composite);
 			if ((fsAttributes & EFS.ATTRIBUTE_EXECUTABLE) != 0
-					&& !isPermissionSupport(fsAttributes))
+					&& !isPermissionsSupport(fsAttributes))
 				createExecutableButton(composite);
 			if ((fsAttributes & EFS.ATTRIBUTE_ARCHIVE) != 0)
 				createArchiveButton(composite);
+			if ((fsAttributes & EFS.ATTRIBUTE_IMMUTABLE) != 0)
+				createImmutableButton(composite);
 		}
 		createDerivedButton(composite);
 		// create warning for executable flag
@@ -668,7 +697,7 @@ public class ResourceInfoPage extends PropertyPage {
 			createExecutableWarning(composite, font);
 	}
 
-	private void createPermissionGroup(Composite parent) {
+	private void createPermissionsGroup(Composite parent) {
 		Font font = parent.getFont();
 
 		permissionBoxes = new Button[9];
@@ -765,7 +794,7 @@ public class ResourceInfoPage extends PropertyPage {
 		return fs.attributes();
 	}
 
-	private boolean isPermissionSupport(int fsAttributes) {
+	private boolean isPermissionsSupport(int fsAttributes) {
 		int unixPermissions = EFS.ATTRIBUTE_OWNER_READ
 				| EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_EXECUTE
 				| EFS.ATTRIBUTE_GROUP_READ | EFS.ATTRIBUTE_GROUP_WRITE
@@ -851,13 +880,18 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 
 		// Nothing to update if we never made the box
+		if (this.immutableBox != null) {
+			this.immutableBox.setSelection(false);
+		}
+
+		// Nothing to update if we never made the box
 		if (this.derivedBox != null) {
 			this.derivedBox.setSelection(false);
 		}
 
 		if (permissionBoxes != null) {
 			int defaultPermissionValues = getDefaulPermissions(resource.getType() == IResource.FOLDER);
-			setPermissionsTableSelection(defaultPermissionValues);
+			setPermissionsSelection(defaultPermissionValues);
 		}
 
 		encodingEditor.loadDefault();
@@ -935,13 +969,13 @@ public class ResourceInfoPage extends PropertyPage {
 			}
 
 			if (permissionBoxes != null) {
-				int permissionValues = getPermissionTableSelection();
-				if (previousPermissionValues != permissionValues) {
+				int permissionValues = getPermissionsSelection();
+				if (previousPermissionsValue != permissionValues) {
 					putPermissions(resource, permissionValues);
-					previousPermissionValues = fetchPermissions(resource);
-					if (previousPermissionValues != permissionValues) {
+					previousPermissionsValue = fetchPermissions(resource);
+					if (previousPermissionsValue != permissionValues) {
 						// We failed to set some of the permissions
-						setPermissionsTableSelection(previousPermissionValues);
+						setPermissionsSelection(previousPermissionsValue);
 					}
 				}
 			}
