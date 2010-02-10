@@ -39,9 +39,15 @@ import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganize
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
@@ -63,6 +69,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
@@ -94,6 +101,13 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	private IBreakpointOrganizer[] fOrganizers;
 	private IStructuredSelection fFilterSelection;
 
+	/**
+	 * Flag used to determine whether the viewer input is being set for the 
+	 * fist time.  If this is the case the view contents are expanded.
+	 * (bug 297762)
+	 */
+	private boolean fFirstInputSet = false;
+	
 	public void dispose() {
 		if (fClipboard != null)
 			fClipboard.dispose();		
@@ -300,6 +314,12 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 		
 		showViewer();
 		getViewer().setInput(context);
+		
+		// Expand all elements when the view is first shown. (bug 297762)
+		if (!fFirstInputSet) {
+		    fFirstInputSet = true;
+		    expandAllElementsInViewer();
+		}
 	}
 		
 	/*
@@ -568,6 +588,41 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 			}
 		});
 	}
+	
+	/**
+	 * Expands all elements in the viewer.
+	 */
+	public void expandAllElementsInViewer() {
+        Display display = getSite().getShell().getDisplay(); 
+        
+        VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
+            display, 0, ((ITreeModelViewer)getViewer()).getPresentationContext());
+        
+        final Boolean[] finishedExpanding = new Boolean[] { Boolean.FALSE };
+        virtualViewer.setAutoExpandLevel(-1);
+        virtualViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+            public void viewerUpdatesComplete() {
+                finishedExpanding[0] = Boolean.TRUE;
+            }
+            
+            public void viewerUpdatesBegin() {}
+            public void updateStarted(IViewerUpdate update) {}
+            public void updateComplete(IViewerUpdate update) {}
+        });
+        
+        virtualViewer.setInput(getViewer().getInput());
+        
+        while (finishedExpanding[0] == Boolean.FALSE) {
+           if (!display.readAndDispatch ()) display.sleep ();
+        }
+
+        ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
+        virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
+        ((ITreeModelViewer) getViewer()).updateViewer(stateDelta);
+        
+        virtualViewer.dispose();
+	}
+	
 	
 	/**
 	 * Returns the breakpoint organizers for this view.
