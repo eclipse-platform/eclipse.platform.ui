@@ -551,6 +551,16 @@ class ContextInformationPopup implements IContentAssistListener {
 			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		fContextSelectorTable.setForeground(c);
 
+		fContextSelectorTable.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				insertSelectedContext();
+				hideContextSelector();
+			}
+		});
+
 		fPopupCloser.install(fContentAssistant, fContextSelectorTable);
 
 		fContextSelectorTable.setHeaderVisible(false);
