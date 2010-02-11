@@ -774,7 +774,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		
 		private Object getContributedResourceOrResourceVariant(Object o) {
 			IResource[] resources = Utils.getContributedResources(new Object[] {o});
-			if (resources.length>0 && resources[0].exists())
+			if (resources.length > 0)
 				return resources[0];
 			if (o instanceof SyncInfoModelElement) {
 				SyncInfoModelElement sime = (SyncInfoModelElement) o;
