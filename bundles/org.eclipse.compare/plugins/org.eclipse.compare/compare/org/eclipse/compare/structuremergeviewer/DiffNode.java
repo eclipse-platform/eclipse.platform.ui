@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
-import com.ibm.icu.text.MessageFormat;
-
+import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.Utilities;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Diff node are used as the compare result of the differencing engine.
@@ -34,7 +33,7 @@ import org.eclipse.compare.internal.Utilities;
  * @see DiffTreeViewer
  * @see Differencer
  */
-public class DiffNode extends DiffContainer implements ITypedElement, ICompareInput {
+public class DiffNode extends DiffContainer implements ICompareInput {
 
 	private ITypedElement fAncestor;
 	private ITypedElement fLeft;
