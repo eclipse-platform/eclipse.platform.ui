@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class SiteStatusAnalyzer {
 	private static final String ID = "org.eclipse.update.core"; //$NON-NLS-1$
 	private static List allConfiguredFeatures; /*VersionedIdentifier */
 	private LocalSite siteLocal;
-	
+
 	// A list of versionedIdentifiers for source bundles; initialized on demand.
 	private List sourceBundles = null;
 
@@ -73,7 +73,7 @@ public class SiteStatusAnalyzer {
 		if (featureSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
-			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusSiteNull, (new Object[] { feature.getURL()}));
+			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusSiteNull, (new Object[] {feature.getURL()}));
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -82,7 +82,7 @@ public class SiteStatusAnalyzer {
 		if (cSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
-			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusConfiguredSiteNull, (new Object[] { feature.getURL()}));
+			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusConfiguredSiteNull, (new Object[] {feature.getURL()}));
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -106,7 +106,7 @@ public class SiteStatusAnalyzer {
 
 		// check ambiguous against registry [17015]
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		return status( feature, featuresEntries);
+		return status(feature, featuresEntries);
 	}
 
 	/*
@@ -125,7 +125,7 @@ public class SiteStatusAnalyzer {
 
 		// consider disable
 		// check the current feature
-		String msg = Messages.SiteLocal_FeatureDisable; 
+		String msg = Messages.SiteLocal_FeatureDisable;
 		int code = IFeature.STATUS_DISABLED;
 		IStatus featureStatus = getStatus(feature);
 		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -147,7 +147,7 @@ public class SiteStatusAnalyzer {
 					try {
 						childFeature = children[i].getFeature(null);
 					} catch (CoreException e) {
-                        childFeature = null;
+						childFeature = null;
 						if (!UpdateManagerUtils.isOptional(children[i]))
 							UpdateCore.warn("Error retrieving feature:" + children[i]); //$NON-NLS-1$
 					}
@@ -157,7 +157,7 @@ public class SiteStatusAnalyzer {
 						// Unable to find children feature, broken
 						Object featureAsPrintableObject = children[i].getURL();
 						featureAsPrintableObject = children[i].getVersionedIdentifier();
-						String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnavailable, (new Object[] { featureAsPrintableObject }));
+						String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnavailable, (new Object[] {featureAsPrintableObject}));
 						multiTemp.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null));
 						if (IFeature.STATUS_UNHAPPY > code)
 							code = IFeature.STATUS_UNHAPPY;
@@ -168,7 +168,7 @@ public class SiteStatusAnalyzer {
 						if (childStatus.getCode() == IFeature.STATUS_DISABLED) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
 							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
-							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureDisable, (new String[] { childFeature.getLabel(), featureVer }));
+							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureDisable, (new String[] {childFeature.getLabel(), featureVer}));
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (IFeature.STATUS_UNHAPPY > code)
 								code = IFeature.STATUS_UNHAPPY;
@@ -176,7 +176,7 @@ public class SiteStatusAnalyzer {
 						if (childStatus.getSeverity() != IStatus.OK) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
 							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
-							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnHappy, (new String[] { childFeature.getLabel(), featureVer }));
+							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnHappy, (new String[] {childFeature.getLabel(), featureVer}));
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (childStatus.getCode() > code)
 								code = childStatus.getCode();
@@ -189,19 +189,19 @@ public class SiteStatusAnalyzer {
 		// set message
 		switch (code) {
 			case IFeature.STATUS_HAPPY :
-				msg = Messages.SiteLocal_FeatureHappy; 
+				msg = Messages.SiteLocal_FeatureHappy;
 				break;
 			case IFeature.STATUS_UNHAPPY :
-				msg = Messages.SiteLocal_FeatureUnHappy; 
+				msg = Messages.SiteLocal_FeatureUnHappy;
 				break;
 			case IFeature.STATUS_AMBIGUOUS :
-				msg = Messages.SiteLocal_FeatureAmbiguous; 
+				msg = Messages.SiteLocal_FeatureAmbiguous;
 				break;
 			case IFeature.STATUS_DISABLED :
-				msg = Messages.SiteLocal_FeatureDisable; 
+				msg = Messages.SiteLocal_FeatureDisable;
 				break;
 			default :
-				msg = Messages.SiteLocal_FeatureStatusUnknown; 
+				msg = Messages.SiteLocal_FeatureStatusUnknown;
 				break;
 		}
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -215,58 +215,52 @@ public class SiteStatusAnalyzer {
 	private IStatus status(IFeature pluginsOriginatorFeature, IPluginEntry[] featurePlugins) {
 		VersionedIdentifier featurePluginID;
 
-		String happyMSG = Messages.SiteLocal_FeatureHappy; 
-		String ambiguousMSG = Messages.SiteLocal_FeatureAmbiguous; 
+		String happyMSG = Messages.SiteLocal_FeatureHappy;
+		String ambiguousMSG = Messages.SiteLocal_FeatureAmbiguous;
 		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null); //$NON-NLS-1$
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
-		
+
 		// is Ambigous if we find a plugin from the feature
 		// with a different version and not the one we are looking
 		for (int i = 0; i < featurePlugins.length; i++) {
 			MultiStatus tempmulti = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
 			featurePluginID = featurePlugins[i].getVersionedIdentifier();
 			boolean found = false;
-			
+
 			String singleVersionRange = '[' + featurePluginID.getVersion().toString() + ',' + featurePluginID.getVersion().toString() + ']';
 			Bundle[] bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), singleVersionRange);
 			if (bundles != null && bundles.length == 1) {
 				found = true;
 				continue;
 			}
-			
+
 			// Check if there is another feature with this plugin (but different version)
 			// log it
 			bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), null);
-			for (int j = 0; bundles != null && j < bundles.length && !found; j++ ) {
-				String bundleVersion = (String)bundles[j].getHeaders().get(Constants.BUNDLE_VERSION);
-				IFeature feature = getFeatureForId(new VersionedIdentifier(bundles[j].getSymbolicName(), bundleVersion ));
+			for (int j = 0; bundles != null && j < bundles.length && !found; j++) {
+				String bundleVersion = (String) bundles[j].getHeaders().get(Constants.BUNDLE_VERSION);
+				IFeature feature = getFeatureForId(new VersionedIdentifier(bundles[j].getSymbolicName(), bundleVersion));
 				if ((feature != null) && (!isFeaturePatchOfThisFeature(pluginsOriginatorFeature, feature))) {
 					String msg = null;
-					if (feature == null) {
-						Object[] values = new Object[] {bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion};
-						msg = NLS.bind(Messages.SiteLocal_TwoVersionSamePlugin1, values);
-					} else {
-						String label = feature.getLabel();
-						String featureVersion = feature.getVersionedIdentifier().getVersion().toString();
-						Object[] values = new Object[] { bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion, label, featureVersion };
-						msg = NLS.bind(Messages.SiteLocal_TwoVersionSamePlugin2, values);
-					}
-	
+					String label = feature.getLabel();
+					String featureVersion = feature.getVersionedIdentifier().getVersion().toString();
+					Object[] values = new Object[] {bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion, label, featureVersion};
+					msg = NLS.bind(Messages.SiteLocal_TwoVersionSamePlugin2, values);
 					UpdateCore.warn("Found another version of the same plugin on the path:" + bundles[j].getSymbolicName() + " " + bundleVersion); //$NON-NLS-1$ //$NON-NLS-2$
 					tempmulti.add(createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null));
 				} else {
 					found = true;
 				}
-			
+
 			}
-	
+
 			// check whether the plugin is a source bundle
 			// that has not been configured into the runtime
 			if (!found) {
 				loadSourceBundlesList();
 				for (Iterator iter = sourceBundles.iterator(); iter.hasNext();) {
-					VersionedIdentifier nextId = (VersionedIdentifier)iter.next();
+					VersionedIdentifier nextId = (VersionedIdentifier) iter.next();
 					if (featurePluginID.equals(nextId)) {
 						found = true;
 						break;
@@ -282,12 +276,12 @@ public class SiteStatusAnalyzer {
 					multi.addAll(tempmulti);
 				} else {
 					if (multi.getCode() != IFeature.STATUS_UNHAPPY) {
-						String unhappyMSG = Messages.SiteLocal_FeatureUnHappy; 
+						String unhappyMSG = Messages.SiteLocal_FeatureUnHappy;
 						MultiStatus newMulti = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_UNHAPPY, unhappyMSG, null);
 						newMulti.addAll(multi);
 						multi = newMulti;
 					}
-					String msg = NLS.bind(Messages.SiteLocal_NoPluginVersion, (new String[] { featurePluginID.getIdentifier() }));
+					String msg = NLS.bind(Messages.SiteLocal_NoPluginVersion, (new String[] {featurePluginID.getIdentifier()}));
 					multi.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg, null));
 				}
 			}
@@ -299,7 +293,7 @@ public class SiteStatusAnalyzer {
 		// we return happy as we consider the isBroken verification has been done
 		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY, happyMSG, null);
 	}
-	
+
 	public static File toFile(URL url) {
 		try {
 			if (!"file".equalsIgnoreCase(url.getProtocol())) //$NON-NLS-1$
@@ -318,7 +312,7 @@ public class SiteStatusAnalyzer {
 	private void loadSourceBundlesList() {
 		if (sourceBundles != null)
 			return;
-		
+
 		sourceBundles = new ArrayList(32);
 		IPlatformConfiguration config = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		URL configLocation = config.getConfigurationLocation();
@@ -344,7 +338,7 @@ public class SiteStatusAnalyzer {
 					line = line.trim();// symbolicName,version,other ignored stuff
 					if (line.length() == 0)
 						continue;
-					
+
 					StringTokenizer tok = new StringTokenizer(line, ",", true);
 					String symbolicName = tok.nextToken();
 					if (symbolicName.equals(","))
@@ -376,17 +370,17 @@ public class SiteStatusAnalyzer {
 	}
 
 	private boolean isFeaturePatchOfThisFeature(IFeature pluginsOriginatorFeature, IFeature feature) {
-		
+
 		if (!feature.isPatch())
 			return false;
-		
+
 		IImport[] featureImports = feature.getImports();
 
 		if (featureImports == null) {
 			return false;
 		}
-		
-		for(int i = 0; i < featureImports.length; i++) {
+
+		for (int i = 0; i < featureImports.length; i++) {
 			if (featureImports[i].isPatch() && featureImports[i].getVersionedIdentifier().equals(pluginsOriginatorFeature.getVersionedIdentifier())) {
 				return true;
 			}
@@ -410,7 +404,6 @@ public class SiteStatusAnalyzer {
 		}
 		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}
-
 
 	/*
 	 * returns all the configured fetaures
