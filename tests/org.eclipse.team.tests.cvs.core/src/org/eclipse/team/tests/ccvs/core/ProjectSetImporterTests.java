@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,11 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.ProjectSetCapability;
+import org.eclipse.team.core.ProjectSetSerializationContext;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ui.ProjectSetImporter;
 
 public class ProjectSetImporterTests extends EclipseTest {
@@ -191,5 +195,24 @@ public class ProjectSetImporterTests extends EclipseTest {
 			if (out != null)
 				out.close();
 		}
+	}
+
+	public void testBug298925_noToAll() throws TeamException, CoreException {
+		IProject project = createProject("ProjectSetImporterTests",
+				new String[0]);
+		String[] referenceStrings = new String[] { "1.0,"
+				+ CVSTestSetup.REPOSITORY_LOCATION + "," + project.getName() /* module */
+				+ psf_1 + project.getName() /* project */};
+		RepositoryProviderType type = RepositoryProviderType
+				.getProviderType(CVSProviderPlugin.getTypeId());
+		ProjectSetCapability c = type.getProjectSetCapability();
+		/*
+		 * ProjectSetSerializationContext.confirmOverwrite gives the same result
+		 * as UIProjectSetSerializationContext when there is no project to
+		 * overwrite ('No to All' selected).
+		 */
+		c.addToWorkspace(referenceStrings,
+				new ProjectSetSerializationContext(), null);
+		// If we got here and no NPE was thrown, we're good.
 	}
 }

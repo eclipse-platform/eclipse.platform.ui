@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,8 +119,8 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
  		IProject[] projects = asProjects(referenceStrings, infoMap);
 		
  		projects = confirmOverwrite(context, projects);
- 		if (projects == null)
- 			return new IProject[0];
+		if (projects == null || projects.length == 0 /* No projects to import */)
+			return new IProject[0];
 
 		Map suggestedRepositoryLocations = CVSRepositoryLocationMatcher
 				.prepareSuggestedRepositoryLocations(projects, infoMap);

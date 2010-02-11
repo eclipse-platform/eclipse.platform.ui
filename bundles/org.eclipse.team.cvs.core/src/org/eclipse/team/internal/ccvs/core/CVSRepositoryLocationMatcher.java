@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,10 +54,6 @@ public class CVSRepositoryLocationMatcher {
 	public static Map/* <IProject, List<ICVSRepositoryLocation>> */prepareSuggestedRepositoryLocations(
 			IProject[] projects, final Map/* <IProject, LoadInfo> */infoMap) {
 		List/* <IProject> */confirmedProjectsList = Arrays.asList(projects);
-
-		if (infoMap == null)
-			return null;
-
 		Set/* <ICVSRepositoryLocation> */projectSetRepositoryLocations = new HashSet();
 		for (Iterator i = infoMap.keySet().iterator(); i.hasNext();) {
 			IProject project = (IProject) i.next();
