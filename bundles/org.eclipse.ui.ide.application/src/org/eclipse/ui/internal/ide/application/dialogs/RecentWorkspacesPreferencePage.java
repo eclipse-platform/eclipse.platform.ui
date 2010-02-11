@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Eric Rizzo and others.
+ * Copyright (c) 2009, 2010 Eric Rizzo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Eric Rizzo - initial API and implementation
+ *     Helena Halperin (IBM) - bug 299031 [BiDi] Incorrect file path display
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.dialogs;
 
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -142,7 +144,7 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		for (int i = 0; i < recentWorkspaces.length; i++) {
 			String aWorkspace = recentWorkspaces[i];
 			if (aWorkspace != null) {
-				workspacesList.add(aWorkspace);
+				workspacesList.add(TextProcessor.process(aWorkspace));
 			}
 		}
 	}
@@ -174,7 +176,12 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 	public boolean performOk() {
 		int maxWorkspaces = maxWorkspacesField.getSelection();
 		String[] workspaces = new String[maxWorkspaces];
-		String[] listItems = workspacesList.getItems();
+		String[] tmpListItem = workspacesList.getItems();
+		String[] listItems = new String[tmpListItem.length];
+
+		for (int i = 0; i < tmpListItem.length; i++){
+			listItems[i] = TextProcessor.deprocess(tmpListItem[i]); 
+		}
 
 		if (maxWorkspaces < listItems.length) {
 			// TODO: maybe alert the user that the list will be truncated?
