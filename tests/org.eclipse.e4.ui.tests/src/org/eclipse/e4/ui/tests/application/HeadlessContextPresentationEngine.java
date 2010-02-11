@@ -127,8 +127,12 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 */
 	public Object createGui(MUIElement element, Object parent) {
 		if (element instanceof MContext) {
-			final IEclipseContext parentContext = getParentContext(element);
 			MContext mcontext = (MContext) element;
+			if (mcontext.getContext() != null) {
+				return null;
+			}
+
+			final IEclipseContext parentContext = getParentContext(element);
 			final IEclipseContext createdContext = EclipseContextFactory
 					.create(parentContext, null);
 
@@ -152,6 +156,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 							createdContext);
 					contribution.setObject(clientObject);
 				}
+			}
+
+			if (parentContext.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
+				parentContext.set(IContextConstants.ACTIVE_CHILD,
+						createdContext);
 			}
 		}
 
@@ -177,8 +186,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 						IEclipseContext childContext = ((MContext) child)
 								.getContext();
 						IEclipseContext parentContext = getParentContext((MUIElement) child);
-						parentContext.set(IContextConstants.ACTIVE_CHILD,
-								childContext);
+						if (parentContext
+								.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
+							parentContext.set(IContextConstants.ACTIVE_CHILD,
+									childContext);
+						}
 					}
 				}
 			}
