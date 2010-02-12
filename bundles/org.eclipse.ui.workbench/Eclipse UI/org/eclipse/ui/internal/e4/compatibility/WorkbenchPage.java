@@ -148,10 +148,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private void processEventLoop() {
+	void processEventLoop() {
 		Display display = getWorkbenchWindow().getShell().getDisplay();
 		if (display.isDisposed()) {
 			return;
@@ -167,7 +164,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		propertyChangeListeners.add(listener);
 	}
 
-	private MPart findPart(IWorkbenchPart part) {
+	MPart findPart(IWorkbenchPart part) {
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
 			if (part == reference.getPart(false)) {
