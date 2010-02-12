@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,33 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.AndSyncInfoFilter;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.OrSyncInfoFilter;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -63,6 +63,67 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	 */
 	public boolean shouldRun() {
 		return promptIfNeeded();
+	}
+
+	/**
+	 * Run the operation for the sync infos from the given project.
+	 * 
+	 * @param projectSyncInfos the project syncInfos
+	 * @param project the project
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 */
+	protected void run(final Map projectSyncInfos, final IProject project,
+			IProgressMonitor monitor) throws InvocationTargetException {
+		try {
+			IResource[] resources = getIResourcesFrom(((SyncInfoSet) projectSyncInfos
+					.get(project)).getSyncInfos());
+			ResourceMapping[] selectedMappings = Utils
+					.getResourceMappings(resources);
+			ResourceMappingContext context = new SingleProjectSubscriberContext(
+					CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(),
+					false, project);
+			SynchronizationScopeManager manager = new SingleProjectScopeManager(
+					getJobName(), selectedMappings, context, true, project);
+			manager.initialize(null);
+
+			// Pass the scheduling rule to the synchronizer so that sync change
+			// events and cache commits to disk are batched
+			EclipseSynchronizer.getInstance().run(getUpdateRule(manager),
+					new ICVSRunnable() {
+						public void run(IProgressMonitor monitor)
+								throws CVSException {
+							try {
+								runWithProjectRule(project,
+										(SyncInfoSet) projectSyncInfos
+												.get(project), monitor);
+							} catch (TeamException e) {
+								throw CVSException.wrapException(e);
+							}
+						}
+					}, Policy.subMonitorFor(monitor, 100));
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+
+	private ISchedulingRule getUpdateRule(SynchronizationScopeManager manager) {
+		ISchedulingRule rule = null;
+		ResourceMapping[] mappings = manager.getScope().getMappings();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			IProject[] mappingProjects = mapping.getProjects();
+			for (int j = 0; j < mappingProjects.length; j++) {
+				if (rule == null) {
+					rule = mappingProjects[j];
+				} else {
+					rule = MultiRule.combine(rule, mappingProjects[j]);
+				}
+			}
+		}
+		return rule;
 	}
 	
 	/* (non-Javadoc)
