@@ -36,6 +36,8 @@ import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DnDManager;
+import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DragHost;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -276,6 +278,9 @@ public class WBWRenderer extends SWTPartRenderer {
 		Shell wbwShell;
 		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+		} else if (wbwModel.getTags().contains(DragHost.DragHostId)) {
+			wbwShell = new Shell(parentShell, SWT.BORDER);
+			wbwShell.setAlpha(110);
 		} else {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
 		}
@@ -306,6 +311,11 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell.setText(wbwModel.getLabel());
 
 		wbwShell.setImage(getImage(wbwModel));
+
+		// Install the drag and drop handler on all regular windows
+		if (!wbwModel.getTags().contains(DragHost.DragHostId)) {
+			new DnDManager(wbwModel);
+		}
 
 		return newWidget;
 	}
@@ -409,6 +419,9 @@ public class WBWRenderer extends SWTPartRenderer {
 			return super.getUIContainer(element);
 
 		Composite shellComp = (Composite) element.getParent().getWidget();
+		if (element instanceof MWindow)
+			return shellComp;
+
 		TrimmedPartLayout tpl = (TrimmedPartLayout) shellComp.getLayout();
 		return tpl.clientArea;
 	}

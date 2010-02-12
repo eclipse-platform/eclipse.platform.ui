@@ -302,8 +302,10 @@ public class SashRenderer extends SWTPartRenderer {
 	 */
 	private static int getWeight(MUIElement element) {
 		String info = element.getContainerData();
-		if (info == null || info.length() == 0)
-			return DEFAULT_WEIGHT;
+		if (info == null || info.length() == 0) {
+			element.setContainerData(Integer.toString(100));
+			info = element.getContainerData();
+		}
 
 		try {
 			int value = Integer.parseInt(info);
@@ -314,8 +316,13 @@ public class SashRenderer extends SWTPartRenderer {
 	}
 
 	private static int[] getModelWeights(MElementContainer<MUIElement> psc) {
-		SashForm sf = (SashForm) psc.getWidget();
-		int[] modelWeights = sf.getWeights();
+		int count = 0;
+		for (MUIElement element : psc.getChildren()) {
+			if (element.getWidget() != null)
+				count++;
+		}
+
+		int[] modelWeights = new int[count];
 		int index = 0;
 		for (MUIElement element : psc.getChildren()) {
 			if (element.getWidget() != null)
@@ -356,6 +363,7 @@ public class SashRenderer extends SWTPartRenderer {
 
 		// Put the new weights in the map first
 		weightsMap.put(sf, newWeights);
+		sf.layout();
 		sf.setWeights(newWeights);
 	}
 

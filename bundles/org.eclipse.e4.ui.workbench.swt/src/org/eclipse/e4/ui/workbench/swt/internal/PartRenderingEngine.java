@@ -124,9 +124,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// explicitly do *not* render non-selected elements in
 				// stacks (to support lazy loading).
 				boolean isStack = changedObj instanceof MGenericStack<?>;
-				boolean renderIt = !isStack
-						|| added == changedElement.getSelectedElement();
-				if (added.getWidget() == null && renderIt) {
+				boolean renderIt = added.getWidget() == null
+						&& (!isStack || added == changedElement
+								.getSelectedElement());
+				if (renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
 					Widget w = (Widget) createGui(added);
 					if (w instanceof Control && !(w instanceof Shell)) {
@@ -145,6 +146,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// renderer is concerned
 				if (!removed.isToBeRendered())
 					return;
+
+				if (removed.getWidget() instanceof Control) {
+					Control ctrl = (Control) removed.getWidget();
+					ctrl.setLayoutData(null);
+					ctrl.getParent().layout(new Control[] { ctrl },
+							SWT.CHANGED | SWT.DEFER);
+				}
 
 				if (renderer != null)
 					renderer.hideChild(changedElement, removed);
@@ -276,6 +284,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				final Composite p = (Composite) parent;
 				Control c = (Control) element.getWidget();
 				c.setVisible(true);
+				c.setLayoutData(null);
 				c.setParent(p);
 				final Control[] changed = { c };
 
@@ -293,6 +302,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					IEclipseContext pc = getContext(element.getParent());
 					ec.set(IContextConstants.PARENT, pc);
 				}
+
+				getRendererFor(element.getParent()).childRendered(
+						element.getParent(), element);
 				return c;
 			}
 		}
