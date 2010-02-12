@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-import java.io.*;
+import java.io.IOException;
+
+import org.eclipse.help.internal.criteria.CriterionResource;
 
 /**
  * The working set manager stores help working sets. Working sets are persisted
@@ -32,6 +34,8 @@ public interface IHelpWorkingSetManager {
 	public WorkingSet createWorkingSet(String name,
 			AdaptableHelpResource[] elements);
 
+	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria);
+	
 	/**
 	 * Returns a working set by name
 	 *  
@@ -67,4 +71,14 @@ public interface IHelpWorkingSetManager {
 	public String getCurrentWorkingSet();
 
 	public void setCurrentWorkingSet(String workingSet);
+	
+	public boolean isCriteriaScopeEnabled();
+	
+	public String[] getCriterionIds();
+	
+	public String[] getCriterionValueIds(String criterionId);
+	
+	public String getCriterionDisplayName(String criterionId);
+	
+	public String getCriterionValueDisplayName(String criterionId, String criterionValueId);
 }

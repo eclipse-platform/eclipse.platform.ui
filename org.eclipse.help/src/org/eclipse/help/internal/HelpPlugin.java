@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
+import org.eclipse.help.internal.criteria.CriteriaManager;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.toc.TocManager;
@@ -37,6 +38,7 @@ public class HelpPlugin extends Plugin {
 	public static boolean DEBUG_SEARCH = false;
 	public static boolean DEBUG_TOC = false;
 	public static boolean DEBUG_INDEX = false;
+	public static boolean DEBUG_CRITERIA = false;
 	
 	public final static String HELP_DATA_KEY = "HELP_DATA"; //$NON-NLS-1$
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
@@ -50,6 +52,7 @@ public class HelpPlugin extends Plugin {
 	private ContextManager contextManager;
 	private ContentExtensionManager contentExtensionManager;
 	private IndexManager indexManager;
+	private CriteriaManager criteriaManager;
 	private IHelpProvider helpProvider;
 	private File configurationDirectory;
 
@@ -122,6 +125,12 @@ public class HelpPlugin extends Plugin {
 		return getDefault().indexManager;
 	}
 
+	public static CriteriaManager getCriteriaManager() {
+		if (getDefault().criteriaManager == null)
+			getDefault().criteriaManager = new CriteriaManager();
+		return getDefault().criteriaManager;
+	}
+	
 	/*
 	 * Returns the provider responsible for serving help documents.
 	 */
@@ -161,7 +170,8 @@ public class HelpPlugin extends Plugin {
 			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/context")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_TOC = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/toc")); //$NON-NLS-1$ //$NON-NLS-2$		
-			DEBUG_INDEX = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/index")); //$NON-NLS-1$ //$NON-NLS-2$			
+			DEBUG_INDEX = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/index")); //$NON-NLS-1$ //$NON-NLS-2$	
+			DEBUG_CRITERIA = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/criteria")); //$NON-NLS-1$ //$NON-NLS-2$	
 		}
 	}
 

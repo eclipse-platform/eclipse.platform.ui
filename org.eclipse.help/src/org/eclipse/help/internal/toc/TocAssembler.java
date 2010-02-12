@@ -27,7 +27,6 @@ import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
-import org.eclipse.help.internal.criteria.CriteriaPreferences;
 import org.eclipse.help.internal.dynamic.DocumentProcessor;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
@@ -434,7 +433,7 @@ public class TocAssembler {
 					topic.setHref(normalize(href, id));
 				}
 				
-				processCriteria(element);
+				processCriteria(element, id);
 				
 				return HANDLED_CONTINUE;
 			}
@@ -446,7 +445,7 @@ public class TocAssembler {
 					toc.setTopic(normalize(topic, id));
 				}
 				
-				processCriteria(element);
+				processCriteria(element, id);
 				
 				return HANDLED_CONTINUE;
 			}
@@ -469,8 +468,10 @@ public class TocAssembler {
 			return href;
 		}
 		
-		private void processCriteria(UAElement element) {
-			if(CriteriaPreferences.getInstance().isCriteriaEnabled()){
+		private void processCriteria(UAElement element, String id) {
+			if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()){
+				ITocContribution contribution = getContribution(id);
+				String locale = contribution.getLocale();
 				ICriteria[] criteria = new ICriteria[0];
 				if (element instanceof Topic) {
 					Topic topic = (Topic) element;
@@ -481,7 +482,7 @@ public class TocAssembler {
 					criteria = toc.getCriteria();
 				}
 
-				CriteriaPreferences.getInstance().addCriteriaValues(criteria);
+				HelpPlugin.getCriteriaManager().addCriteriaValues(criteria, locale);
 			}
 		}
 	}

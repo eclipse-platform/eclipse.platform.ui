@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2009 IBM Corporation and others.
+ Copyright (c) 2000, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 	WorkingSetData data = new WorkingSetData(application, request, response);
 	TocData tocData = new TocData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
+	boolean isCriteriaEnable = data.isCriteriaScopeEnabled();
 %>
 
 
@@ -67,6 +68,26 @@ INPUT {
 	border:	2px inset ThreeDHighlight;
 	margin:10px;
 	margin-top:2px;
+	margin-bottom: 0px;
+	padding-<%=isRTL?"right":"left"%>:5px;
+	overflow:auto;
+	height:350px;
+<%
+if (data.isIE()) {
+%>
+    width:100%; 
+<%
+}
+%>
+}
+
+#criteriaContainer {
+    background:Window;
+	color:WindowText;
+	border:	2px inset ThreeDHighlight;
+	margin-<%=isRTL?"left":"right"%>:10px;
+	margin-top:2px;
+	margin-bottom: 0px;
 	padding-<%=isRTL?"right":"left"%>:5px;
 	overflow:auto;
 	height:350px;
@@ -90,14 +111,14 @@ if (data.isMozilla()) {
 %>
 }
 
-.book {
+.book, .criterion {
 	margin:0px;
 	border:0px;
 	padding:0px;
 	white-space: nowrap;
 }
 
-.topic {
+.topic, .criterionValue {
 	margin-<%=isRTL?"right":"left"%>:30px;
 	border:0px;
 	padding:0px;
@@ -154,6 +175,8 @@ plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 var oldName = '<%=data.isEditMode()?UrlUtil.JavaScriptEncode(data.getWorkingSetName()):""%>';
 var altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
 var altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
+var altCriterionClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("criterionClosed", request))%>";
+var altCriterionOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("criterionOpen", request))%>";
 
 function onloadHandler() {
 <%if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
@@ -161,7 +184,7 @@ function onloadHandler() {
 %>
 	sizeButtons();
 <%}%>
-    sizeBookContainer();
+    sizeContainer();
 	document.getElementById("workingSet").focus();
 	enableOK();
 <%-- event handlers that call enableOK() are not invoked properly on Japanese --%>
@@ -180,8 +203,11 @@ function sizeButtons() {
 	}
 }
 
-function sizeBookContainer() {
-    resizeVertical("booksContainer", "wsTable", "buttonBar", 100, 20);
+function sizeContainer() {
+    resizeVertical("booksContainer", "wsTable", "buttonBar", 100, 30);
+    <%if(isCriteriaEnable){%>
+    resizeVertical("criteriaContainer", "wsTable", "buttonBar", 100, 30);
+    <%}%>
 }
 
 function doSubmit()
@@ -192,23 +218,25 @@ function doSubmit()
 		if (!workingSet || workingSet == "")
 			return false;
 	
-		var hrefs = getSelectedResources();
+		var hrefs = getSelectedContentResources();
 		if (!hrefs || hrefs == "")
 			return false;
 
-		var query = "operation="+'<%=UrlUtil.JavaScriptEncode(data.getOperation())%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+"&oldName="+encodeURIComponent(oldName);
+		var criteria = getSelectedCriteriaResources();
+		var query = "operation="+'<%=UrlUtil.JavaScriptEncode(data.getOperation())%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+criteria+"&oldName="+encodeURIComponent(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
 		window.close();
 	} catch(ex) {alert("Error..." + ex.message)}
 }
 
-function getSelectedResources() {
+function getSelectedContentResources() {
 	var hrefs = "";
 	var inputs = document.getElementsByTagName("INPUT");
 	for (var i=0; i<inputs.length; i++)
 	{
 		if (inputs[i].type != "checkbox") continue;
+		if (inputs[i].parentNode.id.indexOf("_criterion") > -1) continue;
 		if (inputs[i].checked == false) continue;
 		if (getGrayed(inputs[i])) continue;
 		if (isToc(inputs[i].name)) {
@@ -220,12 +248,42 @@ function getSelectedResources() {
 	return hrefs;
 }
 
-// Assumption: last character of a toc reference cannot be underscore _
+//Assumption: last character of a toc reference cannot be underscore _
 function isToc(name) {
 	return name.charAt(name.length-1) != "_";
 }
 
 function isParentTocSelected(name) {
+	return isParentCheckboxSelected(name);
+}
+
+function getSelectedCriteriaResources() {
+	var criteria = "";
+	var inputs = document.getElementsByTagName("INPUT");
+	for (var i=0; i<inputs.length; i++)
+	{
+		if (inputs[i].type != "checkbox") continue;
+		if (inputs[i].parentNode.id.indexOf("_criterion") < 0) continue;
+		if (inputs[i].checked == false) continue;
+		if (getGrayed(inputs[i])) continue;
+		if (isCriterionCategory(inputs[i].name)) {
+			criteria += "&criteria=" + encodeURIComponent(inputs[i].name);
+		} else if(!isParentTocSelected(inputs[i].name)){
+            criteria += "&criteria=" + encodeURIComponent(inputs[i].name);
+		}
+	}
+	return criteria;
+}
+
+function isCriterionCategory(name) {
+	return name.charAt(name.length-1) != "_";
+}
+
+function isParentCategorySelected(name){
+	return isParentCheckboxSelected(name);
+}
+
+function isParentCheckboxSelected(name) {
 	var parentCheckbox = getParentCheckbox(name);
 	return (parentCheckbox.checked && !getGrayed(parentCheckbox));
 }
@@ -235,6 +293,13 @@ function getParentCheckbox(name) {
 	return document.getElementById(parentId);
 }
 
+function isCriterionNode(nodeId){
+	if(nodeId && nodeId.indexOf("_criterion") > -1){
+		return true; 
+	}
+	return false;
+}
+
 function collapseOrExpand(nodeId) {
 	var node = document.getElementById("div"+nodeId);
 	var img = document.getElementById("img"+nodeId);
@@ -242,13 +307,23 @@ function collapseOrExpand(nodeId) {
 	if (node.className == "expanded") {
 		node.className = "collapsed";
 		img.src = plus.src;
-		img.alt = altBookClosed;
-		img.title = altBookClosed;
+		if(isCriterionNode(nodeId)){
+			img.alt = altCritrionClosed;
+			img.title = altCriterionClosed;
+		}else{
+			img.alt = altBookClosed;
+			img.title = altBookClosed;
+		}
 	} else {
 		node.className = "expanded";
 		img.src = minus.src;
-		img.alt = altBookOpen;
-		img.title = altBookOpen;
+		if(isCriterionNode(nodeId)){
+			img.alt = altCriterionOpen;
+			img.title = altCriterionOpen;
+		}else{
+			img.alt = altBookOpen;
+			img.title = altBookOpen;
+		}
 	}
 }
 
@@ -258,8 +333,13 @@ function collapse(nodeId) {
 	if (!node || !img) return;
 	node.className = "collapsed";
 	img.src = plus.src;
-	img.alt = altBookClosed;
-	img.title = altBookClosed;
+	if(isCriterionNode(nodeId)){
+		img.alt = altCritrionClosed;
+		img.title = altCriterionClosed;
+	}else{
+		img.alt = altBookClosed;
+		img.title = altBookClosed;
+	}
 }
 
 function expand(nodeId) {
@@ -268,8 +348,13 @@ function expand(nodeId) {
 	if (!node || !img) return;
 	node.className = "expanded";
 	img.src = minus.src;
-	img.alt = altBookOpen;
-	img.title = altBookOpen;
+	if(isCriterionNode(nodeId)){
+		img.alt = altCriterionOpen;
+		img.title = altCriterionOpen;
+	}else{
+		img.alt = altBookOpen;
+		img.title = altBookOpen;
+	}
 }
 
 function getParent(child) {
@@ -364,8 +449,8 @@ function keyDownHandler(folderId, key, target)
   	return false;
 }
 
-function hasSelections() {
-		var hrefs = getSelectedResources();
+function hasContentSelections() {
+		var hrefs = getSelectedContentResources();
 		if (!hrefs || hrefs == "")
 			return false;
 		else
@@ -374,7 +459,7 @@ function hasSelections() {
 
 function enableOK() {
 	var value = document.getElementById("workingSet").value;
-	if (!value || value.length == 0 || value.charAt(0) == " " || !hasSelections())
+	if (!value || value.length == 0 || value.charAt(0) == " " || !hasContentSelections())
 		document.getElementById("ok").disabled = true;
 	else
 		document.getElementById("ok").disabled = false;
@@ -384,7 +469,7 @@ function enableOK() {
 
 </head>
 
-<body dir="<%=direction%>" onload="onloadHandler()"  onresize = "sizeBookContainer()">
+<body dir="<%=direction%>" onload="onloadHandler()"  onresize = "sizeContainer()">
 <form onsubmit="doSubmit();return false;">
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%></label>
@@ -392,63 +477,139 @@ function enableOK() {
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" 
 		    value='<%=data.isEditMode()?UrlUtil.htmlEncode(data.getWorkingSetName()):data.getDefaultName()%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
-         <tr><td><div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
-		</td></tr>
     </table>
     
-<div id="booksContainer">
+    <table width="100%" cellspacing=0 cellpading=0 border=0 align=center style="table-layout:fixed;">
+        <tr>
+            <td>
+               <div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
+		    </td>
+		    <%if(isCriteriaEnable){ %>
+		    <td width="50%">
+               <div id="selectCriteria" style="padding-top:5px;"><%=ServletResources.getString("Criteria", request)%>:</div>
+		    </td>
+		    <% }%>
+		</tr>
+		<tr>
+		    <td>
+		       <div id="booksContainer">
+		       <% for (int i=0; i<data.getTocCount(); i++){
+	                 if(!tocData.isEnabled(i)){
+		             // do not show
+		                 continue;
+	                  }
+	                 String label = data.getTocLabel(i);
+	                 short state = data.getTocState(i);
+	                 String checked = state == WorkingSetData.STATE_CHECKED || state == WorkingSetData.STATE_GRAYED ? "checked" : "";
+	                 String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
+               %>
+				    <div class="book" id='<%="id"+i%>' >
+					   <img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					   <input 	class='<%=className%>' 
+							    type="checkbox" 
+							    id='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
+							    name='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
+							    alt="<%=UrlUtil.htmlEncode(label)%>" <%=checked%> 
+						  	    onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
+							    onclick="setSubtreeChecked(this, '<%="div"+i%>')">
+							    <label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))%>"><%=UrlUtil.htmlEncode(label)%></label>
+					   <div id='<%="div"+i%>' class="collapsed">
+                         <%
+	                         for (int topic=0; topic<data.getTopicCount(i); topic++)
+	                         {
+		                        String topicLabel = data.getTopicLabel(i, topic);
+		                        String topicChecked = (state == WorkingSetData.STATE_CHECKED) || 
+							                          (state == WorkingSetData.STATE_GRAYED && data.getTopicState(i,topic) == WorkingSetData.STATE_CHECKED) 
+							                          ? "checked" : "";
+                         %>
+						    <div class="topic" id='<%="id"+i+"_"+topic%>'>
+							    <input 	class="checkbox" 
+									    type="checkbox" 
+									    id='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
+									    name='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
+									    alt="<%=UrlUtil.htmlEncode(topicLabel)%>" <%=topicChecked%> 
+									    onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
+									    onclick="updateParentState(this, '<%="div"+i%>')">
+									    <label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>"><%=UrlUtil.htmlEncode(topicLabel)%></label>
+						    </div>
+                         <%
+	                         }
+                         %>
+					   </div>
+				    </div>
+               <%
+                   }		
+               %>
+                </div>
+		    </td>
+		    <%if(isCriteriaEnable){ %>
+		    <td width="50%">
+               <div id="criteriaContainer">
+                   <% 
+                     String[] category = data.getCriterionIds();
+                     for (int i=0; i < category.length; i++){
+                    	 String criterionId = category[i];
+	                     if(null == criterionId || 0 == criterionId.trim().length()){
+		                  // do not show
+		                     continue;
+	                     }
+	                     
+	                     short categoryState = data.getCriterionCategoryState(i);	            
+	                     String categoryChecked = categoryState == WorkingSetData.STATE_CHECKED || categoryState == WorkingSetData.STATE_GRAYED ? "checked" : "";
+		                 String inputClassName = categoryState == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
+		                 String criterionDisplayName = data.getCriterionDisplayName(criterionId);
+                   %>
+				    <div class="criterion" id='<%="id_criterion"+i%>' >
+					   <img id='<%="img_criterion"+i%>' alt="<%=ServletResources.getString("criterionClosed", request)%>" title="<%=ServletResources.getString("criterionClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('_criterion'+'<%=i%>')">
+					   <input 	class='<%=inputClassName%>' 
+							    type="checkbox" 
+							    id='<%=UrlUtil.htmlEncode(criterionId)%>' 
+							    name='<%=UrlUtil.htmlEncode(criterionId)%>' 
+							    alt="<%=UrlUtil.htmlEncode(criterionDisplayName)%>" <%=categoryChecked%> 
+						  	    onkeydown="keyDownHandler('_criterion'+<%=i%>, event.keyCode, this)"
+							    onclick="setSubtreeChecked(this, '<%="div_criterion"+i%>')">
+							    <label for="<%=UrlUtil.htmlEncode(criterionId)%>"><%=UrlUtil.htmlEncode(criterionDisplayName)%></label>
+					   <div id='<%="div_criterion"+i%>' class="collapsed">
+                         <%
+                             String[] criterionValueIds = data.getCriterionValueIds(criterionId);
+	                         for (int j=0; j<criterionValueIds.length; j++)
+	                         {
+		                        String criterionValue = criterionValueIds[j];
+		                        String valueChecked = (categoryState == WorkingSetData.STATE_CHECKED) || 
+		                          (categoryState == WorkingSetData.STATE_GRAYED && data.getCriterionValueState(i,j) == WorkingSetData.STATE_CHECKED) 
+		                          ? "checked" : "";
+		                        String criterionValueDisplayName ="";
+		                        if(criterionValue.equalsIgnoreCase("Uncategorized")){
+		                        	criterionValueDisplayName = ServletResources.getString("Uncategorized", request);
+		                        } else {
+		                        	criterionValueDisplayName = data.getCriterionValueDisplayName(criterionId, criterionValue);
+		                        }
+                         %>
+						    <div class="criterionValue" id='<%="id_criterion"+i+"_"+j%>'>
+							    <input 	class="checkbox" 
+									    type="checkbox" 
+									    id='<%=UrlUtil.htmlEncode(criterionId)+"_"+j+"_"%>' 
+									    name='<%=UrlUtil.htmlEncode(criterionId)+"_"+j+"_"%>' 
+									    alt="<%=UrlUtil.htmlEncode(criterionValueDisplayName)%>" <%=valueChecked%> 
+									    onkeydown="keyDownHandler('_criterion'+<%=i%>, event.keyCode, this)"
+									    onclick="updateParentState(this, '<%="div_criterion"+i%>')">
+									    <label for="<%=UrlUtil.htmlEncode(criterionId)+"_"+j+"_"%>"><%=UrlUtil.htmlEncode(criterionValueDisplayName)%></label>
+						    </div>
+                         <%
+	                         }
+                         %>
+					   </div>
+				    </div>
+               <%
+                   }		
+               %>
+               </div>
+		    </td>
+		    <% }%>
+		</tr>
 
-<% 
-for (int i=0; i<data.getTocCount(); i++)
-{
-	if(!tocData.isEnabled(i)){
-		// do not show
-		continue;
-	}
-	String label = data.getTocLabel(i);
-	short state = data.getTocState(i);
-	String checked = state == WorkingSetData.STATE_CHECKED || state == WorkingSetData.STATE_GRAYED ? "checked" : "";
-	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
-%>
-				<div class="book" id='<%="id"+i%>' >
-					<img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
-					<input 	class='<%=className%>' 
-							type="checkbox" 
-							id='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
-							name='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
-							alt="<%=UrlUtil.htmlEncode(label)%>" <%=checked%> 
-						  	onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
-							onclick="setSubtreeChecked(this, '<%="div"+i%>')">
-							<label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))%>"><%=UrlUtil.htmlEncode(label)%></label>
-					<div id='<%="div"+i%>' class="collapsed">
-<%
-	for (int topic=0; topic<data.getTopicCount(i); topic++)
-	{
-		String topicLabel = data.getTopicLabel(i, topic);
-		String topicChecked = (state == WorkingSetData.STATE_CHECKED) || 
-							  (state == WorkingSetData.STATE_GRAYED && data.getTopicState(i,topic) == WorkingSetData.STATE_CHECKED) 
-							  ? "checked" : "";
-%>
-						<div class="topic" id='<%="id"+i+"_"+topic%>'>
-							<input 	class="checkbox" 
-									type="checkbox" 
-									id='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
-									name='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
-									alt="<%=UrlUtil.htmlEncode(topicLabel)%>" <%=topicChecked%> 
-									onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
-									onclick="updateParentState(this, '<%="div"+i%>')">
-									<label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>"><%=UrlUtil.htmlEncode(topicLabel)%></label>
-						</div>
-<%
-	}
-%>
-					</div>
-				</div>
-<%
-}		
-%>
+    </table>
 
-</div>
 <div id="buttonBar" >
 	<table valign="bottom" align="<%=isRTL?"left":"right"%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">

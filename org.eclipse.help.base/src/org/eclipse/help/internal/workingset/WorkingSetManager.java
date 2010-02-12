@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -39,6 +42,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.criteria.CriterionResource;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,9 +62,13 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 
+	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
+	
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 
 	private AdaptableTocsArray root;
+	
+	private Map allCriteriaValues;
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
@@ -99,6 +107,12 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
+	
+	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
+		return new WorkingSet(name, elements, criteria);
+	}
+	
+	
 
 	/**
 	 * Tests the receiver and the object for equality
@@ -231,8 +245,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			if (workingSets.item(i).getNodeType() != Node.ELEMENT_NODE)
 				continue;
 
-			WorkingSet workingSet = restoreWorkingSet((Element) workingSets
-					.item(i));
+			WorkingSet workingSet = restoreWorkingSet((Element) workingSets.item(i));
 			if (workingSet != null) {
 				this.workingSets.add(workingSet);
 			}
@@ -246,46 +259,75 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 *         failed.
 	 */
 	private WorkingSet restoreWorkingSet(Element workingSetNode) {
-
 		String name = workingSetNode.getAttribute("name"); //$NON-NLS-1$
-		NodeList items = workingSetNode.getElementsByTagName("item"); //$NON-NLS-1$
-		List helpResources = new ArrayList(items.getLength());
-		for (int i = 0; i < items.getLength(); i++) {
-			Element item = (Element) items.item(i);
-			String href = item.getAttribute("toc"); //$NON-NLS-1$
-			if (href == null || href.length() == 0)
-				continue;
 
-			String child_pos = item.getAttribute("topic"); //$NON-NLS-1$
-			int pos = -1;
-			if (child_pos != null) {
-				try {
-					pos = Integer.parseInt(child_pos);
-				} catch (Exception e) {
+		// scope
+		List helpResources = new ArrayList();
+		NodeList contents = workingSetNode.getElementsByTagName("contents"); //$NON-NLS-1$
+		for (int i = 0; i < contents.getLength(); i++) {
+			Element content = (Element) contents.item(i);
+			NodeList items = content.getElementsByTagName("item"); //$NON-NLS-1$
+			for(int j = 0; j < items.getLength(); j++){
+				Element itemI = (Element) items.item(j);
+				String href = itemI.getAttribute("toc"); //$NON-NLS-1$
+				if (href == null || href.length() == 0)
+					continue;
+
+				String child_pos = itemI.getAttribute("topic"); //$NON-NLS-1$
+				int pos = -1;
+				if (child_pos != null) {
+					try {
+						pos = Integer.parseInt(child_pos);
+					} catch (Exception e) {
+					}
+				}
+
+				AdaptableHelpResource toc = getAdaptableToc(href);
+
+				if (toc == null)
+					return null;
+
+				if (pos == -1) {
+					// Create the adaptable toc.
+					helpResources.add(toc);
+				} else {
+					// Create the adaptable topic
+					AdaptableTopic[] topics = (AdaptableTopic[]) toc.getChildren();
+					if (pos >= 0 && topics.length > pos)
+						helpResources.add(topics[pos]);
 				}
 			}
-
-			AdaptableHelpResource toc = getAdaptableToc(href);
-
-			if (toc == null)
-				return null;
-
-			if (pos == -1) {
-				// Create the adaptable toc.
-				helpResources.add(toc);
-			} else {
-				// Create the adaptable topic
-				AdaptableTopic[] topics = (AdaptableTopic[]) toc.getChildren();
-				if (pos >= 0 && topics.length > pos)
-					helpResources.add(topics[pos]);
-			}
+		}
+		AdaptableHelpResource[] elements = new AdaptableHelpResource[helpResources.size()];
+		helpResources.toArray(elements);
+				
+		//criteria
+		
+		List criteriaResource = new ArrayList();
+		NodeList criteriaContents = workingSetNode.getElementsByTagName("criterion"); //$NON-NLS-1$
+		for (int i = 0; i < criteriaContents.getLength(); ++i) {
+			Element criterion = (Element) criteriaContents.item(i);
+			String criterionName = criterion.getAttribute("name"); //$NON-NLS-1$
+			if(null != name && 0 != name.length() && HelpPlugin.getCriteriaManager().isSupportedCriterion(criterionName)){
+				NodeList items = criterion.getElementsByTagName("item"); //$NON-NLS-1$
+				List criterionValues = new ArrayList();
+				for(int j = 0; j < items.getLength(); ++j){
+					String value = ((Element) items.item(j)).getAttribute("value"); //$NON-NLS-1$
+					if(null != value && 0 != value.length()){
+						criterionValues.add(value);
+					}
+				}
+				if(criterionValues.size() > 0){
+					CriterionResource criterionResource = new CriterionResource(criterionName, criterionValues);
+					criteriaResource.add(criterionResource);
+				}
+			}	
 		}
 
-		AdaptableHelpResource[] elements = new AdaptableHelpResource[helpResources
-				.size()];
-		helpResources.toArray(elements);
+		CriterionResource[] criteria = new CriterionResource[criteriaResource.size()];
+		criteriaResource.toArray(criteria);
 
-		WorkingSet ws = createWorkingSet(name, elements);
+		WorkingSet ws = createWorkingSet(name, elements, criteria);
 
 		return ws;
 	}
@@ -296,8 +338,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	public synchronized boolean saveState() {
 		File stateFile = null;
 		try {
-			DocumentBuilder docBuilder = documentBuilderFactory
-					.newDocumentBuilder();
+			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("workingSets"); //$NON-NLS-1$
 			doc.appendChild(rootElement);
@@ -414,6 +455,62 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		root = null;
 		workingSets = new TreeSet(new WorkingSetComparator());
 		restoreState();
+	}
+	
+	public boolean isCriteriaScopeEnabled(){
+		if(null == allCriteriaValues){
+			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
+		}
+		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled() && !allCriteriaValues.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public String[] getCriterionIds() {
+		if(null == allCriteriaValues){
+			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
+		}
+		List criterionIds = new ArrayList();
+		if(null != allCriteriaValues){
+			for(Iterator iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
+				String criterion = (String) iter.next();
+				if(null == criterion || 0 == criterion.length() || 0 == getCriterionValueIds(criterion).length)
+					continue;
+				criterionIds.add(criterion);
+			}
+			Collections.sort(criterionIds);
+		}
+		String[] ids = new String[criterionIds.size()];                                        		
+		criterionIds.toArray(ids);
+		return ids;
+	}
+
+	public String[] getCriterionValueIds(String criterionName) {
+		if(null == allCriteriaValues){
+			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
+		}
+		List valueIds = new ArrayList();
+		if(null != criterionName && null != allCriteriaValues) {
+			Set criterionValues = (Set)allCriteriaValues.get(criterionName);
+			if(null != criterionValues && !criterionValues.isEmpty()) {
+				valueIds.addAll(criterionValues);
+				Collections.sort(valueIds);
+				valueIds.add(UNCATEGORIZED);
+			}
+		}
+		String[] valueIdsArray = new String[valueIds.size()];                                        		
+		valueIds.toArray(valueIdsArray);
+		return valueIdsArray;
+	}
+	
+	public String getCriterionDisplayName(String criterionId) {
+		return HelpPlugin.getCriteriaManager().getCriterionDisplayName(criterionId, Platform.getNL());
+	}
+
+	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
+		return HelpPlugin.getCriteriaManager().getCriterionValueDisplayName(criterionId, criterionValueId, Platform.getNL());
 	}
 
 }

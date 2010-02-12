@@ -18,6 +18,8 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.scope.CriteriaHelpScope;
+import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableSelectedToc;
@@ -36,6 +38,7 @@ public class SearchResults implements ISearchHitCollector {
 	private int maxHits;
 	private String locale;
 	private AbstractHelpScope filter;
+	private CriteriaHelpScope criteriaScope;
 	protected SearchHit[] searchHits = new SearchHit[0];
 	private QueryTooComplexException searchException = null;
 	/**
@@ -48,6 +51,7 @@ public class SearchResults implements ISearchHitCollector {
 		this.maxHits = maxHits;
 		this.locale = locale;
 		this.scopes = getScopes(workingSets);
+		this.criteriaScope = new CriteriaHelpScope(getCriteriaScopes(workingSets));
 	}
 	
 	public void setFilter(AbstractHelpScope filter) {
@@ -131,13 +135,17 @@ public class SearchResults implements ISearchHitCollector {
 	 * Finds a topic within a scope
 	 */
 	private AdaptableHelpResource getScopeForTopic(String href) {
+		boolean enabled = HelpPlugin.getCriteriaManager().isCriteriaEnabled();
 		for (int i = 0; i < scopes.size(); i++) {
 			AdaptableHelpResource scope = (AdaptableHelpResource) scopes.get(i);
 			ITopic inScopeTopic = scope.getTopic(href);
-			if (inScopeTopic != null)
+			if (inScopeTopic != null){
 				if (filter == null || filter.inScope(inScopeTopic)) {
-				    return scope;
+					if(!enabled || (enabled && criteriaScope.inScope(inScopeTopic))){
+						return scope;
+					}
 				}
+			}	
 		
 			// add root toc's extradir topics to search scope
 			IToc tocRoot = getTocForScope(scope, locale);
@@ -147,9 +155,10 @@ public class SearchResults implements ISearchHitCollector {
 					String owningTocHref = toc.getHref();
 					if (owningTocHref == tocRoot.getHref()) {
 						if (filter == null || filter.inScope(inScopeTopic)) {
-						    return scope;
+							if(!enabled || (enabled && criteriaScope.inScope(inScopeTopic))){
+								return scope;
+							}
 						}
-						return scope;
 					}
 				}
 			}
@@ -198,7 +207,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (topic != null) {
 				foundInToc = true;
 				if (filter == null || filter.inScope(topic)) {
-				    return tocs[i];
+					return tocs[i];
 				}
 			} 
 		}
@@ -245,6 +254,19 @@ public class SearchResults implements ISearchHitCollector {
 				scopes.add(elements[i]);
 		}
 		return scopes;
+	}
+	
+	private ArrayList getCriteriaScopes(WorkingSet[] wSets){
+		if (wSets == null)
+			return null;
+		
+		ArrayList criteriaScopes = new ArrayList(wSets.length);
+		for (int w = 0; w < wSets.length; w++) {
+			CriterionResource[] elements = wSets[w].getCriteria();
+			for (int i = 0; i < elements.length; i++)
+				criteriaScopes.add(elements[i]);
+		}
+		return criteriaScopes;		
 	}
 
 	public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {

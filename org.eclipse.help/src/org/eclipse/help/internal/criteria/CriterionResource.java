@@ -6,6 +6,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.help.ICriteria;
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * A class represents one criterion, which has the name and values
@@ -57,7 +69,7 @@ public class CriterionResource {
 			String elementValue = criteriaElements[i].getValue();
 			if (null != elementName && 0 != elementName.length() && null != elementValue
 					&& 0 != elementValue.length()) {
-				if (CriteriaPreferences.getInstance().isSupportedCriterion(elementName)) {
+				if (HelpPlugin.getCriteriaManager().isSupportedCriterion(elementName)) {
 					elementName = elementName.toLowerCase();
 					List values = Arrays.asList(elementValue.split(",")); //$NON-NLS-1$
 					for(int j = 0; j < criteriaList.size(); ++j){

@@ -25,7 +25,7 @@ import org.eclipse.help.internal.webapp.data.*;
 public class CookieUtil {
 	private static final int COOKIE_LIFE = 5 * 365 * 24 * 60 * 60;
 	private static final int MAX_COOKIE_PAYLOAD = 4096
-			- "wset01=".length() - "81920<".length() - 1; //$NON-NLS-1$ //$NON-NLS-2$
+			- "wset_contents01=".length() - "81920<".length() - 1; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * @return null or String

@@ -28,7 +28,7 @@ import org.eclipse.help.internal.HelpPlugin;
  * 
  * @since 3.5
  */
-public class CriteriaPreferences {
+public class CriteriaManager {
 	
 	private final static String SUPPORTED_CRITERIA = "supportedCriteria"; //$NON-NLS-1$
 	private final static String ENABLE_CRITERIA = "enableCriteria"; //$NON-NLS-1$
@@ -37,11 +37,9 @@ public class CriteriaPreferences {
 	private boolean criteriaEnabled;
 	private Map allCriteriaValues;
 	
-	static class InstanceHolder{
-		static CriteriaPreferences instance = new CriteriaPreferences();
-	}
+	private CriteriaDefinitionManager criteriaDefinitionManager;
 	
-	private CriteriaPreferences() {
+	public CriteriaManager() {
 		criteriaEnabled = Platform.getPreferencesService().getBoolean(HelpPlugin.PLUGIN_ID, ENABLE_CRITERIA, false, null);
 		
 		supportedCriteria = new ArrayList();
@@ -51,10 +49,10 @@ public class CriteriaPreferences {
 		}
 		
 		allCriteriaValues = new HashMap();
-	}
-	
-	public static CriteriaPreferences getInstance() {
-		return InstanceHolder.instance;
+		
+		if (criteriaDefinitionManager == null){
+			criteriaDefinitionManager = new CriteriaDefinitionManager();
+		}
 	}
 
 	public boolean isSupportedCriterion(String criterion){
@@ -68,23 +66,41 @@ public class CriteriaPreferences {
 		return criteriaEnabled;
 	}
 	
-	public void addCriteriaValues(ICriteria[] criteria){
+	public void addCriteriaValues(ICriteria[] criteria, String locale){
+		Map criteriaInLocale = (HashMap)allCriteriaValues.get(locale);
+		if(null == criteriaInLocale) {
+			criteriaInLocale = new HashMap();
+		}
 		CriterionResource[] resources = CriterionResource.toCriterionResource(criteria);
 		for(int i = 0; i < resources.length; ++ i){
 			CriterionResource criterion = resources[i];
 			String criterionName = criterion.getCriterionName();
 			List criterionValues = criterion.getCriterionValues();
 			
-			Set existedValues = (Set)allCriteriaValues.get(criterionName);
+			Set existedValues = (Set)criteriaInLocale.get(criterionName);
 			if (null == existedValues)
 				existedValues = new HashSet();
 			existedValues.addAll(criterionValues);
-			allCriteriaValues.put(criterionName, existedValues);
+			criteriaInLocale.put(criterionName, existedValues);
 		}
+		allCriteriaValues.put(locale, criteriaInLocale);
 	}
 	
-	public Map getAllCriteriaValues(){
-		return allCriteriaValues;
+	public Map getAllCriteriaValues(String locale){
+		Map criteria = (Map) allCriteriaValues.get(locale);
+		if(null == criteria) {
+			criteria = new HashMap();
+		}
+		return criteria;
+	}
+	
+	
+	public String getCriterionDisplayName (String criterionId, String locale){
+		return criteriaDefinitionManager.getCriterionName(criterionId, locale);
+	}
+	
+	public String getCriterionValueDisplayName(String criterionId, String criterionValueId, String locale) {
+		return criteriaDefinitionManager.getCriterionValueName(criterionId, criterionValueId, locale);
 	}
 
 }

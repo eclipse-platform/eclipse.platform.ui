@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,24 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.help.internal.webapp.servlet.*;
-import org.eclipse.help.internal.workingset.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.help.internal.base.util.CriteriaUtilities;
+import org.eclipse.help.internal.criteria.CriterionResource;
+import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.AdaptableTocsArray;
+import org.eclipse.help.internal.workingset.AdaptableTopic;
+import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
  * This class manages help working sets
@@ -162,6 +175,83 @@ public class WorkingSetData extends RequestData {
 			}
 		}
 	    return ""; //$NON-NLS-1$
+	}
+	
+	public boolean isCriteriaScopeEnabled(){
+		return wsmgr.isCriteriaScopeEnabled();
+	}
+	
+	public String[] getCriterionIds() {
+		return wsmgr.getCriterionIds();
+	}
+	
+
+	public String[] getCriterionValueIds(String criterionId) {
+		return wsmgr.getCriterionValueIds(criterionId);
+	}
+
+
+	public String getCriterionDisplayName(String criterionId) {
+		return wsmgr.getCriterionDisplayName(criterionId);
+	}
+	
+	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
+		return wsmgr.getCriterionValueDisplayName(criterionId, criterionValueId);
+	}
+	
+	public short getCriterionCategoryState(int index) {
+		String[] categories = getCriterionIds();
+		
+		if (!isEditMode())
+			return STATE_UNCHECKED;
+		WorkingSet ws = getWorkingSet();
+		if (ws == null)
+			return STATE_UNCHECKED;
+		if (index < 0 || index >= categories.length)
+			return STATE_UNCHECKED;
+
+		String category = categories[index];
+		Map criteriaMap = new HashMap();
+		CriterionResource[] criteria = ws.getCriteria();
+		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
+		if(!criteriaMap.keySet().contains(category))
+			return STATE_UNCHECKED;
+		
+		Set criterionValuesFromWS = (Set) criteriaMap.get(category);
+		Set criterionValuesSet = new HashSet(Arrays.asList(getCriterionValueIds(category)));
+		if(criterionValuesFromWS.containsAll(criterionValuesSet)){
+			return STATE_CHECKED;
+		}else{
+			return STATE_GRAYED;
+		}
+	}
+
+	public short getCriterionValueState(int categoryIndex, int valueIndex) {
+		String[] categories = getCriterionIds();
+		if (!isEditMode)
+			return STATE_UNCHECKED;
+		WorkingSet ws = getWorkingSet();
+		if (ws == null)
+			return STATE_UNCHECKED;
+		if (categoryIndex < 0 || categoryIndex >= categories.length)
+			return STATE_UNCHECKED;
+
+		String category = categories[categoryIndex];
+		Map criteriaMap = new HashMap();
+		CriterionResource[] criteria = ws.getCriteria();
+		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
+		
+		Set criterionValuesFromWS = (Set) criteriaMap.get(category);
+		String[] crietriaValues = getCriterionValueIds(category);
+		if (valueIndex < 0 || valueIndex >= crietriaValues.length){
+			return STATE_UNCHECKED;
+		}
+		String relatedCriterionValue = crietriaValues[valueIndex];
+		if(criterionValuesFromWS.contains(relatedCriterionValue)){
+			return STATE_CHECKED;
+		}else{
+			return STATE_UNCHECKED;
+		}
 	}
 	
 }

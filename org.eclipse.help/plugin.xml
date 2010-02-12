@@ -17,7 +17,7 @@
    <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.exsd"/>
    <extension-point id="index" name="%index_extension_point_name" schema="schema/index.exsd"/>
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.exsd"/>
-
+   <extension-point id="criteriaDefinition" name="%criteriaDefinition_extension_point_name" schema="schema/criteriaDefinition.exsd"/>
    <extension
          point="org.eclipse.help.contentExtension">
       <contentExtensionProvider class="org.eclipse.help.internal.extension.ContentExtensionFileProvider"/>
@@ -36,6 +36,13 @@
    <extension
          point="org.eclipse.help.toc">
       <tocProvider class="org.eclipse.help.internal.toc.TocFileProvider"/>
+   </extension>
+   
+    <extension
+         point="org.eclipse.help.criteriaDefinition">
+      <criteriaDefinitionProvider
+            class="org.eclipse.help.internal.criteria.CriteriaDefinitionFileProvider">
+      </criteriaDefinitionProvider>
    </extension>
    
 </plugin>

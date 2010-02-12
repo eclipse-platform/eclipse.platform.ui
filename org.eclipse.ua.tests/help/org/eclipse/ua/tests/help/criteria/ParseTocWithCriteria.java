@@ -27,13 +27,13 @@ import org.eclipse.help.IToc2;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.ITopic2;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.base.scope.CriteriaHelpScope;
 import org.eclipse.help.internal.base.util.CriteriaUtilities;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocContribution;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.internal.toc.TocFileParser;
-import org.eclipse.help.internal.workingset.CriteriaHelpScope;
 import org.eclipse.ua.tests.help.other.UserCriteria;
 import org.eclipse.ua.tests.help.other.UserToc2;
 import org.eclipse.ua.tests.help.other.UserTopic2;
@@ -273,7 +273,7 @@ public class ParseTocWithCriteria extends TestCase {
 		linuxResource[0] = new CriterionResource("platform");
 		linuxResource[0].addCriterionValue("linux");
 		CriteriaHelpScope linuxScope = new CriteriaHelpScope(linuxResource);
-		assertTrue(linuxScope.inScope(topics[0]));		
+		assertFalse(linuxScope.inScope(topics[0]));		
 	}
 
 	public void testValuesWithWhitespace() throws Exception {

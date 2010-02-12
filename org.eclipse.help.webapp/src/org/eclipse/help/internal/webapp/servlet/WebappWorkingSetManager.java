@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.IOException;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.criteria.CriterionResource;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.AdaptableTocsArray;
+import org.eclipse.help.internal.workingset.AdaptableTopic;
+import org.eclipse.help.internal.workingset.IHelpWorkingSetManager;
+import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
  * Proxy for WorkingSetManager or InfocenterWorkingSetManager.
@@ -61,6 +68,10 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 		return wSetManager.createWorkingSet(name, elements);
 	}
 
+	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
+		return wSetManager.createWorkingSet(name, elements, criteria);
+	}
+	
 	/**
 	 * Returns a working set by name
 	 *  
@@ -110,5 +121,28 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	public void setCurrentWorkingSet(String scope) {
 		wSetManager.setCurrentWorkingSet(scope);
 	}
+	
+	public boolean isCriteriaScopeEnabled(){
+		return wSetManager.isCriteriaScopeEnabled();
+	}
+	
+	public String[] getCriterionIds() {
+		return wSetManager.getCriterionIds();
+	}
+	
+
+	public String[] getCriterionValueIds(String criterionId) {
+		return wSetManager.getCriterionValueIds(criterionId);
+	}
+
+
+	public String getCriterionDisplayName(String criterionId) {
+		return wSetManager.getCriterionDisplayName(criterionId);
+	}
+	
+	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
+		return wSetManager.getCriterionValueDisplayName(criterionId, criterionValueId);
+	}
+
 
 }

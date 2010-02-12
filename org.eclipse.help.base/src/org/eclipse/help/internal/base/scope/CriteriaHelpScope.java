@@ -9,10 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.help.internal.workingset;
+package org.eclipse.help.internal.base.scope;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -96,17 +95,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 
 	private Map getCriteriaInfo(CriterionResource[] criteria) {
 		Map criteriaMap = new HashMap();
-		for(int i = 0; i < criteria.length; ++ i){
-			CriterionResource criterion = criteria[i];
-			String criterionName = criterion.getCriterionName();
-			List criterionValues = criterion.getCriterionValues();
-			
-			Set existedValueSet = (Set)criteriaMap.get(criterionName);
-			if (null == existedValueSet)
-				existedValueSet = new HashSet();
-			existedValueSet.addAll(criterionValues);
-			criteriaMap.put(criterionName, existedValueSet);
-		}
+		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 	

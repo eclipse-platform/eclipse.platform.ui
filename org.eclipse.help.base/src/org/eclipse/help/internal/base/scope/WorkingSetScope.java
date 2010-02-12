@@ -11,35 +11,56 @@
 
 package org.eclipse.help.internal.base.scope;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.help.ICriteria;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IToc;
+import org.eclipse.help.IToc2;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.ITopic2;
 import org.eclipse.help.base.AbstractHelpScope;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.base.util.CriteriaUtilities;
+import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.IHelpWorkingSetManager;
 import org.eclipse.help.internal.workingset.WorkingSet;
 
 public class WorkingSetScope extends AbstractHelpScope {
 	
+	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
+	
 	IHelpWorkingSetManager wSetManager;
 	private WorkingSet workingSet;
 	AdaptableHelpResource[] elements;
+	CriterionResource[] criteria;
 	
 	public WorkingSetScope(String scope, IHelpWorkingSetManager manager) {
 		wSetManager = manager;
 		workingSet = wSetManager.getWorkingSet(scope); 
 		elements = workingSet.getElements();
+		criteria = workingSet.getCriteria();
 		wSetManager = manager;
 	}
 
 	public boolean inScope(IToc toc) {
+		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+			return inContentScope(toc) && inCriteriaScope(toc);
+		} else {
+			return inContentScope(toc);
+		}
+	}
+	
+	private boolean inContentScope(IToc toc) {
 		for (int i = 0; i < elements.length; i++) {	
 			for (AdaptableHelpResource adaptable = elements[i]; adaptable != null; ) {
 				Object itoc = adaptable.getAdapter(IToc.class); 
@@ -56,8 +77,63 @@ public class WorkingSetScope extends AbstractHelpScope {
 		}
 		return false;
 	}
+	
+	private boolean inCriteriaScope(IToc toc) {
+		if(null == toc){
+			if(null == criteria || 0 == criteria.length){
+				return true;
+			}
+			return false;
+		}
+		ICriteria[] criteriaOfToc = ((IToc2) toc).getCriteria();
+		return isCriteriaInScope(criteriaOfToc);
+	}
+	
+	private boolean isCriteriaInScope(ICriteria[] criteriaOfTopic) {
+		if(null ==criteria){
+			return true;
+		}
+		Map ownCriteria = getCriteriaInfo(criteriaOfTopic);
+		Map scope = getCriteriaInfo(criteria);
+		outer: for (Iterator keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
+			String key = String.valueOf(keyIterator.next());
+			for (Iterator valueIterator = ((Set)scope.get(key)).iterator(); valueIterator.hasNext();) {
+				String value = String.valueOf(valueIterator.next());
+				if (value.equals(UNCATEGORIZED)) {
+					if (!ownCriteria.containsKey(key)) {
+						continue outer;						
+					}
+				} else {
+					if (null != ownCriteria.get(key) && ((Set)ownCriteria.get(key)).contains(value))
+						continue outer;					
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	private Map getCriteriaInfo(CriterionResource[] criteria) {
+		Map criteriaMap = new HashMap();
+		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
+		return criteriaMap;
+	}
+	
+	private Map getCriteriaInfo(ICriteria[] criteria) {
+		Map criteriaMap = new HashMap();
+		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
+	    return criteriaMap;
+	}
 
 	public boolean inScope(ITopic topic) {
+		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+			return inContentScope(topic) && inCriteriaScope(topic);
+		} else {
+			return inContentScope(topic);
+		}
+	}
+	
+	private boolean inContentScope(ITopic topic) {
 		Set topics = new HashSet();
 		IToc toc = null;
 		topics.add(topic);
@@ -102,6 +178,17 @@ public class WorkingSetScope extends AbstractHelpScope {
 			}
 		}
 		return false;
+	}
+	
+	private boolean inCriteriaScope(ITopic topic) {
+		if(null == topic){
+			if(null == criteria || 0 == criteria.length){
+				return true;
+			}
+			return false;
+		}
+		ICriteria[] criteriaOfTopic = ((ITopic2) topic).getCriteria();
+		return isCriteriaInScope(criteriaOfTopic);
 	}
 
 	public boolean inScope(IIndexEntry entry) {

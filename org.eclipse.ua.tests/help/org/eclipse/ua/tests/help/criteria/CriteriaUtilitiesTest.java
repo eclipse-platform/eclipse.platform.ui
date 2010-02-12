@@ -45,7 +45,7 @@ public class CriteriaUtilitiesTest extends TestCase {
 	public void testUppercaseValue() {
 		List values = CriteriaUtilities.getCriteriaValues("LINUX");
 		assertEquals(1, values.size());
-		assertEquals("linux", values.get(0));
+		assertNotSame("linux", values.get(0));
 	}
 	
 }

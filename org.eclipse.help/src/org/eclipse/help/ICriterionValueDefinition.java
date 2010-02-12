@@ -8,29 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help.criteria;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+package org.eclipse.help;
 
-/*
- * Tests help keyword index functionality.
+/**
+ * ICriterionValueDefinition represents one criterion value definition of one criterion.
+ * It includes value id and its display name.
+ * 
+ * @since 3.5
  */
-public class AllCriteriaTests extends TestSuite {
+public interface ICriterionValueDefinition extends IUAElement {
 
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllCriteriaTests();
-	}
+    /**
+     * Returns the id that this criterion value
+     *
+     * @return the id
+     */
+    public String getId();
 
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllCriteriaTests() {
-		addTestSuite(ParseTocWithCriteria.class);
-		addTestSuite(CriteriaUtilitiesTest.class);
-		addTestSuite(ParseCriteriaDefinition.class);
-	}
+    /**
+     * Obtains the display name associated with this criterion value.
+     * 
+     * @return the name
+     */
+    public String getName();
 }

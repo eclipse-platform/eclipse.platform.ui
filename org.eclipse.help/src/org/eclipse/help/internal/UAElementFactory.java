@@ -20,6 +20,9 @@ import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContentExtension;
 import org.eclipse.help.IContext;
 import org.eclipse.help.ICriteria;
+import org.eclipse.help.ICriteriaDefinition;
+import org.eclipse.help.ICriterionDefinition;
+import org.eclipse.help.ICriterionValueDefinition;
 import org.eclipse.help.IInclude;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
@@ -31,6 +34,9 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.criteria.Criteria;
+import org.eclipse.help.internal.criteria.CriteriaDefinition;
+import org.eclipse.help.internal.criteria.CriterionDefinition;
+import org.eclipse.help.internal.criteria.CriterionValueDefinition;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
@@ -60,6 +66,9 @@ public class UAElementFactory {
 		{ IIndex.class, Index.class },
 		{ IContentExtension.class, ContentExtension.class },
 		{ ICriteria.class, Criteria.class },
+		{ ICriteriaDefinition.class, CriteriaDefinition.class },
+		{ ICriterionDefinition.class, CriterionDefinition.class },
+		{ ICriterionValueDefinition.class, CriterionValueDefinition.class },
 	};
 
 	private static final Map classByElementName;
@@ -78,6 +87,9 @@ public class UAElementFactory {
 		classByElementName.put(IndexSee.NAME, IndexSee.class);
 		classByElementName.put(IndexSubpath.NAME, IndexSubpath.class);
 		classByElementName.put(Criteria.NAME, Criteria.class);
+		classByElementName.put(CriteriaDefinition.NAME, CriteriaDefinition.class);
+		classByElementName.put(CriterionDefinition.NAME, CriterionDefinition.class);
+		classByElementName.put(CriterionValueDefinition.NAME, CriterionValueDefinition.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_REPLACEMENT, ContentExtension.class);

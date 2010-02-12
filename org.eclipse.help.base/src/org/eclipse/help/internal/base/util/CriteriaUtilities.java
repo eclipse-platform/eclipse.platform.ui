@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.help.ICriteria;
+import org.eclipse.help.internal.criteria.CriterionResource;
 
 public class CriteriaUtilities {
 	
     public static List getCriteriaValues(String rawValues) {
     	List result = new ArrayList();
     	if (rawValues != null) {
-    		String lowerCaseValues = rawValues.toLowerCase();
-    		String[] values = lowerCaseValues.split(","); //$NON-NLS-1$
+    		String[] values = rawValues.split(","); //$NON-NLS-1$
     		for(int j = 0; j < values.length; ++j){
     			String value = values[j].trim();
     			if (value.length() > 0) {
@@ -42,15 +42,28 @@ public class CriteriaUtilities {
 			String name = criterion.getName();
 			List values = CriteriaUtilities.getCriteriaValues(criterion.getValue());
 			if (name != null && name.length() > 0 && values.size() > 0) {
-				
-			}
-
-			Set existingValueSet = (Set) map.get(name);
-			if (null == existingValueSet) {
-				existingValueSet = new HashSet();
+				name = name.toLowerCase();
+				Set existingValueSet = (Set) map.get(name);
+				if (null == existingValueSet) {
+					existingValueSet = new HashSet();
+				}
+				existingValueSet.addAll(values);
 				map.put(name, existingValueSet);
-			}
-			existingValueSet.addAll(values);
+			}		
+		}
+    }
+    
+    public static void addCriteriaToMap(Map map, CriterionResource[] criteria) {
+    	for(int i = 0; i < criteria.length; ++ i){
+			CriterionResource criterion = criteria[i];
+			String criterionName = criterion.getCriterionName();
+			List criterionValues = criterion.getCriterionValues();
+			
+			Set existedValueSet = (Set)map.get(criterionName);
+			if (null == existedValueSet)
+				existedValueSet = new HashSet();
+			existedValueSet.addAll(criterionValues);
+			map.put(criterionName, existedValueSet);
 		}
     }
     
