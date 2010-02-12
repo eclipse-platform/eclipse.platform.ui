@@ -431,9 +431,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 		assertExistsInWorkspace("3,1", newFile);
 		assertTrue("3,2", !newFile.getLocation().equals(newFile.getRawLocation()));
-		assertTrue("3,3", newFile.getRawLocation().equals(variableBasedLocation));
-		assertTrue("3,4", newFile.getRawLocation().equals(variableBasedLocation));
-		assertEquals("3,5", newFile.getLocation(), resolvedPath);
+		assertEquals("3,3", newFile.getLocation(), resolvedPath);
 	}
 
 	private IPath convertToRelative(IPathVariableManager manager, IPath path, IResource res, boolean force, String variableHint) throws CoreException {
@@ -1355,107 +1353,58 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	public void testConvertToUserEditableFormat() {
 		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
 
-		String result = pathVariableManager.convertToUserEditableFormat("C:\\foo\\bar");
-		assertEquals("1.0", "C:\\foo\\bar", result);
+		String[][] table = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
+		{"C:\\foo\\bar", "C:\\foo\\bar"}, //
+				{"C:/foo/bar", "C:/foo/bar"}, //
+				{"VAR/foo/bar", "VAR/foo/bar"}, //
+				{"${VAR}/foo/bar", "${VAR}/foo/bar"}, //
+				{"${VAR}/../foo/bar", "${VAR}/../foo/bar", "${PARENT-1-VAR}/foo/bar"}, //
+				{"${PARENT-1-VAR}/foo/bar", "${VAR}/../foo/bar"}, //
+				{"${PARENT-0-VAR}/foo/bar", "${VAR}/foo/bar", "${VAR}/foo/bar"}, //
+				{"${PARENT-VAR}/foo/bar", "${PARENT-VAR}/foo/bar"}, //
+				{"${PARENT-2}/foo/bar", "${PARENT-2}/foo/bar"}, //
+				{"${PARENT}/foo/bar", "${PARENT}/foo/bar"}, //
+				{"${PARENT-2-VAR}/foo/bar", "${VAR}/../../foo/bar"}, //
+				{"${PARENT-2-VAR}/foo/${PARENT-4-BAR}", "${VAR}/../../foo/${BAR}/../../../.."}, //
+				{"${PARENT-2-VAR}/foo${PARENT-4-BAR}", "${VAR}/../../foo${BAR}/../../../.."}, //
+				{"${PARENT-2-VAR}/${PARENT-4-BAR}/foo", "${VAR}/../../${BAR}/../../../../foo"}, //
+				{"${PARENT-2-VAR}/f${PARENT-4-BAR}/oo", "${VAR}/../../f${BAR}/../../../../oo"} //
+		};
 
-		result = pathVariableManager.convertToUserEditableFormat("C:/foo/bar");
-		assertEquals("1.1", "C:/foo/bar", result);
+		for (int i = 0; i < table.length; i++) {
+			String result = pathVariableManager.convertToUserEditableFormat(toOS(table[i][0]), false);
+			assertEquals("1." + i, toOS(table[i][1]), result);
+			String original = pathVariableManager.convertFromUserEditableFormat(result, false, existingProject);
+			assertEquals("2." + i, toOS(table[i].length == 2 ? table[i][0] : table[i][2]), original);
+		}
 
-		result = pathVariableManager.convertToUserEditableFormat("VAR/foo/bar");
-		assertEquals("1.2", "VAR/foo/bar", result);
+		String[][] tableLocationFormat = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
+		{"C:\\foo\\bar", "C:\\foo\\bar"}, //
+				{"C:/foo/bar", "C:/foo/bar"}, //
+				{"VAR/foo/bar", "VAR/foo/bar"}, //
+				{"${VAR}/../foo/bar", "${VAR}/../foo/bar", "PARENT-1-VAR/foo/bar"}, //
+				{"PARENT-1-VAR/foo/bar", "VAR/../foo/bar"}, //
+				{"PARENT-0-VAR/foo/bar", "VAR/foo/bar", "VAR/foo/bar"}, //
+				{"PARENT-VAR/foo/bar", "PARENT-VAR/foo/bar"}, //
+				{"PARENT-2/foo/bar", "PARENT-2/foo/bar"}, //
+				{"PARENT/foo/bar", "PARENT/foo/bar"}, //
+				{"PARENT-2-VAR/foo/bar", "VAR/../../foo/bar"}, //
+				{"PARENT-2-VAR/foo/PARENT-4-BAR", "VAR/../../foo/PARENT-4-BAR"}, //
+				{"PARENT-2-VAR/fooPARENT-4-BAR", "VAR/../../fooPARENT-4-BAR"}, //
+				{"PARENT-2-VAR/PARENT-4-BAR/foo", "VAR/../../PARENT-4-BAR/foo"}, //
+				{"PARENT-2-VAR/fPARENT-4-BAR/oo", "VAR/../../fPARENT-4-BAR/oo"}, //
+				{"/foo/bar", "/foo/bar"}, //
+		};
 
-		result = pathVariableManager.convertToUserEditableFormat("${VAR}/foo/bar");
-		assertEquals("1.3", "${VAR}/foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${VAR}/../foo/bar");
-		assertEquals("1.4", "${VAR}/../foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-1-VAR}/foo/bar");
-		assertEquals("1.5", "${VAR}/../foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-0-VAR}/foo/bar");
-		assertEquals("1.6", "${VAR}/foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-VAR}/foo/bar");
-		assertEquals("1.7", "${PARENT-VAR}/foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2}/foo/bar");
-		assertEquals("1.8", "${PARENT-2}/foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT}/foo/bar");
-		assertEquals("1.9", "${PARENT}/foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo/bar");
-		assertEquals("2.0", "${VAR}/../../foo/bar", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo/${PARENT-4-BAR}");
-		assertEquals("2.1", "${VAR}/../../foo/${BAR}/../../../..", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/foo${PARENT-4-BAR}");
-		assertEquals("2.2", "${VAR}/../../foo${BAR}/../../../..", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/${PARENT-4-BAR}/foo");
-		assertEquals("2.3", "${VAR}/../../${BAR}/../../../../foo", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("${PARENT-2-VAR}/f${PARENT-4-BAR}/oo");
-		assertEquals("2.4", "${VAR}/../../f${BAR}/../../../../oo", result);
-
-		result = pathVariableManager.convertToUserEditableFormat("/foo/bar");
-		assertEquals("2.5", "/foo/bar", result);
+		for (int i = 0; i < table.length; i++) {
+			String result = pathVariableManager.convertToUserEditableFormat(toOS(tableLocationFormat[i][0]), true);
+			assertEquals("3." + i, toOS(tableLocationFormat[i][1]), result);
+			String original = pathVariableManager.convertFromUserEditableFormat(result, true, existingProject);
+			assertEquals("4." + i, toOS(tableLocationFormat[i].length == 2 ? tableLocationFormat[i][0] : tableLocationFormat[i][2]), original);
+		}
 	}
 
-	public void testConvertFromUserEditableFormat() {
-		IPathVariableManager manager = existingProject.getPathVariableManager();
-
-		String result = manager.convertFromUserEditableFormat("C:\\foo\\bar", existingProject);
-		assertEquals("1.0", "C:/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("C:/foo/bar", existingProject);
-		assertEquals("1.1", "C:/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("VAR/foo/bar", existingProject);
-		assertEquals("1.2", "VAR/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/foo/bar", existingProject);
-		assertEquals("1.3", "${VAR}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../foo/bar", existingProject);
-		assertEquals("1.4", "${PARENT-1-VAR}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${PARENT-1-VAR}/foo/bar", existingProject);
-		assertEquals("1.5", "${PARENT-1-VAR}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${PARENT-VAR}/foo/bar", existingProject);
-		assertEquals("1.6", "${PARENT-VAR}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${PARENT-2}/foo/bar", existingProject);
-		assertEquals("1.7", "${PARENT-2}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${PARENT}/foo/bar", existingProject);
-		assertEquals("1.8", "${PARENT}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../../foo/bar", existingProject);
-		assertEquals("1.9", "${PARENT-2-VAR}/foo/bar", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../../foo/${BAR}/../../../../", existingProject);
-		assertEquals("2.0", "${PARENT-2-VAR}/foo/${PARENT-4-BAR}", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../../foo${BAR}/../../../../", existingProject);
-		assertEquals("2.1", "${PARENT-2-VAR}/foo${PARENT-4-BAR}", result);
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../../${BAR}foo/../../../../", existingProject);
-		assertEquals("2.2", "${PARENT-2-VAR}/${PARENT-4-BARfoo}", result);
-
-		IPath intermeiateValue = manager.getValue("BARfoo");
-		assertEquals("2.3", "${BAR}foo", intermeiateValue.toPortableString());
-
-		result = manager.convertFromUserEditableFormat("${VAR}/../../f${BAR}oo/../../../../", existingProject);
-		assertEquals("2.4", "${PARENT-2-VAR}/${PARENT-4-BARoo}", result);
-
-		intermeiateValue = manager.getValue("BARoo");
-		assertEquals("2.5", "f${BAR}oo", intermeiateValue.toPortableString());
-
-		result = manager.convertFromUserEditableFormat("/foo/bar", existingProject);
-		assertEquals("2.6", "/foo/bar", result);
+	private String toOS(String path) {
+		return path.replace("/", File.separator);
 	}
 }

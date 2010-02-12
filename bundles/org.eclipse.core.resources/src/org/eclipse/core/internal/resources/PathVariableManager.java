@@ -363,13 +363,13 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see IPathVariableManager#convertToUserEditableFormat(String)
+	 * @see IPathVariableManager#convertToUserEditableFormat(String, boolean)
 	 */
-	public String convertToUserEditableFormat(String value) { 
-		return PathVariableUtil.convertToUserEditableFormatInternal(value);
+	public String convertToUserEditableFormat(String value, boolean locationFormat) { 
+		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
 
-	public String convertFromUserEditableFormat(String userFormat, IResource resource) {
-		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, resource);
+	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat, IResource resource) {
+		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat, resource);
 	}
 }

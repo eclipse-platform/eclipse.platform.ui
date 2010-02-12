@@ -177,7 +177,16 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		} catch (CoreException e) {
 			return false;
 		}
-		return getWorkspaceManager().isDefined(varName);
+		boolean value = getWorkspaceManager().isDefined(varName);
+		if (!value) {
+			// this is to handle variables with encoded arguments
+			int index = varName.indexOf('-');
+			if (index != -1) {
+				String newVarName = varName.substring(0, index);
+				value = isDefined(newVarName);
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -432,14 +441,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @see IPathVariableManager#convertToUserEditableFormat(String)
+	 * @see IPathVariableManager#convertToUserEditableFormat(String, boolean)
 	 */
-	public String convertToUserEditableFormat(String value) { 
-		return PathVariableUtil.convertToUserEditableFormatInternal(value);
+	public String convertToUserEditableFormat(String value, boolean locationFormat) { 
+		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
 	
-	public String convertFromUserEditableFormat(String userFormat, IResource resource) {
-		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, resource);
+	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat, IResource resource) {
+		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat, resource);
 	}
 	
 	public void addChangeListener(IPathVariableChangeListener listener) {

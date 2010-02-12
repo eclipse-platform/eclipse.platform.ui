@@ -369,25 +369,27 @@ public interface IPathVariableManager {
 
 	/**
 	 * Converts the internal format of the linked resource location if the PARENT
-	 * variables is used.  For example, if the value is "${PARENT-2-VAR}/foo", the
-	 * converted result is "${VAR}/../../foo".
-	 * @param value
+	 * variables is used.  For example, if the value is "${PARENT-2-VAR}\foo", the
+	 * converted result is "${VAR}\..\..\foo".
+	 * @param value the value encoded using OS string (as returned from Path.toOSString())
+	 * @param locationFormat indicates whether the value contains a string that is stored in the linked resource location rather than in the path variable value
 	 * @return the converted path variable value
 	 * @since 3.6
 	 */
-	public String convertToUserEditableFormat(String value);
+	public String convertToUserEditableFormat(String value, boolean locationFormat);
 
 	/**
 	 * Converts the user editable format to the internal format.
-	 * For example, if the value is "${VAR}/../../foo", the
-	 * converted result is "${PARENT-2-VAR}/foo".
+	 * For example, if the value is "${VAR}\..\..\foo", the
+	 * converted result is "${PARENT-2-VAR}\foo".
 	 * If the string is not directly convertible to a ${PARENT-COUNT-VAR}
-	 * syntax (for example, the editable string "${FOO}bar/../../"), intermediate
+	 * syntax (for example, the editable string "${FOO}bar\..\..\"), intermediate
 	 * path variables will be created.
-	 * @param userFormat The user editable string
+	 * @param value the value encoded using OS string (as returned from Path.toOSString())
+	 * @param locationFormat indicates whether the value contains a string that is stored in the linked resource location rather than in the path variable value
 	 * @param resource the resource for which this variable is resolved  
 	 * @return the converted path variable value
 	 * @since 3.6
 	 */
-	public String convertFromUserEditableFormat(String userFormat, IResource resource);
+	public String convertFromUserEditableFormat(String value, boolean locationFormat, IResource resource);
 }

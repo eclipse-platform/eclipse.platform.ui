@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -876,6 +878,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		String[] variables = destPathVariableManager.getPathVariableNames(dest);
 		for (int i = 0; i < variables.length; i++) {
 			if (variables[i].equals(WorkspaceLocationVariableResolver.NAME))
+				continue;
+			if (variables[i].equals(WorkspaceParentLocationVariableResolver.NAME))
 				continue;
 			if (variables[i].equals(ParentVariableResolver.NAME))
 				continue;

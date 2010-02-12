@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -90,6 +94,8 @@ public class PathVariableUtil {
 				if (variable.equals(WorkspaceLocationVariableResolver.NAME))
 					continue; 
 			}
+			if (variable.equals(WorkspaceParentLocationVariableResolver.NAME))
+				continue;
 			if (variable.equals(ParentVariableResolver.NAME))
 				continue;
 			// find closest path to the original path
@@ -119,6 +125,8 @@ public class PathVariableUtil {
 						if (variable.equals(WorkspaceLocationVariableResolver.NAME))
 							continue;
 					}
+					if (variable.equals(WorkspaceParentLocationVariableResolver.NAME))
+						continue;
 					if (variable.equals(ParentVariableResolver.NAME))
 						continue;
 					IPath value = URIUtil.toPath(pathVariableManager.getValue(variable, resource));
@@ -158,7 +166,7 @@ public class PathVariableUtil {
 		return newPath;
 	}
 
-	private static IPath makeRelativeToVariable(IPathVariableManager pathVariableManager, IPath originalPath, IResource resource, boolean force, String variableHint, boolean generateMacro) throws CoreException {
+	private static IPath makeRelativeToVariable(IPathVariableManager pathVariableManager, IPath originalPath, IResource resource, boolean force, String variableHint, boolean generateMacro) {
 		IPath path = convertToProperCase(originalPath);
 		IPath value = URIUtil.toPath(pathVariableManager.getValue(variableHint, resource));
 		value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
@@ -173,57 +181,28 @@ public class PathVariableUtil {
 		} 
 
 		if (force) {
-			// transform "c:/foo/bar/other_child/file.txt" into "${PARENT-1-BAR_CHILD}/other_child/file.txt"
-			int matchingFirstSegments = path.matchingFirstSegments(value);
-			if (matchingFirstSegments >= 0) {
-				String newValue = buildParentPathVariable(variableHint, valueSegmentCount - matchingFirstSegments, generateMacro);
-				String originalName;
-				if (generateMacro) 
-					originalName = newValue;
-				else {
-					originalName = getExistingVariable(newValue, pathVariableManager, resource);
-					if (originalName == null) {
-						String name;
-						if (matchingFirstSegments > 0)
-							name = originalPath.segment(matchingFirstSegments - 1);
-						else
-							name = originalPath.getDevice();
-						if (name == null)
-							name = "ROOT"; //$NON-NLS-1$
-						originalName = getUniqueVariableName(name, pathVariableManager, resource);
-						pathVariableManager.setValue(originalName, resource, URIUtil.toURI(Path.fromOSString(newValue)));
+			if (devicesAreCompatible(path, value)) {
+				// transform "c:/foo/bar/other_child/file.txt" into "${PARENT-1-BAR_CHILD}/other_child/file.txt"
+				int matchingFirstSegments = path.matchingFirstSegments(value);
+				if (matchingFirstSegments >= 0) {
+					String originalName= buildParentPathVariable(variableHint, valueSegmentCount - matchingFirstSegments, true);
+					IPath tmp = Path.fromOSString(originalName);
+					for (int j = matchingFirstSegments ;j < originalPath.segmentCount(); j++) {
+						tmp = tmp.append(originalPath.segment(j));
 					}
+					return tmp;
 				}
-				IPath tmp = Path.fromOSString(originalName);
-				for (int j = matchingFirstSegments ;j < originalPath.segmentCount(); j++) {
-					tmp = tmp.append(originalPath.segment(j));
-				}
-				return tmp;
 			}
 		}
 		return originalPath;
 	}
-
-	private static String getExistingVariable(String newValue, IPathVariableManager pathVariableManager, IResource resource) {
-		IPath resolvedNewValue = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(Path.fromOSString(newValue)), resource)));
-		String[] existingVariables = pathVariableManager.getPathVariableNames(resource);
-		for (int i = 0; i < existingVariables.length; i++) {
-			String variable = existingVariables[i];
-			URI uri = pathVariableManager.getValue(variable, resource);
-			if (uri != null) {
-				IPath value = URIUtil.toPath(uri);
-				if (value != null) {
-					if (value.toOSString().equals(newValue))
-						return variable;
-					IPath resolvedValue = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
-					if (resolvedValue.equals(resolvedNewValue))
-						return variable;
-				}
-			}
-		}
-		return null;
-	}
 	
+	private static boolean devicesAreCompatible(IPath path, IPath value) {
+		return (path.getDevice() != null && value.getDevice() != null) ?
+					(path.getDevice().equals(value.getDevice())) :
+					(path.getDevice() == value.getDevice());
+	}
+
 	static private IPath convertToProperCase(IPath path) {
 		if (Platform.getOS().equals(Platform.OS_WIN32))
 			return Path.fromPortableString(path.toPortableString().toLowerCase());
@@ -270,8 +249,10 @@ public class PathVariableUtil {
 		return Path.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
 	}
 
-	public static String convertFromUserEditableFormatInternal(IPathVariableManager manager, String userFormat, IResource resource) {
-		boolean isAbsolute = (userFormat.length() > 0) && (userFormat.charAt(0) == '/' || userFormat.charAt(0) == '\\');
+	public static String convertFromUserEditableFormatInternal(IPathVariableManager manager, String userFormat, boolean locationFormat, IResource resource) {
+		char pathPrefix = 0;
+		if ((userFormat.length() > 0) && (userFormat.charAt(0) == '/' || userFormat.charAt(0) == '\\'))
+			pathPrefix = userFormat.charAt(0);
 		String components[] = splitPathComponents(userFormat);
 		for (int i = 0; i < components.length; i++) {
 			if (components[i] == null)
@@ -297,41 +278,51 @@ public class PathVariableUtil {
 						if (components[j] == null)
 							continue;
 						String variable = extractVariable(components[j]);
+						
+						boolean hasVariableWithMacroSyntax = true;
+						if (variable.length() == 0 && (locationFormat && j == 0)) {
+							variable = components[j];
+							hasVariableWithMacroSyntax = false;
+						}
+						
 						try {
 							if (variable.length() > 0) {
-								int indexOfVariable = components[j].indexOf(variable) - "${".length(); //$NON-NLS-1$
-								String prefix = components[j].substring(0, indexOfVariable);
-								String suffix = components[j].substring(indexOfVariable + "${".length() + variable.length() + "}".length()); //$NON-NLS-1$ //$NON-NLS-2$
-								if (suffix.length() != 0) {
-									// Create an intermediate variable, since a syntax of "${VAR}foo/../"
-									// can't be converted to a "${PARENT-1-VAR}foo" variable.
-									// So instead, an intermediate variable "VARFOO" will be created of value 
-									// "${VAR}foo", and the string "${PARENT-1-VARFOO}" will be inserted.
-									String intermediateVariable = PathVariableUtil.getValidVariableName(variable + suffix);
-									IPath intermediateValue = Path.fromPortableString(components[j]);
-									int intermediateVariableIndex = 1;
-									String originalIntermediateVariableName = intermediateVariable;
-									while (manager.isDefined(intermediateVariable, resource)) {
-										IPath tmpValue = URIUtil.toPath(manager.getValue(intermediateVariable, resource));
-										if (tmpValue.equals(intermediateValue))
-											break;
-										intermediateVariable = originalIntermediateVariableName + intermediateVariableIndex;
+								String prefix = new String();
+								if (hasVariableWithMacroSyntax) {
+									int indexOfVariable = components[j].indexOf(variable) - "${".length(); //$NON-NLS-1$
+									prefix = components[j].substring(0, indexOfVariable);
+									String suffix = components[j].substring(indexOfVariable + "${".length() + variable.length() + "}".length()); //$NON-NLS-1$ //$NON-NLS-2$
+									if (suffix.length() != 0) {
+										// Create an intermediate variable, since a syntax of "${VAR}foo/../"
+										// can't be converted to a "${PARENT-1-VAR}foo" variable.
+										// So instead, an intermediate variable "VARFOO" will be created of value 
+										// "${VAR}foo", and the string "${PARENT-1-VARFOO}" will be inserted.
+										String intermediateVariable = PathVariableUtil.getValidVariableName(variable + suffix);
+										IPath intermediateValue = Path.fromPortableString(components[j]);
+										int intermediateVariableIndex = 1;
+										String originalIntermediateVariableName = intermediateVariable;
+										while (manager.isDefined(intermediateVariable, resource)) {
+											IPath tmpValue = URIUtil.toPath(manager.getValue(intermediateVariable, resource));
+											if (tmpValue.equals(intermediateValue))
+												break;
+											intermediateVariable = originalIntermediateVariableName + intermediateVariableIndex;
+										}
+										if (!manager.isDefined(intermediateVariable, resource))
+											manager.setValue(intermediateVariable, resource, URIUtil.toURI(intermediateValue));
+										variable = intermediateVariable;
+										prefix = new String();
 									}
-									if (!manager.isDefined(intermediateVariable, resource))
-										manager.setValue(intermediateVariable, resource, URIUtil.toURI(intermediateValue));
-									variable = intermediateVariable;
-									prefix = new String();
 								}
 								String newVariable = variable;
 								if (PathVariableUtil.isParentVariable(variable)) {
 									String argument = PathVariableUtil.getParentVariableArgument(variable);
 									int count = PathVariableUtil.getParentVariableCount(variable);
 									if (argument != null && count != -1)
-										newVariable = PathVariableUtil.buildParentPathVariable(argument, count + parentCount, false);
+										newVariable = PathVariableUtil.buildParentPathVariable(argument, count + parentCount, locationFormat);
 									else
-										newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
+										newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, locationFormat);
 								} else
-									newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, false);
+									newVariable = PathVariableUtil.buildParentPathVariable(variable, parentCount, locationFormat);
 								components[j] = prefix + newVariable;
 								break;
 							}
@@ -346,12 +337,12 @@ public class PathVariableUtil {
 			}
 		}
 		StringBuffer buffer = new StringBuffer();
-		if (isAbsolute)
-			buffer.append('/');
+		if (pathPrefix != 0)
+			buffer.append(pathPrefix);
 		for (int i = 0; i < components.length; i++) {
 			if (components[i] != null) {
 				if (i > 0)
-					buffer.append('/');
+					buffer.append(java.io.File.separator);
 				buffer.append(components[i]);
 			}
 		}
@@ -379,25 +370,40 @@ public class PathVariableUtil {
 		return (String[]) list.toArray(new String[0]);
 	}
 
-	public static String convertToUserEditableFormatInternal(String value) {
+	public static String convertToUserEditableFormatInternal(String value, boolean locationFormat) {
 		StringBuffer buffer = new StringBuffer();
-		String components[] = splitVariablesAndContent(value);
-		for (int i = 0; i < components.length; i++) {
-			String variable = extractVariable(components[i]);
-			if (PathVariableUtil.isParentVariable(variable)) {
-				String argument = PathVariableUtil.getParentVariableArgument(variable);
-				int count = PathVariableUtil.getParentVariableCount(variable);
-				if (argument != null && count != -1) {
-					buffer.append(PathVariableUtil.buildVariableMacro(Path.fromOSString(argument)));
-					for (int j = 0; j < count; j++) {
-						buffer.append("/.."); //$NON-NLS-1$
-					}
-				} else
-					buffer.append(components[i]);
-			} else
-				buffer.append(components[i]);
+		if (locationFormat) {
+			IPath path = Path.fromOSString(value);
+			if (path.isAbsolute())
+				return path.toOSString();
+			int index = value.indexOf(java.io.File.separator);
+			String variable = index != -1 ? value.substring(0, index): value;
+			convertVariableToUserFormat(buffer, variable, variable, false);
+			if (index != -1)
+				buffer.append(value.substring(index));
+		} else {
+			String components[] = splitVariablesAndContent(value);
+			for (int i = 0; i < components.length; i++) {
+				String variable = extractVariable(components[i]);
+				convertVariableToUserFormat(buffer, components[i], variable, true);
+			}
 		}
 		return buffer.toString();
+	}
+
+	private static void convertVariableToUserFormat(StringBuffer buffer, String component, String variable, boolean generateMacro) {
+		if (PathVariableUtil.isParentVariable(variable)) {
+			String argument = PathVariableUtil.getParentVariableArgument(variable);
+			int count = PathVariableUtil.getParentVariableCount(variable);
+			if (argument != null && count != -1) {
+				buffer.append(generateMacro? PathVariableUtil.buildVariableMacro(Path.fromOSString(argument)):Path.fromOSString(argument));
+				for (int j = 0; j < count; j++) {
+					buffer.append(java.io.File.separator + ".."); //$NON-NLS-1$
+				}
+			} else
+				buffer.append(component);
+		} else
+			buffer.append(component);
 	}
 	/*
 	 * Splits a value (returned by this.getValue(variable) in an array of

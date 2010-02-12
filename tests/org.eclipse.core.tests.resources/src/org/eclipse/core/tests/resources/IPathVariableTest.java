@@ -550,10 +550,8 @@ public class IPathVariableTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
-		expected = new Path("foo/other/file.txt");
+		expected = new Path("PARENT-1-ONE/other/file.txt");
 		assertEquals("4.0", expected, actual);
-		assertTrue("4.1", manager.isDefined("foo"));
-		assertEquals("4.2", manager.getValue("foo").toOSString(), "${PARENT-1-ONE}");
 
 		// the second time should be re-using "FOO"
 		try {
@@ -561,16 +559,8 @@ public class IPathVariableTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("4.3", e);
 		}
-		expected = new Path("foo/other/file.txt");
+		expected = new Path("PARENT-1-ONE/other/file.txt");
 		assertEquals("5.0", expected, actual);
-		assertTrue("5.1", manager.isDefined("foo"));
-		assertEquals("5.2", manager.getValue("foo").toOSString(), "${PARENT-1-ONE}");
-
-		try {
-			manager.setValue("foo", null);
-		} catch (CoreException e) {
-			fail("5.3", e);
-		}
 
 		try {
 			actual = convertToRelative(manager, file, true, "TWO");
@@ -616,10 +606,8 @@ public class IPathVariableTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("9.1", e);
 		}
-		expected = new Path("foo/other/file.txt");
+		expected = new Path("PARENT-1-ONE/other/file.txt");
 		assertEquals("10.0", expected, actual);
-		assertTrue("10.1", manager.isDefined("foo"));
-		assertEquals("10.2", manager.getValue("foo").toOSString(), "${PARENT-1-ONE}");
 	}
 
 	/**
