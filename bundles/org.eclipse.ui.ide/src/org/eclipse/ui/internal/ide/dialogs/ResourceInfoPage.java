@@ -316,7 +316,8 @@ public class ResourceInfoPage extends PropertyPage {
 	protected void editLinkLocation() {
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
-		IPath location = Path.fromPortableString(locationValue.getText());
+		String locationFormat = resource.getProject().getPathVariableManager().convertFromUserEditableFormat(locationValue.getText(), true, resource);
+		IPath location = Path.fromOSString(locationFormat);
 
 		PathVariableDialog dialog = new PathVariableDialog(getShell(),
 				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
@@ -336,7 +337,8 @@ public class ResourceInfoPage extends PropertyPage {
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
 
-		locationValue.setText(newResourceLocation.toPortableString());
+		String userEditableFormat = resource.getProject().getPathVariableManager().convertToUserEditableFormat(newResourceLocation.toOSString(), true);
+		locationValue.setText(userEditableFormat);
 
 		URI resolvedURI = resource.getProject().getPathVariableManager()
 				.resolveURI(URIUtil.toURI(newResourceLocation), resource);

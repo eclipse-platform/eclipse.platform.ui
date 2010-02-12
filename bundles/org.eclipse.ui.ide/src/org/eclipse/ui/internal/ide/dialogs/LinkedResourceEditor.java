@@ -275,7 +275,7 @@ public class LinkedResourceEditor {
 				else {
 					IPath rawLocation = ((IResource) obj).getRawLocation();
 					if (rawLocation != null)
-						return rawLocation.toPortableString();
+						return rawLocation.toOSString();
 				}
 			} else if ((obj instanceof String) && index == 0)
 				return (String) obj;
@@ -522,8 +522,8 @@ public class LinkedResourceEditor {
 												res.getProjectRelativePath()
 														.toPortableString(),
 												res.getRawLocation()
-														.toPortableString(),
-												location.toPortableString() }));
+														.toOSString(),
+												location.toOSString() }));
 			} catch (CoreException e) {
 				report
 						.add(NLS
@@ -642,9 +642,9 @@ public class LinkedResourceEditor {
 													res
 															.getProjectRelativePath()
 															.toPortableString(),
-													location.toPortableString(),
+													location.toOSString(),
 													newLocation
-															.toPortableString() }));
+															.toOSString() }));
 				}
 			} catch (CoreException e) {
 				remaining.add(res);
@@ -667,7 +667,7 @@ public class LinkedResourceEditor {
 			for (int i = 0; i < variables.length; i++) {
 				IPath resolvePath = URIUtil.toPath(fProject
 				.getPathVariableManager().resolveURI(
-						URIUtil.toURI(Path.fromPortableString(variables[i])), res));
+						URIUtil.toURI(Path.fromOSString(variables[i])), res));
 				if (resolvePath
 						.isPrefixOf(convertToProperCase(location))) {
 					int count = location
@@ -691,9 +691,9 @@ public class LinkedResourceEditor {
 													res
 															.getProjectRelativePath()
 															.toPortableString(),
-													location.toPortableString(),
+													location.toOSString(),
 													newLocation
-															.toPortableString() }));
+															.toOSString() }));
 				} catch (CoreException e) {
 					variable = -1;
 				}
@@ -737,7 +737,7 @@ public class LinkedResourceEditor {
 									.bind(
 											IDEWorkbenchMessages.LinkedResourceEditor_unableToCreateVariable,
 											variableName, commonPath
-													.toPortableString()));
+													.toOSString()));
 				}
 				it = resources.iterator();
 				while (it.hasNext()) {
@@ -758,9 +758,9 @@ public class LinkedResourceEditor {
 																.getProjectRelativePath()
 																.toPortableString(),
 														location
-																.toPortableString(),
+																.toOSString(),
 														newLocation
-																.toPortableString() }));
+																.toOSString() }));
 					} catch (CoreException e) {
 						report
 								.add(NLS
@@ -808,8 +808,8 @@ public class LinkedResourceEditor {
 										new Object[] {
 												res.getProjectRelativePath()
 														.toPortableString(),
-												location.toPortableString(),
-												newLocation.toPortableString() }));
+												location.toOSString(),
+												newLocation.toOSString() }));
 			} catch (CoreException e) {
 				report
 						.add(NLS
@@ -827,6 +827,13 @@ public class LinkedResourceEditor {
 
 	private String getSuitablePathVariable(IPath commonPath) {
 		String variableName = commonPath.lastSegment();
+		if (variableName == null) {
+			variableName = commonPath.getDevice();
+			if (variableName == null)
+				variableName = "ROOT"; //$NON-NLS-1$
+			else
+				variableName = variableName.substring(0, variableName.length() -1); // remove the tailing ':'
+		}
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < variableName.length(); i++) {
 			char c = variableName.charAt(i);

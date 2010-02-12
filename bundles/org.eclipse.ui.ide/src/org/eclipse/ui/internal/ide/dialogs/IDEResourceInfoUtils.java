@@ -21,6 +21,7 @@ import java.util.Date;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -255,7 +256,8 @@ public class IDEResourceInfoUtils {
 			}
 		}
 		if (isLinked && isPathVariable) {
-			return resource.getRawLocationURI().toString();
+			String tmp = URIUtil.toPath(resource.getRawLocationURI()).toOSString();
+			return resource.getProject().getPathVariableManager().convertToUserEditableFormat(tmp, true);
 		}
 		if (store != null) {
 			return store.toString();

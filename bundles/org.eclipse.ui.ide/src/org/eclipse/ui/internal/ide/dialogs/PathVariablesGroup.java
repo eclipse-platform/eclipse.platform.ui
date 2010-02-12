@@ -571,7 +571,7 @@ public class PathVariablesGroup {
      * @return the converted value
      */
     private String removeParentVariable(String value) {
-    	return pathVariableManager.convertToUserEditableFormat(value);
+    	return pathVariableManager.convertToUserEditableFormat(value, false);
     }
     
     /**

@@ -382,10 +382,10 @@ public class PathVariableDialog extends TitleAreaDialog {
         if (currentResource != null) {
         	IPathVariableManager pathVariableManager2 = currentResource.getProject().getPathVariableManager();
 			String[] variables = pathVariableManager2.getPathVariableNames(currentResource);
-    		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, currentResource);
-    		URI uri = URIUtil.toURI(Path.fromPortableString(internalFormat));
+    		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION, currentResource);
+    		URI uri = URIUtil.toURI(Path.fromOSString(internalFormat));
         	URI resolvedURI = pathVariableManager2.resolveURI(uri, currentResource);
-        	String resolveValue = URIUtil.toPath(resolvedURI).toPortableString();
+        	String resolveValue = URIUtil.toPath(resolvedURI).toOSString();
         	// Delete intermediate variables that might have been created as
         	// as a side effect of converting arbitrary relative paths to an internal string. 
         	String[] newVariables = pathVariableManager2.getPathVariableNames(currentResource);
@@ -474,10 +474,10 @@ public class PathVariableDialog extends TitleAreaDialog {
             String[] variableNames = (String[]) dialog.getResult();
             if (variableNames != null && variableNames.length == 1) {
                 String newValue = variableNames[0];
-            	IPath path = Path.fromPortableString(newValue);
+            	IPath path = Path.fromOSString(newValue);
                 if (operationMode != EDIT_LINK_LOCATION && currentResource != null && !path.isAbsolute() && path.segmentCount() > 0) {
                 	path = buildVariableMacro(path);
-                	newValue = path.toPortableString();
+                	newValue = path.toOSString();
                 }
                 variableValue = newValue;
                 variableValueField.setText(newValue);
@@ -593,7 +593,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             // contain macros such as "${foo}\etc"
             allowFinish = true;
             String resolvedValue = getVariableResolvedValue();
-            IPath resolvedPath = Path.fromPortableString(resolvedValue);
+            IPath resolvedPath = Path.fromOSString(resolvedValue);
             if (!IDEResourceInfoUtils.exists(resolvedPath.toOSString())) {
                 // the path does not exist (warning)
                 message = IDEWorkbenchMessages.PathVariableDialog_pathDoesNotExistMessage;
@@ -655,7 +655,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     public String getVariableValue() {
     	if (currentResource != null) {
-    		String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, currentResource);
+    		String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION, currentResource);
     		return internalFormat;
     	}
     	return variableValue;
@@ -677,7 +677,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @param variable the new variable value
      */
     public void setVariableValue(String variable) {
-    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(variable);
+    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(variable, operationMode == EDIT_LINK_LOCATION);
         variableValue = userEditableString;
     }
 
@@ -692,7 +692,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @param location
      */
     public void setLinkLocation(IPath location) {
-    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(location.toPortableString());
+    	String userEditableString = getPathVariableManager().convertToUserEditableFormat(location.toOSString(), operationMode == EDIT_LINK_LOCATION);
         variableValue = userEditableString;
     }
 
