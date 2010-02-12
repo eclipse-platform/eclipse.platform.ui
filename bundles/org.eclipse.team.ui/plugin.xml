@@ -661,6 +661,9 @@
                   type="org.eclipse.core.resources.mapping.ResourceMapping">
             </adapter>
             <adapter
+                  type="org.eclipse.core.resources.IResource">
+            </adapter>
+            <adapter
                   type="org.eclipse.ui.model.IWorkbenchAdapter">
             </adapter>
          </factory>
@@ -686,16 +689,6 @@
                class="org.eclipse.team.internal.ui.synchronize.patch.AdapterFactory">
             <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
          </factory>
-         <factory
-               adaptableType="org.eclipse.compare.internal.patch.PatchFileDiffNode"
-               class="org.eclipse.team.internal.ui.synchronize.patch.AdapterFactory">
-            <adapter
-                  type="org.eclipse.core.resources.IResource">
-            </adapter>
-            <adapter
-                  type="org.eclipse.ui.model.IWorkbenchAdapter">
-            </adapter>
-         </factory>         
       </extension>
       <extension
             point="org.eclipse.team.ui.teamContentProviders">
