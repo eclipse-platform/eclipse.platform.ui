@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt.dnd;
 
-import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DragAndDropUtil.CursorInfo;
-
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericTile;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -20,6 +18,7 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DragAndDropUtil.CursorInfo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -59,7 +58,8 @@ public class DnDManager {
 
 			CursorInfo info = dndUtil.getCursorInfo();
 			if (event.type == SWT.MouseDown && dragHost == null
-					&& !(info.curElement instanceof MGenericTile<?>)) {
+					&& !(info.curElement instanceof MGenericTile<?>)
+					&& !(info.curElement instanceof MPart)) {
 				downPos = new Point(event.x, event.y);
 				downInfo = info;
 			} else if (event.type == SWT.MouseUp) {
