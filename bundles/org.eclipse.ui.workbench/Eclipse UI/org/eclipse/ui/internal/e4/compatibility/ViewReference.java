@@ -26,7 +26,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	private ViewDescriptor descriptor;
 
-	ViewReference(IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
+	public ViewReference(IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
 		super(page, part);
 		this.descriptor = descriptor;
 	}

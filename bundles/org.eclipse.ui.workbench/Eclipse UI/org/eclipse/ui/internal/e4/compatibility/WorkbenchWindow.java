@@ -60,7 +60,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private ListenerList pageListeners = new ListenerList();
 	private ListenerList perspectiveListeners = new ListenerList();
 
-	WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
+	public WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
 		this.perspective = perspective;
 	}

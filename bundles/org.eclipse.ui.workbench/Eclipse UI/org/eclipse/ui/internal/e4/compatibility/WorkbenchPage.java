@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -134,6 +135,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 				createEditorReferenceForPart(part, null, part.getId());
 			}
 		}
+	}
+
+	public ViewReference getViewReference(MPart part) {
+		for (IViewReference ref : viewReferences) {
+			if (((ViewReference) ref).getModel() == part) {
+				return (ViewReference) ref;
+			}
+		}
+		return null;
+	}
+
+	public void addViewReference(IViewReference viewReference) {
+		viewReferences.add(viewReference);
 	}
 
 	/* (non-Javadoc)
@@ -860,7 +874,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 						viewId));
 			}
 
-			createViewReferenceForPart(part, viewId);
 			partService.showPart(part, convert(mode));
 
 			if (secondaryId != null) {
@@ -887,23 +900,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return compatibilityView.getView();
 	}
 
-	public void createViewReferenceForPart(final MPart part, String viewId) {
+	void createViewReferenceForPart(final MPart part, String viewId) {
 		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
 		final ViewReference ref = new ViewReference(this, part, (ViewDescriptor) desc);
-		final IEventBroker broker = (IEventBroker) application.getContext().get(
-				IEventBroker.class.getName());
-		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
-				new EventHandler() {
-					public void handleEvent(Event event) {
-						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-						if (element == part) {
-							if (part.getContext() != null) {
-								broker.unsubscribe(this);
-								part.getContext().set(ViewReference.class.getName(), ref);
+		IEclipseContext partContext = part.getContext();
+		if (partContext == null) {
+			final IEventBroker broker = (IEventBroker) application.getContext().get(
+					IEventBroker.class.getName());
+			broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+					new EventHandler() {
+						public void handleEvent(Event event) {
+							Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+							if (element == part) {
+								if (part.getContext() != null) {
+									broker.unsubscribe(this);
+									part.getContext().set(ViewReference.class.getName(), ref);
+								}
 							}
 						}
-					}
-				});
+					});
+		} else {
+			partContext.set(ViewReference.class.getName(), ref);
+		}
 		viewReferences.add(ref);
 	}
 

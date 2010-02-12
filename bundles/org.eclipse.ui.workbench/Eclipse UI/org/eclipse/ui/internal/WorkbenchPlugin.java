@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -49,10 +56,16 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.compatibility.ViewDescriptor;
+import org.eclipse.ui.internal.e4.compatibility.ViewReference;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchPage;
+import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -60,6 +73,7 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -69,6 +83,8 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -986,20 +1002,24 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		 Window.setDefaultOrientation(getDefaultOrientation());
 
-        // The UI plugin needs to be initialized so that it can install the callback in PrefUtil,
-        // which needs to be done as early as possible, before the workbench
-        // accesses any API preferences.
-        Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-        try {
-            // Attempt to load the activator of the ui bundle.  This will force lazy start
-            // of the ui bundle.  Using the bundle activator class here because it is a
-            // class that needs to be loaded anyway so it should not cause extra classes
-            // to be loaded.s
-        	if(uiBundle != null)
-        		uiBundle.start(Bundle.START_TRANSIENT);
-        } catch (BundleException e) {
-            WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
-        }
+	        // The UI plugin needs to be initialized so that it can install the callback in PrefUtil,
+	        // which needs to be done as early as possible, before the workbench
+	        // accesses any API preferences.
+	        Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+	        try {
+	            // Attempt to load the activator of the ui bundle.  This will force lazy start
+	            // of the ui bundle.  Using the bundle activator class here because it is a
+	            // class that needs to be loaded anyway so it should not cause extra classes
+	            // to be loaded.s
+	        	if(uiBundle != null) {
+				uiBundle.start(Bundle.START_TRANSIENT);
+				final IEclipseContext serviceContext = org.eclipse.e4.workbench.ui.internal.E4Workbench
+						.getServiceContext();
+				instantiateCompatibilityLayerHooks(serviceContext);
+			}
+	        } catch (BundleException e) {
+	            WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
+	        }
 		/*
 		 * DO NOT RUN ANY OTHER CODE AFTER THIS LINE.  If you do, then you are
 		 * likely to cause a deadlock in class loader code.  Please see Bug 86450
@@ -1007,6 +1027,91 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		 */
 
     }
+
+	private void instantiateCompatibilityLayerHooks(IEclipseContext context) {
+		IEventBroker broker = (IEventBroker) context.get(
+				IEventBroker.class.getName());
+		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.TOBERENDERED), new EventHandler() {
+			public void handleEvent(Event event) {
+				if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
+					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+					if (element instanceof MPart) {
+						MPart part = (MPart) element;
+						addReference(part);
+					}
+				}
+			}
+		});
+
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				new EventHandler() {
+					public void handleEvent(Event event) {
+						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+						if (element instanceof MPart) {
+							MPart part = (MPart) element;
+							IEclipseContext context = part.getContext();
+							if (context != null) {
+								setReference(part, context);
+							}
+						}
+					}
+				});
+
+		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+				new EventHandler() {
+					public void handleEvent(Event event) {
+						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+						if (element instanceof MWindow) {
+							MWindow window = (MWindow) element;
+							if (window.getWidget() != null) {
+								WorkbenchWindow wwindow = new WorkbenchWindow(null, null);
+								ContextInjectionFactory.inject(wwindow, window.getContext());	
+							}
+						}
+					}
+				});
+
+		PlatformUI.getWorkbench();
+	}
+
+	private void setReference(MPart part, IEclipseContext context) {
+		String uri = part.getURI();
+		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
+			WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+			ViewReference ref = page.getViewReference(part);
+			if (ref == null) {
+				ref = createViewReference(part, page);
+			}
+			context.set(ViewReference.class.getName(), ref);
+		}
+	}
+
+	private ViewReference createViewReference(MPart part, WorkbenchPage page) {
+		IViewDescriptor desc = page.getWorkbenchWindow().getWorkbench().getViewRegistry().find(
+				part.getId());
+		ViewReference ref = new ViewReference(page, part, (ViewDescriptor) desc);
+		page.addViewReference(ref);
+		return ref;
+	}
+
+	private void addReference(MPart part) {
+		String uri = part.getURI();
+		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
+			IEclipseContext context = getContext(part);
+			WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+			createViewReference(part, page);
+		}
+	}
+
+	private IEclipseContext getContext(MPart part) {
+		MElementContainer<?> parent = part.getParent();
+		while (!(parent instanceof MWindow)) {
+			parent = parent.getParent();
+		}
+
+		return ((MWindow) parent).getContext();
+	}
 
 	/**
      * Get the default orientation from the command line
