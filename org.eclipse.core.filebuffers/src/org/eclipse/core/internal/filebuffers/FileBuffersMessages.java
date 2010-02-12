@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ final class FileBuffersMessages extends NLS {
 	public static String ResourceFileBuffer_warning_fileIsDerived;
 	public static String ResourceFileBuffer_stateValidationFailed;
 	public static String FileBuffer_error_outOfSync;
-	public static String FileBuffer_status_ok;
 	public static String FileBuffer_status_error;
 	public static String FileBuffer_error_queryContentDescription;
 	public static String FileBufferManager_error_canNotCreateFilebuffer;
