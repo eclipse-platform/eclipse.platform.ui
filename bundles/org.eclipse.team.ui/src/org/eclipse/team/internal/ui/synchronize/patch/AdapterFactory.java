@@ -47,6 +47,11 @@ public class AdapterFactory implements IAdapterFactory {
 			}
 			return compareAdapter;
 		}
+		if (adapterType == IResource.class) {
+			if (adaptableObject instanceof PatchFileDiffNode) {
+				return ((PatchFileDiffNode) adaptableObject).getResource();
+			}
+		}
 		return null;
 	}
 

@@ -685,6 +685,16 @@
                adaptableType="org.eclipse.team.internal.ui.synchronize.patch.PatchModelProvider"
                class="org.eclipse.team.internal.ui.synchronize.patch.AdapterFactory">
             <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
+         </factory>
+         <factory
+               adaptableType="org.eclipse.compare.internal.patch.PatchFileDiffNode"
+               class="org.eclipse.team.internal.ui.synchronize.patch.AdapterFactory">
+            <adapter
+                  type="org.eclipse.core.resources.IResource">
+            </adapter>
+            <adapter
+                  type="org.eclipse.ui.model.IWorkbenchAdapter">
+            </adapter>
          </factory>         
       </extension>
       <extension
