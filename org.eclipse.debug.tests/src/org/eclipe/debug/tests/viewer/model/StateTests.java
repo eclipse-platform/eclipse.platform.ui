@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -436,7 +436,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void testPreserveExpandedOnContentStress() {
+    public void _X_testPreserveExpandedOnContentStress() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -506,7 +506,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         }
     }
 
-    public void testPreserveLargeModelOnContent() {
+    public void _X_testPreserveLargeModelOnContent() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(100);
 
