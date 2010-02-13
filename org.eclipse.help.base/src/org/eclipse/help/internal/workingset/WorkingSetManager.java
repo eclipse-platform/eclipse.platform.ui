@@ -308,7 +308,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		for (int i = 0; i < criteriaContents.getLength(); ++i) {
 			Element criterion = (Element) criteriaContents.item(i);
 			String criterionName = criterion.getAttribute("name"); //$NON-NLS-1$
-			if(null != name && 0 != name.length() && HelpPlugin.getCriteriaManager().isSupportedCriterion(criterionName)){
+			if(null != name && 0 != name.length()){
 				NodeList items = criterion.getElementsByTagName("item"); //$NON-NLS-1$
 				List criterionValues = new ArrayList();
 				for(int j = 0; j < items.getLength(); ++j){

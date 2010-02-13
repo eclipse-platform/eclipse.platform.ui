@@ -11,6 +11,7 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
@@ -176,6 +177,114 @@ public class WorkingSetManagerTest extends TestCase {
 		AdaptableHelpResource[] resourcesT4 = mgr2.getWorkingSet("test4").getElements();		
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
+	};
+
+	public void testWSMWithCriteria() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test5");
+		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		CriterionResource[] criteria =  { new CriterionResource("version") };
+		criteria[0].addCriterionValue("1.0");	
+		wset.setCriteria(criteria);
+		mgr.addWorkingSet(wset);
+		WorkingSet[] readWsets = mgr.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		CriterionResource[] readResources = readWsets[0].getCriteria();
+		assertEquals(1, readResources.length);
+	};
+	
+	public void testSaveRestoreWSMWithMCriteria() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test6");
+		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		CriterionResource[] criteria =  { new CriterionResource("version") };
+		criteria[0].addCriterionValue("1.0");	
+		wset.setCriteria(criteria);
+		mgr.addWorkingSet(wset);
+		mgr.saveState();
+		
+		WorkingSetManager mgr2 = new WorkingSetManager();
+		WorkingSet[] readWsets = mgr2.getWorkingSets();
+		
+		assertEquals(1, readWsets.length);
+		CriterionResource[] readResources = readWsets[0].getCriteria();
+		assertEquals(1, readResources.length);
+	};
+
+	public void testWSMWithMultipleCriteria() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test7");
+		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		CriterionResource[] criteria =  { new CriterionResource("version"), new CriterionResource("platform") };
+		criteria[0].addCriterionValue("1.0");	
+		criteria[1].addCriterionValue("linux");	
+		criteria[1].addCriterionValue("MacOS");	
+		wset.setCriteria(criteria);
+		mgr.addWorkingSet(wset);
+		WorkingSet[] readWsets = mgr.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		CriterionResource[] readResources = readWsets[0].getCriteria();
+		assertEquals(2, readResources.length);
+		CriterionResource readVersion;
+		CriterionResource readPlatform;
+		if (readResources[0].getCriterionName().equals("version")) {
+			readVersion = readResources[0];
+			readPlatform = readResources[1];
+		} else {
+			readVersion = readResources[0];
+			readPlatform = readResources[1];
+		}
+		assertEquals("version", readVersion.getCriterionName());
+		assertEquals(1, readVersion.getCriterionValues().size());
+		assertTrue(readVersion.getCriterionValues().contains("1.0"));
+		assertEquals("platform", readPlatform.getCriterionName());
+		assertEquals(2, readPlatform.getCriterionValues().size());
+		assertTrue(readPlatform.getCriterionValues().contains("linux"));
+		assertTrue(readPlatform.getCriterionValues().contains("MacOS"));
+	};
+
+	public void testSaveRestoreWSMWithMultipleCriteria() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test8");
+		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		CriterionResource[] criteria =  { new CriterionResource("version"), new CriterionResource("platform") };
+		criteria[0].addCriterionValue("1.0");	
+		criteria[1].addCriterionValue("linux");	
+		criteria[1].addCriterionValue("MacOS");	
+		wset.setCriteria(criteria);
+		mgr.addWorkingSet(wset);
+        mgr.saveState();
+		
+		WorkingSetManager mgr2 = new WorkingSetManager();
+		WorkingSet[] readWsets = mgr2.getWorkingSets();
+		
+		assertEquals(1, readWsets.length);
+		CriterionResource[] readResources = readWsets[0].getCriteria();
+		assertEquals(2, readResources.length);
+		CriterionResource readVersion;
+		CriterionResource readPlatform;
+		if (readResources[0].getCriterionName().equals("version")) {
+			readVersion = readResources[0];
+			readPlatform = readResources[1];
+		} else {
+			readVersion = readResources[0];
+			readPlatform = readResources[1];
+		}
+		assertEquals("version", readVersion.getCriterionName());
+		assertEquals(1, readVersion.getCriterionValues().size());
+		assertTrue(readVersion.getCriterionValues().contains("1.0"));
+		assertEquals("platform", readPlatform.getCriterionName());
+		assertEquals(2, readPlatform.getCriterionValues().size());
+		assertTrue(readPlatform.getCriterionValues().contains("linux"));
+		assertTrue(readPlatform.getCriterionValues().contains("MacOS"));
 	};
 
 }

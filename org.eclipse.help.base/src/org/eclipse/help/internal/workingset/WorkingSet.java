@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -128,7 +127,7 @@ public class WorkingSet {
 			contents.appendChild(child);
 		}
 		
-		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled() && !criteria.isEmpty()){
+		if (!criteria.isEmpty()){
 			Element criteriaElement = doc.createElement("criteria"); //$NON-NLS-1$
 			ws.appendChild(criteriaElement);
 			
