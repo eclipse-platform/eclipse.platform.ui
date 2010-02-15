@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
+import org.eclipse.compare.CompareViewerPane;
+import org.eclipse.compare.ICompareNavigator;
+import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
@@ -48,5 +52,18 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
 		manager.insertAfter("merge", mergeAction); //$NON-NLS-1$
 		*/
+	}
+
+	protected void contentsCreated() {
+		super.contentsCreated();
+		ICompareNavigator nav = getNavigator();
+		if (nav instanceof CompareEditorInputNavigator) {
+			CompareEditorInputNavigator cein = (CompareEditorInputNavigator) nav;
+			Object pane = cein.getPanes()[0]; // the structure input pane
+			if (pane instanceof CompareViewerPane) {
+				CompareViewerPane cvp = (CompareViewerPane) pane;
+				cvp.setSelection(StructuredSelection.EMPTY);
+			}
+		}
 	}
 }
