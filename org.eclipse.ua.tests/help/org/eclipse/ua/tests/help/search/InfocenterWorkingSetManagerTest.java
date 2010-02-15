@@ -11,51 +11,24 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
 import org.eclipse.help.internal.criteria.CriterionResource;
+import org.eclipse.help.internal.webapp.servlet.InfocenterWorkingSetManager;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
-import org.eclipse.help.internal.workingset.WorkingSetManager;
+import org.eclipse.ua.tests.help.webapp.MockServletRequest;
+import org.eclipse.ua.tests.help.webapp.MockServletResponse;
 
-import junit.framework.TestCase;
-
-public class WorkingSetManagerTest extends TestCase {
+public class InfocenterWorkingSetManagerTest extends TestCase {
 	
-	private WorkingSet[] workingSets;
-	
-	protected void setUp() throws Exception {
-		WorkingSetManager manager = new WorkingSetManager();
-		manager.restoreState();
-		workingSets = manager.getWorkingSets();
-		for (int i = 0; i < workingSets.length; i++) {
-			manager.removeWorkingSet(workingSets[i]);
-		}
-		manager.saveState();
-	}
-
-	protected void tearDown() throws Exception {
-		WorkingSetManager manager = new WorkingSetManager();
-		WorkingSet[] wsetsToRemove = manager.getWorkingSets();
-		for (int i = 0; i < wsetsToRemove.length; i++) {
-			manager.removeWorkingSet(wsetsToRemove[i]);
-		}
-		for (int i = 0; i < workingSets.length; i++) {
-		    manager.addWorkingSet(workingSets[i]);
-		}
-		manager.saveState();
-	}
-
-	public void testNewWSM() {
-		WorkingSetManager mgr = new WorkingSetManager();
-		assertEquals(0, mgr.getWorkingSets().length);
-		WorkingSetManager mgr2 = new WorkingSetManager();
-		assertEquals(mgr, mgr2);
-		assertEquals(mgr.hashCode(), mgr2.hashCode());
-	}
-	
-	public void testWSMWithToc() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testIWSMWithToc() throws IOException {
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager
+		    (new MockServletRequest(), new MockServletResponse(), "en");
 		WorkingSet wset = new WorkingSet("test");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -68,15 +41,18 @@ public class WorkingSetManagerTest extends TestCase {
 		assertTrue(resources[0].equals(toc));
 	};
 
-	public void testSaveRestoreWSMWithToc() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testSaveRestoreIWSMWithToc() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		wset.setElements(new AdaptableHelpResource[] { toc });
 		mgr.addWorkingSet(wset);
-		mgr.saveState();
-		WorkingSetManager mgr2 = new WorkingSetManager();
-		mgr2.restoreState();
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
@@ -84,8 +60,10 @@ public class WorkingSetManagerTest extends TestCase {
 		assertTrue(resources[0].equals(toc));
 	};
 
-	public void testWSMWithTopics() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testIWSMWithTopics() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test2");
 		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
 		AdaptableTopic topic3 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_3_");
@@ -107,8 +85,10 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	};
 
-	public void testSaveRestoreWSMWithTopics() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testSaveRestoreIWSMWithTopics() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test2");
 		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
 		AdaptableTopic topic3 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_3_");
@@ -116,8 +96,11 @@ public class WorkingSetManagerTest extends TestCase {
 		assertNotNull(topic3);
 		wset.setElements(new AdaptableHelpResource[] { topic1, topic3 });
 		mgr.addWorkingSet(wset);
-		mgr.saveState();
-		WorkingSetManager mgr2 = new WorkingSetManager();
+
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
@@ -132,8 +115,10 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	};
 
-	public void testWSMWithMultipleWsets() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testIWSMWithMultipleWsets() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset1 = new WorkingSet("test3");
 		WorkingSet wset2 = new WorkingSet("test4");
 		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
@@ -154,8 +139,10 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(topic3, resourcesT4[0]);
 	};
 	
-	public void testSaveRestoreWSMWithMultipleWsets() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testSaveRestoreIWSMWithMultipleWsets() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset1 = new WorkingSet("test3");
 		WorkingSet wset2 = new WorkingSet("test4");
 		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
@@ -167,7 +154,10 @@ public class WorkingSetManagerTest extends TestCase {
 		mgr.addWorkingSet(wset1);
 		mgr.addWorkingSet(wset2);
 		
-		WorkingSetManager mgr2 = new WorkingSetManager();
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
 		
 		assertEquals(2, readWsets.length);
@@ -179,8 +169,10 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(topic3, resourcesT4[0]);
 	};
 
-	public void testWSMWithCriteria() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testIWSMWithCriteria() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test5");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -195,8 +187,10 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(1, readResources.length);
 	};
 	
-	public void testSaveRestoreWSMWithMCriteria() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testSaveRestoreIWSMWithMCriteria() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test6");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -205,9 +199,11 @@ public class WorkingSetManagerTest extends TestCase {
 		criteria[0].addCriterionValue("1.0");	
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
-		mgr.saveState();
 		
-		WorkingSetManager mgr2 = new WorkingSetManager();
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
 		
 		assertEquals(1, readWsets.length);
@@ -215,8 +211,10 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(1, readResources.length);
 	};
 
-	public void testWSMWithMultipleCriteria() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testIWSMWithMultipleCriteria() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test7");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -233,8 +231,10 @@ public class WorkingSetManagerTest extends TestCase {
 		checkResourceWithTwoChildren(readResources);
 	};
 
-	public void testSaveRestoreWSMWithMultipleCriteria() {
-		WorkingSetManager mgr = new WorkingSetManager();
+	public void testSaveRestoreIWSMWithMultipleCriteria() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
 		WorkingSet wset = new WorkingSet("test8");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -242,9 +242,10 @@ public class WorkingSetManagerTest extends TestCase {
 		CriterionResource[] criteria = createResourceWithTwoCriteria();	
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
-        mgr.saveState();
-		
-		WorkingSetManager mgr2 = new WorkingSetManager();
+        MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
 		
 		assertEquals(1, readWsets.length);

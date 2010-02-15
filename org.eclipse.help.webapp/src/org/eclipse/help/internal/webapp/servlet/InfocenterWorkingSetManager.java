@@ -203,16 +203,15 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				if(keyAndValue.length != 2)
 					continue;
 				String key = URLCoder.decode(keyAndValue[0]);
-				String value = URLCoder.decode(keyAndValue[1]);
-				if(HelpPlugin.getCriteriaManager().isSupportedCriterion(key)){
-					String[] criterionValues = value.split(",", -1); //$NON-NLS-1$
-					if(criterionValues.length < 1)
-						continue;
+			    String value = URLCoder.decode(keyAndValue[1]);
+				String[] criterionValues = value.split(",", -1); //$NON-NLS-1$
+				if(criterionValues.length < 1)
+					continue;
 
-					List criterionValuesList = Arrays.asList(criterionValues);
-					CriterionResource criterionResource = new CriterionResource(key, criterionValuesList);
-					criteriaResource.add(criterionResource);
-				}
+				List criterionValuesList = Arrays.asList(criterionValues);
+				CriterionResource criterionResource = new CriterionResource(key, criterionValuesList);
+				criteriaResource.add(criterionResource);
+
 			}
 			
 			WorkingSet workingset = getWorkingSet(name);

@@ -43,5 +43,6 @@ public class AllSearchTests extends TestSuite {
 		addTest(LuceneParticipantTest.suite());
 		addTest(LuceneXMLParticipantTest.suite());
 		addTestSuite(WorkingSetManagerTest.class);
+		addTestSuite(InfocenterWorkingSetManagerTest.class);
 	}
 }
