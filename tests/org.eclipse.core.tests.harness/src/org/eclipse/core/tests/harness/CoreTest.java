@@ -292,7 +292,7 @@ public class CoreTest extends TestCase {
 			case 4 :
 				return "there is no imagination for more sentences";
 			case 5 :
-				return "customize yours";
+				return "Alexandre Bilodeau, Canada's first home gold. 14/02/2010";
 			case 6 :
 				return "foo";
 			case 7 :
