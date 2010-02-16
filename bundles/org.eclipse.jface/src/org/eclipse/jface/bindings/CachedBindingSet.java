@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.jface.util.Util;
 
 /**
@@ -343,7 +345,11 @@ final class CachedBindingSet {
 	 */
 	final void setPrefixTable(final Map prefixTable) {
 		if (prefixTable == null) {
-			throw new NullPointerException("Cannot set a null prefix table"); //$NON-NLS-1$
+			this.prefixTable = Collections.EMPTY_MAP;
+			if (BindingManager.DEBUG) {
+				Tracing.printTrace("BINDINGS", "Cannot set a null prefix table, set to EMPTY_MAP"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return;
 		}
 
 		this.prefixTable = prefixTable;
