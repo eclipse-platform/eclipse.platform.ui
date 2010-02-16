@@ -290,8 +290,8 @@ public abstract class HeadlessApplicationTest extends
 				true);
 
 		MApplication application = (MApplication) resource.getContents().get(0);
-		appContext.set(MApplication.class.getName(), application);
 		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application); // XXX
 
 		ECommandService cs = (ECommandService) appContext
 				.get(ECommandService.class.getName());

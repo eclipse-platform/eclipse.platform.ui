@@ -31,8 +31,10 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -150,12 +152,13 @@ public class Workbench implements IWorkbench {
 
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
-		mainContext.runAndTrack(new Runnable() {
-			public void run() {
+		mainContext.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
 					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getId());
 				}
+				return true;
 			}
 
 			/*
@@ -165,7 +168,7 @@ public class Workbench implements IWorkbench {
 			public String toString() {
 				return IServiceConstants.ACTIVE_PART_ID;
 			}
-		});
+		}, null);
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);

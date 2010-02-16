@@ -34,7 +34,7 @@ public class UISchedulerStrategy implements ISchedulerStrategy {
 	public boolean schedule(final IRunAndTrack runnable, final ContextChangeEvent event) {
 		Realm realm = Realm.getDefault();
 		if (realm == null)
-			return false;
+			return runnable.notify(event);
 		realm.asyncExec(new Runnable() {
 			public void run() {
 				runnable.notify(event);

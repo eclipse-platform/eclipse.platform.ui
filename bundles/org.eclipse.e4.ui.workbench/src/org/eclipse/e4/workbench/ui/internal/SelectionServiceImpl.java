@@ -21,7 +21,9 @@ import javax.inject.Named;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -164,16 +166,15 @@ public class SelectionServiceImpl implements ESelectionService {
 	private void track(final MPart part) {
 		final IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
-			context.runAndTrack(new Runnable() {
-
+			context.runAndTrack(new IRunAndTrack() {
 				private boolean initial = true;
 
-				public void run() {
+				public boolean notify(ContextChangeEvent event) {
 					Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
 						if (selection == null) {
-							return;
+							return true;
 						}
 					}
 
@@ -182,8 +183,9 @@ public class SelectionServiceImpl implements ESelectionService {
 					} else {
 						notifyTargetedListeners(part, selection);
 					}
+					return true;
 				}
-			});
+			}, null);
 		}
 	}
 

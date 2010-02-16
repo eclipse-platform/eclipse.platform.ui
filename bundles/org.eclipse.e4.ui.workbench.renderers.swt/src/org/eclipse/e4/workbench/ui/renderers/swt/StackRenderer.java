@@ -13,6 +13,7 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -211,9 +212,11 @@ public class StackRenderer extends LazyStackRenderer {
 		folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
 		final IEclipseContext toplevelContext = getToplevelContext(element);
 		final Trackable updateActiveTab = new Trackable(folderContext) {
-			public void run() {
+			public boolean notify(ContextChangeEvent event) {
+				if (event.getEventType() == ContextChangeEvent.DISPOSE)
+					return false;
 				if (!participating) {
-					return;
+					return true;
 				}
 				trackingContext.get(FOLDER_DISPOSED);
 				IEclipseContext currentActive = toplevelContext;
@@ -240,6 +243,7 @@ public class StackRenderer extends LazyStackRenderer {
 				for (int i = 0; i < items.length; i++) {
 					stylingEngine.setClassname(items[i], cssClassName);
 				}
+				return true;
 			}
 		};
 		ctf.addDisposeListener(new DisposeListener() {
@@ -248,7 +252,7 @@ public class StackRenderer extends LazyStackRenderer {
 				folderContext.set(FOLDER_DISPOSED, Boolean.TRUE);
 			}
 		});
-		folderContext.runAndTrack(updateActiveTab);
+		folderContext.runAndTrack(updateActiveTab, null);
 
 		return newWidget;
 	}

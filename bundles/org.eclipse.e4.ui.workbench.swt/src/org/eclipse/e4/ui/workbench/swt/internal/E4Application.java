@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
@@ -193,13 +195,14 @@ public class E4Application implements IApplication {
 				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.runAndTrack(new Runnable() {
-			public void run() {
+		appContext.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				Object o = appContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
 					appContext.set(IServiceConstants.ACTIVE_PART_ID,
 							((MPart) o).getId());
 				}
+				return true;
 			}
 
 			/*
@@ -209,7 +212,7 @@ public class E4Application implements IApplication {
 			public String toString() {
 				return IServiceConstants.ACTIVE_PART_ID;
 			}
-		});
+		}, null);
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 		appContext.set(IExceptionHandler.class.getName(), exceptionHandler);
