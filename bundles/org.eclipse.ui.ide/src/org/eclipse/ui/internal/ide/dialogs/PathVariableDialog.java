@@ -10,6 +10,7 @@
  *     Sebastian Davids <sdavids@gmx.de> - 19346, 42056
  *     Remy Chi Jian Suen - bug 204879
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ *     Helena Halperin (IBM) - bug #299212
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -29,6 +30,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -367,7 +369,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
         // variable value field.  Attachments done after all widgets created.
         variableResolvedValueField = new Label(contents, SWT.LEAD | SWT.SINGLE | SWT.READ_ONLY);
-        variableResolvedValueField.setText(getVariableResolvedValue());
+        variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));
         variableResolvedValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
         		false, 2, 1));
     }
@@ -432,7 +434,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         validationStatus = IMessageProvider.NONE;
         okButton.setEnabled(validateVariableValue() && validateVariableName());
         locationEntered = true;
-        variableResolvedValueField.setText(getVariableResolvedValue());
+        variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));        
     }
 
     /**

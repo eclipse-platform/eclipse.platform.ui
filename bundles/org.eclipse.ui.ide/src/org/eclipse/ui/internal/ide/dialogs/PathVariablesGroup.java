@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ *     Helena Halperin (IBM) - bug #299212
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -42,6 +43,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -340,7 +342,7 @@ public class PathVariablesGroup {
             IPath value = (IPath) tempPathVariables.get(element);
         	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value), currentResource);
         	IPath resolvedValue = URIUtil.toPath(resolvedURI);
-            return resolvedValue.toOSString();
+            return TextProcessor.process(resolvedValue.toOSString());
 		}
 
 		public Point getToolTipShift(Object object) {
@@ -357,7 +359,7 @@ public class PathVariablesGroup {
 
 		public void update(ViewerCell cell) {
             IPath value = (IPath) tempPathVariables.get(cell.getElement());
-			cell.setText(removeParentVariable(value.toOSString()));
+			cell.setText(TextProcessor.process(removeParentVariable(value.toOSString())));
 		}
     	
     }
