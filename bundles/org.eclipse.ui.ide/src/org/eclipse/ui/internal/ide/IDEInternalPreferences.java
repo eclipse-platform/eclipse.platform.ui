@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
+ *     Markus Schorn (Wind River Systems) -  bug 284447
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -99,4 +100,9 @@ public interface IDEInternalPreferences {
 
     // Always show this import window
     public static final String IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG = "IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG"; //$NON-NLS-1$
+
+    /**
+     * Workspace name, will be displayed in the window title.
+     */
+	public static final String WORKSPACE_NAME = "WORKSPACE_NAME"; //$NON-NLS-1$
 }

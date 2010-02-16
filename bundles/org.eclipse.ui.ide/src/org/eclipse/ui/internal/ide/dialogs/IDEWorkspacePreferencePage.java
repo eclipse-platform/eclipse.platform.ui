@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
+ *     Markus Schorn (Wind River Systems) -  bug 284447
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -63,6 +64,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
     private IntegerFieldEditor saveInterval;
 
+	private FieldEditor workspaceName;
+
     private Button autoRefreshButton;
     
     private Button closeUnrelatedProjectButton;
@@ -75,6 +78,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 	private boolean clearUserSettings = false;
 
 	private RadioGroupFieldEditor openReferencesEditor;
+
 
     /*
      * (non-Javadoc)
@@ -105,6 +109,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         
         createSpace(composite);
         createSaveIntervalGroup(composite);
+        createWindowTitleGroup(composite);
 		createSpace(composite);
 		
 		createOpenPrefControls(composite);
@@ -217,7 +222,32 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         });
 
     }
-	
+
+    /**
+     * Create a composite that contains entry fields specifying the workspace name
+     * preference.
+     * 
+     * @param composite the Composite the group is created in.
+     */
+    private void createWindowTitleGroup(Composite composite) {
+        Composite groupComposite = new Composite(composite, SWT.LEFT);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        groupComposite.setLayout(layout);
+        GridData gd = new GridData();
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        groupComposite.setLayoutData(gd);
+
+        workspaceName = new StringFieldEditor(
+                IDEInternalPreferences.WORKSPACE_NAME, IDEWorkbenchMessages.IDEWorkspacePreference_workspaceName,
+                groupComposite);
+
+        workspaceName.setPreferenceStore(getIDEPreferenceStore());
+        workspaceName.load();
+        workspaceName.setPage(this);
+    }
+
 	/**
      * Create the Refresh controls
      * 
@@ -345,6 +375,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
         saveInterval.loadDefault();
+        workspaceName.loadDefault();
         
         boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
         closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
@@ -412,6 +443,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage
                                 .getStatus());
             }
         }
+        
+        workspaceName.store();
         
         Preferences preferences = ResourcesPlugin.getPlugin()
                 .getPluginPreferences();

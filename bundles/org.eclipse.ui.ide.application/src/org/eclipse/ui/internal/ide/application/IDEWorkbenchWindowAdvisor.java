@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems) -  bug 284447
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -27,6 +28,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -101,7 +104,6 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	};
 
 	private IAdaptable lastInput;
-
 	private IWorkbenchAction openPerspectiveAction;
 
 	/**
@@ -297,6 +299,20 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						// do nothing
 					}
 				});
+		
+		// Listen for changes of the workspace name.
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						if (IDEInternalPreferences.WORKSPACE_NAME.equals(event
+								.getProperty())) {
+							// Make sure the title is actually updated by
+							// setting last active page.
+							lastActivePage = null;
+							updateTitle(false);
+						}
+					}
+				});
 	}
 
 	private String computeTitle() {
@@ -343,6 +359,15 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		if (workspaceLocation != null) {
 			title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
 					title, workspaceLocation);
+		}
+		
+		// Bug 284447: Prepend workspace name to the title
+		String workspaceName = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(
+						IDEInternalPreferences.WORKSPACE_NAME);
+		if (workspaceName != null && workspaceName.length() > 0) {
+			title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
+					workspaceName, title);
 		}
 
 		return title;

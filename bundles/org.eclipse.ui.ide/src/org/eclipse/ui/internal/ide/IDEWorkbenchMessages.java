@@ -12,6 +12,7 @@
  *		- Bug 224997 [Workbench] Impossible to copy project
  * Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  * Serge Beauchamp (Freescale Semiconductor) - [252996] Resource filters
+ *     Markus Schorn (Wind River Systems) -  bug 284447
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -476,6 +477,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
+	public static String IDEWorkspacePreference_workspaceName;
 
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
