@@ -1350,7 +1350,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertEquals("5.1", targetPath, resolvedPath);
 	}
 
-	public void testConvertToUserEditableFormat() {
+	public void _testConvertToUserEditableFormat() {
 		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
 
 		String[][] table = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
