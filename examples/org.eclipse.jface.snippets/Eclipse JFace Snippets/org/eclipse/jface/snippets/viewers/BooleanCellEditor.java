@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorDeactivationEvent;

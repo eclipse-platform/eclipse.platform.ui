@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.snippets.resources;
 
-import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
