@@ -1651,7 +1651,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
 		}
 
-		return null;
+		return (String) toolbarLabelContributions.get(actionSetId);
+	}
+
+	private Map toolbarLabelContributions = new HashMap();
+
+	public void putToolbarLabel(String id, String label) {
+		toolbarLabelContributions.put(id, label);
 	}
 
 	/**
@@ -1661,6 +1667,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private boolean hardClose() {
 		boolean result;
 		try {
+			// clear some lables
+			if (toolbarLabelContributions != null) {
+				toolbarLabelContributions.clear();
+				toolbarLabelContributions = null;
+			}
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
 			final IHandlerService handlerService = (IHandlerService) workbench.getService(IHandlerService.class);

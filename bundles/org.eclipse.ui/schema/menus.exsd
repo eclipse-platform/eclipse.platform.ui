@@ -835,6 +835,16 @@ Separator contributions that have an id define the start of a logical group so t
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  The label to be displayed for this element when it is displayed in the customize perspective dialog. This value should be translatable.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -909,6 +919,22 @@ If defined then it can be  used as a reference in the Query part of the location
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+It is preferred that menu contributions be added in the &lt;code&gt;plugin.xml&lt;/code&gt;.  Plugins can
+programmatically add their own menu contributions using &lt;code&gt;org.eclipse.ui.menus.IMenuService&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.menus.AbstractContributionFactory&lt;/code&gt;, but should be sure to remove them if the plugin is unloaded.  The &lt;code&gt;IMenuService&lt;/code&gt; can be retrieved through any of the &lt;code&gt;IServiceLocators&lt;/code&gt;, the workbench, the workbench window, or the part site.
+&lt;/p&gt;
+&lt;p&gt;
+See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; to define a command and &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; to define an implementation for the command.
+&lt;/p&gt;
+&lt;p&gt;To register a context menu, use the &lt;code&gt;IWorkbenchPartSite.registerContextMenu&lt;/code&gt; methods.&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -943,22 +969,6 @@ A basic extension looks like this.
 &lt;p&gt;
 This is the simplest example; adding a command contribution after an existing menu&apos;s additions group.
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         &lt;p&gt;
-It is preferred that menu contributions be added in the &lt;code&gt;plugin.xml&lt;/code&gt;.  Plugins can
-programmatically add their own menu contributions using &lt;code&gt;org.eclipse.ui.menus.IMenuService&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.menus.AbstractContributionFactory&lt;/code&gt;, but should be sure to remove them if the plugin is unloaded.  The &lt;code&gt;IMenuService&lt;/code&gt; can be retrieved through any of the &lt;code&gt;IServiceLocators&lt;/code&gt;, the workbench, the workbench window, or the part site.
-&lt;/p&gt;
-&lt;p&gt;
-See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; to define a command and &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; to define an implementation for the command.
-&lt;/p&gt;
-&lt;p&gt;To register a context menu, use the &lt;code&gt;IWorkbenchPartSite.registerContextMenu&lt;/code&gt; methods.&lt;/p&gt;
       </documentation>
    </annotation>
 

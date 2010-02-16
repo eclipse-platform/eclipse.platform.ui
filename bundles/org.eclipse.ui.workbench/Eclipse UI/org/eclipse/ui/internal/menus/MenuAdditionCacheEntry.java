@@ -174,7 +174,7 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				newItem = createMenuAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
-				newItem = createToolBarAdditionContribution(
+				newItem = createToolBarAdditionContribution(window,
 						actionBarPresentationFactory, items[i]);
 			}
 			
@@ -192,22 +192,28 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 	}
 
 	/**
+	 * @param window
 	 * @param configurationElement
 	 * @return the toolbar contribution item
 	 */
-	private IContributionItem createToolBarAdditionContribution(
+	private IContributionItem createToolBarAdditionContribution(WorkbenchWindow window,
 			IActionBarPresentationFactory actionBarPresentationFactory,
 			IConfigurationElement configurationElement) {
 		if (!inToolbar()) {
 			return null;
 		}
+		String id = getId(configurationElement);
+		String label = getLabel(configurationElement);
+		if (label != null && label.length() > 0) {
+			window.putToolbarLabel(id, label);
+		}
 		if (actionBarPresentationFactory != null) {
 			return actionBarPresentationFactory.createToolBarContributionItem(
 					actionBarPresentationFactory.createToolBarManager(),
-					getId(configurationElement));
+					id);
 		}
 		return new ToolBarContributionItem(new ToolBarManager(),
-				getId(configurationElement));
+				id);
 	}
 
 	/**
