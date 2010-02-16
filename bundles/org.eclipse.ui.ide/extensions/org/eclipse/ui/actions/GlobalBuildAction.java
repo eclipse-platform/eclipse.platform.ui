@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River) -  [296800] UI build actions should not lock the workspace
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -194,8 +195,6 @@ public class GlobalBuildAction extends Action implements
                 return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
             }
         };
-        buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory()
-                .buildRule());
         buildJob.setUser(true);
         buildJob.schedule();
     }
