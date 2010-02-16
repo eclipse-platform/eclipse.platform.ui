@@ -19,23 +19,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.commands.IRestartHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -68,7 +64,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -84,7 +79,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -99,8 +94,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
@@ -224,6 +217,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
      * @since 3.5
      */
     private boolean fBreadcrumbDropDownAutoExpand = false;
+    
+    /**
+     * Terminate and remove handler
+     * @since 3.6
+     */
+    IHandler2 fTARHandler = null;
     
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in 
@@ -506,7 +505,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         addCapabilityAction(new StepOverCommandAction(), STEP_OVER);
         addCapabilityAction(new StepIntoCommandAction(), STEP_INTO);
         addCapabilityAction(new DropToFrameCommandAction(), DROP_TO_FRAME);
-        addCapabilityAction(new TerminateAndRemoveAction(), TERMINATE_AND_REMOVE);
+        TerminateAndRemoveAction tar = new TerminateAndRemoveAction();
+        addCapabilityAction(tar, TERMINATE_AND_REMOVE);
+        // also create a handler for this action
+        fTARHandler = new ActionHandler(tar);
         addCapabilityAction(new TerminateAndRelaunchAction(), TERMINATE_AND_RELAUNCH);
         addCapabilityAction(new RestartCommandAction(), RESTART);
         addCapabilityAction(new TerminateAllAction(), TERMINATE_ALL);
@@ -780,13 +782,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				fPresentationContext);
         
         viewer.addSelectionChangedListener(fTreeViewerSelectionChangedListener);
-        viewer.getControl().addKeyListener(new KeyAdapter() {
-        	public void keyPressed(KeyEvent event) {
-        		if (event.character == SWT.DEL && event.stateMask == 0) {
-        			handleDeleteKeyPressed();
-        		}
-        	}
-        });
         viewer.addViewerUpdateListener(this);        
         
 		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
@@ -794,77 +789,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fTreeViewerDebugContextProvider = new TreeViewerContextProvider(viewer);
 		
 		return viewer;
-	}
-		
-	private void handleDeleteKeyPressed() {
-		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
-		Iterator iter= selection.iterator();
-		Object item;
-		boolean itemsToTerminate= false;
-		ITerminate terminable;
-		while (iter.hasNext()) {
-			item= iter.next();
-			if (item instanceof ITerminate) {
-				terminable= (ITerminate) item;
-				if (terminable.canTerminate() && !terminable.isTerminated()) {
-					itemsToTerminate= true;
-					break;
-				}
-			}
-		}
-		if (itemsToTerminate) {
-			// Prompt the user to proceed with termination
-			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
-				return;
-			}
-		}
-		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIViewsMessages.LaunchView_Exceptions_occurred_attempting_to_terminate_and_remove_3, null); 
-		iter= selection.iterator(); 
-		while (iter.hasNext()) {
-			try {
-				terminateAndRemove(iter.next());
-			} catch (DebugException exception) {
-				status.merge(exception.getStatus());				
-			}
-		}
-		if (!status.isOK()) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_4, DebugUIViewsMessages.LaunchView_Terminate_and_remove_failed_5, status);  
-			} else {
-				DebugUIPlugin.log(status);
-			}
-		}
-	}
-	
-	/**
-	 * Terminates and removes the given element from the launch manager
-	 */
-	public static void terminateAndRemove(Object element) throws DebugException {
-		ILaunch launch = DebugUIPlugin.getLaunch(element);
-		ITerminate terminable = launch;
-		if (terminable == null) {
-			if (element instanceof ITerminate) {
-				terminable = (ITerminate) element;
-			}
-		}
-		if (terminable == null) {
-			return;
-		}
-		if (!(terminable.canTerminate() || terminable.isTerminated())) {
-			// Don't try to terminate or remove attached launches
-			return;
-		}
-		try {
-			if (!terminable.isTerminated()) {
-				terminable.terminate();
-			}
-		} finally {
-			if (launch != null) {
-				ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-				lManager.removeLaunch(launch);		
-			}
-		}
 	}
 
 	private void commonInit(IViewSite site) {

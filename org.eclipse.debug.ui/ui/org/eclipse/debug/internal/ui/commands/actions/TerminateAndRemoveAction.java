@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,14 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.actions.DebugCommandAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Terminate and remove action.
@@ -71,6 +77,20 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
             }
         }
     }
-
     
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.DebugCommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void runWithEvent(Event event) {
+    	// prompt if invoked via keyboard shortcut (don't prompt when menu is used)
+    	if (event.widget instanceof Tree) {
+    		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        	if (window != null) {
+    	    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
+    				return;
+    			}
+        	}
+    	}
+    	super.runWithEvent(event);
+    }
 }
