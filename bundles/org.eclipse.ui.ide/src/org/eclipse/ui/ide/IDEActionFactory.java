@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.NewWizardDropDownAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
@@ -44,6 +46,18 @@ import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
  * @since 3.0
  */
 public final class IDEActionFactory {
+
+	private static class WorkbenchCommandAction extends CommandAction implements
+			ActionFactory.IWorkbenchAction {
+		/**
+		 * @param commandIdIn
+		 * @param window
+		 */
+		public WorkbenchCommandAction(String commandIdIn,
+				IWorkbenchWindow window) {
+			super(window, commandIdIn);
+		}
+	}
 
     /**
      * Prevents instantiation.
@@ -101,10 +115,17 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            GlobalBuildAction globalBuildAction = new GlobalBuildAction(window,
-                    IncrementalProjectBuilder.INCREMENTAL_BUILD);
-            globalBuildAction.setId(getId());
-			return globalBuildAction;
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
+            action.setId(getId());
+
+            action.setText(IDEWorkbenchMessages.GlobalBuildAction_text);
+            action.setToolTipText(IDEWorkbenchMessages.GlobalBuildAction_toolTip);
+            action.setImageDescriptor(IDEInternalWorkbenchImages
+                    .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC));
+            action.setDisabledImageDescriptor(IDEInternalWorkbenchImages
+                    .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED));
+			return action;
         }
     };
 

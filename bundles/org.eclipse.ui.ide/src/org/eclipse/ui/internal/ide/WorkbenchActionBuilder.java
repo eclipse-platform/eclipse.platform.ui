@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -50,6 +51,8 @@ import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -1258,7 +1261,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 				IProject[] projects = workspace.getRoot().getProjects();
 		    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		        //update menu bar actions in project menu
-		        buildAllAction.setEnabled(enabled);
+				updateCommandEnablement(buildAllAction.getActionDefinitionId());
 		        buildProjectAction.setEnabled(enabled);
 		        toggleAutoBuildAction.setChecked(workspace.isAutoBuilding());
 		        cleanAction.setEnabled(BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.CLEAN_BUILD));
@@ -1293,6 +1296,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		            toolBarItem.update(ICoolBarManager.SIZE);
 		        }
             }
+
+			private void updateCommandEnablement(String commandId) {
+				IHandlerService handlerService = (IHandlerService) window.getService(IHandlerService.class);
+				ICommandService commandService = (ICommandService) window.getService(ICommandService.class);
+				if (handlerService != null && commandService != null) {
+					Command buildAllCmd = commandService.getCommand(commandId);
+					buildAllCmd.setEnabled(handlerService.getCurrentState());
+				}
+			}
         };
         if (immediately) {
         	update.run();

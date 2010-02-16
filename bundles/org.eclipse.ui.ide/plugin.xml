@@ -827,6 +827,7 @@
             name="%command.buildAll.name"
             description="%command.buildAll.description"
             categoryId="org.eclipse.ui.category.project"
+            defaultHandler="org.eclipse.ui.internal.ide.handlers.BuildAllProjectsHandler"
             id="org.eclipse.ui.project.buildAll">
       </command>
       <command
