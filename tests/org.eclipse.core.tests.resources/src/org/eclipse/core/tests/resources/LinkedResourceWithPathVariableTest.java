@@ -1350,11 +1350,11 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertEquals("5.1", targetPath, resolvedPath);
 	}
 
-	public void _testConvertToUserEditableFormat() {
+	public void testConvertToUserEditableFormat() {
 		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
 
 		String[][] table = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
-		{"C:\\foo\\bar", "C:\\foo\\bar"}, //
+		{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
 				{"C:/foo/bar", "C:/foo/bar"}, //
 				{"VAR/foo/bar", "VAR/foo/bar"}, //
 				{"${VAR}/foo/bar", "${VAR}/foo/bar"}, //
@@ -1379,7 +1379,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 
 		String[][] tableLocationFormat = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
-		{"C:\\foo\\bar", "C:\\foo\\bar"}, //
+		{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
 				{"C:/foo/bar", "C:/foo/bar"}, //
 				{"VAR/foo/bar", "VAR/foo/bar"}, //
 				{"${VAR}/../foo/bar", "${VAR}/../foo/bar", "PARENT-1-VAR/foo/bar"}, //
