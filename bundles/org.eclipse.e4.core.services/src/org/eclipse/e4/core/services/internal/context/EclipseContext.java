@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -84,69 +83,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	static class TrackableComputation extends Computation implements Runnable {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return runnable.hashCode();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			return this.runnable.equals(((TrackableComputation) obj).runnable);
-		}
-
-		final Runnable runnable;
-
-		TrackableComputation(Runnable runnable) {
-			this.runnable = runnable;
-			Assert.isNotNull(runnable);
-		}
-
-		final protected void doHandleInvalid(ContextChangeEvent event) {
-			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
-				return;
-			}
-			if (EclipseContext.DEBUG)
-				System.out.println("scheduling " + this); //$NON-NLS-1$
-			((EclipseContext) event.getContext()).schedule(this);
-		}
-
-		public void run() {
-			Computation oldComputation = (Computation) currentComputation.get();
-			currentComputation.set(this);
-			try {
-				runnable.run();
-			} finally {
-				currentComputation.set(oldComputation);
-			}
-			startListening();
-		}
-
-		protected void stopListening(IEclipseContext context, String name) {
-			// trackable computation should always stop listening to
-			// everything since dependencies are recomputed on each run
-			removeAll();
-		}
-
-		public String toString() {
-			return runnable.toString();
-		}
-	}
-
 	static class TrackableComputationExt extends Computation implements IRunAndTrack {
 
 		/*
@@ -198,7 +134,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			} finally {
 				currentComputation.set(oldComputation);
 			}
-			startListening();
+			if (result)
+				startListening();
+			else
+				removeAll();
 			return result;
 		}
 
@@ -426,11 +365,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
 		schedule(computation, EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.INITIAL, args, null, null));
-	}
-
-	public void runAndTrack(final Runnable runnable) {
-		TrackableComputation computation = new TrackableComputation(runnable);
-		schedule(computation);
 	}
 
 	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {

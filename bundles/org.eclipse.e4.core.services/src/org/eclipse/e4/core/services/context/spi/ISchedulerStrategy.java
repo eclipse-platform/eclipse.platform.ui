@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,11 @@
 package org.eclipse.e4.core.services.context.spi;
 
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 
 /**
  * A context strategy for queueing and invoking runnables that are tracking changes in the context.
  * Implementations of this strategy must queue and invoke runnables in the order they are scheduled.
- * 
- * @see IEclipseContext#runAndTrack(Runnable)
  */
 public interface ISchedulerStrategy extends IEclipseContextStrategy {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,17 +130,6 @@ public interface IEclipseContext {
 	 * this context. Thus a provided runnable should be implemented to return immediately when
 	 * change tracking is no longer needed.
 	 * </p>
-	 * 
-	 * @param runnable
-	 *            The runnable to execute and register for change tracking
-	 */
-	public void runAndTrack(final Runnable runnable);
-
-	/**
-	 * Executes a runnable within this context. This is a more advanced variant of
-	 * {@link #runAndTrack(Runnable)} that provides additional information to the runnable. Apart
-	 * from the additional data passed to the runnable, this method has the same contract as
-	 * {@link #runAndTrack(Runnable)}.
 	 * 
 	 * @param runnable
 	 *            The runnable to execute and register for change tracking

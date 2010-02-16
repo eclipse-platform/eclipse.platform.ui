@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -222,16 +222,17 @@ public class RunAndTrackTest extends TestCase {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
-		windows[0].runAndTrack(new Runnable() {
-			public void run() {
+		windows[0].runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
+				return true;
 			}
 
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
-		});
+		}, null);
 
 		final IEclipseContext[] mainSashes = createNextLevel(windows[0], "mainSash", 2);
 		createNextLevel(mainSashes[1], "editorArea", 1);
@@ -275,16 +276,17 @@ public class RunAndTrackTest extends TestCase {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
-		windows[0].runAndTrack(new Runnable() {
-			public void run() {
+		windows[0].runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
+				return true;
 			}
 
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
-		});
+		}, null);
 
 		final IEclipseContext[] parts = createNextLevel(windows[0], "part", 2);
 		assertEquals("part0", workbenchContext.get(ACTIVE_PART));

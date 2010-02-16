@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import junit.framework.TestCase;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
@@ -151,12 +153,13 @@ public class EclipseContextTest extends TestCase {
 
 	public void testRunAndTrack() {
 		final Object[] value = new Object[1];
-		context.runAndTrack(new Runnable() {
-			public void run() {
+		context.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				runCounter++;
 				value[0] = context.get("foo");
+				return true;
 			}
-		});
+		}, null);
 		assertEquals(1, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", "bar");
@@ -193,16 +196,21 @@ public class EclipseContextTest extends TestCase {
 		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
 		child.set("childValue", "x");
 		child.set(IContextConstants.DEBUG_STRING, "ChildContext");
-		Runnable runnable = new Runnable() {
-			public void run() {
+		IRunAndTrack runnable = new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				runCounter++;
-				if (runCounter < 2)
+				if (runCounter < 2) {
 					child.get("childValue");
-				if (runCounter < 3)
+					return true;
+				}
+				if (runCounter < 3) {
 					child.get("parentValue");
+					return true;
+				}
+				return false;
 			}
 		};
-		child.runAndTrack(runnable);
+		child.runAndTrack(runnable, null);
 		assertEquals(1, runCounter);
 		child.set("childValue", "z");
 		assertEquals(2, runCounter);

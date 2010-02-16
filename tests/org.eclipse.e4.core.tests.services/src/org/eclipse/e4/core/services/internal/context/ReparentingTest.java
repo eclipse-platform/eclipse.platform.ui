@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,10 @@ package org.eclipse.e4.core.services.internal.context;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
@@ -127,11 +129,12 @@ public class ReparentingTest extends TestCase {
 	public void testRunAndTrackNullBecomesParent() {
 		final String[] value = new String[1];
 		final IEclipseContext child = EclipseContextFactory.create();
-		child.runAndTrack(new Runnable() {
-			public void run() {
+		child.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				value[0] = (String) child.get("x");
+				return true;
 			}
-		});
+		}, null);
 		assertEquals(null, value[0]);
 		IEclipseContext parent = EclipseContextFactory.create();
 		parent.set("x", "newParent");
@@ -147,11 +150,12 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
 		parent.set("x", "oldParent");
-		child.runAndTrack(new Runnable() {
-			public void run() {
+		child.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				value[0] = (String) child.get("x");
+				return true;
 			}
-		});
+		}, null);
 		assertEquals("oldParent", value[0]);
 		child.set(IContextConstants.PARENT, null);
 		assertNull(value[0]);
@@ -162,11 +166,12 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
 		parent.set("x", "oldParent");
-		child.runAndTrack(new Runnable() {
-			public void run() {
+		child.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
 				value[0] = (String) child.get("x");
+				return true;
 			}
-		});
+		}, null);
 		assertEquals("oldParent", value[0]);
 		IEclipseContext newParent = EclipseContextFactory.create();
 		newParent.set("x", "newParent");
