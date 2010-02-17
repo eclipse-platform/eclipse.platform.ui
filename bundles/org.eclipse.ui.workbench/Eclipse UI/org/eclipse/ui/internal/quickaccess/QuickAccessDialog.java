@@ -173,23 +173,29 @@ public class QuickAccessDialog extends PopupDialog {
 		filterText.addKeyListener(getKeyAdapter());
 		filterText.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 0x0D) {
+				switch (e.keyCode) {
+				case SWT.CR:
+				case SWT.KEYPAD_CR:
 					handleSelection();
-					return;
-				} else if (e.keyCode == SWT.ARROW_DOWN) {
+					break;
+				case SWT.ARROW_DOWN:
 					int index = table.getSelectionIndex();
 					if (index != -1 && table.getItemCount() > index + 1) {
 						table.setSelection(index + 1);
 					}
 					table.setFocus();
-				} else if (e.keyCode == SWT.ARROW_UP) {
-					int index = table.getSelectionIndex();
+					break;
+				case SWT.ARROW_UP:
+					index = table.getSelectionIndex();
 					if (index != -1 && index >= 1) {
 						table.setSelection(index - 1);
 						table.setFocus();
 					}
-				} else if (e.character == 0x1B) // ESC
+					break;
+				case SWT.ESC:
 					close();
+					break;
+				}
 			}
 
 			public void keyReleased(KeyEvent e) {
