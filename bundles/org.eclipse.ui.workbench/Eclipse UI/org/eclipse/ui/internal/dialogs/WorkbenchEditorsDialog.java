@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -526,6 +526,14 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      * Updates all items in the table
      */
     private void updateItems() {
+    	// record what the user has selected
+		TableItem[] selectedItems = editorsTable.getSelection();
+		Adapter[] selectedAdapters = new Adapter[selectedItems.length];
+		for (int i = 0; i < selectedItems.length; i++) {
+			selectedAdapters[i] = (Adapter) selectedItems[i].getData();
+		}
+		
+		// remove all the items
         editorsTable.removeAll();
         elements = new ArrayList();
         if (showAllPersp) {
@@ -540,19 +548,27 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 updateEditors(new IWorkbenchPage[] { page });
             }
         }
+
+        // sort the items
         sort();
-        Object selection = null;
-        if (window.getActivePage() != null) {
-			selection = window.getActivePage().getActiveEditor();
-		}
+
+		List selection = new ArrayList(selectedItems.length);
         for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
             Adapter e = (Adapter) iterator.next();
             TableItem item = new TableItem(editorsTable, SWT.NULL);
             updateItem(item, e);
-            if ((selection != null) && (selection == e.editorRef)) {
-				editorsTable.setSelection(new TableItem[] { item });
+
+            // try to match this item's editor to one that was previously selected
+			for (int i = 0; i < selectedAdapters.length; i++) {
+				if (selectedAdapters[i].editorRef == e.editorRef) {
+					selection.add(item);
+				}
 			}
         }
+
+        // set the selection back to the table
+		editorsTable.setSelection((TableItem[]) selection.toArray(new TableItem[selection.size()]));
+
         // update the buttons, because the selection may have changed
         updateButtons();
     }
