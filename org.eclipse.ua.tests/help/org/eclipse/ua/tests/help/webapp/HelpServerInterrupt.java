@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,13 +48,38 @@ public class HelpServerInterrupt extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
+
+	public void testServerWithoutInterrupt() throws Exception {
+		WebappManager.stop("help");
+		startServerWithoutInterrupt();
+		checkServer();
+		WebappManager.stop("help");
+	}	
 	
-	public void testServer() throws Exception {
+	public void testServerWithInterrupt() throws Exception {
 		WebappManager.stop("help");
 		startServerWithInterrupt();
 		checkServer();
 		WebappManager.stop("help");
 	}	
+	
+	private void startServerWithoutInterrupt() throws Exception {
+		ServerStarter starter = new ServerStarter();
+		starter.start();
+		// Now wait for the thread to complete
+		iterations = 0;
+		do {
+			iterations++;
+			if (enableTimeout && sleepTime * iterations > 10000) {
+				fail("Test did not complete within 10 seconds");
+			}	
+			Thread.sleep(sleepTime);			
+        } while (starter.isAlive());
+		Exception exception = starter.getException();
+		if (exception != null) {
+			throw exception;
+		}
+	}
 	
 	private void startServerWithInterrupt() throws Exception {
 		ServerStarter starter = new ServerStarter();
