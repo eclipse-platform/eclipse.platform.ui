@@ -97,9 +97,9 @@ public class EditorTests extends DynamicTestCase {
 	    
 		testEditorProperties(desc);
 
-		// tests bug 193361
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName(), contentType);
-		assertEquals(desc, descriptor);
+		// should not get our editor since it is not the default
+		assertFalse(desc.equals(descriptor));
 		
 		removeBundle();	
 		assertNull(registry.findEditor(EDITOR_ID));

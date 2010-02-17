@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1522,15 +1522,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 			}
 		}
 		
-		if (type == null) {
-			// add all non-default editors to the list
-			for (Iterator i = nonDefaultFileEditors.iterator(); i.hasNext();) {
-				IEditorDescriptor editor = (IEditorDescriptor) i.next();
-				if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
-					allRelated.add(editor);
-				}
-			}
-		} else {
+		if (type != null) {
 			// now add any objects directly related to the content type
 			related = registry.getRelatedObjects(type);
 			for (int i = 0; i < related.length; i++) {
@@ -1543,16 +1535,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 				}
 			}
 
-			// add all non-default editors to the list
-			for (Iterator i = nonDefaultFileEditors.iterator(); i.hasNext();) {
-				IEditorDescriptor editor = (IEditorDescriptor) i.next();
-				if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
-					allRelated.add(editor);
-				}
-			}
+		}
 
-			// now add any indirectly related objects, walking up the
-			// content type hierarchy
+		if (type != null) {
+			// now add any indirectly related objects, walking up the content type hierarchy 
 			while ((type = type.getBaseType()) != null) {
 				related = registry.getRelatedObjects(type);
 				for (int i = 0; i < related.length; i++) {
@@ -1564,6 +1550,14 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 						}
 					}
 				}
+			}
+		}
+			
+		// add all non-default editors to the list
+		for (Iterator i = nonDefaultFileEditors.iterator(); i.hasNext();) {
+			IEditorDescriptor editor = (IEditorDescriptor) i.next();
+			if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
+				allRelated.add(editor);
 			}
 		}
 		
