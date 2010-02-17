@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
@@ -504,6 +503,9 @@ final class KeyAssistDialog extends PopupDialog {
 			columnKeySequence.setWidth(previousWidth);
 		}
 		columnCommandName.pack();
+		if (completionsTable.getItems().length > 0) {
+			completionsTable.setSelection(0);
+		}
 
 		/*
 		 * If you double-click on the table, it should execute the selected
