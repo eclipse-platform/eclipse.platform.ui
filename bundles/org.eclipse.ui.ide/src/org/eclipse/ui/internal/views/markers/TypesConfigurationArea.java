@@ -346,6 +346,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				boolean checked = event.getChecked();
+				typesViewer.setGrayed(element, false);
 				setChildrenChecked(element, checked);
 				setParentCheckState(element, checked);
 			}
@@ -389,6 +390,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 						return;
 					}
 				}
+				typesViewer.setGrayed(parent, false);
 				// All are the same - update the parent
 				typesViewer.setChecked(parent, checked);
 
@@ -621,6 +623,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		Collection checked = new HashSet();
 		Collection greyed = new HashSet();
 		findTypeEntries(group, checked, greyed);
+		checked.addAll(greyed);
 		typesViewer.setCheckedElements(checked.toArray());
 		typesViewer.setGrayedElements(greyed.toArray());
 	}
