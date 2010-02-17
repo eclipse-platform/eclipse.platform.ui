@@ -547,6 +547,7 @@ final class KeyAssistDialog extends PopupDialog {
 		if (selectionIndex >= 0) {
 			final Binding binding = (Binding) bindings.get(selectionIndex);
 			try {
+				workbenchKeyboard.updateShellKludge(null);
 				workbenchKeyboard.executeCommand(binding, trigger);
 			} catch (final CommandException e) {
 				workbenchKeyboard.logException(e, binding

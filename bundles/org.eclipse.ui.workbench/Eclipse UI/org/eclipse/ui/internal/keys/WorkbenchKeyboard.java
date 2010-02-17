@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -54,8 +54,6 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>
@@ -766,45 +764,9 @@ public final class WorkbenchKeyboard {
 					"WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
 							+ potentialKeyStrokes + ')');
 		}
+		final Widget widget = event.widget;
 
-		/*
-		 * KLUDGE. This works around a couple of specific problems in how GTK+
-		 * works. The first problem is the ordering of key press events with
-		 * respect to shell activation events. If on the event thread a dialog
-		 * is about to open, and the user presses a key, the key press event
-		 * will arrive before the shell activation event. From the perspective
-		 * of Eclipse, this means that things like two "Open Type" dialogs can
-		 * appear if "Ctrl+Shift+T" is pressed twice rapidly. For more
-		 * information, please see Bug 95792. The second problem is simply a bug
-		 * in GTK+, for which an incomplete workaround currently exists in SWT.
-		 * This makes shell activation events unreliable. Please see Bug 56231
-		 * and Bug 95222 for more information.
-		 */
-		if (org.eclipse.jface.util.Util.isGtk()) {
-			final Widget widget = event.widget;
-
-			// Update the contexts.
-			final ContextService contextService = (ContextService) workbench
-					.getService(IContextService.class);
-			if ((widget instanceof Control) && (!widget.isDisposed())) {
-				final Shell shell = ((Control) widget).getShell();
-				contextService.updateShellKludge(shell);
-			} else {
-				contextService.updateShellKludge();
-			}
-
-			// Update the handlers.
-			Object hs = workbench.getService(IHandlerService.class);
-			if (hs instanceof HandlerService) {
-				final HandlerService handlerService = (HandlerService) hs;
-				if ((widget instanceof Control) && (!widget.isDisposed())) {
-					final Shell shell = ((Control) widget).getShell();
-					handlerService.updateShellKludge(shell);
-				} else {
-					handlerService.updateShellKludge();
-				}
-			}
-		}
+		updateShellKludge(widget);
 
 		KeySequence errorSequence = null;
 		Collection errorMatch = null;
@@ -856,15 +818,58 @@ public final class WorkbenchKeyboard {
 	}
 
 	/**
+	 * KLUDGE. This works around a couple of specific problems in how GTK+
+	 * works. The first problem is the ordering of key press events with respect
+	 * to shell activation events. If on the event thread a dialog is about to
+	 * open, and the user presses a key, the key press event will arrive before
+	 * the shell activation event. From the perspective of Eclipse, this means
+	 * that things like two "Open Type" dialogs can appear if "Ctrl+Shift+T" is
+	 * pressed twice rapidly. For more information, please see Bug 95792. The
+	 * second problem is simply a bug in GTK+, for which an incomplete
+	 * workaround currently exists in SWT. This makes shell activation events
+	 * unreliable. Please see Bug 56231 and Bug 95222 for more information.
+	 * 
+	 * @param widget
+	 *            the widget that has focus in the main window. May be
+	 *            <code>null</code>
+	 */
+	void updateShellKludge(final Widget widget) {
+		if (org.eclipse.jface.util.Util.isGtk()) {
+
+			// Update the contexts.
+			final ContextService contextService = (ContextService) workbench
+					.getService(IContextService.class);
+			if ((widget instanceof Control) && (!widget.isDisposed())) {
+				final Shell shell = ((Control) widget).getShell();
+				contextService.updateShellKludge(shell);
+			} else {
+				contextService.updateShellKludge();
+			}
+
+			// Update the handlers.
+			Object hs = workbench.getService(IHandlerService.class);
+			if (hs instanceof HandlerService) {
+				final HandlerService handlerService = (HandlerService) hs;
+				if ((widget instanceof Control) && (!widget.isDisposed())) {
+					final Shell shell = ((Control) widget).getShell();
+					handlerService.updateShellKludge(shell);
+				} else {
+					handlerService.updateShellKludge();
+				}
+			}
+		}
+	}
+
+	/**
 	 * <p>
 	 * Actually performs the processing of the key event by interacting with the
-	 * <code>ICommandManager</code>. If work is carried out, then the event
-	 * is stopped here (i.e., <code>event.doit = false</code>). It does not
-	 * do any processing if there are no matching key strokes.
+	 * <code>ICommandManager</code>. If work is carried out, then the event is
+	 * stopped here (i.e., <code>event.doit = false</code>). It does not do any
+	 * processing if there are no matching key strokes.
 	 * </p>
 	 * <p>
-	 * If the active <code>Shell</code> is not the same as the one to which
-	 * the state is associated, then a reset occurs.
+	 * If the active <code>Shell</code> is not the same as the one to which the
+	 * state is associated, then a reset occurs.
 	 * </p>
 	 * 
 	 * @param keyStrokes
