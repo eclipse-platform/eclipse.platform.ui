@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2009 IBM Corporation and others.
+ Copyright (c) 2000, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@
 	String quickSearchError = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchError", request));
 	String quickSearchMenuData = quickSearchTopicLabel + "=quickSearchTopic(\\'" + quickSearchError + "\\')," + quickSearchTocLabel+ "=quickSearchToc(\\'" + quickSearchError + "\\')";
     
-	// See  Bug 290064 for an explanation of why these constants are used
+	// See  Bug 290064 for an explanation of why the constants below are used
     final String ON = "on";
     final String OFF = "off";
 %>
@@ -30,12 +30,12 @@
 	<jsp:param name="script" value="navActions.js"/>
 	<jsp:param name="view" value="toc"/>
 
-	<jsp:param name="name"     value="show_all"/>
-	<jsp:param name="tooltip"  value='show_all'/>
-	<jsp:param name="image"    value="show_all.gif"/>
-	<jsp:param name="action"   value="toggleShowAll"/>
+	<jsp:param name="name"     value="filter"/>
+	<jsp:param name="tooltip"  value='filter'/>
+	<jsp:param name="image"    value="filter.gif"/>
+	<jsp:param name="action"   value="filter"/>
 	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value="<%=(new ActivitiesData(application, request, response)).getButtonState()%>"/>
+	<jsp:param name="state"    value="<%=(RequestScope.getScopeButtonState())%>"/>
 
 	<jsp:param name="name"     value="print_toc"/>
 	<jsp:param name="tooltip"  value='PrintMulti'/>

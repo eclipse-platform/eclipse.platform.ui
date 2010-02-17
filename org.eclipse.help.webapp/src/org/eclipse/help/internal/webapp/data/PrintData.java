@@ -85,7 +85,7 @@ public class PrintData extends RequestData {
 		}
 
 		isRTL = UrlUtil.isRTL(request, response);
-		scope = RequestScope.getScopeFromRequest(request, response);
+		scope = RequestScope.getScope(request, response, false);
 		
 		String confirmString = request.getParameter("confirmed"); //$NON-NLS-1$
 		if ((confirmString != null) && ("true".equals(confirmString))) { //$NON-NLS-1$

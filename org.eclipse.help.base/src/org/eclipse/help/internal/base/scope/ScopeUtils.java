@@ -101,14 +101,14 @@ public class ScopeUtils {
 		if (entry instanceof IIndexEntry2) {
 			IIndexSee[] sees = ((IIndexEntry2)entry).getSees();
 			for (int s = 0; s < sees.length; s++) {
-				if (scope.inScope(sees[s]) && hasInScopeTarget(sees[s], scope)) {
+				if (showInTree(sees[s], scope)) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	public static boolean hasInScopeTarget(IIndexSee see, AbstractHelpScope scope) {
 		if (see instanceof IndexSee) {
 			IndexSee indexSee = (IndexSee)see;
@@ -124,6 +124,25 @@ public class ScopeUtils {
 				return false;
 			}
 			return scope.inScope(target) || hasInScopeDescendent(target, scope);	
+		}
+		return false;
+	}
+	
+	public static boolean showInTree(IIndexSee see, AbstractHelpScope scope) {
+		if (see instanceof IndexSee) {
+			IndexSee indexSee = (IndexSee)see;
+			UAElement ancestor = indexSee.getParentElement();
+			while (!(ancestor instanceof Index)) {
+				if (ancestor == null) {
+					return true;
+				}
+				ancestor = ancestor.getParentElement();
+			}
+			IIndexEntry target = ((Index)ancestor).getSeeTarget(indexSee);
+			if (target == null) {
+				return false;
+			}
+			return showInTree(target, scope);	
 		}
 		return false;
 	}

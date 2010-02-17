@@ -12,31 +12,34 @@
 package org.eclipse.help.internal.base.scope;
 
 import java.util.Locale;
-
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 
-public class EnablementScope extends AbstractHelpScope {
+/**
+ * This is a dummy scope which is used by the UI to allow the user to turn on
+ * and off filtering by search scope. The inScope functions should never be called
+ */
+
+public class SearchScopeScope extends AbstractHelpScope {
 
 	public boolean inScope(IToc toc) {
-		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
+		return false;
 	}
 
 	public boolean inScope(ITopic topic) {
-		return true;
+		return false;
 	}
 
 	public boolean inScope(IIndexEntry entry) {
-		return true;
+		return false;
 	}
 
 	public boolean inScope(IIndexSee see) {
-		return true;
+		return false;
 	}
 	
 	/**
@@ -45,7 +48,7 @@ public class EnablementScope extends AbstractHelpScope {
 	 * be able to return a name in any locale, just the current one.
 	 */
 	public String getName(Locale locale) {
-		return HelpBaseResources.EnabledTopicFilterName;
+		return HelpBaseResources.SearchScopeFilterName;
 	}
 
 }

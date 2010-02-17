@@ -56,7 +56,7 @@ public class TocFragmentServlet extends HttpServlet {
 		
 		readParameters(req);
 		
-		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		Serializer serializer = new Serializer(data, req.getLocale(), scope);
 		String response = serializer.generateTreeXml();	
 		locale2Response.put(locale, response);
@@ -153,9 +153,6 @@ public class TocFragmentServlet extends HttpServlet {
 			// toc, otherwise generate the root of every toc.
 			for (int toc=0; toc< tocData.getTocCount(); toc++) {
 				boolean shouldLoad = requestKind == REQUEST_SHOW_TOCS || toc == selectedToc;
-				if(!tocData.isEnabled(toc)){
-					shouldLoad = false;
-				} 
 	            if (shouldLoad) {
 	            	boolean isSelected = false; // Should this node be selected in the tree
 	            	if (requestKind == REQUEST_SHOW_TOCS) {

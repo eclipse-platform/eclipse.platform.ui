@@ -19,12 +19,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class ScopeRegistry {
 
 	public static final String SCOPE_XP_NAME = "org.eclipse.help.base.scope"; //$NON-NLS-1$
+	public static final String ENABLEMENT_SCOPE_ID = "org.eclipse.help.enablement"; //$NON-NLS-1$
+	public static final String SEARCH_SCOPE_SCOPE_ID = "org.eclipse.help.searchscope"; //$NON-NLS-1$
 
 	private static List scopes = null;
 	
@@ -32,7 +35,6 @@ public class ScopeRegistry {
 
 	private boolean initialized = false;
 	
-
 	private ScopeRegistry() {
 	}
 	
@@ -63,6 +65,9 @@ public class ScopeRegistry {
 			return;
 		}	
 		scopes = new ArrayList();
+		if (!HelpSystem.isShared()) {
+			scopes.add(new ScopeHandle(ENABLEMENT_SCOPE_ID, new EnablementScope()));
+		}
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(SCOPE_XP_NAME);
@@ -81,7 +86,13 @@ public class ScopeRegistry {
 				scopes.add(filter);
 			}
 		}
+		scopes.add(new ScopeHandle(SEARCH_SCOPE_SCOPE_ID, new SearchScopeScope()));
 		initialized = true;
+	}
+	
+	public ScopeHandle[] getScopes() {
+		readScopes();
+		return (ScopeHandle[]) scopes.toArray(new ScopeHandle[scopes.size()]);
 	}
 
 }

@@ -109,7 +109,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
 		    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$	
 		}
-		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		Serializer serializer = new Serializer(locale, scope);
 		String response = serializer.generateIndexXml();	
 		locale2Response.put(locale, response);
@@ -286,7 +286,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			int seeCount = 0;
 			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
 			for (int s = 0; s < sees.length; s++) {
-				if (scope.inScope(sees[s])) {
+				if (ScopeUtils.showInTree(sees[s], scope)) {
 					seeCount++;
 				}
 			}
@@ -370,35 +370,34 @@ public class IndexFragmentServlet extends HttpServlet {
 			ITopic[] topics = entry.getTopics();
 			
 			for (int i = 0; i < topics.length; ++i) {
-				ITopic topic = (ITopic)topics[i]; 
-				
-				//
-				String label = UrlUtil.htmlEncode(topic.getLabel());
-                if (label == null) {
-                	label = UrlUtil.htmlEncode(topic.getLabel());
-                }
-                
-			
-				buf.append("<node"); //$NON-NLS-1$
-				if (entry.getKeyword() != null) { 
-					buf.append('\n' + "      title=\"" + label + '"'); //$NON-NLS-1$ 
-				}
-				
-				count++;
-				buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
-				String href = UrlUtil.getHelpURL(topic.getHref());	
-				buf.append('\n' + "      href=\""  //$NON-NLS-1$
-					+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
-				buf.append(">\n"); //$NON-NLS-1$
-				buf.append("</node>\n"); //$NON-NLS-1$	
+				ITopic topic = (ITopic) topics[i];
+				if (ScopeUtils.showInTree(topic, scope)) {
+					//
+					String label = UrlUtil.htmlEncode(topic.getLabel());
+					if (label == null) {
+						label = UrlUtil.htmlEncode(topic.getLabel());
+					}
 
+					buf.append("<node"); //$NON-NLS-1$
+					if (entry.getKeyword() != null) {
+						buf.append('\n' + "      title=\"" + label + '"'); //$NON-NLS-1$ 
+					}
+
+					count++;
+					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
+					String href = UrlUtil.getHelpURL(topic.getHref());
+					buf.append('\n' + "      href=\"" //$NON-NLS-1$
+							+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
+					buf.append(">\n"); //$NON-NLS-1$
+					buf.append("</node>\n"); //$NON-NLS-1$	
+				}
 			}
 		}
 		
 		private void generateSees(IIndexSee[] sees) {
 	        for (int i = 0; i < sees.length; i++) {
 	        	IIndexSee see = sees[i];
-				if (scope.inScope(see)) {
+				if (ScopeUtils.showInTree(see, scope)) {
 					//
 					String key = see.isSeeAlso() ? "SeeAlso" : "See"; //$NON-NLS-1$ //$NON-NLS-2$
 					String seePrefix = WebappResources.getString(key, UrlUtil

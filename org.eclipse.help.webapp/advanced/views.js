@@ -92,6 +92,16 @@ function showAll(){
 	}catch(ex) {}
 }
 
+function rescope(scopes) {
+     window.location.replace("views.jsp?scope=" + scopes);
+     try{
+         window.frames.toc.tocViewFrame.collapseAll();
+     }catch(ex) {}
+     try{
+         window.frames.index.indexViewFrame.setShowAll(true);
+     }catch(ex) {}
+}
+
 function dontShowAll(){
 	activityFiltering=true;
 	try{
@@ -120,10 +130,14 @@ function closeConfirmShowAllDialog(){
 		if (confirmShowAllDialog){
 			confirmShowAllDialog.close();
 		}
+		if (selectScopeDialog) {
+		    selectScopeDialog.close();
+		}
 	}
 	catch(e) {}
 }
 
 var confirmShowAllDialog;
+var selectScopeDialog;
 var w = 470;
 var h = 240;

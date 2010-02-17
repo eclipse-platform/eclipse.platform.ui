@@ -63,4 +63,6 @@ public final class HelpBaseResources extends NLS {
 	public static String HelpIndexBuilder_errorParsing;
 	public static String PreferenceNameDefault;
 	public static String HelpSearch_QueryTooComplex;
+	public static String EnabledTopicFilterName;
+	public static String SearchScopeFilterName;
 }

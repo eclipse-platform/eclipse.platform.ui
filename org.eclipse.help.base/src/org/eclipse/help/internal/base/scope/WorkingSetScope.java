@@ -39,17 +39,18 @@ public class WorkingSetScope extends AbstractHelpScope {
 	
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 	
-	IHelpWorkingSetManager wSetManager;
+	private IHelpWorkingSetManager wSetManager;
 	private WorkingSet workingSet;
-	AdaptableHelpResource[] elements;
-	CriterionResource[] criteria;
+	private AdaptableHelpResource[] elements;
+	private CriterionResource[] criteria;
+	private String name;
 	
-	public WorkingSetScope(String scope, IHelpWorkingSetManager manager) {
+	public WorkingSetScope(String scope, IHelpWorkingSetManager manager, String name) {
 		wSetManager = manager;
 		workingSet = wSetManager.getWorkingSet(scope); 
 		elements = workingSet.getElements();
 		criteria = workingSet.getCriteria();
-		wSetManager = manager;
+		this.name = name;
 	}
 
 	public boolean inScope(IToc toc) {
@@ -200,7 +201,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 	}
 
 	public String getName(Locale locale) {
-		return null;
+		return name;
 	}
 
 }

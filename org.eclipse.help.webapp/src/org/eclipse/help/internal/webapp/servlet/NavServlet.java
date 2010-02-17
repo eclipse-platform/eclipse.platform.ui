@@ -62,7 +62,7 @@ public class NavServlet extends HttpServlet {
 		}
 
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-		AbstractHelpScope scope = RequestScope.getScopeFromRequest(req, resp);
+		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
 		writer.close();
 	}

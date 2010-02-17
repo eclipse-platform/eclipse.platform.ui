@@ -18,8 +18,6 @@
 		cookieTest.setMaxAge(365*24*60*60);
 		response.addCookie(cookieTest);
 	}
-	// Read the scope parameter
-	RequestScope.setScopeCookie(request, response);
 %>
 
 <html>

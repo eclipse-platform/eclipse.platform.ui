@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2009 IBM Corporation and others.
+ Copyright (c) 2000, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@
 <% 
 	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
-	AbstractView[] views = data.getViews();
+	AbstractView[] views = data.getViews();	
+	// Read the scope parameter
+	RequestScope.setScopeFromRequest(request, response);
 %>	
 
 
@@ -89,6 +91,29 @@ if (data.isIE()){
 	window.location="javascript://needModal";
 	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	confirmShowAllDialog.focus(); 
+}
+
+function selectScope() 
+{
+<%
+if (data.isIE()){
+%>
+	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+<%
+} else {
+%>
+	var l = top.screenX + (top.innerWidth - w) / 2;
+	var t = top.screenY + (top.innerHeight - h) / 2;
+<%
+}
+%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+	
+	window.location="javascript://needModal";
+	selectScopeDialog = window.open("selectScope.jsp", "selectScopeDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	selectScopeDialog.focus(); 
 }
 
 </script>

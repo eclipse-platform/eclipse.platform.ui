@@ -67,6 +67,13 @@ function removeAllBookmarks(button){
 	}
 }
 
+function filter(button){
+	window.parent.parent.selectScope();
+	if (button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function printTopic(errorMsg) {
 	var href = parent.tocViewFrame.getSelectedTopic();
 	if (href) {

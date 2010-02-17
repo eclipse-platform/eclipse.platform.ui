@@ -185,7 +185,14 @@ function selectWorkingSet() {
 	var searchWord = window.opener.document.forms["searchForm"].searchWord.value;
 	if (searchWord)
 		search += "&searchWord="+encodeURIComponent(searchWord);
-		
+	
+<%
+    if (RequestScope.filterBySearchScope(request)) {
+%>	
+    try {
+        window.opener.parent.parent.HelpFrame.NavFrame.ViewsFrame.window.location.replace("views.jsp");
+    } catch(e) {}
+<% } %>
 	window.opener.location.replace(
 		window.opener.location.protocol +
 		"//" +

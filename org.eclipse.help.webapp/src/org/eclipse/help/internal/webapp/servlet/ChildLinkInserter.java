@@ -38,7 +38,7 @@ public class ChildLinkInserter {
 	public ChildLinkInserter(HttpServletRequest req, OutputStream out) {
 		this.req = req;
 		this.out = out;
-		scope = RequestScope.getScopeFromRequest(req, null);
+		scope = RequestScope.getScope(req, null, false);
 	}
 	
 	public void addContents(String encoding) throws IOException {	
