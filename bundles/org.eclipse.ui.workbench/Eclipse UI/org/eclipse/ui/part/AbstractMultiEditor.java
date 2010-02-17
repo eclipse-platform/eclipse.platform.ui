@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
@@ -42,12 +43,32 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
 	private IPartListener2 propagationListener;
 
-    /**
-     * Constructor for TileEditor.
-     */
+	/**
+	 * Constructs an editor to contain other editors.
+	 */
     public AbstractMultiEditor() {
         super();
     }
+
+	/**
+	 * Handles a property change notification from a nested editor. The default
+	 * implementation simply forwards the change to listeners on this multi
+	 * editor by calling <code>firePropertyChange</code> with the same property
+	 * id. For example, if the dirty state of a nested editor changes (property
+	 * id <code>ISaveablePart.PROP_DIRTY</code>), this method handles it by
+	 * firing a property change event for <code>ISaveablePart.PROP_DIRTY</code>
+	 * to property listeners on this multi editor.
+	 * <p>
+	 * Subclasses may extend or reimplement this method.
+	 * </p>
+	 * 
+	 * @param propId
+	 *            the id of the property that changed
+	 * @since 3.6
+	 */
+	protected void handlePropertyChange(int propId) {
+		firePropertyChange(propId);
+	}
 
     /*
      * @see IEditorPart#doSave(IProgressMonitor)
@@ -133,16 +154,27 @@ public abstract class AbstractMultiEditor extends EditorPart {
         return innerEditors;
     }
 
-    /**
-     * Set the inner editors.
-     * 
-     * Should not be called by clients.
-     * 
-     * @param children 
-     */
+	/**
+	 * Set the inner editors.
+	 * 
+	 * Should not be called by clients.
+	 * 
+	 * @param children
+	 *            the inner editors of this multi editor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
     public final void setChildren(IEditorPart[] children) {
         innerEditors = children;
         activeEditorIndex = 0;
+
+		for (int i = 0; i < children.length; i++) {
+			children[i].addPropertyListener( new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					handlePropertyChange(propId);
+				}
+			});
+		}
+
         innerEditorsCreated();
     }
 

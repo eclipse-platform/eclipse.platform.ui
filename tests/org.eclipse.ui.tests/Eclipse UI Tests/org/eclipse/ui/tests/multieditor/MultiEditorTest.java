@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -40,6 +42,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.EditorSashContainer;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
@@ -47,6 +50,7 @@ import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -193,6 +197,57 @@ public class MultiEditorTest extends UITestCase {
 		assertTrue("Editor close trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorCloseTrace));
+	}
+	public void testDirty() throws Throwable {
+		IWorkbenchWindow window = openTestWindow();
+		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+		page.closeAllEditors(false);
+
+		IProject testProject = findOrCreateProject(PROJECT_NAME);
+
+		IFile fileA = createFile(testProject, TEST01_TXT);
+		IFile fileB = createFile(testProject, TEST02_TXT);
+		
+		MultiEditorInput input = new MultiEditorInput(new String[] { MockEditorPart.ID1, MockEditorPart.ID1}, new IEditorInput[] { new FileEditorInput(fileA),new FileEditorInput(fileB)});
+
+		// catches the framework NPE
+		IEditorPart editor = openAndValidateEditor(page, input);
+
+		// did we get a multieditor back?
+		assertTrue(editor instanceof MultiEditor);
+		MultiEditor multiEditor = (MultiEditor) editor;
+		
+		EditorSashContainer container = (EditorSashContainer) page
+				.getEditorPresentation().getLayoutPart();
+		// retrieve the SWT CTabFolder
+		CTabFolder tabFolder = (CTabFolder) container.getActiveWorkbook()
+				.getControl();
+		// index is 0 since we want the editor that's behind in the editor
+		// stack, 1 should be the second one that we activated
+		CTabItem item = tabFolder.getItem(0);
+
+		IEditorPart[] innerEditors = multiEditor.getInnerEditors();
+		MockEditorPart editorA = (MockEditorPart) innerEditors[0];
+		MockEditorPart editorB = (MockEditorPart) innerEditors[0];
+		
+		char firstChar = item.getText().charAt(0);
+		assertFalse(firstChar == '*');
+		
+		try {
+			editorA.setDirty(true);
+			assertEquals('*', item.getText().charAt(0));
+			
+			editorA.setDirty(false);
+			assertEquals(firstChar, item.getText().charAt(0));
+
+			editorB.setDirty(true);
+			assertEquals('*', item.getText().charAt(0));
+
+			editorB.setDirty(false);
+			assertEquals(firstChar, item.getText().charAt(0));
+		} finally {
+			page.closeAllEditors(false);
+		}
 	}
 
 	/**
@@ -485,18 +540,23 @@ public class MultiEditorTest extends UITestCase {
 		IEditorRegistry registry = fWorkbench.getEditorRegistry();
 
 		for (int f = 0; f < simpleFiles.length; ++f) {
-			IFile f1 = testProject.getFile(simpleFiles[f]);
-			if (!f1.exists()) {
-				URL file = Platform.asLocalURL(TestPlugin.getDefault()
-						.getBundle().getEntry(DATA_FILES_DIR + simpleFiles[f]));
-				f1.create(file.openStream(), true, null);
-			}
+			IFile f1 = createFile(testProject, simpleFiles[f]);
 			ids[f] = registry.getDefaultEditor(f1.getName()).getId();
 			inputs[f] = new FileEditorInput(f1);
 		}
 
 		MultiEditorInput input = new MultiEditorInput(ids, inputs);
 		return input;
+	}
+	
+	private IFile createFile(IProject testProject, String simpleFile) throws CoreException, IOException {
+		IFile file = testProject.getFile(simpleFile);
+		if (!file.exists()) {
+			URL url = Platform.asLocalURL(TestPlugin.getDefault()
+					.getBundle().getEntry(DATA_FILES_DIR + simpleFile));
+			file.create(url.openStream(), true, null);
+		}
+		return file;
 	}
 
 	/**
