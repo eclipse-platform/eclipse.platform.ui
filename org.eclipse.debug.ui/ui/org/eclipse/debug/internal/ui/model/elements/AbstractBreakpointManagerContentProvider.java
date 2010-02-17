@@ -24,7 +24,12 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -438,6 +443,21 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	    }
 	}
 	
+	/**
+     * Scheduling rule to make sure that breakpoint manager listener updates
+     * are process serially.
+     */
+	private ISchedulingRule fBreakpointsListenerSchedulingRule = new ISchedulingRule() {
+        
+        public boolean isConflicting(ISchedulingRule rule) {
+            return rule == this;
+        }
+        
+        public boolean contains(ISchedulingRule rule) {
+            return rule == this;
+        }
+    };
+	
 	// debug flags
 	public static boolean DEBUG_BREAKPOINT_DELTAS = false;
 	
@@ -703,11 +723,21 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
-	public void breakpointsAdded(IBreakpoint[] breakpoints) {
-	    InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
-	    for (int i = 0; i < datas.length; i++) {
-			datas[i].breakpointsAdded(breakpoints);
-		}				
+	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
+        new Job("Breakpoints View Update Job") { //$NON-NLS-1$
+            {
+                setSystem(true);
+                setRule(fBreakpointsListenerSchedulingRule);
+            }
+            
+            protected IStatus run(IProgressMonitor monitor) {
+        	    InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+        	    for (int i = 0; i < datas.length; i++) {
+        			datas[i].breakpointsAdded(breakpoints);
+        		}
+                return Status.OK_STATUS;
+            }
+        }.schedule();        	    
 	}
 	
 	/*
@@ -715,10 +745,20 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
 	public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-        InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
-        for (int i = 0; i < datas.length; i++) {
-            datas[i].breakpointsRemoved(breakpoints);
-        }               
+        new Job("Breakpoints View Update Job") { //$NON-NLS-1$
+            {
+                setSystem(true);
+                setRule(fBreakpointsListenerSchedulingRule);
+            }
+            
+            protected IStatus run(IProgressMonitor monitor) {
+                InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+                for (int i = 0; i < datas.length; i++) {
+                    datas[i].breakpointsRemoved(breakpoints);
+                }               
+                return Status.OK_STATUS;
+            }
+        }.schedule();
 	}
 	
 	/*
@@ -726,10 +766,20 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
 	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-        InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
-        for (int i = 0; i < datas.length; i++) {
-            datas[i].breakpointsChanged(breakpoints);
-        }               
+        new Job("Breakpoints View Update Job") { //$NON-NLS-1$
+            {
+                setSystem(true);
+                setRule(fBreakpointsListenerSchedulingRule);
+            }
+            
+            protected IStatus run(IProgressMonitor monitor) {
+                InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+                for (int i = 0; i < datas.length; i++) {
+                    datas[i].breakpointsChanged(breakpoints);
+                }               
+                return Status.OK_STATUS;
+            }
+        }.schedule();
 	}	
 	/**
 	 * Appends the model delta flags to child containers that contains the breakpoint.
