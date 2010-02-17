@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.services.IDisposable;
@@ -121,8 +122,21 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.runnable = runnable;
 		}
 
-		final protected void doHandleInvalid(ContextChangeEvent event) {
-			((EclipseContext) event.getContext()).schedule(this, event);
+		final protected void doHandleInvalid(ContextChangeEvent event, List scheduledList) {
+			int eventType = event.getEventType();
+			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
+				// process right away
+				notify(event);
+			} else {
+				// schedule processing
+				Scheduled toBeScheduled = new Scheduled(this, event);
+				for (Iterator i = scheduledList.iterator(); i.hasNext();) {
+					Scheduled scheduled = (Scheduled) i.next();
+					if (scheduled.equals(toBeScheduled)) // eliminate duplicates
+						return;
+				}
+				scheduledList.add(toBeScheduled);
+			}
 		}
 
 		public boolean notify(ContextChangeEvent event) {
@@ -145,6 +159,34 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
 		}
 	}
+
+	static private class Scheduled {
+
+		public IRunAndTrack runnable;
+		public ContextChangeEvent event;
+
+		public Scheduled(IRunAndTrack runnable, ContextChangeEvent event) {
+			this.runnable = runnable;
+			this.event = event;
+		}
+
+		public int hashCode() {
+			return 31 * (31 + event.hashCode()) + runnable.hashCode();
+		}
+
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Scheduled other = (Scheduled) obj;
+			if (!event.equals(other.event))
+				return false;
+			return runnable.equals(other.runnable);
+		}
+	};
 
 	static class DebugSnap {
 		Set listeners = new HashSet();
@@ -245,7 +287,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.DISPOSE, null, null, null);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(event);
+			List scheduled = new ArrayList();
+			ls[i].handleInvalid(event, scheduled);
+			processScheduled(scheduled);
 		}
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
@@ -315,7 +359,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return null;
 	}
 
-	protected void invalidate(String name, int eventType, Object oldValue) {
+	protected void invalidate(String name, int eventType, Object oldValue, List scheduled) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
@@ -323,7 +367,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
 				name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(event);
+			ls[i].handleInvalid(event, scheduled);
 		}
 	}
 
@@ -335,7 +379,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void remove(String name) {
 		if (isSetLocally(name)) {
 			Object oldValue = localValues.remove(name);
-			invalidate(name, ContextChangeEvent.REMOVED, oldValue);
+			List scheduled = new ArrayList();
+			invalidate(name, ContextChangeEvent.REMOVED, oldValue, scheduled);
+			processScheduled(scheduled);
 		}
 	}
 
@@ -362,28 +408,21 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.INITIAL, args, null, null);
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
-		schedule(computation, EclipseContextFactory.createContextEvent(this,
-				ContextChangeEvent.INITIAL, args, null, null));
+		computation.notify(event);
 	}
 
-	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {
-		if (runnable == null)
-			return false;
-		int eventType = event.getEventType();
-		if (eventType != ContextChangeEvent.INITIAL && eventType != ContextChangeEvent.DISPOSE
-				&& strategy != null && strategy instanceof ISchedulerStrategy)
-			return ((ISchedulerStrategy) strategy).schedule(runnable, event);
-		return runnable.notify(event);
-	}
-
-	protected void schedule(Runnable runnable) {
-		if (runnable == null)
-			return;
-		if (strategy != null && strategy instanceof ISchedulerStrategy)
-			((ISchedulerStrategy) strategy).schedule(runnable);
-		else
-			runnable.run();
+	protected void processScheduled(List scheduledList) {
+		boolean useScheduler = (strategy != null && strategy instanceof ISchedulerStrategy);
+		for (Iterator i = scheduledList.iterator(); i.hasNext();) {
+			Scheduled scheduled = (Scheduled) i.next();
+			if (useScheduler)
+				((ISchedulerStrategy) strategy).schedule(scheduled.runnable, scheduled.event);
+			else
+				scheduled.runnable.notify(scheduled.event);
+		}
 	}
 
 	public void set(String name, Object value) {
@@ -394,16 +433,20 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
 						+ toString());
 			}
-			invalidate(name, ContextChangeEvent.ADDED, oldValue);
+			List scheduled = new ArrayList();
+			invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
+			processScheduled(scheduled);
 		}
 	}
 
 	public void modify(String name, Object value) {
-		if (!internalModify(name, value))
+		List scheduled = new ArrayList();
+		if (!internalModify(name, value, scheduled))
 			set(name, value);
+		processScheduled(scheduled);
 	}
 
-	public boolean internalModify(String name, Object value) {
+	public boolean internalModify(String name, Object value, List scheduled) {
 		boolean containsKey = localValues.containsKey(name);
 		if (containsKey) {
 			if (!checkModifiable(name)) {
@@ -415,14 +458,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				if (DEBUG_VERBOSE)
 					System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
 							+ toString());
-				invalidate(name, ContextChangeEvent.ADDED, oldValue);
+				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 			}
 			return true;
 		}
 
 		EclipseContext parent = getParent();
 		if (parent != null)
-			return parent.internalModify(name, value);
+			return parent.internalModify(name, value, scheduled);
 		return false;
 	}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import java.util.List;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -106,7 +107,7 @@ public class ValueComputation extends Computation {
 		cachedValue = null;
 	}
 
-	final protected void doHandleInvalid(ContextChangeEvent event) {
+	final protected void doHandleInvalid(ContextChangeEvent event, List scheduled) {
 		int eventType = event.getEventType();
 		// if the originating context is being disposed, remove this value computation completely
 		if (eventType == ContextChangeEvent.DISPOSE
@@ -116,7 +117,7 @@ public class ValueComputation extends Computation {
 		}
 		this.originatingContext.invalidate(this.name,
 				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
-				event.getOldValue());
+				event.getOldValue(), scheduled);
 	}
 
 	final Object get(Object[] arguments) {

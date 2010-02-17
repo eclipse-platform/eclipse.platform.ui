@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.e4.core.services.internal.context;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
@@ -38,7 +39,7 @@ abstract class Computation {
 	protected void doClear() {
 	}
 
-	protected void doHandleInvalid(ContextChangeEvent event) {
+	protected void doHandleInvalid(ContextChangeEvent event, List scheduled) {
 	}
 
 	/**
@@ -46,21 +47,21 @@ abstract class Computation {
 	 */
 	public abstract boolean equals(Object arg0);
 
-	final void handleInvalid(ContextChangeEvent event) {
+	final void handleInvalid(ContextChangeEvent event, List scheduled) {
 		IEclipseContext context = event.getContext();
 		String name = event.getName();
 		Set names = (Set) dependencies.get(context);
 		if (name == null && event.getEventType() == ContextChangeEvent.DISPOSE) {
 			clear(context, null);
-			doHandleInvalid(event);
+			doHandleInvalid(event, scheduled);
 		} else if (names != null && names.contains(name)) {
 			clear(context, name);
-			doHandleInvalid(event);
+			doHandleInvalid(event, scheduled);
 		}
 	}
 
-	final void handleUninjected(ContextChangeEvent event) {
-		doHandleInvalid(event);
+	final void handleUninjected(ContextChangeEvent event, List scheduled) {
+		doHandleInvalid(event, scheduled);
 	}
 
 	/**
