@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -44,6 +48,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtensio
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -52,6 +57,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import com.ibm.icu.text.MessageFormat;
 
 public class DefaultLabelProvider implements ILabelProvider {
+	
+	/**
+	 * Maps image descriptors to images.
+	 */
+	private Map fImages = new HashMap();
 
 	/**
 	 * @see ILabelProvider#getImage(Object)
@@ -66,15 +76,34 @@ public class DefaultLabelProvider implements ILabelProvider {
 			if (de != null) {
 				ImageDescriptor descriptor= de.getImageDescriptor(element);
 				if( descriptor != null) {
-					return descriptor.createImage();
+					return getImage(descriptor);					
 				}
 			}
 			return null;
 		}
 		if(element instanceof LaunchShortcutExtension) {
-			return ((LaunchShortcutExtension)element).getImageDescriptor().createImage();
+			return getImage(((LaunchShortcutExtension)element).getImageDescriptor());
 		}
 		return DebugPluginImages.getImage(key);
+	}
+	
+	/**
+	 * Returns an image created from the given image descriptor or <code>null</code>.
+	 * Caches and reuses images.
+	 * 
+	 * @param descriptor image descriptor
+	 * @return image or <code>null</code>
+	 */
+	private Image getImage(ImageDescriptor descriptor) {
+		Image image = (Image) fImages.get(descriptor);
+		if (image != null) {
+			return image;
+		}
+		image = descriptor.createImage();
+		if (image != null) {
+			fImages.put(descriptor, image);
+		}
+		return image;						
 	}
 	
 	/**
@@ -453,6 +482,12 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+		Iterator iterator = fImages.values().iterator();
+		while (iterator.hasNext()) {
+			Image image = (Image) iterator.next();
+			image.dispose();
+		}
+		fImages.clear();
 	}
 
 	/**

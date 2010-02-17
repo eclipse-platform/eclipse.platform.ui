@@ -414,6 +414,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
                 fImageDescriptorRegistry.dispose();
             }
             
+            if (fgDefaultLabelProvider != null) {
+            	fgDefaultLabelProvider.dispose();
+            }
+            
             SourceLookupFacility.shutdown();
 			
 			DebugElementHelper.dispose();
