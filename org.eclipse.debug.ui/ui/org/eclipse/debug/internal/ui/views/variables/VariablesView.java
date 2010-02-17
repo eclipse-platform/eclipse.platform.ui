@@ -439,7 +439,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void setViewerInput(Object context) {
         if (context == null) {
             // Clear the detail pane
-            fDetailPane.display(null);
+        	refreshDetailPaneContents();
         }
         
         Object current = getViewer().getInput();
@@ -1013,31 +1013,33 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
 	 */
 	public void refreshDetailPaneContents() {
-		String currentPaneID = getCurrentPaneID();
-		if (currentPaneID != null) {
-			fLastSashWeights = fSashForm.getWeights();
-		}
-		fDetailPane.display(getCurrentSelection());
-		// Adjust sash background color settings and separator based on detail pane background color:
-		//   When the backgrounds are the same, the sash should have a default background, else it should be
-		//   invisible and the label separator should appear with the same background color as the detail pane
-		Control control = fDetailPane.getCurrentControl();
-		if (control.getBackground().equals(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND))) {
-			// don't show the label separator
-			if (!fSepearator.isDisposed()) {
-				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-				fSepearator.dispose();
-				fDetailsComposiste.layout(true);
+		if (isDetailPaneVisible()) {
+			String currentPaneID = getCurrentPaneID();
+			if (currentPaneID != null) {
+				fLastSashWeights = fSashForm.getWeights();
 			}
-		} else {
-			// show the label separator and make sash invisible
-			if (fSepearator.isDisposed()) {
-				// re-build the detail pane with the separator
-				buildDetailPane(fSashForm.getOrientation());
-				return;
+			fDetailPane.display(getCurrentSelection());
+			// Adjust sash background color settings and separator based on detail pane background color:
+			//   When the backgrounds are the same, the sash should have a default background, else it should be
+			//   invisible and the label separator should appear with the same background color as the detail pane
+			Control control = fDetailPane.getCurrentControl();
+			if (control.getBackground().equals(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND))) {
+				// don't show the label separator
+				if (!fSepearator.isDisposed()) {
+					getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					fSepearator.dispose();
+					fDetailsComposiste.layout(true);
+				}
+			} else {
+				// show the label separator and make sash invisible
+				if (fSepearator.isDisposed()) {
+					// re-build the detail pane with the separator
+					buildDetailPane(fSashForm.getOrientation());
+					return;
+				}
+				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				fSepearator.setBackground(control.getBackground());
 			}
-			getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-			fSepearator.setBackground(control.getBackground());
 		}
 	}
 
