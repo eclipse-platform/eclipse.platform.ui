@@ -425,7 +425,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		List<IEditorPart> dirtyEditors = new ArrayList<IEditorPart>();
 		for (IEditorReference editorRef : editorReferences) {
 			IEditorPart editor = editorRef.getEditor(false);
-			if (editor.isDirty()) {
+			if (editor != null && editor.isDirty()) {
 				dirtyEditors.add(editor);
 			}
 		}
