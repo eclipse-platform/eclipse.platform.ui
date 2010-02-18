@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -248,10 +248,6 @@ public class TextCellEditor extends CellEditor {
         Object typedValue = value;
         boolean oldValidState = isValueValid();
         boolean newValidState = isCorrect(typedValue);
-        if (typedValue == null && newValidState) {
-			Assert.isTrue(false,
-                    "Validator isn't limiting the cell editor's type range");//$NON-NLS-1$
-		}
         if (!newValidState) {
             // try to insert the current value into the error message.
             setErrorMessage(MessageFormat.format(getErrorMessage(),
