@@ -265,6 +265,18 @@ public class ContextInjector {
 		return result;
 	}
 
+	public void reinject() {
+		Processor processor = new Processor(null, true, false);
+		Object[] objectsCopy = userObjects.getSafeCopy();
+		for (int i = 0; i < objectsCopy.length; i++) {
+			try {
+				processClassHierarchy(objectsCopy[i], processor);
+			} catch (InvocationTargetException e) {
+				logExternalError("Exception occured while processing removal on", objectsCopy[i], e);
+			}
+		}
+	}
+
 	// TBD use null object to inject statics
 	public boolean injectStatic(Class clazz) {
 		Processor processor = new Processor(null, true, false);

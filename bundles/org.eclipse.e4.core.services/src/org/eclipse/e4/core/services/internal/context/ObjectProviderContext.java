@@ -81,7 +81,10 @@ public class ObjectProviderContext implements IObjectProvider, IRunAndTrack {
 			injector.uninject(event.getArguments()[0]);
 			break;
 		case ContextChangeEvent.DISPOSE:
-			injector.dispose();
+			if (event.getContext() == context)
+				injector.dispose();
+			else
+				injector.reinject();
 			break;
 		case ContextChangeEvent.ADDED: {
 			String name = event.getName();

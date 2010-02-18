@@ -32,6 +32,10 @@ final public class Injector implements IDisposable {
 		return eInjector.inject(object);
 	}
 
+	public void reinject() {
+		eInjector.reinject();
+	}
+
 	public boolean uninject(Object object) {
 		return eInjector.uninject(object);
 	}
