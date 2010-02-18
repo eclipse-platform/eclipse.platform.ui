@@ -67,6 +67,8 @@ public class E4Application implements IApplication {
 		// Create the app model and its context
 		MApplication appModel = loadApplicationModel(applicationContext,
 				appContext);
+		appModel.setContext(appContext);
+
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
 		if (!E4Workbench.getServiceContext().containsKey(
@@ -78,7 +80,6 @@ public class E4Application implements IApplication {
 
 		// Set the app's context after adding itself
 		appContext.set(MApplication.class.getName(), appModel);
-		appModel.setContext(appContext);
 
 		// Parse out parameters from both the command line and/or the product
 		// definition (if any) and put them in the context

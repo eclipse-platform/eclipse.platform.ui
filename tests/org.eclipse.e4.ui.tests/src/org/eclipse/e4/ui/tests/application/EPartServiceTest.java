@@ -3725,6 +3725,39 @@ public class EPartServiceTest extends TestCase {
 				windowService2.getActivePart());
 	}
 
+	public void testApplicationContextHasActivePart() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.getChildren().add(partB);
+		window.setSelectedElement(partA);
+
+		// setup the context
+		initialize(applicationContext, application);
+
+		// render the windows
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+
+		partService.activate(partA);
+
+		Object o = applicationContext.get(IServiceConstants.ACTIVE_PART);
+		assertEquals(partA, o);
+
+		partService.activate(partB);
+
+		o = applicationContext.get(IServiceConstants.ACTIVE_PART);
+		assertEquals(partB, o);
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
@@ -3763,8 +3796,8 @@ public class EPartServiceTest extends TestCase {
 
 	private void initialize(IEclipseContext applicationContext,
 			MApplication application) {
-		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
+		applicationContext.set(MApplication.class.getName(), application);
 		Workbench.processHierarchy(application);
 		((Notifier) application).eAdapters().add(
 				new UIEventPublisher(applicationContext));
