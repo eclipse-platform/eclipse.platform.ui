@@ -13,9 +13,10 @@ package org.eclipse.team.internal.ui.synchronize.patch;
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.ICompareNavigator;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
+import org.eclipse.compare.internal.patch.PatchFileDiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
@@ -58,11 +59,33 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 		super.contentsCreated();
 		ICompareNavigator nav = getNavigator();
 		if (nav instanceof CompareEditorInputNavigator) {
-			CompareEditorInputNavigator cein = (CompareEditorInputNavigator) nav;
-			Object pane = cein.getPanes()[0]; // the structure input pane
+			final CompareEditorInputNavigator cein = (CompareEditorInputNavigator) nav;
+			Object pane = cein.getPanes()[0]; // the structure input pane, top left
 			if (pane instanceof CompareViewerPane) {
 				CompareViewerPane cvp = (CompareViewerPane) pane;
 				cvp.setSelection(StructuredSelection.EMPTY);
+				cvp.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent e) {
+						feed1(cein);
+					}
+				});
+				feed1(cein);
+			}
+		}
+	}
+
+	// see org.eclipse.compare.CompareEditorInput.feed1(ISelection)
+	private void feed1(CompareEditorInputNavigator cein) {
+		if (getCompareInput() instanceof PatchFileDiffNode) {
+			Object pane = cein.getPanes()[1]; // the top middle pane
+			if (pane instanceof CompareViewerPane) {
+				CompareViewerPane cvp = (CompareViewerPane) pane;
+				cvp.setInput(getCompareInput());
+			}
+			pane = cein.getPanes()[2]; // the top right pane
+			if (pane instanceof CompareViewerPane) {
+				CompareViewerPane cvp = (CompareViewerPane) pane;
+				cvp.setInput(null); // clear downstream pane
 			}
 		}
 	}
