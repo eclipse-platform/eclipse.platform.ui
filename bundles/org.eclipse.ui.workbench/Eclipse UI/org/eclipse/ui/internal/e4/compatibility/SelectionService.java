@@ -141,8 +141,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 * .ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// TODO compat addPostSelectionListener
+		E4Util.unsupported("addPostSelectionListener"); //$NON-NLS-1$
 	}
 
 	/*
@@ -153,8 +153,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 * , org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// TODO compat addPostSelectionListener
+		E4Util.unsupported("addPostSelectionListener"); //$NON-NLS-1$
 	}
 
 	/*
@@ -216,8 +216,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 * .ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// TODO compat removePostSelectionListener
+		E4Util.unsupported("removePostSelectionListener"); //$NON-NLS-1$
 	}
 
 	/*
@@ -228,8 +228,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 * .String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// TODO compat removePostSelectionListener
+		E4Util.unsupported("removePostSelectionListener"); //$NON-NLS-1$
 	}
 
 	/*

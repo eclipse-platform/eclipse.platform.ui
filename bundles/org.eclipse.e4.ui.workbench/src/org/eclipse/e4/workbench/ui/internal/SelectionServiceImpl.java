@@ -208,7 +208,12 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * @see org.eclipse.e4.ui.selection.ESelectionService#getSelection()
 	 */
 	public Object getSelection() {
-		return activePart.getContext().get(ESelectionService.SELECTION);
+		if (activePart == null) {
+			return null;
+		}
+
+		IEclipseContext partContext = activePart.getContext();
+		return partContext == null ? null : partContext.get(ESelectionService.SELECTION);
 	}
 
 	/*
