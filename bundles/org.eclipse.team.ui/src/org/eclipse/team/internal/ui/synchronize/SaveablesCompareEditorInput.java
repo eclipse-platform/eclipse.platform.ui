@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 	private static ITypedElement getFileElement(ITypedElement element,
 			CompareEditorInput editorInput) {
 		if (element instanceof LocalResourceTypedElement) {
-			return (LocalResourceTypedElement) element;
+			return element;
 		}
 		if (editorInput instanceof CompareFileRevisionEditorInput) {
 			return ((CompareFileRevisionEditorInput) editorInput)
@@ -774,11 +774,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 			if (document != null) {
 				Object otherDocument = ((Saveable) obj)
 						.getAdapter(IDocument.class);
-
-				if (document == null && otherDocument == null)
-					return false;
-
-				return document != null && document.equals(otherDocument);
+				return document.equals(otherDocument);
 			}
 
 			if (obj instanceof InternalResourceSaveableComparison) {
