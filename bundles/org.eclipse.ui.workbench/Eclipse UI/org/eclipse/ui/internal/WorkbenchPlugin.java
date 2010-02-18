@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -1030,6 +1031,38 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
 	private void instantiateCompatibilityLayerHooks(IEclipseContext context) {
+		initializeCompatibilityObjects(context);
+		initializeEventHandling(context);
+	}
+
+	/**
+	 * Creates the necessary 3.x counterparts to the e4 model.
+	 * 
+	 * @param context
+	 *            the OSGi service context
+	 */
+	private void initializeCompatibilityObjects(IEclipseContext context) {
+		MApplication application = (MApplication) context.get(MApplication.class.getName());
+		// this will be null when running compatibility tests
+		if (application != null) {
+			// instantiate the workbench
+			PlatformUI.getWorkbench();
+			// create IWW instances for all windows
+			for (MWindow window : application.getChildren()) {
+				WorkbenchWindow wwindow = new WorkbenchWindow(null, null);
+				ContextInjectionFactory.inject(wwindow, window.getContext());
+			}
+		}
+	}
+
+	/**
+	 * Performs the necessary event handling hooks for creating 3.x counterparts
+	 * to the e4 model.
+	 * 
+	 * @param context
+	 *            the OSGi service context
+	 */
+	private void initializeEventHandling(IEclipseContext context) {
 		IEventBroker broker = (IEventBroker) context.get(
 				IEventBroker.class.getName());
 
