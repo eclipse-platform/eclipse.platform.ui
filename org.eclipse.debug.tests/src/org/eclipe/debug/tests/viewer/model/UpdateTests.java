@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.6
  */
-abstract public class UpdateTests extends TestCase {
+abstract public class UpdateTests extends TestCase implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -161,7 +161,7 @@ abstract public class UpdateTests extends TestCase {
         // be processed.
         fListener.reset(); 
         model.postDelta(delta);
-        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY);        
     }
@@ -173,7 +173,7 @@ abstract public class UpdateTests extends TestCase {
         // be processed.
         fListener.reset(); 
         model.postDelta(delta);
-        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE | TestModelUpdatesListener.CONTENT_UPDATES_COMPLETE | TestModelUpdatesListener.LABEL_UPDATES_COMPLETE)) 
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY);                
     }
@@ -202,5 +202,42 @@ abstract public class UpdateTests extends TestCase {
         removeElement(model, 3);
         addElement(model, "4-new", 4);
     }
+    
+    /**
+     * This test forces the viewer to reschedule pending content updates
+     * due to a remove event from the model.
+     * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#rescheduleUpdates
+     */
+    public void testRescheduleUpdates() {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        for (int i = 0; i < 5; i++) {
+            // Refresh the viewer so that updates are generated.
+            TestElement rootElement = model.getRootElement();
+            fListener.reset();
+            fListener.addUpdates(TreePath.EMPTY, model.getRootElement(), 1, CHILDREN_COUNT_UPDATES);
+            model.postDelta(new ModelDelta(rootElement, IModelDelta.CONTENT));
+    
+            // Wait for the delta to be processed.
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+    
+            // Wait until an update is started.
+            while (fListener.isFinished(VIEWER_UPDATES_RUNNING)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            
+            // Update the model
+            removeElement(model, 0);
+            addElement(model, "1", 0);
+        }
+    }
+
 
 }
