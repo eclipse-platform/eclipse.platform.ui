@@ -1,11 +1,3 @@
-package org.eclipse.help.internal.criteria;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.help.ICriteria;
 /*******************************************************************************
  * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -16,6 +8,16 @@ import org.eclipse.help.ICriteria;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
+package org.eclipse.help.internal.criteria;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.eclipse.help.ICriteria;
 
 import org.eclipse.help.internal.HelpPlugin;
 
@@ -71,7 +73,11 @@ public class CriterionResource {
 					&& 0 != elementValue.length()) {
 				if (HelpPlugin.getCriteriaManager().isSupportedCriterion(elementName)) {
 					elementName = elementName.toLowerCase();
-					List values = Arrays.asList(elementValue.split(",")); //$NON-NLS-1$
+					StringTokenizer tokenizer = new StringTokenizer(elementValue, ","); //$NON-NLS-1$ 
+					List values = new ArrayList();
+					while (tokenizer.hasMoreTokens()) {
+						values.add(tokenizer.nextToken().trim());
+					}
 					for(int j = 0; j < criteriaList.size(); ++j){
 						CriterionResource criterion = (CriterionResource) criteriaList.get(j);
 						if(elementName.equals(criterion.getCriterionName())){
