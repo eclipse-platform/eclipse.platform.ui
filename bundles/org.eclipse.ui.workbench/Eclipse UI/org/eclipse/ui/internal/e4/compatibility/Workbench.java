@@ -432,6 +432,11 @@ public class Workbench implements IWorkbench {
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
+		return openWorkbenchWindow(input, descriptor, window);
+	}
+
+	public WorkbenchWindow openWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
+			MWindow window) {
 		WorkbenchWindow result = new WorkbenchWindow(input, descriptor);
 		ContextInjectionFactory.inject(result, window.getContext());
 		fireWindowOpened(result);

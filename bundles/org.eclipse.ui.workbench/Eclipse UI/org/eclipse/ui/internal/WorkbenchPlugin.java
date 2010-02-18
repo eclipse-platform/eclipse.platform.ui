@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ViewDescriptor;
 import org.eclipse.ui.internal.e4.compatibility.ViewReference;
+import org.eclipse.ui.internal.e4.compatibility.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchPage;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -1031,6 +1032,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private void instantiateCompatibilityLayerHooks(IEclipseContext context) {
 		IEventBroker broker = (IEventBroker) context.get(
 				IEventBroker.class.getName());
+
+		// watch for parts' "toBeRendered" attribute being flipped to true, if
+		// they need to be rendered, then they need a corresponding 3.x
+		// reference
 		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.TOBERENDERED), new EventHandler() {
 			public void handleEvent(Event event) {
@@ -1038,12 +1043,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 					if (element instanceof MPart) {
 						MPart part = (MPart) element;
-						addReference(part);
+						createReference(part);
 					}
 				}
 			}
 		});
 
+		// watch for parts' contexts being set, once they've been set, we need
+		// to inject the ViewReference/EditorReference into the context
 		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
 				new EventHandler() {
 					public void handleEvent(Event event) {
@@ -1058,6 +1065,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 					}
 				});
 
+		// watch for windows' widget being set, when the shell is set, we need a
+		// corresponding IWorkbenchWindow created for them
 		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
 				new EventHandler() {
 					public void handleEvent(Event event) {
@@ -1071,14 +1080,40 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 						}
 					}
 				});
-
-		PlatformUI.getWorkbench();
 	}
 
+	/**
+	 * Returns a workbench page that will contain the specified part. If no page
+	 * can be located, one will be instantiated.
+	 * 
+	 * @param part
+	 *            the model part to query a parent workbench page for
+	 * @return the workbench page that contains the specified part
+	 */
+	private WorkbenchPage getWorkbenchPage(MPart part) {
+		IEclipseContext context = getWindowContext(part);
+		WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+		if (page == null) {
+			MWindow window = (MWindow) context.get(MWindow.class.getName());
+			Workbench workbench = (Workbench) PlatformUI.getWorkbench();
+			workbench.openWorkbenchWindow(null, null, window);
+			page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+		}
+		return page;
+	}
+
+	/**
+	 * Sets the 3.x reference of the specified part into its context.
+	 * 
+	 * @param part
+	 *            the model part that requires a 3.x part reference
+	 * @param context
+	 *            the part's context
+	 */
 	private void setReference(MPart part, IEclipseContext context) {
 		String uri = part.getURI();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
-			WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+			WorkbenchPage page = getWorkbenchPage(part);
 			ViewReference ref = page.getViewReference(part);
 			if (ref == null) {
 				ref = createViewReference(part, page);
@@ -1095,16 +1130,21 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return ref;
 	}
 
-	private void addReference(MPart part) {
+	/**
+	 * Creates a workbench part reference for the specified part.
+	 * 
+	 * @param part
+	 *            the model part to create a 3.x part reference for
+	 */
+	private void createReference(MPart part) {
 		String uri = part.getURI();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
-			IEclipseContext context = getContext(part);
-			WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+			WorkbenchPage page = getWorkbenchPage(part);
 			createViewReference(part, page);
 		}
 	}
 
-	private IEclipseContext getContext(MPart part) {
+	private IEclipseContext getWindowContext(MPart part) {
 		MElementContainer<?> parent = part.getParent();
 		while (!(parent instanceof MWindow)) {
 			parent = parent.getParent();
