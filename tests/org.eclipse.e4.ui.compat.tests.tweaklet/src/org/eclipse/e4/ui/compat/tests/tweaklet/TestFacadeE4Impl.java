@@ -3,11 +3,14 @@ package org.eclipse.e4.ui.compat.tests.tweaklet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IMemento;
@@ -112,22 +115,32 @@ public class TestFacadeE4Impl extends TestFacade {
 		MApplication application = workbench.getApplication();
 		
 		IEclipseContext context = application.getContext();
-		ISaveHandler saveHandler = (ISaveHandler) context.get(ISaveHandler.class.getName());
-		if (response == -1) {
-			context.set(ISaveHandler.class.getName(), originalHandler);
-		} else {
-			if (saveHandler == testSaveHandler) {
-				testSaveHandler.setResponse(response);
-			} else {
-				originalHandler = saveHandler;
-				testSaveHandler.setResponse(response);
-				context.set(ISaveHandler.class.getName(), testSaveHandler);
-			}	
+		saveableHelperSetAutomatedResponse(response, context);
+		
+		while (workbench.getDisplay().readAndDispatch());
+		
+		for (MWindow window : application.getChildren()) {
+			saveableHelperSetAutomatedResponse(response, window.getContext());	
 		}
+		
 		while (workbench.getDisplay().readAndDispatch());
 	}
+
+	private void saveableHelperSetAutomatedResponse(final int response,
+			IEclipseContext context) {
+		ISaveHandler saveHandler = (ISaveHandler) context.get(ISaveHandler.class.getName());
+		if (response == -1) {
+			context.set(ISaveHandler.class.getName(), originalHandlers.remove(context));
+		} else {
+			if (saveHandler != testSaveHandler) {
+				originalHandlers.put(context, saveHandler);
+			}
+			testSaveHandler.setResponse(response);
+			context.set(ISaveHandler.class.getName(), testSaveHandler);
+		}
+	}
 	
-	private static ISaveHandler originalHandler;
+	private static Map<IEclipseContext, ISaveHandler> originalHandlers = new HashMap<IEclipseContext, ISaveHandler>();
 	
 	private static TestSaveHandler testSaveHandler = new TestSaveHandler();
 	
