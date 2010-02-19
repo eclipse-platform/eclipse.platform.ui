@@ -208,6 +208,7 @@
         eType="#//Command" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
         eType="#//Handler" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="processor" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V______________Commands_______________V"
       abstract="true" interface="true"/>

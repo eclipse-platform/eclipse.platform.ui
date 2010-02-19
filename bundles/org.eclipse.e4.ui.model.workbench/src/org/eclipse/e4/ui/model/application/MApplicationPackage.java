@@ -3621,13 +3621,22 @@ public interface MApplicationPackage extends EPackage {
 	int MODEL_COMPONENT__HANDLERS = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Processor</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__PROCESSOR = APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Model Component</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	int MODEL_COMPONENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>VCommands V</em>' class.
@@ -6255,6 +6264,17 @@ public interface MApplicationPackage extends EPackage {
 	EReference getModelComponent_Handlers();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Processor</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getProcessor()
+	 * @see #getModelComponent()
+	 * @generated
+	 */
+	EAttribute getModelComponent_Processor();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -7434,6 +7454,14 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MODEL_COMPONENT__HANDLERS = eINSTANCE.getModelComponent_Handlers();
+
+		/**
+		 * The meta object literal for the '<em><b>Processor</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL_COMPONENT__PROCESSOR = eINSTANCE.getModelComponent_Processor();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.

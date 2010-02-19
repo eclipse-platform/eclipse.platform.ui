@@ -49,11 +49,21 @@
 
    <element name="snippet">
       <complexType>
-         <attribute name="uri" type="string" use="required">
+         <attribute name="uri" type="string">
             <annotation>
                <documentation>
-                  
+                  An XMI snippet to add to the parent.  Element must specify either uri or processor.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="processor" type="string">
+            <annotation>
+               <documentation>
+                  A processor that can update the model.  Element must specify either uri or processor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.workbench.modeling.IModelExtension"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

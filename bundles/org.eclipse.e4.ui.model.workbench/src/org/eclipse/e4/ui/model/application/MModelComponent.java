@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}</li>
  * </ul>
  * </p>
  *
@@ -133,5 +134,31 @@ public interface MModelComponent extends MApplicationElement, MPartDescriptorCon
 	 * @generated
 	 */
 	EList<MHandler> getHandlers();
+
+	/**
+	 * Returns the value of the '<em><b>Processor</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Processor</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Processor</em>' attribute.
+	 * @see #setProcessor(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Processor()
+	 * @model
+	 * @generated
+	 */
+	String getProcessor();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Processor</em>' attribute.
+	 * @see #getProcessor()
+	 * @generated
+	 */
+	void setProcessor(String value);
 
 } // MModelComponent

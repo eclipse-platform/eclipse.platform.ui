@@ -23,12 +23,14 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.workbench.modeling.IModelExtension;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.osgi.framework.Bundle;
 
 /**
  * Process extensions to E4 model contributed via extensions.
@@ -128,12 +130,27 @@ public class ModelExtensionProcessor {
 				for (MModelComponent snippet : snippets) {
 					Object parentElement = findDefaultParent(snippet.getParentID());
 					if (parentElement == null) {
-						log("Unable to find parent with ID \"{0}\"", //$NON-NLS-1$
-								snippet.getParentID());
+						log("Unable to find parent with ID \"{0}\" for extension \"{1}\"", //$NON-NLS-1$
+								snippet.getParentID(), contributor.getName());
 						continue;
 					}
 
 					EObject parentObject = ((EObject) parentElement);
+					if (snippet.getProcessor() != null && snippet.getProcessor().length() > 0) {
+						Bundle bundle = Activator.getDefault().getBundleForName(
+								contributor.getName());
+						if (bundle != null) {
+							try {
+								Class pc = bundle.loadClass(snippet.getProcessor());
+								IModelExtension me = (IModelExtension) pc.newInstance();
+								me.processElement(parentObject);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						continue;
+					}
+
 					Object[] elements = ((EObject) snippet).eContents().toArray();
 					for (int i = 0; i < elements.length; i++) {
 						EStructuralFeature sourceFeature = ((EObject) elements[i])
@@ -173,6 +190,15 @@ public class ModelExtensionProcessor {
 		// Logger logger = (Logger) context.get(Logger.class.getName());
 		// if (logger == null)
 		System.err.println(com.ibm.icu.text.MessageFormat.format(msg, new Object[] { arg }));
+		// else
+		// logger.error(msg, arg);
+	}
+
+	private void log(String msg, String arg, String arg2) {
+		// IEclipseContext context = e4Window.getContext();
+		// Logger logger = (Logger) context.get(Logger.class.getName());
+		// if (logger == null)
+		System.err.println(com.ibm.icu.text.MessageFormat.format(msg, new Object[] { arg, arg2 }));
 		// else
 		// logger.error(msg, arg);
 	}

@@ -70,6 +70,7 @@ public class ModelComponentItemProvider
 
 			addPositionInParentPropertyDescriptor(object);
 			addParentIDPropertyDescriptor(object);
+			addProcessorPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -110,6 +111,28 @@ public class ModelComponentItemProvider
 				 getString("_UI_ModelComponent_parentID_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_parentID_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 MApplicationPackage.Literals.MODEL_COMPONENT__PARENT_ID,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Processor feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addProcessorPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ModelComponent_processor_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_processor_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.MODEL_COMPONENT__PROCESSOR,
 				 true,
 				 false,
 				 false,
@@ -190,6 +213,7 @@ public class ModelComponentItemProvider
 		switch (notification.getFeatureID(MModelComponent.class)) {
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
+			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__DESCRIPTORS:

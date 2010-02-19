@@ -46,6 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getProcessor <em>Processor</em>}</li>
  * </ul>
  * </p>
  *
@@ -131,6 +132,26 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 	 * @ordered
 	 */
 	protected EList<MHandler> handlers;
+
+	/**
+	 * The default value of the '{@link #getProcessor() <em>Processor</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProcessor()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String PROCESSOR_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getProcessor() <em>Processor</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProcessor()
+	 * @generated
+	 * @ordered
+	 */
+	protected String processor = PROCESSOR_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -246,6 +267,27 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getProcessor() {
+		return processor;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setProcessor(String newProcessor) {
+		String oldProcessor = processor;
+		processor = newProcessor;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__PROCESSOR, oldProcessor, processor));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -281,6 +323,8 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 				return getCommands();
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				return getHandlers();
+			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+				return getProcessor();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -316,6 +360,9 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+				setProcessor((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -346,6 +393,9 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				getHandlers().clear();
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+				setProcessor(PROCESSOR_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -370,6 +420,8 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 				return commands != null && !commands.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
+			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+				return PROCESSOR_EDEFAULT == null ? processor != null : !PROCESSOR_EDEFAULT.equals(processor);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -420,6 +472,8 @@ public class ModelComponentImpl extends ApplicationElementImpl implements MModel
 		result.append(positionInParent);
 		result.append(", parentID: "); //$NON-NLS-1$
 		result.append(parentID);
+		result.append(", processor: "); //$NON-NLS-1$
+		result.append(processor);
 		result.append(')');
 		return result.toString();
 	}
