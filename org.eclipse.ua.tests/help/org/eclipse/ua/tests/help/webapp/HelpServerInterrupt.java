@@ -12,7 +12,9 @@
 package org.eclipse.ua.tests.help.webapp;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLConnection;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -101,12 +103,36 @@ public class HelpServerInterrupt extends TestCase {
 	}
 	
 	private void checkServer() throws Exception {
-		int port = WebappManager.getPort();
-		URL url = new URL("http", "localhost", port, "/help/index.jsp");
-		InputStream input = url.openStream();
-		int firstbyte = input.read();
-		Assert.assertTrue(firstbyte > 0);
-		input.close();
+		InputStream input;
+		long start = System.currentTimeMillis();
+		try {
+			int port = WebappManager.getPort();
+			URL url = new URL("http", "localhost", port, "/help/index.jsp");	
+			URLConnection connection = url.openConnection();
+			setTimeout(connection, 5000);
+			input = connection.getInputStream();
+			int firstbyte = input.read();
+			Assert.assertTrue(firstbyte > 0);
+			input.close();
+		} catch (Exception e) {
+			long elapsed = System.currentTimeMillis() - start;
+			System.out.println("Fail, milliseconds = " + elapsed);
+			throw e;
+		}
+	}
+	
+	private void setTimeout(URLConnection conn, int milliseconds) {
+		Class conClass = conn.getClass();
+		try {
+			Method timeoutMethod = conClass.getMethod(
+					"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+			Method readMethod = conClass.getMethod(
+					"setReadTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			readMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+		} catch (Exception e) {
+		     // If running on a 1.4 JRE an exception is expected, fall through
+		} 
 	}
 		
 }
