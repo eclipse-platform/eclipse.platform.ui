@@ -25,7 +25,9 @@ import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -90,6 +92,8 @@ public class PartServiceImpl implements EPartService {
 	 */
 	@Inject
 	@Named(EPartService.PART_SERVICE_ROOT)
+	@Optional
+	// technically this should be a mandatory parameter
 	private MElementContainer<MUIElement> rootContainer;
 
 	@Inject
@@ -127,6 +131,23 @@ public class PartServiceImpl implements EPartService {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
+
+		if (rootContainer == null) {
+			// couldn't find one, we'll just track the application then, it is
+			// questionable why someone would ask the application for the part
+			// service though
+			application.getContext().runAndTrack(new IRunAndTrack() {
+				public boolean notify(ContextChangeEvent event) {
+					IEclipseContext childContext = (IEclipseContext) event.getContext().getLocal(
+							IContextConstants.ACTIVE_CHILD);
+					if (childContext != null) {
+						rootContainer = (MElementContainer<MUIElement>) childContext
+								.get(MWindow.class.getName());
+					}
+					return true;
+				}
+			}, null);
+		}
 	}
 
 	@PreDestroy
