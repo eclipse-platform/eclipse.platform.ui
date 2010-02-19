@@ -17,10 +17,6 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -28,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.6
  */
-public class ShowTargetBreakpointsAction extends Action implements ISelectionListener {
+public class ShowTargetBreakpointsAction extends Action {
 	/**
 	 * Breakpoints view
 	 */
@@ -62,24 +58,6 @@ public class ShowTargetBreakpointsAction extends Action implements ISelectionLis
 		if (fView.getViewer().getControl().isDisposed()) {
 			return;
 		}
-		
-		if (isChecked()) {
-			fView.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-			ISelection selection = fView.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-			selectionChanged(null, selection);
-		} else {
-			fView.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-			fView.setFilterSelection(null);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			fView.setFilterSelection((IStructuredSelection) selection);
-		}
+		fView.setFilterSelection(isChecked());
 	}
 }

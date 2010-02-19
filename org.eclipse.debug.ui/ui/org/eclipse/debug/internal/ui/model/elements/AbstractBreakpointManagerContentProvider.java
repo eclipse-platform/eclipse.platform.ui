@@ -34,6 +34,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
@@ -49,6 +51,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * This class provides breakpoint content for the breakpoint manager.
@@ -191,10 +194,6 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
             fireModelChanged(fInput, addedDelta, "setOrganizers - Insert added elements"); //$NON-NLS-1$
 		}
 		
-		  /*
-	     * (non-Javadoc)
-	     * @see org.eclipse.debug.internal.ui.actions.breakpoints.IBreakpointFilterContentProvider#setFilterSelection(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.jface.viewers.IStructuredSelection)
-	     */
 	    synchronized public void setFilterSelection(IStructuredSelection ss) {
             ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
             
@@ -218,6 +217,17 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
             fireModelChanged(fInput, delta, "setFilterSelection"); //$NON-NLS-1$
 	    }
 
+        synchronized public void trackSelection(IBreakpoint[] bps) {
+            ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+            Set bpsSet = new HashSet(bps.length * 4/3);
+            for (int i = 0; i< bps.length; i++) {
+                bpsSet.add(bps[i]);
+            }
+            buildTrackSelectionDelta(delta, fContainer, bpsSet);
+
+            fireModelChanged(fInput, delta, "trackSelection"); //$NON-NLS-1$
+        }	    
+	    
 	    /**
 	     * Helper method to add breakpoints to the given input.
 	     * 
@@ -286,6 +296,13 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	    }
 
 	    
+        /**
+         * Recursive function to build the model delta to install breakpoint
+         * model proxies for all breakpoints and breakpoint containers.
+         * 
+         * @param delta Delta node to build on
+         * @param container Container element to build delta for.
+         */
 		private void buildInstallDelta(ModelDelta delta, BreakpointContainer container) {
             Object[] children = container.getChildren();
             delta.setChildCount(children.length);
@@ -299,7 +316,36 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
                 }
             }
         }
-        
+
+		/**
+		 * Recursive function to build the model delta to select a breakpoint
+		 * corresponding to the active debug context selection.
+		 * 
+		 * @param delta Delta node to build on
+		 * @param container Container element to build delta for.
+		 * @param breakpoints Breakpoint set to be selected.
+		 * @return whether to continue building delta.
+		 */
+		private boolean buildTrackSelectionDelta(ModelDelta delta, BreakpointContainer container, Set breakpoints) {
+            Object[] children = container.getChildren();
+            delta.setChildCount(children.length);
+            for (int i = 0; i < children.length; i++) {
+                ModelDelta childDelta = delta.addNode(children[i], i, IModelDelta.NO_CHANGE);
+                if (children[i] instanceof BreakpointContainer) {
+                    if (!buildTrackSelectionDelta(childDelta, (BreakpointContainer)children[i], breakpoints) ) { 
+                        return false; 
+                    }
+                } else if (children[i] instanceof IBreakpoint &&
+                    breakpoints.contains(children[i])) 
+                {
+                    childDelta.setFlags(IModelDelta.SELECT | IModelDelta.EXPAND);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+		
 		/**
 		 * Insert elements from the reference container to an existing container.
 		 * 
@@ -524,26 +570,89 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	}
 	
     /**
-     * Handles the propety changed events in presentation contexts.
+     * Handles the property changed events in presentation contexts.
      * Sub-classes may override to perform additional handling.
      * 
-     * @param context Presetnation context that was disposed.
+     * @param presentation Presentation context that changed.
      */
-	protected void contextPropertyChanged(IPresentationContext context, PropertyChangeEvent event) {
+	protected void contextPropertyChanged(IPresentationContext presentation, PropertyChangeEvent event) {
 	    if (IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS.equals(event.getProperty())) {
 	        IBreakpointOrganizer[] organizers = (IBreakpointOrganizer[])event.getNewValue();
-	        InputData[] contextDatas = getContextInputDatas(context);
+	        InputData[] contextDatas = getContextInputDatas(presentation);
 	        for (int i = 0; i < contextDatas.length; i++) {
 	            contextDatas[i].setOrganizers(organizers);
 	        }
 	    }
-	    else if (IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION.equals(event.getProperty())) {
-            IStructuredSelection selection = (IStructuredSelection)event.getNewValue();
+	    else if ( IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION.equals(event.getProperty()) ) 
+	    {
+            IStructuredSelection selection = null;
+            
+	        if (Boolean.TRUE.equals(event.getNewValue()) ) {
+	            selection = getActiveContextStructredSelection(presentation);
+	        }
+	        setFilterSelection(presentation, selection);
+        } 
+        else if ( IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION.equals(event.getProperty()) ) 
+        {
+            IStructuredSelection selection = null;
+            
+            if (Boolean.TRUE.equals(event.getNewValue()) ) {
+                selection = getActiveContextStructredSelection(presentation);
+            }
+            trackSelection(presentation, selection);
+        } 
+	    else if ( IBreakpointUIConstants.PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT.equals(event.getProperty()) ) 
+        {
+	        IStructuredSelection selection = getActiveContextStructredSelection(presentation);
+
+            if (Boolean.TRUE.equals(presentation.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION)) ) {
+                setFilterSelection(presentation, selection);
+            }
+            
+            if (Boolean.TRUE.equals(presentation.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION)) ) {
+                trackSelection(presentation, selection);
+            }            
+        }
+	}
+	
+	private void setFilterSelection(IPresentationContext context, IStructuredSelection selection) {
+        InputData[] contextDatas = getContextInputDatas(context);
+        for (int i = 0; i < contextDatas.length; i++) {
+            contextDatas[i].setFilterSelection(selection);
+        }
+	}
+
+	private void trackSelection(IPresentationContext context, IStructuredSelection selection) {
+        Iterator iter = selection.iterator();
+        Object firstElement = iter.next();
+        if (firstElement == null || iter.hasNext()) {
+            return;
+        }
+        IThread thread = null;
+        if (firstElement instanceof IStackFrame) {
+            thread = ((IStackFrame) firstElement).getThread();
+        } else if (firstElement instanceof IThread) {
+            thread = (IThread) firstElement;
+        } else {
+            return;
+        }
+
+        IBreakpoint[] breakpoints = thread.getBreakpoints();
+
+        if (breakpoints != null && breakpoints.length != 0) {
             InputData[] contextDatas = getContextInputDatas(context);
             for (int i = 0; i < contextDatas.length; i++) {
-                contextDatas[i].setFilterSelection(selection);
+                contextDatas[i].trackSelection(breakpoints);
             }
         }
+    }
+
+	private IStructuredSelection getActiveContextStructredSelection(IPresentationContext presentation) {
+        Object activeContext = presentation.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT);
+        if (activeContext instanceof IStructuredSelection) {
+            return (IStructuredSelection)activeContext;
+        }
+        return StructuredSelection.EMPTY;
 	}
 	
 	private InputData[] getContextInputDatas(IPresentationContext context) {
@@ -662,7 +771,14 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 */
 	protected IStructuredSelection getSelectionFilter(Object input) {
 	    if (input instanceof AbstractBreakpointManagerInput) {
-	        return (IStructuredSelection) ((AbstractBreakpointManagerInput)input).getContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION);
+	        IPresentationContext presentation = ((AbstractBreakpointManagerInput)input).getContext();
+	        
+	        if ( Boolean.TRUE.equals(presentation.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION)) ) {
+	            Object activeContext = presentation.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT);
+	            if (activeContext instanceof IStructuredSelection) {
+	                return (IStructuredSelection)activeContext;
+	            }
+	        }
 	    }
 	    return null;
 	}

@@ -27,11 +27,12 @@ public interface IBreakpointUIConstants {
     public static final String PROP_BREAKPOINTS_ORGANIZERS      = "BreakpointOrganizers";   //$NON-NLS-1$
 
     /** 
-     * Breakpoints presentation context property used to retrieve the debug 
-     * context selection which should be used to filter the visible 
-     * breakpoints.  The returned property value should be of type  
-     * <code>org.eclipse.jface.viewers.ISelection</code>.  If property value 
-     * is <code>null</code>, the breakpoints should not be filtered.
+     * Breakpoints presentation context property used to retrieve a flag 
+     * indicating whether the list of breakpoints should be filtered based
+     * on the active debug context.  The returned property value should 
+     * be of type <code>java.lang.Boolean</code>.  If property value is 
+     * <code>null</code>, then value should be treated the same as 
+     * <code>Boolean.FALSE</code>.
      * 
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperty(String)
      */
@@ -59,4 +60,14 @@ public interface IBreakpointUIConstants {
      */
     public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR = "ElementComparator";   //$NON-NLS-1$
 
+    /**
+     * The property for tracking the active debug context for the breakpoints 
+     * view.  For most debuggers, the input into the breakpoints view will
+     * remain constant as to avoid unnecessary flickering in the view.  
+     * However, to implement the track selection features, debugger still 
+     * need access to the active debug context for the breakpoints view. 
+     * This property is updated by the breakpoints view whenever the active
+     * debug context changes.
+     */
+    public static final String PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT = "ActiveDebugContext"; //$NON-NLS-1$
 }

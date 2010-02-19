@@ -15,13 +15,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
-import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizerInputProvider;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -81,32 +78,10 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 		return menu;
     }
 
-    /**
-     * Get the breakpoint organizer input provider from the view input.
-     * 
-     * @param input the view input.
-     * @return the breakpoint organizer input provider, can be <code>null</code>.
-     */
-    private IBreakpointOrganizerInputProvider getOrganizerProvider(Object input) {
-    	if (input instanceof IAdaptable) {
-    		return (IBreakpointOrganizerInputProvider) ((IAdaptable) input).getAdapter(IBreakpointOrganizerInputProvider.class);
-    	}
-    	return null;
-    }
-	/**
+ 	/**
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
-		// allow the organizer provider to populate the menu first
-		Object input = fView.getTreeModelViewer().getInput();
-		IBreakpointOrganizerInputProvider provider = getOrganizerProvider(input);
-		if (provider != null) {				
-			IPresentationContext context = fView.getTreeModelViewer().getPresentationContext();
-			provider.fillMenu(input, context, menu);
-			fAction.setEnabled(menu.getItemCount() > 0);
-			return;
-		}
-				
 		// determine which item should be checked
 		IBreakpointOrganizer[] organizers = fView.getBreakpointOrganizers();					
 		

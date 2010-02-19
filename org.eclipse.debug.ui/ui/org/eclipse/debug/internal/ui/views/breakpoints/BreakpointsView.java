@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManagerListener;
@@ -73,7 +72,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -85,21 +83,17 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 /**
  * This class implements the breakpoints view.
  */
-public class BreakpointsView extends VariablesView implements ISelectionListener, IBreakpointManagerListener {	
+public class BreakpointsView extends VariablesView implements IBreakpointManagerListener {	
 	private static final String ACTION_GOTO_MARKER				= "GotoMarker";				//$NON-NLS-1$
 	private static final String ACTION_SKIP_BREAKPOINTS			= "SkipBreakpoints";		//$NON-NLS-1$
 	private static final String ACTION_SHOW_MODEL_BREAKPOINT	= "ShowBreakpointsForModel";//$NON-NLS-1$
 	private static final String ACTION_REMOVE_FROM_GROUP 		= "RemoveFromGroup"; 		//$NON-NLS-1$
 	
 	
-	private static final String KEY_IS_TRACKING_SELECTION		= "isTrackingSelection"; 	//$NON-NLS-1$
 	private static final String KEY_VALUE						= "value";					//$NON-NLS-1$
 
-	private boolean fIsTrackingSelection 						= false;
-	
 	private Clipboard fClipboard;	
 	private IBreakpointOrganizer[] fOrganizers;
-	private IStructuredSelection fFilterSelection;
 
 	/**
 	 * Flag used to determine whether the viewer input is being set for the 
@@ -147,9 +141,12 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 		TreeModelViewer viewer = (TreeModelViewer) super.createViewer(parent);		
 		
 		initBreakpointOrganizers(getMemento());
-		initIsTrackingSelection(getMemento());
-		
-		return viewer;
+
+		IPresentationContext presentationContext = viewer.getPresentationContext(); 
+		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS, fOrganizers);
+        presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR, new ElementComparator(presentationContext));
+
+        return viewer;
 	}
 
 	/*
@@ -270,6 +267,9 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void contextActivated(ISelection selection) {
+	    IPresentationContext presentationContext = getTreeModelViewer().getPresentationContext();
+	    presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT, selection);
+	    
 		if (selection == null || selection.isEmpty()) {
 			Object input = new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext());
 			super.contextActivated(new StructuredSelection(input));
@@ -295,22 +295,6 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 		if (current != null && current.equals(context)) {
 			return;
 		}
-		
-		final TreeModelViewer viewer = getTreeModelViewer();
-		final IPresentationContext presentationContext = viewer.getPresentationContext();		
-		
-		// set the view organizer - if there is an organizer override per input, than set the organizer to null
-		Object organizerInputAdapter = null;
-		if (context instanceof IAdaptable) {
-			organizerInputAdapter = ((IAdaptable) context).getAdapter(IBreakpointOrganizerInputProvider.class);
-		}
-		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS, organizerInputAdapter != null ? null : fOrganizers);
-		
-		// set the view filter selection
-		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, fFilterSelection);
-
-		// set the element comparator 
-		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR, new ElementComparator(presentationContext));
 		
 		showViewer();
 		getViewer().setInput(context);
@@ -343,7 +327,12 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * @return whether this view is currently tracking the debug view's selection
 	 */
 	public boolean isTrackingSelection() {
-		return fIsTrackingSelection;
+        final TreeModelViewer viewer = getTreeModelViewer();
+        if (viewer != null) {
+            return Boolean.TRUE.equals( 
+                viewer.getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION) );
+        }
+        return false;
 	}
 
 	/**
@@ -352,17 +341,12 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * @param trackSelection whether or not this view should track the debug view's selection.
 	 */
 	public void setTrackSelection(boolean trackSelection) {
-		fIsTrackingSelection = trackSelection;
-		if (trackSelection) {
-			getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		} else {
-			getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		}
-		
 		// set the track selection property for non-standard model to track the debug context
 		final TreeModelViewer viewer = getTreeModelViewer();
 		if (viewer != null) {
-			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION, new Boolean(fIsTrackingSelection));
+			viewer.getPresentationContext().setProperty(
+			    IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION, 
+			    trackSelection ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 	
@@ -413,20 +397,6 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
         action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     }
 	
-	/**
-	 * Initializes whether this view tracks selection in the debug view from the persisted state.
-	 */
-	private void initIsTrackingSelection(IMemento memento) {
-		if (memento != null) {
-			IMemento node = memento.getChild(KEY_IS_TRACKING_SELECTION);
-			if (node != null) {
-				setTrackSelection(Boolean.valueOf(node.getString(KEY_VALUE)).booleanValue());
-				return;
-			}
-		}
-		setTrackSelection(false);
-	}
-	
     /**
      * Initializes drag and drop for the breakpoints viewer
      */
@@ -436,8 +406,6 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
         viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer, this));
         // Drag
         viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer, this));
-        // Drag only
-//        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
     }
  
 	/*
@@ -445,9 +413,6 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#saveViewerState(org.eclipse.ui.IMemento)
 	 */
 	public void saveViewerState(IMemento memento) {
-		IMemento node = memento.createChild(KEY_IS_TRACKING_SELECTION);
-		node.putString(KEY_VALUE, String.valueOf(fIsTrackingSelection));
-		
 		StringBuffer buffer = new StringBuffer();
         if (fOrganizers != null) {
             for (int i = 0; i < fOrganizers.length; i++) {
@@ -457,7 +422,7 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
                     buffer.append(',');
                 }
             }
-            node = memento.createChild(IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
+            IMemento node = memento.createChild(IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
             node.putString(KEY_VALUE, buffer.toString());
         }
 		super.saveViewerState(memento);
@@ -565,13 +530,12 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * 
 	 * @param ss the selection, can be <code>null</code>.
 	 */
-	public void setFilterSelection(IStructuredSelection ss) {
-		fFilterSelection = ss;
-		
+	public void setFilterSelection(boolean filter) {
 		TreeModelViewer viewer = getTreeModelViewer();
 		if (viewer != null) {
 			// update the presentation context filter
-			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, fFilterSelection);
+			viewer.getPresentationContext().setProperty(
+			    IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, filter ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
