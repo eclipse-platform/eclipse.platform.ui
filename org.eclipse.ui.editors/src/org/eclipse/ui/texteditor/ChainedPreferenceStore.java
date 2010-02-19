@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,7 +414,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 		/*
 		 * Assume that the property is there but has no default value (its owner relies on the default-default value)
-		 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=52827
+		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52827
 		 */
 		if (visibleStore == null && newValue != null)
 			visibleStore= childPreferenceStore;
@@ -473,7 +473,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 				/*
 				 * The original event's new value can be non-null (removed assertion).
-				 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=69419
+				 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=69419
 				 */
 
 				newValue= getOtherValue(property, visibleStore, oldValue);

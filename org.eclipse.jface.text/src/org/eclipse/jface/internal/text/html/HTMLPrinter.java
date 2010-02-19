@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class HTMLPrinter {
 	private static RGB BG_COLOR_RGB= new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
 	private static RGB FG_COLOR_RGB= new RGB(0, 0, 0); // RGB value of info fg color on WindowsXP
 	
-	private static final String UNIT; // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
+	private static final String UNIT; // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 	static {
 		UNIT= Util.isMac() ? "px" : "pt";   //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -52,7 +52,7 @@ public class HTMLPrinter {
 					}
 				});
 			} catch (SWTError err) {
-				// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
 				if (err.code != SWT.ERROR_DEVICE_DISPOSED)
 					throw err;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,7 +285,7 @@ public class FileCharSequenceProvider {
 				if (CHARSET_UTF_8.equals(charset)) {
 					/*
 					 * This is a workaround for a corresponding bug in Java readers and writer,
-					 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+					 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 					 * we remove the BOM before passing the stream to the reader
 					 */
 					IContentDescription description= fFile.getContentDescription();

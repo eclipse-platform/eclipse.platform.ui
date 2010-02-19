@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,7 +409,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				/*
 				 * XXX:
 				 * This is a workaround for a corresponding bug in Java readers and writer,
-				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+				 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
 				if (removeBOM) {
 					int n= 0;
@@ -612,7 +612,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			/*
 			 * XXX:
 			 * This is a workaround for a corresponding bug in Java readers and writer,
-			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
 			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && CHARSET_UTF_8.equals(encoding))
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
@@ -1204,7 +1204,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * <p>
 	 * XXX:
 	 * This is a workaround for a corresponding bug in Java readers and writer,
-	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 	 * </p>
 	 * @param file the file
 	 * @param encoding the encoding
