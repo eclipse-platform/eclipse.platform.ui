@@ -75,7 +75,11 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#getPresentationContext()
 	 */
 	protected IPresentationContext getPresentationContext() {
-		return ((ITreeModelViewer)getViewer()).getPresentationContext();
+	    ITreeModelViewer viewer = getViewer();
+	    if (viewer != null) {
+	        return viewer.getPresentationContext();
+	    } 
+	    return null;
 	}
 	
 	/* (non-Javadoc)
