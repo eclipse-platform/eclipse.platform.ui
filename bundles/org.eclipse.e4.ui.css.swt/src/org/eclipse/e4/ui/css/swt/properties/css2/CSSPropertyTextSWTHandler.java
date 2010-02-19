@@ -65,6 +65,9 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 					folder.setForeground(newColor);
 				}
 			}
+			else if (widget instanceof Control) {
+				  ((Control) widget).setForeground(newColor);
+				}
 		}
 	}
 
