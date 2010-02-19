@@ -1,22 +1,22 @@
-ETabFolder {
+CTabFolder {
 	simple: true;
 	margin: 3;
 }
 
-ETabItem {
+CTabItem {
 	font: Verdana 8px;
 	color: #666666;
 	background-color: #ffffff;
 }
-ETabItem:selected {
+CTabItem:selected {
 	background-color: #f4f4f4;
 }
 
-ETabItem.active {
+CTabItem.active {
 	background-color: #ffffff;
 }
 
-ETabItem.active:selected {
+CTabItem.active:selected {
 	color: #ff5500;
 	background-color: #f4f4f4;
 	font-weight: bold;
