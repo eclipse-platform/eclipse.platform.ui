@@ -44,7 +44,7 @@ public class ToolBarManager extends ContributionManager implements
 	private int itemStyle = SWT.NONE;
 
 	/**
-	 * The tool bat control; <code>null</code> before creation and after
+	 * The tool bar control; <code>null</code> before creation and after
 	 * disposal.
 	 */
 	private ToolBar toolBar = null;
