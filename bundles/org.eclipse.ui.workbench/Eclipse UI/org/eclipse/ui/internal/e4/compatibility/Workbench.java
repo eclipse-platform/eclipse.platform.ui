@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
@@ -115,6 +116,11 @@ public class Workbench implements IWorkbench {
 				.getContext());
 		perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
 				PerspectiveRegistry.class, application.getContext());
+
+		IBindingService bindingService = (IBindingService) ContextInjectionFactory.make(
+				BindingService.class,
+				application.getContext());
+		application.getContext().set(IBindingService.class.getName(), bindingService);
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
