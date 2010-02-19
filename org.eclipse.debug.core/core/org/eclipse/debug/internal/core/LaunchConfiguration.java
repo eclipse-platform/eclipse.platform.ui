@@ -857,6 +857,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					getLaunchManager().removeLaunch(launch);
 				}
 				throw e;
+			} catch (RuntimeException e) {
+				// if there was a runtime exception, and the launch is empty, remove it
+				if (!launch.hasChildren()) {
+					getLaunchManager().removeLaunch(launch);
+				}
+				throw e;
 			}
 			if (monitor.isCanceled()) {
 				getLaunchManager().removeLaunch(launch);
