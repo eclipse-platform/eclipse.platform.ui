@@ -54,6 +54,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private WorkbenchPage page;
 	private UIExtensionTracker tracker;
 
+	private ISelectionService selectionService;
+
 	private IAdaptable input;
 	private IPerspectiveDescriptor perspective;
 
@@ -65,7 +67,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		this.perspective = perspective;
 	}
 
-	void contextSet() {
+	void contextSet() throws InvocationTargetException, InstantiationException {
 		IEclipseContext windowContext = model.getContext();
 		page = new WorkbenchPage(this, input);
 
@@ -77,6 +79,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		ContextInjectionFactory.inject(page, windowContext);
 		page.setPerspective(perspective);
+
+		selectionService = (ISelectionService) ContextInjectionFactory.make(SelectionService.class,
+				model.getContext());
 	}
 
 	public MWindow getModel() {
@@ -125,9 +130,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
-		// FIXME compat window selection service
-		E4Util.unsupported("getSelectionService"); //$NON-NLS-1$
-		return null;
+		return selectionService;
 	}
 
 	/* (non-Javadoc)

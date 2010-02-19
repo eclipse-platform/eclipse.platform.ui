@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -60,7 +59,6 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -105,8 +103,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Inject
 	private EModelService modelService;
 
-	private ISelectionService selectionService;
-
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
 	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
 
@@ -129,8 +125,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	void postConstruct() throws InvocationTargetException, InstantiationException {
 		partService.addPartListener(e4PartListener);
 		window.getContext().set(IPartService.class.getName(), this);
-		selectionService = (ISelectionService) ContextInjectionFactory
-				.make(SelectionService.class, window.getContext());
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
@@ -1364,70 +1358,70 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
-		selectionService.addSelectionListener(listener);
+		workbenchWindow.getSelectionService().addSelectionListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
-		selectionService.addSelectionListener(partId, listener);
+		workbenchWindow.getSelectionService().addSelectionListener(partId, listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
-		selectionService.addPostSelectionListener(listener);
+		workbenchWindow.getSelectionService().addPostSelectionListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
-		selectionService.addPostSelectionListener(partId, listener);
+		workbenchWindow.getSelectionService().addPostSelectionListener(partId, listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#getSelection()
 	 */
 	public ISelection getSelection() {
-		return selectionService.getSelection();
+		return workbenchWindow.getSelectionService().getSelection();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#getSelection(java.lang.String)
 	 */
 	public ISelection getSelection(String partId) {
-		return selectionService.getSelection(partId);
+		return workbenchWindow.getSelectionService().getSelection(partId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
-		selectionService.removeSelectionListener(listener);
+		workbenchWindow.getSelectionService().removeSelectionListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
-		selectionService.removeSelectionListener(partId, listener);
+		workbenchWindow.getSelectionService().removeSelectionListener(partId, listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
-		selectionService.removePostSelectionListener(listener);
+		workbenchWindow.getSelectionService().removePostSelectionListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
-		selectionService.removePostSelectionListener(partId, listener);
+		workbenchWindow.getSelectionService().removePostSelectionListener(partId, listener);
 	}
 
 	ArrayList<MPart> activationList = new ArrayList<MPart>();
