@@ -172,7 +172,7 @@ public class ModelExtensionProcessor {
 		// IEclipseContext context = e4Window.getContext();
 		// Logger logger = (Logger) context.get(Logger.class.getName());
 		// if (logger == null)
-		System.err.println(msg);
+		System.err.println(com.ibm.icu.text.MessageFormat.format(msg, new Object[] { arg }));
 		// else
 		// logger.error(msg, arg);
 	}
