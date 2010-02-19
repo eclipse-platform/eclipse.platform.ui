@@ -152,6 +152,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.ContributionService;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -3570,6 +3571,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public ServiceLocator getServiceLocator() {
 		return serviceLocator;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#getModalDialogShellProvider()
+	 */
+	public IShellProvider getModalDialogShellProvider() {
+		return new IShellProvider() {
+			public Shell getShell() {
+				return ProgressManagerUtil.getDefaultParent();
+			}
+		};
 	}
 
 }
