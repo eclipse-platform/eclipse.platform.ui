@@ -14,6 +14,8 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
@@ -31,7 +33,12 @@ public class MenuRenderer extends SWTPartRenderer {
 			return null;
 
 		if (parent instanceof Decorations) {
-			return new Menu((Decorations) parent, SWT.BAR);
+			MUIElement container = (MUIElement) ((EObject) element)
+					.eContainer();
+			if (container instanceof MWindow)
+				return new Menu((Decorations) parent, SWT.BAR);
+			else
+				return new Menu((Decorations) parent, SWT.POP_UP);
 		} else if (parent instanceof MenuItem) {
 			return new Menu((MenuItem) parent);
 		} else if (parent instanceof Control) {

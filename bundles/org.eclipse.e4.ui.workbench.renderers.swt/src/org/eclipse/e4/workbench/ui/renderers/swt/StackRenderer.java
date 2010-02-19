@@ -17,8 +17,10 @@ import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -37,10 +39,18 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -56,6 +66,9 @@ public class StackRenderer extends LazyStackRenderer {
 
 	@Inject
 	IEventBroker eventBroker;
+
+	@Inject
+	IPresentationEngine renderer;
 
 	private EventHandler itemUpdater;
 
@@ -520,117 +533,119 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private ToolBar getToolbar(MUIElement element) {
-		// if (part.getToolBar() == null && part.getMenu() == null)
-		// return null;
-		// CTabFolder ctf = (CTabFolder) getParentWidget(part);
-		//
-		// ToolBar tb;
-		// MToolBar tbModel = part.getToolBar();
-		// if (tbModel != null) {
-		// tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
-		// } else {
-		// tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
-		// }
-		//
-		// // View menu (if any)
-		// if (part.getMenu() != null) {
-		// addMenuButton(part, tb, part.getMenu());
-		// }
-		//
-		// tb.pack();
-		// return tb;
-		return null; // later
+		if (!(element instanceof MPart))
+			return null;
+
+		MPart part = (MPart) element;
+		boolean hasMenu = part.getMenus() != null && part.getMenus().size() > 0;
+		boolean hasTB = part.getToolbar() != null;
+		if (!hasMenu && !hasTB)
+			return null;
+
+		CTabFolder ctf = (CTabFolder) getParentWidget(part);
+
+		ToolBar tb;
+		MToolBar tbModel = part.getToolbar();
+		if (tbModel != null) {
+			tb = (ToolBar) renderer.createGui(tbModel, ctf);
+		} else {
+			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
+		}
+
+		// View menu (if any)
+		if (hasMenu) {
+			addMenuButton(part, tb, part.getMenus().get(0));
+		}
+
+		tb.pack();
+		return tb;
 	}
 
 	/**
 	 * @param tb
 	 */
-	// private void addMenuButton(MPart part, ToolBar tb, MMenu menu) {
-	// ToolItem ti = new ToolItem(tb, SWT.PUSH);
-	// ti.setImage(getViewMenuImage());
-	// ti.setHotImage(null);
-	//		ti.setToolTipText("View Menu"); //$NON-NLS-1$
-	//		ti.setData("theMenu", menu); //$NON-NLS-1$
-	//		ti.setData("thePart", part); //$NON-NLS-1$
-	//
-	// ti.addSelectionListener(new SelectionListener() {
-	// public void widgetSelected(SelectionEvent e) {
-	// showMenu((ToolItem) e.widget);
-	// }
-	//
-	// public void widgetDefaultSelected(SelectionEvent e) {
-	// showMenu((ToolItem) e.widget);
-	// }
-	// });
-	// }
+	private void addMenuButton(MPart part, ToolBar tb, MMenu menu) {
+		ToolItem ti = new ToolItem(tb, SWT.PUSH);
+		ti.setImage(getViewMenuImage());
+		ti.setHotImage(null);
+		ti.setToolTipText("View Menu"); //$NON-NLS-1$
+		ti.setData("theMenu", menu); //$NON-NLS-1$
+		ti.setData("thePart", part); //$NON-NLS-1$
+
+		ti.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+		});
+	}
 
 	/**
 	 * @param item
 	 */
-	// protected void showMenu(ToolItem item) {
-	//		MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
-	//		MItemPart<?> part = (MItemPart<?>) item.getData("thePart"); //$NON-NLS-1$
-	// Menu menu = (Menu) createMenu(part, item, menuModel);
-	//
-	// // EList<MMenuItem> items = menuModel.getItems();
-	// // for (Iterator iterator = items.iterator(); iterator.hasNext();) {
-	// // MMenuItem mToolBarItem = (MMenuItem) iterator.next();
-	// // MenuItem mi = new MenuItem(menu, SWT.PUSH);
-	// // mi.setText(mToolBarItem.getName());
-	// // mi.setImage(getImage(mToolBarItem));
-	// // }
-	// Rectangle ib = item.getBounds();
-	// Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
-	// menu.setLocation(displayAt);
-	// menu.setVisible(true);
-	//
-	// Display display = Display.getCurrent();
-	// while (!menu.isDisposed() && menu.isVisible()) {
-	// if (!display.readAndDispatch())
-	// display.sleep();
-	// }
-	// menu.dispose();
-	// }
-	//
-	// private Image getViewMenuImage() {
-	// if (viewMenuImage == null) {
-	// Display d = Display.getCurrent();
-	//
-	// Image viewMenu = new Image(d, 16, 16);
-	// Image viewMenuMask = new Image(d, 16, 16);
-	//
-	// Display display = Display.getCurrent();
-	// GC gc = new GC(viewMenu);
-	// GC maskgc = new GC(viewMenuMask);
-	// gc.setForeground(display
-	// .getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-	// gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-	//
-	// int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
-	// gc.fillPolygon(shapeArray);
-	// gc.drawPolygon(shapeArray);
-	//
-	// Color black = display.getSystemColor(SWT.COLOR_BLACK);
-	// Color white = display.getSystemColor(SWT.COLOR_WHITE);
-	//
-	// maskgc.setBackground(black);
-	// maskgc.fillRectangle(0, 0, 16, 16);
-	//
-	// maskgc.setBackground(white);
-	// maskgc.setForeground(white);
-	// maskgc.fillPolygon(shapeArray);
-	// maskgc.drawPolygon(shapeArray);
-	// gc.dispose();
-	// maskgc.dispose();
-	//
-	// ImageData data = viewMenu.getImageData();
-	// data.transparentPixel = data.getPixel(0, 0);
-	//
-	// viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
-	// .getImageData());
-	// viewMenu.dispose();
-	// viewMenuMask.dispose();
-	// }
-	// return viewMenuImage;
-	// }
+	protected void showMenu(ToolItem item) {
+		// Create the UI for the menu
+		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
+		MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
+		Control ctrl = (Control) part.getWidget();
+		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell());
+
+		// ...and Show it...
+		Rectangle ib = item.getBounds();
+		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
+		menu.setLocation(displayAt);
+		menu.setVisible(true);
+
+		Display display = Display.getCurrent();
+		while (!menu.isDisposed() && menu.isVisible()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		menu.dispose();
+	}
+
+	private Image getViewMenuImage() {
+		if (viewMenuImage == null) {
+			Display d = Display.getCurrent();
+
+			Image viewMenu = new Image(d, 16, 16);
+			Image viewMenuMask = new Image(d, 16, 16);
+
+			Display display = Display.getCurrent();
+			GC gc = new GC(viewMenu);
+			GC maskgc = new GC(viewMenuMask);
+			gc.setForeground(display
+					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
+			gc.fillPolygon(shapeArray);
+			gc.drawPolygon(shapeArray);
+
+			Color black = display.getSystemColor(SWT.COLOR_BLACK);
+			Color white = display.getSystemColor(SWT.COLOR_WHITE);
+
+			maskgc.setBackground(black);
+			maskgc.fillRectangle(0, 0, 16, 16);
+
+			maskgc.setBackground(white);
+			maskgc.setForeground(white);
+			maskgc.fillPolygon(shapeArray);
+			maskgc.drawPolygon(shapeArray);
+			gc.dispose();
+			maskgc.dispose();
+
+			ImageData data = viewMenu.getImageData();
+			data.transparentPixel = data.getPixel(0, 0);
+
+			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
+					.getImageData());
+			viewMenu.dispose();
+			viewMenuMask.dispose();
+		}
+		return viewMenuImage;
+	}
 }
