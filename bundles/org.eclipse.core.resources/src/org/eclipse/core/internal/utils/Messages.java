@@ -62,11 +62,7 @@ public class Messages extends NLS {
 	public static String links_resourceIsNotALink;
 	public static String links_setLocation;
 
-	public static String group_creating;
-	public static String group_errorGroupReconcile;
 	public static String group_invalidParent;
-
-	public static String filter_creating;
 	public static String filters_missingFilterType;
 
 	// local store
@@ -122,29 +118,24 @@ public class Messages extends NLS {
 	public static String preferences_saveProblems;
 	public static String preferences_syncException;
 
+	public static String projRead_badArguments;
+	public static String projRead_badFilterName;
+	public static String projRead_badFilterID;
+	public static String projRead_badFilterType;
+	public static String projRead_badFilterType2;
+	public static String projRead_badID;
 	public static String projRead_badLinkLocation;
 	public static String projRead_badLinkName;
 	public static String projRead_badLinkType;
 	public static String projRead_badLinkType2;
 	public static String projRead_badLocation;
+	public static String projRead_emptyFilterName;
 	public static String projRead_emptyLinkName;
+	public static String projRead_emptyVariableName;
 	public static String projRead_failureReadingProjectDesc;
 	public static String projRead_notProjectDescription;
 	public static String projRead_whichKey;
 	public static String projRead_whichValue;
-
-	public static String projRead_badGroupName;
-	public static String projRead_emptyGroupName;
-
-	public static String projRead_emptyVariableName;
-
-	public static String projRead_badFilterName;
-	public static String projRead_emptyFilterName;
-	public static String projRead_badFilterID;
-	public static String projRead_badFilterType;
-	public static String projRead_badFilterType2;
-	public static String projRead_badID;
-	public static String projRead_badArguments;
 	
 	public static String properties_couldNotClose;
 	public static String properties_qualifierIsNull;
