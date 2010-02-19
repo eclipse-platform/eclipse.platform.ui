@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path     
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -28,6 +29,11 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      * for system defaults.
      */
     private String[] extensions = null;
+
+    /**
+     * Initial path for the Browse dialog.
+     */
+    private File filterPath = null;
 
     /**
      * Indicates whether the path must be absolute;
@@ -165,6 +171,9 @@ public class FileFieldEditor extends StringButtonFieldEditor {
         if (startingDirectory != null) {
 			dialog.setFileName(startingDirectory.getPath());
 		}
+        else if (filterPath != null) {
+        	dialog.setFilterPath(filterPath.getPath());
+        }
         if (extensions != null) {
 			dialog.setFilterExtensions(extensions);
 		}
@@ -188,4 +197,14 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     public void setFileExtensions(String[] extensions) {
         this.extensions = extensions;
     }
+
+    /**
+     * Sets the initial path for the Browse dialog.
+     * @param path initial path for the Browse dialog
+     * @since 3.6
+     */
+    public void setFilterPath(File path) {
+    	filterPath = path;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path     
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -22,6 +23,11 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  * dialog appears when the user presses the change button.
  */
 public class DirectoryFieldEditor extends StringButtonFieldEditor {
+    /**
+     * Initial path for the Browse dialog.
+     */
+    private File filterPath = null;
+
     /**
      * Creates a new directory field editor 
      */
@@ -87,6 +93,9 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
         if (startingDirectory != null) {
 			fileDialog.setFilterPath(startingDirectory.getPath());
 		}
+        else if (filterPath != null) {
+        	fileDialog.setFilterPath(filterPath.getPath());
+        }
         String dir = fileDialog.open();
         if (dir != null) {
             dir = dir.trim();
@@ -97,4 +106,14 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
 
         return null;
     }
+
+    /**
+     * Sets the initial path for the Browse dialog.
+     * @param path initial path for the Browse dialog
+     * @since 3.6
+     */
+    public void setFilterPath(File path) {
+    	filterPath = path;
+    }
+    
 }
