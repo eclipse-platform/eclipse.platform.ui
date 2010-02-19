@@ -226,7 +226,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 		public boolean hasViewerFor(Object input) {
 			OutlineViewerCreator creator = getWrappedCreator();
-			return (creator != null);
+			return creator != null;
 		}
 
 		public Object getInput() {
@@ -275,7 +275,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	private boolean isShowStructureInOutlineView() {
 		Object object= getCompareConfiguration().getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
-		return (object instanceof Boolean && ((Boolean)object).booleanValue());
+		return object instanceof Boolean && ((Boolean)object).booleanValue();
 	}
 		
 	/* (non Javadoc)
@@ -718,7 +718,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	/* private */ boolean hasChildren(Object input) {
 		if (input instanceof IDiffContainer) {
 			IDiffContainer dn= (IDiffContainer) input;
-			return (dn.hasChildren());
+			return dn.hasChildren();
 		}
 		return false;
 	}

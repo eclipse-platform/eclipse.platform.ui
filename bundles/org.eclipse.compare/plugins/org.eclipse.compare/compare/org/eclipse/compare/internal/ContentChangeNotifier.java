@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eclipse.compare.internal;
 
 import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -62,7 +64,7 @@ public class ContentChangeNotifier implements IContentChangeNotifier {
 					final IContentChangeListener contentChangeListener = (IContentChangeListener)listeners[i];
 					SafeRunner.run(new ISafeRunnable() {
 						public void run() throws Exception {
-							(contentChangeListener).contentChanged(element);
+							contentChangeListener.contentChanged(element);
 						}
 						public void handleException(Throwable exception) {
 							// Logged by safe runner
