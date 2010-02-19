@@ -38,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 
 
 /**
@@ -334,10 +335,9 @@ public final class EditorSelectionDialog extends Dialog {
 	protected IEditorDescriptor[] getInternalEditors() {
 		if (internalEditors == null) {
 			// TODO commented out for e4 compatibility
-			// IEditorRegistry reg = (IEditorRegistry) WorkbenchPlugin
-			// .getDefault()
-			// .getEditorRegistry();
-			// internalEditors = reg.getSortedEditorsFromPlugins();
+			EditorRegistry reg = (EditorRegistry) PlatformUI.getWorkbench()
+					.getEditorRegistry();
+			internalEditors = reg.getSortedEditorsFromPlugins();
 			internalEditors = filterEditors(internalEditors);
 			internalEditorImages = getImages(internalEditors);
 		}
