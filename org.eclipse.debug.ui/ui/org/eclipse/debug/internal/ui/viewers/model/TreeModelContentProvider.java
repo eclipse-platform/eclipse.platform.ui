@@ -95,7 +95,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		    }
 			if (shouldFilter(parentPath, element)) {
 				addFilteredIndex(parentPath, modelIndex, element);
-				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+				if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 					System.out.println("[filtered] handleAdd(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				// it was filtered so the child count does not change
@@ -103,20 +103,20 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				if (isFiltered(parentPath, modelIndex)) {
 					clearFilteredChild(parentPath, modelIndex);
 				}
+                int viewIndex = modelToViewIndex(parentPath, modelIndex);
 				int viewCount = modelToViewChildCount(parentPath, count);
-				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewCount + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " viewCount: " + viewCount + " modelCount: " + count); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				}
 				getViewer().setChildCount(parentPath, viewCount);
 				getViewer().autoExpand(parentPath);
-				int viewIndex = modelToViewIndex(parentPath, modelIndex);
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
 				updateHasChildren(childPath);
 				restorePendingStateOnUpdate(childPath, modelIndex, false, false, false);
 			}	        
 		} else {
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		    doUpdateChildCount(getViewerTreePath(delta.getParentDelta()));
@@ -164,7 +164,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	        TreePath elementPath = getViewerTreePath(delta);
 	        if (childCount > 0) {
 	            int viewCount = modelToViewChildCount(elementPath, childCount);
-	            if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+	            if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 	                System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	            }
 	            getViewer().setChildCount(elementPath, viewCount);	            
@@ -184,7 +184,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			}
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
-				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+				if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 					System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
@@ -199,7 +199,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 		if (childCount > 0) {
 			int viewCount = modelToViewChildCount(elementPath, childCount);
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			treeViewer.setChildCount(elementPath, viewCount);
@@ -223,7 +223,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	protected int unfilterElement(TreePath parentPath, Object element, int modelIndex) {
 		// Element is filtered - if no longer filtered, insert the element
 		if (shouldFilter(parentPath, element)) {
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("[unfilter] abort unfilter element: " + element + ", (model) " + modelIndex);  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			// still filtered, stop
@@ -233,7 +233,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		clearFilteredChild(parentPath, modelIndex);
 		int viewIndex = modelToViewIndex(parentPath, modelIndex);
 		if (viewIndex >= 0) {
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("[unfilter] insert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			getViewer().insert(parentPath, element, viewIndex);
@@ -256,7 +256,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleRemove(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleRemove(IModelDelta delta) {
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IModelDelta parentDelta = delta.getParentDelta();
@@ -287,7 +287,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 		if (modelIndex >= 0) {
 			// found the element
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println(" - (found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			rescheduleUpdates(parentPath, modelIndex);
@@ -298,7 +298,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		if (unmappedIndex >= 0) {
 			// did not find the element, but found an unmapped item.
 			// remove the unmapped item in it's place and update filters
-			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " unmapped index: " + unmappedIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			modelIndex = viewToModelIndex(parentPath, unmappedIndex);
@@ -316,7 +316,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println(" - (not found) remove/refresh(" + delta.getElement()); //$NON-NLS-1$
 		}
 		getViewer().remove(getViewerTreePath(delta));
@@ -347,12 +347,12 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				int modelCount = parentDelta.getChildCount();
 				if (modelCount > 0) {
 					int viewCount = modelToViewChildCount(parentPath, modelCount);
-					if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+					if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 						System.out.println("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					treeViewer.setChildCount(parentPath, viewCount);
 				}
-				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+				if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 					System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
@@ -394,7 +394,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			}
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
-				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+				if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 					System.out.println("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
@@ -513,7 +513,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateChildCount(org.eclipse.jface.viewers.TreePath, int)
 	 */
 	public synchronized void updateChildCount(TreePath treePath, int currentChildCount) {
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateChildCount(" + getElement(treePath) + ", " + currentChildCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		refilterChildren(treePath);
@@ -527,7 +527,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 */
 	public synchronized void updateElement(TreePath parentPath, int viewIndex) {
 		int modelIndex = viewToModelIndex(parentPath, viewIndex);
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateElement("+ getElement(parentPath) + ", " + viewIndex + ") > modelIndex = " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		doUpdateElement(parentPath, modelIndex);		
@@ -537,7 +537,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateHasChildren(org.eclipse.jface.viewers.TreePath)
 	 */
 	public synchronized void updateHasChildren(TreePath path) {
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateHasChildren(" + getElement(path)); //$NON-NLS-1$
 		}
 		doUpdateHasChildren(path);
@@ -553,14 +553,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
         // Attempt to expand the node only if the children are known.
 		if (knowsHasChildren) {
 		    if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-	            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+	            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 	                System.out.println("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
 	            }
     			viewer.expandToLevel(treePath, 1);
                 delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
 		    }
             if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
-                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                     System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 getViewer().setExpandedState(treePath, false);
@@ -570,7 +570,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		
 		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
-            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                 System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             ITreeSelection currentSelection = (ITreeSelection)viewer.getSelection();
@@ -616,7 +616,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                 TreePath parentPath = treePath.getParentPath();
                 int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
                 if (index >= 0) { 
-                    if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                    if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                         System.out.println("\tRESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
                     }
                     viewer.reveal(parentPath, index);
@@ -653,7 +653,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
         if ((checkChildrenRealized && getElementChildrenRealized(treePath)) ||
              (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
         {
-            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                 System.out.println("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            

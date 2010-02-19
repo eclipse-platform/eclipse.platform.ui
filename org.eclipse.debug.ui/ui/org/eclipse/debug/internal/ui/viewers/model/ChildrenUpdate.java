@@ -57,7 +57,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					int viewIndex = provider.modelToViewIndex(elementPath, modelIndex);
 					if (provider.shouldFilter(elementPath, element)) {
 						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
-							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                            if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 								System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.remove(elementPath, viewIndex);
@@ -71,7 +71,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 							}
 							viewer.insert(elementPath, element, insertIndex);
 						} else {
-							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+		                    if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 								System.out.println("replace(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.replace(elementPath, viewIndex, element);
@@ -117,7 +117,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					fIndex = Math.min(fIndex, otherStart);
 					end = Math.max(end, otherEnd);
 					fLength = end - fIndex;
-					if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+					if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 						System.out.println("coalesced: " + this.toString()); //$NON-NLS-1$
 					}
 					return true;

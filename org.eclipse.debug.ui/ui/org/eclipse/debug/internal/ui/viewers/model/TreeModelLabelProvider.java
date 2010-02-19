@@ -332,12 +332,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 			fUpdatesInProgress.add(update);
 		}
 		if (begin) {
-			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
-		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+        if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(ModelContentProvider.UPDATE_BEGINS, update);
@@ -354,12 +354,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 			fUpdatesInProgress.remove(update);
 			end = fUpdatesInProgress.isEmpty();
 		}
-		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+        if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tEND - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(ModelContentProvider.UPDATE_COMPLETE, update);
 		if (end) {
-			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+            if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
