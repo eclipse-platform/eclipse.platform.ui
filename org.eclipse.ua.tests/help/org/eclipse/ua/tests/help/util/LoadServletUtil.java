@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
 package org.eclipse.ua.tests.help.util;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLConnection;
 
 import junit.framework.Assert;
 
@@ -31,7 +33,10 @@ public class LoadServletUtil {
 		WebappManager.start("help");
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/index.jsp");
-		InputStream input = url.openStream();
+		URLConnection connection = url.openConnection();
+		setTimeout(connection, 5000);
+		InputStream input = connection.getInputStream();
+		 input = url.openStream();
 		int firstbyte = input.read();
 		Assert.assertTrue(firstbyte > 0);
 		input.close();
@@ -74,6 +79,20 @@ public class LoadServletUtil {
         } while (nextChar != '$');
         Assert.assertEquals(uniqueParam, value);
         input.close();
+	}
+	
+	private static void setTimeout(URLConnection conn, int milliseconds) {
+		Class conClass = conn.getClass();
+		try {
+			Method timeoutMethod = conClass.getMethod(
+					"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+			Method readMethod = conClass.getMethod(
+					"setReadTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
+			readMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+		} catch (Exception e) {
+		     // If running on a 1.4 JRE an exception is expected, fall through
+		} 
 	}
 
 }
