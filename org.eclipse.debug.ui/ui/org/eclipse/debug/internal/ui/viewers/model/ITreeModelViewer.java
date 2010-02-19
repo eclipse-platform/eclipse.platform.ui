@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - ongoing bug fixes and enhancements
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -78,16 +79,30 @@ public interface ITreeModelViewer extends ISelectionProvider {
 
     /**
      * Sets a new selection for this viewer and optionally makes it visible.
+     * The selection is not set if the model selection policy overrides the
+     * attempt to set the selection.
      * 
      * @param selection the new selection
      * @param reveal <code>true</code> if the selection is to be made
      *   visible, and <code>false</code> otherwise
      * @param force <code>true</code> if the selection should override the 
      *   model selection policy
-     * @return returns <code>false</code> if the selection change was overriden
-     *   by the model selection policy
      */
-    public boolean setSelection(ISelection selection, boolean reveal, boolean force);
+    public void setSelection(ISelection selection, boolean reveal, boolean force);
+    
+    /**
+     * Attempts to set the selection for this viewer and optionally makes it visible.
+     * The selection is not set if the model selection policy overrides the
+     * attempt to set the selection.
+     * 
+     * @param selection the new selection
+     * @param reveal whether to make the selection visible after successfully setting
+     *  the selection
+     * @param force whether to force the selection (override the model selection policy)
+     * @return <code>true</code> if the selection was set and <code>false</code> if the
+     *  model selection policy overrides the selection attempt
+     */
+    public boolean trySelection(ISelection selection, boolean reveal, boolean force);
 
     /**
      * Returns the auto-expand level.

@@ -743,16 +743,18 @@ public class InternalVirtualTreeModelViewer extends Viewer
         setSelection(selection, reveal, false);
     }
     
-    /**
-     * Sets the selection in the viewer to the specified selection.
-     * 
-     * @param selection the selection
-     * @param reveal whether to reveal the selection
-     * @param force whether to force the selection (i.e. <code>true</code> to
-     *  override the model selection policy)
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
      */
-    public boolean setSelection(ISelection selection, boolean reveal, boolean force) {
-        if (!force && !overrideSelection(getSelection(), selection)) {
+    public void setSelection(ISelection selection, boolean reveal, boolean force) {
+        trySelection(selection, reveal, force);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
+     */
+    public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
+    	if (!force && !overrideSelection(getSelection(), selection)) {
             return false;
         }
 
