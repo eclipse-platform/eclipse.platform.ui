@@ -89,8 +89,13 @@ public class PreferenceFileHandler {
 			return  new String[0];//NEW
 		
 		// Split the string and return an array of Strings
-		String [] currEntries=preferenceEntry.split(PREFERENCE_ENTRY_DELIMITER);
+		String [] currEntries;
 		String [] updatedArray=null;
+		
+		if(!preferenceEntry.equals("")) //$NON-NLS-1$
+			currEntries=preferenceEntry.split(PREFERENCE_ENTRY_DELIMITER);
+		else
+			currEntries = new String[0];
 		
 		if(currEntries.length!=numHostEntries) //Current Entry not equals to Hosts
 		{
