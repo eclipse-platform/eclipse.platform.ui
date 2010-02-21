@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -67,7 +68,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		this.perspective = perspective;
 	}
 
-	void contextSet() throws InvocationTargetException, InstantiationException {
+	@PostConstruct
+	void setup() throws InvocationTargetException, InstantiationException {
 		IEclipseContext windowContext = model.getContext();
 		page = new WorkbenchPage(this, input);
 

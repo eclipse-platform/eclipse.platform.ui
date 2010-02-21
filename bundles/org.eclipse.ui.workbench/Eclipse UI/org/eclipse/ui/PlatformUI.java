@@ -105,7 +105,7 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
     public static boolean isWorkbenchRunning() {
-		return Workbench.getInstance() != null && Workbench.getInstance().getDisplay() != null;
+		return Workbench.isWorkbenchRunning();
     }
 
     /**

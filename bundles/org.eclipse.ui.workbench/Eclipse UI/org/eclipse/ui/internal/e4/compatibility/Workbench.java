@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
@@ -64,6 +65,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.JFaceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
@@ -71,6 +73,10 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.eclipse.ui.internal.themes.ThemeElementHelper;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
@@ -143,6 +149,16 @@ public class Workbench implements IWorkbench {
 				IWorkbenchLocationService.class.getName(),
 				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, this, null, null, null,
 						null, 0));
+		JFaceUtil.initializeJFacePreferences();
+		initializeApplicationColors();
+	}
+
+	private void initializeApplicationColors() {
+		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry()
+				.getColors();
+		ThemeElementHelper.populateRegistry(
+				getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), colorDefinitions, PrefUtil
+						.getInternalPreferenceStore());
 	}
 
 	/*
@@ -151,12 +167,12 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getDisplay()
 	 */
 	public Display getDisplay() {
-		if (application.getChildren().size() > 0) {
+		if (application != null && application.getChildren().size() > 0) {
 			MWindow window = application.getChildren().get(0);
 			Widget widget = (Widget) window.getWidget();
-			return widget == null ? null : widget.getDisplay();
+			return widget == null ? Display.getCurrent() : widget.getDisplay();
 		}
-		return null;
+		return Display.getCurrent();
 	}
 
 	/*
@@ -289,8 +305,9 @@ public class Workbench implements IWorkbench {
 		IWorkbenchWindow result = (IWorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
 		if (result == null) {
-			result = new WorkbenchWindow(null, getPerspectiveRegistry().findPerspectiveWithId(
-					getPerspectiveRegistry().getDefaultPerspective()));
+			result = new WorkbenchWindow(ResourcesPlugin.getWorkspace().getRoot(),
+					getPerspectiveRegistry().findPerspectiveWithId(
+							getPerspectiveRegistry().getDefaultPerspective()));
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
 		}
@@ -617,7 +634,7 @@ public class Workbench implements IWorkbench {
 	 */
 	public IThemeManager getThemeManager() {
 		if (themeManager == null) {
-			themeManager = new ThemeManager();
+			themeManager = WorkbenchThemeManager.getInstance();
 		}
 		return themeManager;
 	}
@@ -786,19 +803,12 @@ public class Workbench implements IWorkbench {
 			MApplication application = (MApplication) serviceContext.get(MApplication.class
 					.getName());
 
-			try {
-				IEclipseContext appContext = application
-						.getContext();
-				instance = (Workbench) ContextInjectionFactory.make(Workbench.class, appContext);
-				appContext.set(IWorkbench.class.getName(), instance);
-				initializeLegacyServices(appContext);
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			IEclipseContext appContext = application.getContext();
+			instance = new Workbench();
+			ContextInjectionFactory.inject(instance, appContext);
+			appContext.set(IWorkbench.class.getName(), instance);
+			initializeLegacyServices(appContext);
+			running = true;
 		}
 		return instance;
 	}
@@ -820,4 +830,9 @@ public class Workbench implements IWorkbench {
 		return null;
 	}
 
+	static boolean running = true;
+
+	public static boolean isWorkbenchRunning() {
+		return running;
+	}
 }

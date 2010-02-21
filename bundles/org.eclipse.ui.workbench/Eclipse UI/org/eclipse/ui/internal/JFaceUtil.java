@@ -33,7 +33,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  * @since 3.1
  */
-final class JFaceUtil {
+final public class JFaceUtil {
 
 	private JFaceUtil() {
 		// prevents intantiation

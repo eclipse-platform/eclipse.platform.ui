@@ -19,7 +19,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class E4Util {
 	public static void unsupported(String msg) throws UnsupportedOperationException {
 		WorkbenchPlugin.log("unsupported: " + msg); //$NON-NLS-1$
-		UnsupportedOperationException ex = new UnsupportedOperationException(msg);
-		throw ex;
+		// UnsupportedOperationException ex = new
+		// UnsupportedOperationException(msg);
+		// throw ex;
 	}
 }

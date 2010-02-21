@@ -25,6 +25,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -54,10 +56,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -72,7 +76,11 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.themes.IThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -202,6 +210,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	// private WorkbenchOperationSupport operationSupport;
 
 	private EditorRegistry editorRegistry;
+
+	private ThemeRegistry themeRegistry;
+
+	private String factoryID;
         
     
     /**
@@ -819,16 +831,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * 
      * @return the theme registry
      */
-	// TODO commented out for e4 compatibility
-//    public IThemeRegistry getThemeRegistry() {
-//        if (themeRegistry == null) {
-//            themeRegistry = new ThemeRegistry();
-//            ThemeRegistryReader reader = new ThemeRegistryReader();
-//            reader.readThemes(Platform.getExtensionRegistry(),
-//                    themeRegistry);
-//        }
-//        return themeRegistry;
-//    }
+	public IThemeRegistry getThemeRegistry() {
+		if (themeRegistry == null) {
+			themeRegistry = new ThemeRegistry();
+			ThemeRegistryReader reader = new ThemeRegistryReader();
+			reader.readThemes(Platform.getExtensionRegistry(), themeRegistry);
+		}
+		return themeRegistry;
+	}
 
     /**
      * Answer the workbench.
@@ -1015,8 +1025,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	            // to be loaded.s
 	        	if(uiBundle != null) {
 				uiBundle.start(Bundle.START_TRANSIENT);
-				final IEclipseContext serviceContext = org.eclipse.e4.workbench.ui.internal.E4Workbench
-						.getServiceContext();
+				final IEclipseContext serviceContext = EclipseContextFactory
+						.getServiceContext(context);
 				instantiateCompatibilityLayerHooks(serviceContext);
 			}
 	        } catch (BundleException e) {
@@ -1049,7 +1059,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			PlatformUI.getWorkbench();
 			// create IWW instances for all windows
 			for (MWindow window : application.getChildren()) {
-				WorkbenchWindow wwindow = new WorkbenchWindow(null, null);
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(
+						getPerspectiveRegistry().getDefaultPerspective());
+				WorkbenchWindow wwindow = new WorkbenchWindow(ResourcesPlugin.getWorkspace()
+						.getRoot(), desc);
 				ContextInjectionFactory.inject(wwindow, window.getContext());
 			}
 		}
@@ -1107,7 +1120,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 						if (element instanceof MWindow) {
 							MWindow window = (MWindow) element;
 							if (window.getWidget() != null) {
-								WorkbenchWindow wwindow = new WorkbenchWindow(null, null);
+								IPerspectiveDescriptor desc = getPerspectiveRegistry()
+										.findPerspectiveWithId(
+												getPerspectiveRegistry().getDefaultPerspective());
+								WorkbenchWindow wwindow = new WorkbenchWindow(ResourcesPlugin
+										.getWorkspace().getRoot(), desc);
 								ContextInjectionFactory.inject(wwindow, window.getContext());	
 							}
 						}
@@ -1595,5 +1612,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			display.setData(DATA_SPLASH_SHELL, null);
 		}
 
+	}
+
+	public String getPresentationId() {
+		if (factoryID != null) {
+			return factoryID;
+		}
+
+		factoryID = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
+
+		// Workaround for bug 58975 - New preference mechanism does not properly
+		// initialize defaults
+		// Ensure that the UI plugin has started too.
+		if (factoryID == null || factoryID.equals("")) { //$NON-NLS-1$
+			factoryID = IWorkbenchConstants.DEFAULT_PRESENTATION_ID;
+		}
+		return factoryID;
 	}
 }
