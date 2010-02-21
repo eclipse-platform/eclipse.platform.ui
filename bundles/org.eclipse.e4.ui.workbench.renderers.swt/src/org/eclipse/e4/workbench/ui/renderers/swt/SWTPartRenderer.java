@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.util.Iterator;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -45,9 +44,13 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		// Process any contents of the newly created ME
 		EList<MUIElement> parts = container.getChildren();
 		if (parts != null) {
-			for (Iterator<MUIElement> childIter = parts.iterator(); childIter
-					.hasNext();) {
-				MUIElement childME = childIter.next();
+			// loading a legacy app will add children to the window while it is
+			// being rendered.
+			// this is *not* the correct place for this
+			// hope that the ADD event will pick up the new part.
+			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
+			for (int i = 0; i < plist.length; i++) {
+				MUIElement childME = plist[i];
 				IPresentationEngine renderer = (IPresentationEngine) context
 						.get(IPresentationEngine.class.getName());
 				renderer.createGui(childME);
