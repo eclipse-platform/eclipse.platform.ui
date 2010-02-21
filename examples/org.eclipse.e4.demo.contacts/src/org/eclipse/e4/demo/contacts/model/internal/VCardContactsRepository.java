@@ -22,7 +22,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -119,33 +118,6 @@ public class VCardContactsRepository implements IContactsRepository {
 
 	public void removeContact(final Contact contact) {
 		contacts.remove(contact);
-	}
-
-	private void saveAsVCard(Contact contact, String fileName) {
-		String charSet = "CHARSET="
-				+ java.nio.charset.Charset.defaultCharset().name();
-		String vCard = "BEGIN:VCARD" + "\nVERSION:2.1" + "\nN;" + charSet + ":"
-				+ contact.getLastName() + ";" + contact.getFirstName()
-				+ "\nFN;" + charSet + ":" + contact.getFirstName() + " "
-				+ contact.getLastName() + "\nORG;" + charSet + ":"
-				+ contact.getCompany() + "\nTITLE:" + contact.getJobTitle()
-				+ "\nTEL;WORK;VOICE:" + contact.getPhone()
-				+ "\nTEL;CELL;VOICE:" + contact.getMobile() + "\nADR;WORK;"
-				+ charSet + ":" + ";;" + contact.getStreet() + ";"
-				+ contact.getCity() + ";" + contact.getState() + ";"
-				+ contact.getZip() + ";" + contact.getCountry() + "\nURL;WORK:"
-				+ contact.getWebPage() + "\nEMAIL;PREF;INTERNET:"
-				+ contact.getEmail() + "\nEND:VCARD\n";
-
-		PrintWriter out;
-		try {
-			out = new PrintWriter(fileName);
-			out.println(vCard);
-			out.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
