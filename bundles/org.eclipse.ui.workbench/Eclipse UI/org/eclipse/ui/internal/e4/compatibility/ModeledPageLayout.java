@@ -65,6 +65,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 		MPartSashContainer esc = MApplicationFactory.eINSTANCE.createPartSashContainer();
 		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
+		editorStack.setId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		esc.getChildren().add(editorStack);
 		esc.setId(getEditorArea());
 
