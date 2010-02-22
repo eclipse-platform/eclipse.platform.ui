@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
@@ -24,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
@@ -262,7 +264,7 @@ public class ModeledPageLayout implements IPageLayout {
 	private MPartStack insertStack(String stackId, int relationship,
 			float ratio, String refId, boolean visible) {
 		MUIElement refModel = findElement(perspModel, refId);
-		if (refModel == null || !(refModel instanceof MPart)) {
+		if (refModel == null) {
 			// If the 'refModel' is -not- a stack then find one
 			// This covers cases where the defining layout is adding
 			// Views relative to other views and relying on the stacks
@@ -276,15 +278,15 @@ public class ModeledPageLayout implements IPageLayout {
 		// This covers cases where the defining layout is adding
 		// Views relative to other views and relying on the stacks
 		// being automatically created.
-		if (!(refModel instanceof MPartStack)) {
-			while (refModel.getParent() != null) {
-				refModel = refModel.getParent();
-				if (refModel instanceof MPartStack)
-					break;
-			}
-			if (!(refModel instanceof MPartStack))
-				return null;
-		}
+		// if (!(refModel instanceof MPartStack)) {
+		// while (refModel.getParent() != null) {
+		// refModel = refModel.getParent();
+		// if (refModel instanceof MPartStack)
+		// break;
+		// }
+		// if (!(refModel instanceof MPartStack))
+		// return null;
+		// }
 
 		MPartStack stack = createStack(stackId, visible);
 		insert(stack, refModel, plRelToSwt(relationship), ratio);
@@ -329,6 +331,37 @@ public class ModeledPageLayout implements IPageLayout {
 			return;
 
 		MElementContainer<MUIElement> relParent = relTo.getParent();
+		if (relParent != null) {
+			EList<MUIElement> children = relParent.getChildren();
+			int index = children.indexOf(relTo);
+			MPartSashContainer psc = MApplicationFactory.eINSTANCE.createPartSashContainer();
+			relParent.getChildren().add(index + 1, psc);
+
+			switch (swtSide) {
+			case SWT.LEFT:
+				psc.getChildren().add((MPSCElement) toInsert);
+				psc.getChildren().add((MPSCElement) relTo);
+				psc.setHorizontal(true);
+				break;
+			case SWT.RIGHT:
+				psc.getChildren().add((MPSCElement) relTo);
+				psc.getChildren().add((MPSCElement) toInsert);
+				psc.setHorizontal(true);
+				break;
+			case SWT.TOP:
+				psc.getChildren().add((MPSCElement) toInsert);
+				psc.getChildren().add((MPSCElement) relTo);
+				psc.setHorizontal(false);
+				break;
+			case SWT.BOTTOM:
+				psc.getChildren().add((MPSCElement) relTo);
+				psc.getChildren().add((MPSCElement) toInsert);
+				psc.setHorizontal(false);
+				break;
+			}
+
+			return;
+		}
 
 		boolean isStack = true;
 
