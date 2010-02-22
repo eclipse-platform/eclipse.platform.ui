@@ -8,10 +8,13 @@
  * Contributors:
  *     Genady Beryozkin, me@genady.org - initial API and implementation
  *     IBM Corporation - fixes and cleaning
+ *     Fabio Zadrozny, <fabiofz at gmail dot com> - [typing] HippieCompleteAction is slow  ( Alt+/ ) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=270385
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -25,10 +28,6 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
 import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
 import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
@@ -65,31 +64,119 @@ final class HippieCompleteAction extends TextEditorAction {
 		final int startOffset;
 
 		/**
-		 * The list of suggestions that was computed when the completion action
-		 * was first invoked
+		 * Iterator of Strings with suggestions computed when the completion action is invoked
+		 * 
+		 * @since 3.6
 		 */
-		final String[] suggestions;
+		private final Iterator suggestions;
+
+		/**
+		 * List of Strings with the suggestions that are already consumed from the iterator
+		 * 
+		 * @since 3.6
+		 */
+		private final List consumedSuggestions;
+
+		/**
+		 * Do we have only 1 (empty) completion available?
+		 * 
+		 * @since 3.6
+		 */
+		private final boolean hasOnly1EmptySuggestion;
+
+		/**
+		 * Set with the String completions found so that we can make them unique
+		 * 
+		 * @since 3.6
+		 */
+		private final HashSet alreadyFound;
 
 		/**
 		 * Create a new completion state object
-		 *
-		 * @param suggestions the array of possible completions
-		 * @param startOffset the position in the parent document at which the
-		 *        completions will be inserted.
+		 * 
+		 * @param suggestions the iterator of Strings with possible completions
+		 * @param startOffset the position in the parent document at which the completions will be
+		 *            inserted.
 		 */
-		CompletionState(String[] suggestions, int startOffset) {
+		CompletionState(Iterator suggestions, int startOffset) {
 			this.suggestions= suggestions;
+			this.consumedSuggestions= new ArrayList();
+			this.alreadyFound= new HashSet();
 			this.startOffset= startOffset;
-			length= 0;
-			nextSuggestion= 0;
+			this.length= 0;
+			this.nextSuggestion= 0;
+
+
+			//Let's see if only 1 is available.
+			if (this.suggestions.hasNext()) {
+				addNewToken((String)this.suggestions.next());
+
+				boolean hasOnly1Temp= true;
+				while (this.suggestions.hasNext()) {
+					Object next= this.suggestions.next();
+					if (consumedSuggestions.contains(next)) {
+						continue;
+					}
+					addNewToken((String)next);
+					hasOnly1Temp= false;
+					break;
+				}
+				this.hasOnly1EmptySuggestion= hasOnly1Temp;
+			} else {
+				throw new AssertionError("At least the empty completion must be available in the iterator!"); //$NON-NLS-1$
+			}
 		}
 
 		/**
-		 * Advances the completion state to represent the next completion.
+		 * Advances the completion state to represent the next completion (starts cycling when it
+		 * gets to the end).
+		 * 
+		 * @return The next suggestion to be shown to the user.
+		 * @since 3.6
 		 */
-		public void advance() {
-			length= suggestions[nextSuggestion].length();
-			nextSuggestion= (nextSuggestion + 1) % suggestions.length;
+		public String next() {
+			String ret= null;
+			if (this.consumedSuggestions.size() > nextSuggestion) {
+				//We already consumed one that we didn't return
+				ret= (String)this.consumedSuggestions.get(nextSuggestion);
+				nextSuggestion++;
+
+			}
+
+			while (ret == null &&
+					this.consumedSuggestions.size() == nextSuggestion &&
+					this.suggestions.hasNext()) {
+				//we're just in the place to get a new one from the iterator
+				String temp= (String)this.suggestions.next();
+				if (this.alreadyFound.contains(temp)) {
+					continue;//go to next iteration
+				}
+				addNewToken(temp);
+				ret= temp;
+				nextSuggestion++;
+
+			}
+
+			if (ret == null) {
+				//we consumed all in the iterator, so, just start cycling.
+				ret= (String)this.consumedSuggestions.get(0);
+				nextSuggestion= 1; //we just got the 0, so, we can already skip to 1.
+			}
+
+
+			length= ret.length();
+			return ret;
+		}
+
+		/**
+		 * Adds a new suggestion to the found and consumed suggestions
+		 * 
+		 * @param suggestion the suggestion to be added
+		 * @since 3.6
+		 */
+		private void addNewToken(String suggestion) {
+			this.alreadyFound.add(suggestion);
+			this.consumedSuggestions.add(suggestion);
 		}
 	}
 
@@ -155,7 +242,7 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	private void completeNext() {
 		try {
-			fDocument.replace(fLastCompletion.startOffset, fLastCompletion.length, fLastCompletion.suggestions[fLastCompletion.nextSuggestion]);
+			fDocument.replace(fLastCompletion.startOffset, fLastCompletion.length, fLastCompletion.next()); //next() will already advance
 		} catch (BadLocationException e) {
 			// we should never get here. different from other places to notify the user.
 			log(e);
@@ -163,33 +250,12 @@ final class HippieCompleteAction extends TextEditorAction {
 			return;
 		}
 
-		// advance the suggestion state
-		fLastCompletion.advance();
-
 		// move the caret to the insertion point
 		ISourceViewer sourceViewer= ((AbstractTextEditor) getTextEditor()).getSourceViewer();
 		sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
 		sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
 
 		fExitStrategy.arm(((AbstractTextEditor) getTextEditor()).getSourceViewer());
-	}
-
-	/**
-	 * Return the list of suggestions from the current document. First the
-	 * document is searched backwards from the caret position and then forwards.
-	 *
-	 * @param prefix the completion prefix
-	 * @return all possible completions that were found in the current document
-	 * @throws BadLocationException if accessing the document fails
-	 */
-	private ArrayList createSuggestionsFromOpenDocument(String prefix) throws BadLocationException {
-		int selectionOffset= getSelectionOffset();
-
-		ArrayList completions= new ArrayList();
-		completions.addAll(fEngine.getCompletionsBackwards(fDocument, prefix, selectionOffset));
-		completions.addAll(fEngine.getCompletionsForward(fDocument, prefix, selectionOffset - prefix.length(), true));
-
-		return completions;
 	}
 
 	/**
@@ -234,42 +300,6 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	private int getSelectionOffset() {
 		return ((ITextSelection) getTextEditor().getSelectionProvider().getSelection()).getOffset();
-	}
-
-	/**
-	 * Create the array of suggestions. It scans all open text editors and
-	 * prefers suggestions from the currently open editor. It also adds the
-	 * empty suggestion at the end.
-	 *
-	 * @param prefix the prefix to search for
-	 * @return the list of all possible suggestions in the currently open
-	 *         editors
-	 * @throws BadLocationException if accessing the current document fails
-	 */
-	private String[] getSuggestions(String prefix) throws BadLocationException {
-
-		ArrayList suggestions= createSuggestionsFromOpenDocument(prefix);
-
-		IWorkbenchWindow window= getTextEditor().getSite().getWorkbenchWindow();
-		IEditorReference editorsArray[]= window.getActivePage().getEditorReferences();
-
-		for (int i= 0; i < editorsArray.length; i++) {
-			IEditorPart realEditor= editorsArray[i].getEditor(false);
-			if (realEditor instanceof ITextEditor &&
-					!realEditor.equals(getTextEditor())) { // realEditor != null
-				ITextEditor textEditor= (ITextEditor)realEditor;
-				IEditorInput input= textEditor.getEditorInput();
-				IDocument doc= textEditor.getDocumentProvider().getDocument(input);
-
-				suggestions.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
-			}
-		}
-		// add the empty suggestion
-		suggestions.add(""); //$NON-NLS-1$
-
-		List uniqueSuggestions= fEngine.makeUnique(suggestions);
-
-		return (String[]) uniqueSuggestions.toArray(new String[0]);
 	}
 
 	/**
@@ -335,34 +365,39 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		clearState();
 
-		IDocument document= getCurrentDocument();
-		if (document != null) {
-			fDocument= document;
+		List documents= HippieCompletionEngine.computeDocuments(getTextEditor());
 
-			String[] suggestions;
+		if (documents.size() > 0) {
+			fDocument= (IDocument)documents.remove(0);
+
+			Iterator suggestions;
 			try {
 				String prefix= getCurrentPrefix();
 				if (prefix == null) {
 					notifyUser();
 					return;
 				}
-				suggestions= getSuggestions(prefix);
+				suggestions= fEngine.getMultipleDocumentsIterator(
+						fDocument, documents, prefix, getSelectionOffset());
 			} catch (BadLocationException e) {
 				log(e);
 				return;
 			}
 
+			CompletionState completionState= new CompletionState(
+					suggestions, getSelectionOffset());
+
 			// if it is single empty suggestion
-			if (suggestions.length == 1) {
+			if (completionState.hasOnly1EmptySuggestion) {
 				notifyUser();
 				return;
 			}
 
-			IRewriteTarget target= (IRewriteTarget) getTextEditor().getAdapter(IRewriteTarget.class);
+			IRewriteTarget target= (IRewriteTarget)getTextEditor().getAdapter(IRewriteTarget.class);
 			if (target != null)
 				target.beginCompoundChange();
 
-			fLastCompletion= new CompletionState(suggestions, getSelectionOffset());
+			fLastCompletion= completionState;
 		}
 	}
 

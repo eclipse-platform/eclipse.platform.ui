@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     Genady Beryozkin, me@genady.org - initial API and implementation
+ *     Fabio Zadrozny <fabiofz at gmail dot com> - [typing] HippieCompleteAction is slow  ( Alt+/ ) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=270385
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,11 +22,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.text.tests.Accessor;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
+
 
 /**
  * Tests for the Hippie completion action of the text editor.
@@ -437,6 +443,154 @@ public class HippieCompletionTest extends TestCase {
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
 		}
+	}
+
+	private Accessor createAccessor(Iterator suggestions, int startOffset) throws AssertionError, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+		//Note, this could be simpler just using the Accessor constructor, but 
+		//we actually want to test an InvocationTargetException when creating
+		//the class, which is masked when using the Accessor constructor direcly.  
+		Class hippieCompleteAction= null;
+		hippieCompleteAction= Class.forName("org.eclipse.ui.texteditor.HippieCompleteAction$CompletionState");
+		Constructor[] declaredConstructors= hippieCompleteAction.getDeclaredConstructors();
+		assertEquals(1, declaredConstructors.length);
+		Constructor constructor= declaredConstructors[0];
+		constructor.setAccessible(true);
+		Object instance= constructor.newInstance(new Object[] { suggestions, new Integer(startOffset) });
+		return new Accessor(instance, instance.getClass());
+	}
+
+	private String next(Accessor state) {
+		return (String)state.invoke("next", new Object[] {});
+	}
+
+
+	/*
+	 * Getting completions lazily
+	 */
+	public void testCompletionState() throws Exception {
+		ArrayList list= new ArrayList();
+		Accessor state= null;
+
+		try {
+			state= createAccessor(list.iterator(), 0);
+			fail("Having no items is not valid (at least the empty completion must be there)");
+		} catch (InvocationTargetException e) {
+			//An assertion failed in the constructor.
+			assertEquals(e.getCause().getClass(), java.lang.AssertionError.class);
+		}
+
+
+		list.add("");
+		state= createAccessor(list.iterator(), 0);
+		assertTrue(state.getBoolean("hasOnly1EmptySuggestion"));
+		for (int i= 0; i < 3; i++) {
+			assertEquals("", next(state));
+		}
+
+		list.add("");
+		state= createAccessor(list.iterator(), 0);
+		assertTrue(state.getBoolean("hasOnly1EmptySuggestion"));
+		for (int i= 0; i < 3; i++) {
+			assertEquals("", next(state));
+		}
+
+
+		//only empty and aaaa
+		list.add(0, "aaaa");
+		state= createAccessor(list.iterator(), 0);
+		assertFalse(state.getBoolean("hasOnly1EmptySuggestion"));
+
+		for (int i= 0; i < 3; i++) {
+			assertEquals("aaaa", next(state));
+			assertEquals("", next(state));
+		}
+
+		//empty, aaaa and bbbb
+		list.add(1, "bbbb");
+		state= createAccessor(list.iterator(), 0);
+		assertFalse(state.getBoolean("hasOnly1EmptySuggestion"));
+
+		for (int i= 0; i < 3; i++) {
+			assertEquals("aaaa", next(state));
+			assertEquals("bbbb", next(state));
+			assertEquals("", next(state));
+		}
+
+
+		//empty, aaaa and 2 from 'bbbb' (should make unique)
+		list.add(2, "bbbb");
+		state= createAccessor(list.iterator(), 0);
+		assertFalse(state.getBoolean("hasOnly1EmptySuggestion"));
+
+		for (int i= 0; i < 3; i++) {
+			assertEquals("aaaa", next(state));
+			assertEquals("bbbb", next(state));
+			assertEquals("", next(state));
+		}
+	}
+
+	/*
+	 * Getting completions lazily
+	 */
+	public void testIteration() throws Exception {
+		//Check only with current document
+		IDocument openDocument= new Document("" +
+				"bar\n" +
+				"bar1\n" +
+				"bar2\n" +
+				"");
+
+		Iterator suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList(), "bar", 3);
+		assertEquals("1", suggestions.next());
+		assertEquals("2", suggestions.next());
+		assertEquals("", suggestions.next());
+		assertFalse(suggestions.hasNext());
+
+
+		//Check with 2 documents
+		List otherDocuments= new ArrayList();
+		otherDocuments.add(new Document("" +
+				"bar3\n" +
+				"bar4\n" +
+				""));
+
+		suggestions= fEngine.getMultipleDocumentsIterator(openDocument, otherDocuments, "bar", 3);
+		assertEquals("1", suggestions.next());
+		assertEquals("2", suggestions.next());
+		assertEquals("3", suggestions.next());
+		assertEquals("4", suggestions.next());
+		assertEquals("", suggestions.next());
+		assertFalse(suggestions.hasNext());
+
+
+		//Check with duplicates (duplicates are gotten at this level -- they're removed later -- at the CompletionState)
+		suggestions= fEngine.getMultipleDocumentsIterator(openDocument, otherDocuments, "bar", 3);
+		otherDocuments.add(new Document());
+		otherDocuments.add(new Document("" +
+				"bar3\n" +
+				"bar4\n" +
+				""));
+		assertEquals("1", suggestions.next());
+		assertEquals("2", suggestions.next());
+		assertEquals("3", suggestions.next());
+		assertEquals("4", suggestions.next());
+		assertEquals("3", suggestions.next());
+		assertEquals("4", suggestions.next());
+		assertEquals("", suggestions.next());
+		assertFalse(suggestions.hasNext());
+
+		//Check with current document with only backward matches
+		openDocument= new Document("" +
+				"bar0 bar1 bar" +
+				"");
+
+		suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList(), "bar", openDocument.getLength());
+		assertEquals("1", suggestions.next());
+		assertEquals("0", suggestions.next());
+		assertEquals("", suggestions.next());
+		assertFalse(suggestions.hasNext());
+
 	}
 
 	public static Test suite() {

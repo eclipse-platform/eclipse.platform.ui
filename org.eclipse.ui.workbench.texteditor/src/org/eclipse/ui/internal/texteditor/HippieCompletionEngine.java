@@ -7,21 +7,33 @@
  *
  * Contributors:
  *     Genady Beryozkin, me@genady.org - initial API and implementation
+ *     Fabio Zadrozny <fabiofz at gmail dot com> - [typing] HippieCompleteAction is slow  ( Alt+/ ) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=270385
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchWindow;
+
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * This class contains the hippie completion engine methods that actually
@@ -138,56 +150,9 @@ public final class HippieCompletionEngine {
 	public List getCompletionsForward(IDocument document, CharSequence prefix,
 			int firstPosition, boolean currentWordLast) throws BadLocationException {
 		ArrayList res= new ArrayList();
-		String currentWordCompletion= null; // fix bug 132533
-
-        if (firstPosition == document.getLength()) {
-            return res;
-        }
-
-		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
-
-		// search only at word boundaries
-		String searchPattern;
-
-		// unless we are at the beginning of the document, the completion boundary
-		// matches one character. It is enough to move just one character backwards
-		// because the boundary pattern has the (....)+ form.
-		// see HippieCompletionTest#testForwardSearch().
-		if (firstPosition > 0) {
-			firstPosition--;
-			// empty spacing is not permitted now.
-			searchPattern= NON_EMPTY_COMPLETION_BOUNDARY + asRegPattern(prefix);
-		} else {
-			searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
+		for (Iterator it= getForwardIterator(document, prefix, firstPosition, currentWordLast); it.hasNext();) {
+			res.add(it.next());
 		}
-
-		IRegion reg= searcher.find(firstPosition, searchPattern, true, CASE_SENSITIVE, false, true);
-		while (reg != null) {
-			// since the boundary may be of nonzero length
-			int wordSearchPos= reg.getOffset() + reg.getLength() - prefix.length();
-			// try to complete to a word. case is irrelevant here.
-			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
-			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
-				String wholeWord= document.get(word.getOffset(), word.getLength());
-				String completion= wholeWord.substring(prefix.length());
-				if (currentWordLast && reg.getOffset() == firstPosition) { // we got the word at caret as completion
-					currentWordCompletion= completion; // add it as the last word.
-				} else {
-					res.add(completion);
-				}
-			}
-			int nextPos= word.getOffset() + word.getLength();
-			if (nextPos >= document.getLength() ) {
-				break;
-			}
-			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
-		}
-
-		// the word at caret position goes last (bug 132533).
-		if (currentWordCompletion != null) {
-			res.add(currentWordCompletion);
-		}
-
 		return res;
 	}
 
@@ -206,39 +171,9 @@ public final class HippieCompletionEngine {
 	 */
 	public List getCompletionsBackwards(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {
 		ArrayList res= new ArrayList();
-
-        // FindReplaceDocumentAdapter expects the start offset to be before the
-        // actual caret position, probably for compatibility with forward search.
-        if (firstPosition == 0) {
-            return res;
-        }
-
-		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
-
-		// search only at word boundaries
-		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
-
-		IRegion reg= searcher.find(0, searchPattern, true, CASE_SENSITIVE, false, true);
-		while (reg != null) {
-			// since the boundary may be of nonzero length
-			int wordSearchPos= reg.getOffset() + reg.getLength() - prefix.length();
-			// try to complete to a word. case is of no matter here
-			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
-            if (word.getOffset() + word.getLength() > firstPosition) {
-                break;
-            }
-			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
-				String found= document.get(word.getOffset(), word.getLength());
-				res.add(found.substring(prefix.length()));
-			}
-            int nextPos= word.getOffset() + word.getLength();
-            if (nextPos >= firstPosition ) { // for efficiency only
-                break;
-            }
-			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
+		for (Iterator it= getBackwardIterator(document, prefix, firstPosition); it.hasNext();) {
+			res.add(it.next());
 		}
-        Collections.reverse(res);
-
 		return res;
 	}
 
@@ -287,4 +222,622 @@ public final class HippieCompletionEngine {
 		}
 		return uniqueSuggestions;
 	}
+	
+	
+
+	/**
+	 * Calculates the documents to be searched. Note that the first returned document is always from
+	 * the current editor and if we have no current editor, an empty list is returned even if there
+	 * are other documents available.
+	 * 
+	 * @param currentTextEditor this is the currently opened text editor.
+	 * @return A List of IDocument with the opened documents so that the first document in that list
+	 *         is always the current document.
+	 * @since 3.6
+	 */
+	public static List computeDocuments(ITextEditor currentTextEditor) {
+		ArrayList documentsForSearch= new ArrayList();
+		if (currentTextEditor == null) {
+			return documentsForSearch;
+		}
+
+		IDocumentProvider provider= currentTextEditor.getDocumentProvider();
+		if (provider == null) {
+			return documentsForSearch;
+		}
+
+		IDocument currentDocument= provider.getDocument(currentTextEditor.getEditorInput());
+		if(currentDocument == null){
+			return documentsForSearch;
+		}
+
+		List computedDocuments= new ArrayList();
+		IWorkbenchWindow window= currentTextEditor.getSite().getWorkbenchWindow();
+		IEditorReference editorsArray[]= window.getActivePage().getEditorReferences();
+
+		for (int i= 0; i < editorsArray.length; i++) {
+			IEditorPart realEditor= editorsArray[i].getEditor(false);
+			if (realEditor instanceof ITextEditor && !realEditor.equals(currentTextEditor)) {
+				ITextEditor textEditor= (ITextEditor)realEditor;
+				provider= textEditor.getDocumentProvider();
+				if (provider == null) {
+					continue;
+				}
+				IDocument doc= provider.getDocument(textEditor.getEditorInput());
+				if (doc == null) {
+					continue;
+				}
+				computedDocuments.add(doc);
+			}
+		}
+		
+		//The first is always the one related to the passed currentTextEditor.
+		computedDocuments.add(0, currentDocument);
+		return computedDocuments;
+	}
+
+
+	/**
+	 * Provides an iterator that will get the completions that start with the passed prefix after
+	 * the passed position (forward until the end of the document).
+	 * 
+	 * @param document the document to be scanned
+	 * @param prefix the prefix to search for
+	 * @param firstPosition the initial position in the document that the search will start from. In
+	 *            order to search from the beginning of the document use
+	 *            <code>firstPosition=0</code>.
+	 * @param currentWordLast if <code>true</code> the word at caret position should be that last
+	 *            completion. <code>true</code> is good for searching in the currently open document
+	 *            and <code>false</code> is good for searching in other documents.
+	 * @return Iterator (for Strings) that will get the completions forward from the passed
+	 *         position.
+	 * 
+	 * @since 3.6
+	 */
+	public Iterator getForwardIterator(IDocument document, CharSequence prefix, int firstPosition, boolean currentWordLast) {
+		return new HippieCompletionForwardIterator(document, prefix, firstPosition, currentWordLast);
+	}
+
+	/**
+	 * Provides an iterator that will get the completions that start with the passed prefix before
+	 * the passed position (backwards until the start of the document).
+	 * 
+	 * @param document the document to be scanned
+	 * @param prefix the prefix to search for
+	 * @param firstPosition the initial position in the document that the search will start from. In
+	 *            order to search from the end of the document use
+	 *            <code>firstPosition=document.getLength()</code>.
+	 * @return Iterator that will get the completions backward from the passed position.
+	 * 
+	 * @since 3.6
+	 */
+	public Iterator getBackwardIterator(IDocument document, CharSequence prefix, int firstPosition) {
+		return new HippieCompletionBackwardIterator(document, prefix, firstPosition);
+	}
+
+	/**
+	 * Provides an iterator that will get the completions for all the documents received, starting
+	 * at the "document" passed (first going backward and then forward from the position passed) and
+	 * later going forward through each of the "otherDocuments".
+	 * 
+	 * @param document the document to be scanned
+	 * @param otherDocuments the additional documents to be scanned
+	 * @param prefix the prefix to search for
+	 * @param firstPosition the initial position in the document that the search will start from.
+	 * @return Iterator that will first get the completions backward from the document passed, then
+	 *         forward in that same document and when that is finished it will get it forward for
+	 *         the other documents (in the same sequence the documents are available).
+	 * 
+	 * @since 3.6
+	 */
+	public Iterator getMultipleDocumentsIterator(IDocument document, List otherDocuments, CharSequence prefix, int firstPosition) {
+		return new MultipleDocumentsIterator(document, otherDocuments, prefix, firstPosition);
+	}
+
+
+
+	/**
+	 * Class that keeps the state while iterating the suggestions
+	 * 
+	 * @since 3.6
+	 */
+	private final class MultipleDocumentsIterator implements Iterator {
+
+		/**
+		 * This is the next token to be returned (when null, no more tokens should be returned)
+		 */
+		private String fNext;
+
+		/**
+		 * -1 means that we still haven't checked the current do completions Any other number means
+		 * that we'll get the completions for some other editor.
+		 */
+		private int fCurrLocation= -1;
+
+		/** These are the suggestions which we already loaded. */
+		private final List fSuggestions;
+
+		/** This marks the current suggestion to be returned */
+		private int fCurrSuggestion= 0;
+
+		/** This is the prefix that should be searched */
+		private final CharSequence fPrefix;
+
+		/** The list of IDocuments that we should search */
+		private final List fOtherDocuments;
+
+		/**
+		 * The document that's currently opened (that's the 1st we should look and we should 1st
+		 * search backwards from the current offset and later forwards)
+		 */
+		private final IDocument fOpenDocument;
+
+		/** The current offset in the opened document */
+		private final int fSelectionOffset;
+
+		/** Indicates whether we already added the empty completion. */
+		private boolean fAddedEmpty= false;
+
+		/** The 'current' forward iterator. */
+		private Iterator fCompletionsForwardIterator;
+
+		/** The 'current' backward iterator. */
+		private Iterator fCompletionsBackwardIterator;
+
+		/*
+		 * (non-Javadoc)
+		 * @see HippieCompletionEngine#getMultipleDocumentsIterator(IDocument, List, CharSequence, int)
+		 */
+		private MultipleDocumentsIterator(IDocument openDocument, List otherDocuments,
+				CharSequence prefix, int selectionOffset) {
+			this.fPrefix= prefix;
+			this.fSuggestions= new ArrayList();
+			this.fOtherDocuments= otherDocuments;
+			this.fSelectionOffset= selectionOffset;
+			this.fOpenDocument= openDocument;
+			calculateNext();
+		}
+
+
+		/**
+		 * This method calculates the next token to be returned (so, after creating the class or
+		 * after calling next(), this function must be called).
+		 * 
+		 * It'll check which document should be used and will get the completions on that document
+		 * until some completion is found.
+		 * 
+		 * An empty completion is always added at the end.
+		 * 
+		 * After the empty completion, the next is set to null.
+		 */
+		private void calculateNext() {
+			if (fCurrLocation == -1) {
+				fCompletionsBackwardIterator= getBackwardIterator(
+						fOpenDocument, fPrefix, fSelectionOffset);
+
+				fCompletionsForwardIterator= getForwardIterator(
+						fOpenDocument, fPrefix, (fSelectionOffset - fPrefix.length()), true);
+				fCurrLocation++;
+			}
+			if (checkNext()) {
+				return;
+			}
+
+
+			while (fCurrLocation < this.fOtherDocuments.size()) {
+				fCompletionsForwardIterator= getForwardIterator(
+						((IDocument)this.fOtherDocuments.get(fCurrLocation)), fPrefix, 0, false);
+				fCurrLocation++;
+				if (checkNext()) {
+					return;
+				}
+			}
+
+			// add the empty suggestion (last one)
+			if (!fAddedEmpty) {
+				fSuggestions.add(""); //$NON-NLS-1$			
+				fAddedEmpty= true;
+			}
+			checkNext();
+		}
+
+		/**
+		 * @return true if a completion was found and false if it couldn't be found -- in which case
+		 *         the next is set to null.
+		 */
+		private boolean checkNext() {
+			if (fCompletionsBackwardIterator != null) {
+				if (fCompletionsBackwardIterator.hasNext()) {
+					fSuggestions.add(fCompletionsBackwardIterator.next());
+				} else {
+					fCompletionsBackwardIterator= null;
+				}
+			}
+			if (fCompletionsBackwardIterator == null) {
+				//only get if backward completions are consumed
+				if (fCompletionsForwardIterator != null && fCompletionsForwardIterator.hasNext()) {
+					fSuggestions.add(fCompletionsForwardIterator.next());
+				}
+			}
+
+			if (fSuggestions.size() > fCurrSuggestion) {
+				fNext= (String)fSuggestions.get(fCurrSuggestion);
+				fCurrSuggestion++;
+				return true;
+			}
+			fNext= null;
+			return false;
+		}
+
+		/**
+		 * We always calculate the next to see if it's available...
+		 * 
+		 * @return true if the next token to be returned is not null (we always pre-calculate
+		 *         things)
+		 */
+		public boolean hasNext() {
+			return fNext != null;
+		}
+
+
+		/**
+		 * @return the next suggestion
+		 */
+		public Object next() {
+			if (fNext == null) {
+				throw new NoSuchElementException("No more elements to iterate"); //$NON-NLS-1$
+			}
+			Object ret= fNext;
+			calculateNext();
+			return ret;
+		}
+
+		/**
+		 * Not supported!
+		 * 
+		 * @throws UnsupportedOperationException always.
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException("Not supported"); //$NON-NLS-1$
+
+		}
+
+	}
+
+	/**
+	 * Base class for Iterator that gets the word completions in a document, and returns them one by
+	 * one (lazily gotten).
+	 * 
+	 * @since 3.6
+	 */
+	private abstract class HippieCompletionIterator implements Iterator {
+
+		/** The document to be scanned */
+		protected IDocument fDocument;
+
+		/** The prefix to search for */
+		protected CharSequence fPrefix;
+
+		/**
+		 * The initial position in the document that the search will start from. In order to search
+		 * from the beginning of the document use <code>firstPosition=0</code>.
+		 */
+		protected int fFirstPosition;
+
+		/** Determines if we have a next element to be returned. */
+		protected boolean fHasNext;
+
+		/** The next element to be returned */
+		protected String fNext;
+
+		/** The current state for the iterator */
+		protected int fCurrentState= 0;
+
+		/** The class that'll do the search */
+		protected FindReplaceDocumentAdapter fSearcher;
+
+		/** Pattern to be used -- search only at word boundaries */
+		protected String fSearchPattern;
+
+		/** The next place to search for */
+		protected int fNextPos;
+
+
+		/**
+		 * Constructor
+		 * 
+		 * @param document the document to be scanned
+		 * @param prefix the prefix to search for
+		 * @param firstPosition the initial position in the document that the search will start
+		 *            from. In order to search from the beginning of the document use
+		 *            <code>firstPosition=0</code>.
+		 */
+		public HippieCompletionIterator(IDocument document, CharSequence prefix, int firstPosition) {
+			this.fDocument= document;
+			this.fPrefix= prefix;
+			this.fFirstPosition= firstPosition;
+		}
+
+		/**
+		 * Must be called to calculate the first completion (subclasses must explicitly call it when
+		 * properly initialized).
+		 */
+		protected void calculateFirst() {
+			try {
+				calculateNext();
+			} catch (BadLocationException e) {
+				log(e);
+				fHasNext= false;
+				fNext= null;
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return fHasNext;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next() {
+			if (!fHasNext) {
+				throw new NoSuchElementException();
+			}
+			String ret= fNext;
+			try {
+				calculateNext();
+			} catch (BadLocationException e) {
+				log(e);
+				fHasNext= false;
+				fNext= null;
+			}
+			return ret;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		/**
+		 * Subclasses must override to calculates whether we have a next element to be returned and
+		 * which element it is (set fHasNext and fNext).
+		 * 
+		 * @throws BadLocationException if we're at an invalid position in the document.
+		 */
+		protected abstract void calculateNext() throws BadLocationException;
+	}
+
+
+
+	/**
+	 * Iterator that gets the word completions in a document, and returns them one by one (lazily
+	 * gotten) from the current position.
+	 * 
+	 * @since 3.6
+	 */
+	private class HippieCompletionForwardIterator extends HippieCompletionIterator {
+
+		/**
+		 * If <code>true</code> the word at caret position should be that last completion.
+		 * <code>true</code> is good for searching in the currently open document and
+		 * <code>false</code> is good for searching in other documents.
+		 */
+		private boolean fCurrentWordLast;
+
+
+		/** The completion for the current word -- fix bug 132533 */
+		private String fCurrentWordCompletion= null;
+
+
+		/*
+		 * (non-Javadoc)
+		 * @see HippieCompletionEngine#getForwardIterator(IDocument, CharSequence, int, boolean)
+		 */
+		private HippieCompletionForwardIterator(IDocument document, CharSequence prefix, int firstPosition, boolean currentWordLast) {
+			super(document, prefix, firstPosition);
+			this.fCurrentWordLast= currentWordLast;
+			calculateFirst();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see HippieCompletionIterator#calculateNext()
+		 */
+		protected void calculateNext() throws BadLocationException {
+			if (fCurrentState == 0) {
+				if (fFirstPosition == fDocument.getLength()) {
+					this.fHasNext= false;
+					return;
+				}
+				fSearcher= new FindReplaceDocumentAdapter(fDocument);
+
+				// unless we are at the beginning of the document, the completion boundary
+				// matches one character. It is enough to move just one character backwards
+				// because the boundary pattern has the (....)+ form.
+				// see HippieCompletionTest#testForwardSearch().
+				if (fFirstPosition > 0) {
+					fFirstPosition--;
+					// empty spacing is not permitted now.
+					fSearchPattern= NON_EMPTY_COMPLETION_BOUNDARY + asRegPattern(fPrefix);
+				} else {
+					fSearchPattern= COMPLETION_BOUNDARY + asRegPattern(fPrefix);
+				}
+
+				fNextPos= fFirstPosition;
+				fCurrentState= 1;
+			}
+
+			if (fCurrentState == 1) {
+				fHasNext= false;
+				IRegion reg= fSearcher.find(fNextPos, fSearchPattern, true, CASE_SENSITIVE, false, true);
+				while (reg != null) {
+					IRegion word= checkRegion(reg);
+					fNextPos= word.getOffset() + word.getLength();
+					if (fNextPos >= fDocument.getLength()) {
+						fCurrentState= 2;
+						if (fHasNext) {
+							return;
+						}
+						break;
+					} else {
+						if (fHasNext) {
+							return;
+						}
+						reg= fSearcher.find(fNextPos, fSearchPattern, true, CASE_SENSITIVE, false, true);
+					}
+				}
+				fCurrentState= 2;
+			}
+
+			if (fCurrentState == 2) {
+				fCurrentState= 3;
+				// the word at caret position goes last (bug 132533).
+				if (fCurrentWordCompletion != null) {
+					fNext= fCurrentWordCompletion;
+					fHasNext= true;
+					return;
+				}
+			}
+
+			fNext= null;
+			fHasNext= false;
+			return;
+		}
+
+		/**
+		 * Checks the given region for a word to be returned in this iterator.
+		 * 
+		 * @param reg the region to check
+		 * @return the word region.
+		 * @throws BadLocationException if we're at an invalid position in the document.
+		 */
+		private IRegion checkRegion(IRegion reg) throws BadLocationException {
+			// since the boundary may be of nonzero length
+			int wordSearchPos= reg.getOffset() + reg.getLength() - fPrefix.length();
+			// try to complete to a word. case is irrelevant here.
+			IRegion word= fSearcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
+			if (word.getLength() > fPrefix.length()) { // empty suggestion will be added later
+				String wholeWord= fDocument.get(word.getOffset(), word.getLength());
+				String completion= wholeWord.substring(fPrefix.length());
+				if (fCurrentWordLast && reg.getOffset() == fFirstPosition) { // we got the word at caret as completion
+					if (fCurrentWordCompletion == null) {
+						fCurrentWordCompletion= completion; // add it as the last word.
+					}
+				} else {
+					fNext= completion;
+					fHasNext= true;
+				}
+			}
+			return word;
+		}
+	}
+
+
+
+	/**
+	 * Iterator that gets the word completions in a document, and returns them one by one (lazily
+	 * gotten) backward from the current position.
+	 * 
+	 * @since 3.6
+	 */
+	private class HippieCompletionBackwardIterator extends HippieCompletionIterator {
+
+		/** Last position searched **/
+		private int fLastSearchPos= -1;
+
+		/*
+		 * (non-Javadoc)
+		 * @see HippieCompletionEngine#getBackwardIterator(IDocument, CharSequence, int)
+		 */
+		private HippieCompletionBackwardIterator(IDocument document, CharSequence prefix, int firstPosition) {
+			super(document, prefix, firstPosition);
+			calculateFirst();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see HippieCompletionIterator#calculateNext()
+		 */
+		protected void calculateNext() throws BadLocationException {
+			if (fCurrentState == 0) {
+				fCurrentState= 1;
+				// FindReplaceDocumentAdapter expects the start offset to be before the
+				// actual caret position, probably for compatibility with forward search.
+				if (fFirstPosition <= 1) {
+					this.fNext= null;
+					this.fHasNext= false;
+					return;
+				}
+				fSearcher= new FindReplaceDocumentAdapter(fDocument);
+
+				// search only at word boundaries
+				fSearchPattern= COMPLETION_BOUNDARY + asRegPattern(fPrefix);
+
+				int length= fDocument.getLength();
+				fNextPos= fFirstPosition;
+				if (fNextPos >= length) {
+					fNextPos= length - 1;
+				}
+			}
+			while (true) {
+				if (fNextPos <= 0) {
+					this.fNext= null;
+					this.fHasNext= false;
+					return;
+				}
+
+				Assert.isTrue(fLastSearchPos != fNextPos, "Position did not change in loop (this would lead to recursion -- and should never happen)."); //$NON-NLS-1$
+
+				fLastSearchPos= fNextPos;
+				IRegion reg= fSearcher.find(fNextPos, fSearchPattern, false, CASE_SENSITIVE, false, true);
+				if (reg == null) {
+					this.fNext= null;
+					this.fHasNext= false;
+					return;
+				}
+
+				// since the boundary may be of nonzero length
+				int wordSearchPos= reg.getOffset() + reg.getLength() - fPrefix.length();
+				// try to complete to a word. case is of no matter here
+				IRegion word= fSearcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
+				fNextPos= word.getOffset() - 1;
+				if (word.getOffset() + word.getLength() > fFirstPosition) {
+					continue;
+				}
+				if (word.getLength() > fPrefix.length()) { // empty suggestion will be added later
+					String found= fDocument.get(word.getOffset(), word.getLength());
+					this.fHasNext= true;
+					this.fNext= found.substring(fPrefix.length());
+					return;
+				}
+			}
+
+			//Note: unreachable section
+		}
+
+	}
+
+	/**
+	 * Logs the exception.
+	 * 
+	 * @param e the exception
+	 * 
+	 * @since 3.6
+	 */
+	private void log(BadLocationException e) {
+		String msg= e.getLocalizedMessage();
+		if (msg == null)
+			msg= "unable to access the document"; //$NON-NLS-1$
+		TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, msg, e));
+	}
+
 }
