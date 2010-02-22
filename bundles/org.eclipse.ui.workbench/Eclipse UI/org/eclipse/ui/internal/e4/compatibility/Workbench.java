@@ -54,6 +54,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
@@ -107,6 +108,8 @@ public class Workbench implements IWorkbench {
 
 	private ListenerList workbenchListeners = new ListenerList();
 	private ListenerList windowListeners = new ListenerList();
+
+	private WorkbenchAdvisor wbAdvisor;
 
 	Workbench() {
 		// prevent external initialization
@@ -823,11 +826,16 @@ public class Workbench implements IWorkbench {
 	}
 
 	public WorkbenchAdvisor getAdvisor() {
-		// TODO compat: we need one of these eventually
-		System.err.println("getAdvisor() called on Workbench, unimplemented"); //$NON-NLS-1$
-		// using E4Util can cause an infinite loop
-		//E4Util.unsupported("getAdvisor"); //$NON-NLS-1$
-		return null;
+		if (wbAdvisor == null) {
+			wbAdvisor = new WorkbenchAdvisor() {
+				@Override
+				public String getInitialWindowPerspectiveId() {
+					return PrefUtil.getAPIPreferenceStore().getString(
+							IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+				}
+			};
+		}
+		return wbAdvisor;
 	}
 
 	static boolean running = true;

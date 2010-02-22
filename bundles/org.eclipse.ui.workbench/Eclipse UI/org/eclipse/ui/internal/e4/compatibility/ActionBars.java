@@ -28,7 +28,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 public class ActionBars implements IActionBars {
 
-	private IToolBarManager manager;
+	private IToolBarManager toolbarManager;
 
 	private IMenuManager menuManager;
 
@@ -110,7 +110,7 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getToolBarManager()
 	 */
 	public IToolBarManager getToolBarManager() {
-		if (manager == null) {
+		if (toolbarManager == null) {
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar == null) {
 				toolbar = MApplicationFactory.eINSTANCE.createToolBar();
@@ -118,9 +118,9 @@ public class ActionBars implements IActionBars {
 			}
 
 			ToolBar toolBarWidget = (ToolBar) toolbar.getWidget();
-			manager = new ToolBarManager(toolBarWidget);
+			toolbarManager = new ToolBarManager(toolBarWidget);
 		}
-		return manager;
+		return toolbarManager;
 	}
 
 	/*
@@ -144,7 +144,8 @@ public class ActionBars implements IActionBars {
 		// FIXME compat: updateActionBars : should do someting useful
 		getStatusLineManager().update(false);
 		getMenuManager().update(false);
-		if (manager != null) {
+		if (toolbarManager != null) {
+			System.err.println("update toolbar manager for " + part.getId()); //$NON-NLS-1$
 			getToolBarManager().update(false);
 		}
 	}
