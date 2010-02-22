@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.ui.model.application.MUIElement;
+
 import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -1122,7 +1124,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 						if (element instanceof MWindow) {
 							MWindow window = (MWindow) element;
-							if (window.getWidget() != null) {
+							if (((MUIElement)window.getParent()) instanceof MApplication
+									&& window.getWidget() != null) {
 								IPerspectiveDescriptor desc = getPerspectiveRegistry()
 										.findPerspectiveWithId(
 												getPerspectiveRegistry().getDefaultPerspective());
