@@ -62,7 +62,10 @@ if (data.isMozilla()){
 <%
 }
 %>
-	window.HelpToolbarFrame.frames["SearchFrame"].document.getElementById("searchWord").focus();
+    try {
+	    window.HelpToolbarFrame.frames["SearchFrame"].document.getElementById("searchWord").focus();
+	} catch (e) {
+	}
 }
 
 </script>
