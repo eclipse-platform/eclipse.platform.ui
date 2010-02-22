@@ -637,6 +637,9 @@ public class JobManager implements IJobManager {
 		//reschedule the job if requested and we are still active
 		if (reschedule)
 			schedule(job, rescheduleDelay, reschedule);
+		//log result if it is warning or error
+		if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
+			RuntimeLog.log(result);
 	}
 
 	/* (non-Javadoc)

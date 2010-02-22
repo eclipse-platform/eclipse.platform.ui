@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -70,8 +69,6 @@ public class Worker extends Thread {
 					if (result == null)
 						result = handleException(currentJob, new NullPointerException());
 					pool.endJob(currentJob, result);
-					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
-						RuntimeLog.log(result);
 					currentJob = null;
 					//reset thread priority in case job changed it
 					setPriority(Thread.NORM_PRIORITY);
