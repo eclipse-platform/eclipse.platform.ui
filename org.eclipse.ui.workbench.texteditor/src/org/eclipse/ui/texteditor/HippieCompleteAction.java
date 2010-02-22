@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Genady Beryozkin, me@genady.org - initial API and implementation
- *     IBM Corporation - fixes and cleaning
- *     Fabio Zadrozny, <fabiofz at gmail dot com> - [typing] HippieCompleteAction is slow  ( Alt+/ ) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=270385
+ *     Fabio Zadrozny <fabiofz at gmail dot com> - [typing] HippieCompleteAction is slow  ( Alt+/ ) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=270385
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -33,6 +32,7 @@ import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
 import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
+
 /**
  * This class implements the emacs style completion action. Completion action is
  * a stateful action, as the user may invoke it several times in a row in order
@@ -42,7 +42,6 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * TODO: Provide history option
  *
  * @since 3.1
- * @author Genady Beryozkin, me@genady.org
  */
 final class HippieCompleteAction extends TextEditorAction {
 
