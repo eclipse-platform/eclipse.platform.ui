@@ -81,6 +81,8 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.wizards.ExportWizardRegistry;
+import org.eclipse.ui.internal.wizards.ImportWizardRegistry;
 import org.eclipse.ui.internal.wizards.NewWizardRegistry;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -1416,9 +1418,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getImportWizardRegistry() {
-		// TODO commented out for e4 compatibility
-//    	return ImportWizardRegistry.getInstance();
-    	return null;
+		return ImportWizardRegistry.getInstance();
     }
     
     /**
@@ -1428,9 +1428,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getExportWizardRegistry() {
-		// TODO commented out for e4 compatibility
-//    	return ExportWizardRegistry.getInstance();
-    	return null;
+		return ExportWizardRegistry.getInstance();
     }
     
     /**
