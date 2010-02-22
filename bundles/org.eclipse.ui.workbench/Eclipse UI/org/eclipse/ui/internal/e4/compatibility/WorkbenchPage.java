@@ -88,6 +88,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
 
 	private WorkbenchWindow workbenchWindow;
+	private ModeledPageLayout modelLayout;
 	private IAdaptable input;
 	private IPerspectiveDescriptor perspective;
 	private List<IPerspectiveDescriptor> openedPerspectives = new ArrayList<IPerspectiveDescriptor>();
@@ -808,8 +809,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		factory.createInitialLayout(new ModeledPageLayout(application, modelService, window,
-				modelPerspective, perspective, this));
+		modelLayout = new ModeledPageLayout(application, modelService, window,
+				modelPerspective, perspective, this);
+		factory.createInitialLayout(modelLayout);
 
 		// add it to the stack
 		perspectives.getChildren().add(modelPerspective);
@@ -1109,9 +1111,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
 	 */
 	public String[] getNewWizardShortcuts() {
-		// FIXME compat getNewWizardShortcuts
-		E4Util.unsupported("getNewWizardShortcuts"); //$NON-NLS-1$
-		return null;
+		ArrayList shortcuts = modelLayout.getNewWizardShortcuts();
+		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
 	}
 
 	/* (non-Javadoc)

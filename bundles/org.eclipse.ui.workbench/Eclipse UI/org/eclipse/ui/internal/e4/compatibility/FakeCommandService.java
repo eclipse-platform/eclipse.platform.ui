@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -58,7 +59,7 @@ public final class FakeCommandService implements ICommandService {
 
 	public Collection getDefinedCommandIds() {
 		E4Util.unsupported("getDefinedCommandIds"); //$NON-NLS-1$
-		return null;
+		return Collections.EMPTY_LIST;
 	}
 
 	public Command[] getDefinedCommands() {

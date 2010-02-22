@@ -15,7 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -31,11 +34,8 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
-import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
-import org.eclipse.ui.services.IDisposable;
-import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -61,11 +61,9 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	private ISelectionProvider selectionProvider;
 
-	/**
-	 * The localized service locator for this page site. This locator is never
-	 * <code>null</code>.
-	 */
-	private final IServiceLocator serviceLocator;
+	private IEclipseContext lastActivePageContext;
+
+	private IEclipseContext pageContext;
 
 	/**
 	 * The action bars for this site
@@ -83,19 +81,6 @@ public class PageSite implements IPageSite, INestable {
 		parentSite = parentViewSite;
 		subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
 
-		// Initialize the service locator.
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
-				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = slc.createServiceLocator(
-				parentViewSite, null, new IDisposable(){
-					public void dispose() {
-				// 3.x implementation closes the view when disposed
-				WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
-				MPart model = partSite.getModel();
-				Widget widget = (Widget) model.getWidget();
-				if (widget != null && !widget.isDisposed()) {
-					parentSite.getPage().hideView((IViewPart) parentSite.getPart());
-				}}});
 		initializeDefaultServices();
 	}
 
@@ -104,11 +89,11 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	private void initializeDefaultServices() {
 		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
-		IEclipseContext context = partSite.getModel().getContext();
-		context.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
+		pageContext = EclipseContextFactory.create(partSite.getModel().getContext(), null);
+		pageContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
 				IServiceScopes.PAGESITE_SCOPE, getWorkbenchWindow().getWorkbench(),
 				getWorkbenchWindow(), parentSite, null, this, 3));
-		context.set(IPageSiteHolder.class.getName(), new IPageSiteHolder() {
+		pageContext.set(IPageSiteHolder.class.getName(), new IPageSiteHolder() {
 			public IPageSite getSite() {
 				return PageSite.this;
 			}
@@ -138,8 +123,16 @@ public class PageSite implements IPageSite, INestable {
 		}
 		subActionBars.dispose();
 
-		if (serviceLocator instanceof IDisposable) {
-			((IDisposable) serviceLocator).dispose();
+		if (pageContext instanceof IDisposable) {
+			((IDisposable) pageContext).dispose();
+
+			// 3.x implementation closes the view when disposed
+			WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
+			MPart model = partSite.getModel();
+			Widget widget = (Widget) model.getWidget();
+			if (widget != null && !widget.isDisposed()) {
+				parentSite.getPage().hideView((IViewPart) parentSite.getPart());
+			}
 		}
 
 		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
@@ -182,7 +175,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final Object getService(final Class key) {
-		return serviceLocator.getService(key);
+		return pageContext.get(key.getName());
 	}
 
 	/*
@@ -200,7 +193,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final boolean hasService(final Class key) {
-		return serviceLocator.hasService(key);
+		return pageContext.containsKey(key.getName());
 	}
 
 	/*
@@ -232,9 +225,9 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
-		if (serviceLocator instanceof INestable) {
-			((INestable) serviceLocator).activate();
-		}
+		IEclipseContext parent = (IEclipseContext) pageContext.getLocal(IContextConstants.PARENT);
+		lastActivePageContext = (IEclipseContext) parent.getLocal(IContextConstants.ACTIVE_CHILD);
+		parent.set(IContextConstants.ACTIVE_CHILD, pageContext);
 	}
 
 	/*
@@ -245,8 +238,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
-		if (serviceLocator instanceof INestable) {
-			((INestable) serviceLocator).deactivate();
-		}
+		IEclipseContext parent = (IEclipseContext) pageContext.getLocal(IContextConstants.PARENT);
+		parent.set(IContextConstants.ACTIVE_CHILD, lastActivePageContext);
 	}
 }
