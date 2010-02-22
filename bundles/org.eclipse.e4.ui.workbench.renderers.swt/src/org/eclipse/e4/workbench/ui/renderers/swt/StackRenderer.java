@@ -427,13 +427,19 @@ public class StackRenderer extends LazyStackRenderer {
 		if (parentElement.getSelectedElement() == child) {
 			// HACK!! we'll reset to the first element for now but really should
 			// be based on the activation chain
-			if (parentElement.getChildren().size() == 0) {
-				parentElement.setSelectedElement(null);
-			} else {
-				parentElement.setSelectedElement(parentElement.getChildren()
-						.get(0));
-			}
+			MUIElement defaultSel = getFirstVisibleElement(parentElement);
+			parentElement.setSelectedElement(defaultSel);
 		}
+	}
+
+	private MUIElement getFirstVisibleElement(
+			MElementContainer<MUIElement> stack) {
+		// Find the -visible- part before this element
+		for (MUIElement mPart : stack.getChildren()) {
+			if (mPart.isToBeRendered())
+				return mPart;
+		}
+		return null;
 	}
 
 	@Override
