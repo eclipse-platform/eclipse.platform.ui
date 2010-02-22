@@ -28,10 +28,12 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
@@ -790,14 +792,50 @@ public class WorkbenchPage implements IWorkbenchPage {
 			openedPerspectives.add(perspective);
 		}
 
-		// TODO Auto-generated method stub
+		MPerspectiveStack perspectives = getPerspectiveStack();
+		for (MPerspective mperspective : perspectives.getChildren()) {
+			if (mperspective.getId().equals(perspective.getId())) {
+				// this perspective already exists, switch to this one
+				perspectives.setSelectedElement(mperspective);
+				return;
+			}
+		}
+
+		// couldn't find the perspective, create a new one
 		MPerspective modelPerspective = MApplicationFactory.eINSTANCE.createPerspective();
+		// tag it with the same id
 		modelPerspective.setId(perspective.getId());
+
+		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
 		factory.createInitialLayout(new ModeledPageLayout(application, modelService, window,
 				modelPerspective, perspective, this));
 
-		window.getChildren().add(modelPerspective);
+		// add it to the stack
+		perspectives.getChildren().add(modelPerspective);
+		// activate it
+		perspectives.setSelectedElement(modelPerspective);
+
+		// FIXME: we need to fire events
+	}
+
+	/**
+	 * Retrieves the perspective stack of the window that's containing this
+	 * workbench page.
+	 * 
+	 * @return the stack of perspectives of this page's containing window
+	 */
+	private MPerspectiveStack getPerspectiveStack() {
+		for (MPSCElement child : window.getChildren()) {
+			if (child instanceof MPerspectiveStack) {
+				return (MPerspectiveStack) child;
+			}
+		}
+
+		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+		return perspectiveStack;
 	}
 
 	/* (non-Javadoc)
