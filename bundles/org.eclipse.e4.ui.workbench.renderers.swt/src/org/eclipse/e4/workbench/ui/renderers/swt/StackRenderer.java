@@ -291,6 +291,7 @@ public class StackRenderer extends LazyStackRenderer {
 				renderer.createGui(selPart);
 			}
 			ctf.setSelection(selItem);
+			showTab(container, selPart);
 			activate(selPart);
 		}
 	}
@@ -383,7 +384,7 @@ public class StackRenderer extends LazyStackRenderer {
 		// part's control will be null (we're just creating the tabs
 		Control ctrl = (Control) element.getWidget();
 		if (ctrl != null) {
-			showTab(parentElement, element);
+			// showTab(parentElement, element);
 			stylingEngine.style(ctrl);
 		}
 	}
