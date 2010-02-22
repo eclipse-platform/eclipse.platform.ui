@@ -81,6 +81,7 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.wizards.NewWizardRegistry;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -1405,9 +1406,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getNewWizardRegistry() {
-		// TODO commented out for e4 compatibility
-//    	return NewWizardRegistry.getInstance();
-    	return null;
+		return NewWizardRegistry.getInstance();
     }
     
     /**
