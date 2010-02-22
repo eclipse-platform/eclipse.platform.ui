@@ -65,18 +65,17 @@ public final class CommandImageManager extends EventManager {
 	 */
 	private final Map imagesById = new HashMap();
 
-	// /**
-	// * Adds a listener to this command image manager. The listener will be
-	// * notified when the set of image bindings changes. This can be used to
-	// * track the global appearance and disappearance of image bindings.
-	// *
-	// * @param listener
-	// * The listener to attach; must not be <code>null</code>.
-	// */
-	// public final void addCommandImageManagerListener(
-	// final ICommandImageManagerListener listener) {
-	// addListenerObject(listener);
-	// }
+	/**
+	 * Adds a listener to this command image manager. The listener will be
+	 * notified when the set of image bindings changes. This can be used to
+	 * track the global appearance and disappearance of image bindings.
+	 * 
+	 * @param listener
+	 *            The listener to attach; must not be <code>null</code>.
+	 */
+	public final void addCommandImageManagerListener(final ICommandImageManagerListener listener) {
+		addListenerObject(listener);
+	}
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
@@ -146,8 +145,8 @@ public final class CommandImageManager extends EventManager {
 			}
 		}
 
-		// fireManagerChanged(new CommandImageManagerEvent(this,
-		// new String[] { commandId }, type, style));
+		fireManagerChanged(new CommandImageManagerEvent(this, new String[] { commandId }, type,
+				style));
 	}
 
 	/**
@@ -155,31 +154,32 @@ public final class CommandImageManager extends EventManager {
 	 */
 	public final void clear() {
 		imagesById.clear();
-		// TODO compat: do we still fire these events?
+		if (isListenerAttached()) {
+			final String[] commandIds = (String[]) imagesById.keySet().toArray(
+					new String[imagesById.size()]);
+			fireManagerChanged(new CommandImageManagerEvent(this, commandIds, TYPE_DEFAULT, null));
+		}
 	}
 
-	// TODO compat: do we still fire these events?
-	// /**
-	// * Notifies all of the listeners to this manager that the image bindings
-	// * have changed.
-	// *
-	// * @param event
-	// * The event to send to all of the listeners; must not be
-	// * <code>null</code>.
-	// */
-	// private final void fireManagerChanged(final CommandImageManagerEvent
-	// event) {
-	// if (event == null) {
-	// throw new NullPointerException();
-	// }
-	//
-	// final Object[] listeners = getListeners();
-	// for (int i = 0; i < listeners.length; i++) {
-	// final ICommandImageManagerListener listener =
-	// (ICommandImageManagerListener) listeners[i];
-	// listener.commandImageManagerChanged(event);
-	// }
-	// }
+	/**
+	 * Notifies all of the listeners to this manager that the image bindings
+	 * have changed.
+	 * 
+	 * @param event
+	 *            The event to send to all of the listeners; must not be
+	 *            <code>null</code>.
+	 */
+	private final void fireManagerChanged(final CommandImageManagerEvent event) {
+		if (event == null) {
+			throw new NullPointerException();
+		}
+
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final ICommandImageManagerListener listener = (ICommandImageManagerListener) listeners[i];
+			listener.commandImageManagerChanged(event);
+		}
+	}
 
 	/**
 	 * Generates a style tag that is not currently used for the given command.
@@ -325,16 +325,13 @@ public final class CommandImageManager extends EventManager {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, style);
 	}
 
-	// TODO compat: do we still fire these events?
-
-	// /**
-	// * Removes a listener from this command image manager.
-	// *
-	// * @param listener
-	// * The listener to be removed; must not be <code>null</code>.
-	// */
-	// public final void removeCommandImageManagerListener(
-	// final ICommandImageManagerListener listener) {
-	// removeListenerObject(listener);
-	// }
+	/**
+	 * Removes a listener from this command image manager.
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 */
+	public final void removeCommandImageManagerListener(final ICommandImageManagerListener listener) {
+		removeListenerObject(listener);
+	}
 }

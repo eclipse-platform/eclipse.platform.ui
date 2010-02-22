@@ -72,6 +72,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -81,6 +82,8 @@ import org.eclipse.ui.internal.JFaceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
+import org.eclipse.ui.internal.commands.CommandImageManager;
+import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -833,8 +836,21 @@ public class Workbench implements IWorkbench {
 	 */
 	private static void initializeLegacyServices(IEclipseContext appContext) {
 		initializeCommandService(appContext);
+		initializeCommandImageService(appContext);
 		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
 		appContext.set(IMenuService.class.getName(), new FakeMenuService());
+	}
+
+	/**
+	 * @param appContext
+	 */
+	private static void initializeCommandImageService(IEclipseContext appContext) {
+		final CommandImageManager commandImageManager = new CommandImageManager();
+		final CommandImageService commandImageService = new CommandImageService(
+				commandImageManager, (ICommandService) appContext.get(ICommandService.class
+						.getName()));
+		commandImageService.readRegistry();
+		appContext.set(ICommandImageService.class.getName(), commandImageService);
 	}
 
 	static class MakeHandlersGo extends AbstractHandler {
