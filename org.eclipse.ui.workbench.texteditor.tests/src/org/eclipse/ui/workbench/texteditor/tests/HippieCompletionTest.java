@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -21,6 +19,8 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.runtime.AssertionFailedException;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -445,19 +445,10 @@ public class HippieCompletionTest extends TestCase {
 		}
 	}
 
-	private Accessor createAccessor(Iterator suggestions, int startOffset) throws AssertionError, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException,
-			InvocationTargetException {
-		//Note, this could be simpler just using the Accessor constructor, but 
-		//we actually want to test an InvocationTargetException when creating
-		//the class, which is masked when using the Accessor constructor direcly.  
-		Class hippieCompleteAction= null;
-		hippieCompleteAction= Class.forName("org.eclipse.ui.texteditor.HippieCompleteAction$CompletionState");
-		Constructor[] declaredConstructors= hippieCompleteAction.getDeclaredConstructors();
-		assertEquals(1, declaredConstructors.length);
-		Constructor constructor= declaredConstructors[0];
-		constructor.setAccessible(true);
-		Object instance= constructor.newInstance(new Object[] { suggestions, new Integer(startOffset) });
-		return new Accessor(instance, instance.getClass());
+	private Accessor createAccessor(Iterator suggestions, int startOffset) {
+		return new Accessor("org.eclipse.ui.texteditor.HippieCompleteAction$CompletionState",
+				getClass().getClassLoader(), new Class[] { Iterator.class, int.class }, new
+				Object[] { suggestions, new Integer(startOffset) });
 	}
 
 	private String next(Accessor state) {
@@ -475,11 +466,8 @@ public class HippieCompletionTest extends TestCase {
 		try {
 			state= createAccessor(list.iterator(), 0);
 			fail("Having no items is not valid (at least the empty completion must be there)");
-		} catch (InvocationTargetException e) {
-			//An assertion failed in the constructor.
-			assertEquals(e.getCause().getClass(), java.lang.AssertionError.class);
+		} catch (AssertionFailedException ex) {
 		}
-
 
 		list.add("");
 		state= createAccessor(list.iterator(), 0);
