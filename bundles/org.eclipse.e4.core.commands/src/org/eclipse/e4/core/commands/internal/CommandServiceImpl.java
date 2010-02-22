@@ -25,8 +25,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  *
  */
 public class CommandServiceImpl implements ECommandService {
-	static final String CAT_ID = "category::"; //$NON-NLS-1$
-	static final String CMD_ID = "command::"; //$NON-NLS-1$
+	public static final String CAT_ID = "category::"; //$NON-NLS-1$
+	public static final String CMD_ID = "command::"; //$NON-NLS-1$
 
 	private CommandManager commandManager;
 	private IEclipseContext context;

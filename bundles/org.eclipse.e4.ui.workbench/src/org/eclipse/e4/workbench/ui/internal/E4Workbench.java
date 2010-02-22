@@ -11,22 +11,15 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.util.ArrayList;
-import org.eclipse.core.commands.Category;
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.EList;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -72,8 +65,7 @@ public class E4Workbench implements IWorkbench {
 			}
 			if (renderer == null) {
 				Logger logger = (Logger) appContext.get(Logger.class.getName());
-				logger
-						.error("Failed to create the presentation engine for URI: " + presentationURI); //$NON-NLS-1$
+				logger.error("Failed to create the presentation engine for URI: " + presentationURI); //$NON-NLS-1$
 			}
 		}
 
@@ -85,27 +77,7 @@ public class E4Workbench implements IWorkbench {
 	private void init(MApplication appElement) {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 
-		// fill in commands
-		Activator.trace(Policy.DEBUG_CMDS, "Initialize service from model", null); //$NON-NLS-1$
-		ECommandService cs = (ECommandService) appContext.get(ECommandService.class.getName());
-		Category cat = cs
-				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
-		EList<MCommand> commands = appElement.getCommands();
-		for (MCommand cmd : commands) {
-			IParameter[] parms = null;
-			String id = cmd.getId();
-			String name = cmd.getCommandName();
-			EList<MCommandParameter> modelParms = cmd.getParameters();
-			if (modelParms != null && !modelParms.isEmpty()) {
-				ArrayList<Parameter> parmList = new ArrayList<Parameter>();
-				for (MCommandParameter cmdParm : modelParms) {
-					parmList.add(new Parameter(cmdParm.getId(), cmdParm.getName(), null, null,
-							cmdParm.isOptional()));
-				}
-				parms = parmList.toArray(new Parameter[parmList.size()]);
-			}
-			cs.defineCommand(id, name, null, cat, parms);
-		}
+		E4CommandProcessor.processCommands(appElement.getContext(), appElement.getCommands());
 
 		// Do a top level processHierarchy for the application?
 		Workbench.processHierarchy(appElement);

@@ -13,8 +13,16 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -23,14 +31,17 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -70,6 +81,7 @@ import org.eclipse.ui.internal.JFaceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
+import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -820,9 +832,86 @@ public class Workbench implements IWorkbench {
 	 * @param appContext
 	 */
 	private static void initializeLegacyServices(IEclipseContext appContext) {
-		appContext.set(ICommandService.class.getName(), new FakeCommandService());
+		initializeCommandService(appContext);
 		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
 		appContext.set(IMenuService.class.getName(), new FakeMenuService());
+	}
+
+	static class MakeHandlersGo extends AbstractHandler {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands
+		 * .ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			org.eclipse.e4.workbench.ui.internal.Activator.trace(
+					org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+					"AllHandlerGo: not for executing", null); //$NON-NLS-1$
+			return null;
+		}
+
+	}
+
+	private static void initializeCommandService(IEclipseContext appContext) {
+		MApplication app = (MApplication) appContext.get(MApplication.class.getName());
+		CommandManager manager = (CommandManager) appContext.get(CommandManager.class.getName());
+
+		// save the e4 commands, just in case
+		ArrayList<MCommand> existing = new ArrayList<MCommand>(app.getCommands());
+		HashSet<String> existingIds = new HashSet<String>();
+		for (MCommand mCommand : existing) {
+			existingIds.add(mCommand.getId());
+		}
+
+		CommandService service = new CommandService(manager);
+		service.readRegistry();
+		appContext.set(ICommandService.class.getName(), service);
+
+		// put back the e4 commands
+		E4CommandProcessor.processCommands(appContext, existing);
+
+		MakeHandlersGo allHandlers = new MakeHandlersGo();
+
+
+		Category[] definedCategories = manager.getDefinedCategories();
+		for (int i = 0; i < definedCategories.length; i++) {
+			// must match definition in CommandServiceImpl
+			appContext.set(CommandServiceImpl.CAT_ID + definedCategories[i].getId(),
+					definedCategories[i]);
+		}
+
+		Command[] cmds = manager.getAllCommands();
+		for (int i = 0; i < cmds.length; i++) {
+			Command cmd = cmds[i];
+			final String cmdId = cmd.getId();
+			if (cmdId.contains("(")) { //$NON-NLS-1$
+				org.eclipse.e4.workbench.ui.internal.Activator.trace(
+						org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+						"Invalid command: " + cmd, null); //$NON-NLS-1$
+				continue;
+			}
+			if (existingIds.contains(cmdId)) {
+				// these were added back above.
+				continue;
+			}
+			cmd.setHandler(allHandlers);
+
+			// must match definition in CommandServiceImpl
+			appContext.set(CommandServiceImpl.CMD_ID + cmdId, cmd);
+			MCommand mcmd = MApplicationFactory.eINSTANCE.createCommand();
+			mcmd.setId(cmdId);
+			try {
+				mcmd.setCommandName(cmd.getName());
+			} catch (NotDefinedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			app.getCommands().add(mcmd);
+		}
+
 	}
 
 	public WorkbenchAdvisor getAdvisor() {
