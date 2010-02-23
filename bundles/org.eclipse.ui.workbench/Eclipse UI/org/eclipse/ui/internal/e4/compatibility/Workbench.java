@@ -82,6 +82,7 @@ import org.eclipse.ui.internal.JFaceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
+import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
@@ -125,6 +126,8 @@ public class Workbench implements IWorkbench {
 	private ListenerList windowListeners = new ListenerList();
 
 	private WorkbenchAdvisor wbAdvisor;
+
+	private WorkbenchActivitySupport activitySupport;
 
 	Workbench() {
 		// prevent external initialization
@@ -616,9 +619,10 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getActivitySupport()
 	 */
 	public IWorkbenchActivitySupport getActivitySupport() {
-		// FIXME compat getActivitySupport
-		E4Util.unsupported("getActivitySupport"); //$NON-NLS-1$
-		return null;
+		if (activitySupport == null) {
+			activitySupport = new WorkbenchActivitySupport();
+		}
+		return activitySupport;
 	}
 
 	/*
