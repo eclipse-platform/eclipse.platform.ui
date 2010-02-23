@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class ContextHelpDialog {
 		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
-		parentShell = display.getActiveShell();
+		parentShell = PlatformUI.getWorkbench().getModalDialogShellProvider().getShell();
 
 		if (parentShell != null) {
 			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL
