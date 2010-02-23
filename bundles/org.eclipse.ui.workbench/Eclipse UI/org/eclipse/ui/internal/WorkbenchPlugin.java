@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.ui.model.application.MUIElement;
-
 import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -44,6 +42,7 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
@@ -1019,6 +1018,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		 Window.setDefaultOrientation(getDefaultOrientation());
 
+		final IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
+		instantiateCompatibilityLayerHooks(serviceContext);
+
 	        // The UI plugin needs to be initialized so that it can install the callback in PrefUtil,
 	        // which needs to be done as early as possible, before the workbench
 	        // accesses any API preferences.
@@ -1030,9 +1032,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	            // to be loaded.s
 	        	if(uiBundle != null) {
 				uiBundle.start(Bundle.START_TRANSIENT);
-				final IEclipseContext serviceContext = EclipseContextFactory
-						.getServiceContext(context);
-				instantiateCompatibilityLayerHooks(serviceContext);
 			}
 	        } catch (BundleException e) {
 	            WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
