@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -29,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.part.IPageSite;
@@ -47,6 +51,7 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 
 	private IKeyBindingService keyBindingService;
 	private ISelectionProvider selectionProvider;
+	private ArrayList menuExtenders;
 
 	WorkbenchPartSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
 		this.model = model;
@@ -81,21 +86,71 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
+	/**
+	 * This is a helper method for the register context menu functionality. It
+	 * is provided so that different implementations of the
+	 * <code>IWorkbenchPartSite</code> interface don't have to worry about how
+	 * context menus should work.
+	 * 
+	 * @param menuId
+	 *            the menu id
+	 * @param menuManager
+	 *            the menu manager
+	 * @param selectionProvider
+	 *            the selection provider
+	 * @param includeEditorInput
+	 *            whether editor inputs should be included in the structured
+	 *            selection when calculating contributions
+	 * @param part
+	 *            the part for this site
+	 * @param menuExtenders
+	 *            the collection of menu extenders for this site
+	 * @see IWorkbenchPartSite#registerContextMenu(MenuManager,
+	 *      ISelectionProvider)
+	 */
+	public static final void registerContextMenu(final String menuId,
+			final MenuManager menuManager, final ISelectionProvider selectionProvider,
+			final boolean includeEditorInput, final IWorkbenchPart part,
+			final Collection menuExtenders) {
+		/*
+		 * Check to see if the same menu manager and selection provider have
+		 * already been used. If they have, then we can just add another menu
+		 * identifier to the existing PopupMenuExtender.
+		 */
+		final Iterator extenderItr = menuExtenders.iterator();
+		boolean foundMatch = false;
+		while (extenderItr.hasNext()) {
+			final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr.next();
+			if (existingExtender.matches(menuManager, selectionProvider, part)) {
+				existingExtender.addMenuId(menuId);
+				foundMatch = true;
+				break;
+			}
+		}
+
+		if (!foundMatch) {
+			menuExtenders.add(new PopupMenuExtender(menuId, menuManager, selectionProvider, part,
+					includeEditorInput));
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String, org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
-	public void registerContextMenu(String menuId, MenuManager menuManager,
-			ISelectionProvider selectionProvider) {
-		// FIXME compat registerContextMenu
-		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
+	public void registerContextMenu(String menuID, MenuManager menuMgr,
+			ISelectionProvider selProvider) {
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
 
+		registerContextMenu(menuID, menuMgr, selProvider, true, getPart(), menuExtenders);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
-	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider) {
-		registerContextMenu(getId(), menuManager, selectionProvider);
+	public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
+		registerContextMenu(getId(), menuMgr, selProvider);
 	}
 
 	/* (non-Javadoc)
