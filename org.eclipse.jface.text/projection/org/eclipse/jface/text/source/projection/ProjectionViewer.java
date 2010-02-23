@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     Anton Leherbauer <anton.leherbauer@windriver.com> - [projection] Eclipse is too eager to unfold code - http://bugs.eclipse.org/178203
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
@@ -1383,7 +1384,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					try {
 						int numberOfLines= e.getDocument().getNumberOfLines(e.getOffset(), replaceLength);
 						if (numberOfLines > 1 || fDeletedLines > 1)
-							fProjectionAnnotationModel.expandAll(master.getOffset(), master.getLength());
+							fProjectionAnnotationModel.expandAll(master.getOffset(), replaceLength);
 					} catch (BadLocationException x) {
 					}
 				}
