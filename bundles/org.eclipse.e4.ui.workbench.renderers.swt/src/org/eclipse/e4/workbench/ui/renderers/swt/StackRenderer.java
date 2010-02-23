@@ -312,7 +312,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 		MUILabel itemPart = (MUILabel) part;
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
-		int createFlags = 0;
+		int createFlags = SWT.NONE;
+		if (part instanceof MPart && ((MPart) part).isCloseable()) {
+			createFlags |= SWT.CLOSE;
+		}
 
 		CTabItem cti = findItemForPart(stack, part);
 		if (cti == null) {

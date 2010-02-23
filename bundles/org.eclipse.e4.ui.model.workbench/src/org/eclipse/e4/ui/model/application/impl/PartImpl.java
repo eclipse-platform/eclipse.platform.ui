@@ -73,6 +73,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isCloseable <em>Closeable</em>}</li>
  * </ul>
  * </p>
  *
@@ -358,6 +359,26 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected MToolBar toolbar;
+
+	/**
+	 * The default value of the '{@link #isCloseable() <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCloseable()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean CLOSEABLE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isCloseable() <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCloseable()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean closeable = CLOSEABLE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -759,6 +780,27 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isCloseable() {
+		return closeable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCloseable(boolean newCloseable) {
+		boolean oldCloseable = closeable;
+		closeable = newCloseable;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__CLOSEABLE, oldCloseable, closeable));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -854,6 +896,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getMenus();
 			case MApplicationPackage.PART__TOOLBAR:
 				return getToolbar();
+			case MApplicationPackage.PART__CLOSEABLE:
+				return isCloseable();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -925,6 +969,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__TOOLBAR:
 				setToolbar((MToolBar)newValue);
 				return;
+			case MApplicationPackage.PART__CLOSEABLE:
+				setCloseable((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -991,6 +1038,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__TOOLBAR:
 				setToolbar((MToolBar)null);
 				return;
+			case MApplicationPackage.PART__CLOSEABLE:
+				setCloseable(CLOSEABLE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1039,6 +1089,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return menus != null && !menus.isEmpty();
 			case MApplicationPackage.PART__TOOLBAR:
 				return toolbar != null;
+			case MApplicationPackage.PART__CLOSEABLE:
+				return closeable != CLOSEABLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1199,6 +1251,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		result.append(tooltip);
 		result.append(", dirty: "); //$NON-NLS-1$
 		result.append(dirty);
+		result.append(", closeable: "); //$NON-NLS-1$
+		result.append(closeable);
 		result.append(')');
 		return result.toString();
 	}

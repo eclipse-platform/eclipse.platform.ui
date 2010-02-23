@@ -59,6 +59,7 @@ public class ViewRegistry implements IViewRegistry {
 					descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 				}
 
+				descriptor.setCloseable(true);
 				descriptor.setAllowMultiple(Boolean.parseBoolean(element
 						.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 				descriptor

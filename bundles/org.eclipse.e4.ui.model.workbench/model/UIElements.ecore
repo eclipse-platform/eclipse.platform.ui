@@ -155,6 +155,8 @@
         eType="#//Menu" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//Part">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

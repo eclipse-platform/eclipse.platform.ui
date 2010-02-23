@@ -1049,6 +1049,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getPart_Closeable() {
+		return (EAttribute)partEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPartDescriptor() {
 		return partDescriptorEClass;
 	}
@@ -1775,6 +1784,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass = createEClass(PART);
 		createEReference(partEClass, PART__MENUS);
 		createEReference(partEClass, PART__TOOLBAR);
+		createEAttribute(partEClass, PART__CLOSEABLE);
 
 		partDescriptorEClass = createEClass(PART_DESCRIPTOR);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__ALLOW_MULTIPLE);
@@ -2160,6 +2170,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(partEClass, MPart.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPart_Menus(), this.getMenu(), null, "menus", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Toolbar(), this.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_AllowMultiple(), ecorePackage.getEBoolean(), "allowMultiple", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

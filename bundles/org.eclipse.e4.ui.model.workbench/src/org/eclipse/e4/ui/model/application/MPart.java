@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MPart#isCloseable <em>Closeable</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,5 +72,32 @@ public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, M
 	 * @generated
 	 */
 	void setToolbar(MToolBar value);
+
+	/**
+	 * Returns the value of the '<em><b>Closeable</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Closeable</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Closeable</em>' attribute.
+	 * @see #setCloseable(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getPart_Closeable()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isCloseable();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#isCloseable <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Closeable</em>' attribute.
+	 * @see #isCloseable()
+	 * @generated
+	 */
+	void setCloseable(boolean value);
 
 } // MPart

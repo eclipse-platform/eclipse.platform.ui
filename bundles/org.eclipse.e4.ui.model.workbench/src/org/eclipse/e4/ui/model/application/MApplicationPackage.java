@@ -2820,13 +2820,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 17;
 
 	/**
+	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__CLOSEABLE = CONTRIBUTION_FEATURE_COUNT + 18;
+
+	/**
 	 * The number of structural features of the '<em>Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 18;
+	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3034,6 +3043,15 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int PART_DESCRIPTOR__TOOLBAR = PART__TOOLBAR;
+
+	/**
+	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_DESCRIPTOR__CLOSEABLE = PART__CLOSEABLE;
 
 	/**
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
@@ -6040,6 +6058,17 @@ public interface MApplicationPackage extends EPackage {
 	EReference getPart_Toolbar();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#isCloseable <em>Closeable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Closeable</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#isCloseable()
+	 * @see #getPart()
+	 * @generated
+	 */
+	EAttribute getPart_Closeable();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartDescriptor <em>Part Descriptor</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -7272,6 +7301,14 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PART__TOOLBAR = eINSTANCE.getPart_Toolbar();
+
+		/**
+		 * The meta object literal for the '<em><b>Closeable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PART__CLOSEABLE = eINSTANCE.getPart_Closeable();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorImpl <em>Part Descriptor</em>}' class.
