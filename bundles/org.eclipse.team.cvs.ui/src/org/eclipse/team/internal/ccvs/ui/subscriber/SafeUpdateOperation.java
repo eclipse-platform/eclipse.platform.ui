@@ -427,7 +427,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	
 	protected void safeUpdate(IProject project, IResource[] resources, LocalOption[] localOptions, IProgressMonitor monitor) throws TeamException {
 		try {
-			UpdateOnlyMergableOperation operation = new UpdateOnlyMergableOperation(getPart(), project, resources, localOptions);
+			UpdateOnlyMergableOperation operation = createUpdateOnlyMergableOperation(project, resources, localOptions);
 			operation.run(monitor);
 			addSkippedFiles(operation.getSkippedFiles());
 		} catch (InvocationTargetException e) {
@@ -435,6 +435,10 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		} catch (InterruptedException e) {
 			Policy.cancelOperation();
 		}
+	}
+	
+	protected UpdateOnlyMergableOperation createUpdateOnlyMergableOperation(IProject project, IResource[] resources, LocalOption[] localOptions) {
+		return new UpdateOnlyMergableOperation(getPart(), project, resources, localOptions);
 	}
 	
 	/**

@@ -49,4 +49,28 @@
             name="CVS Test Editor">
       </editor>
    </extension>
+
+<!-- Other declarations -->
+   
+   <!-- ***** Nature that identifies model projects used in tests for bug 302163 ***** -->
+   <extension
+         id="bug302163_ModelNature"
+         name="Project nature for bug 302163"
+         point="org.eclipse.core.resources.natures">
+     <runtime>
+        <run class="org.eclipse.team.tests.ccvs.core.mappings.model.ModelNature"/>
+     </runtime>
+   </extension>
+ 
+   <!-- ***** Model provider for the model used in tests for bug 302163 ***** -->
+   <extension
+         id="bug302163_ModelProvider"
+         name="Model Provider for bug 302163"
+         point="org.eclipse.core.resources.modelProviders">
+      <modelProvider class="org.eclipse.team.tests.ccvs.core.mappings.model.mapping.CustomModelProvider"/>
+      <extends-model id="org.eclipse.core.resources.modelProvider"/>
+      <enablement>
+          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.team.tests.cvs.core.bug302163_ModelNature" />
+      </enablement>
+   </extension>
 </plugin>

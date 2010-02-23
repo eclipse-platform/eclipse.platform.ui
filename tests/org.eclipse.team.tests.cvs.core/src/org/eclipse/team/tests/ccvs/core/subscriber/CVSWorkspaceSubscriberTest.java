@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -30,7 +31,11 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
+import org.eclipse.team.tests.ccvs.core.mappings.model.ModelProject;
+import org.eclipse.team.tests.ccvs.core.mappings.model.mapping.ModelResourceMapping;
+import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 
 /**
  * This class tests the CVSWorkspaceSubscriber
@@ -276,6 +281,58 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/******************************************************************
 	 * Tests
 	 ******************************************************************/
+	
+	public void testBug302163WithStandardModel() throws CoreException {
+		IProject modelProject = getUniqueTestProject("test1");
+		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
+		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
+		shareProject(modelProject);
+		assertValidCheckout(modelProject);
+		
+		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
+		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
+		commitProject(copyModelProject);
+
+		refresh(getSubscriber(), modelProject);
+		
+		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
+		setSyncSource(new SyncInfoSource());
+		try {
+			update(modelProject, new String[] { "file.mod" });
+		} catch (CVSException e) {
+			fail("Update without models failed", e);
+		}
+		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
+		setSyncSource(new ModelParticipantSyncInfoSource());
+	}
+	
+	public void testBug302163WithCustomModel() throws CoreException {
+		IProject project = createProject("test", new String[] { "file1.txt" });
+		ModelResourceMapping.projectName = project.getName();
+		
+		IProject modelProject = getUniqueTestProject("test1");
+		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
+		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
+		ModelProject.makeModProject(modelProject, new NullProgressMonitor());
+		shareProject(modelProject);
+		assertValidCheckout(modelProject);
+		
+		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
+		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
+		commitProject(copyModelProject);
+
+		refresh(getSubscriber(), modelProject);
+		
+		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
+		setSyncSource(new SyncInfoSource());
+		try {
+			update(modelProject, new String[] { "file.mod" });
+		} catch (CVSException e) {
+			fail("Update without models failed", e);
+		}
+		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
+		setSyncSource(new ModelParticipantSyncInfoSource());
+	}
 	
 	/*
 	 * Perform a simple test that checks for the different types of incoming changes
