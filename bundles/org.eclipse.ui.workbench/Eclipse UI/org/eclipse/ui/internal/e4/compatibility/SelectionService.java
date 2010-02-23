@@ -142,7 +142,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
 		// TODO compat addPostSelectionListener
-		E4Util.unsupported("addPostSelectionListener"); //$NON-NLS-1$
+		E4Util.unsupported("addPostSelectionListener (delegating to addSelectionListener for now)"); //$NON-NLS-1$
+		addSelectionListener(listener);
 	}
 
 	/*
