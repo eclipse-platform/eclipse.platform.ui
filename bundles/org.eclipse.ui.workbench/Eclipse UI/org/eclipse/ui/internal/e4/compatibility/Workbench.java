@@ -86,6 +86,7 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
+import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -839,8 +840,17 @@ public class Workbench implements IWorkbench {
 	private static void initializeLegacyServices(IEclipseContext appContext) {
 		initializeCommandService(appContext);
 		initializeCommandImageService(appContext);
-		appContext.set(IHandlerService.class.getName(), new FakeHandlerService());
+		initializeHandlerService(appContext);
 		appContext.set(IMenuService.class.getName(), new FakeMenuService());
+	}
+
+	/**
+	 * @param appContext
+	 */
+	private static void initializeHandlerService(IEclipseContext appContext) {
+		final LegacyHandlerService service = new LegacyHandlerService(appContext);
+		appContext.set(IHandlerService.class.getName(), service);
+		service.readRegistry();
 	}
 
 	/**

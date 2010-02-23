@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -32,7 +33,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.part.IPageSite;
@@ -58,7 +61,10 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		this.part = part;
 		this.element = element;
 		
-		model.getContext().set(IWorkbenchLocationService.class.getName(), this);
+		IEclipseContext e4Context = model.getContext();
+		e4Context.set(IWorkbenchLocationService.class.getName(), this);
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
+		e4Context.set(IHandlerService.class.getName(), handlerService);
 	}
 
 	public MPart getModel() {

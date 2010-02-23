@@ -28,9 +28,18 @@ public class HandlerServiceImpl implements EHandlerService {
 	static final String METHOD_EXECUTE = "execute"; //$NON-NLS-1$
 	static final String METHOD_CAN_EXECUTE = "canExecute"; //$NON-NLS-1$
 	final static String H_ID = "handler::"; //$NON-NLS-1$
-	final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
+	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
 	final static String HANDLER_LOOKUP = "org.eclipse.e4.core.commands.EHandlerLookup"; //$NON-NLS-1$
 	final static String LOOKUP_HANDLER = "handler"; //$NON-NLS-1$
+
+	private static Object[] lookupHandler(String handlerId) {
+		return new Object[] { handlerId };
+	}
+
+	public static Object lookUpHandler(IEclipseContext context, String commandId) {
+		String handlerId = H_ID + commandId;
+		return context.get(HANDLER_LOOKUP, lookupHandler(handlerId));
+	}
 
 	private IEclipseContext context;
 
@@ -66,8 +75,7 @@ public class HandlerServiceImpl implements EHandlerService {
 	 */
 	public boolean canExecute(ParameterizedCommand command) {
 		String commandId = command.getId();
-		String handlerId = H_ID + commandId;
-		Object handler = context.get(HANDLER_LOOKUP, lookupHandler(handlerId));
+		Object handler = lookUpHandler(context, commandId);
 		if (handler == null) {
 			return false;
 		}
@@ -103,8 +111,7 @@ public class HandlerServiceImpl implements EHandlerService {
 	 */
 	public Object executeHandler(ParameterizedCommand command) {
 		String commandId = command.getId();
-		String handlerId = H_ID + commandId;
-		Object handler = context.get(HANDLER_LOOKUP, lookupHandler(handlerId));
+		Object handler = lookUpHandler(context, commandId);
 		if (handler == null) {
 			return null;
 		}
@@ -129,10 +136,6 @@ public class HandlerServiceImpl implements EHandlerService {
 				logger.error(e);
 			return null;
 		}
-	}
-
-	private Object[] lookupHandler(String handlerId) {
-		return new Object[] { handlerId };
 	}
 
 	@Inject
