@@ -12,6 +12,8 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -957,15 +959,52 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	// copy-pasted from org.eclipse.jdt.internal.ui.javaeditor.EditorUtility and modified
 
 	private static IEditorPart isOpenInEditor(Object inputElement) {
-		IEditorInput input= getEditorInput(inputElement);
-
+		IEditorInput input = getEditorInput(inputElement);
 		if (input != null) {
-			IWorkbenchPage p= TeamUIPlugin.getActivePage();
+			IWorkbenchPage p = TeamUIPlugin.getActivePage();
 			if (p != null) {
-				return p.findEditor(input);
+				IEditorPart editor = p.findEditor(input);
+				if (editor == null) {
+					IEditorReference[] er = p.getEditorReferences();
+					for (int i = 0; i < er.length; i++)
+						if (er[i].getId().equals(
+								"org.eclipse.compare.CompareEditor") && matches(er[i], input)) //$NON-NLS-1$
+							editor = er[i].getEditor(false);
+				}
+				return editor;
 			}
 		}
 		return null;
+	}
+
+	private static boolean matches(IEditorReference editorRef,
+			IEditorInput input) {
+		if (input instanceof FileEditorInput) {
+			IFile file = ((FileEditorInput) input).getFile();
+
+			CompareEditorInput cei = (CompareEditorInput) ((EditorPart) editorRef
+					.getPart(false)).getEditorInput();
+			Object compareResult = cei.getCompareResult();
+
+			if (compareResult instanceof IAdaptable) {
+				IResource r = (IResource) ((IAdaptable) compareResult)
+						.getAdapter(IResource.class);
+				if (r != null)
+					return file.equals(r);
+			}
+			if (compareResult instanceof ICompareInput) {
+				ICompareInput compareInput = (ICompareInput) compareResult;
+				ITypedElement left = compareInput.getLeft();
+				if (left instanceof ResourceNode)
+					if (file.equals(((ResourceNode) left).getResource()))
+						return true;
+				ITypedElement right = compareInput.getRight();
+				if (right instanceof ResourceNode)
+					if (file.equals(((ResourceNode) right).getResource()))
+						return true;
+			}
+		}
+		return false;
 	}
 
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
