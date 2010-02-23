@@ -365,9 +365,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPreferenceManager()
 	 */
 	public PreferenceManager getPreferenceManager() {
-		// FIXME compat getPreferenceManager
-		E4Util.unsupported("getPreferenceManager"); //$NON-NLS-1$
-		return null;
+		return WorkbenchPlugin.getDefault().getPreferenceManager();
 	}
 
 	/*

@@ -66,6 +66,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ViewDescriptor;
@@ -76,6 +77,7 @@ import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
@@ -218,6 +220,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ThemeRegistry themeRegistry;
 
 	private String factoryID;
+
+	private WorkbenchPreferenceManager preferenceManager;
         
     
     /**
@@ -799,23 +803,16 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * the receiver.
      */
     public PreferenceManager getPreferenceManager() {
-		// TODO commented out for e4 compatibility
-//        if (preferenceManager == null) {
-//            preferenceManager = new WorkbenchPreferenceManager(
-//                    PREFERENCE_PAGE_CATEGORY_SEPARATOR);
-//
-//            //Get the pages from the registry
-//            PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(
-//                    getWorkbench());
-//            registryReader
-//                    .loadFromRegistry(Platform.getExtensionRegistry());
-//            preferenceManager.addPages(registryReader.getTopLevelNodes());
-//           
-//        }
-//        return preferenceManager;
-		// FIXME compat: add preference manager support
-		E4Util.unsupported("getPreferenceManager"); //$NON-NLS-1$
-		return null;
+		if (preferenceManager == null) {
+			preferenceManager = new WorkbenchPreferenceManager(PREFERENCE_PAGE_CATEGORY_SEPARATOR);
+
+			// Get the pages from the registry
+			PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader();
+			registryReader.loadFromRegistry(Platform.getExtensionRegistry());
+			preferenceManager.addPages(registryReader.getTopLevelNodes());
+
+		}
+		return preferenceManager;
     }
 
     /**
