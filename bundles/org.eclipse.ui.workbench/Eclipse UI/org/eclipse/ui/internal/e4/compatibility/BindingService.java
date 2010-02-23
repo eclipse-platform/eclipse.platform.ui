@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
@@ -203,7 +204,7 @@ public class BindingService implements IBindingService {
 	public String getLocale() {
 		// TODO compat getLocale
 		E4Util.unsupported("getLocale"); //$NON-NLS-1$
-		return null;
+		return Locale.getDefault().toString();
 	}
 
 	/*
