@@ -341,7 +341,7 @@ public class OpenWithMenu extends ContributionItem {
 	            String editorId = editorDescriptor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID
 	                    : editorDescriptor.getId();
 	            
-	            ((WorkbenchPage) page).openEditor(new FileEditorInput(file), editorId, true, MATCH_BOTH);
+	            page.openEditor(new FileEditorInput(file), editorId, true, MATCH_BOTH);
 	            // only remember the default editor if the open succeeds
 	            IDE.setDefaultEditor(file, editorId);
         	}
