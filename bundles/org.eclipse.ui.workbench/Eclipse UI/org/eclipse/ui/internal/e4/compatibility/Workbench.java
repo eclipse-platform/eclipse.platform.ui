@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -90,7 +91,10 @@ import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
@@ -101,6 +105,7 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
@@ -117,6 +122,8 @@ public class Workbench implements IWorkbench {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	private ServiceLocator serviceLocator;
 
 	private UIExtensionTracker tracker;
 	private IPerspectiveRegistry perspectiveRegistry;
@@ -141,6 +148,22 @@ public class Workbench implements IWorkbench {
 
 	@PostConstruct
 	void postConstruct() throws InstantiationException, InvocationTargetException {
+		ServiceLocatorCreator slc = new ServiceLocatorCreator();
+		serviceLocator = (ServiceLocator) slc.createServiceLocator(null, null, new IDisposable() {
+			public void dispose() {
+				final Display display = getDisplay();
+				if (display != null && !display.isDisposed()) {
+					MessageDialog.openInformation(null,
+							WorkbenchMessages.Workbench_NeedsClose_Title,
+							WorkbenchMessages.Workbench_NeedsClose_Message);
+					close();
+				}
+			}
+		});
+		serviceLocator.setContext(application.getContext());
+		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
+
+
 		viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class, application
 				.getContext());
 		perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
@@ -170,7 +193,8 @@ public class Workbench implements IWorkbench {
 
 		application.getContext().set(
 				IWorkbenchLocationService.class.getName(),
-				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, this, null, null, null,
+				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE, this, null, null,
+						null,
 						null, 0));
 		JFaceUtil.initializeJFacePreferences();
 		initializeApplicationColors();
@@ -796,7 +820,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		return application.getContext().get(adapter.getName());
+		return serviceLocator.getService(adapter);
 	}
 
 	/*
@@ -805,7 +829,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		return application.getContext().get(api.getName());
+		return serviceLocator.getService(api);
 	}
 
 	/*
@@ -814,7 +838,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		return application.getContext().containsKey(api.getName());
+		return serviceLocator.hasService(api);
 	}
 
 	/**

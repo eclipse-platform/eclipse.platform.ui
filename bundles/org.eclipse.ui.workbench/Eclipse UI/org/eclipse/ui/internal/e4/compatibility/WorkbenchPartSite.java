@@ -37,14 +37,17 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.5
- *
+ * 
  */
 public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchPartSite {
 
@@ -55,37 +58,55 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 	private IKeyBindingService keyBindingService;
 	private ISelectionProvider selectionProvider;
 	private ArrayList menuExtenders;
+	private ServiceLocator serviceLocator;
 
 	WorkbenchPartSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
 		this.model = model;
 		this.part = part;
 		this.element = element;
-		
+
 		IEclipseContext e4Context = model.getContext();
 		e4Context.set(IWorkbenchLocationService.class.getName(), this);
 		IHandlerService handlerService = new LegacyHandlerService(e4Context);
 		e4Context.set(IHandlerService.class.getName(), handlerService);
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) e4Context
+				.get(IServiceLocatorCreator.class.getName());
+		IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbenchWindow, null,
+				new IDisposable() {
+					public void dispose() {
+						// not sure what to do here
+					}
+				});
+		serviceLocator.setContext(e4Context);
+		serviceLocator.registerService(IWorkbenchPartSite.class, this);
 	}
 
 	public MPart getModel() {
 		return model;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
 	 */
 	public String getPluginId() {
 		return element.getNamespaceIdentifier();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
 	 */
 	public String getRegisteredName() {
@@ -140,8 +161,13 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String, org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String,
+	 * org.eclipse.jface.action.MenuManager,
+	 * org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(String menuID, MenuManager menuMgr,
 			ISelectionProvider selProvider) {
@@ -152,14 +178,20 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		registerContextMenu(menuID, menuMgr, selProvider, true, getPart(), menuExtenders);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(org.eclipse.jface
+	 * .action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
 		registerContextMenu(getId(), menuMgr, selProvider);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
@@ -170,28 +202,36 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		return keyBindingService;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getPart()
 	 */
 	public IWorkbenchPart getPart() {
 		return part;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchSite#getPage()
 	 */
 	public IWorkbenchPage getPage() {
 		return getWorkbenchWindow().getActivePage();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
 		return selectionProvider;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchSite#getShell()
 	 */
 	public Shell getShell() {
@@ -206,7 +246,9 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		return control.getShell();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchSite#getWorkbenchWindow()
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
@@ -223,14 +265,20 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		return workbench.createWorkbenchWindow(window);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.
+	 * viewers.ISelectionProvider)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
 		selectionProvider = provider;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
@@ -240,18 +288,22 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		return model.getContext().get(api.getName());
+		return serviceLocator.getService(api);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		return model.getContext().containsKey(api.getName());
+		return serviceLocator.hasService(api);
 	}
 
 	/*

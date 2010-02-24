@@ -45,12 +45,17 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
+import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
+import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -78,6 +83,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private ListenerList pageListeners = new ListenerList();
 	private ListenerList perspectiveListeners = new ListenerList();
 
+	private ServiceLocator serviceLocator;
+
 	public WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
 		this.perspective = perspective;
@@ -86,13 +93,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	@PostConstruct
 	void setup() throws InvocationTargetException, InstantiationException {
 		IEclipseContext windowContext = model.getContext();
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
+				new IDisposable() {
+					public void dispose() {
+						final Shell shell = getShell();
+						if (shell != null && !shell.isDisposed()) {
+							close();
+						}
+					}
+				});
+		serviceLocator.setContext(windowContext);
+
 		page = new WorkbenchPage(this, input);
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
 
+		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
+		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
+
 		windowContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
-				IServiceScopes.PARTSITE_SCOPE, getWorkbench(), this, null, null, null, 1));
+				IServiceScopes.WINDOW_SCOPE, getWorkbench(), this, null, null, null, 1));
 
 		ContextInjectionFactory.inject(page, windowContext);
 		page.setPerspective(perspective);
@@ -332,14 +355,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		return model.getContext().get(api.getName());
+		return serviceLocator.getService(api);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		return model.getContext().containsKey(api.getName());
+		return serviceLocator.hasService(api);
 	}
 
 }
