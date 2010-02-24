@@ -90,9 +90,7 @@ public class DnDManager {
 				}
 
 				Point p = event.display.getCursorLocation();
-				p.x = p.x + 20;
-				p.y = p.y + 20;
-				dragHost.getShell().setLocation(p);
+				dragHost.setLocation(p.x, p.y);
 				updateOverlay();
 			}
 

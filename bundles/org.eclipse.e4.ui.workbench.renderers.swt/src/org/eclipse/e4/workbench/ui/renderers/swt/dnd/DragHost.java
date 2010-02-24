@@ -26,6 +26,9 @@ public class DragHost {
 	int originalIndex;
 	MWindow baseWindow;
 
+	int xOffset = 20;
+	int yOffset = 20;
+
 	private MWindow dragWindow;
 
 	public DragHost(Shell shell) {
@@ -56,6 +59,10 @@ public class DragHost {
 		return dragWindow;
 	}
 
+	public void setLocation(int x, int y) {
+		getShell().setLocation(x + xOffset, y + yOffset);
+	}
+
 	private MWindow getWindow() {
 		MUIElement pe = originalParent;
 		while (pe != null && !(pe instanceof MApplication)) {
@@ -68,6 +75,15 @@ public class DragHost {
 	}
 
 	private void attach() {
+		dragElement.getParent().getChildren().remove(dragElement);
+		((Shell) baseWindow.getWidget()).getDisplay().update();
+		dragWindow = MApplicationFactory.eINSTANCE.createWindow();
+		dragWindow.getTags().add(DragHostId);
+		formatModel(dragWindow);
+
+		// define the initial location and size for the window
+		Point cp = ((Shell) baseWindow.getWidget()).getDisplay()
+				.getCursorLocation();
 		Point size = new Point(200, 200);
 		if (dragElement.getWidget() instanceof Control) {
 			Control ctrl = (Control) dragElement.getWidget();
@@ -78,17 +94,13 @@ public class DragHost {
 			size = new Point(bounds.width + 3, bounds.height + 3);
 		}
 
-		dragElement.getParent().getChildren().remove(dragElement);
+		dragWindow.setX(cp.x + xOffset);
+		dragWindow.setY(cp.y + yOffset);
+		dragWindow.setWidth(size.x);
+		dragWindow.setHeight(size.y);
 
-		dragWindow = MApplicationFactory.eINSTANCE.createWindow();
-		dragWindow.getTags().add(DragHostId);
-		formatModel(dragWindow);
+		// add the window as a child oc the base window
 		baseWindow.getChildren().add(dragWindow);
-
-		getShell().setSize(size);
-
-		Point cp = getShell().getDisplay().getCursorLocation();
-		getShell().setLocation(cp.x + 20, cp.y + 20);
 
 		getShell().layout(getShell().getChildren(), SWT.CHANGED | SWT.DEFER);
 		getShell().setVisible(true);
@@ -126,11 +138,13 @@ public class DragHost {
 			tb.getParent()
 					.layout(new Control[] { tb }, SWT.CHANGED | SWT.DEFER);
 		}
+
 		baseWindow.getChildren().remove(dragWindow);
+
+		newContainer.setSelectedElement(dragElement);
+
 		if (getShell() != null)
 			getShell().dispose();
-		else
-			System.out.println("WTF ??"); //$NON-NLS-1$
 	}
 
 	public void cancel() {

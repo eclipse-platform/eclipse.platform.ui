@@ -283,7 +283,8 @@ public class StackRenderer extends LazyStackRenderer {
 		cti.setText(getLabel(itemPart, itemPart.getLabel()));
 		cti.setImage(getImage(itemPart));
 		cti.setToolTipText(itemPart.getTooltip());
-		cti.setControl((Control) part.getWidget());
+		if (part.getWidget() != null)
+			cti.setControl((Control) part.getWidget());
 	}
 
 	private int calcIndexFor(MElementContainer<MUIElement> stack,

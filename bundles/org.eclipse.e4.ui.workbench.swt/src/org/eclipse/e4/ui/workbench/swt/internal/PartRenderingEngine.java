@@ -124,9 +124,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// explicitly do *not* render non-selected elements in
 				// stacks (to support lazy loading).
 				boolean isStack = changedObj instanceof MGenericStack<?>;
-				boolean renderIt = added.getWidget() == null
-						&& (!isStack || added == changedElement
-								.getSelectedElement());
+				boolean hasWidget = added.getWidget() != null;
+				boolean isSelected = added == changedElement
+						.getSelectedElement();
+				boolean renderIt = !isStack || hasWidget || isSelected;
 				if (renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
 					Widget w = (Widget) createGui(added);
