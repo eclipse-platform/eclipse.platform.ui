@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
+import org.eclipse.compare.internal.patch.PatchFileDiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -23,6 +24,10 @@ public class PatchCompareAdapter extends SynchronizationCompareAdapter
 
 	public ICompareInput asCompareInput(ISynchronizationContext context,
 			Object o) {
+		// PatchFileDiffNode can adapt to IFile
+		if (o instanceof PatchFileDiffNode)
+			return super.asCompareInput(context, ((PatchFileDiffNode) o)
+					.getResource());
 		if (o instanceof ICompareInput)
 			return (ICompareInput) o;
 		return super.asCompareInput(context, o);

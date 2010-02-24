@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 		return new PatchFileDiffNode(result, parent, getKind(result), getAncestorElement(result), getLeftElement(result), getRightElement(result));
 	}
 	
-	private static int getKind(FileDiffResult result) {
+	public static int getKind(FileDiffResult result) {
 		if (!result.hasMatches())
 			return Differencer.NO_CHANGE;
 		int fileDiffKind = result.getDiff().getDiffType(result.getConfiguration().isReversed());
@@ -57,7 +57,7 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 		return kind;
 	}
 
-	private static ITypedElement getRightElement(FileDiffResult result) {
+	public static ITypedElement getRightElement(FileDiffResult result) {
 		return new PatchFileTypedElement(result, true);
 	}
 
@@ -65,7 +65,7 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 		return new PatchFileTypedElement(result, false);
 	}
 
-	private static ITypedElement getAncestorElement(FileDiffResult result) {
+	public static ITypedElement getAncestorElement(FileDiffResult result) {
 		return new PatchFileTypedElement(result, false);
 	}
 

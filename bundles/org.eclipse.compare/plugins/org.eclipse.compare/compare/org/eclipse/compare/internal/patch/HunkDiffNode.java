@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class HunkDiffNode extends PatchDiffNode {
 		return new HunkDiffNode(result, parent, Differencer.CHANGE, getAncestorElement(result, ancestorFullContext), getLeftElement(result, leftFullContext), getRightElement(result, rightFullContext));
 	}
 	
-	private static ITypedElement getRightElement(HunkResult result, boolean fullContext) {
+	public static ITypedElement getRightElement(HunkResult result, boolean fullContext) {
 		return new HunkTypedElement(result, true /* isResult */, fullContext);
 	}
 
@@ -39,7 +39,7 @@ public class HunkDiffNode extends PatchDiffNode {
 		return new HunkTypedElement(result, false /* before state */, fullContext);
 	}
 
-	private static ITypedElement getAncestorElement(HunkResult result, boolean fullContext) {
+	public static ITypedElement getAncestorElement(HunkResult result, boolean fullContext) {
 		if (!fullContext && result.isOK()) {
 			return new HunkTypedElement(result, false /* before state */, fullContext);
 		}
@@ -51,7 +51,7 @@ public class HunkDiffNode extends PatchDiffNode {
 		return new HunkTypedElement(result, false /* before state */, result.isOK());
 	}
 
-	private HunkDiffNode(HunkResult result, PatchFileDiffNode parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
+	public HunkDiffNode(HunkResult result, PatchFileDiffNode parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
 		super(result.getHunk(), parent, kind, ancestor, left, right);
 		this.result = result;
 	}

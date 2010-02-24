@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -85,5 +88,16 @@ public class ApplyPatchModelSynchronizeParticipant extends
 			return enabledProviders;
 		extended[extended.length - 1] = provider;
 		return extended;
+	}
+	
+	public ICompareInput asCompareInput(Object object) {
+		// consult adapter first
+		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(object);
+		if (adapter != null)
+			return adapter.asCompareInput(getContext(), object);
+		if (object instanceof ICompareInput) {
+			return (ICompareInput) object;
+		}
+		return null;
 	}
 }

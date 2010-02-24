@@ -13,13 +13,15 @@ package org.eclipse.team.internal.ui.synchronize.patch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.core.patch.*;
 import org.eclipse.compare.internal.patch.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.internal.runtime.AdapterManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 
 // TODO: extend PatchDiffNode, update navigatorContent triggerPoints when done
 public class PatchWorkspace extends DiffNode implements IAdaptable {
@@ -92,20 +94,38 @@ public class PatchWorkspace extends DiffNode implements IAdaptable {
 	private List/*<IDiffElement>*/ processDiff(FilePatch2 diff, DiffNode parent) {
 		List result = new ArrayList();
 		FileDiffResult diffResult = getPatcher().getDiffResult(diff);
-		PatchFileDiffNode node = PatchFileDiffNode.createDiffNode(parent, diffResult);
+		PatchFileDiffNode node = new PatchFileDiffNode(diffResult, parent, PatchFileDiffNode.getKind(diffResult), PatchFileDiffNode.getAncestorElement(diffResult), getLeftElement(diffResult), PatchFileDiffNode.getRightElement(diffResult));
 		result.add(node);
 		HunkResult[] hunkResults = diffResult.getHunkResults();
 		for (int i = 0; i < hunkResults.length; i++) {
 			HunkResult hunkResult = hunkResults[i];
-			/*HunkDiffNode hunkDiffNode =*/ HunkDiffNode.createDiffNode(node, hunkResult, false, true, false);
+			new HunkDiffNode(hunkResult, node, Differencer.CHANGE, HunkDiffNode.getAncestorElement(hunkResult, false), getLeftElement(hunkResult), HunkDiffNode.getRightElement(hunkResult, false));
 			// result.add(hunkDiffNode);
 		}
 		return result;
+	}
+	
+	private static ITypedElement getLeftElement(final FileDiffResult result) {
+		return new LocalResourceTypedElement(((WorkspaceFileDiffResult)result).getTargetFile()) {
+			public String getName() {
+				// as in org.eclipse.compare.internal.patch.PatchFileTypedElement
+				return result.getTargetPath().toString();
+			}
+		};
+	}
+
+	private static ITypedElement getLeftElement(final HunkResult result) {
+		return new LocalResourceTypedElement(((WorkspaceFileDiffResult)result.getDiffResult()).getTargetFile()) {
+			public String getName() {
+				// as in org.eclipse.compare.internal.patch.HunkTypedElement
+				return result.getHunk().getLabel();
+			}
+		};
 	}
 
 	// cannot extend PlatformObject (already extends DiffNode) so implement
 	// IAdaptable
 	public Object getAdapter(Class adapter) {
-		return AdapterManager.getDefault().getAdapter(this, adapter);
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }
