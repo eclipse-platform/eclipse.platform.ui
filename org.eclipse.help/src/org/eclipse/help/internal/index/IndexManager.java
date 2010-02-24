@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,32 +86,29 @@ public class IndexManager {
 			IIndexContribution[] contrib;
 			try {
 				contrib = providers[i].getIndexContributions(locale);
-			}
-			catch (Throwable t) {
+				// check for nulls and root element
+				for (int j = 0; j < contrib.length; ++j) {
+					if (contrib[j] == null) {
+						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+						HelpPlugin.logError(msg);
+					} else if (contrib[j].getIndex() == null) {
+						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+					} else {
+						IndexContribution contribution = new IndexContribution();
+						contribution.setId(contrib[j].getId());
+						contribution.setLocale(contrib[j].getLocale());
+						IIndex index = contrib[j].getIndex();
+						contribution.setIndex(index instanceof Index ? (Index) index
+								: (Index) UAElementFactory.newElement(index));
+						contributions.add(contribution);
+					}
+				}
+			} catch (Throwable t) {
 				// log, and skip the offending provider
 				String msg = "Error getting help keyword index data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
 				HelpPlugin.logError(msg, t);
 				continue;
-			}
-			
-			// check for nulls and root element
-			for (int j=0;j<contrib.length;++j) {
-				if (contrib[j] == null) {
-					String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg);
-				}
-				else if (contrib[j].getIndex() == null) {
-					String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					HelpPlugin.logError(msg);
-				}
-				else {
-					IndexContribution contribution = new IndexContribution();
-					contribution.setId(contrib[j].getId());
-					contribution.setLocale(contrib[j].getLocale());
-					IIndex index = contrib[j].getIndex();
-					contribution.setIndex(index instanceof Index ? (Index)index : (Index)UAElementFactory.newElement(index));
-					contributions.add(contribution);
-				}
 			}
 		}
 		cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
