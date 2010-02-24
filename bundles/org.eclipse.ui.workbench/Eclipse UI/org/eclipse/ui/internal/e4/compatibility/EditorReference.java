@@ -68,6 +68,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 	}
 
+	public EditorDescriptor getDescriptor() {
+		return descriptor;
+	}
+
 	public String getFactoryId() {
 		// FIXME compat getFactoryId
 		E4Util.unsupported("getFactoryId"); //$NON-NLS-1$
