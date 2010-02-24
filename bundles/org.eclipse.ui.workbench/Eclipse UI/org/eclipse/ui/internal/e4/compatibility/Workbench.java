@@ -78,6 +78,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.JFaceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -554,6 +555,18 @@ public class Workbench implements IWorkbench {
 		if (targetWindow != null) {
 			IWorkbenchPage page = targetWindow.getActivePage();
 			if (activate(perspectiveId, page, input, false)) {
+				return page;
+			}
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+
+			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
+				targetWindow.getShell().open();
+				if (page == null) {
+					page = targetWindow.openPage(perspectiveId, input);
+				} else {
+					page.setPerspective(targetPerspective);
+				}
 				return page;
 			}
 		}

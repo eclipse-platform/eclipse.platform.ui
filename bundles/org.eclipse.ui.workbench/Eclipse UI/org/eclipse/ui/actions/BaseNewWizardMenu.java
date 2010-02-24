@@ -28,10 +28,8 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -109,17 +107,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         super(id);
         Assert.isNotNull(window);
         this.workbenchWindow = window;
-		// TODO commented out for e4 compatibility
-		// showDlgAction = ActionFactory.NEW.create(window);
-		class ShowDialogAction extends Action implements IWorkbenchAction {
-			public void dispose() {
-			}
-
-			public void run() {
-				MessageDialog.openInformation(null, "oops", "Dialog not yet implemented."); //$NON-NLS-1$//$NON-NLS-2$
-			}
-		}
-		showDlgAction = new ShowDialogAction();
+		showDlgAction = ActionFactory.NEW.create(window);
         registerListeners();
         // indicate that a new wizards submenu has been created
 		// TODO commented out for e4 compatibility
