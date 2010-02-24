@@ -47,6 +47,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -69,6 +70,7 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewReference;
@@ -94,6 +96,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.JFaceUtil;
+import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
@@ -872,8 +875,8 @@ public class Workbench implements IWorkbench {
 		}
 
 		if (toSave.isEmpty()) {
-			return true;
-		}
+		return true;
+	}
 
 		final boolean[] success = { true };
 		
@@ -967,6 +970,8 @@ public class Workbench implements IWorkbench {
 		initializeCommandImageService(appContext);
 		initializeHandlerService(appContext);
 		appContext.set(IMenuService.class.getName(), new FakeMenuService());
+		appContext.set(ISaveablesLifecycleListener.class.getName(), new SaveablesList(
+				(IExceptionHandler) appContext.get(IExceptionHandler.class.getName())));
 	}
 
 	/**

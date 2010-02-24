@@ -628,6 +628,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ExternalEditor_errorMessage;
 	public static String Save;
 	public static String Save_Resource;
+	public static String Saving_Modifications;
 	public static String Save_All;
 
 
