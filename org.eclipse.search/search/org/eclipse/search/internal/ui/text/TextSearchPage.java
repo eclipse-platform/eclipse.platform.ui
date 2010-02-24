@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -87,7 +91,7 @@ import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
-    private static final int HISTORY_SIZE= 12;
+	private static final int HISTORY_SIZE= 12;
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
 	// Dialog store id constants
@@ -98,7 +102,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private static final String STORE_HISTORY= "HISTORY"; //$NON-NLS-1$
 	private static final String STORE_HISTORY_SIZE= "HISTORY_SIZE"; //$NON-NLS-1$
 
-	private List fPreviousSearchPatterns= new ArrayList(20);
+	/**
+	 * Section name for the stored file extensions.
+	 * @since 3.6
+	 */
+	private static final String STORE_EXTENSIONS= "EXTENSIONS"; //$NON-NLS-1$
+
+	private List fPreviousSearchPatterns= new ArrayList(HISTORY_SIZE);
 
 	private boolean fFirstTime= true;
 	private boolean fIsCaseSensitive;
@@ -117,6 +127,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private ContentAssistCommandAdapter fPatterFieldContentAssist;
 
+	/**
+	 * The previous file extensions.
+	 * @since 3.6
+	 */
+	private String[] fPreviousExtensions;
+
+	
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
@@ -365,16 +382,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return match;
 	}
 
-	private String[] getPreviousExtensions() {
+	private String[] getPreviousExtensionsOldStyle() {
 		List extensions= new ArrayList(fPreviousSearchPatterns.size());
 		int size= fPreviousSearchPatterns.size();
 		for (int i= 0; i < size; i++) {
-			SearchPatternData data= (SearchPatternData) fPreviousSearchPatterns.get(i);
+			SearchPatternData data= (SearchPatternData)fPreviousSearchPatterns.get(i);
 			String text= FileTypeEditor.typesToString(data.fileNamePatterns);
 			if (!extensions.contains(text))
 				extensions.add(text);
 		}
-		return (String[]) extensions.toArray(new String[extensions.size()]);
+		return (String[])extensions.toArray(new String[extensions.size()]);
 	}
 
 	private String[] getPreviousSearchPatterns() {
@@ -402,7 +419,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				fFirstTime= false;
 				// Set item and text here to prevent page from resizing
 				fPattern.setItems(getPreviousSearchPatterns());
-				fExtensions.setItems(getPreviousExtensions());
+				fExtensions.setItems(fPreviousExtensions);
 //				if (fExtensions.getItemCount() == 0) {
 //					loadFilePatternDefaults();
 //				}
@@ -577,8 +594,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				else
 					fPattern.setText(insertEscapeChars(text));
 
-				if (getPreviousExtensions().length > 0) {
-					fExtensions.setText(getPreviousExtensions()[0]);
+				if (fPreviousExtensions.length > 0) {
+					fExtensions.setText(fPreviousExtensions[0]);
 				} else {
 					String extension= getExtensionFromEditor();
 					if (extension != null)
@@ -745,6 +762,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		} catch (NumberFormatException e) {
 			// ignore
 		}
+
+		Set previousExtensions= new HashSet(HISTORY_SIZE);
+		IDialogSettings extensionsSettings= s.getSection(STORE_EXTENSIONS);
+		if (extensionsSettings != null) {
+			for (int i= 0; i < HISTORY_SIZE; i++) {
+				String extension= extensionsSettings.get(Integer.toString(i));
+				if (extension == null)
+					break;
+				previousExtensions.add(extension);
+			}
+			fPreviousExtensions= new String[previousExtensions.size()];
+			previousExtensions.toArray(fPreviousExtensions);
+		} else
+			fPreviousExtensions= getPreviousExtensionsOldStyle();
+		Arrays.sort(fPreviousExtensions, Collator.getInstance());
+
 	}
 
 	/**
@@ -763,6 +796,18 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			SearchPatternData data= ((SearchPatternData) fPreviousSearchPatterns.get(i));
 			data.store(histSettings);
 		}
+
+		IDialogSettings extensionsSettings= s.addNewSection(STORE_EXTENSIONS);
+		extensionsSettings.put(Integer.toString(0), fExtensions.getText());
+		Set extensions= new HashSet(HISTORY_SIZE);
+		extensions.add(fExtensions.getText());
+		int j= 1;
+		for (int i= 0; i < fExtensions.getItemCount(); i++) {
+			String extension= fExtensions.getItem(i);
+			if (extensions.add(extension))
+				extensionsSettings.put(Integer.toString(j++), extension);
+		}
+
 	}
 
 	private void statusMessage(boolean error, String message) {
