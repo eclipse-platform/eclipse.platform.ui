@@ -13,18 +13,15 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 /**
  *
@@ -32,38 +29,14 @@ import org.osgi.service.event.EventHandler;
 public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 	@Inject
+	IPresentationEngine renderer;
+
+	@Inject
 	IEventBroker eventBroker;
-	private EventHandler showPerspectiveHandler;
 
 	@PostConstruct
 	public void init() {
 		super.init(eventBroker);
-
-		showPerspectiveHandler = new EventHandler() {
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MPerspectiveStack))
-					return;
-
-				MPerspectiveStack ps = (MPerspectiveStack) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-
-				Composite psComp = (Composite) ps.getWidget();
-				StackLayout sl = (StackLayout) psComp.getLayout();
-				Control ctrl = (Control) ps.getSelectedElement().getWidget();
-				sl.topControl = ctrl;
-				psComp.layout();
-			}
-		};
-
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), showPerspectiveHandler);
-	}
-
-	@PreDestroy
-	public void contextDisposed() {
-		eventBroker.unsubscribe(showPerspectiveHandler);
 	}
 
 	/*
@@ -108,5 +81,29 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 			sl.topControl = ctrl;
 			psComp.layout();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.LazyStackRenderer#showTab(org
+	 * .eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	protected void showTab(MUIElement tabElement) {
+		super.showTab(tabElement);
+
+		Control ctrl = (Control) tabElement.getWidget();
+		if (ctrl == null) {
+			ctrl = (Control) renderer.createGui(tabElement);
+		}
+
+		Composite psComp = ctrl.getParent();
+		StackLayout sl = (StackLayout) psComp.getLayout();
+		sl.topControl = ctrl;
+		psComp.layout();
+
+		ctrl.moveAbove(null);
 	}
 }

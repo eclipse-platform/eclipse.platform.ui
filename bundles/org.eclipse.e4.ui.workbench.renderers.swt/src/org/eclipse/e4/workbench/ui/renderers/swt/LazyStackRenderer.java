@@ -21,7 +21,6 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -42,37 +41,38 @@ import org.osgi.service.event.EventHandler;
  * 
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
-	private EventHandler lazyLoader;
+	private EventHandler lazyLoader = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+
+			if (!(element instanceof MGenericStack<?>))
+				return;
+
+			MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
+			LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
+			if (lsr == null)
+				return;
+
+			// Gather up the elements that are being 'hidden' by this change
+			MUIElement oldSel = (MUIElement) event
+					.getProperty(UIEvents.EventTags.OLD_VALUE);
+			if (oldSel != null) {
+				List<MUIElement> goingHidden = new ArrayList<MUIElement>();
+				hideElementRecursive(oldSel, goingHidden);
+			}
+
+			lsr.showTab(stack.getSelectedElement());
+		}
+	};;
 
 	public LazyStackRenderer() {
 		super();
 	}
 
 	public void init(IEventBroker eventBroker) {
-		lazyLoader = new EventHandler() {
-			public void handleEvent(Event event) {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-
-				if (!(element instanceof MGenericStack<?>))
-					return;
-
-				MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
-
-				MUIElement oldSel = (MUIElement) event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				selectStackElement(stack, oldSel);
-				MUIElement selPart = stack.getSelectedElement();
-				if (selPart != null) {
-					if (selPart.getWidget() == null) {
-						IPresentationEngine renderer = (IPresentationEngine) context
-								.get(IPresentationEngine.class.getName());
-						renderer.createGui(selPart);
-					} else {
-						showChild(stack, selPart);
-					}
-				}
-			}
-		};
+		// Ensure that there only ever *one* listener. Each subclass
+		// will call this method
+		eventBroker.unsubscribe(lazyLoader);
 
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
@@ -87,22 +87,18 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	public void postProcess(MUIElement element) {
-		if (!(element instanceof MElementContainer<?>))
+		if (!(element instanceof MGenericStack<?>))
 			return;
 
-		MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
+		MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
 		MUIElement selPart = stack.getSelectedElement();
-
-		// If there's no 'active' part defined then pick the first
-		if (selPart == null && stack.getChildren().size() > 0) {
-			// NOTE: no need to render first because the listener for
-			// the active child changing will do it
-			int defaultIndex = 0;
-			stack.setSelectedElement(stack.getChildren().get(defaultIndex));
-		} else if (selPart != null && selPart.getWidget() == null) {
-			IPresentationEngine renderer = (IPresentationEngine) context
-					.get(IPresentationEngine.class.getName());
-			renderer.createGui(selPart);
+		if (selPart != null) {
+			showTab(selPart);
+		} else if (stack.getChildren().size() > 0) {
+			// NOTE: This code will cause a SELECTED_ELEMENT change on the
+			// stack, leading to the tab being shown
+			selPart = stack.getChildren().get(0);
+			stack.setSelectedElement(selPart);
 		}
 	}
 
@@ -116,7 +112,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		// we specifically do not render them
 		for (MUIElement part : me.getChildren()) {
 			if (part.isToBeRendered())
-				showChild(me, part);
+				createTab(me, part);
 		}
 	}
 
@@ -129,7 +125,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	 * @param part
 	 *            The child to show the affordance for
 	 */
-	protected void showChild(MElementContainer<MUIElement> me, MUIElement part) {
+	protected void createTab(MElementContainer<MUIElement> me, MUIElement part) {
 	}
 
 	@Override
@@ -160,19 +156,10 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 	}
 
-	public void selectStackElement(MGenericStack<MUIElement> stack,
-			MUIElement oldElement) {
-		List<MUIElement> goingHidden = new ArrayList<MUIElement>();
-		List<MUIElement> becomingVisible = new ArrayList<MUIElement>();
-		if (oldElement != null) {
-			assert (stack.getChildren().indexOf(oldElement) >= 0);
-
-			// First, get all the elements under the existing 'selected' element
-			hideElementRecursive(oldElement, goingHidden);
-		}
-
+	protected void showTab(MUIElement element) {
 		// Now process any newly visible elements
-		MUIElement curSel = stack.getSelectedElement();
+		List<MUIElement> becomingVisible = new ArrayList<MUIElement>();
+		MUIElement curSel = element.getParent().getSelectedElement();
 		if (curSel != null) {
 			showElementRecursive(curSel, becomingVisible);
 		}

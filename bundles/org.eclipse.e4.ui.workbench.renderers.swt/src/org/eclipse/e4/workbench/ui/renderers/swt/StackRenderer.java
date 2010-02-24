@@ -74,6 +74,8 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private EventHandler dirtyUpdater;
 
+	private boolean ignoreTabSelChanges = false;
+
 	public StackRenderer() {
 		super();
 	}
@@ -101,9 +103,7 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				// Is this Item visible
-				MElementContainer<MUIElement> stack = uiElement.getParent();
-
-				CTabItem item = findItemForPart(stack, uiElement);
+				CTabItem item = findItemForPart(uiElement);
 				if (item == null)
 					return;
 
@@ -147,9 +147,7 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 
 				// Is this Item visible
-				MElementContainer<MUIElement> stack = uiElement.getParent();
-
-				CTabItem item = findItemForPart(stack, uiElement);
+				CTabItem item = findItemForPart(uiElement);
 				if (item == null) {
 					return;
 				}
@@ -206,8 +204,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleModifier = 0; // SWT.CLOSE
 		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER
 				| styleModifier);
-
-		// configureForStyling(ctf);
+		bindWidget(element, ctf);
 
 		// TBD: need to handle this
 		// boolean showCloseAlways = element instanceof MEditorStack;
@@ -270,91 +267,28 @@ public class StackRenderer extends LazyStackRenderer {
 		return newWidget;
 	}
 
-	public void postProcess(MUIElement element) {
-		super.postProcess(element);
-
-		if (!(element instanceof MElementContainer<?>))
-			return;
-
-		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
-		CTabFolder ctf = (CTabFolder) element.getWidget();
-		MPart selPart = ((MPartStack) element).getSelectedElement();
-		if (selPart == null)
-			return;
-
-		// Find the tab associated with the part and set it as the selection
-		CTabItem selItem = findItemForPart(container, selPart);
-		if (selItem != null) {
-			if (selPart.getWidget() == null) {
-				IPresentationEngine renderer = (IPresentationEngine) getContext(
-						selPart).get(IPresentationEngine.class.getName());
-				renderer.createGui(selPart);
-			}
-			ctf.setSelection(selItem);
-			showTab(container, selPart);
-			activate(selPart);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.workbench.ui.renderers.swt.LazyStackFactory#internalChildAdded
-	 * (org.eclipse.e4.ui.model.application.MPart,
-	 * org.eclipse.e4.ui.model.application.MPart)
-	 */
-	@Override
-	protected void showChild(MElementContainer<MUIElement> stack,
+	protected void createTab(MElementContainer<MUIElement> stack,
 			MUIElement part) {
-		// TODO Auto-generated method stub
-		super.showChild(stack, part);
-
 		MUILabel itemPart = (MUILabel) part;
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
+
+		CTabItem cti = findItemForPart(part);
+		if (cti != null)
+			return;
+		
 		int createFlags = SWT.NONE;
 		if (part instanceof MPart && ((MPart) part).isCloseable()) {
 			createFlags |= SWT.CLOSE;
 		}
 
-		CTabItem cti = findItemForPart(stack, part);
-		if (cti == null) {
-			int index = calcIndexFor(stack, part);
-			// TODO see bug 282901 - [UI] Need better support for switching
-			// renderer to use
-			cti = new CTabItem(ctf, createFlags, index);
+		// Create the tab
+		int index = calcIndexFor(stack, part);
+		cti = new CTabItem(ctf, createFlags, index);
 
-			cti.setData(OWNING_ME, part);
-			cti.setText(getLabel(itemPart, itemPart.getLabel()));
-			cti.setImage(getImage(itemPart));
-			cti.setToolTipText(itemPart.getTooltip());
-
-			Control ctrl = (Control) part.getWidget();
-			if (ctrl != null) {
-				if (ctrl.getParent() != ctf)
-					ctrl.setParent(ctf);
-				cti.setControl(ctrl);
-			}
-
-			// TODO HACK: see Bug 283585 [CSS] Specificity fails with
-			// descendents
-			String cssClassName = (String) ctf
-					.getData("org.eclipse.e4.ui.css.CssClassName"); //$NON-NLS-1$
-			stylingEngine.setClassname(cti, cssClassName);
-		}
-
-		// Hook up special logic to synch up the Tab Items
-		hookTabControllerLogic(stack, part, cti);
-
-		// Re-ensure that the activeChild == the selected tab
-		if (stack.getSelectedElement() == null)
-			stack.setSelectedElement(part);
-
-		if (stack.getSelectedElement() != null) {
-			CTabItem selCTI = findItemForPart(stack, stack.getSelectedElement());
-			if (selCTI != null && selCTI != ctf.getSelection())
-				ctf.setSelection(selCTI);
-		}
+		cti.setData(OWNING_ME, part);
+		cti.setText(getLabel(itemPart, itemPart.getLabel()));
+		cti.setImage(getImage(itemPart));
+		cti.setToolTipText(itemPart.getTooltip());
 	}
 
 	private int calcIndexFor(MElementContainer<MUIElement> stack,
@@ -381,19 +315,11 @@ public class StackRenderer extends LazyStackRenderer {
 				|| !(element instanceof MPart))
 			return;
 
-		showChild(parentElement, element);
-
-		// Lazy Loading: On the first pass through this method the
-		// part's control will be null (we're just creating the tabs
-		Control ctrl = (Control) element.getWidget();
-		if (ctrl != null) {
-			// showTab(parentElement, element);
-			stylingEngine.style(ctrl);
-		}
+		createTab(parentElement, element);
 	}
 
-	private CTabItem findItemForPart(MElementContainer<MUIElement> stack,
-			MUIElement part) {
+	private CTabItem findItemForPart(MUIElement part) {
+		MElementContainer<MUIElement> stack = part.getParent();
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		if (ctf == null)
 			return null;
@@ -406,11 +332,6 @@ public class StackRenderer extends LazyStackRenderer {
 		return null;
 	}
 
-	private void hookTabControllerLogic(
-			final MElementContainer<MUIElement> stack, final MUIElement part,
-			final CTabItem cti) {
-	}
-
 	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
@@ -420,10 +341,17 @@ public class StackRenderer extends LazyStackRenderer {
 				|| !(child instanceof MPart))
 			return;
 
-		CTabItem oldItem = findItemForPart(parentElement, child);
-		if (oldItem != null) {
-			oldItem.setControl(null); // prevent the widget from being disposed
-			oldItem.dispose();
+		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+		if (ctf == null)
+			return;
+
+		// find the 'stale' tab for this element and dispose it
+		CTabItem[] items = ctf.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getData(OWNING_ME) == child) {
+				items[i].setControl(null);
+				items[i].dispose();
+			}
 		}
 
 		// Check if we have to reset the currently active child for the stack
@@ -437,7 +365,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private MUIElement getFirstVisibleElement(
 			MElementContainer<MUIElement> stack) {
-		// Find the -visible- part before this element
+		// Find the first -visible- part
 		for (MUIElement mPart : stack.getChildren()) {
 			if (mPart.isToBeRendered())
 				return mPart;
@@ -461,12 +389,16 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
+				// prevent recursions
+				if (ignoreTabSelChanges)
+					return;
+
 				MPart newPart = (MPart) e.item.getData(OWNING_ME);
 				if (stack.getSelectedElement() != newPart) {
 					activate(newPart);
 				}
 
-				showTab(stack, newPart);
+				showTab(newPart);
 			}
 		});
 
@@ -503,19 +435,29 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 	}
 
-	private void showTab(MElementContainer<MUIElement> parentElement,
-			MUIElement element) {
+	protected void showTab(MUIElement element) {
+		super.showTab(element);
+
 		CTabFolder ctf = (CTabFolder) getParentWidget(element);
-		Control ctrl = (Control) element.getWidget();
-		CTabItem cti = findItemForPart(parentElement, element);
-		cti.setControl(ctrl);
+		CTabItem cti = findItemForPart(element);
+
+		if (element.getWidget() == null) {
+			Control tabCtrl = (Control) renderer.createGui(element);
+			cti.setControl(tabCtrl);
+		}
+
+		ignoreTabSelChanges = true;
+		ctf.setSelection(cti);
+		ignoreTabSelChanges = false;
+
+		// Dispose the existing toolbar
+		if (ctf.getTopRight() != null) {
+			ctf.getTopRight().dispose();
+			ctf.setTopRight(null);
+		}
 
 		ToolBar tb = getToolbar(element);
 		if (tb != null) {
-			Control curTR = ctf.getTopRight();
-			if (curTR != null)
-				curTR.dispose();
-
 			if (tb.getSize().y > ctf.getTabHeight())
 				ctf.setTabHeight(tb.getSize().y);
 

@@ -283,6 +283,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// Re-parent the control
 				final Composite p = (Composite) parent;
 				Control c = (Control) element.getWidget();
+				if (c.getParent() == parent)
+					return c;
+
 				c.setVisible(true);
 				c.setLayoutData(null);
 				c.setParent(p);

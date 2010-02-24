@@ -205,7 +205,8 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void internalFixContext(MPart part, MPart oldSelectedElement) {
-		MContext parentPart = getParentWithContext(oldSelectedElement);
+		MContext parentPart = oldSelectedElement == null ? null
+				: getParentWithContext(oldSelectedElement);
 		if (parentPart == null) {
 			return;
 		}
