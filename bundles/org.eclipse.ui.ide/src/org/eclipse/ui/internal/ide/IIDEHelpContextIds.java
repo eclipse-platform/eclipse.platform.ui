@@ -148,6 +148,9 @@ public interface IIDEHelpContextIds {
     public static final String PATH_VARIABLE_SELECTION_DIALOG = PREFIX
             + "path_variable_selection_dialog"; //$NON-NLS-1$
 
+    public static final String IMPORT_TYPE_DIALOG = PREFIX
+    + "import_type_dialog"; //$NON-NLS-1$
+
     public static final String SAVE_AS_DIALOG = PREFIX
     + "save_as_dialog_context"; //$NON-NLS-1$
 

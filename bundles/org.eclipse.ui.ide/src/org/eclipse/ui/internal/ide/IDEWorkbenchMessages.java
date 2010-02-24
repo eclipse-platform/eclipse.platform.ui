@@ -484,6 +484,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourcesPreference_enableLinkedResources;
 	public static String LinkedResourcesPreference_linkedResourcesWarningTitle;
 	public static String LinkedResourcesPreference_linkedResourcesWarningMessage;
+	public static String LinkedResourcesPreference_dragAndDropHandlingMessage;
+	public static String LinkedResourcesPreference_dragAndDropVirtualFolderHandlingMessage;
+	public static String LinkedResourcesPreference_link;
+	public static String linkedResourcesPreference_copy;
+	public static String LinkedResourcesPreference_linkAndVirtualFolder;
 
 	// The following six keys are marked as unused by the NLS search, but they are indirectly used
 	// and should be removed.
@@ -734,16 +739,23 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String PathVariableSelectionDialog_ExtensionDialog_description;
 
 	public static String ImportTypeDialog_title;
+	public static String ImportTypeDialog_titleFilesOnly;
+	public static String ImportTypeDialog_titleFilesLinking;
 	public static String ImportTypeDialog_question;
+	public static String ImportTypeDialog_questionFilesOnly;
 	public static String ImportTypeDialog_moveFilesAndDirectories;
 	public static String ImportTypeDialog_copyFilesAndDirectories;
+	public static String ImportTypeDialog_moveFiles;
+	public static String ImportTypeDialog_copyFiles;
 	public static String ImportTypeDialog_recreateFilesAndDirectories;
 	public static String ImportTypeDialog_createLinks;
+	public static String ImportTypeDialog_linkFiles;
 	public static String ImportTypeDialog_importElementsAs;
-	public static String ImportTypeDialog_automatic;
-	public static String ImportTypeDialog_absolutePath;
+	public static String ImportTypeDialog_importElementsAsTooltip;
+	public static String ImportTypeDialog_importElementsAsTooltipSet;
 	public static String ImportTypeDialog_editVariables;
 	public static String ImportTypeDialog_alwaysPerformThisOperation;
+	public static String ImportTypeDialog_alwaysUseLocationWhenLinkingFiles;
 
 	// ==============================================================================
 	// Editor Framework

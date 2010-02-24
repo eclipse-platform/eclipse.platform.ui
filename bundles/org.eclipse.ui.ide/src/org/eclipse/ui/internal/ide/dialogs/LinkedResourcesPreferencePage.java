@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.ResourceDragAndDropEditor;
 
 /**
  * Preference page for linked resources. 
@@ -46,6 +47,8 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
     private Label topLabel;
 
     private PathVariablesGroup pathVariablesGroup;
+
+	private ResourceDragAndDropEditor dragAndDropHandlingEditor;
 
     /**
      * Constructs a preference page of path variables.
@@ -105,6 +108,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
                     }
                 });
 
+		createLineSeparatorEditorControls(pageComponent);
         createSpace(pageComponent);
 
         topLabel = new Label(pageComponent, SWT.NONE);
@@ -124,6 +128,33 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
         enableLinkedResourcesButton.setSelection(enableLinking);
         updateWidgetState(enableLinking);
         return pageComponent;
+    }
+
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		dragAndDropHandlingEditor.loadDefault();
+		super.performDefaults();
+	}
+
+	/**
+     * Create a composite that contains the line delimiter controls
+     * 
+     * @param parent
+     */
+    private void createLineSeparatorEditorControls(Composite parent){
+    	Composite lineComposite = new Composite(parent,SWT.NONE);
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		lineComposite.setLayout(gridLayout);
+
+		lineComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		dragAndDropHandlingEditor = new ResourceDragAndDropEditor(lineComposite);
+		dragAndDropHandlingEditor.doLoad();
     }
 
     /**
@@ -167,6 +198,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
      * @see PathVariablesGroup#performOk()
      */
     public boolean performOk() {
+		dragAndDropHandlingEditor.store();
         return pathVariablesGroup.performOk();
     }
 

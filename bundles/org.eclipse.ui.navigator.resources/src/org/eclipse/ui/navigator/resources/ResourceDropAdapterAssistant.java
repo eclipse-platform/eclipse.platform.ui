@@ -400,13 +400,10 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			// if all sources are either links or groups, copy then normally,
 			// don't show the dialog
 			if (!allSourceAreLinksOrGroups) {
-				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isVirtual() && (dropAdapter.getCurrentOperation() != DND.DROP_LINK))
-					mask |= ImportTypeDialog.IMPORT_COPY;
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
 				dialog.setResource(target);
 				if (dialog.open() == Window.OK) {
-					if (dialog.getSelection() == ImportTypeDialog.IMPORT_GROUPS_AND_LINKS)
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
 						operation.setCreateGroups(true);
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
 						operation.setCreateLinks(true);
@@ -485,10 +482,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				// if the target is a group and all sources are files, then
 				// automatically create links
 				int type;
-				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-				if (!target.isVirtual() && (finalAdapter.getCurrentOperation() != DND.DROP_LINK))
-					mask |= ImportTypeDialog.IMPORT_COPY;
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), finalAdapter.getCurrentOperation(), names, target);
 				dialog.setResource(target);
 				if (dialog.open() == Window.OK)
 					type = dialog.getSelection();
@@ -498,7 +492,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				case ImportTypeDialog.IMPORT_COPY:
 					operation.copyFiles(names, target);
 					break;
-				case ImportTypeDialog.IMPORT_GROUPS_AND_LINKS:
+				case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
 					if (dialog.getVariable() != null)
 						operation.setRelativeVariable(dialog.getVariable());
 					operation.createGroupAndLinks(names, target);

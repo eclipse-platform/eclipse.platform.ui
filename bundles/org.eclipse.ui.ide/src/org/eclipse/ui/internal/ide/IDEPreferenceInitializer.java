@@ -78,13 +78,15 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, 100);
 		
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, ""); //$NON-NLS-1$
-		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VARIABLE, ""); //$NON-NLS-1$
-		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG, ""); //$NON-NLS-1$
+		node.putBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, true);
 
 		//Filter migration
 		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_BOOKMARK_FILTERS, false);
 		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_TASK_FILTERS, false);
 		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_PROBLEM_FILTERS, false);
+		
+		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
+		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 	}
 
 	private String getHelpSeparatorKey(String groupId) {

@@ -95,8 +95,22 @@ public interface IDEInternalPreferences {
     // Type of import
     public static final String IMPORT_FILES_AND_FOLDERS_TYPE = "IMPORT_FILES_AND_FOLDERS_TYPE"; //$NON-NLS-1$
     
-    // Preferred variable for file and folder imports
-    public static final String IMPORT_FILES_AND_FOLDERS_VARIABLE = "IMPORT_FILES_AND_FOLDERS_VARIABLE"; //$NON-NLS-1$
+    // (boolean) Using variable relative paths for the import file and folder dialog
+    public static final String IMPORT_FILES_AND_FOLDERS_RELATIVE = "IMPORT_FILES_AND_FOLDERS_RELATIVE"; //$NON-NLS-1$
+
+    // (string) Save all dirty editors before running a full or incremental build 
+    public static final String IMPORT_FILES_AND_FOLDERS_MODE = "IMPORT_FILES_AND_FOLDERS_MODE"; //$NON-NLS-1$
+
+    // (string) Save all dirty editors before running a full or incremental build 
+    public static final String IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE = "IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE"; //$NON-NLS-1$
+
+    public static final String IMPORT_FILES_AND_FOLDERS_MODE_PROMPT = MessageDialogWithToggle.PROMPT;
+
+    public static final String IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY = "MOVE_COPY"; //$NON-NLS-1$
+
+    public static final String IMPORT_FILES_AND_FOLDERS_MODE_LINK = "LINK"; //$NON-NLS-1$
+    
+    public static final String IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER = "LINK_AND_VIRTUAL_FOLDER"; //$NON-NLS-1$
 
     // Always show this import window
     public static final String IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG = "IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG"; //$NON-NLS-1$
