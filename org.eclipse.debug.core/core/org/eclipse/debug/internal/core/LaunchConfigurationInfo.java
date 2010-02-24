@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.core;
  
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -445,8 +446,11 @@ public class LaunchConfigurationInfo {
 	protected Element createSetElement(Document doc, String elementType, String setKey, Set set) {
 		Element setElement = doc.createElement(elementType);
 		setElement.setAttribute(KEY, setKey);
+		// persist in sorted order
+		List list = new ArrayList(set);
+		Collections.sort(list);
 		Element element = null;
-		for(Iterator iter = set.iterator(); iter.hasNext();) {
+		for(Iterator iter = list.iterator(); iter.hasNext();) {
 			element = doc.createElement(SET_ENTRY);
 			element.setAttribute(VALUE, (String) iter.next());
 			setElement.appendChild(element);
@@ -467,8 +471,11 @@ public class LaunchConfigurationInfo {
 	 */
 	protected Element createMapElement(Document doc, String elementType, String mapKey, Map map) {
 		Element mapElement = doc.createElement(elementType);
-		mapElement.setAttribute(KEY, mapKey); 
-		Iterator iterator = map.keySet().iterator();
+		mapElement.setAttribute(KEY, mapKey);
+		// persist in sorted order based on keys
+		List keys = new ArrayList(map.keySet());
+		Collections.sort(keys);
+		Iterator iterator = keys.iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
 			String value = (String) map.get(key);

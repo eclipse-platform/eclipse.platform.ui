@@ -440,6 +440,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setAttribute(java.lang.String, java.util.Set)
+	 */
+	public void setAttribute(String attributeName, Set value) {
+		getInfo().setAttribute(attributeName, value);
+		setDirty();
+	}
 
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()

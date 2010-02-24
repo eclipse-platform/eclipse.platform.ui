@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,6 +109,18 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
 	public void setAttribute(String attributeName, Map value);
+	
+	/**
+	 * Sets the <code>java.util.Set</code>-valued attribute with the given name.
+	 * The specified Set <em>must</em> contain only String values.
+	 * If the value is <code>null</code>, the attribute is removed from
+	 * this launch configuration.
+	 *
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
+	 * @param value the value, or <code>null</code> if the attribute is to be undefined
+	 * @since 3.6
+	 */
+	public void setAttribute(String attributeName, Set value);
 	
 	/**
 	 * Sets the boolean-valued attribute with the given name.  

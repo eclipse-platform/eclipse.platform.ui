@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,16 @@ package org.eclipe.debug.tests.launching;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,6 +112,84 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		}
 		
 	}
+	
+	/**
+	 * Returns the given input stream's contents as a character array.
+	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
+	 * Note the specified stream is not closed in this method
+	 * @param stream the stream to get convert to the char array 
+	 * @return the given input stream's contents as a character array.
+	 * @throws IOException if a problem occurred reading the stream.
+	 */
+	public static char[] getInputStreamAsCharArray(InputStream stream) throws IOException {
+		Charset charset = null;
+		try {
+			charset = Charset.forName("UTF-8");
+		} catch (IllegalCharsetNameException e) {
+			System.err.println("Illegal charset name : " + "UTF-8"); //$NON-NLS-1$
+			return null;
+		} catch(UnsupportedCharsetException e) {
+			System.err.println("Unsupported charset : " + "UTF-8"); //$NON-NLS-1$
+			return null;
+		}
+		CharsetDecoder charsetDecoder = charset.newDecoder();
+		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
+		byte[] contents = getInputStreamAsByteArray(stream, -1);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(contents.length);
+		byteBuffer.put(contents);
+		byteBuffer.flip();
+		return charsetDecoder.decode(byteBuffer).array();
+	}
+	
+	/**
+	 * Returns the given input stream as a byte array
+	 * @param stream the stream to get as a byte array
+	 * @param length the length to read from the stream or -1 for unknown
+	 * @return the given input stream as a byte array
+	 * @throws IOException
+	 */
+	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
+		byte[] contents;
+		if (length == -1) {
+			contents = new byte[0];
+			int contentsLength = 0;
+			int amountRead = -1;
+			do {
+				// read at least 8K
+				int amountRequested = Math.max(stream.available(), 8192);
+				// resize contents if needed
+				if (contentsLength + amountRequested > contents.length) {
+					System.arraycopy(contents,
+							0,
+							contents = new byte[contentsLength + amountRequested],
+							0,
+							contentsLength);
+				}
+				// read as many bytes as possible
+				amountRead = stream.read(contents, contentsLength, amountRequested);
+				if (amountRead > 0) {
+					// remember length of contents
+					contentsLength += amountRead;
+				}
+			} while (amountRead != -1);
+			// resize contents if necessary
+			if (contentsLength < contents.length) {
+				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
+			}
+		} else {
+			contents = new byte[length];
+			int len = 0;
+			int readSize = 0;
+			while ((readSize != -1) && (len != length)) {
+				// See PR 1FMS89U
+				// We record first the read size. In this case length is the actual
+				// read size.
+				len += readSize;
+				readSize = stream.read(contents, len, length - len);
+			}
+		}
+		return contents;
+	}		
 	
 	/**
 	 * Constructor
@@ -1064,7 +1150,162 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			}
 		}
 	}
+	
+	/**
+	 * Tests that attributes in a nested map are persisted in alphabetical order.
+	 *   
+	 * @throws CoreException
+	 */
+	public void testMapAttributePersistence() throws CoreException, IOException {
+		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testMapAttributes1");
+		HashMap map = new HashMap();
+			map.put("Z", "z-value");
+			map.put("Y", "y-value");
+			map.put("X", "x-value");
+			map.put("W", "w-value");
+			map.put("V", "v-value");
+			map.put("U", "u-value");
+			map.put("T", "t-value");
+			map.put("S", "s-value");
+			map.put("R", "r-value");
+			map.put("Q", "q-value");
+			map.put("P", "p-value");
+			map.put("O", "o-value");
+			map.put("N", "n-value");
+			map.put("M", "m-value");
+			map.put("L", "l-value");
+			map.put("K", "k-value");
+			map.put("J", "j-value");
+			map.put("I", "i-value");
+			map.put("H", "h-value");
+			map.put("G", "g-value");
+			map.put("F", "f-value");
+			map.put("E", "e-value");
+			map.put("D", "d-value");
+			map.put("C", "c-value");
+			map.put("B", "b-value");
+			map.put("A", "a-value");
+		c1.setAttribute("Map-Attribute", map);
+		c1.doSave();
+		
+		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testMapAttributes2");
+		map = new HashMap();
+			map.put("A", "a-value");
+			map.put("Z", "z-value");
+			map.put("B", "b-value");
+			map.put("Y", "y-value");
+			map.put("C", "c-value");
+			map.put("X", "x-value");
+			map.put("D", "d-value");
+			map.put("W", "w-value");
+			map.put("E", "e-value");
+			map.put("V", "v-value");
+			map.put("F", "f-value");
+			map.put("U", "u-value");
+			map.put("G", "g-value");
+			map.put("T", "t-value");
+			map.put("H", "h-value");
+			map.put("S", "s-value");
+			map.put("I", "i-value");
+			map.put("R", "r-value");
+			map.put("J", "j-value");
+			map.put("Q", "q-value");
+			map.put("K", "k-value");
+			map.put("P", "p-value");
+			map.put("L", "l-value");
+			map.put("M", "m-value");
+			map.put("O", "o-value");
+			map.put("N", "n-value");
+		c2.setAttribute("Map-Attribute", map);
+		c2.doSave();
+		
+		// file contents should be the same
+		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
+		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
+		assertEquals("Should be the same characters", chars1.length, chars2.length);
+		for (int i = 0; i < chars2.length; i++) {
+			assertEquals("Should be the same character", chars1[i], chars2[i]);
+		}
+		
+	}
 
+	/**
+	 * Tests that attributes in a nested set are persisted in alphabetical order.
+	 *   
+	 * @throws CoreException
+	 */
+	public void testSetAttributePersistence() throws CoreException, IOException {
+		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testSetAttributes1");
+		Set set = new HashSet();
+			set.add("z-value");
+			set.add("y-value");
+			set.add("x-value");
+			set.add("w-value");
+			set.add("v-value");
+			set.add("u-value");
+			set.add("t-value");
+			set.add("s-value");
+			set.add("r-value");
+			set.add("q-value");
+			set.add("p-value");
+			set.add("o-value");
+			set.add("n-value");
+			set.add("m-value");
+			set.add("l-value");
+			set.add("k-value");
+			set.add("j-value");
+			set.add("i-value");
+			set.add("h-value");
+			set.add("g-value");
+			set.add("f-value");
+			set.add("e-value");
+			set.add("d-value");
+			set.add("c-value");
+			set.add("b-value");
+			set.add("a-value");
+		c1.setAttribute("Set-Attribute", set);
+		c1.doSave();
+		
+		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testSetAttributes2");
+		set = new HashSet();
+			set.add("a-value");
+			set.add("z-value");
+			set.add("b-value");
+			set.add("y-value");
+			set.add("c-value");
+			set.add("x-value");
+			set.add("d-value");
+			set.add("w-value");
+			set.add("e-value");
+			set.add("v-value");
+			set.add("f-value");
+			set.add("u-value");
+			set.add("g-value");
+			set.add("t-value");
+			set.add("h-value");
+			set.add("s-value");
+			set.add("i-value");
+			set.add("r-value");
+			set.add("j-value");
+			set.add("q-value");
+			set.add("k-value");
+			set.add("p-value");
+			set.add("l-value");
+			set.add("m-value");
+			set.add("o-value");
+			set.add("n-value");
+		c2.setAttribute("Set-Attribute", set);
+		c2.doSave();
+		
+		// file contents should be the same
+		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
+		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
+		assertEquals("Should be the same characters", chars1.length, chars2.length);
+		for (int i = 0; i < chars2.length; i++) {
+			assertEquals("Should be the same character", chars1[i], chars2[i]);
+		}
+		
+	}
 }
 
 
