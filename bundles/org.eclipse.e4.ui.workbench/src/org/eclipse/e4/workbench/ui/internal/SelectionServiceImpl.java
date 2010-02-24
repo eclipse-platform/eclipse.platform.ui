@@ -116,11 +116,13 @@ public class SelectionServiceImpl implements ESelectionService {
 			activePart = part;
 			IEclipseContext rootContext = serviceRoot.getContext();
 			if (rootContext == context) {
-				final IEclipseContext partContext = part.getContext();
-				Object selection = partContext.get(OUT_SELECTION);
-				notifyListeners(part, selection);
+				IEclipseContext partContext = part.getContext();
+				if (partContext != null) {
+					Object selection = partContext.get(OUT_SELECTION);
+					notifyListeners(part, selection);
 
-				track(part);
+					track(part);
+				}
 			}
 		}
 	}
