@@ -62,8 +62,8 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 *  
 	 * @param target adapter to toggle breakpoints
 	 * @param part the active part
-	 * @param selection the seleciton in the active part
-	 * @exception CoreException if an exception occurrs
+	 * @param selection the selection in the active part
+	 * @exception CoreException if an exception occurs
 	 */
 	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) throws CoreException;
 	
