@@ -135,6 +135,12 @@
 	        categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.showChangeRulerInformation">
       </command>
+      <command
+            name="%command.showRulerAnnotationInformation.name"
+            description="%command.showRulerAnnotationInformation.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.showRulerAnnotationInformation">
+      </command>
    </extension>
    
    <extension

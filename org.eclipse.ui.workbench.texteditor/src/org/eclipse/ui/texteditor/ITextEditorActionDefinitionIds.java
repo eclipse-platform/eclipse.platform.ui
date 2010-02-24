@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -585,4 +585,12 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.6
 	 */
 	public static final String SHOW_CHANGE_RULER_INFORMATION_ID= "org.eclipse.ui.edit.text.showChangeRulerInformation"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the command to display a sticky ruler annotation hover for the current caret
+	 * location. Value <code>"org.eclipse.ui.edit.text.showRulerAnnotationInformation"</code>.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String SHOW_RULER_ANNOTATION_INFORMATION_ID= "org.eclipse.ui.edit.text.showRulerAnnotationInformation"; //$NON-NLS-1$
 }

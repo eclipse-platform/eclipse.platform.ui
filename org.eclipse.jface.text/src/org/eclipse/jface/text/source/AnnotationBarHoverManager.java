@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,10 +46,10 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 
 
 /**
@@ -653,9 +653,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * Returns the annotation hover for this hover manager.
 	 *
 	 * @return the annotation hover for this hover manager or <code>null</code> if none
-	 * @since 2.1
+	 * @since 3.6 public, was protected since 3.6
 	 */
-	protected IAnnotationHover getAnnotationHover() {
+	public IAnnotationHover getAnnotationHover() {
 		return fAnnotationHover;
 	}
 

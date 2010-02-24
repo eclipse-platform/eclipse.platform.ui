@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
- *     Tom Hofmann (Perspectix AG) - bug 297572  
+ *     Tom Hofmann (Perspectix AG) - bug 297572
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -80,7 +80,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4 {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
 
 
 	/**
@@ -186,7 +186,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			} else if (fScrollArrowHeights != null) {
 				return fScrollArrowHeights;
 			} else {
-				// No arrow heights available. Enlarge textWidget and tweak scroll bar to get reasonable values. 
+				// No arrow heights available. Enlarge textWidget and tweak scroll bar to get reasonable values.
 				Point originalSize= textWidget.getSize();
 				try {
 					int fakeHeight= 1000;
@@ -1181,13 +1181,23 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 
-    /*
-     * @see org.eclipse.jface.text.source.ISourceViewer#getCurrentAnnotationHover()
-     * @since 3.2
-     */
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension3#getCurrentAnnotationHover()
+	 * @since 3.2
+	 */
     public IAnnotationHover getCurrentAnnotationHover() {
     	if (fVerticalRulerHoveringController == null)
     		return null;
     	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
     }
+
+	/**
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension5#getAnnotationHover()
+	 * @since 3.6
+	 */
+	public IAnnotationHover getAnnotationHover() {
+		if (fVerticalRulerHoveringController == null)
+			return null;
+		return fVerticalRulerHoveringController.getAnnotationHover();
+	}
 }

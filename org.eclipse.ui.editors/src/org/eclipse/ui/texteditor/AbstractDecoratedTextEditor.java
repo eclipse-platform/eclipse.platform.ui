@@ -100,6 +100,7 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
+import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineChangeHover;
@@ -1250,26 +1251,36 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowChangeRulerInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 			public void run() {
-				showChangeRulerInformation();
+				showRulerInformation(true);
 			}
 		};
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_CHANGE_RULER_INFORMATION_ID);
 		setAction(ITextEditorActionConstants.SHOW_CHANGE_RULER_INFORMATION, action);
+
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowRulerAnnotationInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
+			public void run() {
+				showRulerInformation(false);
+			}
+		};
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_RULER_ANNOTATION_INFORMATION_ID);
+		setAction(ITextEditorActionConstants.SHOW_RULER_ANNOTATION_INFORMATION, action);
 	}
 
 	/**
-	 * Opens a sticky change ruler hover for the caret line. Does nothing if no change hover is
-	 * available.
+	 * Opens a sticky ruler hover for the caret line. Does nothing if no hover is available.
 	 * 
-	 * @since 3.5
+	 * @param changeHover <code>true</code> to show change hover, <code>false</code> to show
+	 *            annotation hover
+	 * 
+	 * @since 3.6
 	 */
-	private void showChangeRulerInformation() {
+	private void showRulerInformation(boolean changeHover) {
 		IVerticalRuler ruler= getVerticalRuler();
 		if (!(ruler instanceof CompositeRuler) || fLineColumn == null)
 			return;
 		
-		CompositeRuler compositeRuler= (CompositeRuler) ruler;
-		
+		CompositeRuler compositeRuler= (CompositeRuler)ruler;
+
 		// fake a mouse move (some hovers rely on this to determine the hovered line):
 		int x= fLineColumn.getControl().getLocation().x;
 		
@@ -1281,7 +1292,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		compositeRuler.setLocationOfLastMouseButtonActivity(x, y);
 		
-		IAnnotationHover hover= fLineColumn.getHover();
+		IAnnotationHover hover= null;
+		if (changeHover) {
+			hover= fLineColumn.getHover();
+		} else {
+			if (sourceViewer instanceof ISourceViewerExtension5) {
+				hover= ((ISourceViewerExtension5)sourceViewer).getAnnotationHover();
+			}
+		}
 		if (hover == null)
 			return;
 		
