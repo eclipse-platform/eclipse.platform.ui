@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River) - [108066] Project prefs marked dirty on read
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -299,6 +300,11 @@ public class ProjectPreferences extends EclipsePreferences {
 			if (projectPrefs.isWriting)
 				return;
 			read(projectPrefs, file);
+			// Bug 108066: In case the node had existed before it was updated from
+			// file, the read() operation marks it dirty. Override the dirty flag
+			// since we know that the node is expected to be in sync with the file.
+			projectPrefs.dirty= false;
+
 			// make sure that we generate the appropriate resource change events
 			// if encoding settings have changed
 			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))
