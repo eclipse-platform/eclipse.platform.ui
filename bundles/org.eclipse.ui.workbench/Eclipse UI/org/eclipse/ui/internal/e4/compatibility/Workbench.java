@@ -753,9 +753,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getNewWizardRegistry()
 	 */
 	public IWizardRegistry getNewWizardRegistry() {
-		// FIXME compat getNewWizardRegistry
-		E4Util.unsupported("getNewWizardRegistry"); //$NON-NLS-1$
-		return null;
+		return WorkbenchPlugin.getDefault().getNewWizardRegistry();
 	}
 
 	/*
@@ -764,9 +762,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getImportWizardRegistry()
 	 */
 	public IWizardRegistry getImportWizardRegistry() {
-		// FIXME compat getImportWizardRegistry
-		E4Util.unsupported("getImportWizardRegistry"); //$NON-NLS-1$
-		return null;
+		return WorkbenchPlugin.getDefault().getImportWizardRegistry();
 	}
 
 	/*
@@ -775,9 +771,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExportWizardRegistry()
 	 */
 	public IWizardRegistry getExportWizardRegistry() {
-		// FIXME compat getExportWizardRegistry
-		E4Util.unsupported("getExportWizardRegistry"); //$NON-NLS-1$
-		return null;
+		return WorkbenchPlugin.getDefault().getExportWizardRegistry();
 	}
 
 	/*
