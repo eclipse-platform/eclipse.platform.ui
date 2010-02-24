@@ -236,7 +236,7 @@ public class PathVariableUtil {
 	}
 
 	static public String buildParentPathVariable(String variable, int difference, boolean generateMacro) {
-		String 	newString = "PARENT-" + difference + "-" + variable;    //$NON-NLS-1$//$NON-NLS-2$
+		String 	newString = ParentVariableResolver.NAME + "-" + difference + "-" + variable;    //$NON-NLS-1$//$NON-NLS-2$
 
 		if (!generateMacro)
 			newString = "${" + newString + "}";    //$NON-NLS-1$//$NON-NLS-2$

@@ -41,6 +41,16 @@ public interface IPathVariable {
 	public boolean isReadOnly();
 
 	/**
+	 * Returns whether a IPathVariable is a variable that is
+	 * suited for programatically determining which variable is
+	 * the most appropriate when create new linked resources.
+	 * 
+	 * @return true if the path variable is preferred.
+	 * @since 3.6
+	 */
+	public boolean isPreferred();
+
+	/**
 	 * If the variable supports extensions (specified as
 	 * "${VARNAME-EXTENSIONNAME}"), this method can return the list of possible
 	 * extensions, or null if none are supported.

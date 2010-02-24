@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.resources.projectvariables.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IPathVariable;
 
@@ -41,5 +43,11 @@ public class PathVariable implements IPathVariable {
 	public boolean isReadOnly() {
 		ProjectVariableProviderManager.Descriptor descriptor = ProjectVariableProviderManager.getDefault().findDescriptor(variableName);
 		return descriptor != null;
+	}
+
+	public boolean isPreferred() {
+		return !(variableName.equals(WorkspaceLocationVariableResolver.NAME) ||
+				variableName.equals(WorkspaceParentLocationVariableResolver.NAME) ||
+				variableName.equals(ParentVariableResolver.NAME));
 	}
 }

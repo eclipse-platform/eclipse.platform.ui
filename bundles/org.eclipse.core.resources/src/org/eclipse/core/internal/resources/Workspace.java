@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -25,8 +23,6 @@ import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
-import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
-import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
@@ -877,11 +873,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// look if one variable in the destination project matches
 		String[] variables = destPathVariableManager.getPathVariableNames(dest);
 		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].equals(WorkspaceLocationVariableResolver.NAME))
-				continue;
-			if (variables[i].equals(WorkspaceParentLocationVariableResolver.NAME))
-				continue;
-			if (variables[i].equals(ParentVariableResolver.NAME))
+			IPathVariable pathVariable = destPathVariableManager.getPathVariable(variables[i], dest);
+			if (!pathVariable.isPreferred())
 				continue;
 			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager
 					.resolveURI(destPathVariableManager.getValue(variables[i], dest), dest));
