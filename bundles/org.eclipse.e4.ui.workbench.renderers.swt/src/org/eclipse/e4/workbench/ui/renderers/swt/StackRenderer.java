@@ -269,7 +269,7 @@ public class StackRenderer extends LazyStackRenderer {
 		CTabItem cti = findItemForPart(part);
 		if (cti != null)
 			return;
-		
+
 		int createFlags = SWT.NONE;
 		if (part instanceof MPart && ((MPart) part).isCloseable()) {
 			createFlags |= SWT.CLOSE;
@@ -283,6 +283,7 @@ public class StackRenderer extends LazyStackRenderer {
 		cti.setText(getLabel(itemPart, itemPart.getLabel()));
 		cti.setImage(getImage(itemPart));
 		cti.setToolTipText(itemPart.getTooltip());
+		cti.setControl((Control) part.getWidget());
 	}
 
 	private int calcIndexFor(MElementContainer<MUIElement> stack,
