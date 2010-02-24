@@ -161,6 +161,12 @@ public abstract class ModelReconciler {
 			.getKeySequence_KeySequence().getName();
 
 	/**
+	 * Attribute defined by MParts (value is <code>closeable</code>).
+	 */
+	public static final String PART_CLOSEABLE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getPart_Closeable().getName();
+
+	/**
 	 * Attribute defined by MParts (value is <code>menus</code>).
 	 */
 	public static final String PART_MENUS_ATTNAME = MApplicationPackage.eINSTANCE.getPart_Menus()

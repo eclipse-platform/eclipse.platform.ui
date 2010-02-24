@@ -335,4 +335,51 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		part2 = (MPart) window.getChildren().get(1);
 		assertEquals(toolBar, part2.getToolbar());
 	}
+
+	private void testPart_Closeable(boolean before, boolean after) {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setCloseable(before);
+		window.getChildren().add(part);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		part.setCloseable(after);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(before, part.isCloseable());
+
+		applyAll(deltas);
+
+		assertEquals(after, part.isCloseable());
+	}
+
+	public void testPart_Closeable_TrueTrue() {
+		testPart_Closeable(true, true);
+	}
+
+	public void testPart_Closeable_TrueFalse() {
+		testPart_Closeable(true, false);
+	}
+
+	public void testPart_Closeable_FalseTrue() {
+		testPart_Closeable(false, true);
+	}
+
+	public void testPart_Closeable_FalseFalse() {
+		testPart_Closeable(false, false);
+	}
 }

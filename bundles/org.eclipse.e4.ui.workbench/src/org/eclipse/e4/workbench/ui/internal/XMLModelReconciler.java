@@ -227,6 +227,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getPartDescriptor_AllowMultiple();
 		} else if (featureName.equals(PARTDESCRIPTOR_CATEGORY_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPartDescriptor_Category();
+		} else if (featureName.equals(PART_CLOSEABLE_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getPart_Closeable();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
