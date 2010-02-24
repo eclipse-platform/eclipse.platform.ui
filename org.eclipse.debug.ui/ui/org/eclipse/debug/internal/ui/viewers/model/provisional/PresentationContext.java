@@ -137,12 +137,18 @@ public class PresentationContext implements IPresentationContext {
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#setProperty(java.lang.String, java.lang.Object)
 	 */
 	public void setProperty(String property, Object value) {
+	    Object oldValue = null;
+	    boolean propertySet = false;
 		synchronized (fProperties) {
-			Object oldValue = fProperties.get(property);
+			oldValue = fProperties.get(property);
 			if (!isEqual(oldValue, value)) {
+			    propertySet = true;
 				fProperties.put(property, value);
-				firePropertyChange(property, oldValue, value);
 			}
+		}
+		
+		if (propertySet) {
+		    firePropertyChange(property, oldValue, value);
 		}
 	}
 	
