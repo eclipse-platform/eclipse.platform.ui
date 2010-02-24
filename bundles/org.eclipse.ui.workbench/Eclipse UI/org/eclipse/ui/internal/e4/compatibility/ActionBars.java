@@ -12,9 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.HashMap;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -22,7 +20,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -111,14 +108,7 @@ public class ActionBars implements IActionBars {
 	 */
 	public IToolBarManager getToolBarManager() {
 		if (toolbarManager == null) {
-			MToolBar toolbar = part.getToolbar();
-			if (toolbar == null) {
-				toolbar = MApplicationFactory.eINSTANCE.createToolBar();
-				part.setToolbar(toolbar);
-			}
-
-			ToolBar toolBarWidget = (ToolBar) toolbar.getWidget();
-			toolbarManager = new ToolBarManager(toolBarWidget);
+			toolbarManager = new ToolBarManager(null);
 		}
 		return toolbarManager;
 	}
