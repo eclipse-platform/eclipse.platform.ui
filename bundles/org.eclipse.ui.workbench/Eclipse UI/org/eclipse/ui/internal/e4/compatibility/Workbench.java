@@ -13,8 +13,12 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import javax.inject.Inject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
@@ -25,9 +29,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -55,20 +62,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -806,12 +819,93 @@ public class Workbench implements IWorkbench {
 	 * , org.eclipse.jface.operation.IRunnableContext,
 	 * org.eclipse.ui.ISaveableFilter, boolean)
 	 */
-	public boolean saveAll(IShellProvider shellProvider,
+	public boolean saveAll(final IShellProvider shellProvider,
 			IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm) {
-		// FIXME compat saveAll
-		E4Util.unsupported("saveAll"); //$NON-NLS-1$
-		return true;
+		// FIXME: need to prompt
+		Map<Saveable, Set<IWorkbenchPart>> map = new HashMap<Saveable, Set<IWorkbenchPart>>();
+
+		for (IWorkbenchWindow window : getWorkbenchWindows()) {
+			IWorkbenchPage page = window.getActivePage();
+
+			IViewReference[] viewReferences = page.getViewReferences();
+			for (IWorkbenchPartReference reference : viewReferences) {
+				IWorkbenchPart part = reference.getPart(false);
+				if (part instanceof ISaveablesSource) {
+					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
+					for (Saveable saveable : saveables) {
+						Set<IWorkbenchPart> parts = map.get(saveable);
+						if (parts == null) {
+							parts = new HashSet<IWorkbenchPart>();
+							map.put(saveable, parts);
+						}
+						parts.add(part);
+					}
+				}
+			}
+
+			IEditorReference[] editorReferences = page.getEditorReferences();
+			for (IWorkbenchPartReference reference : editorReferences) {
+				IWorkbenchPart part = reference.getPart(false);
+				if (part instanceof ISaveablesSource) {
+					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
+					for (Saveable saveable : saveables) {
+						Set<IWorkbenchPart> parts = map.get(saveable);
+						if (parts == null) {
+							parts = new HashSet<IWorkbenchPart>();
+							map.put(saveable, parts);
+						}
+						parts.add(part);
+					}
+				}
+			}
+		}
+
+		final Set<Saveable> toSave = new HashSet<Saveable>();
+
+		for (Entry<Saveable, Set<IWorkbenchPart>> entrySet : map.entrySet()) {
+			Saveable saveable = entrySet.getKey();
+			Set<IWorkbenchPart> parts = entrySet.getValue();
+			if (filter.select(saveable, parts.toArray(new IWorkbenchPart[parts.size()]))) {
+				toSave.add(saveable);
+			}
+		}
+
+		if (toSave.isEmpty()) {
+			return true;
+		}
+
+		final boolean[] success = { true };
+		
+		try {
+			runnableContext.run(false, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					monitor = SubMonitor.convert(monitor);
+					monitor.beginTask("", toSave.size()); //$NON-NLS-1$
+					try {
+						for (Saveable saveable : toSave) {
+							try {
+								saveable.doSave(SubMonitor.convert(monitor, 1), shellProvider);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					} catch (RuntimeException e) {
+						success[0] = false;
+						throw e;
+					} finally {
+						monitor.done();
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
+
+		return success[0];
 	}
 
 	/*
