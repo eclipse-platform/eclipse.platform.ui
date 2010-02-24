@@ -623,9 +623,11 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	}
 
 	private void trackSelection(IPresentationContext context, IStructuredSelection selection) {
-        Iterator iter = selection.iterator();
-        Object firstElement = iter.next();
-        if (firstElement == null || iter.hasNext()) {
+		if (selection.size() != 1) {
+			return;
+		}
+        Object firstElement = selection.getFirstElement();
+        if (firstElement == null) {
             return;
         }
         IThread thread = null;
