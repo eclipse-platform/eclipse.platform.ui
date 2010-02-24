@@ -1119,18 +1119,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
 	 */
 	public String[] getPerspectiveShortcuts() {
-		// FIXME compat getPerspectiveShortcuts
-		E4Util.unsupported("getPerspectiveShortcuts"); //$NON-NLS-1$
-		return null;
+		ArrayList shortcuts = modelLayout.getPerspectiveShortcuts();
+		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
 	 */
 	public String[] getShowViewShortcuts() {
-		// FIXME compat getShowViewShortcuts
-		E4Util.unsupported("getShowViewShortcuts"); //$NON-NLS-1$
-		return null;
+		ArrayList shortcuts = modelLayout.getShowViewShortcuts();
+		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
 	}
 
 	/* (non-Javadoc)
