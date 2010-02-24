@@ -83,6 +83,36 @@ public abstract class ModelReconcilerApplicationElementTest extends
 				new String[] { "scm" }, new String[] { "scm", "cvs" });
 	}
 
+	public void testApplicationElement_Tags_New() {
+		MApplication application = createApplication();
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		command.getTags().add("tag");
+		application.getCommands().add(command);
+
+		Object state = reconciler.serialize();
+		print(state);
+
+		application = createApplication();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, application.getCommands().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getCommands().size());
+
+		command = application.getCommands().get(0);
+		assertEquals(1, command.getTags().size());
+		assertEquals("tag", command.getTags().get(0));
+	}
+
 	private void testApplicationElement_Id_New(boolean createIdFirst) {
 		MApplication application = createApplication();
 
