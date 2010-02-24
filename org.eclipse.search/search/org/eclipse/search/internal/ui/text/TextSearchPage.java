@@ -17,14 +17,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
-
-import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -763,7 +761,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			// ignore
 		}
 
-		Set previousExtensions= new HashSet(HISTORY_SIZE);
+		Set previousExtensions= new LinkedHashSet(HISTORY_SIZE);
 		IDialogSettings extensionsSettings= s.getSection(STORE_EXTENSIONS);
 		if (extensionsSettings != null) {
 			for (int i= 0; i < HISTORY_SIZE; i++) {
@@ -776,7 +774,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			previousExtensions.toArray(fPreviousExtensions);
 		} else
 			fPreviousExtensions= getPreviousExtensionsOldStyle();
-		Arrays.sort(fPreviousExtensions, Collator.getInstance());
 
 	}
 
@@ -801,8 +798,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		extensionsSettings.put(Integer.toString(0), fExtensions.getText());
 		Set extensions= new HashSet(HISTORY_SIZE);
 		extensions.add(fExtensions.getText());
+		int length= Math.min(fExtensions.getItemCount(), HISTORY_SIZE - 1);
 		int j= 1;
-		for (int i= 0; i < fExtensions.getItemCount(); i++) {
+		for (int i= 0; i < length; i++) {
 			String extension= fExtensions.getItem(i);
 			if (extensions.add(extension))
 				extensionsSettings.put(Integer.toString(j++), extension);
