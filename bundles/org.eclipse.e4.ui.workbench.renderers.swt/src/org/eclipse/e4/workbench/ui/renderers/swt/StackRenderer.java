@@ -26,9 +26,9 @@ import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -213,12 +213,6 @@ public class StackRenderer extends LazyStackRenderer {
 		newWidget = ctf;
 
 		final IEclipseContext folderContext = getContext(element);
-		folderContext.set("canCloseFunc", new IValueFunction() { //$NON-NLS-1$
-					public Object getValue() {
-						return true;
-					}
-				});
-
 		folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
 		final IEclipseContext toplevelContext = getToplevelContext(element);
 		final Trackable updateActiveTab = new Trackable(folderContext) {
@@ -409,15 +403,14 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// Allow closes to be 'canceled'
 				IEclipseContext partContext = part.getContext();
-				IValueFunction closeFunc = (IValueFunction) partContext
-						.get("canCloseFunc"); //$NON-NLS-1$
-				boolean canClose = closeFunc == null
-						|| (Boolean) closeFunc.getValue();
-				if (!canClose) {
+				EPartService partService = (EPartService) partContext
+						.get(EPartService.class.getName());
+				if (partService.savePart(part, true)) {
+					part.setToBeRendered(false);
+				} else {
+					// the user has canceled the operation
 					event.doit = false;
-					return;
 				}
-				part.setToBeRendered(false);
 			}
 		};
 		ctf.addCTabFolder2Listener(closeListener);
