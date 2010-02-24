@@ -96,7 +96,6 @@ public abstract class ModelReconcilerApplicationElementTest extends
 		application.getCommands().add(command);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 

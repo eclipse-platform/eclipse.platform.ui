@@ -697,6 +697,10 @@ public class XMLModelReconciler extends ModelReconciler {
 							IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
 									objectReferences);
 							compositeDelta.add(delta);
+						} else if (isUnorderedChainedAttribute(attributeName)) {
+							ModelDelta delta = createUnorderedChainedAttributeDelta(object,
+									attributeFeature, item, attributeName);
+							deltas.add(delta);
 						} else {
 							object.eSet(attributeFeature, getValue(attributeFeature, item
 									.getAttribute(attributeName)));
@@ -1307,6 +1311,13 @@ public class XMLModelReconciler extends ModelReconciler {
 			} else if (isChainedReference(featureName)) {
 				List<?> references = (List<?>) object.eGet(feature);
 				appendReferenceElements(document, referenceAttributeElement, references);
+			} else if (isUnorderedChainedAttribute(featureName)) {
+				List<?> attributes = (List<?>) object.eGet(feature);
+				for (Object attribute : attributes) {
+					Element attributeElement = document.createElement(featureName);
+					attributeElement.setAttribute(featureName, String.valueOf(attribute));
+					referenceAttributeElement.appendChild(attributeElement);
+				}
 			} else {
 				referenceAttributeElement.setAttribute(featureName, String.valueOf(object
 						.eGet(feature)));
