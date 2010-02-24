@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -45,12 +46,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -733,26 +734,22 @@ class NewWizardNewPage implements ISelectionChangedListener {
      */
     private void updateWizardSelection(IWizardDescriptor selectedObject) {
         selectedElement = selectedObject;
-		// TODO compat: actually pick a selected wizard
-		E4Util.unsupported("updateWizardSelection"); //$NON-NLS-1$
-		// WorkbenchWizardNode selectedNode;
-		// if (selectedWizards.containsKey(selectedObject)) {
-		// selectedNode = (WorkbenchWizardNode) selectedWizards
-		// .get(selectedObject);
-		// } else {
-		// selectedNode = new WorkbenchWizardNode(page, selectedObject) {
-		// public IWorkbenchWizard createWizard() throws CoreException {
-		// return wizardElement.createWizard();
-		// }
-		// };
-		// selectedWizards.put(selectedObject, selectedNode);
-		// }
-		//
-		// page.setCanFinishEarly(selectedObject.canFinishEarly());
-		// page.setHasPages(selectedObject.hasPages());
-		// page.selectWizardNode(selectedNode);
+		WorkbenchWizardNode selectedNode;
+		if (selectedWizards.containsKey(selectedObject)) {
+			selectedNode = (WorkbenchWizardNode) selectedWizards.get(selectedObject);
+		} else {
+			selectedNode = new WorkbenchWizardNode(page, selectedObject) {
+				public IWorkbenchWizard createWizard() throws CoreException {
+					return wizardElement.createWizard();
+				}
+			};
+			selectedWizards.put(selectedObject, selectedNode);
+		}
 
-		selectedWizards.put(selectedObject, selectedObject);
+		page.setCanFinishEarly(selectedObject.canFinishEarly());
+		page.setHasPages(selectedObject.hasPages());
+		page.selectWizardNode(selectedNode);
+
         updateDescription(selectedObject);
     }
 }
