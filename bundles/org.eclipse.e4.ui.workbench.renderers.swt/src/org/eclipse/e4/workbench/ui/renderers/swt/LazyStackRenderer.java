@@ -61,7 +61,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				hideElementRecursive(oldSel, goingHidden);
 			}
 
-			lsr.showTab(stack.getSelectedElement());
+			if (stack.getSelectedElement() != null)
+				lsr.showTab(stack.getSelectedElement());
 		}
 	};;
 
