@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ResourceNode#getContents()
 	 */
@@ -185,7 +185,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	}
 
 	/**
-	 * ZSave the shared document for this element. The save can only be performed
+	 * Save the shared document for this element. The save can only be performed
 	 * if the element is connected to a shared document. If the element is not
 	 * connected, <code>false</code> is returned.
 	 * @param overwrite indicates whether overwrite should be performed
@@ -212,7 +212,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 		updateTimestamp();
 		return inputStream;
 	}
-	
+
 	/**
 	 * Update the cached timestamp of the resource.
 	 */
@@ -230,14 +230,14 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	private long getTimestamp() {
 		return timestamp;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ResourceNode#hashCode()
 	 */
 	public int hashCode() {
 		return getResource().hashCode();
 	}
-	
+
 	/*
 	 * Returns <code>true</code> if the other object is of type
 	 * <code>LocalResourceTypedElement</code> and their corresponding resources
@@ -286,14 +286,14 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	public boolean exists() {
 		return exists;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.BufferedContent#fireContentChanged()
 	 */
 	protected void fireContentChanged() {
 		super.fireContentChanged();
 	}
-	
+
 	/**
 	 * Discard of any buffered contents. This must be called
 	 * when the local element is no longer needed but is dirty since a
