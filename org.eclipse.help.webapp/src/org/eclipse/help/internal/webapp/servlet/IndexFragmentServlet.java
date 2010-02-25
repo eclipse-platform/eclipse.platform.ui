@@ -30,7 +30,6 @@ import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.ActivitiesData;
@@ -102,13 +101,13 @@ public class IndexFragmentServlet extends HttpServlet {
 		
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
-		// Cache suppression required if not in infocenter mode because the set of disabled 
+		// Cache suppression required because the set of in scope
 		// topics could change between requests
-		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-		    resp.setHeader("Cache-Control","no-cache");   //$NON-NLS-1$//$NON-NLS-2$
-		    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
-		    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$	
-		}
+
+		resp.setHeader("Cache-Control","no-cache");   //$NON-NLS-1$//$NON-NLS-2$
+		resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
+		resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$	
+
 		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		Serializer serializer = new Serializer(locale, scope);
 		String response = serializer.generateIndexXml();	
