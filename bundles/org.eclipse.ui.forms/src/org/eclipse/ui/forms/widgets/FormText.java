@@ -646,7 +646,7 @@ public class FormText extends Canvas {
 		model.clearCache(null);
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
 		if (boldFont != null) {
-			FormFonts.getInstance().markFinished(boldFont);
+			FormFonts.getInstance().markFinished(boldFont, getDisplay());
 			resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 		}
 		ensureBoldFontPresent(getFont());
@@ -1676,7 +1676,7 @@ public class FormText extends Canvas {
 			Font boldFont = (Font) resourceTable
 					.get(FormTextModel.BOLD_FONT_ID);
 			if (boldFont != null) {
-				FormFonts.getInstance().markFinished(boldFont);
+				FormFonts.getInstance().markFinished(boldFont, getDisplay());
 				resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class Section extends ExpandableComposite {
 				public void handleEvent(Event e) {
 					Image image = Section.super.getBackgroundImage();
 					if (image != null) {
-						FormImages.getInstance().markFinished(image);
+						FormImages.getInstance().markFinished(image, getDisplay());
 					}
 					Section.super.setBackgroundImage(null);
 				}
@@ -460,7 +460,7 @@ public class Section extends ExpandableComposite {
 
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight,
 			int realtheight) {
-		Image image = FormImages.getInstance().getGradient(getBackground(), bg, realtheight, theight, marginHeight);
+		Image image = FormImages.getInstance().getGradient(getBackground(), bg, realtheight, theight, marginHeight, getDisplay());
 		super.setBackgroundImage(image);
 	}
 

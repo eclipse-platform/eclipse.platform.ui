@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -23,6 +22,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 public class FormImages {
 	private static FormImages instance;
@@ -33,7 +33,7 @@ public class FormImages {
 		return instance;
 	}
 
-	private LocalResourceManager resources;
+	private ResourceManagerManger manager = new ResourceManagerManger();
 	private HashMap descriptors;
 	
 	private FormImages() {
@@ -238,15 +238,15 @@ public class FormImages {
 	}
 	
 	public Image getGradient(Color color1, Color color2,
-			int realtheight, int theight, int marginHeight) {
+			int realtheight, int theight, int marginHeight, Display display) {
 		if (color1 == null || color1.isDisposed() || color2 == null || color2.isDisposed())
 			return null;
 		AbstractImageDescriptor desc = new SimpleImageDescriptor(color1, color2, realtheight, theight, marginHeight);
-		return getGradient(desc);
+		return getGradient(desc, display);
 	}
 	
 	public Image getGradient(Color[] colors, int[] percents,
-			int length, boolean vertical, Color bg) {
+			int length, boolean vertical, Color bg, Display display) {
 		if (colors.length == 0)
 			return null;
 		for (int i = 0; i < colors.length; i++)
@@ -255,22 +255,23 @@ public class FormImages {
 		if (bg != null && bg.isDisposed())
 			return null;
 		AbstractImageDescriptor desc = new ComplexImageDescriptor(colors, length, percents, vertical, bg);
-		return getGradient(desc);
+		return getGradient(desc, display);
 	}
 	
-	private synchronized Image getGradient(AbstractImageDescriptor desc) {
+	private synchronized Image getGradient(AbstractImageDescriptor desc, Display display) {
 		checkHashMaps();
-		Image result = getResourceManager().createImage(desc);
+		Image result = manager.getResourceManager(display).createImage(desc);
 		descriptors.put(result, desc);
 		return result;
 	}
 	
-	public synchronized boolean markFinished(Image image) {
+	public synchronized boolean markFinished(Image image, Display display) {
 		checkHashMaps();
 		AbstractImageDescriptor desc = (AbstractImageDescriptor)descriptors.get(image);
 		if (desc != null) {
-			getResourceManager().destroyImage(desc);
-			if (getResourceManager().find(desc) == null) {
+			LocalResourceManager resourceManager = manager.getResourceManager(display);
+			resourceManager.destroyImage(desc);
+			if (resourceManager.find(desc) == null) {
 				descriptors.remove(image);
 				validateHashMaps();
 			}
@@ -279,12 +280,6 @@ public class FormImages {
 		// if the image was not found, dispose of it for the caller
 		image.dispose();
 		return false;
-	}
-	
-	private LocalResourceManager getResourceManager() {
-		if (resources == null)
-			resources = new LocalResourceManager(JFaceResources.getResources());
-		return resources;
 	}
 
 	private void checkHashMaps() {

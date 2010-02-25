@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.HashMap;
 
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.FontDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
@@ -31,7 +30,7 @@ public class FormFonts {
 		return instance;
 	}
 	
-	private LocalResourceManager resources;
+	private ResourceManagerManger manager = new ResourceManagerManger();
 	private HashMap descriptors;
 	
 	private FormFonts() {
@@ -79,17 +78,18 @@ public class FormFonts {
 	public Font getBoldFont(Display display, Font font) {
 		checkHashMaps();
 		BoldFontDescriptor desc = new BoldFontDescriptor(font);
-		Font result = getResourceManager().createFont(desc);
+		Font result = manager.getResourceManager(display).createFont(desc);
 		descriptors.put(result, desc);
 		return result;
 	}
 	
-	public boolean markFinished(Font boldFont) {
+	public boolean markFinished(Font boldFont, Display display) {
 		checkHashMaps();
 		BoldFontDescriptor desc = (BoldFontDescriptor)descriptors.get(boldFont);
 		if (desc != null) {
-			getResourceManager().destroyFont(desc);
-			if (getResourceManager().find(desc) == null) {
+			LocalResourceManager resourceManager = manager.getResourceManager(display);
+			resourceManager.destroyFont(desc);
+			if (resourceManager.find(desc) == null) {
 				descriptors.remove(boldFont);
 				validateHashMaps();
 			}
@@ -99,12 +99,6 @@ public class FormFonts {
 		// if the image was not found, dispose of it for the caller
 		boldFont.dispose();
 		return false;
-	}
-	
-	private LocalResourceManager getResourceManager() {
-		if (resources == null)
-			resources = new LocalResourceManager(JFaceResources.getResources());
-		return resources;
 	}
 
 	private void checkHashMaps() {
