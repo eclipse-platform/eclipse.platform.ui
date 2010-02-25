@@ -383,7 +383,7 @@ public class PartServiceImpl implements EPartService {
 			return stack;
 		}
 
-		MElementContainer<?> lastContainer = getLastContainer(children);
+		MElementContainer<?> lastContainer = getLastContainer(rootContainer, children);
 		if (lastContainer == null) {
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 			rootContainer.getChildren().add(stack);
@@ -392,7 +392,7 @@ public class PartServiceImpl implements EPartService {
 		return lastContainer;
 	}
 
-	private MElementContainer<?> getLastContainer(List<?> children) {
+	private MElementContainer<?> getLastContainer(MElementContainer<?> container, List<?> children) {
 		if (children.isEmpty()) {
 			return null;
 		}
@@ -400,10 +400,15 @@ public class PartServiceImpl implements EPartService {
 		for (int i = children.size() - 1; i > -1; i--) {
 			Object muiElement = children.get(i);
 			if (muiElement instanceof MElementContainer<?>) {
-				return getLastContainer(((MElementContainer) muiElement).getChildren());
+				MElementContainer<?> childContainer = (MElementContainer<?>) muiElement;
+				MElementContainer<?> lastContainer = getLastContainer(childContainer,
+						childContainer.getChildren());
+				if (lastContainer != null) {
+					return lastContainer;
+				}
 			}
 		}
-		return null;
+		return container;
 	}
 
 	private MPart showExistingPart(PartState partState, MPart providedPart, MPart localPart) {
