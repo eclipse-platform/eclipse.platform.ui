@@ -35,6 +35,10 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 		this.element = element;
 	}
 
+	public IConfigurationElement getConfigurationElement() {
+		return element;
+	}
+
 	IPerspectiveFactory createFactory() {
 		try {
 			return (IPerspectiveFactory) element

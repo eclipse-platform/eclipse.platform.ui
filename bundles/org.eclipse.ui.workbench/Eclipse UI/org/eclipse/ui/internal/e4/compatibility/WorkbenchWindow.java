@@ -38,6 +38,7 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -110,6 +111,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
+
+		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
+		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
