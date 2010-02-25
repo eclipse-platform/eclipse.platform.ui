@@ -15,6 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
@@ -55,6 +57,10 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		application.getChildren().add(window2);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window2, application.getChildren().get(0));
+
 		applyAll(deltas);
 
 		window1 = application.getChildren().get(0);
@@ -67,6 +73,38 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		assertFalse(applicationId.equals(window1Id));
 		assertFalse(applicationId.equals(window2Id));
 		assertFalse(window1Id.equals(window2Id));
+	}
+
+	public void testNonConflictingIds3_Bug303841() {
+		MApplication application = createApplication();
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		command.setId("id");
+		application.getCommands().add(command);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId("id");
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, application.getChildren().size());
+		assertEquals(0, application.getCommands().size());
+
+		applyAll(deltas);
 	}
 
 	@Override
