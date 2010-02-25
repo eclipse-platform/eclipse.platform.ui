@@ -41,21 +41,20 @@ public class BreakpointManagerContentProvider extends AbstractBreakpointManagerC
 	 * @see org.eclipse.debug.internal.ui.model.elements.AbstractBreakpointManagerContentProvider#filterBreakpointsByInput(org.eclipse.debug.internal.ui.elements.adapters.AbstractBreakpointManagerInput, org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	protected IBreakpoint[] filterBreakpoints(AbstractBreakpointManagerInput input, IBreakpoint[] breakpoints) {		
-		ArrayList retVal = new ArrayList();
-		
 		IStructuredSelection selectionFilter = getSelectionFilter(input);
-		List targets = getDebugTargets(selectionFilter);
-			
-		if (targets != null) {
-			for (int i = 0; i < breakpoints.length; ++i) {
-				if (supportsBreakpoint(targets, breakpoints[i]))
-					retVal.add(breakpoints[i]);
+		if (selectionFilter != null && !selectionFilter.isEmpty()) {
+			List targets = getDebugTargets(selectionFilter);
+			ArrayList retVal = new ArrayList();
+			if (targets != null) {
+				for (int i = 0; i < breakpoints.length; ++i) {
+					if (supportsBreakpoint(targets, breakpoints[i]))
+						retVal.add(breakpoints[i]);
+				}
 			}
+			return (IBreakpoint[]) retVal.toArray(new IBreakpoint[retVal.size()]);
 		} else {
 			return breakpoints;
 		}
-				
-		return (IBreakpoint[]) retVal.toArray(new IBreakpoint[retVal.size()]);
 	}
 	
 	/**
