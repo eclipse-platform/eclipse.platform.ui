@@ -653,7 +653,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * Returns the annotation hover for this hover manager.
 	 *
 	 * @return the annotation hover for this hover manager or <code>null</code> if none
-	 * @since 3.6 public, was protected since 3.6
+	 * @since 3.6 public, was protected since 2.1
 	 */
 	public IAnnotationHover getAnnotationHover() {
 		return fAnnotationHover;
