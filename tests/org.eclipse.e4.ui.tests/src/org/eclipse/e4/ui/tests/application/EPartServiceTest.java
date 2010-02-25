@@ -1817,6 +1817,40 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(part2.isToBeRendered());
 	}
 
+	private void testHidePart_Tagged(boolean tagged) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		if (tagged) {
+			part.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
+		}
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.hidePart(part);
+
+		assertFalse(part.isToBeRendered());
+		assertEquals(tagged ? null : window, part.getParent());
+	}
+
+	public void testHidePart_Tagged_True() {
+		testHidePart_Tagged(true);
+	}
+
+	public void testHidePart_Tagged_False() {
+		testHidePart_Tagged(false);
+	}
+
 	public void testGetDirtyParts() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

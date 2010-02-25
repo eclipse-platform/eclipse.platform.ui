@@ -49,6 +49,7 @@ import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.service.event.Event;
@@ -451,6 +452,17 @@ public class PartServiceImpl implements EPartService {
 	public void hidePart(MPart part) {
 		if (isInContainer(part)) {
 			part.setToBeRendered(false);
+
+			if (part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
+				MElementContainer<MUIElement> parent = part.getParent();
+				EList<MUIElement> children = parent.getChildren();
+				children.remove(part);
+
+				// FIXME: should be based on activation list
+				if (parent.getSelectedElement() == part && !children.isEmpty()) {
+					parent.setSelectedElement(children.get(0));
+				}
+			}
 		}
 	}
 

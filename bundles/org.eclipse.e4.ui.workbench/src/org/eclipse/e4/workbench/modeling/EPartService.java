@@ -52,6 +52,13 @@ public interface EPartService {
 	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
 
 	/**
+	 * A tag on a part to indicate that it should be removed from the model when it is hidden.
+	 * 
+	 * @see #hidePart(MPart)
+	 */
+	public static final String REMOVE_ON_HIDE_TAG = "removeOnHide"; //$NON-NLS-1$
+
+	/**
 	 * Adds the given listener for part lifecycle events. Has no effect if an identical listener has
 	 * already been registered.
 	 * <p>
@@ -189,6 +196,10 @@ public interface EPartService {
 
 	/**
 	 * Hides the given part. The part must be a part managed by this service.
+	 * <p>
+	 * If the part has been tagged with the {@link #REMOVE_ON_HIDE_TAG} tag, it will be removed from
+	 * the model when the service hides it.
+	 * </p>
 	 * 
 	 * @param part
 	 *            the part to hide
