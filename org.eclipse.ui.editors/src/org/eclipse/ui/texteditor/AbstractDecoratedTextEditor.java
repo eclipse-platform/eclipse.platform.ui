@@ -84,8 +84,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
-import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
@@ -100,7 +100,6 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
-import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineChangeHover;
@@ -1251,7 +1250,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowChangeRulerInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 			public void run() {
-				showRulerInformation(true);
+				showChangeRulerInformation();
 			}
 		};
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_CHANGE_RULER_INFORMATION_ID);
@@ -1259,7 +1258,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowRulerAnnotationInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 			public void run() {
-				showRulerInformation(false);
+				showRulerAnnotationInformation();
 			}
 		};
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_RULER_ANNOTATION_INFORMATION_ID);
@@ -1267,14 +1266,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Opens a sticky ruler hover for the caret line. Does nothing if no hover is available.
+	 * Opens a sticky change ruler hover for the caret line. Does nothing if no change hover is
+	 * available.
 	 * 
-	 * @param changeHover <code>true</code> to show change hover, <code>false</code> to show
-	 *            annotation hover
-	 * 
-	 * @since 3.6
+	 * @since 3.5
 	 */
-	private void showRulerInformation(boolean changeHover) {
+	private void showChangeRulerInformation() {
 		IVerticalRuler ruler= getVerticalRuler();
 		if (!(ruler instanceof CompositeRuler) || fLineColumn == null)
 			return;
@@ -1292,14 +1289,35 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		compositeRuler.setLocationOfLastMouseButtonActivity(x, y);
 		
-		IAnnotationHover hover= null;
-		if (changeHover) {
-			hover= fLineColumn.getHover();
-		} else {
-			if (sourceViewer instanceof ISourceViewerExtension5) {
-				hover= ((ISourceViewerExtension5)sourceViewer).getAnnotationHover();
-			}
-		}
+		IAnnotationHover hover= fLineColumn.getHover();
+		showFocusedRulerHover(hover, sourceViewer, caretOffset);
+    }
+
+	/**
+	 * Opens a sticky annotation ruler hover for the caret line. Does nothing if no annotation hover
+	 * is available.
+	 * 
+	 * @since 3.6
+	 */
+	private void showRulerAnnotationInformation() {
+		ISourceViewer sourceViewer= getSourceViewer();
+		IAnnotationHover hover= getSourceViewerConfiguration().getAnnotationHover(sourceViewer);
+		int caretOffset= sourceViewer.getTextWidget().getCaretOffset();
+		
+		showFocusedRulerHover(hover, sourceViewer, caretOffset);
+	}
+
+	/**
+	 * Shows a focused hover at the specified offset.
+	 * Does nothing if <code>hover</code> is <code>null</code> or cannot be shown. 
+	 * 
+	 * @param hover the hover to be shown, can be <code>null</code>
+	 * @param sourceViewer the source viewer
+	 * @param caretOffset the caret offset
+	 * 
+	 * @since 3.6
+	 */
+	private void showFocusedRulerHover(IAnnotationHover hover, ISourceViewer sourceViewer, int caretOffset) {
 		if (hover == null)
 			return;
 		
@@ -1320,7 +1338,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		} catch (BadLocationException e) {
 			return;
 		}
-    }
+	}
 
 	/**
 	 * Creates and registers the print action.

@@ -80,7 +80,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4 {
 
 
 	/**
@@ -1190,14 +1190,4 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
     		return null;
     	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
     }
-
-	/**
-	 * @see org.eclipse.jface.text.source.ISourceViewerExtension5#getAnnotationHover()
-	 * @since 3.6
-	 */
-	public IAnnotationHover getAnnotationHover() {
-		if (fVerticalRulerHoveringController == null)
-			return null;
-		return fVerticalRulerHoveringController.getAnnotationHover();
-	}
 }
