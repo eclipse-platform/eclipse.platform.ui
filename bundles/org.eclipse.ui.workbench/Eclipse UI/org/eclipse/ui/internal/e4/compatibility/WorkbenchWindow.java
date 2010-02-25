@@ -28,6 +28,7 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
@@ -44,6 +45,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
@@ -61,7 +63,7 @@ import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.5
- *
+ * 
  */
 public class WorkbenchWindow implements IWorkbenchWindow {
 
@@ -114,6 +116,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
+		EContextService cs = (EContextService) windowContext.get(EContextService.class.getName());
+		cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
+		cs.getActiveContextIds();
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
@@ -216,7 +221,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return model;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#close()
 	 */
 	public boolean close() {
@@ -233,49 +240,63 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getActivePage()
 	 */
 	public IWorkbenchPage getActivePage() {
 		return page;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPages()
 	 */
 	public IWorkbenchPage[] getPages() {
 		return new IWorkbenchPage[] { page };
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
 	 */
 	public IPartService getPartService() {
 		return page;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
 		return selectionService;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
 		return (Shell) model.getWidget();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
 		return workbench;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu(java.lang.String)
 	 */
 	public boolean isApplicationMenu(String menuId) {
@@ -284,40 +305,55 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String, org.eclipse.core.runtime.IAdaptable)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String,
+	 * org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
 		return workbench.openWorkbenchWindow(perspectiveId, input).getActivePage();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable
+	 * )
 	 */
 	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
 		return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindow#run(boolean, boolean,
+	 * org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void run(boolean fork, boolean cancelable,
-			IRunnableWithProgress runnable) throws InvocationTargetException,
-			InterruptedException {
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException {
 		// TODO Auto-generated method stub
 		runnable.run(new NullProgressMonitor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#setActivePage(org.eclipse.ui.IWorkbenchPage)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchWindow#setActivePage(org.eclipse.ui.IWorkbenchPage
+	 * )
 	 */
 	public void setActivePage(IWorkbenchPage page) {
 		// TODO Auto-generated method stub
 		this.page = (WorkbenchPage) page;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
@@ -327,42 +363,60 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return tracker;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void addPageListener(IPageListener listener) {
 		pageListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.
+	 * IPerspectiveListener)
 	 */
 	public void addPerspectiveListener(IPerspectiveListener listener) {
 		perspectiveListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener
+	 * )
 	 */
 	public void removePageListener(IPageListener listener) {
 		pageListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.
+	 * IPerspectiveListener)
 	 */
 	public void removePerspectiveListener(IPerspectiveListener listener) {
 		perspectiveListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
 		return serviceLocator.getService(api);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {

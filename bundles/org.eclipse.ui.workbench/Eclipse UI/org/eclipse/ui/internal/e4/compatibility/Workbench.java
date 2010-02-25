@@ -27,6 +27,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -46,6 +47,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.UIEvents;
@@ -91,6 +93,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
@@ -104,11 +107,13 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
+import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.LegacyEvaluationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
@@ -122,6 +127,7 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
@@ -176,19 +182,30 @@ public class Workbench implements IWorkbench {
 				}
 			}
 		});
-		serviceLocator.setContext(application.getContext());
+		IEclipseContext appContext = application.getContext();
+		serviceLocator.setContext(appContext);
 		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
 
-
-		viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class, application
-				.getContext());
+		viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class, appContext);
 		perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
-				PerspectiveRegistry.class, application.getContext());
+				PerspectiveRegistry.class, appContext);
+
+		LegacyEvaluationService evalService = new LegacyEvaluationService(appContext);
+		appContext.set(IEvaluationService.class.getName(), evalService);
+
+		ContextManager contextManager = (ContextManager) appContext.get(ContextManager.class
+				.getName());
+		ContextManager.DEBUG = false;
+		final IContextService contextService = new ContextService(contextManager);
+		contextService.readRegistry();
+		EContextService ecs = (EContextService) appContext.get(EContextService.class.getName());
+		ecs.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
+
+		serviceLocator.registerService(IContextService.class, contextService);
 
 		IBindingService bindingService = (IBindingService) ContextInjectionFactory.make(
-				BindingService.class,
-				application.getContext());
-		application.getContext().set(IBindingService.class.getName(), bindingService);
+				BindingService.class, appContext);
+		appContext.set(IBindingService.class.getName(), bindingService);
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
@@ -207,11 +224,8 @@ public class Workbench implements IWorkbench {
 			}
 		});
 
-		application.getContext().set(
-				IWorkbenchLocationService.class.getName(),
-				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE, this, null, null,
-						null,
-						null, 0));
+		appContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
+				IServiceScopes.WORKBENCH_SCOPE, this, null, null, null, null, 0));
 		JFaceUtil.initializeJFacePreferences();
 		initializeApplicationColors();
 	}
@@ -503,8 +517,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#openWorkbenchWindow(java.lang.String,
 	 * org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
-			IAdaptable input) throws WorkbenchException {
+	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId, IAdaptable input)
+			throws WorkbenchException {
 		IPerspectiveDescriptor descriptor = getPerspectiveRegistry().findPerspectiveWithId(
 				perspectiveId);
 		if (descriptor == null) {
@@ -535,8 +549,7 @@ public class Workbench implements IWorkbench {
 	 * org.eclipse.ui.IWorkbench#openWorkbenchWindow(org.eclipse.core.runtime
 	 * .IAdaptable)
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
-			throws WorkbenchException {
+	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
 		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 
@@ -557,8 +570,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#showPerspective(java.lang.String,
 	 * org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId,
-			IWorkbenchWindow window) throws WorkbenchException {
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
+			throws WorkbenchException {
 		return showPerspective(perspectiveId, window, null);
 	}
 
@@ -568,16 +581,16 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#showPerspective(java.lang.String,
 	 * org.eclipse.ui.IWorkbenchWindow, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId,
-			IWorkbenchWindow targetWindow, IAdaptable input)
-			throws WorkbenchException {
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow targetWindow,
+			IAdaptable input) throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
-		IPerspectiveDescriptor targetPerspective = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		IPerspectiveDescriptor targetPerspective = getPerspectiveRegistry().findPerspectiveWithId(
+				perspectiveId);
 		if (targetPerspective == null) {
 			throw new WorkbenchException(NLS.bind(
 					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
-		
+
 		if (targetWindow != null) {
 			IWorkbenchPage page = targetWindow.getActivePage();
 			if (activate(perspectiveId, page, input, true)) {
@@ -591,7 +604,7 @@ public class Workbench implements IWorkbench {
 				return page;
 			}
 		}
-		
+
 		if (targetWindow != null) {
 			IWorkbenchPage page = targetWindow.getActivePage();
 			if (activate(perspectiveId, page, input, false)) {
@@ -822,9 +835,8 @@ public class Workbench implements IWorkbench {
 	 * , org.eclipse.jface.operation.IRunnableContext,
 	 * org.eclipse.ui.ISaveableFilter, boolean)
 	 */
-	public boolean saveAll(final IShellProvider shellProvider,
-			IRunnableContext runnableContext, ISaveableFilter filter,
-			boolean confirm) {
+	public boolean saveAll(final IShellProvider shellProvider, IRunnableContext runnableContext,
+			ISaveableFilter filter, boolean confirm) {
 		// FIXME: need to prompt
 		Map<Saveable, Set<IWorkbenchPart>> map = new HashMap<Saveable, Set<IWorkbenchPart>>();
 
@@ -875,11 +887,11 @@ public class Workbench implements IWorkbench {
 		}
 
 		if (toSave.isEmpty()) {
-		return true;
-	}
+			return true;
+		}
 
 		final boolean[] success = { true };
-		
+
 		try {
 			runnableContext.run(false, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -1032,7 +1044,6 @@ public class Workbench implements IWorkbench {
 		E4CommandProcessor.processCommands(appContext, existing);
 
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
-
 
 		Category[] definedCategories = manager.getDefinedCategories();
 		for (int i = 0; i < definedCategories.length; i++) {
