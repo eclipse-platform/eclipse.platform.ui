@@ -284,6 +284,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		} else {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
 		}
+		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(), wbwModel
 				.getWidth(), wbwModel.getHeight());
 		wbwShell.setVisible(element.isVisible());
