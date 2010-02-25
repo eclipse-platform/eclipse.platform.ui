@@ -67,7 +67,8 @@ public class ScopeUtils {
 	public static boolean hasInScopeDescendent(ITopic topic, AbstractHelpScope scope) {
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++) {
-			if (showInTree(subtopics[i], scope)) {  
+			if (showInTree(subtopics[i], scope) || 
+					(scope.isHierarchicalScope() && hasInScopeDescendent(subtopics[i], scope))) {  
 				return true;
 			}
 		}
@@ -77,8 +78,8 @@ public class ScopeUtils {
 	public static boolean hasInScopeDescendent(IToc toc, AbstractHelpScope scope) {
 		ITopic[] topics = toc.getTopics();
 		for (int i = 0; i < topics.length; i++) {
-			if (showInTree(topics[i], scope)) {  
-				return true;
+			if (showInTree(topics[i], scope) || 
+					(scope.isHierarchicalScope() && hasInScopeDescendent(topics[i], scope))) {  
 			}
 		}
 		return false;
@@ -94,8 +95,9 @@ public class ScopeUtils {
 		}
 		IIndexEntry[] entries = entry.getSubentries();
 		for (int e = 0; e < entries.length; e++) {
-			if (showInTree(entries[e], scope)) {
-				return true;
+			if (showInTree(entries[e], scope)  || 
+					(scope.isHierarchicalScope() && hasInScopeDescendent(entries[e], scope))) {
+                return true;
 			}
 		}
 		if (entry instanceof IIndexEntry2) {
