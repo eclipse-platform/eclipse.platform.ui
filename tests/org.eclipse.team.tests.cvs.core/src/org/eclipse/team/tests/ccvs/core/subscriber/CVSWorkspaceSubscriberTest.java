@@ -299,39 +299,40 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 ******************************************************************/
 	
 	public void testBug302163WithoutModel() throws CoreException {
-		// Create a test project
+		// Create a model project and share it
 		IProject modelProject = getUniqueTestProject("test1");
 		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
 		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
 		shareProject(modelProject);
 		assertValidCheckout(modelProject);
 		
-		// Checkout and modify a copy
+		// Checkout and modify a copy of the model project
 		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
 
-		refresh(getSubscriber(), modelProject);
-		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
 		setSyncSource(new SyncInfoSource());
-		// Update
+		refresh(getSubscriber(), modelProject);
+		
+		// Update the "file.mod" file
 		try {
 			update(modelProject, new String[] { "file.mod" });
 		} catch (CVSException e) {
 			fail("Update without models failed", e);
 		}
+		
 		// Reset settings
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
 		setSyncSource(new ModelParticipantSyncInfoSource());
 	}
 	
 	public void testBug302163WithModel() throws CoreException {
-		// Create a test project
+		// Create a project being a part of the model, share it
 		IProject project = createProject("test", new String[] { "file1.txt" });
 		ModelResourceMapping.projectName = project.getName();
 		
-		// Create a test model project
+		// Create a model project and share it
 		IProject modelProject = getUniqueTestProject("test1");
 		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
 		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
@@ -343,17 +344,18 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
-
-		refresh(getSubscriber(), modelProject);
 		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
 		setSyncSource(new SyncInfoSource());
-		// Update
+		refresh(getSubscriber(), modelProject);
+		
+		// Update the "file.mod" file
 		try {
 			update(modelProject, new String[] { "file.mod" });
 		} catch (CVSException e) {
 			fail("Update without models failed", e);
 		}
+		
 		// Reset settings		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
 		setSyncSource(new ModelParticipantSyncInfoSource());
