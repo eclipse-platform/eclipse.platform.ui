@@ -141,6 +141,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
+	List<IEditorReference> getInternalEditorReferences() {
+		return editorReferences;
+	}
+
 	public ViewReference getViewReference(MPart part) {
 		for (IViewReference ref : viewReferences) {
 			if (((ViewReference) ref).getModel() == part) {

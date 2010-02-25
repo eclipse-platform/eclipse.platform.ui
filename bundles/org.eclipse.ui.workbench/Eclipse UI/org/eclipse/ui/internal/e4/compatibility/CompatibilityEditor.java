@@ -11,13 +11,17 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.Iterator;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -31,6 +35,10 @@ public class CompatibilityEditor extends CompatibilityPart {
 	CompatibilityEditor(MPart part, EditorReference ref) {
 		super(part);
 		reference = ref;
+
+		if (!part.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
+			part.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
+		}
 	}
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
@@ -72,5 +80,18 @@ public class CompatibilityEditor extends CompatibilityPart {
 	@Override
 	public IWorkbenchPartReference getReference() {
 		return reference;
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		WorkbenchPage page = (WorkbenchPage) wrapped.getSite().getPage();
+		for (Iterator<IEditorReference> it = page.getInternalEditorReferences().iterator(); it
+				.hasNext();) {
+			IEditorReference ref = it.next();
+			if (ref.getEditor(false) == wrapped) {
+				it.remove();
+				return;
+			}
+		}
 	}
 }

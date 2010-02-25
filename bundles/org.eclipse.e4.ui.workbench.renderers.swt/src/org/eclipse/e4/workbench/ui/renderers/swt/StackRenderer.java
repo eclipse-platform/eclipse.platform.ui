@@ -408,7 +408,7 @@ public class StackRenderer extends LazyStackRenderer {
 				EPartService partService = (EPartService) partContext
 						.get(EPartService.class.getName());
 				if (partService.savePart(part, true)) {
-					part.setToBeRendered(false);
+					partService.hidePart(part);
 				} else {
 					// the user has canceled the operation
 					event.doit = false;
