@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
@@ -96,7 +97,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * The local service locator for this multi-page editor site. This value is
 	 * never <code>null</code>.
 	 */
-	private final IServiceLocator serviceLocator;
+	private final ServiceLocator serviceLocator;
 
 	/**
 	 * Creates a site for the given editor nested within the given multi-page
@@ -117,11 +118,14 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		final IServiceLocator parentServiceLocator = multiPageEditor.getSite();
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
 				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = slc.createServiceLocator(
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
 				multiPageEditor.getSite(), null, new IDisposable(){
 					public void dispose() {
 						getMultiPageEditor().close();
 					}});
+		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
+		IEclipseContext context = partSite.getModel().getContext();
+		serviceLocator.setContext(context);
 
 		initializeDefaultServices();
 	}
