@@ -158,6 +158,7 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToFloatValid
 import org.eclipse.core.tests.internal.databinding.validation.StringToIntegerValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToLongValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
+import org.eclipse.jface.tests.databinding.preference.PreferencePageSupportTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.swt.WidgetObservableThreadTest;
@@ -409,6 +410,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(SWTObservablesTest.class);
 		addTestSuite(WidgetPropertiesTest.class);
 		addTestSuite(WidgetObservableThreadTest.class);
+
+		// org.eclipse.jface.tests.databinding.preference
+		addTestSuite(PreferencePageSupportTest.class);
 
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableListContentProviderTest.class);
