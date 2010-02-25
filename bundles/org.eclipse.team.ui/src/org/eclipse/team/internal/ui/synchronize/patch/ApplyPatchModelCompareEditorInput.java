@@ -10,16 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
-import org.eclipse.compare.CompareViewerPane;
-import org.eclipse.compare.ICompareNavigator;
+import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.patch.PatchFileDiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
+import org.eclipse.team.internal.ui.mapping.ResourceMergeHandler;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 
 public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
@@ -32,8 +37,6 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 	}
 
 	protected void handleMenuAboutToShow(IMenuManager manager) {
-		// add nothing for now, but when bug 300221 is fixed add 'Merge' only
-		/*
 		StructuredSelection selection = new StructuredSelection(((IResourceProvider)getCompareInput()).getResource());
 
 		final ResourceMergeHandler mergeHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), false);
@@ -52,7 +55,6 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 
 		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
 		manager.insertAfter("merge", mergeAction); //$NON-NLS-1$
-		*/
 	}
 
 	protected void contentsCreated() {
