@@ -60,14 +60,4 @@ public interface IBreakpointUIConstants {
      */
     public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR = "ElementComparator";   //$NON-NLS-1$
 
-    /**
-     * The property for tracking the active debug context for the breakpoints 
-     * view.  For most debuggers, the input into the breakpoints view will
-     * remain constant as to avoid unnecessary flickering in the view.  
-     * However, to implement the track selection features, debugger still 
-     * need access to the active debug context for the breakpoints view. 
-     * This property is updated by the breakpoints view whenever the active
-     * debug context changes.
-     */
-    public static final String PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT = "ActiveDebugContext"; //$NON-NLS-1$
 }

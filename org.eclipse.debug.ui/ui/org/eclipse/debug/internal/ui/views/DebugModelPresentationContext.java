@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A presentation context that has a debug model presentation.
@@ -27,10 +28,11 @@ public class DebugModelPresentationContext extends PresentationContext {
 	 * specified model presentation.
 	 * 
 	 * @param id context id
+	 * @param part workbench view
 	 * @param presentation debug model presentation
 	 */
-	public DebugModelPresentationContext(String id, IDebugModelPresentation presentation) {
-		super(id);
+	public DebugModelPresentationContext(String id, IWorkbenchPart part, IDebugModelPresentation presentation) {
+		super(id, part);
 		fPresentation = presentation;
 	}
 	

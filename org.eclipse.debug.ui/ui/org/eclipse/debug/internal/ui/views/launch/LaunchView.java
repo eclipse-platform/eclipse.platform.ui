@@ -776,7 +776,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	protected Viewer createViewer(Composite parent) {
 		fPresentation = new DelegatingModelPresentation();
-		fPresentationContext = new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, fPresentation);
+		fPresentationContext = new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, this, fPresentation);
 		TreeModelViewer viewer = new TreeModelViewer(parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL,
 				fPresentationContext);

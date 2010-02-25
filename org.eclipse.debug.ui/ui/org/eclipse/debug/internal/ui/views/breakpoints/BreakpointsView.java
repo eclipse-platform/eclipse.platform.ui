@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
@@ -36,7 +34,7 @@ import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsActio
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
-import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -74,7 +72,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -268,10 +265,9 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 */
 	protected void contextActivated(ISelection selection) {
 	    IPresentationContext presentationContext = getTreeModelViewer().getPresentationContext();
-	    presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ACTIVE_DEBUG_CONTEXT, selection);
 	    
 		if (selection == null || selection.isEmpty()) {
-			Object input = new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext());
+			Object input = new DefaultBreakpointsViewInput(presentationContext);
 			super.contextActivated(new StructuredSelection(input));
 		} else {
 			super.contextActivated(selection);
@@ -316,7 +312,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
         if ( (status == null || status.isOK()) && update.getElement() != null) {
             setViewerInput(update.getInputElement());
         } else {
-            setViewerInput(new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext()));
+            setViewerInput(new DefaultBreakpointsViewInput(getTreeModelViewer().getPresentationContext()));
         }
 	}
 	
@@ -428,35 +424,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		super.saveViewerState(memento);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (sel.isEmpty() || !isTrackingSelection()) {
-			return;
-		}
-		IStructuredSelection selection = (IStructuredSelection) sel;
-		Iterator iter = selection.iterator();
-		Object firstElement = iter.next();
-		if (firstElement == null || iter.hasNext()) {
-			return;
-		}
-		IThread thread = null;
-		if (firstElement instanceof IStackFrame) {
-			thread = ((IStackFrame) firstElement).getThread();
-		} else if (firstElement instanceof IThread) {
-			thread = (IThread) firstElement;
-		} else {
-			return;
-		}
-
-		IBreakpoint[] breakpoints = thread.getBreakpoints();
-		Viewer viewer = getViewer();
-		if (viewer != null)
-			viewer.setSelection(new StructuredSelection(breakpoints), true);
-	}
-
 	/**
 	 * Preserves the selection.
 	 * 

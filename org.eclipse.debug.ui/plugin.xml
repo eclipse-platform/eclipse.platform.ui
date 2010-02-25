@@ -2482,7 +2482,7 @@ M4 = Platform-specific fourth key
             </adapter>
          </factory>
 		 <factory
-               adaptableType="org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput"
+               adaptableType="org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput"
                class="org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory">
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">

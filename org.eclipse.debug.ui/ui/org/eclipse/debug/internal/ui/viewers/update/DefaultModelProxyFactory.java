@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
-import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
@@ -75,7 +75,7 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 				return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
 		}
 		if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id)) {
-			if (element instanceof DefaultBreakpointManagerInput) {
+			if (element instanceof DefaultBreakpointsViewInput) {
 				return new BreakpointManagerProxy(element, context);
 			} else if (element instanceof IBreakpoint) {
 				return new BreakpointProxy((IBreakpoint)element);

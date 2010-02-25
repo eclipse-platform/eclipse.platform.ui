@@ -12,6 +12,8 @@
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Context in which an asynchronous request has been made.
@@ -105,5 +107,25 @@ public interface IPresentationContext {
      * @since 3.4
      */
     public String[] getProperties();
+    
+    /**
+     * Returns the part that this presentation context is associated with.
+     * May return <code>null</code> if the presentation is not associated 
+     * with a part.
+     *  
+     * @return IWorkbenchPart or <code>null</code> 
+     * @since 3.6
+     */
+    public IWorkbenchPart getPart();
+    
+    /**
+     * Returns the window that this presentation context is associated with.
+     * May return <code>null</code> if the presentation is not associated 
+     * with a window.
+     *  
+     * @return IWorkbenchWindow or <code>null</code> 
+     * @since 3.6
+     */
+    public IWorkbenchWindow getWindow();
     
 }

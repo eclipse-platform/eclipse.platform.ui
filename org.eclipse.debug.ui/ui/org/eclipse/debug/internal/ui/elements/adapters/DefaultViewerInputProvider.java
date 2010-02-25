@@ -31,7 +31,7 @@ public class DefaultViewerInputProvider extends ViewerInputProvider {
 	 */
 	protected Object getViewerInput(Object source, IPresentationContext context, IViewerUpdate update) throws CoreException {	    
 		if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId())) {	  			
-			AbstractBreakpointManagerInput input = new DefaultBreakpointManagerInput(context);
+			DefaultBreakpointsViewInput input = new DefaultBreakpointsViewInput(context);
 			return input;
 		}	    	
 		

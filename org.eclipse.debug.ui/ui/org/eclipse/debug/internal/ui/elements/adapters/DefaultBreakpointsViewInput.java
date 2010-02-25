@@ -7,18 +7,19 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
+ *     Wind River Systems - ongoing enhancements and bug fixing
  *****************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * A breakpoint manager input allows the breakpoints view to link the active debug context
- * per workbench window.
+ * The default breakpoints view input populates the view with content 
+ * from the default breakpoint manager.
  * 
  * @since 3.6
  */
-public abstract class AbstractBreakpointManagerInput {
+public class DefaultBreakpointsViewInput {
 	
 	/**
 	 * The presentation context of the breakpoints view.
@@ -30,7 +31,7 @@ public abstract class AbstractBreakpointManagerInput {
 	 * 
 	 * @param context the presentation context for this input
 	 */
-	protected AbstractBreakpointManagerInput(IPresentationContext context) {
+	public DefaultBreakpointsViewInput(IPresentationContext context) {
 		fContext = context;
 	}
 		
@@ -42,4 +43,32 @@ public abstract class AbstractBreakpointManagerInput {
 	public IPresentationContext getContext() {
 		return fContext;
 	}
+	
+	/*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        if (getContext() != null) {
+            return getContext().hashCode();
+        } else {
+            return 1;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object arg0) {
+        if ( (arg0 != null) && arg0.getClass().equals(this.getClass()) ) {
+
+            IPresentationContext context = ((DefaultBreakpointsViewInput) arg0).getContext();
+            if (getContext() != null && context != null)
+                return getContext().equals(context);
+        } 
+        
+        return super.equals(arg0);              
+    }
+
 }

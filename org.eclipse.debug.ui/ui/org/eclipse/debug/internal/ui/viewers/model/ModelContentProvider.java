@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.progress.UIJob;
@@ -1252,31 +1253,51 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * #modelChanged
      * (org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
      */
-    public synchronized void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
-        if (fViewer != null && !proxy.isDisposed()) {
-            WorkbenchJob job = new WorkbenchJob(fViewer.getDisplay(), "process model delta") { //$NON-NLS-1$
-                public IStatus runInUIThread(IProgressMonitor monitor) {
-                    if (!proxy.isDisposed()) {
-                        if (DEBUG_DELTAS && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                            DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
-                        }
+    public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
+        Display display = null;
 
-                        updateModel(delta, getModelDeltaMask());
-
-                        // Call model listeners after updating the viewer model.
-                        Object[] listeners = fModelListeners.getListeners();
-                        for (int i = 0; i < listeners.length; i++) {
-                            ((IModelChangedListener) listeners[i]).modelChanged(delta, proxy);
-                        }
+        // Check if the viewer is still available, i.e. if the content provider
+        // is not disposed.
+        synchronized(this) {
+            if (fViewer != null && !proxy.isDisposed()) {
+                display = fViewer.getDisplay();
+            }
+        }
+        if (display != null) {
+            // If we're in display thread, process the delta immediately to 
+            // avoid "skid" in processing events.
+            if (Thread.currentThread().equals(display.getThread())) {
+                doModelChanged(delta, proxy);
+            }
+            else {
+                WorkbenchJob job = new WorkbenchJob(fViewer.getDisplay(), "process model delta") { //$NON-NLS-1$
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        doModelChanged(delta, proxy);
+                        return Status.OK_STATUS;
                     }
-                    return Status.OK_STATUS;
-                }
-            };
-            job.setSystem(true);
-            job.schedule();
+                };
+                job.setSystem(true);
+                job.schedule();
+            }
         }
     }
 
+    private void doModelChanged(IModelDelta delta, IModelProxy proxy) {
+        if (!proxy.isDisposed()) {
+            if (DEBUG_DELTAS && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
+            }
+
+            updateModel(delta, getModelDeltaMask());
+
+            // Call model listeners after updating the viewer model.
+            Object[] listeners = fModelListeners.getListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                ((IModelChangedListener) listeners[i]).modelChanged(delta, proxy);
+            }
+        }
+    }
+    
     /**
      * @see ITreeModelContentProvider#setModelDeltaMask(int)
      */

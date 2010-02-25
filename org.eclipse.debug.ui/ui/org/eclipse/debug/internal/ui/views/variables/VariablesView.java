@@ -641,7 +641,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected TreeModelViewer createTreeViewer(Composite parent) {
 		
 		int style = getViewerStyle();
-		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), fModelPresentation); 
+		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), this, fModelPresentation); 
 		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style, fPresentationContext);
 		
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {

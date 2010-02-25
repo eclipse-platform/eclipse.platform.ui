@@ -31,7 +31,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
@@ -193,7 +193,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             if (adaptableObject instanceof IMemoryBlock) {
             	return fgCPMemoryBlock;
             }            
-            if (adaptableObject instanceof DefaultBreakpointManagerInput) {
+            if (adaptableObject instanceof DefaultBreakpointsViewInput) {
             	return fgCPBreakpointManager;
             }
             if (adaptableObject instanceof IBreakpoint) {
@@ -240,7 +240,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         			adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager ||
         			adaptableObject instanceof IExpression || adaptableObject instanceof IMemoryBlockRetrieval ||
         			adaptableObject instanceof IMemoryBlock ||
-        			adaptableObject instanceof DefaultBreakpointManagerInput ||
+        			adaptableObject instanceof DefaultBreakpointsViewInput ||
         			adaptableObject instanceof IBreakpoint ||
         			adaptableObject instanceof IBreakpointContainer)
         	return fgModelProxyFactoryAdapter;
@@ -289,7 +289,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof IBreakpointContainer) {
         		return fgMPBreakpointContainer;
         	}
-        	if (adaptableObject instanceof DefaultBreakpointManagerInput) {
+        	if (adaptableObject instanceof DefaultBreakpointsViewInput) {
         		return fgMPBreakpointManagerInput;
         	}
         }

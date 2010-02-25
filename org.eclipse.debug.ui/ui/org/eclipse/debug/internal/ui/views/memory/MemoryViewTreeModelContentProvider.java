@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.viewers.PartPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -35,11 +34,8 @@ public class MemoryViewTreeModelContentProvider extends
 				if ((flags & IModelDelta.ADDED) != 0) {
 					if (node.getElement() instanceof IMemoryBlock) {
 						if ((flags & IModelDelta.SELECT) != 0) {
-							PartPresentationContext context = (PartPresentationContext) viewer
-									.getPresentationContext();
-							if (context.getPart() instanceof MemoryView) {
-								MemoryView view = (MemoryView) context
-										.getPart();
+							if (getPresentationContext() instanceof MemoryView) {
+								MemoryView view = (MemoryView) getPresentationContext().getPart();
 								if (view.isPinMBDisplay()) {
 									// turn off select if the view is currently
 									// pinned

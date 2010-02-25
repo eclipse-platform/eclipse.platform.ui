@@ -25,6 +25,8 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -42,17 +44,57 @@ public class PresentationContext implements IPresentationContext {
     private static final String INTEGER = "INTEGER";  //$NON-NLS-1$
     private static final String PERSISTABLE = "PERSISTABLE";  //$NON-NLS-1$
     
-    private String fId;
-    private ListenerList fListeners = new ListenerList();
-    private Map fProperties = new HashMap();
-    
+    final private String fId;
+    final private ListenerList fListeners = new ListenerList();
+    final private Map fProperties = new HashMap();
+    final private IWorkbenchWindow fWindow;
+    final private IWorkbenchPart fPart;
+
     /**
      * Constructs a presentation context for the given id.
      * 
      * @param id presentation context id
      */
     public PresentationContext(String id) {
+        this (id, null, null);
+    }
+
+    /**
+     * Constructs a presentation context for the given id and window.
+     * 
+     * @param id presentation context id
+     * @param window presentation context window, may be <code>null</code>
+     */
+    public PresentationContext(String id, IWorkbenchWindow window) {
+        this (id, window, null);
+    }
+
+    /**
+     * Constructs a presentation context for the given id and part.
+     * The presentation context window is derived from the part.
+     * 
+     * @param id presentation context id
+     * @param part presentation context part, may be <code>null</code>
+     */
+    public PresentationContext(String id, IWorkbenchPart part) {
+        this (id, part.getSite().getWorkbenchWindow(), part);
+    }
+
+    /**
+     * Constructs a presentation context for the given id and part.
+     * The presentation context id and window are derived from the part.
+     * 
+     * @param id presentation context id
+     * @param part presentation context part, can NOT be <code>null</code>
+     */
+    public PresentationContext(IWorkbenchPart part) {
+        this (part.getSite().getId(), part.getSite().getWorkbenchWindow(), part);
+    }
+
+    private PresentationContext(String id, IWorkbenchWindow window, IWorkbenchPart part) {
     	fId = id;
+    	fWindow = window;
+    	fPart = part;
     }
 
 	/* (non-Javadoc)
@@ -246,6 +288,14 @@ public class PresentationContext implements IPresentationContext {
 			return (String[]) keys.toArray(new String[keys.size()]);
 		}
 	}
+
+    public IWorkbenchPart getPart() {
+        return fPart;
+    }
+
+    public IWorkbenchWindow getWindow() {
+        return fWindow;
+    }
 	
 
 }

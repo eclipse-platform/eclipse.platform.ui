@@ -101,7 +101,7 @@ public class InspectPopupDialog extends DebugPopup {
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         VariablesView view = getViewToEmulate();
-        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW, view);
         if (view != null) {
         	// copy over properties
         	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();

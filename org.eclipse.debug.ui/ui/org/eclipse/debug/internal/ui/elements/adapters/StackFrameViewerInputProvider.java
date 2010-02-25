@@ -32,7 +32,7 @@ public class StackFrameViewerInputProvider extends ViewerInputProvider {
 	    if ( IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
 	        return new RegisterGroupProxy((IStackFrame) source);  
 	    } else if ( IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
-	    	return new DefaultBreakpointManagerInput(context);
+	    	return new DefaultBreakpointsViewInput(context);
 	    } else {
 	        return DebugPlugin.getDefault().getExpressionManager();
 	    }
