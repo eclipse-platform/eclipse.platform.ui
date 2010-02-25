@@ -13,12 +13,21 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -26,7 +35,14 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -282,13 +298,15 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * Tests
 	 ******************************************************************/
 	
-	public void testBug302163WithStandardModel() throws CoreException {
+	public void testBug302163WithoutModel() throws CoreException {
+		// Create a test project
 		IProject modelProject = getUniqueTestProject("test1");
 		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
 		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
 		shareProject(modelProject);
 		assertValidCheckout(modelProject);
 		
+		// Checkout and modify a copy
 		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
@@ -297,19 +315,23 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
 		setSyncSource(new SyncInfoSource());
+		// Update
 		try {
 			update(modelProject, new String[] { "file.mod" });
 		} catch (CVSException e) {
 			fail("Update without models failed", e);
 		}
+		// Reset settings
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
 		setSyncSource(new ModelParticipantSyncInfoSource());
 	}
 	
-	public void testBug302163WithCustomModel() throws CoreException {
+	public void testBug302163WithModel() throws CoreException {
+		// Create a test project
 		IProject project = createProject("test", new String[] { "file1.txt" });
 		ModelResourceMapping.projectName = project.getName();
 		
+		// Create a test model project
 		IProject modelProject = getUniqueTestProject("test1");
 		buildResources(modelProject, new String[] { "file.mod", "f1.moe" }, true);
 		modelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe").getBytes()), false, true, null);
@@ -317,6 +339,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		shareProject(modelProject);
 		assertValidCheckout(modelProject);
 		
+		// Checkout and modify a copy of the model project
 		IProject copyModelProject = checkoutCopy(modelProject, "-copy");	
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
@@ -325,11 +348,13 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
 		setSyncSource(new SyncInfoSource());
+		// Update
 		try {
 			update(modelProject, new String[] { "file.mod" });
 		} catch (CVSException e) {
 			fail("Update without models failed", e);
 		}
+		// Reset settings		
 		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
 		setSyncSource(new ModelParticipantSyncInfoSource());
 	}

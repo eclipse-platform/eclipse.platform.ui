@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import junit.framework.Test;
@@ -241,47 +240,15 @@ public class CreatePatchTest extends EclipseTest {
 	}
 
 	private Text getText(Object object, String name) {
-		return (Text) getField(object, name);
+		return (Text) ReflectionUtils.getField(object, name);
 	}
 
 	private Button getButton(Object object, String name) {
-		return (Button) getField(object, name);
-	}
-
-	private Object getField(Object object, String name) {
-		Object ret = null;
-		try {
-			ret = ReflectionUtils.getField(object, name);
-		} catch (IllegalArgumentException e) {
-			fail(e.getMessage());
-		} catch (SecurityException e) {
-			fail(e.getMessage());
-		} catch (IllegalAccessException e) {
-			fail(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			fail(e.getMessage());
-		}
-		return ret;
+		return (Button) ReflectionUtils.getField(object, name);
 	}
 
 	private Object callMethod(Object object, String name) {
-		return callMethod(object, name, new Object[] {});
-	}
-
-	private Object callMethod(Object object, String name, Object args[]) {
-		Object ret = null;
-		try {
-			ret = ReflectionUtils.callMethod(object, name, args);
-		} catch (IllegalArgumentException e) {
-			fail(e.getMessage());
-		} catch (IllegalAccessException e) {
-			fail(e.getMessage());
-		} catch (InvocationTargetException e) {
-			fail(e.getMessage());
-		} catch (NoSuchMethodException e) {
-			fail(e.getMessage());
-		}
-		return ret;
+		return ReflectionUtils.callMethod(object, name, new Object[] {});
 	}
 
 	private Shell getShell() {
