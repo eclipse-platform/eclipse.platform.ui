@@ -359,17 +359,51 @@ public class PartServiceImpl implements EPartService {
 			}
 
 			String category = descriptor.getCategory();
-			MApplicationElement container = modelService.find(category, rootContainer);
+			MUIElement container = modelService.find(category, rootContainer);
 			if (container instanceof MElementContainer<?>) {
 				((MElementContainer<MPart>) container).getChildren().add(providedPart);
 			} else {
-				MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-				stack.setId(category);
-				stack.getChildren().add(providedPart);
-				rootContainer.getChildren().add(stack);
+				MElementContainer<?> lastContainer = getLastContainer();
+				((List) lastContainer.getChildren()).add(providedPart);
+
+				String id = lastContainer.getId();
+				if (id == null || id.length() == 0) {
+					lastContainer.setId(category);
+				}
 			}
 		}
 		return providedPart;
+	}
+
+	private MElementContainer<?> getLastContainer() {
+		List<MUIElement> children = rootContainer.getChildren();
+		if (children.size() == 0) {
+			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			rootContainer.getChildren().add(stack);
+			return stack;
+		}
+
+		MElementContainer<?> lastContainer = getLastContainer(children);
+		if (lastContainer == null) {
+			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			rootContainer.getChildren().add(stack);
+			return stack;
+		}
+		return lastContainer;
+	}
+
+	private MElementContainer<?> getLastContainer(List<?> children) {
+		if (children.isEmpty()) {
+			return null;
+		}
+
+		for (int i = children.size() - 1; i > -1; i--) {
+			Object muiElement = children.get(i);
+			if (muiElement instanceof MElementContainer<?>) {
+				return getLastContainer(((MElementContainer) muiElement).getChildren());
+			}
+		}
+		return null;
 	}
 
 	private MPart showExistingPart(PartState partState, MPart providedPart, MPart localPart) {
