@@ -221,34 +221,6 @@ public class PartRenderingEngineTests extends TestCase {
 		application.getChildren().add(window);
 
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("aStack");
-		window.getChildren().add(stack);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
-
-		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
-		assertEquals(0, tabFolder.getItemCount());
-
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
-		stack.getChildren().add(part);
-
-		assertEquals(1, tabFolder.getItemCount());
-		assertEquals(0, tabFolder.getSelectionIndex());
-		assertEquals(part, stack.getSelectedElement());
-	}
-
-	public void testPartStack_SetActiveChild5Bug299379() throws Exception {
-		MApplication application = MApplicationFactory.eINSTANCE
-				.createApplication();
-		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
-
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
@@ -274,7 +246,7 @@ public class PartRenderingEngineTests extends TestCase {
 				1, tabFolder.getSelectionIndex());
 	}
 
-	public void testPartStack_SetActiveChild6Bug295250() throws Exception {
+	public void testPartStack_SetActiveChild5Bug295250() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -306,7 +278,7 @@ public class PartRenderingEngineTests extends TestCase {
 				.getObject());
 	}
 
-	public void testPartStack_SetActiveChild7Bug298797() throws Exception {
+	public void testPartStack_SetActiveChild6Bug298797() throws Exception {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);

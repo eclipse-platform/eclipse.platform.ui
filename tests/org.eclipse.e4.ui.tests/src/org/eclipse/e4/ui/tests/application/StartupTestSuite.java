@@ -26,8 +26,8 @@ public class StartupTestSuite extends TestSuite {
 		suite.addTestSuite(HeadlessContactsDemoTest.class);
 		suite.addTestSuite(HeadlessPhotoDemoTest.class);
 
-		suite.addTestSuite(UIContactsDemoTest.class);
-		suite.addTestSuite(UIPhotoDemoTest.class);
+		// suite.addTestSuite(UIContactsDemoTest.class);
+		// suite.addTestSuite(UIPhotoDemoTest.class);
 
 		suite.addTestSuite(UIEventsTest.class);
 
