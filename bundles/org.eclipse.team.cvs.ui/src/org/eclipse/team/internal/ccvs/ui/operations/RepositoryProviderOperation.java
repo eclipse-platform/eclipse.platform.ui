@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,7 +221,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
     public ISynchronizationScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (manager == null) {
     		manager = createScopeManager(consultModelsWhenBuildingScope && consultModelsForMappings());
-    		BuildScopeOperation op = createBuildScopeOperation(manager);
+    		BuildScopeOperation op = new BuildScopeOperation(getPart(), manager);
 			try {
 				op.run(monitor);
 			} catch (InvocationTargetException e) {
@@ -230,10 +230,6 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
     	}
     	return manager.getScope();
 	}
-    
-    protected BuildScopeOperation createBuildScopeOperation(ISynchronizationScopeManager manager) {
-    	return new BuildScopeOperation(getPart(), manager);
-    }
 
     /**
      * Create the scope manager to be used by this operation.

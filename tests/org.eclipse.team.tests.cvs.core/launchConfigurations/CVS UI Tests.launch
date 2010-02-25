@@ -18,7 +18,7 @@
 <booleanAttribute key="onePlugin" value="false"/>
 <stringAttribute key="onePluginID" value=""/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/org.eclipse.team.tests.cvs.core/src/org/eclipse/team/tests/ccvs/core/subscriber/CVSWorkspaceSubscriberTest.java"/>
+<listEntry value="/org.eclipse.team.tests.cvs.core/src/org/eclipse/team/tests/ccvs/core/AllTests.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -31,7 +31,7 @@
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
 <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit3"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.subscriber.CVSWorkspaceSubscriberTest"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.AllTests"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os win32 -ws win32 -arch x86 -nl en_CA"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
