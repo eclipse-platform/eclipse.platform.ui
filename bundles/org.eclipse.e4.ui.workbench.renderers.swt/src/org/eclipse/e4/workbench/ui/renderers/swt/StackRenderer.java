@@ -204,6 +204,18 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleModifier = 0; // SWT.CLOSE
 		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER
 				| styleModifier);
+		// temporary HACK for bug 303982
+		if (element.getTags().contains("newtablook")) { //$NON-NLS-1$
+			// ADD RENDERER CHANGES HERE
+//		ctf.setRenderer(new e4Renderer(ctf));
+//		Display display = parentComposite.getDisplay();
+//		Color white = display.getSystemColor(SWT.COLOR_WHITE);
+//		ctf.setSelectionBackground(white);
+//		Color topBlue = new Color(display, 224, 233, 255);
+//		Color bottomBlue = new Color(display, 231, 238, 253);
+//		ctf.setBackground(new Color[] { topBlue, bottomBlue, white },
+//				new int[] { 100, 100 }, true);
+		}
 		bindWidget(element, ctf);
 
 		// TBD: need to handle this

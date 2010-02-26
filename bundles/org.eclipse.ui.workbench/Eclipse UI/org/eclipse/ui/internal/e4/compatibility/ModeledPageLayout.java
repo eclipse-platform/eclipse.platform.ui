@@ -65,6 +65,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 		MPartSashContainer esc = MApplicationFactory.eINSTANCE.createPartSashContainer();
 		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
+		// temporary HACK for bug 303982
+		editorStack.getTags().add("newtablook"); //$NON-NLS-1$
 		editorStack.setId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		esc.getChildren().add(editorStack);
 		esc.setId(getEditorArea());
@@ -236,6 +238,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public static MPartStack createStack(String id, boolean visible) {
 		MPartStack newStack = MApplicationFactory.eINSTANCE.createPartStack();
+		// temporary HACK for bug 303982
+		newStack.getTags().add("newtablook"); //$NON-NLS-1$
 		newStack.setId(id);
 		newStack.setVisible(visible);
 		return newStack;
