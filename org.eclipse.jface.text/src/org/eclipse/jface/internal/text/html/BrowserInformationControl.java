@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -54,21 +54,23 @@ import org.eclipse.jface.text.TextPresentation;
 /**
  * Displays HTML information in a {@link org.eclipse.swt.browser.Browser} widget.
  * <p>
- * This {@link IInformationControlExtension2} expects {@link #setInput(Object)} to be
- * called with an argument of type {@link BrowserInformationControlInput}.
+ * This {@link IInformationControlExtension2} expects {@link #setInput(Object)} to be called with an
+ * argument of type {@link BrowserInformationControlInput}.
  * </p>
  * <p>
- * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.
+ * </p>
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.</p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
  * <p>
  * Current problems:
  * <ul>
- * 	<li>the size computation is too small</li>
- * 	<li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
+ * <li>the size computation is too small</li>
+ * <li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
  * </ul>
  * </p>
- *
+ * 
  * @since 3.2
  */
 public class BrowserInformationControl extends AbstractInformationControl implements IInformationControlExtension2, IDelayedInputChangeProvider {
@@ -77,7 +79,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Tells whether the SWT Browser widget and hence this information
 	 * control is available.
-	 *
+	 * 
 	 * @param parent the parent component used for checking or <code>null</code> if none
 	 * @return <code>true</code> if this control is available
 	 */
@@ -111,6 +113,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * @since 3.2
 	 */
 	private static final int MIN_WIDTH= 80;
+
 	private static final int MIN_HEIGHT= 50;
 
 
@@ -118,6 +121,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * Availability checking cache.
 	 */
 	private static boolean fgIsAvailable= false;
+
 	private static boolean fgAvailabilityChecked= false;
 
 	/**
@@ -128,10 +132,13 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/** The control's browser widget */
 	private Browser fBrowser;
+
 	/** Tells whether the browser has content */
 	private boolean fBrowserHasContent;
+
 	/** Text layout used to approximate size of content when rendered in browser */
 	private TextLayout fTextLayout;
+
 	/** Bold text style */
 	private TextStyle fBoldStyle;
 
@@ -154,7 +161,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * The listeners to be notified when the input changed.
 	 * @since 3.4
 	 */
-	private ListenerList/*<IInputChangedListener>*/ fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList/*<IInputChangedListener>*/fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * The symbolic name of the font used for size computations, or <code>null</code> to use dialog font.
@@ -165,7 +172,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param resizable <code>true</code> if the control should be resizable
@@ -179,7 +186,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param statusFieldText the text to be used in the optional status field
@@ -194,7 +201,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
@@ -212,25 +219,16 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	protected void createContent(Composite parent) {
 		fBrowser= new Browser(parent, SWT.NONE);
 		fBrowser.setJavascriptEnabled(false);
-		
+
 		Display display= getShell().getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		fBrowser.addKeyListener(new KeyListener() {
 
-			public void keyPressed(KeyEvent e)  {
-				if (e.character == 0x1B) // ESC
-					dispose(); // XXX: Just hide? Would avoid constant recreations.
+		fBrowser.addProgressListener(new ProgressAdapter() {
+			public void completed(ProgressEvent event) {
+				fCompleted= true;
 			}
-
-			public void keyReleased(KeyEvent e) {}
 		});
-
-        fBrowser.addProgressListener(new ProgressAdapter() {
-            public void completed(ProgressEvent event) {
-            	fCompleted= true;
-            }
-        });
 
 		fBrowser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
@@ -300,7 +298,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		else if (!resizable)
 			//XXX: In IE, "word-wrap: break-word;" causes bogus wrapping even in non-broken words :-(see e.g. Javadoc of String).
 			// Re-check whether we really still need this now that the Javadoc Hover header already sets this style.
-			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/ }; //$NON-NLS-1$
+			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/}; //$NON-NLS-1$
 		else
 			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
 
@@ -343,12 +341,12 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		 */
 		final Display display= shell.getDisplay();
 
-        // Make sure the display wakes from sleep after timeout:
-        display.timerExec(100, new Runnable() {
-            public void run() {
-                fCompleted= true;
-            }
-        });
+		// Make sure the display wakes from sleep after timeout:
+		display.timerExec(100, new Runnable() {
+			public void run() {
+				fCompleted= true;
+			}
+		});
 
 		while (!fCompleted) {
 			// Drive the event loop to process the events required to load the browser widget's contents:
@@ -368,7 +366,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		if ("win32".equals(SWT.getPlatform())) //$NON-NLS-1$
 			shell.moveAbove(null);
 
-        super.setVisible(true);
+		super.setVisible(true);
 	}
 
 	/*
@@ -386,7 +384,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates and initializes the text layout used
 	 * to compute the size hint.
-	 *
+	 * 
 	 * @since 3.2
 	 */
 	private void createTextLayout() {
@@ -402,10 +400,19 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 		// Compute and set tab width
 		fTextLayout.setText("    "); //$NON-NLS-1$
-		int tabWidth = fTextLayout.getBounds().width;
-		fTextLayout.setTabs(new int[] {tabWidth});
+		int tabWidth= fTextLayout.getBounds().width;
+		fTextLayout.setTabs(new int[] { tabWidth });
 
 		fTextLayout.setText(""); //$NON-NLS-1$
+
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (fTextLayout != null) {
+					fTextLayout.dispose();
+					fTextLayout= null;
+				}
+			}
+		});
 	}
 
 	/*
@@ -457,7 +464,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			Rectangle rect= fTextLayout.getLineBounds(i);
 			int lineWidth= rect.x + rect.width;
 			if (i == 0)
-				lineWidth += fInput.getLeadingImageWidth();
+				lineWidth+= fInput.getLeadingImageWidth();
 			textWidth= Math.max(textWidth, lineWidth);
 		}
 		bounds.width= textWidth;
@@ -505,7 +512,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Adds the listener to the collection of listeners who will be
 	 * notified when the current location has changed or is about to change.
-	 *
+	 * 
 	 * @param listener the location listener
 	 * @since 3.4
 	 */
@@ -539,7 +546,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Adds a listener for input changes to this input change provider.
 	 * Has no effect if an identical listener is already registered.
-	 *
+	 * 
 	 * @param inputChangeListener the listener to add
 	 * @since 3.4
 	 */
@@ -551,7 +558,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Removes the given input change listener from this input change provider.
 	 * Has no effect if an identical listener is not registered.
-	 *
+	 * 
 	 * @param inputChangeListener the listener to remove
 	 * @since 3.4
 	 */
@@ -569,7 +576,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Tells whether a delayed input change listener is registered.
-	 *
+	 * 
 	 * @return <code>true</code> iff a delayed input change
 	 *         listener is currently registered
 	 * @since 3.4
@@ -580,7 +587,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Notifies listeners of a delayed input change.
-	 *
+	 * 
 	 * @param newInput the new input, or <code>null</code> to request cancellation
 	 * @since 3.4
 	 */
