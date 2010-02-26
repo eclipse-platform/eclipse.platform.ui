@@ -115,6 +115,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private E4PartListener e4PartListener = new E4PartListener();
 
+	private EventHandler selectedHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			Object oldSelected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+
+			if (oldSelected instanceof MPart) {
+				MPart oldSelectedPart = (MPart) oldSelected;
+				if (oldSelectedPart.isToBeRendered()) {
+					firePartHidden(oldSelectedPart);
+				}
+			}
+
+			if (selected instanceof MPart) {
+				MPart selectedPart = (MPart) selected;
+				if (selectedPart.isToBeRendered()) {
+					firePartBroughtToTop(selectedPart);
+					firePartVisible(selectedPart);
+				}
+			}
+		}
+	};
+
 	/**
 	 * @param workbenchWindow
 	 * @param input
@@ -128,6 +150,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	void postConstruct() throws InvocationTargetException, InstantiationException {
 		partService.addPartListener(e4PartListener);
 		window.getContext().set(IPartService.class.getName(), this);
+
+		IEventBroker eventBroker = (IEventBroker) window.getContext().get(
+				IEventBroker.class.getName());
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
@@ -231,6 +258,32 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partBroughtToTop(partReference);
+			}
+		}
+	}
+
+	// FIXME: convert me to e4 events!
+	private void firePartVisible(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partVisible(partReference);
+			}
+		}
+	}
+
+	// FIXME: convert me to e4 events!
+	private void firePartHidden(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partHidden(partReference);
 			}
 		}
 	}
