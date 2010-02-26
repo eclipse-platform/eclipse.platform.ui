@@ -32,7 +32,13 @@ import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
@@ -88,6 +94,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private ServiceLocator serviceLocator;
 
+	private StatusLineManager statusLineManager;
+
 	public WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
 		this.perspective = perspective;
@@ -135,6 +143,22 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
 		windowContext.set(IHandlerService.class.getName(), hs);
 		readActionSets();
+	}
+
+	public StatusLineManager getStatusLineManager() {
+		if (statusLineManager == null) {
+			Shell shell = (Shell) model.getWidget();
+			if (shell != null) {
+				TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
+				Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
+				trimComposite.setLayout(new FillLayout());
+
+				statusLineManager = new StatusLineManager();
+				Control control = statusLineManager.createControl(trimComposite);
+				control.setSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+		}
+		return statusLineManager;
 	}
 
 	public static String getId(IConfigurationElement element) {

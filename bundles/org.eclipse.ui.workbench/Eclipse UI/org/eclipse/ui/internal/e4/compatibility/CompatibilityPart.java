@@ -22,13 +22,8 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
@@ -68,16 +63,6 @@ public abstract class CompatibilityPart {
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		try {
-			// create a primary composite
-			Composite composite = new Composite(parent, SWT.NONE);
-			GridLayout layout = new GridLayout(1, true);
-			composite.setLayout(layout);
-
-			// composite for the workbench part itself
-			Composite partComposite = new Composite(composite, SWT.NONE);
-			partComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			partComposite.setLayout(new FillLayout());
-
 			parent.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
 					try {
@@ -91,15 +76,7 @@ public abstract class CompatibilityPart {
 					}
 				}
 			});
-			legacyPart.createPartControl(partComposite);
-
-			// FIXME: now we spawn a status line for every single workbench
-			// part, bug 303778 is very annoying
-			IStatusLineManager statusLineManager = getStatusLineManager();
-			if (statusLineManager instanceof StatusLineManager) {
-				Control control = ((StatusLineManager) statusLineManager).createControl(composite);
-				control.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			}
+			legacyPart.createPartControl(parent);
 		} catch (Throwable ex) {
 			ex.printStackTrace(System.err);
 		}

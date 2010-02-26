@@ -18,9 +18,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class ActionBars implements IActionBars {
@@ -28,8 +28,6 @@ public class ActionBars implements IActionBars {
 	private IToolBarManager toolbarManager;
 
 	private IMenuManager menuManager;
-
-	private StatusLineManager statusLineManager;
 
 	private MPart part;
 
@@ -95,10 +93,9 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getStatusLineManager()
 	 */
 	public IStatusLineManager getStatusLineManager() {
-		if (statusLineManager == null) {
-			statusLineManager = new StatusLineManager();
-		}
-		return statusLineManager;
+		WorkbenchWindow window = (WorkbenchWindow) part.getContext().get(
+				IWorkbenchWindow.class.getName());
+		return window.getStatusLineManager();
 	}
 
 	/*
