@@ -17,6 +17,7 @@ import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -53,6 +54,11 @@ public class CompatibilityView extends CompatibilityPart {
 	@Override
 	public IWorkbenchPartReference getReference() {
 		return reference;
+	}
+
+	@Override
+	protected IStatusLineManager getStatusLineManager() {
+		return getView().getViewSite().getActionBars().getStatusLineManager();
 	}
 
 	/*

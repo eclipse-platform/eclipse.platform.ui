@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -39,6 +40,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 		if (!part.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
 			part.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 		}
+	}
+
+	@Override
+	protected IStatusLineManager getStatusLineManager() {
+		return getEditor().getEditorSite().getActionBars().getStatusLineManager();
 	}
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
