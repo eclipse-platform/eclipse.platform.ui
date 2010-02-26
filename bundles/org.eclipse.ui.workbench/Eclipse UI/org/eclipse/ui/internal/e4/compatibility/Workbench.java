@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -53,6 +54,7 @@ import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -60,6 +62,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -110,6 +113,7 @@ import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -226,6 +230,13 @@ public class Workbench implements IWorkbench {
 
 		appContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
 				IServiceScopes.WORKBENCH_SCOPE, this, null, null, null, null, 0));
+		appContext.set(IProgressService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return getProgressService();
+			}
+		});
+
 		JFaceUtil.initializeJFacePreferences();
 		initializeApplicationColors();
 	}
@@ -275,7 +286,10 @@ public class Workbench implements IWorkbench {
 			public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 					throws InvocationTargetException, InterruptedException {
 				E4Util.unsupported("run"); //$NON-NLS-1$
-				runnable.run(new NullProgressMonitor());
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+						ProgressManagerUtil.getDefaultParent());
+				dialog.open();
+				dialog.run(fork, cancelable, runnable);
 			}
 
 			public void registerIconForFamily(ImageDescriptor icon, Object family) {
@@ -292,10 +306,32 @@ public class Workbench implements IWorkbench {
 				return null;
 			}
 
-			public void busyCursorWhile(IRunnableWithProgress runnable)
+			public void busyCursorWhile(final IRunnableWithProgress runnable)
 					throws InvocationTargetException, InterruptedException {
+				// FIXME e4 compat busyCursorWhile
 				E4Util.unsupported("busyCursorWhile"); //$NON-NLS-1$
-				runnable.run(new NullProgressMonitor());
+				final InvocationTargetException[] ite = new InvocationTargetException[1];
+				final InterruptedException[] ie = new InterruptedException[1];
+				Runnable r = new Runnable() {
+					public void run() {
+						try {
+							runnable.run(new NullProgressMonitor());
+						} catch (InvocationTargetException e) {
+							ite[0] = e;
+						} catch (InterruptedException e) {
+							ie[0] = e;
+						}
+					}
+				};
+				BusyIndicator.showWhile(getDisplay(), r);
+
+				if (ite[0] != null) {
+					throw ite[0];
+				}
+
+				if (ie[0] != null) {
+					throw ie[0];
+				}
 			}
 		};
 	}
