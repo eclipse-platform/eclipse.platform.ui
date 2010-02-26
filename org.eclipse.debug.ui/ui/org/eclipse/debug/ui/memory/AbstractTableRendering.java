@@ -1990,14 +1990,13 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
-			
-			if (label.startsWith("&")) //$NON-NLS-1$
-				label = "&" + label; //$NON-NLS-1$
-			
 			if (label == null)
 			{
 				label = DebugUIMessages.AbstractTableRendering_8; 
 			}
+			
+			if (label.startsWith("&")) //$NON-NLS-1$
+				label = "&" + label; //$NON-NLS-1$
 			
 			try {
 				if (showAddress && ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
