@@ -157,11 +157,6 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedTabsSWTHandler.class,
 				CSSPropertyUnselectedTabsSWTHandler.INSTANCE);
 		
-		//Register the SWT CSS Property TabRenderer
-		super.registerCSSProperty("tab-renderer", CSSPropertyTabRendererSWTHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyTabRendererSWTHandler.class,
-				CSSPropertyTabRendererSWTHandler.INSTANCE);
-		
 		//ETabFolder properties
 		
 		//Register ETabFolder CSS Property webby-style
