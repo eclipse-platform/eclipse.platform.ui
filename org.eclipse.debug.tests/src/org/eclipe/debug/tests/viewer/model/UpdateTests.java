@@ -13,6 +13,7 @@ package org.eclipe.debug.tests.viewer.model;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -68,6 +69,14 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
     }
 
+    protected void runTest() throws Throwable {
+        try {
+            super.runTest();
+        } catch (Throwable t) {
+            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+        }
+    }
+    
     /**
       * This test:
      * - creates a simple model
@@ -213,19 +222,21 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         
         // Update the model
         removeElement(model, 2, true);
-        insertElement(model, "3-new", 3, true);
+        addElement(model, "3-new", 3, true);
         removeElement(model, 4, true);
-        insertElement(model, "5-new", 5, true);
+        addElement(model, "5-new", 5, true);
         removeElement(model, 1, true);
-        insertElement(model, "1-new", 1, true);
+        addElement(model, "1-new", 1, true);
         removeElement(model, 3, true);
-        insertElement(model, "4-new", 4, true);
+        addElement(model, "4-new", 4, true);
     }
 
 
     /**
      * This test case attempts to create a race condition between processing 
      * of the content updates and processing of add/remove model deltas. 
+     * <br>
+     * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a> 
      */
     public void _X_testContentPlusAddRemoveUpdateRaceConditionsElement() {
         TestModel model = TestModel.simpleSingleLevel();
@@ -251,8 +262,6 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
             // Wait until the delta is processed
             while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-            // And then wait for the viewer updates to start.
-            while (fListener.isFinished(VIEWER_UPDATES_RUNNING)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
             
             removeElement(model, 5, false);
             removeElement(model, 4, false);
@@ -263,7 +272,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
             // Wait until the children count update is completed using the count from 
             // before elements were removed.
-            while (!childrenCountUpdateListener.isFinished(CHILDREN_COUNT_UPDATES)) 
+            while (!childrenCountUpdateListener.isFinished(CHILD_COUNT_UPDATES)) 
                 if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
             
             insertElement(model, "1 - " + pass, 0, false);
@@ -304,15 +313,12 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             // Refresh the viewer so that updates are generated.
             TestElement rootElement = model.getRootElement();
             fListener.reset();
-            fListener.addUpdates(TreePath.EMPTY, model.getRootElement(), 1, CHILDREN_COUNT_UPDATES);
+            fListener.addUpdates(TreePath.EMPTY, model.getRootElement(), 1, CHILD_COUNT_UPDATES);
             model.postDelta(new ModelDelta(rootElement, IModelDelta.CONTENT));
     
             // Wait for the delta to be processed.
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
     
-            // Wait until an update is started.
-            while (fListener.isFinished(VIEWER_UPDATES_RUNNING)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-            
             // Update the model
             removeElement(model, 0, true);
             addElement(model, "1", 0, true);

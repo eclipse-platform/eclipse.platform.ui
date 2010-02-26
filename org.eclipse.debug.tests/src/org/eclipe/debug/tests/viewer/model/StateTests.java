@@ -18,6 +18,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -76,6 +77,14 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
     }
 
+    protected void runTest() throws Throwable {
+        try {
+            super.runTest();
+        } catch (Throwable t) {
+            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+        }
+    }
+    
     protected ITreeModelContentProviderTarget getCTargetViewer() {
         return (ITreeModelContentProviderTarget)fViewer;
     }
@@ -226,7 +235,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
                 TreePath elementPath = model.findElement(element.getLabel());
                 fListener.addUpdates(
                     elementPath, element, 1, 
-                    CHILDREN_COUNT_UPDATES | (waitForAllUpdates ? CHILDREN_UPDATES : 0) );
+                    CHILD_COUNT_UPDATES | (waitForAllUpdates ? CHILDREN_UPDATES : 0) );
                 delta = delta.addNode(element, index, IModelDelta.EXPAND, element.getChildren().length);
                 element = element.getChildren()[0];
                 index = 0;

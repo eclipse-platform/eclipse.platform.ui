@@ -42,13 +42,25 @@ public class TestModelUpdatesListener
     private final ITreeModelViewer fViewer;
     
     private boolean fFailOnRedundantUpdates;
-    private boolean fFailOnMultipleModelUpdateSequences;
-    private boolean fFailOnMultipleLabelUpdateSequences;
+    private Set fRedundantUpdates = new HashSet();
     
-    private Set fHasChildrenUpdates = new HashSet();
-    private Map fChildrenUpdates = new HashMap();
-    private Set fChildCountUpdates = new HashSet();
+    private boolean fFailOnMultipleModelUpdateSequences;
+    private boolean fMultipleModelUpdateSequencesObserved;
+    private boolean fFailOnMultipleLabelUpdateSequences;
+    private boolean fMultipleLabelUpdateSequencesObserved;
+    
+    private Set fHasChildrenUpdatesScheduled = new HashSet();
+    private Set fHasChildrenUpdatesRunning = new HashSet();
+    private Set fHasChildrenUpdatesCompleted = new HashSet();
+    private Map fChildrenUpdatesScheduled = new HashMap();
+    private Set fChildrenUpdatesRunning = new HashSet();
+    private Set fChildrenUpdatesCompleted = new HashSet();
+    private Set fChildCountUpdatesScheduled = new HashSet();
+    private Set fChildCountUpdatesRunning = new HashSet();
+    private Set fChildCountUpdatesCompleted = new HashSet();
     private Set fLabelUpdates = new HashSet();
+    private Set fLabelUpdatesRunning = new HashSet();
+    private Set fLabelUpdatesCompleted = new HashSet();
     private Set fProxyModels = new HashSet();
     private Set fStateUpdates = new HashSet();
     private boolean fViewerUpdatesComplete;
@@ -56,9 +68,9 @@ public class TestModelUpdatesListener
     private boolean fModelChangedComplete;
     private boolean fStateSaveComplete;
     private boolean fStateRestoreComplete;
-    private int fViewerUpdatesRunning;
-    private int fLabelUpdatesRunning;
-    private int fTimeoutInterval = 600000;
+    private int fViewerUpdatesCounter;
+    private int fLabelUpdatesCounter;
+    private int fTimeoutInterval = 60000;
 	private long fTimeoutTime;
 	
 	
@@ -121,10 +133,21 @@ public class TestModelUpdatesListener
     }
 
     public void reset() {
-        fHasChildrenUpdates.clear();
-        fChildrenUpdates.clear();
-        fChildCountUpdates.clear();
+        fRedundantUpdates.clear();
+        fMultipleLabelUpdateSequencesObserved = false;
+        fMultipleModelUpdateSequencesObserved = false;
+        fHasChildrenUpdatesScheduled.clear();
+        fHasChildrenUpdatesRunning.clear();
+        fHasChildrenUpdatesCompleted.clear();
+        fChildrenUpdatesScheduled.clear();
+        fChildrenUpdatesRunning.clear();
+        fChildrenUpdatesCompleted.clear();
+        fChildCountUpdatesScheduled.clear();
+        fChildCountUpdatesRunning.clear();
+        fChildCountUpdatesCompleted.clear();
         fLabelUpdates.clear();
+        fLabelUpdatesRunning.clear();
+        fLabelUpdatesCompleted.clear();
         fProxyModels.clear();
         fViewerUpdatesComplete = false;
         fLabelUpdatesComplete = false;
@@ -139,36 +162,36 @@ public class TestModelUpdatesListener
     }
     
     public void addHasChildrenUpdate(TreePath path) {
-        fHasChildrenUpdates.add(path);
+        fHasChildrenUpdatesScheduled.add(path);
     }
 
     public void removeHasChildrenUpdate(TreePath path) {
-        fHasChildrenUpdates.remove(path);
+        fHasChildrenUpdatesScheduled.remove(path);
     }
 
     public void addChildreCountUpdate(TreePath path) {
-        fChildCountUpdates.add(path);
+        fChildCountUpdatesScheduled.add(path);
     }
 
     public void removeChildreCountUpdate(TreePath path) {
-        fChildCountUpdates.remove(path);
+        fChildCountUpdatesScheduled.remove(path);
     }
 
     public void addChildreUpdate(TreePath path, int index) {
-        Set childrenIndexes = (Set)fChildrenUpdates.get(path);
+        Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes == null) {
             childrenIndexes = new TreeSet();
-            fChildrenUpdates.put(path, childrenIndexes);
+            fChildrenUpdatesScheduled.put(path, childrenIndexes);
         }
         childrenIndexes.add(new Integer(index));
     }
 
     public void removeChildrenUpdate(TreePath path, int index) {
-        Set childrenIndexes = (Set)fChildrenUpdates.get(path);
+        Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes != null) {
             childrenIndexes.remove(new Integer(index));
             if (childrenIndexes.isEmpty()) {
-                fChildrenUpdates.remove(path);
+                fChildrenUpdatesScheduled.remove(path);
             }
         }
     }
@@ -199,22 +222,22 @@ public class TestModelUpdatesListener
                 fLabelUpdates.add(path);
             }
             if ((flags & HAS_CHILDREN_UPDATES) != 0) {
-                fHasChildrenUpdates.add(path);
+                fHasChildrenUpdatesScheduled.add(path);
             }
         }
 
         if (levels-- != 0) {
             TestElement[] children = element.getChildren();
             if (children.length > 0 && (viewer == null || path.getSegmentCount() == 0 || viewer.getExpandedState(path))) {
-                if ((flags & CHILDREN_COUNT_UPDATES) != 0) {
-                    fChildCountUpdates.add(path);
+                if ((flags & CHILD_COUNT_UPDATES) != 0) {
+                    fChildCountUpdatesScheduled.add(path);
                 }
                 if ((flags & CHILDREN_UPDATES) != 0) {
                     Set childrenIndexes = new HashSet();
                     for (int i = 0; i < children.length; i++) {
                         childrenIndexes.add(new Integer(i));
                     }
-                    fChildrenUpdates.put(path, childrenIndexes);
+                    fChildrenUpdatesScheduled.put(path, childrenIndexes);
                 }
 
                 if ((flags & STATE_UPDATES) != 0 && viewer != null) {
@@ -253,8 +276,21 @@ public class TestModelUpdatesListener
             throw new RuntimeException("Timed Out: " + toString(flags));
         }
         
+        if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
+            Assert.fail("Redundant Updates: " + fRedundantUpdates.toString());
+        }
+        if (fFailOnMultipleLabelUpdateSequences && !fMultipleLabelUpdateSequencesObserved) {
+            Assert.fail("Multiple label update sequences detected");
+        }
+        if (fFailOnMultipleModelUpdateSequences && fMultipleModelUpdateSequencesObserved) {
+            Assert.fail("Multiple viewer update sequences detected");
+        }
+
         if ( (flags & LABEL_UPDATES_COMPLETE) != 0) {
             if (!fLabelUpdatesComplete) return false;
+        }
+        if ( (flags & LABEL_UPDATES_STARTED) != 0) {
+            if (fLabelUpdatesRunning.isEmpty() && fLabelUpdatesCompleted.isEmpty()) return false;
         }
         if ( (flags & LABEL_UPDATES) != 0) {
             if (!fLabelUpdates.isEmpty()) return false;
@@ -262,14 +298,23 @@ public class TestModelUpdatesListener
         if ( (flags & CONTENT_UPDATES_COMPLETE) != 0) {
             if (!fViewerUpdatesComplete) return false;
         }
-        if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
-            if (!fHasChildrenUpdates.isEmpty()) return false;
+        if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
+            if (fHasChildrenUpdatesRunning.isEmpty() && fHasChildrenUpdatesCompleted.isEmpty()) return false;
         }
-        if ( (flags & CHILDREN_COUNT_UPDATES) != 0) {
-            if (!fChildCountUpdates.isEmpty()) return false;
+        if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
+            if (!fHasChildrenUpdatesScheduled.isEmpty()) return false;
+        }
+        if ( (flags & CHILD_COUNT_UPDATES_STARTED) != 0) {
+            if (fChildCountUpdatesRunning.isEmpty() && fChildCountUpdatesCompleted.isEmpty()) return false;
+        }
+        if ( (flags & CHILD_COUNT_UPDATES) != 0) {
+            if (!fChildCountUpdatesScheduled.isEmpty()) return false;
+        }
+        if ( (flags & CHILDREN_UPDATES_STARTED) != 0) {
+            if (fChildrenUpdatesRunning.isEmpty() && fChildrenUpdatesCompleted.isEmpty()) return false;
         }
         if ( (flags & CHILDREN_UPDATES) != 0) {
-            if (!fChildrenUpdates.isEmpty()) return false;
+            if (!fChildrenUpdatesScheduled.isEmpty()) return false;
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
             if (!fModelChangedComplete) return false;
@@ -284,53 +329,68 @@ public class TestModelUpdatesListener
             if (fProxyModels.size() != 0) return false;
         }
         if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
-            if (fViewerUpdatesRunning != 0) {
+            if (fViewerUpdatesCounter != 0) {
             	return false;
             }
         }
         if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
-            if (fLabelUpdatesRunning != 0) {
+            if (fLabelUpdatesCounter != 0) {
             	return false;
             }
         }
+
         
         return true;
     }
     
     public void updateStarted(IViewerUpdate update) {
         synchronized (this) {
-        	fViewerUpdatesRunning++;
+        	fViewerUpdatesCounter++;
+            if (update instanceof IHasChildrenUpdate) {
+                fHasChildrenUpdatesRunning.add(update);
+            } if (update instanceof IChildrenCountUpdate) {
+                fChildCountUpdatesRunning.add(update);
+            } else if (update instanceof IChildrenUpdate) {
+                fChildCountUpdatesRunning.add(update);
+            } 
         }
     }
     
     public void updateComplete(IViewerUpdate update) {
         synchronized (this) {
-        	fViewerUpdatesRunning--;
+        	fViewerUpdatesCounter--;
         }
 
         if (!update.isCanceled()) {
             if (update instanceof IHasChildrenUpdate) {
-                if (!fHasChildrenUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
-                    Assert.fail("Redundant update: " + update);
+                fHasChildrenUpdatesRunning.remove(update);
+                fHasChildrenUpdatesCompleted.add(update);                
+                if (!fHasChildrenUpdatesScheduled.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
+                    fRedundantUpdates.add(update);
                 }
             } if (update instanceof IChildrenCountUpdate) {
-                if (!fChildCountUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
-                    Assert.fail("Redundant update: " + update);
+                fChildCountUpdatesRunning.remove(update);
+                fChildCountUpdatesCompleted.add(update);                
+                if (!fChildCountUpdatesScheduled.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
+                    fRedundantUpdates.add(update);
                 }
             } else if (update instanceof IChildrenUpdate) {
+                fChildrenUpdatesRunning.remove(update);
+                fChildrenUpdatesCompleted.add(update);                
+                
                 int start = ((IChildrenUpdate)update).getOffset();
                 int end = start + ((IChildrenUpdate)update).getLength();
                 
-                Set childrenIndexes = (Set)fChildrenUpdates.get(update.getElementPath());
+                Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(update.getElementPath());
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
                         childrenIndexes.remove(new Integer(i));
                     }
                     if (childrenIndexes.isEmpty()) {
-                        fChildrenUpdates.remove(update.getElementPath());
+                        fChildrenUpdatesScheduled.remove(update.getElementPath());
                     }
                 } else if (fFailOnRedundantUpdates) {
-                    Assert.fail("Redundant update: " + update);                    
+                    fRedundantUpdates.add(update);
                 }
             } 
         }
@@ -342,14 +402,16 @@ public class TestModelUpdatesListener
     
     public void viewerUpdatesComplete() {
         if (fFailOnMultipleModelUpdateSequences && fViewerUpdatesComplete) {
-            Assert.fail("Multiple viewer update sequences detected");
+            fMultipleModelUpdateSequencesObserved = true;
         }
         fViewerUpdatesComplete = true;
     }
 
     public void labelUpdateComplete(ILabelUpdate update) {
         synchronized (this) {
-        	fLabelUpdatesRunning--;
+            fLabelUpdatesRunning.remove(update);
+            fLabelUpdatesCompleted.add(update);
+        	fLabelUpdatesCounter--;
         }
         if (!fLabelUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
             Assert.fail("Redundant update: " + update);
@@ -358,7 +420,8 @@ public class TestModelUpdatesListener
 
     public void labelUpdateStarted(ILabelUpdate update) {
         synchronized (this) {
-        	fLabelUpdatesRunning++;
+            fLabelUpdatesRunning.add(update);
+        	fLabelUpdatesCounter++;
         }
     }
 
@@ -367,7 +430,7 @@ public class TestModelUpdatesListener
 
     public void labelUpdatesComplete() {
         if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete) {
-            Assert.fail("Multiple label update sequences detected");
+            fMultipleLabelUpdateSequencesObserved = true;
         }
         fLabelUpdatesComplete = true;
     }
@@ -406,14 +469,34 @@ public class TestModelUpdatesListener
     
     private String toString(int flags) {
         StringBuffer buf = new StringBuffer("Viewer Update Listener");
-        
+
+        if (fFailOnRedundantUpdates) {
+            buf.append("\n\t");
+            buf.append("fRedundantUpdates = " + fRedundantUpdates);
+        }
+        if (fFailOnMultipleLabelUpdateSequences) {
+            buf.append("\n\t");
+            buf.append("fMultipleLabelUpdateSequencesObserved = " + fMultipleLabelUpdateSequencesObserved);
+        }
+        if (fFailOnMultipleModelUpdateSequences) {
+            buf.append("\n\t");
+            buf.append("fMultipleModelUpdateSequencesObserved = " + fMultipleModelUpdateSequencesObserved);
+        }
         if ( (flags & LABEL_UPDATES_COMPLETE) != 0) {
             buf.append("\n\t");
             buf.append("fLabelUpdatesComplete = " + fLabelUpdatesComplete);
         }
         if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
             buf.append("\n\t");
-            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesRunning);
+            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesCounter);
+        }
+        if ( (flags & LABEL_UPDATES_STARTED) != 0) {
+            buf.append("\n\t");
+            buf.append("fLabelUpdatesRunning = ");
+            buf.append( fLabelUpdatesRunning );
+            buf.append("\n\t");
+            buf.append("fLabelUpdatesCompleted = ");
+            buf.append( fLabelUpdatesCompleted );
         }
         if ( (flags & LABEL_UPDATES) != 0) {
             buf.append("\n\t");
@@ -426,22 +509,46 @@ public class TestModelUpdatesListener
         }
         if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
             buf.append("\n\t");
-            buf.append("fViewerUpdatesRunning = " + fViewerUpdatesRunning);
+            buf.append("fViewerUpdatesRunning = " + fViewerUpdatesCounter);
+        }
+        if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
+            buf.append("\n\t");
+            buf.append("fHasChildrenUpdatesRunning = ");
+            buf.append( fHasChildrenUpdatesRunning );
+            buf.append("\n\t");
+            buf.append("fHasChildrenUpdatesCompleted = ");
+            buf.append( fHasChildrenUpdatesCompleted );
         }
         if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
             buf.append("\n\t");
             buf.append("fHasChildrenUpdates = ");
-            buf.append( toString(fHasChildrenUpdates) );
+            buf.append( toString(fHasChildrenUpdatesScheduled) );
         }
-        if ( (flags & CHILDREN_COUNT_UPDATES) != 0) {
+        if ( (flags & CHILD_COUNT_UPDATES_STARTED) != 0) {
+            buf.append("\n\t");
+            buf.append("fChildCountUpdatesRunning = ");
+            buf.append( fChildCountUpdatesRunning );
+            buf.append("\n\t");
+            buf.append("fChildCountUpdatesCompleted = ");
+            buf.append( fChildCountUpdatesCompleted );
+        }
+        if ( (flags & CHILD_COUNT_UPDATES) != 0) {
             buf.append("\n\t");
             buf.append("fChildCountUpdates = ");
-            buf.append( toString(fChildCountUpdates) );
+            buf.append( toString(fChildCountUpdatesScheduled) );
+        }
+        if ( (flags & CHILDREN_UPDATES_STARTED) != 0) {
+            buf.append("\n\t");
+            buf.append("fChildrenUpdatesRunning = ");
+            buf.append( fChildrenUpdatesRunning );
+            buf.append("\n\t");
+            buf.append("fChildrenUpdatesCompleted = ");
+            buf.append( fChildrenUpdatesCompleted );
         }
         if ( (flags & CHILDREN_UPDATES) != 0) {
             buf.append("\n\t");
             buf.append("fChildrenUpdates = ");
-            buf.append( toString(fChildrenUpdates) );
+            buf.append( toString(fChildrenUpdatesScheduled) );
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
             buf.append("\n\t");
@@ -507,7 +614,7 @@ public class TestModelUpdatesListener
     }
     
     public String toString() {
-        return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_RESTORE_COMPLETE);
+        return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_RESTORE_COMPLETE | VIEWER_UPDATES_STARTED | LABEL_UPDATES_STARTED);
     }
 }
 
