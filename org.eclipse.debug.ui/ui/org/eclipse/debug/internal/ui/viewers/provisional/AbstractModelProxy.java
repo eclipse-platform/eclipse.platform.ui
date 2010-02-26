@@ -76,9 +76,6 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	public void fireModelChanged(IModelDelta delta) {
 		final IModelDelta root = getRootDelta(delta);
 		Object[] listeners = getListeners();
-		if (DEBUG_DELTAS) {
-			DebugUIPlugin.debug("FIRE DELTA: " + delta.toString()); //$NON-NLS-1$
-		}
 		for (int i = 0; i < listeners.length; i++) {
 			final IModelChangedListener listener = (IModelChangedListener) listeners[i];
 			ISafeRunnable safeRunnable = new ISafeRunnable() {
