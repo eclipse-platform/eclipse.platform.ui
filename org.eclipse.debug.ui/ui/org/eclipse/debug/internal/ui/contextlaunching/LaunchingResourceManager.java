@@ -156,6 +156,19 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	}
 	
 	/**
+	 * Returns if context launching is enabled or not. Context launching is enabled iff:
+	 * <ul>
+	 * <li>The preference is turned on</li>
+	 * <li>the launch group id is not <code>org.eclipse.ui.externaltools.launchGroup</code></li>
+	 * </ul>
+	 * @param launchgroupid
+	 * @return <code>true</code> if context launching is enabled <code>false</code> otherwise
+	 */
+	public static boolean isContextLaunchEnabled(String launchgroupid) {
+		return isContextLaunchEnabled() && !"org.eclipse.ui.externaltools.launchGroup".equals(launchgroupid); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Allows an <code>AbstractLaunchHistoryAction</code> to register with this manager to be notified
 	 * of a context (<code>IResource</code>) change and have its updateToolTip(..) method called back to.
 	 * @param action the action to add
@@ -220,7 +233,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		for(int i = 0; i < listeners.length; i++) {
 			group = ((ILaunchLabelChangedListener)listeners[i]).getLaunchGroup();
 			if(group != null) {
-				if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+				if(isContextLaunchEnabled(group.getIdentifier())) {
 					shortcuts = getShortcutsForSelection(selection, group.getMode());
 					if(resource == null) {
 						resource = getLaunchableResource(shortcuts, selection);

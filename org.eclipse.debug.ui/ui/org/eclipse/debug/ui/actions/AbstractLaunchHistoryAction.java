@@ -387,8 +387,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	public void runWithEvent(IAction action, Event event) {
 		if((event.stateMask & SWT.MOD1) > 0) {
 			ILaunchConfiguration configuration = null;
-			if(LaunchingResourceManager.isContextLaunchEnabled() &&
-					!getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+			if(LaunchingResourceManager.isContextLaunchEnabled(getLaunchGroupIdentifier())) {
 				configuration = resolveContextConfiguration();
 			} else {
 				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
