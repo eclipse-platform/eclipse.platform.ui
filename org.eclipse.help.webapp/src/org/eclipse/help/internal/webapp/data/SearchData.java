@@ -85,6 +85,11 @@ public class SearchData extends ActivitiesData {
 			topicHref = null;
 
 		searchWord = request.getParameter("searchWord"); //$NON-NLS-1$
+		
+		if (isScopeRequest()) {
+			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
+			saveWorkingSet(workingSetName);
+		} 
 
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
@@ -300,10 +305,7 @@ public class SearchData extends ActivitiesData {
 		if (workingSetName != null)
 			return workingSetName;
 
-		if (isScopeRequest()) {
-			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
-			saveWorkingSet(workingSetName);
-		} else if (isSearchRequest()) {
+        if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope"); //$NON-NLS-1$
 			// if we have already set the working set, then use it.
 			if (workingSetName == null) {

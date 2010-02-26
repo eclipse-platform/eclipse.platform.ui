@@ -186,20 +186,13 @@ function selectWorkingSet() {
 	if (searchWord)
 		search += "&searchWord="+encodeURIComponent(searchWord);
 	
-<%
-    if (RequestScope.filterBySearchScope(request)) {
-%>	
-    try {
-        window.opener.parent.parent.HelpFrame.NavFrame.ViewsFrame.window.location.replace("views.jsp");
-    } catch(e) {}
-<% } %>
 	window.opener.location.replace(
 		window.opener.location.protocol +
 		"//" +
 		window.opener.location.host + 
 		window.opener.location.pathname +
 		search);
-
+   
  	window.close();
 	return false;
 }

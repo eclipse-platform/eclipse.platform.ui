@@ -62,7 +62,7 @@ public class RequestScope {
 	}
 
 	public static AbstractHelpScope[] getActiveScopes(HttpServletRequest req,
-			HttpServletResponse resp, boolean allowSearchScope) {
+			HttpServletResponse resp, boolean isSearchFilter) {
 		AbstractHelpScope[] scopeArray;
 		String scopeString;
 		List scopes = new ArrayList();
@@ -73,26 +73,24 @@ public class RequestScope {
 		if (scopeString != null) {
 			StringTokenizer tokenizer = new StringTokenizer(scopeString, "/"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
-				String nextScope = tokenizer.nextToken().trim();
-				if (ScopeRegistry.SEARCH_SCOPE_SCOPE_ID.equals(nextScope)) {
-					if (!allowSearchScope) {
-						// Try for a working set
-						try {
-							WebappWorkingSetManager manager = new WebappWorkingSetManager(req,
-									resp, UrlUtil.getLocale(req, resp));
-							String wset = manager.getCurrentWorkingSet();
-							WorkingSetScope workingSetScope = new WorkingSetScope(
-									wset, manager, HelpBaseResources.SearchScopeFilterName);
-							scopes.add(workingSetScope);
-						} catch (Exception e) {
-						}
-					}
-				} else {
-					AbstractHelpScope scope = ScopeRegistry.getInstance().getScope(nextScope);
-					if (scope != null) {
-						scopes.add(scope);
-					}
+			String nextScope = tokenizer.nextToken().trim();	
+				AbstractHelpScope scope = ScopeRegistry.getInstance().getScope(nextScope);
+				if (scope != null) {
+					scopes.add(scope);
 				}
+			}
+		}
+		// Add filter by search scope
+		if (!isSearchFilter) {
+			// Try for a working set
+			try {
+				WebappWorkingSetManager manager = new WebappWorkingSetManager(req,
+						resp, UrlUtil.getLocale(req, resp));
+				String wset = manager.getCurrentWorkingSet();
+				WorkingSetScope workingSetScope = new WorkingSetScope(
+						wset, manager, HelpBaseResources.SearchScopeFilterName);
+				scopes.add(workingSetScope);
+			} catch (Exception e) {
 			}
 		}
 		scopeArray = (AbstractHelpScope[]) scopes.toArray(new AbstractHelpScope[scopes.size()]);
@@ -173,17 +171,7 @@ public class RequestScope {
 	}
 	
 	public static boolean filterBySearchScope(HttpServletRequest request) {
-		String scopeString = getScopeString(request);
-		if (scopeString != null) {
-			StringTokenizer tokenizer = new StringTokenizer(scopeString, "/"); //$NON-NLS-1$
-			while (tokenizer.hasMoreTokens()) {
-				String nextScope = tokenizer.nextToken().trim();
-				if (ScopeRegistry.SEARCH_SCOPE_SCOPE_ID.equals(nextScope)) {
-					return true;
-				}
-			}
-		}
-        return false;
+        return true;
 	}
 
 }

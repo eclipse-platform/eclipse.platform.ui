@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2009 IBM Corporation and others.
+ Copyright (c) 2000, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -199,8 +199,10 @@ function closeAdvanced()
  * This function can be called from this page or from
  * the advanced search page. When called from the advanced
  * search page, a query is passed.
+ * noRefocus is a boolean which if true suppresses
+ * switch of focus to the search view
  */
-function doSearch(query)
+function doSearch(query, noRefocus)
 {
 	var workingSet = document.getElementById("scope").firstChild.nodeValue;
 
@@ -225,9 +227,28 @@ function doSearch(query)
 		parent.parent.HelpFrame.NavFrame.ViewsFrame.search && 
 		parent.parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame) 
 	{
-		parent.parent.HelpFrame.NavFrame.showView("search");
+	    if (!noRefocus) {
+		    parent.parent.HelpFrame.NavFrame.showView("search");
+		}
 		var searchView = parent.parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame;
 		searchView.location.replace("searchView.jsp?"+query);
+	}
+}
+
+function rescope() {
+    if (parent.parent.HelpFrame && 
+		parent.parent.HelpFrame.NavFrame && 
+		parent.parent.HelpFrame.NavFrame.ViewsFrame) {
+		var viewsFrame = parent.parent.HelpFrame.NavFrame.ViewsFrame;
+		if (viewsFrame.toc && viewsFrame.toc.tocViewFrame) {
+		    var tocView = viewsFrame.toc.tocViewFrame;
+		    tocView.location.replace("tocView.jsp");
+		}
+		if (viewsFrame.toc && viewsFrame.index.indexViewFrame) {
+		    var indexView = viewsFrame.index.indexViewFrame;
+		    indexView.location.replace("indexView.jsp");
+		}
+		doSearch(null, true);
 	}
 }
 
@@ -244,6 +265,13 @@ function onloadHandler(e)
 	var form = document.forms["searchForm"];
 	form.searchWord.value = '<%=UrlUtil.JavaScriptEncode(data.getSearchWord())%>';
 	fixHeights();
+<%
+    if (data.isScopeRequest() && RequestScope.filterBySearchScope(request)) {
+%>
+    rescope();
+<%
+    }
+%>
 }
 
 </script>

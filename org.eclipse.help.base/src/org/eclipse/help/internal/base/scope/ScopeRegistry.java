@@ -86,7 +86,6 @@ public class ScopeRegistry {
 				scopes.add(filter);
 			}
 		}
-		scopes.add(new ScopeHandle(SEARCH_SCOPE_SCOPE_ID, new SearchScopeScope()));
 		initialized = true;
 	}
 	
