@@ -155,7 +155,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 */
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
 		// TODO compat addPostSelectionListener
-		E4Util.unsupported("addPostSelectionListener"); //$NON-NLS-1$
+		E4Util.unsupported("addPostSelectionListener (delegating to addSelectionListener for now)"); //$NON-NLS-1$
+		addSelectionListener(partId, listener);
 	}
 
 	/*
@@ -218,7 +219,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
 		// TODO compat removePostSelectionListener
-		E4Util.unsupported("removePostSelectionListener"); //$NON-NLS-1$
+		E4Util.unsupported("removePostSelectionListener (delegating to removeSelectionListener for now)"); //$NON-NLS-1$
+		removeSelectionListener(listener);
 	}
 
 	/*
@@ -230,7 +232,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 */
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		// TODO compat removePostSelectionListener
-		E4Util.unsupported("removePostSelectionListener"); //$NON-NLS-1$
+		E4Util.unsupported("removePostSelectionListener (delegating to removeSelectionListener for now)"); //$NON-NLS-1$
+		removeSelectionListener(partId, listener);
 	}
 
 	/*
