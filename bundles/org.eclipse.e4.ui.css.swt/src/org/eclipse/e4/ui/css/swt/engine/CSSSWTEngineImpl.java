@@ -37,8 +37,10 @@ import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabMarginOffsetHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabRendererSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedTabsSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyBackgroundXMLHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyFontXMLHandler;
@@ -149,6 +151,16 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("alignment", CSSPropertyAlignmentSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyAlignmentSWTHandler.class,
 				CSSPropertyAlignmentSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property UnselectedTabsColor
+		super.registerCSSProperty("unselected-tabs-color", CSSPropertyUnselectedTabsSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyUnselectedTabsSWTHandler.class,
+				CSSPropertyUnselectedTabsSWTHandler.INSTANCE);
+		
+		//Register the SWT CSS Property TabRenderer
+		super.registerCSSProperty("tab-renderer", CSSPropertyTabRendererSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabRendererSWTHandler.class,
+				CSSPropertyTabRendererSWTHandler.INSTANCE);
 		
 		//ETabFolder properties
 		
