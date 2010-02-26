@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -38,6 +39,8 @@ public class TestModelUpdatesListener
     implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants,
         IStateUpdateListener
 {
+    private final ITreeModelViewer fViewer;
+    
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnMultipleModelUpdateSequences;
     private boolean fFailOnMultipleLabelUpdateSequences;
@@ -53,17 +56,34 @@ public class TestModelUpdatesListener
     private boolean fModelChangedComplete;
     private boolean fStateSaveComplete;
     private boolean fStateRestoreComplete;
-	private int fViewerUpdatesRunning;
-	private int fLabelUpdatesRunning;
-	private int fTimeoutInterval = 60000;
+    private int fViewerUpdatesRunning;
+    private int fLabelUpdatesRunning;
+    private int fTimeoutInterval = 600000;
 	private long fTimeoutTime;
 	
 	
-    public TestModelUpdatesListener(boolean failOnRedundantUpdates, boolean failOnMultipleModelUpdateSequences) {
+    public TestModelUpdatesListener(ITreeModelViewer viewer, boolean failOnRedundantUpdates, boolean failOnMultipleModelUpdateSequences) {
+        this(viewer);
         setFailOnRedundantUpdates(failOnRedundantUpdates);
         setFailOnMultipleModelUpdateSequences(failOnMultipleModelUpdateSequences);
     }
-    
+
+	public TestModelUpdatesListener(ITreeModelViewer viewer) {
+	    fViewer = viewer;
+        fViewer.addLabelUpdateListener(this);
+        fViewer.addModelChangedListener(this);
+        fViewer.addStateUpdateListener(this);
+        fViewer.addViewerUpdateListener(this);
+    }
+
+	public void dispose() {
+        fViewer.removeLabelUpdateListener(this);
+        fViewer.removeModelChangedListener(this);
+        fViewer.removeStateUpdateListener(this);
+        fViewer.removeViewerUpdateListener(this);
+	}
+	
+	
     public void setFailOnRedundantUpdates(boolean failOnRedundantUpdates) {
         fFailOnRedundantUpdates = failOnRedundantUpdates;
     }
@@ -224,8 +244,12 @@ public class TestModelUpdatesListener
         return isFinished(ALL_UPDATES_COMPLETE);
     }
     
+    public boolean isTimedOut() {
+        return fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
+    }
+    
     public boolean isFinished(int flags) {
-        if (fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis()) {
+        if (isTimedOut()) {
             throw new RuntimeException("Timed Out: " + toString(flags));
         }
         

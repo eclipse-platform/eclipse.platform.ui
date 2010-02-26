@@ -306,7 +306,6 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
 
     public void validateData(ITreeModelViewer viewer, TreePath path) {
-        
         validateData(viewer, path, false);
     }
 
@@ -458,7 +457,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         
         // Add the delta flag and update the child count in the parent delta.
         delta.setChildCount(element.getChildren().length);
-        delta.addNode(newChild, IModelDelta.ADDED);
+        delta.addNode(newChild, index, IModelDelta.ADDED);
         
         return rootDelta;
     }    

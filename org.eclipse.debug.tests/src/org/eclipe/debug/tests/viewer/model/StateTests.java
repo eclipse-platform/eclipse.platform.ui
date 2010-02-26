@@ -57,11 +57,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         fViewer = createViewer(fDisplay, fShell);
         
-        fListener = new TestModelUpdatesListener(false, false);
-        fViewer.addViewerUpdateListener(fListener);
-        fViewer.addLabelUpdateListener(fListener);
-        fViewer.addModelChangedListener(fListener);
-        fViewer.addStateUpdateListener(fListener);
+        fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
     }
@@ -72,10 +68,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
      * @throws java.lang.Exception
      */
     protected void tearDown() throws Exception {
-        fViewer.removeLabelUpdateListener(fListener);
-        fViewer.removeViewerUpdateListener(fListener);
-        fViewer.removeModelChangedListener(fListener);
-        fViewer.addStateUpdateListener(fListener);
+        fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
         // Close the shell and exit.

@@ -49,25 +49,20 @@ public class VirtualViewerLazyModeTests extends TestCase {
 
         fViewer = createViewer(fDisplay, fShell);
         
-        fListener = new TestModelUpdatesListener(false, false);
-        fViewer.addViewerUpdateListener(fListener);
-        fViewer.addLabelUpdateListener(fListener);
-        fViewer.addModelChangedListener(fListener);
+        fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
     }
 
     protected ITreeModelViewer createViewer(Display display, Shell shell) {
-        return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+        return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer"));
     }
     
     /**
      * @throws java.lang.Exception
      */
     protected void tearDown() throws Exception {
-        fViewer.removeLabelUpdateListener(fListener);
-        fViewer.removeViewerUpdateListener(fListener);
-        fViewer.removeModelChangedListener(fListener);
+        fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
         // Close the shell and exit.

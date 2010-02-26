@@ -49,10 +49,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         fViewer = createViewer(fDisplay, fShell);
         
-        fListener = new TestModelUpdatesListener(false, false);
-        fViewer.addViewerUpdateListener(fListener);
-        fViewer.addLabelUpdateListener(fListener);
-        fViewer.addModelChangedListener(fListener);
+        fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
     }
@@ -63,9 +60,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
      * @throws java.lang.Exception
      */
     protected void tearDown() throws Exception {
-        fViewer.removeLabelUpdateListener(fListener);
-        fViewer.removeViewerUpdateListener(fListener);
-        fViewer.removeModelChangedListener(fListener);
+        fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
         // Close the shell and exit.
