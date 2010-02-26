@@ -122,6 +122,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -238,7 +239,16 @@ public class Workbench implements IWorkbench {
 		});
 
 		JFaceUtil.initializeJFacePreferences();
+		initializeFonts();
 		initializeApplicationColors();
+	}
+
+	private void initializeFonts() {
+		FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry()
+				.getFonts();
+
+		ThemeElementHelper.populateRegistry(getThemeManager().getCurrentTheme(), fontDefinitions,
+				PrefUtil.getInternalPreferenceStore());
 	}
 
 	private void initializeApplicationColors() {
