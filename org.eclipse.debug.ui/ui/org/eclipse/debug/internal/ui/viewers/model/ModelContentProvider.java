@@ -926,11 +926,14 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         final IMementoManager manager = new IMementoManager() {
 
             /**
-             * list of memento requests
+             * list of memento fRequests
              */
-            private List requests = new ArrayList();
+            private List fRequests = new ArrayList();
 
-            private volatile boolean abort = false;
+            /**
+             * Flag indicating whether the encoding of delta has been canceled.
+             */
+            private boolean fCanceled = false;
 
             /*
              * (non-Javadoc)
@@ -947,42 +950,46 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     System.out.println("\tSTATE END: " + request); //$NON-NLS-1$
                 }
 
-                if (!abort) {
-                    if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
-                        boolean requestsEmpty = false; 
-                        synchronized(this) {
-                            requests.remove(request);
-                            requestsEmpty = requests.isEmpty();
+                if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
+                    boolean requestsComplted = false; 
+                    synchronized(this) {
+                        if (!fCanceled) { 
+                            fRequests.remove(request);
+                            requestsComplted = fRequests.isEmpty();
                         }
-                        if (requestsEmpty) {
-                            XMLMemento keyMemento = (XMLMemento) rootDelta.getElement();
-                            StringWriter writer = new StringWriter();
-                            try {
-                                keyMemento.save(writer);
-                                fViewerStates.put(writer.toString(), rootDelta);
-                            } catch (IOException e) {
-                                DebugUIPlugin.log(e);
-                            }
-                            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                                System.out.println("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
-                            }
-                            stateSaveComplete(input, this);
-                        }
-                    } else {
-                        abort = true;
-                        cancel();
                     }
+                    if (requestsComplted) {
+                        XMLMemento keyMemento = (XMLMemento) rootDelta.getElement();
+                        StringWriter writer = new StringWriter();
+                        try {
+                            keyMemento.save(writer);
+                            fViewerStates.put(writer.toString(), rootDelta);
+                        } catch (IOException e) {
+                            DebugUIPlugin.log(e);
+                        }
+                        if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                            System.out.println("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
+                        }
+                        stateSaveComplete(input, this);
+                    }
+                } else {
+                    cancel();
                 }
             }
 
             public void cancel() {
                 synchronized (this) {
-                    Iterator iterator = requests.iterator();
+                    if (fCanceled) {
+                        return;
+                    }
+                                
+                    fCanceled = true;
+                    Iterator iterator = fRequests.iterator();
                     while (iterator.hasNext()) {
                         IElementMementoRequest req = (IElementMementoRequest) iterator.next();
                         req.cancel();
                     }
-                    requests.clear();
+                    fRequests.clear();
                     if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                         System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
                     }
@@ -999,7 +1006,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
              */
             public synchronized void processReqeusts() {
                 Map providers = new HashMap();
-                Iterator iterator = requests.iterator();
+                Iterator iterator = fRequests.iterator();
                 while (iterator.hasNext()) {
                     IElementMementoRequest request = (IElementMementoRequest) iterator.next();
                     notifyStateUpdate(input, UPDATE_BEGINS, request);
@@ -1034,7 +1041,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
              * model.provisional.IElementMementoRequest)
              */
             public synchronized void addRequest(IElementMementoRequest request) {
-                requests.add(request);
+                fRequests.add(request);
             }
 
         };
