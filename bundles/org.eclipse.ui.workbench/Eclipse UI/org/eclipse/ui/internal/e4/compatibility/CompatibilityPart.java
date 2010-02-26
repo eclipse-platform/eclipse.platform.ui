@@ -34,9 +34,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 
 public abstract class CompatibilityPart {
 
@@ -106,6 +109,19 @@ public abstract class CompatibilityPart {
 		wrapped.setFocus();
 	}
 
+	private String computeLabel() {
+		if (wrapped instanceof IWorkbenchPart2) {
+			String label = ((IWorkbenchPart2) wrapped).getPartName();
+			return Util.safeString(label);
+		}
+
+		IWorkbenchPartSite site = wrapped.getSite();
+		if (site != null) {
+			return Util.safeString(site.getRegisteredName());
+		}
+		return Util.safeString(wrapped.getTitle());
+	}
+
 	@PostConstruct
 	public void create() throws PartInitException {
 		wrapped = getReference().getPart(true);
@@ -119,7 +135,7 @@ public abstract class CompatibilityPart {
 			public void propertyChanged(Object source, int propId) {
 				switch (propId) {
 				case IWorkbenchPartConstants.PROP_TITLE:
-					part.setLabel(wrapped.getTitle());
+					part.setLabel(computeLabel());
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
 					if (wrapped instanceof ISaveablePart) {
