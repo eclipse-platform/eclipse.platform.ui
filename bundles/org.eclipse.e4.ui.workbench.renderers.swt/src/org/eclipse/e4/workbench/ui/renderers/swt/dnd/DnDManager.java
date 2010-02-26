@@ -11,7 +11,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt.dnd;
 
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MGenericTile;
+import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
@@ -58,8 +58,8 @@ public class DnDManager {
 
 			CursorInfo info = dndUtil.getCursorInfo();
 			if (event.type == SWT.MouseDown && dragHost == null
-					&& !(info.curElement instanceof MGenericTile<?>)
-					&& !(info.curElement instanceof MPart)) {
+					&& (info.curElement instanceof MGenericStack<?>)
+					&& (info.itemElement != null)) {
 				downPos = new Point(event.x, event.y);
 				downInfo = info;
 			} else if (event.type == SWT.MouseUp) {
