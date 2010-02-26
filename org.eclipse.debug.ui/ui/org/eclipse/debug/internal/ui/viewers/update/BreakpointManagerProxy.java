@@ -129,8 +129,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	 * If the delta is used only to select a breakpiont and does not change the
 	 * viewer content, the caller should set the <code>select</code> parameter 
 	 * to <code>true</code>.  When a select delta is added to the delta queue, 
-	 * any previous select deltas are removed.  Also a select delta is fired 
-	 * after a brief delay to avoid flooding the viewer with upates.
+	 * any previous select deltas are removed. 
 	 * 
 	 * @param delta Delta to be posted to the viewer.
 	 * @param select Flag indicating that the delta is only to change the
@@ -176,7 +175,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
                     return Status.OK_STATUS;
                 }
             };
-            fFireModelChangedJob.schedule(select ? 100 : 0);
+            fFireModelChangedJob.schedule();
 	    }
 	}
 
