@@ -648,6 +648,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		if (activate) {
 			partService.activate(editor);
+			compatibilityEditor.delegateSetFocus();
 		}
 
 
