@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+<booleanAttribute key="append.args" value="true"/>
+<stringAttribute key="application" value="org.eclipse.e4.examples.services.snippets.adapter"/>
+<booleanAttribute key="askclear" value="true"/>
+<booleanAttribute key="automaticAdd" value="true"/>
+<booleanAttribute key="automaticValidate" value="false"/>
+<stringAttribute key="bad_container_name" value="\org.eclipse.e4.examples.servic"/>
+<stringAttribute key="bootstrap" value=""/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="false"/>
+<booleanAttribute key="clearws" value="false"/>
+<booleanAttribute key="clearwslog" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Adapter Snippet"/>
+<booleanAttribute key="default" value="false"/>
+<stringAttribute key="deselected_workspace_plugins" value="org.eclipse.e4.ui.workbench.swt,org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.e4.ui.examples.css.nebula,org.eclipse.e4.core.commands,org.eclipse.e4.pde.ui,org.eclipse.e4.ui.bindings.tests,org.eclipse.ui,org.eclipse.e4.ui.css.swt,org.apache.batik.xml,org.eclipse.e4.demo.contacts,org.eclipse.e4.ui.workbench.renderers.swt.contributions,org.eclipse.e4.core.tests.di,org.eclipse.e4.ui.css.nebula,org.eclipse.e4.ui.workbench,org.eclipse.e4.demo.e4photo.flickr.service,org.w3c.dom.svg,org.eclipse.e4.ui.services,org.eclipse.e4.ide.application,org.eclipse.e4.core.javascript,org.eclipse.ui.workbench,org.eclipse.e4.ui.css.jface,snip,org.eclipse.e4.ui.workbench3,org.w3c.css.sac,org.apache.batik.util.gui,org.eclipse.e4.ui.examples.css,org.eclipse.ui.ide,org.eclipse.e4.core.commands.tests,org.eclipse.ui.ide.application,org.mozilla.javascript,org.eclipse.e4.ui.tests,org.eclipse.e4.core.tests.services.annotations,org.eclipse.e4.ui.examples.legacy.workbench,org.eclipse.nebula.widgets.gallery,org.eclipse.e4.ui.model.workbench,org.eclipse.e4.demo.views,org.apache.batik.util,org.eclipse.ui.tests,org.eclipse.test.performance,org.eclipse.core.tests.harness,org.w3c.dom.smil,org.eclipse.e4.ui.compat.tests.tweaklet,org.eclipse.e4.demo.e4photo.flickr,org.eclipse.e4.ui.examples.css.rcp,org.eclipse.e4.ui.gadgets,org.eclipse.e4.core.di,org.apache.commons.beanutils,org.apache.batik.css,org.easymock,org.eclipse.e4.ui.tests.css.swt,org.eclipse.e4.ui.css.core,org.eclipse.e4.ui.tests.css.core,org.eclipse.e4.ui.web,org.eclipse.e4.pde.webui,org.eclipse.ui.tests.harness,org.eclipse.e4.demo.modifier,org.eclipse.e4.demo.e4photo,org.eclipse.e4.demo.e4photo.flickr.service.rest,org.eclipse.e4.core.tests.services,org.dojotoolkit,org.eclipse.e4.ui.bindings"/>
+<booleanAttribute key="includeOptional" value="true"/>
+<stringAttribute key="location" value="${workspace_loc}/../runtime-New_configuration"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_11"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms256m -Xmx512m"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<stringAttribute key="product" value="org.eclipse.e4.ui.examples.legacy.workbench.product"/>
+<stringAttribute key="selected_target_plugins" value="org.eclipse.core.runtime@default:true,org.eclipse.equinox.registry@default:default,org.eclipse.osgi@-1:true,org.eclipse.osgi.services@default:default,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.core.runtime.compatibility.auth@default:default,org.eclipse.equinox.concurrent@default:default,org.eclipse.core.jobs@default:default,org.eclipse.equinox.preferences@default:default,javax.servlet@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.contenttype@default:default"/>
+<stringAttribute key="selected_workspace_plugins" value="org.eclipse.e4.examples.services@2:true,org.eclipse.e4.core.services.annotations@default:false,org.eclipse.e4.core.services@default:default,javax.inject@default:default"/>
+<booleanAttribute key="show_selected_only" value="true"/>
+<stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="false"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<booleanAttribute key="useProduct" value="false"/>
+<booleanAttribute key="usefeatures" value="false"/>
+</launchConfiguration>
