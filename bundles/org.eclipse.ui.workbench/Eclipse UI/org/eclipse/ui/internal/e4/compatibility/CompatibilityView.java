@@ -18,9 +18,10 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -70,11 +71,18 @@ public class CompatibilityView extends CompatibilityPart {
 	 */
 	@Override
 	protected void createPartControl(IWorkbenchPart legacyPart, Composite parent) {
+		// Some views (i.e. Console) require that the actual ToolBar be
+		// instantiated before they are
+		ToolBarManager tbm = (ToolBarManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
+				.getToolBarManager();
+		ToolBar tb = tbm.createControl(parent);
+
 		super.createPartControl(legacyPart, parent);
 
-		// Construct the toolbar
-		IToolBarManager tbm = ((ViewPart) legacyPart).getViewSite().getActionBars()
-				.getToolBarManager();
+		// dispose the tb, it will be re-created when the tab is shown
+		tb.dispose();
+
+		// Construct the toolbar (if necessary)
 		if (tbm.getItems().length > 0) {
 			Control partCtrl = (Control) part.getWidget();
 			partCtrl.setData("legacyTBM", tbm); //$NON-NLS-1$
