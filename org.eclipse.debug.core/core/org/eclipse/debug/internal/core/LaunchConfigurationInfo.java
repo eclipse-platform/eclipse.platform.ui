@@ -45,7 +45,7 @@ import com.ibm.icu.text.MessageFormat;
 public class LaunchConfigurationInfo {
 	
 	/**
-	 * Constants fo XML element names and attrbiutes
+	 * Constants for XML element names and attributes
 	 */
 	private static final String KEY = "key"; //$NON-NLS-1$
 	private static final String VALUE = "value"; //$NON-NLS-1$
