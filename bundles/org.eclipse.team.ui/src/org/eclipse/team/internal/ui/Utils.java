@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -382,6 +382,16 @@ public class Utils {
 		} else {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel);
 		}
+	}
+
+	/**
+	 * DO NOT REMOVE, used in a product.
+	 * 
+	 * @deprecated As of 3.5, replaced by
+	 *             {@link #updateLabels(SyncInfo, CompareConfiguration, IProgressMonitor)}
+	 */
+	public static void updateLabels(SyncInfo sync, CompareConfiguration config) {
+		updateLabels(sync, config, null);
 	}
 
 	private static boolean isShowAuthor() {
