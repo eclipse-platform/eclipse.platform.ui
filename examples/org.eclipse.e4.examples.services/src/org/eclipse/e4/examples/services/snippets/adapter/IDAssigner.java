@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 
-class IDAssigner implements IAdapterFactory {
-	int currentId = 1000;
+public class IDAssigner implements IAdapterFactory {
+	int currentId;
 	Map<Object, String> assignedIds = new HashMap<Object, String>(); // Object->its
 																		// id
 
+	public IDAssigner() {
+		currentId = 1000;
+	}
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(final Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(ThingWithId.class)) {

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.services.Adapter;
+import org.eclipse.e4.examples.services.snippets.SnippetSetup;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
@@ -59,6 +60,9 @@ public class AdapterSnippet implements IApplication{
 	}
 
 	public Object start(IApplicationContext context) throws Exception {
+		// Inject services into this snippet
+		SnippetSetup.setup(this);
+		
 		tryAdapters(new MultiFacetedObject("Fred"));
 		return IApplication.EXIT_OK;
 	}
