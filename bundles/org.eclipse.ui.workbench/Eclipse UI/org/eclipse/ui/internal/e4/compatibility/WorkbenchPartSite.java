@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
+import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -80,6 +81,8 @@ public class WorkbenchPartSite implements IWorkbenchLocationService, IWorkbenchP
 				});
 		serviceLocator.setContext(e4Context);
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
+		serviceLocator.registerService(IWorkbenchSiteProgressService.class,
+				new WorkbenchSiteProgressService(e4Context));
 	}
 
 	public MPart getModel() {
