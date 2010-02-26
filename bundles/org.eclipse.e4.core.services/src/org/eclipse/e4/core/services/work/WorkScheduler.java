@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.work;
 
+/**
+ * This class is experimental and represents a work in progress.
+ */
 public abstract class WorkScheduler {
 
 	/**

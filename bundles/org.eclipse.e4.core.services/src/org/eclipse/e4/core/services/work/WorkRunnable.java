@@ -14,6 +14,8 @@ package org.eclipse.e4.core.services.work;
  * Runnable with a result, running in a WorkContext for reporting progress and responding to
  * cancellation.
  * 
+ * This class is experimental and represents a work in progress.
+ * 
  * @param <T>
  *            the result type
  */

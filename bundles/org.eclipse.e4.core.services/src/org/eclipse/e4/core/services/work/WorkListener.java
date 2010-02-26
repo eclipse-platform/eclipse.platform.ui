@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.work;
 
+/**
+ * This class is experimental and represents a work in progress.
+ */
+
 public class WorkListener {
+
 	/*
 	 * Something that you would pass when creating a WorkContext yourself, so that ongoing work in
 	 * that context can be reported back to the user. - new background work scheduled - new progress

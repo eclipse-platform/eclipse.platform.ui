@@ -13,6 +13,9 @@ package org.eclipse.e4.core.services.internal.work;
 import org.eclipse.e4.core.services.work.AsyncFuture;
 import org.eclipse.e4.core.services.work.WorkRunnable;
 
+/**
+ * This class is experimental and represents a work in progress.
+ */
 public class EclipseWorkScheduler {
 
 	/**

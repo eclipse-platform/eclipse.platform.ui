@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Context reporting progress, responding to cancellation, and scheduling related background work.
+ * This class is experimental and represents a work in progress.
  * 
  */
 public abstract class WorkContext extends WorkScheduler {
