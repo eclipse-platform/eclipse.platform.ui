@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287, 268203, 268688
+ *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.set;
@@ -147,26 +147,33 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 
 	// Single change operations
 
+	private void updateSet(Set set, SetDiff diff) {
+		if (!diff.isEmpty()) {
+			Set newSet = diff.simulateOn(set);
+
+			boolean wasUpdating = updating;
+			updating = true;
+			try {
+				property.setSet(source, newSet, diff);
+				modCount++;
+			} finally {
+				updating = wasUpdating;
+			}
+
+			notifyIfChanged(null);
+		}
+	}
+
 	public boolean add(Object o) {
 		checkRealm();
 
-		Set set = new HashSet(getSet());
-		if (!set.add(o))
+		Set set = getSet();
+		if (set.contains(o))
 			return false;
 
 		SetDiff diff = Diffs.createSetDiff(Collections.singleton(o),
 				Collections.EMPTY_SET);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, set, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 
 		return true;
 	}
@@ -196,20 +203,11 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 				checkRealm();
 				checkForComodification();
 
-				iterator.remove(); // stay in sync
 				SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET,
 						Collections.singleton(last));
+				updateSet(set, diff);
 
-				boolean wasUpdating = updating;
-				updating = true;
-				try {
-					property.setSet(source, set, diff);
-					modCount++;
-				} finally {
-					updating = wasUpdating;
-				}
-
-				notifyIfChanged(null);
+				iterator.remove(); // stay in sync
 
 				last = null;
 				expectedModCount = modCount;
@@ -225,23 +223,13 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	public boolean remove(Object o) {
 		getterCalled();
 
-		Set set = new HashSet(getSet());
-		if (!set.remove(o))
+		Set set = getSet();
+		if (!set.contains(o))
 			return false;
 
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Collections
 				.singleton(o));
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, set, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 
 		return true;
 	}
@@ -254,30 +242,18 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		if (c.isEmpty())
 			return false;
 
-		Set set = new HashSet(getSet());
+		Set set = getSet();
+		if (set.containsAll(c))
+			return false;
 
 		Set additions = new HashSet(c);
-		for (Iterator it = c.iterator(); it.hasNext();) {
-			Object element = it.next();
-			if (set.add(element))
-				additions.add(element);
-		}
+		additions.removeAll(set);
 
 		if (additions.isEmpty())
 			return false;
 
 		SetDiff diff = Diffs.createSetDiff(additions, Collections.EMPTY_SET);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, set, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 
 		return true;
 	}
@@ -285,36 +261,21 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	public boolean removeAll(Collection c) {
 		getterCalled();
 
-		Set set = getSet();
-		if (set.isEmpty())
-			return false;
 		if (c.isEmpty())
 			return false;
 
-		set = new HashSet(set);
+		Set set = getSet();
+		if (set.isEmpty())
+			return false;
 
 		Set removals = new HashSet(c);
-		for (Iterator it = c.iterator(); it.hasNext();) {
-			Object element = it.next();
-			if (set.remove(element))
-				removals.add(element);
-		}
+		removals.retainAll(set);
 
 		if (removals.isEmpty())
 			return false;
 
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, removals);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, set, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 
 		return true;
 	}
@@ -331,32 +292,14 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 			return true;
 		}
 
-		set = new HashSet(set);
-
-		Set removals = new HashSet();
-		for (Iterator it = set.iterator(); it.hasNext();) {
-			Object element = it.next();
-			if (!c.contains(element)) {
-				it.remove();
-				removals.add(element);
-			}
-		}
+		Set removals = new HashSet(set);
+		removals.removeAll(c);
 
 		if (removals.isEmpty())
 			return false;
 
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, removals);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, set, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 
 		return true;
 	}
@@ -369,17 +312,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 			return;
 
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, set);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setSet(source, Collections.EMPTY_SET, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateSet(set, diff);
 	}
 
 	private void notifyIfChanged(SetDiff diff) {

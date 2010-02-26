@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287, 268203, 268688
+ *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -129,6 +129,23 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 
 	// Single change operations
 
+	private void updateMap(Map map, MapDiff diff) {
+		if (!diff.isEmpty()) {
+			Map newMap = diff.simulateOn(map);
+
+			boolean wasUpdating = updating;
+			updating = true;
+			try {
+				property.setMap(source, newMap, diff);
+				modCount++;
+			} finally {
+				updating = wasUpdating;
+			}
+
+			notifyIfChanged(null);
+		}
+	}
+
 	private EntrySet es = new EntrySet();
 
 	public Set entrySet() {
@@ -169,19 +186,11 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			getterCalled();
 			checkForComodification();
 
-			iterator.remove(); // stay in sync
 			MapDiff diff = Diffs.createMapDiffSingleRemove(last.getKey(), last
 					.getValue());
+			updateMap(map, diff);
 
-			boolean wasUpdating = updating;
-			updating = true;
-			try {
-				property.setMap(source, map, diff);
-			} finally {
-				updating = wasUpdating;
-			}
-
-			notifyIfChanged(null);
+			iterator.remove(); // stay in sync
 
 			last = null;
 			expectedModCount = modCount;
@@ -203,11 +212,11 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	public Object put(Object key, Object value) {
 		checkRealm();
 
-		Map map = new HashMap(getMap());
+		Map map = getMap();
 
 		boolean add = !map.containsKey(key);
 
-		Object oldValue = map.put(key, value);
+		Object oldValue = map.get(key);
 
 		MapDiff diff;
 		if (add)
@@ -215,16 +224,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		else
 			diff = Diffs.createMapDiffSingleChange(key, oldValue, value);
 
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setMap(source, map, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateMap(map, diff);
 
 		return oldValue;
 	}
@@ -232,14 +232,14 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	public void putAll(Map m) {
 		checkRealm();
 
-		Map map = new HashMap(getMap());
+		Map map = getMap();
 
 		Map oldValues = new HashMap();
 		Map newValues = new HashMap();
 		Set changedKeys = new HashSet();
 		Set addedKeys = new HashSet();
 		for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Entry) it.next();
+			Map.Entry entry = (Map.Entry) it.next();
 			Object key = entry.getKey();
 			Object newValue = entry.getValue();
 			if (map.containsKey(key)) {
@@ -248,29 +248,27 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			} else {
 				addedKeys.add(key);
 			}
-			map.put(key, newValue);
-
 			newValues.put(key, newValue);
 		}
 
 		MapDiff diff = Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET,
 				changedKeys, oldValues, newValues);
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			property.setMap(source, map, diff);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		notifyIfChanged(null);
+		updateMap(map, diff);
 	}
 
 	public Object remove(Object key) {
 		checkRealm();
-		return super.remove(key);
+
+		Map map = getMap();
+		if (!map.containsKey(key))
+			return null;
+
+		Object oldValue = map.get(key);
+
+		MapDiff diff = Diffs.createMapDiffSingleRemove(key, oldValue);
+		updateMap(map, diff);
+
+		return oldValue;
 	}
 
 	public Collection values() {

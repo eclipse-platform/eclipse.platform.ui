@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
- *     Matthew Hall - bug 213145, 244098, 246103, 194734, 268688
+ *     Matthew Hall - bug 213145, 244098, 246103, 194734, 268688, 301774
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -239,7 +239,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		});
 	}
 
-	public void testRetailAll() throws Exception {
+	public void testRetainAll() throws Exception {
 		set.addAll(Arrays.asList(new String[] { "0", "1", "2", "3" }));
 
 		assertEquals(4, bean.getArray().length);

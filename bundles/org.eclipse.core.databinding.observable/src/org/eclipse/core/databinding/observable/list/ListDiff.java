@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 208858, 251884, 194734, 272651
+ *     Matthew Hall - bugs 208858, 251884, 194734, 272651, 301774
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
 
+import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.IDiff;
@@ -172,6 +174,98 @@ public abstract class ListDiff implements IDiff {
 				list.set(index, newElement);
 			}
 		});
+	}
+
+	/**
+	 * Returns a list showing what <code>list</code> would look like if this
+	 * diff were applied to it.
+	 * <p>
+	 * <b>Note</b>: the returned list is only valid until structural changes are
+	 * made to the passed-in list.
+	 * 
+	 * @param list
+	 *            the list over which the diff will be simulated
+	 * @return an unmodifiable list showing what <code>list</code> would look
+	 *         like if it were passed to the {@link #applyTo(List)} method.
+	 * @see #applyTo(List)
+	 * @since 1.3
+	 */
+	public List simulateOn(List list) {
+		final List[] result = { list };
+		accept(new ListDiffVisitor() {
+			public void handleAdd(int index, Object element) {
+				List first = result[0].subList(0, index);
+				List middle = Collections.singletonList(element);
+				List last = result[0].subList(index, result[0].size());
+				result[0] = ConcatList.cat(first, middle, last);
+			}
+
+			public void handleRemove(int index, Object element) {
+				List first = result[0].subList(0, index);
+				List last = result[0].subList(index + 1, result[0].size());
+				result[0] = ConcatList.cat(first, last);
+			}
+
+			public void handleReplace(int index, Object oldElement,
+					Object newElement) {
+				List first = result[0].subList(0, index);
+				List middle = Collections.singletonList(newElement);
+				List last = result[0].subList(index + 1, result[0].size());
+				result[0] = ConcatList.cat(first, middle, last);
+			}
+		});
+		return result[0];
+	}
+
+	private static class ConcatList extends AbstractList {
+		private final List[] subLists;
+
+		public static List cat(List a, List b, List c) {
+			if (a.isEmpty()) {
+				return cat(b, c);
+			} else if (b.isEmpty()) {
+				return cat(a, c);
+			} else if (c.isEmpty()) {
+				return cat(a, b);
+			}
+			return new ConcatList(new List[] { a, b, c });
+		}
+
+		public static List cat(List a, List b) {
+			if (a.isEmpty()) {
+				if (b.isEmpty()) {
+					return Collections.EMPTY_LIST;
+				}
+				return b;
+			} else if (b.isEmpty()) {
+				return a;
+			}
+			return new ConcatList(new List[] { a, b });
+		}
+
+		private ConcatList(List[] sublists) {
+			this.subLists = sublists;
+		}
+
+		public Object get(int index) {
+			int offset = 0;
+			for (int i = 0; i < subLists.length; i++) {
+				int subListIndex = index - offset;
+				if (subListIndex < subLists[i].size()) {
+					return subLists[i].get(subListIndex);
+				}
+				offset += subLists[i].size();
+			}
+			throw new IndexOutOfBoundsException();
+		}
+
+		public int size() {
+			int size = 0;
+			for (int i = 0; i < subLists.length; i++) {
+				size += subLists[i].size();
+			}
+			return size;
+		}
 	}
 
 	/**

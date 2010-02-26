@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688,
+ *                    301774
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -361,7 +362,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 		});
 	}
 
-	public void testRetailAll() throws Exception {
+	public void testRetainAll() throws Exception {
 		List elements = Arrays.asList(new String[] { "0", "1", "2", "3" });
 		list.addAll(elements);
 

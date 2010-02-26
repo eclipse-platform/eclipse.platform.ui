@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 264307, 265561
+ *     Matthew Hall - bugs 195222, 264307, 265561, 301774
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -59,7 +59,7 @@ public class BeanMapProperty extends SimpleMapProperty {
 
 	private Map asMap(Object propertyValue) {
 		if (propertyValue == null)
-			return new HashMap();
+			return Collections.EMPTY_MAP;
 		return (Map) propertyValue;
 	}
 
