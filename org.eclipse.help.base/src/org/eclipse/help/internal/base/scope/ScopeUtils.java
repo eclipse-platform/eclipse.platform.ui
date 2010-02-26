@@ -80,6 +80,7 @@ public class ScopeUtils {
 		for (int i = 0; i < topics.length; i++) {
 			if (showInTree(topics[i], scope) || 
 					(scope.isHierarchicalScope() && hasInScopeDescendent(topics[i], scope))) {  
+				return true;
 			}
 		}
 		return false;
