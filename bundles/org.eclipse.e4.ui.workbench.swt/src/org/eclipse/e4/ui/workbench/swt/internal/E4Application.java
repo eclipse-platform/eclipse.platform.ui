@@ -16,6 +16,8 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.internal.services.EclipseAdapter;
+import org.eclipse.e4.core.services.Adapter;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
@@ -186,6 +188,9 @@ public class E4Application implements IApplication {
 
 		appContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), appContext));
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.inject(
+				new EclipseAdapter(), appContext));
+
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
