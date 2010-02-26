@@ -356,6 +356,13 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Check if we have to reset the currently active child for the stack
 		if (parentElement.getSelectedElement() == child) {
+			// Remove the TB (if any)
+			Control tb = ctf.getTopRight();
+			if (tb != null) {
+				ctf.setTopRight(null);
+				tb.dispose();
+			}
+
 			// HACK!! we'll reset to the first element for now but really should
 			// be based on the activation chain
 			MUIElement defaultSel = getFirstVisibleElement(parentElement);
