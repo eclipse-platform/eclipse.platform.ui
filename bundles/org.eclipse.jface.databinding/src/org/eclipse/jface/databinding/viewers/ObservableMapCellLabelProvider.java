@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164134
+ *     Brad Reynolds - bugs 164247, 164134
+ *     Matthew Hall - bug 302860
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -33,7 +33,13 @@ import org.eclipse.jface.viewers.ViewerCell;
  */
 public class ObservableMapCellLabelProvider extends CellLabelProvider {
 
-	private IObservableMap[] attributeMaps;
+	/**
+	 * Observable maps typically mapping from viewer elements to label values.
+	 * Subclasses may use these maps to provide custom labels.
+	 * 
+	 * @since 1.4
+	 */
+	protected IObservableMap[] attributeMaps;
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
 		public void handleMapChange(MapChangeEvent event) {

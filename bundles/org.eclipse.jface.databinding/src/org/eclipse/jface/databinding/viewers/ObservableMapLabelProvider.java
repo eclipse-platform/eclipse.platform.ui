@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164134
+ *     Brad Reynolds - bugs 164247, 164134
+ *     Matthew Hall - bug 302860
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -37,7 +37,13 @@ import org.eclipse.swt.graphics.Image;
 public class ObservableMapLabelProvider extends LabelProvider implements
 		ILabelProvider, ITableLabelProvider {
 
-	private final IObservableMap[] attributeMaps;
+	/**
+	 * Observable maps typically mapping from viewer elements to label values.
+	 * Subclasses may reference these maps to provide custom labels.
+	 * 
+	 * @since 1.4
+	 */
+	protected IObservableMap[] attributeMaps;
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
 		public void handleMapChange(MapChangeEvent event) {
@@ -72,10 +78,12 @@ public class ObservableMapLabelProvider extends LabelProvider implements
 			attributeMaps[i].removeMapChangeListener(mapChangeListener);
 		}
 		super.dispose();
+		this.attributeMaps = null;
+		this.mapChangeListener = null;
 	}
 
 	public Image getImage(Object element) {
-		return null;
+		return getColumnImage(element, 0);
 	}
 
 	public String getText(Object element) {
