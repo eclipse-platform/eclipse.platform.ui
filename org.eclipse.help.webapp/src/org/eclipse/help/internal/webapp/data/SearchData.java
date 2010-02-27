@@ -302,7 +302,7 @@ public class SearchData extends ActivitiesData {
 	 * @return String
 	 */
 	public String getScope() {
-		if (workingSetName != null)
+		if (workingSetName != null && workingSetName.length() != 0)
 			return workingSetName;
 
         if (isSearchRequest()) {
