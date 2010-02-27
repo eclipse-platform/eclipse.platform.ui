@@ -7,9 +7,10 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 268472)
+ *     Matthew Hall - bug 300953
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional.fieldassist;
+package org.eclipse.jface.databinding.fieldassist;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -18,21 +19,13 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * <b>EXPERIMENTAL</b>: This class is not API. It is experimental and subject to
- * arbitrary change, including removal. Please provide feedback if you would
- * like to see this become API.
- * <p>
  * Controls the appearance of a ControlDecoration managed by a
  * ControlDecorationSupport.
  * 
- * @since 1.3
+ * @since 1.4
  */
 public class ControlDecorationUpdater {
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
-	 * <p>
 	 * Updates the visibility, image, and description text of the given
 	 * ControlDecoration to represent the given status.
 	 * 
@@ -52,10 +45,6 @@ public class ControlDecorationUpdater {
 	}
 
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
-	 * <p>
 	 * Returns the description text to show in a ControlDecoration for the given
 	 * status. The default implementation of this method returns
 	 * status.getMessage().
@@ -70,10 +59,6 @@ public class ControlDecorationUpdater {
 	}
 
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
-	 * <p>
 	 * Returns an image to display in a ControlDecoration which is appropriate
 	 * for the given status. The default implementation of this method returns
 	 * an image according to <code>status.getSeverity()</code>:

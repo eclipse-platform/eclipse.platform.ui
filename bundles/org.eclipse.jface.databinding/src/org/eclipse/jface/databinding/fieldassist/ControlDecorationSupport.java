@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation (bug 268472
+ *     Matthew Hall - initial API and implementation (bug 268472)
+ *     Matthew Hall - bug 300953
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional.fieldassist;
+package org.eclipse.jface.databinding.fieldassist;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,26 +40,31 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * <b>EXPERIMENTAL</b>: This class is not API. It is experimental and subject to
- * arbitrary change, including removal. Please provide feedback if you would
- * like to see this become API.
- * <p>
  * Decorates the underlying controls of the target observables of a
  * {@link ValidationStatusProvider} with {@link ControlDecoration}s mirroring
  * the current validation status. Only those target observables which implement
  * {@link ISWTObservable} or {@link IViewerObservable} are decorated.
  * 
- * @since 1.3
+ * @since 1.4
  */
 public class ControlDecorationSupport {
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
+	 * Creates a ControlDecorationSupport which observes the validation status
+	 * of the specified {@link ValidationStatusProvider}, and displays a
+	 * {@link ControlDecoration} over the underlying SWT control of all target
+	 * observables that implement {@link ISWTObservable} or
+	 * {@link IViewerObservable}.
 	 * 
 	 * @param validationStatusProvider
+	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position
-	 * @return .
+	 *            SWT alignment constant (e.g. SWT.LEFT | SWT.TOP) to use when
+	 *            constructing {@link ControlDecorationSupport}
+	 * @return a ControlDecorationSupport which observes the validation status
+	 *         of the specified {@link ValidationStatusProvider}, and displays a
+	 *         {@link ControlDecoration} over the underlying SWT control of all
+	 *         target observables that implement {@link ISWTObservable} or
+	 *         {@link IViewerObservable}.
 	 */
 	public static ControlDecorationSupport create(
 			ValidationStatusProvider validationStatusProvider, int position) {
@@ -67,14 +73,25 @@ public class ControlDecorationSupport {
 	}
 
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
+	 * Creates a ControlDecorationSupport which observes the validation status
+	 * of the specified {@link ValidationStatusProvider}, and displays a
+	 * {@link ControlDecoration} over the underlying SWT control of all target
+	 * observables that implement {@link ISWTObservable} or
+	 * {@link IViewerObservable}.
 	 * 
 	 * @param validationStatusProvider
+	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position
+	 *            SWT alignment constant (e.g. SWT.LEFT | SWT.TOP) to use when
+	 *            constructing {@link ControlDecoration} instances.
 	 * @param composite
-	 * @return .
+	 *            the composite to use when constructing
+	 *            {@link ControlDecoration} instances.
+	 * @return a ControlDecorationSupport which observes the validation status
+	 *         of the specified {@link ValidationStatusProvider}, and displays a
+	 *         {@link ControlDecoration} over the underlying SWT control of all
+	 *         target observables that implement {@link ISWTObservable} or
+	 *         {@link IViewerObservable}.
 	 */
 	public static ControlDecorationSupport create(
 			ValidationStatusProvider validationStatusProvider, int position,
@@ -84,15 +101,28 @@ public class ControlDecorationSupport {
 	}
 
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
+	 * Creates a ControlDecorationSupport which observes the validation status
+	 * of the specified {@link ValidationStatusProvider}, and displays a
+	 * {@link ControlDecoration} over the underlying SWT control of all target
+	 * observables that implement {@link ISWTObservable} or
+	 * {@link IViewerObservable}.
 	 * 
 	 * @param validationStatusProvider
+	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position
+	 *            SWT alignment constant (e.g. SWT.LEFT | SWT.TOP) to use when
+	 *            constructing {@link ControlDecoration} instances.
 	 * @param composite
+	 *            the composite to use when constructing
+	 *            {@link ControlDecoration} instances.
 	 * @param updater
-	 * @return .
+	 *            custom strategy for updating the {@link ControlDecoration}(s)
+	 *            whenever the validation status changes.
+	 * @return a ControlDecorationSupport which observes the validation status
+	 *         of the specified {@link ValidationStatusProvider}, and displays a
+	 *         {@link ControlDecoration} over the underlying SWT control of all
+	 *         target observables that implement {@link ISWTObservable} or
+	 *         {@link IViewerObservable}.
 	 */
 	public static ControlDecorationSupport create(
 			ValidationStatusProvider validationStatusProvider, int position,
@@ -229,10 +259,6 @@ public class ControlDecorationSupport {
 	}
 
 	/**
-	 * <b>EXPERIMENTAL</b>: This method is not API. It is experimental and
-	 * subject to arbitrary change, including removal. Please provide feedback
-	 * if you would like to see this become API.
-	 * <p>
 	 * Disposes this ControlDecorationSupport, including all control decorations
 	 * managed by it. A ControlDecorationSupport is automatically disposed when
 	 * its target ValidationStatusProvider is disposed.
