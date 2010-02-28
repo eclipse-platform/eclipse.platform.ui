@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 265561, 262287, 268688, 278550
+ *     Matthew Hall - bugs 262269, 265561, 262287, 268688, 278550, 303847
  *     Ovidio Mallo - bugs 299619, 301370
  ******************************************************************************/
 
@@ -310,6 +310,18 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		}
 	}
 
+	public boolean containsKey(Object key) {
+		getterCalled();
+
+		return masterMap.containsKey(key);
+	}
+
+	public Object get(Object key) {
+		getterCalled();
+
+		return detailProperty.getValue(masterMap.get(key));
+	}
+
 	public Object put(Object key, Object value) {
 		if (!masterMap.containsKey(key))
 			return null;
@@ -317,6 +329,17 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		Object oldValue = detailProperty.getValue(masterValue);
 		detailProperty.setValue(masterValue, value);
 		notifyIfChanged(masterValue);
+		return oldValue;
+	}
+
+	public Object remove(Object key) {
+		checkRealm();
+
+		Object masterValue = masterMap.get(key);
+		Object oldValue = detailProperty.getValue(masterValue);
+
+		masterMap.remove(key);
+
 		return oldValue;
 	}
 

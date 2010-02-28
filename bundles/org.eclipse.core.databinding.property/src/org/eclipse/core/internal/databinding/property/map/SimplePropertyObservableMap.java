@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774
+ *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774, 303847
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -207,6 +207,18 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
 		// getterCalled() and comodification checks will still be handled
 		return super.keySet();
+	}
+
+	public boolean containsKey(Object key) {
+		getterCalled();
+
+		return getMap().containsKey(key);
+	}
+
+	public Object get(Object key) {
+		getterCalled();
+
+		return getMap().get(key);
 	}
 
 	public Object put(Object key, Object value) {

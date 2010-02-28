@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 215531)
  *     Matthew Hall - bug 228125
  *         (through ViewerElementMap.java)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 303847
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding;
@@ -62,7 +62,7 @@ public class IdentityMap implements Map {
 	}
 
 	public boolean containsKey(Object key) {
-		return wrappedMap.containsKey(new IdentityWrapper(key));
+		return wrappedMap.containsKey(IdentityWrapper.wrap(key));
 	}
 
 	public boolean containsValue(Object value) {
@@ -151,8 +151,8 @@ public class IdentityMap implements Map {
 
 			public boolean remove(Object o) {
 				final Map.Entry unwrappedEntry = (Map.Entry) o;
-				final IdentityWrapper wrappedKey = new IdentityWrapper(
-						unwrappedEntry.getKey());
+				final IdentityWrapper wrappedKey = IdentityWrapper
+						.wrap(unwrappedEntry.getKey());
 				Map.Entry wrappedEntry = new Map.Entry() {
 					public Object getKey() {
 						return wrappedKey;
@@ -246,7 +246,7 @@ public class IdentityMap implements Map {
 	}
 
 	public Object get(Object key) {
-		return wrappedMap.get(new IdentityWrapper(key));
+		return wrappedMap.get(IdentityWrapper.wrap(key));
 	}
 
 	public boolean isEmpty() {
@@ -269,12 +269,12 @@ public class IdentityMap implements Map {
 			}
 
 			public boolean contains(Object o) {
-				return wrappedKeySet.contains(new IdentityWrapper(o));
+				return wrappedKeySet.contains(IdentityWrapper.wrap(o));
 			}
 
 			public boolean containsAll(Collection c) {
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
-					if (!wrappedKeySet.contains(new IdentityWrapper(iterator
+					if (!wrappedKeySet.contains(IdentityWrapper.wrap(iterator
 							.next())))
 						return false;
 				return true;
@@ -303,14 +303,14 @@ public class IdentityMap implements Map {
 			}
 
 			public boolean remove(Object o) {
-				return wrappedKeySet.remove(new IdentityWrapper(o));
+				return wrappedKeySet.remove(IdentityWrapper.wrap(o));
 			}
 
 			public boolean removeAll(Collection c) {
 				boolean changed = false;
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
-					changed |= wrappedKeySet.remove(new IdentityWrapper(
-							iterator.next()));
+					changed |= wrappedKeySet.remove(IdentityWrapper
+							.wrap(iterator.next()));
 				return changed;
 			}
 
@@ -367,20 +367,20 @@ public class IdentityMap implements Map {
 	}
 
 	public Object put(Object key, Object value) {
-		return wrappedMap.put(new IdentityWrapper(key), value);
+		return wrappedMap.put(IdentityWrapper.wrap(key), value);
 	}
 
 	public void putAll(Map other) {
 		for (Iterator iterator = other.entrySet().iterator(); iterator
 				.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			wrappedMap.put(new IdentityWrapper(entry.getKey()), entry
+			wrappedMap.put(IdentityWrapper.wrap(entry.getKey()), entry
 					.getValue());
 		}
 	}
 
 	public Object remove(Object key) {
-		return wrappedMap.remove(new IdentityWrapper(key));
+		return wrappedMap.remove(IdentityWrapper.wrap(key));
 	}
 
 	public int size() {

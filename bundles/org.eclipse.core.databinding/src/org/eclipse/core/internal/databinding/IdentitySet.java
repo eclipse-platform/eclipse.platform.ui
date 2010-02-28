@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 215531)
  *     Matthew Hall - bug 124684
  *         (through ViewerElementSet.java)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 303847
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding;
@@ -54,13 +54,13 @@ public class IdentitySet implements Set {
 	}
 
 	public boolean add(Object o) {
-		return wrappedSet.add(new IdentityWrapper(o));
+		return wrappedSet.add(IdentityWrapper.wrap(o));
 	}
 
 	public boolean addAll(Collection c) {
 		boolean changed = false;
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			changed |= wrappedSet.add(new IdentityWrapper(iterator.next()));
+			changed |= wrappedSet.add(IdentityWrapper.wrap(iterator.next()));
 		return changed;
 	}
 
@@ -69,12 +69,12 @@ public class IdentitySet implements Set {
 	}
 
 	public boolean contains(Object o) {
-		return wrappedSet.contains(new IdentityWrapper(o));
+		return wrappedSet.contains(IdentityWrapper.wrap(o));
 	}
 
 	public boolean containsAll(Collection c) {
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			if (!wrappedSet.contains(new IdentityWrapper(iterator.next())))
+			if (!wrappedSet.contains(IdentityWrapper.wrap(iterator.next())))
 				return false;
 		return true;
 	}
@@ -101,7 +101,7 @@ public class IdentitySet implements Set {
 	}
 
 	public boolean remove(Object o) {
-		return wrappedSet.remove(new IdentityWrapper(o));
+		return wrappedSet.remove(IdentityWrapper.wrap(o));
 	}
 
 	public boolean removeAll(Collection c) {

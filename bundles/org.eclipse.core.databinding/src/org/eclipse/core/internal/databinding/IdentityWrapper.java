@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Daniel Kruegler - bug 137435
+ *     Matthew Hall - bug 303847
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding;
@@ -21,15 +22,28 @@ package org.eclipse.core.internal.databinding;
  * 
  */
 public class IdentityWrapper {
+
+	private static final IdentityWrapper NULL_WRAPPER = new IdentityWrapper(
+			null);
+
+	/**
+	 * @param obj
+	 *            the object to wrap
+	 * @return an IdentityWrapper wrapping the specified object
+	 */
+	public static IdentityWrapper wrap(Object obj) {
+		return obj == null ? NULL_WRAPPER : new IdentityWrapper(obj);
+	}
+
 	final Object o;
 
 	/**
 	 * @param o
 	 */
-	public IdentityWrapper(Object o) {
+	private IdentityWrapper(Object o) {
 		this.o = o;
 	}
-	
+
 	/**
 	 * @return the unwrapped object
 	 */
