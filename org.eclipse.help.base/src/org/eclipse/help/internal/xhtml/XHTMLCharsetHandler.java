@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.help.internal.xhtml;
 
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.dynamic.ProcessorHandler;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /*
  * Converts the charset in XHTML meta tag to UTF-8. This is the encoding
@@ -37,14 +37,29 @@ public class XHTMLCharsetHandler extends ProcessorHandler {
 				return HANDLED_CONTINUE;
 			}
 		}
-		if ("script".equalsIgnoreCase(element.getElementName())) { //$NON-NLS-1$ 
+		if (endTagRequired(element)) { 
 			Element domElement = element.getElement();
 			if (domElement.getFirstChild() == null) {
 				Document document = domElement.getOwnerDocument();
-				Text child = document.createTextNode(" "); //$NON-NLS-1$
+				Comment child = document.createComment(" "); //$NON-NLS-1$
 				domElement.appendChild(child);
 			}
 		}
 		return UNHANDLED;
+	}
+
+	/*
+	 * Returns true if this element requires the end tag to be separate from the 
+	 * start tag to render correctly in browsers.
+	 * i.e. generate <a></a> rather than <a/>
+	 */
+	private boolean endTagRequired(UAElement element) {
+		String elementName = element.getElementName();
+		if ("a".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("p".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("div".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("script".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("textarea".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		return false;
 	}
 }

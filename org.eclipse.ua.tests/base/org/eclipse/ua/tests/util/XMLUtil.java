@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,11 +41,20 @@ public class XMLUtil extends Assert {
 		InputStream in2 = new ByteArrayInputStream(s2.getBytes("UTF-8"));
 		assertXMLEquals(msg, in1, in2);
 	}
-	
+
 	public static void assertXMLEquals(String msg, InputStream in1, InputStream in2) throws Exception {
 		String s1 = process(in1);
 		String s2 = process(in2);
 		assertEquals(msg, s1, s2);
+	}
+	
+	public static void assertParseableXML(String s)  {
+		try {
+			InputStream in1 = new ByteArrayInputStream(s.getBytes("UTF-8"));
+			process(in1);
+		} catch (Exception e) {
+			fail("Unable to parse source: " + s);
+		}
 	}
 	
 	private static String process(InputStream in) throws Exception {
