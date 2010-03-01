@@ -23,8 +23,6 @@ import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -402,30 +400,21 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fTextLayout.setText("    "); //$NON-NLS-1$
 		int tabWidth= fTextLayout.getBounds().width;
 		fTextLayout.setTabs(new int[] { tabWidth });
-
 		fTextLayout.setText(""); //$NON-NLS-1$
-
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (fTextLayout != null) {
-					fTextLayout.dispose();
-					fTextLayout= null;
-				}
-			}
-		});
 	}
 
 	/*
-	 * @see IInformationControl#dispose()
+	 * @see org.eclipse.jface.text.AbstractInformationControl#handleDispose()
+	 * @since 3.6
 	 */
-	public void dispose() {
+	protected void handleDispose() {
 		if (fTextLayout != null) {
 			fTextLayout.dispose();
 			fTextLayout= null;
 		}
 		fBrowser= null;
 
-		super.dispose();
+		super.handleDispose();
 	}
 
 	/*

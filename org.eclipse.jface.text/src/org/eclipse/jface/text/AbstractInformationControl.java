@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -193,6 +194,13 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (fResizable) {
 			ResizableShellSupport.makeResizable(fShell);
 		}
+
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handleDispose();
+			}
+		});
+
 	}
 
 	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
@@ -499,12 +507,21 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
+		if (fShell != null && !fShell.isDisposed())
+			fShell.dispose();
+	}
+
+	/**
+	 * Frees all resources allocated by this information control. Internally called when the
+	 * information control's shell has been disposed.
+	 * 
+	 * @since 3.6
+	 */
+	protected void handleDispose() {
 		if (fStatusLabelFont != null) {
 			fStatusLabelFont.dispose();
 			fStatusLabelFont= null;
 		}
-		if (fShell != null && !fShell.isDisposed())
-			fShell.dispose();
 	}
 
 	/*
