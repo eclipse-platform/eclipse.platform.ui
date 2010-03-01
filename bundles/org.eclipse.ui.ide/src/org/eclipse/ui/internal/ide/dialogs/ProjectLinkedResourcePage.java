@@ -28,8 +28,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * A property page for viewing and modifying the set
@@ -55,7 +57,10 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 
 	protected Control createContents(Composite parent) {
 
-		 IAdaptable adaptable = getElement();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IIDEHelpContextIds.LINKED_RESOURCE_PAGE);
+
+		IAdaptable adaptable = getElement();
 		 if (adaptable.getAdapter(IProject.class) != null) {
 			 IProject project = (IProject) adaptable.getAdapter(IProject.class);
 			 pathVariablesGroup.setResource(project);

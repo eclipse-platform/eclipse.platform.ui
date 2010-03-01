@@ -182,6 +182,9 @@ public interface IIDEHelpContextIds {
     public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX
             + "resource_info_property_page_context"; //$NON-NLS-1$
 
+    public static final String NEW_FILE_WIZARD_PAGE = PREFIX
+    		+ "new_file_wizard_page_context"; //$NON-NLS-1$
+    
     // Wizard pages
     public static final String NEW_PROJECT_WIZARD_PAGE = PREFIX
             + "new_project_wizard_page_context"; //$NON-NLS-1$
@@ -191,12 +194,12 @@ public interface IIDEHelpContextIds {
 
     public static final String NEW_FOLDER_WIZARD_PAGE = PREFIX
             + "new_folder_wizard_page_context"; //$NON-NLS-1$
-
+    
+    public static final String LINKED_RESOURCE_PAGE = PREFIX
+    		+ "linked_resource_page_context"; //$NON-NLS-1$
+   
     public static final String NEW_GROUP_WIZARD_PAGE = PREFIX
     		+ "new_group_wizard_page_context"; //$NON-NLS-1$
-
-    public static final String NEW_FILE_WIZARD_PAGE = PREFIX
-            + "new_file_wizard_page_context"; //$NON-NLS-1$
 
    public static final String NEW_LINK_WIZARD_PAGE = PREFIX
             + "new_link_wizard_page_context"; //$NON-NLS-1$
