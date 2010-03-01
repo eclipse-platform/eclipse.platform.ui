@@ -53,7 +53,7 @@ public class EclipseAdapter extends Adapter {
 			return null;
 		}
 
-		Object result = adapterManager.getAdapter(element, adapterType);
+		Object result = adapterManager.loadAdapter(element, adapterType.getName());
 		if (result != null) {
 			// Sanity-check
 			Assert.isTrue(adapterType.isInstance(result));
