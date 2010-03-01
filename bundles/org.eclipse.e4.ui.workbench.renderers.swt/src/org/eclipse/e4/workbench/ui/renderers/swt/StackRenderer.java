@@ -271,8 +271,11 @@ public class StackRenderer extends LazyStackRenderer {
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 
 		CTabItem cti = findItemForPart(part);
-		if (cti != null)
+		if (cti != null) {
+			if (part.getWidget() != null)
+				cti.setControl((Control) part.getWidget());
 			return;
+		}
 
 		int createFlags = SWT.NONE;
 		if (part instanceof MPart && ((MPart) part).isCloseable()) {
@@ -450,6 +453,8 @@ public class StackRenderer extends LazyStackRenderer {
 		if (element.getWidget() == null) {
 			Control tabCtrl = (Control) renderer.createGui(element);
 			cti.setControl(tabCtrl);
+		} else if (cti.getControl() == null) {
+			cti.setControl((Control) element.getWidget());
 		}
 
 		ignoreTabSelChanges = true;

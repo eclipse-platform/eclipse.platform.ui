@@ -29,6 +29,7 @@ import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
 
 public class PartRenderingEngineTests extends TestCase {
@@ -480,6 +481,62 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNull(part.getRenderer());
 		assertNull(part.getObject());
 		assertEquals(0, tabFolder.getItemCount());
+	}
+
+	public void testCTabItem_SetControl_Bug304211() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setId("partA");
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+		IPresentationEngine engine = (IPresentationEngine) appContext
+				.get(IPresentationEngine.class.getName());
+
+		CTabFolder folder = (CTabFolder) stack.getWidget();
+		CTabItem itemA = folder.getItem(0);
+		assertEquals(
+				"The presentation engine should have created the part and set it",
+				partA.getWidget(), itemA.getControl());
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setId("partB");
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		// add this new part to the stack
+		stack.getChildren().add(partB);
+
+		CTabItem item2 = folder.getItem(1);
+		assertNull(
+				"For a stack, the object will not be rendered unless explicitly required",
+				item2.getControl());
+
+		// ask the engine to render the part
+		engine.createGui(partB);
+
+		assertEquals(
+				"The presentation engine should have created the part and set it",
+				partB.getWidget(), item2.getControl());
+
+		// select the new part to display it to the user
+		stack.setSelectedElement(partB);
+
+		assertEquals("Selecting the element should not have changed anything",
+				partB.getWidget(), item2.getControl());
 	}
 
 	public void testToBeRenderedCausesSelectionChanges() {
