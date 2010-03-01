@@ -192,7 +192,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 						IResource resource = root.findMember(path);
 						if (resource != null && resource instanceof IContainer) {
 							String resourceName = resourceGroup.getResource();
-							return ((IContainer) resource).getFolder(Path.fromOSString(resourceName.length() > 0 ? resourceName:"foo")); //$NON-NLS-1$
+							if (resourceName.length() > 0)
+								return ((IContainer) resource).getFolder(Path.fromOSString(resourceName));
+							return null;
 						}
 						return resource;
 					}
