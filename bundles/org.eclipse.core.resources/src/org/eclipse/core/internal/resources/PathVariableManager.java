@@ -215,6 +215,8 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public URI resolveURI(URI uri) {
 		if (uri == null || uri.isAbsolute())
 			return uri;
+		if (uri.getSchemeSpecificPart() == null)
+			return uri;
 		IPath raw = new Path(uri.getSchemeSpecificPart());
 		IPath resolved = resolvePath(raw);
 		return raw == resolved ? uri : URIUtil.toURI(resolved);
