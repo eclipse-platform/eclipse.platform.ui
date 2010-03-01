@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.HelpSystem;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
@@ -65,9 +64,6 @@ public class ScopeRegistry {
 			return;
 		}	
 		scopes = new ArrayList();
-		if (!HelpSystem.isShared()) {
-			scopes.add(new ScopeHandle(ENABLEMENT_SCOPE_ID, new EnablementScope()));
-		}
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(SCOPE_XP_NAME);

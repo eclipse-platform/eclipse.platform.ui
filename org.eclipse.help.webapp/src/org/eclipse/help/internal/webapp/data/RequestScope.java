@@ -111,7 +111,7 @@ public class RequestScope {
 	}
 	
 	public static String getScopeButtonState() {
-		if (!HelpSystem.isShared() || ScopeRegistry.getInstance().getScopes().length > 0) {
+		if (ScopeRegistry.getInstance().getScopes().length > 0) {
 			return "off"; //$NON-NLS-1$
 		}
 		return "hidden"; //$NON-NLS-1$
