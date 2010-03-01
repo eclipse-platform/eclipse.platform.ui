@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.Policy;
+
+import java.util.regex.PatternSyntaxException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -38,7 +42,12 @@ public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 	}
 
 	public void initialize(IProject project, Object arguments) {
-		if (arguments != null)
-			pattern = Pattern.compile((String) arguments);
+		if (arguments != null) {
+			try {
+				pattern = Pattern.compile((String) arguments);
+			} catch (PatternSyntaxException e) {
+				Policy.log(e);
+			}
+		}
 	}
 }
