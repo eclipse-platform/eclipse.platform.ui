@@ -66,9 +66,6 @@ public class ApplyPatchModelSynchronizeParticipant extends
 			if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
 				// omit this action
 				return;
-			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
-				// omit this action
-				return;
 			}
 			super.addToContextMenu(mergeActionId, action, manager);
 		}

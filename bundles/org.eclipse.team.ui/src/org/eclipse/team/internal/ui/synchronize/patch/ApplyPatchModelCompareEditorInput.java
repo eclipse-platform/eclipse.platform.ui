@@ -20,8 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
-import org.eclipse.team.internal.ui.mapping.ResourceMergeHandler;
+import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -38,6 +37,20 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 
 	protected void handleMenuAboutToShow(IMenuManager manager) {
 		StructuredSelection selection = new StructuredSelection(((IResourceProvider)getCompareInput()).getResource());
+		final ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(getSynchronizeConfiguration());
+		markAsMergedHandler.updateEnablement(selection);
+		Action markAsMergedAction = new Action(TeamUIMessages.ModelCompareEditorInput_0) {
+			public void run() {
+				try {
+					markAsMergedHandler.execute(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
+				}
+			}
+			
+		};
+		Utils.initAction(markAsMergedAction, "action.markAsMerged."); //$NON-NLS-1$
+		markAsMergedAction.setEnabled(markAsMergedAction.isEnabled());
 
 		final ResourceMergeHandler mergeHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), false);
 		mergeHandler.updateEnablement(selection);
@@ -54,6 +67,7 @@ public class ApplyPatchModelCompareEditorInput extends ModelCompareEditorInput {
 		mergeAction.setEnabled(mergeAction.isEnabled());
 
 		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
+		manager.insertAfter("merge", markAsMergedAction); //$NON-NLS-1$
 		manager.insertAfter("merge", mergeAction); //$NON-NLS-1$
 	}
 

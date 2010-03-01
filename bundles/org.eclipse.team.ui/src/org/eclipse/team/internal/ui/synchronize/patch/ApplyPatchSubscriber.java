@@ -12,23 +12,24 @@ package org.eclipse.team.internal.ui.synchronize.patch;
 
 import java.util.*;
 
-import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FilePatch2;
+import org.eclipse.compare.internal.core.patch.*;
 import org.eclipse.compare.internal.patch.PatchProjectDiffNode;
 import org.eclipse.compare.internal.patch.WorkspacePatcher;
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.mapping.LocalResourceVariant;
 
 public class ApplyPatchSubscriber extends Subscriber {
-	
+
 	private class ApplyPatchSyncInfo extends SyncInfo {
 		private ApplyPatchSyncInfo(IResource local, IResourceVariant base,
 				IResourceVariant remote, IResourceVariantComparator comparator) {
@@ -36,9 +37,20 @@ public class ApplyPatchSubscriber extends Subscriber {
 		}
 
 		protected int calculateKind() throws TeamException {
-			// TODO: this works only for files, what about excluding individual hunks?
+			// TODO: this works only for files, see bug 300214
 			if (!getPatcher().isEnabled(PatchModelProvider.getPatchObject(getLocal(), patcher)))
 				return IN_SYNC;
+
+			// same story here, one merged hunk is enough to consider the file as merged 
+			if (getRemote() != null) {
+				FilePatch2 filePatch2 = ((PatchedFileVariant)getRemote()).getDiff();
+				IHunk[] hunks = filePatch2.getHunks();
+				for (int i = 0; i < hunks.length; i++) {
+					if (patcher.isManuallyMerged((Hunk) hunks[i]))
+						return IN_SYNC;
+				}
+			}
+
 			// mark diffs with problems as conflicts 
 			if (getRemote() != null 
 					&& getPatcher().getDiffResult(((PatchedFileVariant)getRemote()).getDiff()).containsProblems())
@@ -66,9 +78,7 @@ public class ApplyPatchSubscriber extends Subscriber {
 
 	public SyncInfo getSyncInfo(IResource resource) throws TeamException {
 		if (!isSupervised(resource)) return null;
-		// XXX: doing this here is highly inefficient!
-		// getPatcher().refresh();
-		// a little bit better but still called gazzilon times
+		// TODO: called too many times, optimize
 		refresh(new IResource[] { resource }, IResource.DEPTH_ZERO, null);
 		try {
 			FilePatch2 diff = (FilePatch2) PatchModelProvider.getPatchObject(resource, getPatcher());
@@ -146,5 +156,9 @@ public class ApplyPatchSubscriber extends Subscriber {
 
 	WorkspacePatcher getPatcher() {
 		return patcher;
+	}
+
+	public void merged(IResource[] resources) {
+		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, resources));
 	}
 }

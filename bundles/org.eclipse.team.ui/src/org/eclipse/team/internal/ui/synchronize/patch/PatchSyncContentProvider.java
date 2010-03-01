@@ -17,17 +17,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class PatchSyncContentProvider extends SynchronizationContentProvider {
@@ -93,40 +89,6 @@ public class PatchSyncContentProvider extends SynchronizationContentProvider {
 				return true;
 		}
 		return false;
-	}
-
-	public void propertyChange(PropertyChangeEvent event) {
-		super.propertyChange(event);
-		if (event.getProperty().equals(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER)) {
-			if (event.getNewValue().equals(PatchModelProvider.ID)) {
-				addFilter(getViewer());
-			} else if (event.getOldValue().equals(PatchModelProvider.ID)){
-				removeFilter(getViewer());
-			}
-		}
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		super.inputChanged(viewer, oldInput, newInput);
-		if (PatchModelProvider.getProvider().equals(newInput)) {
-			addFilter(viewer);
-		} else if (PatchModelProvider.getProvider().equals(oldInput)) {
-			// removeFilter(viewer);
-		}
-	}
-
-	private static void addFilter(Viewer v) {
-		if (v != null && v instanceof CommonViewer) {
-			CommonViewer cv = (CommonViewer) v;
-			cv.addFilter(ExcludedPatchDiffNodesFilter.getInstance());
-		}
-	}
-
-	private static void removeFilter(Viewer v) {
-		if (v != null && v instanceof CommonViewer) {
-			CommonViewer cv = (CommonViewer) v;
-			cv.removeFilter(ExcludedPatchDiffNodesFilter.getInstance());
-		}
 	}
 
 	public boolean hasChildren(final Object element) {

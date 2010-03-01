@@ -53,13 +53,23 @@ class ApplyPatchSubscriberMergeContext extends SubscriberMergeContext {
 			FileDiffResult fileDiffResult = patcher.getDiffResult(filePatch);
 			HunkResult[] hunkResults = fileDiffResult.getHunkResults();
 			for (int i = 0; i < hunkResults.length; i++) {
-				// disable hunks that were merged
-				if (hunkResults[i].isOK())
-					patcher.setEnabled(hunkResults[i].getHunk(), false);
+				if (inSyncHint) {
+					// disable hunks that were merged
+					if (hunkResults[i].isOK())
+						patcher.setEnabled(hunkResults[i].getHunk(), false);
+				} else {
+					// mark *all* hunks from the file as manually merged
+					patcher.setManuallyMerged(hunkResults[i].getHunk(), true);
+				}
 			}
 		} else {
 			patcher.setEnabled(object, false);
+			// TODO: mark as merged
 		}
+		// fire a team resource change event
+		((ApplyPatchSubscriber)getSubscriber()).merged(new IResource[] { resource});
+		// don't need to worry about the node no more... it is in sync now
+		// see ApplyPatchSubscriber.ApplyPatchSyncInfo.calculateKind()
 	}
 
 	public void reject(IDiff diff, IProgressMonitor monitor)
