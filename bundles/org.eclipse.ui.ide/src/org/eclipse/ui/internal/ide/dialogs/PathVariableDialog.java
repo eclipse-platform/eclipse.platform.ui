@@ -420,7 +420,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         // updates and validates the variable name
         variableName = variableNameField.getText();
         validationStatus = IMessageProvider.NONE;
-        okButton.setEnabled(validateVariableName() && validateVariableValue());
+        okButton.setEnabled(validateVariableName() && validateVariableValue() && variableValue.length() != 0);
         nameEntered = true;
     }
 
