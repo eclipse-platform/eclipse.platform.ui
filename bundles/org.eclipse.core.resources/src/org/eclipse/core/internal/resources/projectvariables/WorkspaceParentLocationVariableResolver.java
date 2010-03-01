@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResource;
  */
 public class WorkspaceParentLocationVariableResolver extends PathVariableResolver {
 
-	public static String NAME = "WORKSPACE_PARENT_LOC"; //$NON-NLS-1$
+	public static String NAME = "PARENT_LOC"; //$NON-NLS-1$
 
 	public WorkspaceParentLocationVariableResolver() {
 		// nothing

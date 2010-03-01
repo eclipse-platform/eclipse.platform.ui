@@ -223,7 +223,7 @@
       </variableResolver>
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver"
-            name="WORKSPACE_PARENT_LOC">
+            name="PARENT_LOC">
       </variableResolver>
    </extension>
    <extension

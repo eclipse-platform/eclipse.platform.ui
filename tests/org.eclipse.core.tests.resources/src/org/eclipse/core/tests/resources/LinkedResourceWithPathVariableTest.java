@@ -1289,7 +1289,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertEquals("3.2", 7, extensions.length);
 		assertTrue("3.3", list.contains("1-ECLIPSE_HOME"));
 		assertTrue("3.4", list.contains("1-WORKSPACE_LOC"));
-		assertTrue("3.4", list.contains("1-WORKSPACE_PARENT_LOC"));
+		assertTrue("3.4", list.contains("1-PARENT_LOC"));
 		assertTrue("3.5", list.contains("1-PROJECT_LOC"));
 		assertTrue("3.6", list.contains("1-" + PROJECT_RELATIVE_VARIABLE_NAME));
 		assertTrue("3.7", list.contains("1-" + PROJECT_VARIABLE_NAME));
