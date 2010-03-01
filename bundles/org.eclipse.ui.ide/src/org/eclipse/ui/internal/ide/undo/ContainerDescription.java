@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.ide.undo.ResourceDescription;
-import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
 
 /**
  * ContainerDescription is a lightweight description that describes a container

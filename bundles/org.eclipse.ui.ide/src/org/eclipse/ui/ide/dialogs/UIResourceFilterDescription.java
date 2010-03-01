@@ -9,7 +9,7 @@
  *     Serge Beauchamp (Freescale Semiconductor)- initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IProject;
@@ -21,19 +21,19 @@ import org.eclipse.core.runtime.IPath;
  */
 public abstract class UIResourceFilterDescription {
 	/**
-	 * @return
+	 * @return the filter path
 	 */
 	abstract public IPath getPath();
 	/**
-	 * @return
+	 * @return the project
 	 */
 	abstract public IProject getProject();
 	/**
-	 * @return
+	 * @return the filter type
 	 */
 	abstract public int getType();
 	/**
-	 * @return
+	 * @return the description
 	 */
 	abstract public FileInfoMatcherDescription getFileInfoMatcherDescription();
 	

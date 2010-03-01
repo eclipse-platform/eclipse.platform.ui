@@ -14,7 +14,7 @@ package org.eclipse.ui.ide.undo;
 import java.net.URI;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
+import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
 /**
