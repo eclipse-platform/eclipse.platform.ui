@@ -244,7 +244,7 @@ function rescope() {
 		    var tocView = viewsFrame.toc.tocViewFrame;
 		    tocView.location.replace("tocView.jsp");
 		}
-		if (viewsFrame.toc && viewsFrame.index.indexViewFrame) {
+		if (viewsFrame.index && viewsFrame.index.indexViewFrame) {
 		    var indexView = viewsFrame.index.indexViewFrame;
 		    indexView.location.replace("indexView.jsp");
 		}
