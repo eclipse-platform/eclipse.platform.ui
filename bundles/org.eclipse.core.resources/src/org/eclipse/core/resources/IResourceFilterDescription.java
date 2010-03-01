@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ package org.eclipse.core.resources;
 /**
  * A description of a resource filter.
  * 
- * A filter determines which file system
- * objects will be visible when a local refresh is performed for an IContainer.
+ * A filter determines which file system objects will be visible when a local refresh is 
+ * performed for an IContainer.
  *
  * @see IContainer#getFilters()
  * @noimplement This interface is not intended to be implemented by clients.
@@ -59,6 +59,13 @@ public interface IResourceFilterDescription {
 	public static final int INHERITABLE = 16;
 
 	/**
+	 * Returns the description of the file info matcher corresponding to this resource
+	 * filter.
+	 * @return the file info matcher description for this resource filter
+	 */
+	public FileInfoMatcherDescription getFileInfoMatcherDescription();
+
+	/**
 	 * Return the resource towards which this filter is set.
 	 * 
 	 * @return the resource towards which this filter is set
@@ -72,5 +79,4 @@ public interface IResourceFilterDescription {
 	 */
 	public int getType();
 
-	public FileInfoMatcherDescription getFileInfoMatcherDescription();
 }

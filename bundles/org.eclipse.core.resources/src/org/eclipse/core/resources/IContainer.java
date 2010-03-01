@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -468,28 +468,64 @@ public interface IContainer extends IResource, IAdaptable {
 	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Adds a new filter to this container.
+	 * Adds a new filter to this container. Filters restrict the set of files and directories
+	 * in the underlying file system that will be included as members of this container.
+	 * <p>
+	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls when
+	 * changes to the resource hierarchy under this container resulting from the new
+	 * filter take effect. If this flag is specified, the resource hierarchy is updated in a 
+	 * separate thread after this method returns. If the flag is not specified, any resource 
+	 * changes resulting from the new filter  will occur before this method returns.
+	 * </p>
+	 * <p> 
+	 * This operation changes resources; these changes will be reported
+	 * in a subsequent resource change event that will include an indication of any 
+	 * resources that have been removed as a result of the new filter.
+	 * </p>
+	 * <p>
+	 * This operation is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
 	 * 
-	 * @param type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
+	 * @param type ({@link IResourceFilterDescription#INCLUDE_ONLY} or 
+	 * {@link IResourceFilterDescription#EXCLUDE_ALL} and/or {@link IResourceFilterDescription#INHERITABLE})
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
 	 * @param monitor a progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @return the description of the added filter
 	 * @exception CoreException if this filter could not be added. Reasons include:
 	 * <ul>
-	 * <li> This resource is not a folder.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
-	 * 
-	 * @see IContainer#getFilters()
+	 * @see #getFilters()
+	 * @see #removeFilter(IResourceFilterDescription, int, IProgressMonitor)
 	 * 
 	 * @since 3.6
 	 */
 	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Remove the filter matching the arguments from this container's filter list  
+	 * Removes the filter matching the provided description from the set of filters 
+	 * applied to this container.
+	 * <p>
+	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls when
+	 * changes to the resource hierarchy under this container resulting from the filter 
+	 * removal take effect. If this flag is specified, the resource hierarchy is updated in a 
+	 * separate thread after this method returns. If the flag is not specified, any resource 
+	 * changes resulting from the filter removal will occur before this method returns.
+	 * </p>
+	 * <p> 
+	 * This operation changes resources; these changes will be reported
+	 * in a subsequent resource change event that will include an indication 
+	 * of any resources that have been added as a result of the filter removal.
+	 * </p>
+	 * <p>
+	 * This operation is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
 	 * 
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
@@ -497,13 +533,13 @@ public interface IContainer extends IResource, IAdaptable {
 	 *    reporting is not desired
 	 * @exception CoreException if this filter could not be removed. Reasons include:
 	 * <ul>
-	 * <li> This resource is not a folder.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
-	 * 
-	 * @see IContainer#getFilters()
-	 * 
+	 * @see #getFilters()
+	 * @see #createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
 	 * @since 3.6
 	 */
 	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -517,6 +553,8 @@ public interface IContainer extends IResource, IAdaptable {
 	 * <ul>
 	 * <li> This resource is not a folder.</li>
 	 * 
+	 * @see #createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
+	 * @see #removeFilter(IResourceFilterDescription, int, IProgressMonitor)
 	 * @since 3.6
 	 */
 	public IResourceFilterDescription[] getFilters() throws CoreException;

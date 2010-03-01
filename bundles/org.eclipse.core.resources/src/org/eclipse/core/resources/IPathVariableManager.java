@@ -37,31 +37,35 @@ import org.eclipse.core.runtime.*;
  */
 public interface IPathVariableManager {
 
-	/** Convert an absolute path to path variable relative path.
-	 *  For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
-	 *  granted that the path variable "FOO" value is "C:/foo".
-	 *  
-	 *  The "force" argument allows intermediate path variable to
-	 *  be created if for a given path can be relative only to a parent
-	 *  of an existing path variable.
-	 *  
-	 *  For example, if the path "C:/other/file.txt" is to be converted
-	 *  and no path variables point to "C:/" or "C:/other" but "FOO" 
-	 *  points to "C:/foo", an intermediate "OTHER" variable will be 
-	 *  created relative to "FOO" containing the value "${PARENT-1-FOO}"
-	 *  so that the final path returned will be "OTHER/file.txt".
-	 *  
-	 *  The argument "variableHint" can be used to specify to which 
-	 *  path variable the path should be made relative to.
+	/** 
+	 * Converts an absolute path to path relative to some defined
+	 * {@link IPathVariable}. For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
+	 * granted that the path variable "FOO" value is "C:/foo".
+	 * <p>
+	 * The "force" argument will cause an intermediate path variable to be created if 
+	 * the given path can be relative only to a parent of an existing path variable.
+	 * For example, if the path "C:/other/file.txt" is to be converted
+	 * and no path variables point to "C:/" or "C:/other" but "FOO" 
+	 * points to "C:/foo", an intermediate "OTHER" variable will be 
+	 * created relative to "FOO" containing the value "${PARENT-1-FOO}"
+	 * so that the final path returned will be "OTHER/file.txt".
+	 * </p>
+	 * <p>
+	 * The argument "variableHint" can be used to specify the name of the path
+	 * variable to make the provided path relative to. 
+	 * </p>
 	 *  
 	 * @param path  The absolute path to be converted
 	 * @param resource the resource for which this variable is set
-	 * @param force Set to true if intermediate path variables need to be created if the path is relative only to a parent of an existing path variable.
-	 * @param variableHint The name of the variable to which the path should be relative to, or null for the nearest one.
-	 * @return  The converted path
+	 * @param force indicates whether intermediate path variables should be created 
+	 * if the path is relative only to a parent of an existing path variable.
+	 * @param variableHint The name of the variable to which the path should be made 
+	 * relative to, or <code>null</code> for the nearest one.
+	 * @return The converted path
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The variable name is not valid</li>
+	 * </ul>
 	 * @since 3.6
 	 */
 	public URI convertToRelative(URI path, IResource resource, boolean force, String variableHint) throws CoreException;
@@ -140,8 +144,8 @@ public interface IPathVariableManager {
 	public void setValue(String name, IResource resource, URI value) throws CoreException;
 
 	/**
-	 * Returns the IPathVariable interface for the variable with the given name. 
-	 * If there is no variable defined with the given name, returns <code>null</code>.
+	 * Returns the {@link IPathVariable} corresponding to the given variable name.
+	 * If there is no variable defined with the given name, this method returns <code>null</code>.
 	 * 
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
@@ -344,7 +348,7 @@ public interface IPathVariableManager {
 	 * variable value must be a valid path that is absolute.
 	 *
 	 * @param path a possibly valid path variable value
-	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * @return a status object with code {@link IStatus#OK} if the given
 	 * path is a valid path variable value, otherwise a status object indicating
 	 * what is wrong with the value
 	 * @see IPath#isValidPath(String)

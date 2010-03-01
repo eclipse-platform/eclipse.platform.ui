@@ -7,15 +7,16 @@
  * 
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
+ *     IBM - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources;
 
 /**
- * Represents a path variable contained in a IPathVariableManager.
+ * Represents a path variable contained in an {@link IPathVariableManager}.
  * <p>
- * A path variable is a pair of non-null elements (name,value) where name is 
+ * A path variable is a pair of non-null elements (name,value) where the name is 
  * a case-sensitive string (containing only letters, digits and the underscore
- * character, and not starting with a digit), and value is an absolute
+ * character, and not starting with a digit), and the value is an absolute
  * <code>IPath</code> object.
  * </p>
  * <p>
@@ -25,9 +26,9 @@ package org.eclipse.core.resources;
  * </p>
  * 
  * @see org.eclipse.core.runtime.IPath
- * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @since 3.6
 */
 public interface IPathVariable {
 	/**
@@ -36,17 +37,14 @@ public interface IPathVariable {
 	 * cannot be edited nor removed.
 	 * 
 	 * @return true if the path variable is read only.
-	 * @since 3.6
 	 */
 	public boolean isReadOnly();
 
 	/**
-	 * Returns whether a IPathVariable is a variable that is
-	 * suited for programatically determining which variable is
-	 * the most appropriate when create new linked resources.
+	 * Returns whether this variable is suited for programmatically determining 
+	 * which variable is the most appropriate when creating new linked resources.
 	 * 
 	 * @return true if the path variable is preferred.
-	 * @since 3.6
 	 */
 	public boolean isPreferred();
 
