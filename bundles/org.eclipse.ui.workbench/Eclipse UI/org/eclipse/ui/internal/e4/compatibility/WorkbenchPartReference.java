@@ -81,6 +81,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		return part;
 	}
 
+	void invalidate() {
+		legacyPart = null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
 	 */

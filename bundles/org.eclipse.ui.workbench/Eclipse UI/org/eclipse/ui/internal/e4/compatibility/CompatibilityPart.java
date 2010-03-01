@@ -11,14 +11,12 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -65,14 +63,10 @@ public abstract class CompatibilityPart {
 		try {
 			parent.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
-					try {
-						ContextInjectionFactory.invoke(legacyPart,
-								"dispose", CompatibilityPart.this.part //$NON-NLS-1$
-										.getContext(), null);
-					} catch (InvocationTargetException e) {
-						if (logger != null) {
-							logger.error(e);
-						}
+					((WorkbenchPartReference) getReference()).invalidate();
+
+					if (wrapped != null) {
+						wrapped.dispose();
 					}
 				}
 			});
