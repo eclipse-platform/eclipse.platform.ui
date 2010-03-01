@@ -187,16 +187,19 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					}
 					public IResource getResource() {
 						IPath path = resourceGroup.getContainerFullPath();
-						IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-								.getRoot();
-						IResource resource = root.findMember(path);
-						if (resource != null && resource instanceof IContainer) {
-							String resourceName = resourceGroup.getResource();
-							if (resourceName.length() > 0)
-								return ((IContainer) resource).getFolder(Path.fromOSString(resourceName));
-							return null;
+						if (path != null) {
+							IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+									.getRoot();
+							IResource resource = root.findMember(path);
+							if (resource != null && resource instanceof IContainer) {
+								String resourceName = resourceGroup.getResource();
+								if (resourceName.length() > 0)
+									return ((IContainer) resource).getFolder(Path.fromOSString(resourceName));
+								return resource;
+							}
+							return resource;
 						}
-						return resource;
+						return null;
 					}
 				});
 	}

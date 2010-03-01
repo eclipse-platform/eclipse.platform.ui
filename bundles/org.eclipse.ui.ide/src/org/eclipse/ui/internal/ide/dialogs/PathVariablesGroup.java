@@ -49,6 +49,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -296,6 +297,15 @@ public class PathVariablesGroup {
 			public void mouseDown(MouseEvent e) { }
 			public void mouseUp(MouseEvent e) { }
         });
+        variableTable.getTable().addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+		        updateEnabledState();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+		        updateEnabledState();
+			}
+        });
+        
         variableTable.getTable().setToolTipText(null);
         variableTable.setContentProvider(new ContentProvider());
         variableTable.setInput(this);
@@ -498,6 +508,7 @@ public class PathVariablesGroup {
         });
         removeButton.setFont(font);
         setButtonLayoutData(removeButton);
+        updateEnabledState();
     }
 
     /**
