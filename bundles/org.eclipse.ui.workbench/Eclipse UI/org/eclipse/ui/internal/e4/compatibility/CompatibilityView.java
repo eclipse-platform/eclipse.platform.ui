@@ -15,9 +15,12 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -81,6 +84,21 @@ public class CompatibilityView extends CompatibilityPart {
 
 		// dispose the tb, it will be re-created when the tab is shown
 		tb.dispose();
+
+		MenuManager mm = (MenuManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
+				.getMenuManager();
+		if (mm.getItems().length > 0) {
+			Control partCtrl = (Control) part.getWidget();
+			partCtrl.setData("legacyMM", mm); //$NON-NLS-1$
+			EList<MMenu> menus = part.getMenus();
+			if (menus.size() == 0) {
+				MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+
+				// HACK!! Identifies this to the TB renderer
+				menu.getTags().add("LegacyMenu"); //$NON-NLS-1$
+				menus.add(menu);
+			}
+		}
 
 		// Construct the toolbar (if necessary)
 		if (tbm.getItems().length > 0) {

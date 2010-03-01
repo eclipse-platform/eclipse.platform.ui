@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
@@ -32,20 +33,32 @@ public class MenuRenderer extends SWTPartRenderer {
 		if (!(element instanceof MMenu) || element instanceof MMenuItem)
 			return null;
 
+		Menu newMenu = null;
 		if (parent instanceof Decorations) {
 			MUIElement container = (MUIElement) ((EObject) element)
 					.eContainer();
 			if (container instanceof MWindow)
-				return new Menu((Decorations) parent, SWT.BAR);
-			else
-				return new Menu((Decorations) parent, SWT.POP_UP);
+				newMenu = new Menu((Decorations) parent, SWT.BAR);
+			else {
+				// TBD: This should really be in its own renderer...
+				if (element.getTags().contains("LegacyMenu")) { //$NON-NLS-1$
+					MUIElement parentElement = (MUIElement) ((EObject) element)
+							.eContainer();
+					Control ctrl = (Control) parentElement.getWidget();
+					MenuManager mm = (MenuManager) ctrl.getData("legacyMM"); //$NON-NLS-1$
+					newMenu = mm.createContextMenu((Control) parent);
+					mm.update(true);
+				} else {
+					newMenu = new Menu((Decorations) parent, SWT.POP_UP);
+				}
+			}
 		} else if (parent instanceof MenuItem) {
-			return new Menu((MenuItem) parent);
+			newMenu = new Menu((MenuItem) parent);
 		} else if (parent instanceof Control) {
-			return new Menu((Control) parent);
+			newMenu = new Menu((Control) parent);
 		}
 
-		return null;
+		return newMenu;
 	}
 
 	/*

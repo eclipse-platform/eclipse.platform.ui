@@ -50,7 +50,6 @@ public class ToolBarRenderer extends SWTPartRenderer {
 					.eContainer();
 			Control ctrl = (Control) parentElement.getWidget();
 			ToolBarManager tbm = (ToolBarManager) ctrl.getData("legacyTBM"); //$NON-NLS-1$
-			System.out.println(tbm.toString());
 			tb = tbm.createControl((Composite) parent);
 			tbm.update(true);
 		} else {
