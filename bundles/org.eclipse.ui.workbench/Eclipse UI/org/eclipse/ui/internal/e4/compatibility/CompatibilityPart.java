@@ -44,7 +44,6 @@ public abstract class CompatibilityPart {
 	Composite composite;
 
 	@Inject
-	@Optional
 	Logger logger;
 
 	IWorkbenchPart wrapped;
@@ -60,19 +59,24 @@ public abstract class CompatibilityPart {
 	protected abstract IStatusLineManager getStatusLineManager();
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
-		try {
-			parent.addListener(SWT.Dispose, new Listener() {
-				public void handleEvent(Event event) {
-					((WorkbenchPartReference) getReference()).invalidate();
+		parent.addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+				WorkbenchPartReference reference = (WorkbenchPartReference) getReference();
+				// notify the workbench we're being closed
+				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 
-					if (wrapped != null) {
-						wrapped.dispose();
-					}
+				reference.invalidate();
+
+				if (wrapped != null) {
+					wrapped.dispose();
 				}
-			});
+			}
+		});
+
+		try {
 			legacyPart.createPartControl(parent);
-		} catch (Throwable ex) {
-			ex.printStackTrace(System.err);
+		} catch (RuntimeException e) {
+			logger.error(e);
 		}
 	}
 

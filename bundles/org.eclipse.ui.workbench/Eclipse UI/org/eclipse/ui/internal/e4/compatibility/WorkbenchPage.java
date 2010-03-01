@@ -118,7 +118,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private EventHandler selectedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			Object oldSelected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
 
 			if (oldSelected instanceof MPart) {
 				MPart oldSelectedPart = (MPart) oldSelected;
@@ -259,6 +259,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partBroughtToTop(partReference);
 			}
+		}
+	}
+
+	// FIXME: convert me to e4 events!
+	void firePartClosed(CompatibilityPart compatibilityPart) {
+		IWorkbenchPart part = compatibilityPart.getPart();
+		IWorkbenchPartReference partReference = compatibilityPart.getReference();
+
+		for (Object listener : partListenerList.getListeners()) {
+			((IPartListener) listener).partClosed(part);
+		}
+
+		for (Object listener : partListener2List.getListeners()) {
+			((IPartListener2) listener).partClosed(partReference);
 		}
 	}
 

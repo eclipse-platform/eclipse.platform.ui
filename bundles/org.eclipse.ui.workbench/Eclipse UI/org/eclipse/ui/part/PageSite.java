@@ -19,13 +19,10 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -125,14 +122,6 @@ public class PageSite implements IPageSite, INestable {
 
 		if (pageContext instanceof IDisposable) {
 			((IDisposable) pageContext).dispose();
-
-			// 3.x implementation closes the view when disposed
-			WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
-			MPart model = partSite.getModel();
-			Widget widget = (Widget) model.getWidget();
-			if (widget != null && !widget.isDisposed()) {
-				parentSite.getPage().hideView((IViewPart) parentSite.getPart());
-			}
 		}
 
 		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
