@@ -265,14 +265,100 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 
 	private String getLongDescription() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>"
-				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>preferences.ini</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>"
-				+ "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
+				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>doc</name>"
+				+ "	<type>2</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>icons</name>"
+				+ "	<type>2</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>preferences.ini</name>"
+				+ "	<type>1</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>.options</name>"
+				+ "	<type>1</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>plugin.properties</name>"
+				+ "	<type>1</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>plugin.xml</name>"
+				+ "	<type>1</type>"
+				+ "	<location>"
+				+ LONG_LOCATION
+				+ "</location>"
+				+ "	</link>"
+				+ "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
 	}
 
 	private String getLongDescriptionURI() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>"
-				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>preferences.ini</name>" + "	<type>1</type>" + "	<locationURI>"
-				+ LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
+				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>doc</name>"
+				+ "	<type>2</type>"
+				+ "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>icons</name>"
+				+ "	<type>2</type>"
+				+ "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>preferences.ini</name>"
+				+ "	<type>1</type>"
+				+ "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>.options</name>"
+				+ "	<type>1</type>"
+				+ "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>plugin.properties</name>"
+				+ "	<type>1</type>"
+				+ "	<locationURI>"
+				+ LONG_LOCATION_URI
+				+ "</locationURI>"
+				+ "	</link>"
+				+ "	<link>"
+				+ "	<name>plugin.xml</name>"
+				+ "	<type>1</type>"
+				+ "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
 	}
 
 	/**
@@ -301,11 +387,12 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		String locationA = getTempDir().append("testPath1").toPortableString();
 		String locationB = getTempDir().append("testPath1").toPortableString();
 		String newline = System.getProperty("line.separator");
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>"+ locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
-		
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline
+				+ "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
+
 		IFileStore tempStore = getTempStore();
 		URI location = tempStore.toURI();
-		
+
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
@@ -329,7 +416,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		new ModelObjectWriter().write(description, buffer);
 		String result = buffer.toString();
-		
+
 		// order of keys in serialized file should be exactly the same as expected
 		assertEquals("1.0", expected, result);
 	}
@@ -733,7 +820,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			Workspace.clear(location.toFile());
 		}
 	}
-	
+
 	protected URI uriFromPortableString(String pathString) {
 		return Path.fromPortableString(pathString).toFile().toURI();
 	}
@@ -754,5 +841,50 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			assertClose(output);
 		}
 
+	}
+
+	// Regression for Bug 300669
+	public void testProjectDescriptionWithFiltersAndNullProject() {
+		String projectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
+				"<projectDescription>\n" + //
+				"	<name>rome_dfw</name>\n" + //
+				"		<comment></comment>\n" + //
+				"	<projects>\n" + //
+				"	</projects>\n" + //
+				"	<linkedResources>\n" + //
+				"		<link>\n" + //
+				"			<name>OcdTargetPlugin</name>\n" + //
+				"			<type>2</type>\n" + //
+				"			<location>M:/lcruaud.dfw-main-validation/HSI_api/OcdTargetPlugin</location>\n" + //
+				"		</link>\n" + //
+				"	</linkedResources>\n" + //
+				"	<filteredResources>\n" + //
+				"		<filter>\n" + //
+				"			<id>1264174785480</id>\n" + //
+				"			<name></name>\n" + //
+				"			<type>22</type>\n" + //
+				"			<matcher>\n" + //
+				"				<id>org.eclipse.ui.ide.patternFilterMatcher</id>\n" + //
+				"				<arguments>*:*</arguments>\n" + //
+				"			</matcher>\n" + //
+				"		</filter>\n" + //
+				"	</filteredResources>\n" + //
+				"</projectDescription>\n";
+
+		IPath root = getWorkspace().getRoot().getLocation();
+		IPath location = root.append("ModelObjectReaderWriterTest.txt");
+		ProjectDescriptionReader reader = new ProjectDescriptionReader();
+		// Write out the project description file
+		ensureDoesNotExistInFileSystem(location.toFile());
+		InputStream stream = new ByteArrayInputStream(projectDescription.getBytes());
+		createFileInFileSystem(location, stream);
+		try {
+			ProjectDescription projDesc = reader.read(location);
+			assertNotNull("1.0", projDesc);
+		} catch (IOException e) {
+			fail("1.1", e);
+		} finally {
+			Workspace.clear(location.toFile());
+		}
 	}
 }
