@@ -290,7 +290,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 					case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
 						if (dialog.getVariable() != null)
 							operation.setRelativeVariable(dialog.getVariable());
-						operation.createGroupAndLinks(names, target);
+						operation.createVirtualFoldersAndLinks(names, target);
 						break;
 					case ImportTypeDialog.IMPORT_LINK:
 						if (dialog.getVariable() != null)
@@ -349,7 +349,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 				dialog.setResource(target);
 				if (dialog.open() == Window.OK) {
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
 						operation.setCreateLinks(true);
 					if (dialog.getVariable() != null)
@@ -487,13 +487,13 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
                 if ((lastValidOperation == DND.DROP_COPY) || (lastValidOperation == DND.DROP_LINK)) {
                     operation = new CopyFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
                 } else {
                     operation = new MoveFilesAndFoldersOperation(getShell());
                 	if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 						if (message == null)
 							lastValidOperation = DND.DROP_COPY;

@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class FolderDescription extends ContainerDescription {
 
+	private boolean virtual = false;
 	/**
 	 * Create a FolderDescription from the specified folder handle. Typically
 	 * used when the folder handle represents a resource that actually exists,
@@ -41,9 +42,12 @@ public class FolderDescription extends ContainerDescription {
 	 * 
 	 * @param folder
 	 *            the folder to be described
+	 * @param virtual
+	 *            the folder is a virtual folder
 	 */
-	public FolderDescription(IFolder folder) {
+	public FolderDescription(IFolder folder, boolean virtual) {
 		super(folder);
+		this.virtual = virtual;
 	}
 
 	/**
@@ -105,7 +109,7 @@ public class FolderDescription extends ContainerDescription {
 						IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(
 								monitor, 100));
 			} else {
-				folderHandle.create(false, true, new SubProgressMonitor(
+				folderHandle.create(virtual ? IResource.VIRTUAL:0, true, new SubProgressMonitor(
 						monitor, 100));
 			}
 			if (monitor.isCanceled()) {

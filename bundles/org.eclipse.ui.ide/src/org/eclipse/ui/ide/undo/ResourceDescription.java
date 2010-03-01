@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.internal.ide.undo.FileDescription;
 import org.eclipse.ui.internal.ide.undo.FolderDescription;
-import org.eclipse.ui.internal.ide.undo.GroupDescription;
 import org.eclipse.ui.internal.ide.undo.ProjectDescription;
 
 /**
@@ -45,9 +44,7 @@ public abstract class ResourceDescription {
 		if (resource.getType() == IResource.PROJECT) {
 			return new ProjectDescription((IProject) resource);
 		} else if (resource.getType() == IResource.FOLDER) {
-			if (resource.isVirtual())
-				return new GroupDescription((IFolder) resource);
-			return new FolderDescription((IFolder) resource);
+			return new FolderDescription((IFolder) resource, resource.isVirtual());
 		} else if (resource.getType() == IResource.FILE) {
 			return new FileDescription((IFile) resource);
 		} else {

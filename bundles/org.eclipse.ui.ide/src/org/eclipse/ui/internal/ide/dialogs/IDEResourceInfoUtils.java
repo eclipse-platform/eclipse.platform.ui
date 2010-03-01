@@ -65,7 +65,7 @@ public class IDEResourceInfoUtils {
 
 	private static String VIRTUAL_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_virtualFolder;
 
-	private static String GROUP_TEXT = IDEWorkbenchMessages.ResourceInfo_isGroup;
+	private static String VIRTUAL_FOLDER_TEXT = IDEWorkbenchMessages.ResourceInfo_isVirtualFolder;
 
 	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable;
 
@@ -223,7 +223,7 @@ public class IDEResourceInfoUtils {
 	 */
 	public static String getLocationText(IResource resource) {
 		if (resource.isVirtual())
-			return GROUP_TEXT;
+			return VIRTUAL_FOLDER_TEXT;
 		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
 		}

@@ -96,10 +96,10 @@ public class CopyFilesAndFoldersOperation {
 	private boolean canceled = false;
 
 	/**
-	 * Whether or not the operation creates groups and links instead of folders
+	 * Whether or not the operation creates virtual folders and links instead of folders
 	 * and files.
 	 */
-	private boolean createGroupsAndLinks = false;
+	private boolean createVirtualFoldersAndLinks = false;
 
 	/**
 	 * Whether or not the operation creates links instead of folders and files.
@@ -458,7 +458,7 @@ public class CopyFilesAndFoldersOperation {
 						delete(existing, new SubProgressMonitor(subMonitor, 0));
 					}
 
-					if ((createLinks || createGroupsAndLinks)
+					if ((createLinks || createVirtualFoldersAndLinks)
 							&& (source.isLinked() == false)
 							&& (source.isVirtual() == false)) {
 						if (source.getType() == IResource.FILE) {
@@ -470,7 +470,7 @@ public class CopyFilesAndFoldersOperation {
 						} else {
 							IFolder folder = workspaceRoot
 									.getFolder(destinationPath);
-							if (createGroupsAndLinks) {
+							if (createVirtualFoldersAndLinks) {
 									folder.create(IResource.VIRTUAL, true,
 											new SubProgressMonitor(subMonitor,
 													1));
@@ -1226,7 +1226,7 @@ public class CopyFilesAndFoldersOperation {
 			op.setModelProviderIds(getModelProviderIds());
 			if (op instanceof CopyResourcesOperation) {
 				CopyResourcesOperation copyMoveOp = (CopyResourcesOperation) op;
-				copyMoveOp.setCreateGroups(createGroupsAndLinks);
+				copyMoveOp.setCreateVirtualFolders(createVirtualFoldersAndLinks);
 				copyMoveOp.setCreateLinks(createLinks);
 				copyMoveOp.setRelativeVariable(relativeVariable);
 			}
@@ -1353,7 +1353,7 @@ public class CopyFilesAndFoldersOperation {
 				query, Arrays.asList(stores));
 		op.setContext(messageShell);
 		op.setCreateContainerStructure(false);
-		op.setCreateGroups(createGroupsAndLinks);
+		op.setVirtualFolders(createVirtualFoldersAndLinks);
 		op.setCreateLinks(createLinks);
 		op.setRelativeVariable(relativeVariable);
 		try {
@@ -1425,14 +1425,14 @@ public class CopyFilesAndFoldersOperation {
 				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_parentNotEqual;
 			}
 
-			// verify that if the destination is a group, the resource must be
-			// either a link or another group
+			// verify that if the destination is a virtual folder, the resource must be
+			// either a link or another virtual folder
 			if (destination.isVirtual()) {
 				if (!sourceResource.isLinked() && !sourceResource.isVirtual()
-						&& !createLinks && !createGroupsAndLinks) {
+						&& !createLinks && !createVirtualFoldersAndLinks) {
 					return NLS
 							.bind(
-									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAGroup,
+									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAVirtualFolder,
 									sourceResource.getName());
 				}
 			}
@@ -1799,7 +1799,7 @@ public class CopyFilesAndFoldersOperation {
 	}
 
 	/**
-	 * Create groups and links of the given files and folders to the
+	 * Create virtual folders and links of the given files and folders to the
 	 * destination. The current Thread is halted while the resources are copied
 	 * using a WorkspaceModifyOperation. This method should be called from the
 	 * UI Thread.
@@ -1813,14 +1813,14 @@ public class CopyFilesAndFoldersOperation {
 	 * @see Thread#currentThread()
 	 * @since 3.6
 	 */
-	public void createGroupAndLinks(final String[] fileNames,
+	public void createVirtualFoldersAndLinks(final String[] fileNames,
 			IContainer destination) {
 		IFileStore[] stores = buildFileStores(fileNames);
 		if (stores == null) {
 			return;
 		}
 
-		createGroupsAndLinks = true;
+		createVirtualFoldersAndLinks = true;
 		copyFileStores(destination, stores, true, null);
 	}
 
@@ -1850,14 +1850,14 @@ public class CopyFilesAndFoldersOperation {
 	}
 
 	/**
-	 * Set whether or not groups and links will be created under the destination
+	 * Set whether or not virtual folders and links will be created under the destination
 	 * container.
 	 * 
 	 * @param value
 	 * @since 3.6
 	 */
-	public void setCreateGroups(boolean value) {
-		createGroupsAndLinks = value;
+	public void setVirtualFolders(boolean value) {
+		createVirtualFoldersAndLinks = value;
 	}
 
 	/**

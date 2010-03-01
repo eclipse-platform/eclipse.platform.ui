@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateFolderOperation;
-import org.eclipse.ui.ide.undo.CreateGroupOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -368,14 +367,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				AbstractOperation op;
-				if (createVirtualFolder)
-					op = new CreateGroupOperation(
-							newFolderHandle, filterList,
-							IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
-				else
-					op = new CreateFolderOperation(
-						newFolderHandle, linkTargetPath, filterList,
-						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
+				op = new CreateFolderOperation(
+					newFolderHandle, linkTargetPath, createVirtualFolder, filterList,
+					IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 				try {
 					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
 					// directly execute the operation so that the undo state is

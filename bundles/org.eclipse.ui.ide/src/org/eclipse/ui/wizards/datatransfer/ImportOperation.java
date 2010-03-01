@@ -86,7 +86,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private List errorTable = new ArrayList();
 
-    private boolean createGroups = false;
+    private boolean createVirtualFolder = false;
 
     private boolean createLinks = false;
 
@@ -316,7 +316,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         for (int i = 0; i < segmentCount; i++) {
             currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
             if (!currentFolder.exists()) {
-                if (createGroups)
+                if (createVirtualFolder)
 					((IFolder) currentFolder).create(IResource.VIRTUAL, true,
 							null);
                 else if (createLinks)
@@ -571,7 +571,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				targetResource.setContents(contentStream,
                         IResource.KEEP_HISTORY, null);
             } else {
-                if (createGroups || createLinks)
+                if (createVirtualFolder || createLinks)
                     targetResource.createLink(createRelativePath(
                             containerResource.getProject(), new Path(provider
                                     .getFullPath(fileObject)), targetResource), 0, null);
@@ -715,14 +715,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 
             IFolder folder = workspace.getRoot().getFolder(resourcePath);
-            if (createGroups || createLinks || folder.isVirtual() || folder.isLinked()) {
+            if (createVirtualFolder || createLinks || folder.isVirtual() || folder.isLinked()) {
                 folder.delete(true, null);
             } else
                 return POLICY_FORCE_OVERWRITE;
         }
 
         try {
-            if (createGroups)
+            if (createVirtualFolder)
 				workspace.getRoot().getFolder(resourcePath).create(
 						IResource.VIRTUAL, true, null);
             else if (createLinks) {
@@ -950,11 +950,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
     /**
      * Set Whether groups and links will be created instead of files and folders
      * 
-     * @param groups
+     * @param virtualFolders
      * @since 3.6
      */
-    public void setCreateGroups(boolean groups) {
-        createGroups = groups;
+    public void setVirtualFolders(boolean virtualFolders) {
+        createVirtualFolder = virtualFolders;
     }
 
     /**

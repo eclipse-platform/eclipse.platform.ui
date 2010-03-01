@@ -353,7 +353,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
 	public static String CopyFilesAndFoldersOperation_infoNotFound;
-	public static String CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAGroup;
+	public static String CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAVirtualFolder;
 	public static String CopyFilesAndFoldersOperation_copyTitle;
 	public static String CopyFilesAndFoldersOperation_moveTitle;
 
@@ -591,7 +591,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
 	public static String ResourceInfo_exWarning;
-	public static String ResourceInfo_isGroup;
+	public static String ResourceInfo_isVirtualFolder;
 	public static String ResourceInfo_edit;
 	public static String ResourceInfo_attributes;
 	public static String ResourceInfo_permissions;

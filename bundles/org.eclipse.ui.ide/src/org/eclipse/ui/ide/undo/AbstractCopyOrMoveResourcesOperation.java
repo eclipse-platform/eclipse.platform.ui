@@ -263,7 +263,7 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 		return status;
 	}
 
-	public void setCreateGroups(boolean value) {
+	public void setCreateVirtualFolders(boolean value) {
 		fCreateGroups = value;
 	}
 

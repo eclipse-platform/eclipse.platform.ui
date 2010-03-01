@@ -141,7 +141,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 						operation = new MoveFilesAndFoldersOperation(getShell());
 					}
 					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
 				}
@@ -384,27 +384,27 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		}
 
 		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
-		// if the target is a group and all sources are files, then
+		// if the target is a virtual folder and all sources are files, then
 		// automatically create links
 		if (shouldLinkAutomatically) {
 			operation.setCreateLinks(true);
 			operation.copyResources(sources, target);
 		} else {
-			boolean allSourceAreLinksOrGroups = true;
+			boolean allSourceAreLinksOrVirtualFolders = true;
 			for (int i = 0; i < sources.length; i++) {
 				if (!sources[i].isVirtual() && !sources[i].isLinked()) {
-					allSourceAreLinksOrGroups = false;
+					allSourceAreLinksOrVirtualFolders = false;
 					break;
 				}
 			}
 			// if all sources are either links or groups, copy then normally,
 			// don't show the dialog
-			if (!allSourceAreLinksOrGroups) {
+			if (!allSourceAreLinksOrVirtualFolders) {
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
 				dialog.setResource(target);
 				if (dialog.open() == Window.OK) {
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
 						operation.setCreateLinks(true);
 					if (dialog.getVariable() != null)
@@ -479,7 +479,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			public void run() {
 				getShell().forceActive();
 				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
-				// if the target is a group and all sources are files, then
+				// if the target is a virtual folder and all sources are files, then
 				// automatically create links
 				int type;
 				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), finalAdapter.getCurrentOperation(), names, target);
@@ -495,7 +495,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
 					if (dialog.getVariable() != null)
 						operation.setRelativeVariable(dialog.getVariable());
-					operation.createGroupAndLinks(names, target);
+					operation.createVirtualFoldersAndLinks(names, target);
 					break;
 				case ImportTypeDialog.IMPORT_LINK:
 					if (dialog.getVariable() != null)
@@ -541,13 +541,13 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				if ((dropOperation == DND.DROP_COPY) || (dropOperation == DND.DROP_LINK)) {
 					operation = new CopyFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
 				} else {
 					operation = new MoveFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setCreateGroups(true);
+						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
 				}

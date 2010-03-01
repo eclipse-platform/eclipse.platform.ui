@@ -77,11 +77,11 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 *         non-existing parents.
 	 */
 
-	public static ContainerDescription fromGroupContainer(IContainer container) {
+	public static ContainerDescription fromVirtualFolderContainer(IContainer container) {
 		return fromContainer(container, true);
 	}
 	
-	protected static ContainerDescription fromContainer(IContainer container, boolean usingGroups) {
+	protected static ContainerDescription fromContainer(IContainer container, boolean usingVirtualFolder) {
 		IPath fullPath = container.getFullPath();
 		ContainerDescription firstCreatedParent = null;
 		ContainerDescription currentContainerDescription = null;
@@ -114,10 +114,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 					IFolder folderHandle = currentContainer.getFolder(new Path(
 							currentSegment));
 					ContainerDescription currentFolder;
-					if (usingGroups)
-						currentFolder = new GroupDescription(folderHandle);
-					else
-						currentFolder = new FolderDescription(folderHandle);
+					currentFolder = new FolderDescription(folderHandle, usingVirtualFolder);
 					currentContainer = folderHandle;
 					if (currentContainerDescription != null) {
 						currentContainerDescription.addMember(currentFolder);
@@ -222,14 +219,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 							.getFolder(path);
 					members[i].recordStateFromHistory(folderHandle,
 							new SubProgressMonitor(monitor, 100 / members.length));
-				} else if (members[i] instanceof GroupDescription) {
-					IPath path = resource.getFullPath().append(
-							((GroupDescription) members[i]).name);
-					IFolder folderHandle = resource.getWorkspace().getRoot()
-							.getFolder(path);
-					members[i].recordStateFromHistory(folderHandle,
-							new SubProgressMonitor(monitor, 100 / members.length));
-				}
+				} 
 			}
 		}
 		monitor.done();

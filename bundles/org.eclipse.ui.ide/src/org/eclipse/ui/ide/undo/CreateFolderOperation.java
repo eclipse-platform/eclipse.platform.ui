@@ -51,7 +51,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 
 	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
 			String label) {
-		this(folderHandle, linkLocation, null, label);
+		this(folderHandle, linkLocation, false, null, label);
 	}
 
 	/**
@@ -61,17 +61,21 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 *            the folder to be created
 	 * @param linkLocation
 	 *            the location of the folder if it is to be linked
-	 * @param label
-	 *            the label of the operation
+	 * @param virtual
+	 *            Create a virtual folder
 	 * @param filterList
 	 *            The filters to apply to the created folder
+	 * @param label
+	 *            the label of the operation
 	 * @since 3.6
 	 */
 	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
+			boolean virtual,
 			UIResourceFilterDescription[] filterList, String label) {
 		super(null, label);
-		ContainerDescription containerDescription = ContainerDescription
-				.fromContainer(folderHandle);
+		ContainerDescription containerDescription = virtual? ContainerDescription
+				.fromVirtualFolderContainer(folderHandle):
+				ContainerDescription.fromContainer(folderHandle);
 		if (linkLocation != null) {
 			containerDescription.getFirstLeafFolder().setLocation(linkLocation);
 		}
