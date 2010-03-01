@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 import junit.framework.TestCase;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.patch.PatchMessages;
 import org.eclipse.compare.internal.patch.PatchWizard;
 import org.eclipse.compare.internal.patch.PatchWizardDialog;
 import org.eclipse.core.internal.resources.WorkspaceRoot;
@@ -39,7 +41,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 public class PatchUITest extends TestCase {
 
@@ -125,9 +127,9 @@ public class PatchUITest extends TestCase {
 	}
 
 	private void openPatchWizard() {
-		ImageDescriptor patchWizardImage = null;
-		String patchWizardTitle = null;
-
+		ImageDescriptor patchWizardImage = CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png");
+		String patchWizardTitle = PatchMessages.PatchWizard_title;
+		
 		IStorage patch = null;
 		IResource target = null;
 		CompareConfiguration configuration = new CompareConfiguration();
@@ -231,8 +233,7 @@ public class PatchUITest extends TestCase {
 	}
 
 	private Shell getShell() {
-		return WorkbenchPlugin.getDefault().getWorkbench()
-				.getActiveWorkbenchWindow().getShell();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
 	private void processQueuedEvents() {
