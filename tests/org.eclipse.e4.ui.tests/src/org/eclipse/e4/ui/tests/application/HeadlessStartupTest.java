@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.internal.services.EclipseAdapter;
+import org.eclipse.e4.core.services.Adapter;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.Logger;
@@ -24,6 +26,7 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
@@ -94,8 +97,11 @@ public abstract class HeadlessStartupTest extends TestCase {
 								.get(IExtensionRegistry.class.getName())));
 		appContext.set(IExceptionHandler.class.getName(),
 				new ExceptionHandler());
+		// TODO is there a reason the logger isn't injected with the context?
 		appContext.set(Logger.class.getName(), new WorkbenchLogger());
 
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.inject(
+				new EclipseAdapter(), appContext));
 		appContext.set(ContextManager.class.getName(), new ContextManager());
 
 		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,

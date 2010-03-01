@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.Adapter;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.e4.core.services.Logger;
@@ -91,6 +92,11 @@ public class ContextContentsTest extends HeadlessStartupTest {
 	public void testGet_IAdapterManager() {
 		testGet_IAdapterManager(osgiContext, true);
 		testGet_IAdapterManager(applicationContext, true);
+	}
+
+	public void testGet_Adapter() {
+		testGet(osgiContext, Adapter.class, false);
+		testGet(applicationContext, Adapter.class, true);
 	}
 
 	private void testGet_IPreferencesService(IEclipseContext eclipseContext,
