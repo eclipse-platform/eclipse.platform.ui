@@ -514,28 +514,42 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		if (elementName.equals(FILTER)) {
 			// Pop off the filter description
 			FilterDescription filter = (FilterDescription) objectStack.pop();
-			// Make sure that you have something reasonable
-			IPath path = filter.getResource().getProjectRelativePath();
-			int type = filter.getType();
-			// arguments can be null
-			if (path == null) {
-				parseProblem(NLS.bind(Messages.projRead_emptyFilterName, Integer.toString(type)));
-				return;
-			}
-			if (type == -1) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterType, path));
-				return;
-			}
+			if (project != null) {
+				// Make sure that you have something reasonable
+				IPath path = filter.getResource().getProjectRelativePath();
+				int type = filter.getType();
+				// arguments can be null
+				if (path == null) {
+					parseProblem(NLS.bind(Messages.projRead_emptyFilterName, Integer.toString(type)));
+					return;
+				}
+				if (type == -1) {
+					parseProblem(NLS.bind(Messages.projRead_badFilterType, path));
+					return;
+				}
 
-			state = S_FILTERED_RESOURCES;
-			// The HashMap of filtered resources is the next thing on the stack
-			HashMap map = ((HashMap) objectStack.peek());
-			LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getResource().getProjectRelativePath());
-			if (list == null) {
-				list = new LinkedList/*FilterDescription*/();
-				map.put(filter.getResource().getProjectRelativePath(), list);
+				// The HashMap of filtered resources is the next thing on the stack
+				HashMap map = ((HashMap) objectStack.peek());
+				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getResource().getProjectRelativePath());
+				if (list == null) {
+					list = new LinkedList/*FilterDescription*/();
+					map.put(filter.getResource().getProjectRelativePath(), list);
+				}
+				list.add(filter);
 			}
-			list.add(filter);
+			else {
+				// if the project is null, that means that we're loading a project description to retrieve 
+				// some meta data only.
+				String key = new String(); // an empty key;
+				HashMap map = ((HashMap) objectStack.peek());
+				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(key);
+				if (list == null) {
+					list = new LinkedList/*FilterDescription*/();
+					map.put(key, list);
+				}
+				list.add(filter);
+			}
+			state = S_FILTERED_RESOURCES;
 		}
 	}
 
