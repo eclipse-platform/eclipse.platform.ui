@@ -53,7 +53,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * <p>
 	 * FIXME: Not yet implemented. Will be implemented during M7.
 	 * </p>
-	 * 
+	 * @see #openHyperlink()
 	 * @since 3.6
 	 */
 	public static final int OPEN_HYPERLINK= ISourceViewer.QUICK_ASSIST + 1;
@@ -548,6 +548,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * </p>
 	 * 
 	 * @return <code>true</code> if at least one hyperlink has been found at the caret location, <code>false</code> otherwise
+	 * @see #OPEN_HYPERLINK
 	 * @since 3.6
 	 */
 	public boolean openHyperlink() {
