@@ -581,7 +581,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partB, stack.getSelectedElement());
 	}
 
-	public void testCreateGuiBug298415() {
+	public void testCreateGuiBug301950() {
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
