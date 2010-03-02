@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -26,8 +27,9 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	private ViewDescriptor descriptor;
 
-	public ViewReference(IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
-		super(page, part);
+	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
+			ViewDescriptor descriptor) {
+		super(windowContext, page, part);
 		this.descriptor = descriptor;
 	}
 

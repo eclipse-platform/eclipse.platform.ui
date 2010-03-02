@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
 
 public class CompatibilityView extends CompatibilityPart {
@@ -56,7 +55,7 @@ public class CompatibilityView extends CompatibilityPart {
 	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#getReference()
 	 */
 	@Override
-	public IWorkbenchPartReference getReference() {
+	public WorkbenchPartReference getReference() {
 		return reference;
 	}
 

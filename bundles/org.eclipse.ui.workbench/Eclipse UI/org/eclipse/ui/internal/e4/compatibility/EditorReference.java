@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
@@ -43,8 +44,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
 
-	EditorReference(IWorkbenchPage page, MPart part, IEditorInput input, EditorDescriptor descriptor) {
-		super(page, part);
+	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
+			IEditorInput input, EditorDescriptor descriptor) {
+		super(windowContext, page, part);
 		this.input = input;
 		this.descriptor = descriptor;
 

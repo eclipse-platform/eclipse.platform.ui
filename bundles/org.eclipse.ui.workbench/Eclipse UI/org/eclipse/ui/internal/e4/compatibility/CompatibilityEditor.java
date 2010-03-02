@@ -84,7 +84,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#getReference()
 	 */
 	@Override
-	public IWorkbenchPartReference getReference() {
+	public WorkbenchPartReference getReference() {
 		return reference;
 	}
 

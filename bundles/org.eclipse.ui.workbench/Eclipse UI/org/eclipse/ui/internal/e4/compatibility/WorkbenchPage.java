@@ -725,7 +725,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private void createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId) {
 		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
-		final EditorReference ref = new EditorReference(this, part, input, descriptor);
+		final EditorReference ref = new EditorReference(window.getContext(), this, part, input,
+				descriptor);
 		editorReferences.add(ref);
 		final IEventBroker broker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
@@ -1015,7 +1016,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	void createViewReferenceForPart(final MPart part, String viewId) {
 		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
-		final ViewReference ref = new ViewReference(this, part, (ViewDescriptor) desc);
+		final ViewReference ref = new ViewReference(window.getContext(), this, part,
+				(ViewDescriptor) desc);
 		IEclipseContext partContext = part.getContext();
 		if (partContext == null) {
 			final IEventBroker broker = (IEventBroker) application.getContext().get(

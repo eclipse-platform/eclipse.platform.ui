@@ -29,7 +29,6 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.util.Util;
@@ -54,7 +53,7 @@ public abstract class CompatibilityPart {
 		this.part = part;
 	}
 
-	public abstract IWorkbenchPartReference getReference();
+	public abstract WorkbenchPartReference getReference();
 
 	protected abstract IStatusLineManager getStatusLineManager();
 
@@ -99,7 +98,14 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() throws PartInitException {
-		wrapped = getReference().getPart(true);
+		WorkbenchPartReference reference = getReference();
+		// ask our reference to instantiate the part through the registry
+		wrapped = reference.createPart();
+		// invoke init methods
+		reference.initialize(wrapped);
+		// hook reference listeners to the part
+		reference.hookPropertyListeners();
+
 		createPartControl(wrapped, composite);
 		delegateSetFocus();
 

@@ -12,7 +12,9 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
@@ -28,6 +30,10 @@ import org.eclipse.ui.internal.util.Util;
 
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference {
 
+	/**
+	 * The context of the MWindow containing this part reference.
+	 */
+	private IEclipseContext windowContext;
 	private IWorkbenchPage page;
 	private MPart part;
 	private IWorkbenchPart legacyPart;
@@ -35,12 +41,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	private ListenerList propertyListeners = new ListenerList();
 	private ListenerList partPropertyListeners = new ListenerList();
 
-	WorkbenchPartReference(IWorkbenchPage page, MPart part) {
+	WorkbenchPartReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part) {
+		this.windowContext = windowContext;
 		this.page = page;
 		this.part = part;
 	}
 
-	private void addPropertyListeners() {
+	void hookPropertyListeners() {
 		IWorkbenchPart workbenchPart = getPart(false);
 		if (workbenchPart != null) {
 			workbenchPart.addPropertyListener(new IPropertyListener() {
@@ -89,14 +96,17 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
 	 */
 	public IWorkbenchPart getPart(boolean restore) {
-		if (legacyPart == null && restore) {
-			try {
-				legacyPart = createPart();
-				initialize(legacyPart);
-				addPropertyListeners();
-			} catch (PartInitException e) {
-				legacyPart = null;
-				e.printStackTrace();
+		if (legacyPart == null) {
+			if (restore) {
+				// ask the renderer to create this part
+				IPresentationEngine engine = (IPresentationEngine) windowContext
+						.get(IPresentationEngine.SERVICE_NAME);
+				engine.createGui(part);
+			}
+
+			CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+			if (compatibilityPart != null) {
+				legacyPart = compatibilityPart.getPart();
 			}
 		}
 		return legacyPart;

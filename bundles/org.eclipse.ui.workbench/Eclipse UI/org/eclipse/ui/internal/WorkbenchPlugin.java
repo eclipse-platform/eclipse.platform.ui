@@ -1175,9 +1175,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	private ViewReference createViewReference(MPart part, WorkbenchPage page) {
-		IViewDescriptor desc = page.getWorkbenchWindow().getWorkbench().getViewRegistry().find(
+		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(
 				part.getId());
-		ViewReference ref = new ViewReference(page, part, (ViewDescriptor) desc);
+		ViewReference ref = new ViewReference(window.getModel().getContext(), page, part,
+				(ViewDescriptor) desc);
 		page.addViewReference(ref);
 		return ref;
 	}
