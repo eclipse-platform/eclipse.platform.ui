@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009-2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,6 +295,14 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.navigate.collapseAll"</code>).
      */
     public static final String NAVIGATE_COLLAPSE_ALL = "org.eclipse.ui.navigate.collapseAll"; //$NON-NLS-1$
+
+	/**
+	 * Id for command "Expand All" in category "Navigate" (value is
+	 * <code>"org.eclipse.ui.navigate.expandAll"</code>).
+	 * 
+	 * @since 3.6
+	 */
+	public static final String NAVIGATE_EXPAND_ALL = "org.eclipse.ui.navigate.expandAll"; //$NON-NLS-1$
 
     /**
      * Id for command "Show In" in category "Navigate"

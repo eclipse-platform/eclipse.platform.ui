@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -73,7 +74,8 @@ public final class CommandImageManager extends EventManager {
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 */
-	public final void addCommandImageManagerListener(final ICommandImageManagerListener listener) {
+	public final void addCommandImageManagerListener(
+			final ICommandImageManagerListener listener) {
 		addListenerObject(listener);
 	}
 
@@ -145,8 +147,8 @@ public final class CommandImageManager extends EventManager {
 			}
 		}
 
-		fireManagerChanged(new CommandImageManagerEvent(this, new String[] { commandId }, type,
-				style));
+		fireManagerChanged(new CommandImageManagerEvent(this,
+				new String[] { commandId }, type, style));
 	}
 
 	/**
@@ -157,7 +159,8 @@ public final class CommandImageManager extends EventManager {
 		if (isListenerAttached()) {
 			final String[] commandIds = (String[]) imagesById.keySet().toArray(
 					new String[imagesById.size()]);
-			fireManagerChanged(new CommandImageManagerEvent(this, commandIds, TYPE_DEFAULT, null));
+			fireManagerChanged(new CommandImageManagerEvent(this, commandIds,
+					TYPE_DEFAULT, null));
 		}
 	}
 
@@ -331,7 +334,8 @@ public final class CommandImageManager extends EventManager {
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 */
-	public final void removeCommandImageManagerListener(final ICommandImageManagerListener listener) {
+	public final void removeCommandImageManagerListener(
+			final ICommandImageManagerListener listener) {
 		removeListenerObject(listener);
 	}
 }

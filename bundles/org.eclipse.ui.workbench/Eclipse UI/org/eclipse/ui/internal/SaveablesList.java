@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -82,12 +81,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private Map modelRefCounts = new HashMap();
 
 	private Set nonPartSources = new HashSet();
-
-	private final IExceptionHandler handler;
-
-	public SaveablesList(IExceptionHandler handler) {
-		this.handler = handler;
-	}
 
 	/**
 	 * Returns the list of open models managed by this model manager.
@@ -568,7 +561,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 								: WorkbenchMessages.EditorManager_saveResourcesMessage,
 						canCancel, stillOpenElsewhere);
 				dlg.setInitialSelections(modelsToSave.toArray());
-				dlg.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
+				dlg.setTitle("EditorManager.SAVE_RESOURCES_TITLE"); //$NON-NLS-1$
 
 				// this "if" statement aids in testing.
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
@@ -602,7 +595,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	public boolean saveModels(final List finalModels, final IShellProvider shellProvider, IRunnableContext runnableContext) {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor, handler);
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
+						monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Saving_Modifications, finalModels.size());
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
 					Saveable model = (Saveable) i.next();

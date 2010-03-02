@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -66,6 +67,12 @@ public class NewWizardAction extends Action implements
      */
     private String categoryId = null;
 
+	/**
+	 * The title of the wizard window or <code>null</code> to use the default
+	 * wizard window title.
+	 */
+	private String windowTitle = null;
+
     /**
      * The workbench window; or <code>null</code> if this
      * action has been <code>dispose</code>d.
@@ -76,9 +83,7 @@ public class NewWizardAction extends Action implements
      * Tracks perspective activation, to update this action's
      * enabled state.
      */
-	// private PerspectiveTracker tracker;
-	// TODO compat: we need to listen to perspective changes in the e4 workbench
-
+    private PerspectiveTracker tracker;
     
     /**
      * Create a new instance of this class.
@@ -90,9 +95,7 @@ public class NewWizardAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-		// TODO compat: we need to listen to perspective changes in the e4
-		// workbench
-		// tracker = new PerspectiveTracker(window, this);
+        tracker = new PerspectiveTracker(window, this);
         // @issues should be IDE-specific images
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         setImageDescriptor(images
@@ -131,6 +134,26 @@ public class NewWizardAction extends Action implements
         categoryId = id;
     }
 
+	/**
+	 * <p>
+	 * Sets the title of the wizard window
+	 * <p>
+	 * 
+	 * <p>
+	 * If the title of the wizard window is <code>null</code>, the default
+	 * wizard window title will be used.
+	 * </p>
+	 * 
+	 * @param windowTitle
+	 *            The title of the wizard window, otherwise <code>null</code>
+	 *            (default wizard window title).
+	 * 
+	 * @since 3.6
+	 */
+	public void setWizardWindowTitle(String windowTitle) {
+		this.windowTitle = windowTitle;
+	}
+
     /* (non-Javadoc)
      * Method declared on IAction.
      */
@@ -141,6 +164,7 @@ public class NewWizardAction extends Action implements
         }
         NewWizard wizard = new NewWizard();
         wizard.setCategoryId(categoryId);
+		wizard.setWindowTitle(windowTitle);
 
         ISelection selection = workbenchWindow.getSelectionService()
                 .getSelection();
@@ -165,6 +189,7 @@ public class NewWizardAction extends Action implements
         }
 
         wizard.init(workbenchWindow.getWorkbench(), selectionToPass);
+
         IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
                 .getDialogSettings();
         IDialogSettings wizardSettings = workbenchSettings
@@ -195,7 +220,7 @@ public class NewWizardAction extends Action implements
             // action has already been disposed
             return;
         }
-
+        tracker.dispose();
         workbenchWindow = null;
     }
 

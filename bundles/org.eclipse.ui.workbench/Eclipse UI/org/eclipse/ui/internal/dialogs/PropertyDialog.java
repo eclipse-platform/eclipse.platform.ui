@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.Iterator;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;

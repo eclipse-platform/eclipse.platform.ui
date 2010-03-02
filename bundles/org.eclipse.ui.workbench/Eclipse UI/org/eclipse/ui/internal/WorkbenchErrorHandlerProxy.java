@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.internal.e4.compatibility.Workbench;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
@@ -34,7 +33,7 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 	 *      int)
 	 */
 	public void handle(final StatusAdapter statusAdapter, int style) {
-		((Workbench) Workbench.getInstance()).getAdvisor().getWorkbenchErrorHandler().handle(
+		Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().handle(
 				statusAdapter, style);
 	}
 
@@ -42,7 +41,7 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#supportsNotification(int)
 	 */
 	public boolean supportsNotification(int type) {
-		return ((Workbench) Workbench.getInstance()).getAdvisor().getWorkbenchErrorHandler()
+		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
 				.supportsNotification(type);
 	}
 	

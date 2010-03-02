@@ -31,6 +31,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
@@ -149,9 +150,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 							.createFromURL((URL) property));
 				} else {
 					// Let the progress manager handle the resource management
-					// return ProgressManager.getInstance().getIconFor(job);
-					// TODO compat:
-					// ProgressManager.getInstance().getIconFor(job);
+					return ProgressManager.getInstance().getIconFor(job);
 				}
 			}
 			return null;

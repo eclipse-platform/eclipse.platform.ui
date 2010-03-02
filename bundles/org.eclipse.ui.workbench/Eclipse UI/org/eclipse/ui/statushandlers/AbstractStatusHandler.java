@@ -13,6 +13,8 @@ package org.eclipse.ui.statushandlers;
 
 import java.util.Map;
 
+import org.eclipse.ui.application.WorkbenchAdvisor;
+
 /**
  * <p>
  * Status handlers are part of the status handling facility. The facility is

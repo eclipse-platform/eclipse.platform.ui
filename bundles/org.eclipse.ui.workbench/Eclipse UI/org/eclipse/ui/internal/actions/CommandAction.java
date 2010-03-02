@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.actions;
 
 import java.util.Map;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ICommandListener;

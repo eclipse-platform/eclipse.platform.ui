@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.internal.util.Util;

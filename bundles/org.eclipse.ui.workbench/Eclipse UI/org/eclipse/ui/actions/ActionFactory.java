@@ -17,12 +17,24 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.IntroAction;
+import org.eclipse.ui.internal.NavigationHistoryAction;
+import org.eclipse.ui.internal.OpenPreferencesAction;
+import org.eclipse.ui.internal.ResetPerspectiveAction;
+import org.eclipse.ui.internal.SaveAction;
+import org.eclipse.ui.internal.SaveAllAction;
+import org.eclipse.ui.internal.SaveAsAction;
+import org.eclipse.ui.internal.SavePerspectiveAction;
+import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.actions.DynamicHelpAction;
+import org.eclipse.ui.internal.actions.HelpContentsAction;
+import org.eclipse.ui.internal.actions.HelpSearchAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -168,13 +180,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new NavigationHistoryAction(window,
-			// false);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("BACKWARD_HISTORY"); //$NON-NLS-1$ 
-			return null;
+            IWorkbenchAction action = new NavigationHistoryAction(window, false);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -284,12 +292,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new CloseAllSavedAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("CLOSE_ALL_SAVED"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new CloseAllSavedAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -343,13 +348,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new IntroAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("INTRO"); //$NON-NLS-1$
-			return null;
-
+            IWorkbenchAction action = new IntroAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -560,13 +561,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new NavigationHistoryAction(window,
-			// true);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("FORWARD_HISTORY"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new NavigationHistoryAction(window, true);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -636,12 +633,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new LockToolBarAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("LOCK_TOOL_BAR"); //$NON-NLS-1$
-			return null;
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					IWorkbenchCommandConstants.HELP_ABOUT, window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -957,12 +952,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new OpenPreferencesAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("PREFERENCES"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new OpenPreferencesAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1246,12 +1238,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new ResetPerspectiveAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("RESET_PERSPECTIVE"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new ResetPerspectiveAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1291,12 +1280,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new SaveAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("SAVE"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new SaveAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1314,12 +1300,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new SaveAllAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("SAVE_ALL"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new SaveAllAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1337,12 +1320,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new SaveAsAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("SAVE_AS"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new SaveAsAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1360,12 +1340,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new SavePerspectiveAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("SAVE_PERSPECTIVE"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new SavePerspectiveAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1406,13 +1383,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new
-			// ToggleEditorsVisibilityAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("SHOW_EDITOR"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new ToggleEditorsVisibilityAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1596,12 +1569,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new HelpContentsAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("HELP_CONTENTS"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new HelpContentsAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1621,12 +1591,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new HelpSearchAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("HELP_SEARCH"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new HelpSearchAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1646,12 +1613,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// IWorkbenchAction action = new DynamicHelpAction(window);
-			// action.setId(getId());
-			// return action;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("DYNAMIC_HELP"); //$NON-NLS-1$
-			return null;
+            IWorkbenchAction action = new DynamicHelpAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 

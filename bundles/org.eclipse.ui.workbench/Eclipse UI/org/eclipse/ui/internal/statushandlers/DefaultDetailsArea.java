@@ -50,7 +50,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 /**
  * The default details area displaying a tree of statuses.
@@ -87,15 +86,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
 		mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK))
 				.intValue();
-	}
-
-	/**
-	 * @param workbenchStatusDialogManager
-	 */
-	public DefaultDetailsArea(WorkbenchStatusDialogManager workbenchStatusDialogManager) {
-		// TODO compat: this isn't really here
-		handleOkStatuses = true;
-		mask = 0xffffffff;
 	}
 
 	/*

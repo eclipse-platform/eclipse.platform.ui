@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;

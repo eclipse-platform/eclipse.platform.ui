@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.IPluginContribution;

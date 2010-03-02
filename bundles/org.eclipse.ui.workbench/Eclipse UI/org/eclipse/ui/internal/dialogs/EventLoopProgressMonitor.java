@@ -14,9 +14,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
  * Used to run an event loop whenever progress monitor methods
@@ -49,15 +49,12 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
      */
     private String taskName;
 
-	IExceptionHandler handler;
-
     /**
      * Constructs a new instance of the receiver and forwards to monitor.
      * @param monitor
      */
-	public EventLoopProgressMonitor(IProgressMonitor monitor, IExceptionHandler exceptionHandler) {
+    public EventLoopProgressMonitor(IProgressMonitor monitor) {
         super(monitor);
-		handler = exceptionHandler;
     }
 
     /** 
@@ -118,6 +115,8 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
             return;
         }
 
+        //Initialize an exception handler from the window class.
+        ExceptionHandler handler = ExceptionHandler.getInstance();
 
         for (;;) {
             try {

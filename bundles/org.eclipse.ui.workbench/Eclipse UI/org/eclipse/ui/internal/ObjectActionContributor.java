@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.List;
+
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;

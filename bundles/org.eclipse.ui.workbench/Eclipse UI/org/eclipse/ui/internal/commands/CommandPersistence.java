@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.workbench.ui.internal.Parameter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchMessages;

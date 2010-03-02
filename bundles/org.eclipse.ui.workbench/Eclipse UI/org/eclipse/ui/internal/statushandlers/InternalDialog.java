@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.statushandlers;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -50,9 +51,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -795,11 +796,8 @@ public class InternalDialog extends TrayDialog {
 		if (!shouldDisplay) {
 			return null;
 		}
-		// TODO compat: returh the log view descriptor
-		E4Util.unsupported("shouldDisplayLinkToErrorLog"); //$NON-NLS-1$
 		/* view description */
-		// return Workbench.getInstance().getViewRegistry().find(LOG_VIEW_ID);
-		return null;
+		return Workbench.getInstance().getViewRegistry().find(LOG_VIEW_ID);
 	}
 
 	/**
@@ -967,16 +965,13 @@ public class InternalDialog extends TrayDialog {
 		Link link = new Link(linkComposite, SWT.NONE);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// try {
-				// TODO compat: returh the log view descriptor
-				E4Util.unsupported("createShowErrorLogLink"); //$NON-NLS-1$
-
-				// Workbench.getInstance().getActiveWorkbenchWindow()
-				// .getActivePage().showView(LOG_VIEW_ID);
-				// } catch (CoreException ce) {
-				// StatusManager.getManager().handle(ce,
-				// WorkbenchPlugin.PI_WORKBENCH);
-				// }
+				try {
+					Workbench.getInstance().getActiveWorkbenchWindow()
+							.getActivePage().showView(LOG_VIEW_ID);
+				} catch (CoreException ce) {
+					StatusManager.getManager().handle(ce,
+							WorkbenchPlugin.PI_WORKBENCH);
+				}
 			}
 		});
 		link.setText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink);

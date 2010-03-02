@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;

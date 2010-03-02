@@ -14,6 +14,7 @@ package org.eclipse.ui.statushandlers;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;

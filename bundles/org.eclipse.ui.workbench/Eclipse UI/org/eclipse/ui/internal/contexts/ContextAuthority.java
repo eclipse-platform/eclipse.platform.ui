@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;

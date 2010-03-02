@@ -99,8 +99,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     private IWizardDescriptor selectedElement;
 
-	// TODO compat: we need a filter
-	// private WizardActivityFilter filter = new WizardActivityFilter();
+    private WizardActivityFilter filter = new WizardActivityFilter();
 
     private boolean needShowAll;
 
@@ -313,8 +312,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 						return element;
 					}
 				});
-		// TODO compat: produce a comparator
-		// treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
+		treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
 		treeViewer.addSelectionChangedListener(this);
 
         ArrayList inputArray = new ArrayList();
@@ -372,7 +370,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
             }
         });
         
-		// treeViewer.addFilter(filter);
+        treeViewer.addFilter(filter);
         
         if (projectsOnly) {
 			treeViewer.addFilter(projectFilter);
@@ -437,7 +435,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
                                     currentExpanded.length, delta.length);
                             filteredTree.getViewer().setExpandedElements(expanded);
                         } else {
-							// filteredTree.getViewer().addFilter(filter);
+                        	filteredTree.getViewer().addFilter(filter);
                             if (projectsOnly) {
 								filteredTree.getViewer().addFilter(projectFilter);
 							}
@@ -734,21 +732,22 @@ class NewWizardNewPage implements ISelectionChangedListener {
      */
     private void updateWizardSelection(IWizardDescriptor selectedObject) {
         selectedElement = selectedObject;
-		WorkbenchWizardNode selectedNode;
-		if (selectedWizards.containsKey(selectedObject)) {
-			selectedNode = (WorkbenchWizardNode) selectedWizards.get(selectedObject);
-		} else {
-			selectedNode = new WorkbenchWizardNode(page, selectedObject) {
-				public IWorkbenchWizard createWizard() throws CoreException {
-					return wizardElement.createWizard();
-				}
-			};
-			selectedWizards.put(selectedObject, selectedNode);
-		}
+        WorkbenchWizardNode selectedNode;
+        if (selectedWizards.containsKey(selectedObject)) {
+            selectedNode = (WorkbenchWizardNode) selectedWizards
+                    .get(selectedObject);
+        } else {
+            selectedNode = new WorkbenchWizardNode(page, selectedObject) {
+                public IWorkbenchWizard createWizard() throws CoreException {
+                    return wizardElement.createWizard();
+                }
+            };
+            selectedWizards.put(selectedObject, selectedNode);
+        }
 
-		page.setCanFinishEarly(selectedObject.canFinishEarly());
-		page.setHasPages(selectedObject.hasPages());
-		page.selectWizardNode(selectedNode);
+        page.setCanFinishEarly(selectedObject.canFinishEarly());
+        page.setHasPages(selectedObject.hasPages());
+        page.selectWizardNode(selectedNode);
 
         updateDescription(selectedObject);
     }

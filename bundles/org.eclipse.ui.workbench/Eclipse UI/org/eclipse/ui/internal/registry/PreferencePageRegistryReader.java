@@ -14,11 +14,14 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
 /**
@@ -30,6 +33,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
 	private List nodes;
+
+	private IWorkbench workbench;
+	
 
 	class PreferencesCategoryNode extends CategoryNode {
 
@@ -71,8 +77,10 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	/**
 	 * Create a new instance configured with the workbench
 	 * 
+	 * @param newWorkbench the workbench
 	 */
-	public PreferencePageRegistryReader() {
+	public PreferencePageRegistryReader(IWorkbench newWorkbench) {
+		workbench = newWorkbench;
 	}
 
 	/* (non-Javadoc)
@@ -159,6 +167,11 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		}
 		WorkbenchPreferenceNode node = createNode(element);
 		if (node != null) {
+			if (workbench instanceof Workbench) {
+				if (node.getId().equals(
+						((Workbench) workbench).getMainPreferencePageId()))
+					node.setPriority(-1);
+			}
 			nodes.add(node);
 		}
 		return true;

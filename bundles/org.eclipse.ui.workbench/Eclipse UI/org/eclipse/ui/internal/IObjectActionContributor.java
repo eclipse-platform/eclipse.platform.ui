@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.List;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchPart;

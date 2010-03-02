@@ -18,11 +18,10 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.PartSite;
 
 /**
  * A <code>RetargetAction</code> tracks the active part in the workbench.  
@@ -116,21 +115,11 @@ public class RetargetAction extends PartEventAction implements
         }
         IWorkbenchPart part = getActivePart();
         if (part != null) {
-			SubActionBars bars = getSubActionBars(part);
+            IWorkbenchPartSite site = part.getSite();
+            SubActionBars bars = (SubActionBars) ((PartSite) site).getActionBars();
             bars.removePropertyChangeListener(propertyChangeListener);
         }
     }
-
-	public SubActionBars getSubActionBars(IWorkbenchPart part) {
-		IWorkbenchPartSite site = part.getSite();
-		SubActionBars bars;
-		if (site instanceof IViewSite) {
-			bars = (SubActionBars) ((IViewSite) site).getActionBars();
-		} else {
-			bars = (SubActionBars) ((IEditorSite) site).getActionBars();
-		}
-		return bars;
-	}
 
     /**
      * Enables the accelerator for this action. 
@@ -160,7 +149,8 @@ public class RetargetAction extends PartEventAction implements
      */
     public void partActivated(IWorkbenchPart part) {
         super.partActivated(part);
-		SubActionBars bars = getSubActionBars(part);
+        IWorkbenchPartSite site = part.getSite();
+        SubActionBars bars = (SubActionBars) ((PartSite) site).getActionBars();
         bars.addPropertyChangeListener(propertyChangeListener);
         setActionHandler(bars.getGlobalActionHandler(getId()));
     }
@@ -190,7 +180,8 @@ public class RetargetAction extends PartEventAction implements
      */
     public void partDeactivated(IWorkbenchPart part) {
         super.partDeactivated(part);
-		SubActionBars bars = getSubActionBars(part);
+        IWorkbenchPartSite site = part.getSite();
+        SubActionBars bars = (SubActionBars) ((PartSite) site).getActionBars();
         bars.removePropertyChangeListener(propertyChangeListener);
 
         IWorkbenchPart activePart = part.getSite().getPage().getActivePart();

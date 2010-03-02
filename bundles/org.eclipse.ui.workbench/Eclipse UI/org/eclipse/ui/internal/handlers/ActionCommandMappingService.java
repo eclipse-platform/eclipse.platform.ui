@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**

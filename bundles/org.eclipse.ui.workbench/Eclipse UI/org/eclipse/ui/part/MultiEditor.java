@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
-import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -142,8 +141,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
     protected boolean getShellActivated() {
         WorkbenchWindow window = (WorkbenchWindow) getSite().getPage()
                 .getWorkbenchWindow();
-		MWindow mwindow = window.getModel();
-		return mwindow.getParent().getSelectedElement() == mwindow;
+        return window.getShellActivated();
     }
 
 	public Composite getInnerEditorContainer(

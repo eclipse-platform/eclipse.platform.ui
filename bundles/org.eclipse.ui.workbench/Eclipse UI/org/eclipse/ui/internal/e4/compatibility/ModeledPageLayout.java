@@ -34,6 +34,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
+import org.eclipse.ui.internal.WorkbenchPage;
 
 public class ModeledPageLayout implements IPageLayout {
 

@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.dialogs.Dialog;
@@ -65,6 +66,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.InternalActivityHelper;
+import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -123,7 +125,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     	private static final String DIALOG_SETTINGS_SECTION = "ActivityCategoryPreferencePageAdvancedDialogSettings"; //$NON-NLS-1$
 
     	
-		// ActivityEnabler enabler;
+        ActivityEnabler enabler;
         /**
          * @param parentShell
          */
@@ -150,10 +152,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          */
         protected Control createDialogArea(Composite parent) {
             Composite composite = (Composite) super.createDialogArea(parent);
-			// FIXME compat: add enabled back
-			// enabler = new ActivityEnabler(workingCopy, strings);
-			// Control enablerControl = enabler.createControl(composite);
-			// enablerControl.setLayoutData(new GridData(GridData.FILL_BOTH));
+            enabler = new ActivityEnabler(workingCopy, strings);
+            Control enablerControl = enabler.createControl(composite);
+            enablerControl.setLayoutData(new GridData(GridData.FILL_BOTH));
             return composite;
         }
 
@@ -161,8 +162,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          * @see org.eclipse.jface.dialogs.Dialog#okPressed()
          */
         protected void okPressed() {
-			// FIXME compat: add enabled back
-			// enabler.updateActivityStates();
+            enabler.updateActivityStates();            
             super.okPressed();
         }
         

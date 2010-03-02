@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -56,7 +57,9 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
+import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
+import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
@@ -210,10 +213,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     
     public IWorkingSet createAggregateWorkingSet(String name, String label,
 			IWorkingSet[] components) {
-		// return new AggregateWorkingSet(name, label, components);
-		// FIXME compat: no new WS wizard
-		E4Util.unsupported("createAggregateWorkingSet"); //$NON-NLS-1$
-		return null;
+		return new AggregateWorkingSet(name, label, components);
 	}
 
     /*
@@ -459,12 +459,11 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         ArrayList aggregateSets = new ArrayList();
         while (iterator.hasNext()) {
         		IWorkingSet set = (IWorkingSet) iterator.next();
-			// if (set instanceof AggregateWorkingSet) {
-			// aggregateSets.add(set);
-			// } else {
+        		if (set instanceof AggregateWorkingSet) {
+					aggregateSets.add(set);
+				} else {
 					standardSets.add(set);
-			// }
-
+				}
         }
 
         saveWorkingSetState(memento, standardSets);
@@ -628,13 +627,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			}
 		}
 		 
-
-		// WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
-		// editWizard.setSelection(workingSet);
-		// return editWizard;
-		// FIXME compat: no new WS wizard
-		E4Util.unsupported("createWorkingSetEditWizard"); //$NON-NLS-1$
-		return null;
+        WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
+        editWizard.setSelection(workingSet);
+        return editWizard;
     }
 
     /**
@@ -661,9 +656,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
          if (descriptors.length == 0) {
 			return null;
 		}
-		// FIXME compat: no new WS wizard
-		E4Util.unsupported("createWorkingSetNewWizard"); //$NON-NLS-1$
-		return null;
+         return new WorkingSetNewWizard(descriptors);
 }
 
     //---- working set delta handling -------------------------------------------------
@@ -802,10 +795,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(org.eclipse.swt.widgets.Shell, boolean, java.lang.String[])
      */
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
-		// return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
-		// FIXME compat: no new WS wizard
-		E4Util.unsupported("createWorkingSetSelectionDialog"); //$NON-NLS-1$
-		return null;
+        return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
     }
 
 	/**

@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 
@@ -265,10 +265,7 @@ public class WorkbenchWindowAdvisor {
      * @see IWorkbenchWindowConfigurer#createPageComposite
      */
     public void createWindowContents(Shell shell) {
-		// ((WorkbenchWindowConfigurer)
-		// getWindowConfigurer()).createDefaultContents(shell);
-		// TODO compat: shouldn't we create some contents here?
-		E4Util.unsupported("createWindowContents"); //$NON-NLS-1$
+        ((WorkbenchWindowConfigurer) getWindowConfigurer()).createDefaultContents(shell);
     }
 
     /**

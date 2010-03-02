@@ -7,12 +7,5 @@
       <initializer
             class="org.eclipse.ui.internal.WorkbenchPreferenceInitializer"/>
    </extension>
-   <extension
-         id="org.eclipse.ui.workbench"
-         point="org.eclipse.e4.workbench.model">
-      <snippet
-            uri="xmi/components.e4xmi">
-      </snippet>
-   </extension>
 
 </plugin>

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -33,6 +34,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -61,10 +63,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
          */
         public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
-				// TODO commented out for e4 compatibility
-				// if (objects[i] instanceof NewWizardShortcutAction) {
-				// actions.values().remove(objects[i]);
-				// }
+                if (objects[i] instanceof NewWizardShortcutAction) {
+                    actions.values().remove(objects[i]);
+                }
             }
         }
 
@@ -107,14 +108,13 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         super(id);
         Assert.isNotNull(window);
         this.workbenchWindow = window;
-		showDlgAction = ActionFactory.NEW.create(window);
+        showDlgAction = ActionFactory.NEW.create(window);
         registerListeners();
         // indicate that a new wizards submenu has been created
-		// TODO commented out for e4 compatibility
-		// if (window instanceof WorkbenchWindow) {
-		// ((WorkbenchWindow) window)
-		// .addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
-		// }
+		if (window instanceof WorkbenchWindow) {
+			((WorkbenchWindow) window)
+					.addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
+		}
     }
 
     /**
@@ -180,13 +180,15 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
             IWizardDescriptor wizardDesc = WorkbenchPlugin.getDefault()
 					.getNewWizardRegistry().findWizard(id);
             if (wizardDesc != null) {
-				action = new NewWizardShortcutAction(workbenchWindow, wizardDesc);
+                action = new NewWizardShortcutAction(workbenchWindow,
+						wizardDesc);
 				actions.put(id, action);
-				IConfigurationElement element = (IConfigurationElement) Util.getAdapter(wizardDesc,
-						IConfigurationElement.class);
+				IConfigurationElement element = (IConfigurationElement) Util
+						.getAdapter(wizardDesc, IConfigurationElement.class);
 				if (element != null) {
 					workbenchWindow.getExtensionTracker().registerObject(
-							element.getDeclaringExtension(), action, IExtensionTracker.REF_WEAK);
+							element.getDeclaringExtension(), action,
+							IExtensionTracker.REF_WEAK);
 				}
             }
         }

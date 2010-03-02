@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -39,8 +40,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.menus.InternalMenuService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 
 /**
  * This class extends a single popup menu
@@ -299,25 +302,28 @@ public class PopupMenuExtender implements IMenuListener2,
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
-		// IMenuManager originalManager = mgr;
+    	IMenuManager originalManager = mgr;
     	
     	// Add this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
-			// final IWorkbench workbench = site.getWorkbenchWindow()
-			// .getWorkbench();
-			runCleanUp();
-			// ISelection input = null;
-			// if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
-			// if (part instanceof IEditorPart) {
-			// final IEditorPart editorPart = (IEditorPart) part;
-			// input = new StructuredSelection(
-			// new Object[] { editorPart.getEditorInput() });
-			// }
-			// }
-			// ISelection s = (selProvider == null ? null : selProvider
-			// .getSelection());
-			// realWorkbench.addShowingMenus(getMenuIds(), s, input);
+			final IWorkbench workbench = site.getWorkbenchWindow()
+					.getWorkbench();
+			if (workbench instanceof Workbench) {
+				final Workbench realWorkbench = (Workbench) workbench;
+				runCleanUp(realWorkbench);
+				ISelection input = null;
+				if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
+					if (part instanceof IEditorPart) {
+						final IEditorPart editorPart = (IEditorPart) part;
+						input = new StructuredSelection(
+								new Object[] { editorPart.getEditorInput() });
+					}
+				}
+				ISelection s = (selProvider == null ? null : selProvider
+						.getSelection());
+				realWorkbench.addShowingMenus(getMenuIds(), s, input);
+			}
 		}
     	
     	readStaticActions();
@@ -326,7 +332,7 @@ public class PopupMenuExtender implements IMenuListener2,
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
-		// addMenuContributions(originalManager);
+        addMenuContributions(originalManager);
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
             addEditorActions(mgr);
         }
@@ -335,33 +341,32 @@ public class PopupMenuExtender implements IMenuListener2,
         cleanUpContributionCache();
     }
     
-
-	// private boolean contributionsPopulated = false;
-	//    
-	// private void addMenuContributions(IMenuManager mgr) {
-	// final IMenuService menuService = (IMenuService) part.getSite()
-	// .getService(IMenuService.class);
-	// if (menuService == null) {
-	// return;
-	// }
-	// if ((mgr.getRemoveAllWhenShown() || !contributionsPopulated)
-	// && mgr instanceof ContributionManager) {
-	// ContributionManager manager = (ContributionManager) mgr;
-	// contributionsPopulated = true;
-	// menuService
-	// .populateContributionManager(manager, MenuUtil.ANY_POPUP);
-	// Iterator i = getMenuIds().iterator();
-	// while (i.hasNext()) {
-	//				String id = "popup:" + i.next(); //$NON-NLS-1$
-	// if (menuService instanceof InternalMenuService) {
-	// ((InternalMenuService) menuService)
-	// .populateContributionManager(manager, id, false);
-	// } else {
-	// menuService.populateContributionManager(manager, id);
-	// }
-	// }
-	// }
-	// }
+    private boolean contributionsPopulated = false;
+    
+    private void addMenuContributions(IMenuManager mgr) {
+		final IMenuService menuService = (IMenuService) part.getSite()
+				.getService(IMenuService.class);
+		if (menuService == null) {
+			return;
+		}
+		if ((mgr.getRemoveAllWhenShown() || !contributionsPopulated)
+				&& mgr instanceof ContributionManager) {
+			ContributionManager manager = (ContributionManager) mgr;
+			contributionsPopulated = true;
+			menuService
+					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
+			Iterator i = getMenuIds().iterator();
+			while (i.hasNext()) {
+				String id = "popup:" + i.next(); //$NON-NLS-1$
+				if (menuService instanceof InternalMenuService) {
+					((InternalMenuService) menuService)
+							.populateContributionManager(manager, id, false);
+				} else {
+					menuService.populateContributionManager(manager, id);
+				}
+			}
+		}
+	}
 
     /**
 	 * Notifies the listener that the menu is about to be hidden.
@@ -373,27 +378,27 @@ public class PopupMenuExtender implements IMenuListener2,
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
     		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
-			// if (workbench instanceof Workbench) {
+    		if (workbench instanceof Workbench) {
     			// try delaying this until after the selection event
     			// has been fired.
     			// This is less threatening if the popup: menu
     			// contributions aren't tied to the evaluation service
 				workbench.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-					// final Workbench realWorkbench = (Workbench) workbench;
-					runCleanUp();
+						final Workbench realWorkbench = (Workbench) workbench;
+						runCleanUp(realWorkbench);
 					}
 				});
 			}
-		// }
+    	}
     }
 
-	private void runCleanUp() {
+	private void runCleanUp(Workbench realWorkbench) {
 		if (!cleanupNeeded) {
 			return;
 		}
 		cleanupNeeded = false;
-		// realWorkbench.removeShowingMenus(getMenuIds(), null, null);
+		realWorkbench.removeShowingMenus(getMenuIds(), null, null);
 		cleanUpContributionCache();
 	}
 
@@ -422,21 +427,19 @@ public class PopupMenuExtender implements IMenuListener2,
 			}
 		}
 		if (!managerContributionCache.isEmpty() && menu.getRemoveAllWhenShown()) {
-			// ContributionManager[] items = (ContributionManager[])
-			// managerContributionCache
-			// .toArray(new ContributionManager[managerContributionCache
-			// .size()]);
+			ContributionManager[] items = (ContributionManager[]) managerContributionCache
+					.toArray(new ContributionManager[managerContributionCache
+							.size()]);
 			managerContributionCache.clear();
-			// final IMenuService menuService = (IMenuService) part.getSite()
-			// .getService(IMenuService.class);
-			// if (menuService instanceof InternalMenuService) {
-			// InternalMenuService realService = (InternalMenuService)
-			// menuService;
-			// for (int i = 0; i < items.length; i++) {
-			// realService.releaseContributions(items[i]);
-			// items[i].removeAll();
-			// }
-			// }
+			final IMenuService menuService = (IMenuService) part.getSite()
+					.getService(IMenuService.class);
+			if (menuService instanceof InternalMenuService) {
+				InternalMenuService realService = (InternalMenuService) menuService;
+				for (int i = 0; i < items.length; i++) {
+					realService.releaseContributions(items[i]);
+					items[i].removeAll();
+				}
+			}
 		} else {
 			managerContributionCache.clear();
 		}

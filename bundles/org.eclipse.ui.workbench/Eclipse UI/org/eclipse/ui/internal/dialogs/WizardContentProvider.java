@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.AdaptableList;

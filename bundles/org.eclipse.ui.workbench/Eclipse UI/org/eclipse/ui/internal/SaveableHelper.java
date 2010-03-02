@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,7 +28,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -96,7 +96,7 @@ public class SaveableHelper {
 	 * was canceled.
 	 */
 	static boolean savePart(final ISaveablePart saveable, IWorkbenchPart part, 
-			final IWorkbenchWindow window, boolean confirm) {
+			IWorkbenchWindow window, boolean confirm) {
 		// Short circuit.
 		if (!saveable.isDirty()) {
 			return true;
@@ -147,8 +147,7 @@ public class SaveableHelper {
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor,
-						(IExceptionHandler) window.getService(IExceptionHandler.class));
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				saveable.doSave(monitorWrap);
 			}
 		};
@@ -182,8 +181,7 @@ public class SaveableHelper {
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor,
-						(IExceptionHandler) window.getService(IExceptionHandler.class));
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
 				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
 					Saveable model = (Saveable) i.next();
@@ -219,8 +217,7 @@ public class SaveableHelper {
 	 * @return the ISaveablePart2 constant
 	 */
 	static int savePart(final ISaveablePart2 saveable, 
- final IWorkbenchWindow window,
-			boolean confirm) {
+			IWorkbenchWindow window, boolean confirm) {
 		// Short circuit.
 		if (!saveable.isDirty()) {
 			return ISaveablePart2.YES;
@@ -243,8 +240,7 @@ public class SaveableHelper {
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor,
-						(IExceptionHandler) window.getService(IExceptionHandler.class));
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				saveable.doSave(monitorWrap);
 			}
 		};
@@ -436,8 +432,8 @@ public class SaveableHelper {
 			wwindows.add(parts[i].getSite().getWorkbenchWindow());
 		}
 		for (Iterator it = wwindows.iterator(); it.hasNext();) {
-			// WorkbenchWindow wwin = (WorkbenchWindow) it.next();
-			// wwin.fireBackgroundSaveStarted();
+			WorkbenchWindow wwin = (WorkbenchWindow) it.next();
+			wwin.fireBackgroundSaveStarted();
 		}
 	}
 

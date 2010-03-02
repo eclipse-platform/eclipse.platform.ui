@@ -626,4 +626,17 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	public boolean saveAll(IShellProvider shellProvider,
 			IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm);
+
+	/**
+	 * Return a shell provider that can be used to get the best parenting
+	 * possible for a modal dialog. If modal shells are already created, use the
+	 * topmost modal shell as the parent to avoid two modal dialogs. If there
+	 * are no modal shells, use the shell of the active workbench window.
+	 * 
+	 * @return a shell provider that provides the best parenting possible for a
+	 *         modal dialog.
+	 * 
+	 * @since 3.6
+	 */
+	public IShellProvider getModalDialogShellProvider();
 }

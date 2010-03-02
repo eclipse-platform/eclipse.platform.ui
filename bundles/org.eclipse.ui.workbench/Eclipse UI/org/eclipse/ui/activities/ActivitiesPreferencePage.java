@@ -12,6 +12,7 @@ package org.eclipse.ui.activities;
 
 import java.util.Hashtable;
 import java.util.Properties;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.dialogs.Dialog;
@@ -27,6 +28,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
 /**
@@ -62,6 +64,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 
     private IWorkbench workbench;
 
+    private ActivityEnabler enabler;
+    
     private Properties strings = new Properties();
 
     private IMutableActivityManager workingCopy;
@@ -107,9 +111,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 
         data = new GridData(GridData.FILL_BOTH);
         workingCopy = workbench.getActivitySupport().createWorkingCopy();
-		// FIXME compat: add enabler back
-		// enabler = new ActivityEnabler(workingCopy, strings);
-		// enabler.createControl(composite).setLayoutData(data);
+        enabler = new ActivityEnabler(workingCopy, strings);
+        enabler.createControl(composite).setLayoutData(data);
         
         Dialog.applyDialogFont(composite);
 
@@ -128,8 +131,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
-		// FIXME compat: add enabler back
-		// enabler.updateActivityStates();
+        enabler.updateActivityStates();
         workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
         
         getPreferenceStore().setValue(
@@ -143,8 +145,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     protected void performDefaults() {
-		// FIXME compat: add enabler back
-		// enabler.restoreDefaults();
+        enabler.restoreDefaults();
         activityPromptButton.setSelection(getPreferenceStore()
                 .getDefaultBoolean(
                         IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));

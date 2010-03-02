@@ -62,7 +62,7 @@ public class LegacyHandlerService implements IHandlerService {
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		Command command = cs.getCommand(cmdId);
 		E4HandlerProxy handlerProxy = new E4HandlerProxy(command, handler);
-		final EHandlerActivation activation = new EHandlerActivation(context, cmdId, handler,
+		final HandlerActivation activation = new HandlerActivation(context, cmdId, handler,
 				handlerProxy, activeWhen);
 		context.runAndTrack(activation, null);
 		return activation;
@@ -123,7 +123,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .handlers.IHandlerActivation)
 	 */
 	public IHandlerActivation activateHandler(IHandlerActivation activation) {
-		EHandlerActivation eActivation = (EHandlerActivation) activation;
+		HandlerActivation eActivation = (HandlerActivation) activation;
 		eActivation.participating = true;
 		eActivation.context.runAndTrack(eActivation, null);
 		return activation;
@@ -222,7 +222,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .ui.handlers.IHandlerActivation)
 	 */
 	public void deactivateHandler(IHandlerActivation activation) {
-		EHandlerActivation eActivation = (EHandlerActivation) activation;
+		HandlerActivation eActivation = (HandlerActivation) activation;
 		eActivation.participating = false;
 		EHandlerService hs = (EHandlerService) eActivation.context.get(EHandlerService.class
 				.getName());

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -30,9 +31,9 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.commands.PersistentState;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.UIElement;
@@ -269,7 +270,20 @@ public final class CommandService implements ICommandService {
 	public final IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
-		return null;
+		if (!command.getCommand().isDefined()) {
+			throw new NotDefinedException(
+					"Cannot define a callback for undefined command " //$NON-NLS-1$
+							+ command.getCommand().getId());
+		}
+		if (element == null) {
+			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
+					+ command.getCommand().getId());
+		}
+
+		ElementReference ref = new ElementReference(command.getId(), element,
+				command.getParameterMap());
+		registerElement(ref);
+		return ref;
 	}
 
 	/*

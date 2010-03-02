@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.ViewReference;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
 
 public class CompatibilityView extends CompatibilityPart {

@@ -21,9 +21,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
  * Basic splash implementation that provides an absolute positioned progress bar
@@ -277,22 +278,21 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		Shell splashShell = getSplash();
 		if (splashShell == null || splashShell.isDisposed())
 			return;
-		// TODO compat: we'll need to look at this once we support splash again
-		// Display display = splashShell.getDisplay();
 		
-
-		// if (Thread.currentThread() == display.getThread())
+		Display display = splashShell.getDisplay();
+		
+		if (Thread.currentThread() == display.getThread())
 			r.run(); // run immediatley if we're on the UI thread
-		// else {
-		// // wrapper with a StartupRunnable to ensure that it will run before
-		// // the UI is fully initialized
-		// StartupRunnable startupRunnable = new StartupRunnable() {
-		//
-		// public void runWithException() throws Throwable {
-		// r.run();
-		// }
-		// };
-		// display.asyncExec(startupRunnable);
-		// }
+		else {
+			// wrapper with a StartupRunnable to ensure that it will run before
+			// the UI is fully initialized
+			StartupRunnable startupRunnable = new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					r.run();
+				}
+			};
+			display.asyncExec(startupRunnable);
+		}
 	}
 }

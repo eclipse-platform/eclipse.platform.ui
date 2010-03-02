@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -50,6 +51,7 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -354,12 +356,11 @@ public class DecoratorManager implements ILabelProviderListener,
 				updateForEnablementChange();
 			}
 		}
-		// TODO commented out for e4 compatibility
-		// ((Workbench) PlatformUI.getWorkbench()).getExtensionTracker()
-		// .registerObject(
-		// definition.getConfigurationElement()
-		// .getDeclaringExtension(), definition,
-		// IExtensionTracker.REF_WEAK);
+		((Workbench) PlatformUI.getWorkbench()).getExtensionTracker()
+				.registerObject(
+						definition.getConfigurationElement()
+								.getDeclaringExtension(), definition,
+						IExtensionTracker.REF_WEAK);
 	}
 
 	/**
@@ -984,7 +985,15 @@ public class DecoratorManager implements ILabelProviderListener,
 
 		// Do not return for a disabled decorator
 		if (definition != null && definition.isEnabled()) {
-			return definition.getDecorator();
+			ILabelDecorator result = definition.getDecorator();
+			if (result == null) {
+				try {
+					result = definition.internalGetDecorator();
+				} catch (CoreException e) {
+					WorkbenchPlugin.log(e);
+				}
+			}
+			return result;
 		}
 		return null;
 	}

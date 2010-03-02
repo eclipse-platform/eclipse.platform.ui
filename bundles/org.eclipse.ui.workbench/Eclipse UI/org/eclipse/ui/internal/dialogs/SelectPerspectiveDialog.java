@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,7 +41,7 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
 import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
 import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
-import org.eclipse.ui.internal.e4.compatibility.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
@@ -188,15 +187,15 @@ public class SelectPerspectiveDialog extends Dialog implements
 						.getLabelDecorator(ContributingPluginDecorator.ID)) {
 			protected Object unwrapElement(Object element) {
 				if (element instanceof PerspectiveDescriptor) {
-					element = ((PerspectiveDescriptor) element).getConfigurationElement();
+					element = ((PerspectiveDescriptor) element).getConfigElement();
 				}
 				return element;
 			}
 		});
-		list.setContentProvider(ArrayContentProvider.getInstance());
+        list.setContentProvider(new PerspContentProvider());
         list.addFilter(activityViewerFilter);
         list.setComparator(new ViewerComparator());
-		list.setInput(perspReg.getPerspectives());
+        list.setInput(perspReg);
         list.addSelectionChangedListener(this);
         list.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {

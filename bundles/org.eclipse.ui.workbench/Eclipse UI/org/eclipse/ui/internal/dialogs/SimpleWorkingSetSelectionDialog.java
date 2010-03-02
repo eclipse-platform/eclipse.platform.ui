@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -133,8 +134,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.setLabelProvider(new WorkingSetLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
-		// FIXME compat: add back filter
-		// viewer.addFilter(new WorkingSetFilter(null));
+		viewer.addFilter(new WorkingSetFilter(null));
 		viewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
 		viewer.setFilters(new ViewerFilter[] { new Filter() });

@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.services.LegacyEvalContext;
  * 
  */
 public class E4HandlerProxy {
-	public EHandlerActivation activation = null;
+	public HandlerActivation activation = null;
 	private Command command;
 	private IHandler handler;
 

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -162,7 +163,7 @@ public class TypeFilteringDialog extends SelectionDialog {
      * viewer.
      */
     private void checkInitialSelections() {
-		IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI
+        IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry()).getUnifiedMappings();
         ArrayList selectedMappings = new ArrayList();
         for (int i = 0; i < editorMappings.length; i++) {

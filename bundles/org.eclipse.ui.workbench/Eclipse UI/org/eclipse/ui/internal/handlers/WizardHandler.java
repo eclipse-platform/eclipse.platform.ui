@@ -267,6 +267,9 @@ public abstract class WizardHandler extends AbstractHandler {
 
 		String wizardId = event.getParameter(getWizardIdParameterId());
 
+		IWorkbenchWindow activeWindow = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+
 		if (wizardId == null) {
 			executeHandler(event);
 		} else {
@@ -286,8 +289,6 @@ public abstract class WizardHandler extends AbstractHandler {
 					wizard.performFinish();
 					return null;
 				}
-
-				IWorkbenchWindow activeWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 				
 				Shell parent = activeWindow.getShell();
 				WizardDialog dialog = new WizardDialog(parent, wizard);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -27,12 +27,15 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -58,14 +61,18 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	private ISelectionProvider selectionProvider;
 
-	private IEclipseContext lastActivePageContext;
-
-	private IEclipseContext pageContext;
+	/**
+	 * The localized service locator for this page site. This locator is never
+	 * <code>null</code>.
+	 */
+	private final ServiceLocator serviceLocator;
 
 	/**
 	 * The action bars for this site
 	 */
 	private SubActionBars subActionBars;
+
+	private IEclipseContext e4Context;
 
 	/**
 	 * Creates a new sub view site of the given parent view site.
@@ -78,6 +85,24 @@ public class PageSite implements IPageSite, INestable {
 		parentSite = parentViewSite;
 		subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
 
+		// Initialize the service locator.
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(parentViewSite, null,
+				new IDisposable() {
+					public void dispose() {
+						// final Control control =
+						// ((PartSite)parentViewSite).getPane().getControl();
+						// if (control != null && !control.isDisposed()) {
+						// ((PartSite)parentViewSite).getPane().doHide();
+						// }
+						// TODO compat: not tsure what this should do
+					}
+				});
+		e4Context = EclipseContextFactory.create(((PartSite) parentViewSite).getContext(),
+				UISchedulerStrategy.getInstance());
+		e4Context.set(IContextConstants.DEBUG_STRING, "PageSite"); //$NON-NLS-1$
+		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
 	}
 
@@ -85,16 +110,16 @@ public class PageSite implements IPageSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
-		pageContext = EclipseContextFactory.create(partSite.getModel().getContext(), null);
-		pageContext.set(IWorkbenchLocationService.class.getName(), new WorkbenchLocationService(
-				IServiceScopes.PAGESITE_SCOPE, getWorkbenchWindow().getWorkbench(),
-				getWorkbenchWindow(), parentSite, null, this, 3));
-		pageContext.set(IPageSiteHolder.class.getName(), new IPageSiteHolder() {
-			public IPageSite getSite() {
-				return PageSite.this;
-			}
-		});
+		serviceLocator.registerService(IWorkbenchLocationService.class,
+				new WorkbenchLocationService(IServiceScopes.PAGESITE_SCOPE,
+						getWorkbenchWindow().getWorkbench(),
+						getWorkbenchWindow(), parentSite, null, this, 3));
+		serviceLocator.registerService(IPageSiteHolder.class,
+				new IPageSiteHolder() {
+					public IPageSite getSite() {
+						return PageSite.this;
+					}
+				});
 	}
 
 	/**
@@ -104,10 +129,9 @@ public class PageSite implements IPageSite, INestable {
 		if (menuExtenders != null) {
 			HashSet managers = new HashSet(menuExtenders.size());
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				// PopupMenuExtender ext = (PopupMenuExtender)
-				// menuExtenders.get(i);
-				// managers.add(ext.getManager());
-				// ext.dispose();
+				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
+				managers.add(ext.getManager());
+				ext.dispose();
 			}
 			if (managers.size()>0) {
 				for (Iterator iterator = managers.iterator(); iterator
@@ -119,15 +143,7 @@ public class PageSite implements IPageSite, INestable {
 			menuExtenders = null;
 		}
 		subActionBars.dispose();
-
-		if (pageContext instanceof IDisposable) {
-			((IDisposable) pageContext).dispose();
-		}
-
-		WorkbenchPartSite partSite = (WorkbenchPartSite) parentSite;
-		IEclipseContext context = partSite.getModel().getContext();
-		context.remove(IWorkbenchLocationService.class.getName());
-		context.remove(IPageSiteHolder.class.getName());
+		serviceLocator.dispose();
 	}
 
 	/**
@@ -164,7 +180,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final Object getService(final Class key) {
-		return pageContext.get(key.getName());
+		return serviceLocator.getService(key);
 	}
 
 	/*
@@ -182,7 +198,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final boolean hasService(final Class key) {
-		return pageContext.containsKey(key.getName());
+		return serviceLocator.hasService(key);
 	}
 
 	/*
@@ -193,10 +209,8 @@ public class PageSite implements IPageSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		// TODO compat: registerContextMenu
-		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
-		// PartSite.registerContextMenu(menuID, menuMgr, selProvider, false,
-		// parentSite.getPart(), menuExtenders);
+		PartSite.registerContextMenu(menuID, menuMgr, selProvider, false,
+				parentSite.getPart(), menuExtenders);
 	}
 
 	/*
@@ -214,9 +228,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
-		IEclipseContext parent = (IEclipseContext) pageContext.getLocal(IContextConstants.PARENT);
-		lastActivePageContext = (IEclipseContext) parent.getLocal(IContextConstants.ACTIVE_CHILD);
-		parent.set(IContextConstants.ACTIVE_CHILD, pageContext);
+		serviceLocator.activate();
 	}
 
 	/*
@@ -227,7 +239,6 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
-		IEclipseContext parent = (IEclipseContext) pageContext.getLocal(IContextConstants.PARENT);
-		parent.set(IContextConstants.ACTIVE_CHILD, lastActivePageContext);
+		serviceLocator.deactivate();
 	}
 }

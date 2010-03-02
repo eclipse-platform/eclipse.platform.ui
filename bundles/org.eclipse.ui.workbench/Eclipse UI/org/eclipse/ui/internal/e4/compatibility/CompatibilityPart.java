@@ -31,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.util.Util;
 
 public abstract class CompatibilityPart {
@@ -60,7 +62,7 @@ public abstract class CompatibilityPart {
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		parent.addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
-				WorkbenchPartReference reference = getReference();
+				WorkbenchPartReference reference = (WorkbenchPartReference) getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 
@@ -104,12 +106,12 @@ public abstract class CompatibilityPart {
 		// invoke init methods
 		reference.initialize(wrapped);
 		// hook reference listeners to the part
-		reference.hookPropertyListeners();
+		// reference.hookPropertyListeners();
 
 		createPartControl(wrapped, composite);
 		delegateSetFocus();
 
-		part.setLabel(computeLabel());
+		part.setLabel(wrapped.getTitle());
 		part.setTooltip(wrapped.getTitleToolTip());
 
 		wrapped.addPropertyListener(new IPropertyListener() {
@@ -126,9 +128,6 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
-
-		// notify the workbench we've been opened
-		((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
 	}
 
 	void doSave(@Optional IProgressMonitor monitor) {

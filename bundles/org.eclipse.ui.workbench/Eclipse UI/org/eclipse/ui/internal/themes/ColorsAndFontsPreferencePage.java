@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -79,6 +79,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -87,6 +88,8 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -173,8 +176,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                         Set bindings = themeRegistry
                                 .getPresentationsBindingsFor(categories[i]);
                         if (bindings == null
-								|| bindings.contains(WorkbenchPlugin.getDefault()
-										.getPresentationId())) {
+                                || bindings.contains(workbench
+                                        .getPresentationId())) {
 							list.add(categories[i]);
 						}
                     }
@@ -301,7 +304,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     Set bindings = themeRegistry
                             .getPresentationsBindingsFor(categories[i]);
                     if (bindings == null
-							|| bindings.contains(WorkbenchPlugin.getDefault().getPresentationId())) {
+                            || bindings.contains(workbench.getPresentationId())) {
 						list.add(categories[i]);
 					}
                 }
@@ -629,7 +632,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     private IPropertyChangeListener themeChangeListener;
 
-	private IWorkbench workbench;
+    private Workbench workbench;
 
     private FilteredTree tree;
     
@@ -1054,7 +1057,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
     public void init(IWorkbench aWorkbench) {
-		this.workbench = aWorkbench;
+        this.workbench = (Workbench) aWorkbench;
         setPreferenceStore(PrefUtil.getInternalPreferenceStore());
 
         final IThemeManager themeManager = aWorkbench.getThemeManager();

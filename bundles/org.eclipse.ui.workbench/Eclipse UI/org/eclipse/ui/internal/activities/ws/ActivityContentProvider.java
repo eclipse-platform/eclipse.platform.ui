@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.activities.ws;
 
 import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.IActivityManager;

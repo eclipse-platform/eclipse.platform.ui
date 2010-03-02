@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -29,9 +28,10 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.KeyBindingService;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.WorkbenchPartSite;
 import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
@@ -123,9 +123,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 					public void dispose() {
 						getMultiPageEditor().close();
 					}});
-		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
-		IEclipseContext context = partSite.getModel().getContext();
-		serviceLocator.setContext(context);
 
 		initializeDefaultServices();
 	}
@@ -134,14 +131,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
-		IEclipseContext context = partSite.getModel().getContext();
-		context.set(IWorkbenchLocationService.class.getName(),
+		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.MPESITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), getMultiPageEditor().getSite(),
 						this, null, 3));
-		context.set(IMultiPageEditorSiteHolder.class.getName(),
+		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
 				new IMultiPageEditorSiteHolder() {
 					public MultiPageEditorSite getSite() {
 						return MultiPageEditorSite.this;
@@ -156,9 +151,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void activate() {
-		if (serviceLocator instanceof INestable) {
-			((INestable) serviceLocator).activate();
-		}
+		serviceLocator.activate();
 	}
 
 	/**
@@ -168,9 +161,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void deactivate() {
-		if (serviceLocator instanceof INestable) {
-			((INestable) serviceLocator).deactivate();
-		}
+		serviceLocator.deactivate();
 	}
 
 	/**
@@ -179,7 +170,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	public void dispose() {
 		if (menuExtenders != null) {
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				// ((PopupMenuExtender) menuExtenders.get(i)).dispose();
+				((PopupMenuExtender) menuExtenders.get(i)).dispose();
 			}
 			menuExtenders = null;
 		}
@@ -192,20 +183,15 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 				INestableKeyBindingService nestableParent = (INestableKeyBindingService) parentService;
 				nestableParent.removeKeyBindingService(this);
 			}
-			if (service instanceof IDisposable) {
-				((IDisposable) service).dispose();
+			if (service instanceof KeyBindingService) {
+				((KeyBindingService) service).dispose();
 			}
 			service = null;
 		}
 
-		if (serviceLocator instanceof IDisposable) {
-			((IDisposable) serviceLocator).dispose();
+		if (serviceLocator != null) {
+			serviceLocator.dispose();
 		}
-
-		WorkbenchPartSite partSite = (WorkbenchPartSite) multiPageEditor.getSite();
-		IEclipseContext context = partSite.getModel().getContext();
-		context.remove(IWorkbenchLocationService.class.getName());
-		context.remove(IMultiPageEditorSiteHolder.class.getName());
 	}
 
 	/**
@@ -506,10 +492,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		// TODO compat: registerContextMenu
-		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
-		// PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
-		// editor, menuExtenders);
+		PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
+				editor, menuExtenders);
 	}
 
 	public final void registerContextMenu(final String menuId,
@@ -519,10 +503,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		// TODO compat: registerContextMenu
-		E4Util.unsupported("registerContextMenu"); //$NON-NLS-1$
-		// PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
-		// includeEditorInput, editor, menuExtenders);
+		PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+				includeEditorInput, editor, menuExtenders);
 	}
 
 	/**

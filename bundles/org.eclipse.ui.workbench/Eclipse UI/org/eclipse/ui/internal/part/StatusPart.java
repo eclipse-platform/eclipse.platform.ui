@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.part;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;

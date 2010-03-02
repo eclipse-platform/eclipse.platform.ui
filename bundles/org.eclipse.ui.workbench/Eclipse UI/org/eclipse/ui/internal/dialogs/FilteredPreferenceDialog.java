@@ -242,8 +242,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		tree.setInput(getPreferenceManager());
 
 
-		// TODO compat: what to do with this filter
-		// tree.addFilter(new CapabilityFilter());
+		tree.addFilter(new CapabilityFilter());
 
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			/*

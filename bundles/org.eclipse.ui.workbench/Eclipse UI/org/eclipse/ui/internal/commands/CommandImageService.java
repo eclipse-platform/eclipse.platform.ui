@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.commands;
 
 import java.net.URL;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;

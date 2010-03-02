@@ -10,23 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.ReopenEditorMenu;
+import org.eclipse.ui.internal.ShowInMenu;
+import org.eclipse.ui.internal.ShowViewMenu;
+import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
@@ -201,10 +204,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// return new SwitchToWindowMenu(window, getId(), true);
-			// FIXME compat: where did this go?
-			E4Util.unsupported("OPEN_WINDOWS"); //$NON-NLS-1$
-			return null;
+            return new SwitchToWindowMenu(window, getId(), true);
         }
     };
 
@@ -222,10 +222,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// return new ShowViewMenu(window, getId());
-			// FIXME compat: where did this go?
-			E4Util.unsupported("VIEWS_SHORTLIST"); //$NON-NLS-1$
-			return null;
+            return new ShowViewMenu(window, getId());
         }
     };
 
@@ -244,23 +241,10 @@ public abstract class ContributionItemFactory {
                 throw new IllegalArgumentException();
             }
             
-
-			// ShowInMenu showInMenu = new ShowInMenu();
-			// showInMenu.setId(getId());
-			// showInMenu.initialize(window);
-			// return showInMenu;
-			// FIXME compat: where did this go?
-			E4Util.unsupported("VIEWS_SHOW_IN"); //$NON-NLS-1$
-			return new ContributionItem("VIEWS_SHOW_IN") { //$NON-NLS-1$
-
-				public void fill(ToolBar parent, int index) {
-					super.fill(parent, index);
-				}
-
-				public void dispose() {
-					super.dispose();
-				}
-			};
+            ShowInMenu showInMenu = new ShowInMenu();
+            showInMenu.setId(getId());
+            showInMenu.initialize(window);
+			return showInMenu;
         }
     };
 
@@ -277,10 +261,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// return new ReopenEditorMenu(window, getId(), true);
-			// FIXME compat: where did this go?
-			E4Util.unsupported("REOPEN_EDITORS"); //$NON-NLS-1$
-			return null;
+            return new ReopenEditorMenu(window, getId(), true);
         }
     };
 
@@ -300,9 +281,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// FIXME compat: where did this go?
-			E4Util.unsupported("PERSPECTIVES_SHORTLIST"); //$NON-NLS-1$
-			return null;
+            return new ChangeToPerspectiveMenu(window, getId());
         }
     };
     
@@ -336,10 +315,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			// return new HelpSearchContributionItem(window, getId());
-			// FIXME compat: where did this go?
-			E4Util.unsupported("HELP_SEARCH"); //$NON-NLS-1$
-			return null;
+            return new HelpSearchContributionItem(window, getId());
         }
     };
 

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
@@ -20,6 +21,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -27,9 +29,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.WorkbenchWindow;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -117,7 +119,7 @@ public class ProgressManagerUtil {
 			return;
 		}
 		try {
-			IViewDescriptor reference = window.getWorkbench()
+			IViewDescriptor reference = WorkbenchPlugin.getDefault()
 					.getViewRegistry()
 					.find(IProgressConstants.PROGRESS_VIEW_ID);
 
@@ -373,8 +375,20 @@ public class ProgressManagerUtil {
 		if (currentWindow == null) {
 			return;
 		}
-		// TODO compat: animateDown needs some re-work
-		E4Util.unsupported("animateDown"); //$NON-NLS-1$
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+
+		ProgressRegion progressRegion = internalWindow.getProgressRegion();
+		if (progressRegion == null) {
+			return;
+		}
+		Rectangle endPosition = progressRegion.getControl().getBounds();
+
+		Point windowLocation = internalWindow.getShell().getLocation();
+		endPosition.x += windowLocation.x;
+		endPosition.y += windowLocation.y;
+
+		// animate the progress dialog's removal
+		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
 	}
 
 	/**
@@ -390,8 +404,19 @@ public class ProgressManagerUtil {
 		if (currentWindow == null) {
 			return;
 		}
-		// TODO compat: animateUp needs some re-work
-		E4Util.unsupported("animateUp"); //$NON-NLS-1$
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+		Point windowLocation = internalWindow.getShell().getLocation();
+
+		ProgressRegion progressRegion = internalWindow.getProgressRegion();
+		if (progressRegion == null) {
+			return;
+		}
+		Rectangle startPosition = progressRegion.getControl().getBounds();
+		startPosition.x += windowLocation.x;
+		startPosition.y += windowLocation.y;
+
+		// animate the progress dialog's arrival
+		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
 	}
 
 	/**
@@ -421,9 +446,8 @@ public class ProgressManagerUtil {
 	 * @return URL
 	 */
 	public static URL getIconsRoot() {
-		// TODO compat: we need to put the Progress Manager root back
 		return BundleUtility.find(PlatformUI.PLUGIN_ID,
- "/"); //$NON-NLS-1$
+				ProgressManager.PROGRESS_FOLDER);
 	}
 
 	/**

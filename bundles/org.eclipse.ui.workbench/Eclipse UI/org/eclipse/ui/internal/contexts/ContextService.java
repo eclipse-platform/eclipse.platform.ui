@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.IContextManagerListener;

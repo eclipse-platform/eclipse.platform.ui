@@ -21,9 +21,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IServiceLocator;
 
-public class ActionBars implements IActionBars {
+public class ActionBars extends SubActionBars {
 
 	private IToolBarManager toolbarManager;
 
@@ -33,7 +35,8 @@ public class ActionBars implements IActionBars {
 
 	private HashMap<String, IAction> actions = new HashMap<String, IAction>();
 
-	ActionBars(MPart part) {
+	public ActionBars(final IActionBars parent, final IServiceLocator serviceLocator, MPart part) {
+		super(parent, serviceLocator);
 		this.part = part;
 	}
 
@@ -69,23 +72,6 @@ public class ActionBars implements IActionBars {
 		return menuManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionBars#getServiceLocator()
-	 */
-	public IServiceLocator getServiceLocator() {
-		// FIXME compat create a delegation implementation for this?
-		return new IServiceLocator() {
-			public boolean hasService(Class api) {
-				return part.getContext().containsKey(api.getName());
-			}
-
-			public Object getService(Class api) {
-				return part.getContext().get(api.getName());
-			}
-		};
-	}
 
 	/*
 	 * (non-Javadoc)

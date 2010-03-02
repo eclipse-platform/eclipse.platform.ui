@@ -13,7 +13,8 @@ package org.eclipse.ui;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.e4.compatibility.Workbench;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.testing.TestableObject;
 
@@ -86,7 +87,11 @@ public final class PlatformUI {
      * @return the workbench
      */
     public static IWorkbench getWorkbench() {
-		return Workbench.getInstance();
+        if (Workbench.getInstance() == null) {
+            // app forgot to call createAndRunWorkbench beforehand
+            throw new IllegalStateException(WorkbenchMessages.PlatformUI_NoWorkbench); 
+        }
+        return Workbench.getInstance();
     }
 
     /**
@@ -105,7 +110,8 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
     public static boolean isWorkbenchRunning() {
-		return Workbench.isWorkbenchRunning();
+        return Workbench.getInstance() != null
+                && Workbench.getInstance().isRunning();
     }
 
     /**
@@ -138,11 +144,10 @@ public final class PlatformUI {
      * because of an emergency; other values reserved for future use
      * @since 3.0
      */
-	// TODO commented out for e4 compatibility
-	public static int createAndRunWorkbench(Display display, WorkbenchAdvisor advisor) {
-		// return Workbench.createAndRunWorkbench(display, advisor);
-		return 0;
-	}
+    public static int createAndRunWorkbench(Display display,
+            WorkbenchAdvisor advisor) {
+        return Workbench.createAndRunWorkbench(display, advisor);
+    }
 
     /**
      * Creates the <code>Display</code> to be used by the workbench.
@@ -153,8 +158,7 @@ public final class PlatformUI {
      * @since 3.0
      */
     public static Display createDisplay() {
-		// return Workbench.createDisplay();
-		return null;
+        return Workbench.createDisplay();
     }
 
     /**
@@ -168,8 +172,7 @@ public final class PlatformUI {
      * @since 3.0
      */
     public static TestableObject getTestableObject() {
-		return (TestableObject) org.eclipse.e4.workbench.ui.internal.E4Workbench.getServiceContext().get(
-				TestableObject.class.getName());
+        return Workbench.getWorkbenchTestable();
     }
 
     /**

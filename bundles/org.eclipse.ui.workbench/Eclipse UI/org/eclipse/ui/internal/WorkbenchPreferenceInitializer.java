@@ -62,6 +62,9 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE, false);
 		
 		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
+		
+		node.putBoolean(IPreferenceConstants.COOLBAR_VISIBLE, true);
+		node.putBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE,

@@ -17,7 +17,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.InternalSaveable;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.progress.IJobRunnable;
 
 /**
@@ -39,9 +44,8 @@ import org.eclipse.ui.progress.IJobRunnable;
  */
 public abstract class Saveable extends InternalSaveable implements IAdaptable {
 
-	// TODO commented out for e4 compatibility
-	// private Cursor waitCursor;
-	// private Cursor originalCursor;
+	private Cursor waitCursor;
+	private Cursor originalCursor;
 
 	/**
 	 * Attempts to show this saveable in the given page and returns
@@ -241,22 +245,20 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * @since 3.3
 	 */
 	public void disableUI(IWorkbenchPart[] parts, boolean closing) {
-		// TODO commented out for e4 compatibility
-		// for (int i = 0; i < parts.length; i++) {
-		// IWorkbenchPart workbenchPart = parts[i];
-		// Composite paneComposite = (Composite) ((PartSite) workbenchPart
-		// .getSite()).getPane().getControl();
-		// Control[] paneChildren = paneComposite.getChildren();
-		// Composite toDisable = ((Composite) paneChildren[0]);
-		// toDisable.setEnabled(false);
-		// if (waitCursor == null) {
-		// waitCursor = new
-		// Cursor(workbenchPart.getSite().getWorkbenchWindow().getShell().getDisplay(),
-		// SWT.CURSOR_WAIT);
-		// }
-		// originalCursor = paneComposite.getCursor();
-		// paneComposite.setCursor(waitCursor);
-		// }
+		for (int i = 0; i < parts.length; i++) {
+			IWorkbenchPart workbenchPart = parts[i];
+			Composite paneComposite = (Composite) ((PartSite) workbenchPart
+.getSite()).getModel()
+					.getWidget();
+			Control[] paneChildren = paneComposite.getChildren();
+			Composite toDisable = ((Composite) paneChildren[0]);
+			toDisable.setEnabled(false);
+			if (waitCursor == null) {
+				waitCursor = new Cursor(workbenchPart.getSite().getWorkbenchWindow().getShell().getDisplay(), SWT.CURSOR_WAIT);
+			}
+			originalCursor = paneComposite.getCursor();
+			paneComposite.setCursor(waitCursor);
+		}
 	}
 
 	/**
@@ -274,20 +276,20 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * @since 3.3
 	 */
 	public void enableUI(IWorkbenchPart[] parts) {
-		// TODO commented out for e4 compatibility
-		// for (int i = 0; i < parts.length; i++) {
-		// IWorkbenchPart workbenchPart = parts[i];
-		// Composite paneComposite = (Composite) ((PartSite) workbenchPart
-		// .getSite()).getPane().getControl();
-		// Control[] paneChildren = paneComposite.getChildren();
-		// Composite toEnable = ((Composite) paneChildren[0]);
-		// paneComposite.setCursor(originalCursor);
-		// if (waitCursor!=null && !waitCursor.isDisposed()) {
-		// waitCursor.dispose();
-		// waitCursor = null;
-		// }
-		// toEnable.setEnabled(true);
-		// }
+		for (int i = 0; i < parts.length; i++) {
+			IWorkbenchPart workbenchPart = parts[i];
+			Composite paneComposite = (Composite) ((PartSite) workbenchPart
+.getSite()).getModel()
+					.getWidget();
+			Control[] paneChildren = paneComposite.getChildren();
+			Composite toEnable = ((Composite) paneChildren[0]);
+			paneComposite.setCursor(originalCursor);
+			if (waitCursor!=null && !waitCursor.isDisposed()) {
+				waitCursor.dispose();
+				waitCursor = null;
+			}
+			toEnable.setEnabled(true);
+		}
 	}
 
 	/**

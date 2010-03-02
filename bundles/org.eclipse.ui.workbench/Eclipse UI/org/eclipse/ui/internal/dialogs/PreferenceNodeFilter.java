@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
 import java.util.HashSet;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;

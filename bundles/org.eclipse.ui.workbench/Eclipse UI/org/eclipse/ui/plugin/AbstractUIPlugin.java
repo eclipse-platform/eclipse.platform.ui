@@ -33,6 +33,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
@@ -481,8 +482,7 @@ public abstract class AbstractUIPlugin extends Plugin {
         // so use asyncExec.  See bug 6623 for more details.
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-				// TODO commented out for e4 compatibility
-				// WWinPluginAction.refreshActionList();
+                WWinPluginAction.refreshActionList();
             }
         });
     }
@@ -687,9 +687,6 @@ public abstract class AbstractUIPlugin extends Plugin {
             }
         }
 
-        if (fullPathString == null) {
-			return null;
-		}
         return ImageDescriptor.createFromURL(fullPathString);
     }
     
