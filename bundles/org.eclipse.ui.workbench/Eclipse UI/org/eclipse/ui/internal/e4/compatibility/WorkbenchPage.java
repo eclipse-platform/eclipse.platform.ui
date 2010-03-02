@@ -115,28 +115,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private E4PartListener e4PartListener = new E4PartListener();
 
-	private EventHandler selectedHandler = new EventHandler() {
-		public void handleEvent(Event event) {
-			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
-
-			if (oldSelected instanceof MPart) {
-				MPart oldSelectedPart = (MPart) oldSelected;
-				if (oldSelectedPart.isToBeRendered()) {
-					firePartHidden(oldSelectedPart);
-				}
-			}
-
-			if (selected instanceof MPart) {
-				MPart selectedPart = (MPart) selected;
-				if (selectedPart.isToBeRendered()) {
-					firePartBroughtToTop(selectedPart);
-					firePartVisible(selectedPart);
-				}
-			}
-		}
-	};
-
 	/**
 	 * @param workbenchWindow
 	 * @param input
@@ -150,11 +128,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	void postConstruct() throws InvocationTargetException, InstantiationException {
 		partService.addPartListener(e4PartListener);
 		window.getContext().set(IPartService.class.getName(), this);
-
-		IEventBroker eventBroker = (IEventBroker) window.getContext().get(
-				IEventBroker.class.getName());
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
@@ -262,6 +235,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
+	private void firePartDeactivated(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListenerList.getListeners()) {
+				((IPartListener) listener).partDeactivated(workbenchPart);
+			}
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partDeactivated(partReference);
+			}
+		}
+	}
+
 	// FIXME: convert me to e4 events!
 	void firePartClosed(CompatibilityPart compatibilityPart) {
 		IWorkbenchPart part = compatibilityPart.getPart();
@@ -276,7 +265,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-	// FIXME: convert me to e4 events!
 	private void firePartVisible(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
@@ -289,7 +277,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-	// FIXME: convert me to e4 events!
 	private void firePartHidden(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
@@ -1542,7 +1529,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		activationList.add(part);
 	}
 
-	private void updateBroughtToTop(MPart part) {
+	private void updateVisible(MPart part) {
 		MElementContainer<?> parent = part.getParent();
 		if (parent instanceof MPartStack) {
 			int newIndex = lastIndexOfContainer(parent);
@@ -1577,8 +1564,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		public void partBroughtToTop(MPart part) {
-			updateBroughtToTop(part);
 			firePartBroughtToTop(part);
+		}
+
+		public void partDeactivated(MPart part) {
+			firePartDeactivated(part);
+		}
+
+		public void partHidden(MPart part) {
+			firePartHidden(part);
+		}
+
+		public void partVisible(MPart part) {
+			updateVisible(part);
+			firePartVisible(part);
 		}
 
 	}

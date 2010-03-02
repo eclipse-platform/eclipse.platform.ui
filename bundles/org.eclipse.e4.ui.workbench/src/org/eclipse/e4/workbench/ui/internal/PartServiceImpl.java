@@ -76,11 +76,19 @@ public class PartServiceImpl implements EPartService {
 
 	private EventHandler selectedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
+			Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
 			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			if (selected instanceof MPart) {
-				if (((MPart) selected).isToBeRendered()) {
-					firePartBroughtToTop((MPart) selected);
-				}
+
+			MPart oldSelectedPart = oldSelected instanceof MPart ? (MPart) oldSelected : null;
+			MPart selectedPart = selected instanceof MPart ? (MPart) selected : null;
+
+			if (oldSelectedPart != null) {
+				firePartHidden(oldSelectedPart);
+			}
+
+			if (selectedPart != null && selectedPart.isToBeRendered()) {
+				firePartVisible(selectedPart);
+				firePartBroughtToTop(selectedPart);
 			}
 		}
 	};
@@ -114,16 +122,25 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
+	private MPart lastActivePart;
+
 	private ListenerList listeners = new ListenerList();
 
 	private boolean constructed = false;
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
+		lastActivePart = activePart;
 		activePart = p;
 
-		if (constructed && p != null) {
-			firePartActivated(p);
+		if (constructed) {
+			if (lastActivePart != null && lastActivePart != activePart) {
+				firePartDeactivated(lastActivePart);
+			}
+
+			if (activePart != null) {
+				firePartActivated(activePart);
+			}
 		}
 	}
 
@@ -160,6 +177,24 @@ public class PartServiceImpl implements EPartService {
 	private void firePartActivated(MPart part) {
 		for (Object listener : listeners.getListeners()) {
 			((IPartListener) listener).partActivated(part);
+		}
+	}
+
+	private void firePartDeactivated(MPart part) {
+		for (Object listener : listeners.getListeners()) {
+			((IPartListener) listener).partDeactivated(part);
+		}
+	}
+
+	private void firePartHidden(MPart part) {
+		for (Object listener : listeners.getListeners()) {
+			((IPartListener) listener).partHidden(part);
+		}
+	}
+
+	private void firePartVisible(MPart part) {
+		for (Object listener : listeners.getListeners()) {
+			((IPartListener) listener).partVisible(part);
 		}
 	}
 

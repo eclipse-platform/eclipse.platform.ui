@@ -22,4 +22,10 @@ public interface IPartListener {
 
 	public void partBroughtToTop(MPart part);
 
+	public void partDeactivated(MPart part);
+
+	public void partHidden(MPart part);
+
+	public void partVisible(MPart part);
+
 }

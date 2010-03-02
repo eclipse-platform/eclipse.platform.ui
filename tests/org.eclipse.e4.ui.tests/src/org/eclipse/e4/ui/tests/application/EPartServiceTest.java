@@ -33,9 +33,9 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
@@ -1956,67 +1956,92 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partListener.isValid());
 	}
 
-	public void testEvent_PartBroughtToTop() {
-		MApplication application = MApplicationFactory.eINSTANCE
-				.createApplication();
+	public void testEvent_PartDeactivated() {
+		MApplication application = createApplication("partFront", "partBack");
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
-		MPart partFrontA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partBackA = MApplicationFactory.eINSTANCE.createPart();
-		partStackA.getChildren().add(partFrontA);
-		partStackA.getChildren().add(partBackA);
-		window.getChildren().add(partStackA);
-
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
-		MPart partFrontB = MApplicationFactory.eINSTANCE.createPart();
-		MPart partBackB = MApplicationFactory.eINSTANCE.createPart();
-		partStackB.getChildren().add(partFrontB);
-		partStackB.getChildren().add(partBackB);
-		window.getChildren().add(partStackB);
-
-		partStackA.setSelectedElement(partFrontA);
-		partStackB.setSelectedElement(partFrontB);
-		window.setSelectedElement(partStackA);
-		application.setSelectedElement(window);
-
-		initialize(applicationContext, application);
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partStack.setSelectedElement(partFront);
 
 		getEngine().createGui(window);
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		partService.activate(partFrontA);
-		assertEquals(partFrontA, partService.getActivePart());
+		assertEquals(partFront, partService.getActivePart());
 
 		PartListener partListener = new PartListener();
 		partService.addPartListener(partListener);
 
-		partService.bringToTop(partBackB);
+		partService.activate(partBack);
 
-		assertEquals(0, partListener.getActivated());
-		assertEquals(1, partListener.getBroughtToTop());
+		assertEquals(1, partListener.getDeactivated());
+		assertEquals(partFront, partListener.getDeactivatedParts().get(0));
+		assertTrue(partListener.isValid());
+	}
 
-		assertEquals(0, partListener.getActivatedParts().size());
-		assertEquals(1, partListener.getBroughtToTopParts().size());
-		assertEquals(partBackB, partListener.getBroughtToTopParts().get(0));
+	public void testEvent_PartHidden() {
+		MApplication application = createApplication("partFront", "partBack");
 
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partStack.setSelectedElement(partFront);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(partFront, partService.getActivePart());
+
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		partService.activate(partBack);
+
+		assertEquals(1, partListener.getHidden());
+		assertEquals(partFront, partListener.getHiddenParts().get(0));
 		assertTrue(partListener.isValid());
 
 		partListener.clear();
+		partService.activate(partFront);
 
-		partService.bringToTop(partBackA);
+		assertEquals(1, partListener.getHidden());
+		assertEquals(partBack, partListener.getHiddenParts().get(0));
+		assertTrue(partListener.isValid());
+	}
 
-		assertEquals(1, partListener.getActivated());
-		assertEquals(1, partListener.getBroughtToTop());
+	public void testEvent_PartVisible() {
+		MApplication application = createApplication("partFront", "partBack");
 
-		assertEquals(1, partListener.getActivatedParts().size());
-		assertEquals(partBackA, partListener.getActivatedParts().get(0));
-		assertEquals(1, partListener.getBroughtToTopParts().size());
-		assertEquals(partBackA, partListener.getBroughtToTopParts().get(0));
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partFront = partStack.getChildren().get(0);
+		MPart partBack = partStack.getChildren().get(1);
+		partStack.setSelectedElement(partFront);
 
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(partFront, partService.getActivePart());
+
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		partService.activate(partBack);
+
+		assertEquals(1, partListener.getVisible());
+		assertEquals(partBack, partListener.getVisibleParts().get(0));
+		assertTrue(partListener.isValid());
+
+		partListener.clear();
+		partService.activate(partFront);
+
+		assertEquals(1, partListener.getVisible());
+		assertEquals(partFront, partListener.getVisibleParts().get(0));
 		assertTrue(partListener.isValid());
 	}
 
@@ -3853,17 +3878,28 @@ public class EPartServiceTest extends TestCase {
 	class PartListener implements IPartListener {
 
 		private List<MPart> activatedParts = new ArrayList<MPart>();
-		private List<MPart> broughtToTopParts = new ArrayList<MPart>();
+		private List<MPart> deactivatedParts = new ArrayList<MPart>();
+		private List<MPart> hiddenParts = new ArrayList<MPart>();
+		private List<MPart> visibleParts = new ArrayList<MPart>();
 
 		private int activated = 0;
-		private int broughtToTop = 0;
+		private int deactivated = 0;
+		private int hidden = 0;
+		private int visible = 0;
+
 		private boolean valid = true;
 
 		public void clear() {
 			activated = 0;
-			broughtToTop = 0;
+			deactivated = 0;
+			hidden = 0;
+			visible = 0;
+
 			activatedParts.clear();
-			broughtToTopParts.clear();
+			deactivatedParts.clear();
+			hiddenParts.clear();
+			visibleParts.clear();
+
 			valid = true;
 		}
 
@@ -3871,8 +3907,16 @@ public class EPartServiceTest extends TestCase {
 			return activated;
 		}
 
-		public int getBroughtToTop() {
-			return broughtToTop;
+		public int getDeactivated() {
+			return deactivated;
+		}
+
+		public int getHidden() {
+			return hidden;
+		}
+
+		public int getVisible() {
+			return visible;
 		}
 
 		public boolean isValid() {
@@ -3883,8 +3927,16 @@ public class EPartServiceTest extends TestCase {
 			return activatedParts;
 		}
 
-		public List<MPart> getBroughtToTopParts() {
-			return broughtToTopParts;
+		public List<MPart> getDeactivatedParts() {
+			return deactivatedParts;
+		}
+
+		public List<MPart> getHiddenParts() {
+			return hiddenParts;
+		}
+
+		public List<MPart> getVisibleParts() {
+			return visibleParts;
 		}
 
 		public void partActivated(MPart part) {
@@ -3896,11 +3948,31 @@ public class EPartServiceTest extends TestCase {
 		}
 
 		public void partBroughtToTop(MPart part) {
+
+		}
+
+		public void partDeactivated(MPart part) {
 			if (valid && part == null) {
 				valid = false;
 			}
-			broughtToTop++;
-			broughtToTopParts.add(part);
+			deactivated++;
+			deactivatedParts.add(part);
+		}
+
+		public void partHidden(MPart part) {
+			if (valid && part == null) {
+				valid = false;
+			}
+			hidden++;
+			hiddenParts.add(part);
+		}
+
+		public void partVisible(MPart part) {
+			if (valid && part == null) {
+				valid = false;
+			}
+			visible++;
+			visibleParts.add(part);
 		}
 
 	}
