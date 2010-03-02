@@ -30,6 +30,7 @@ public class E4Workbench implements IWorkbench {
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;
+	MApplication appModel = null;
 
 	public IEclipseContext getContext() {
 		return appContext;
@@ -38,6 +39,9 @@ public class E4Workbench implements IWorkbench {
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
 		appContext = applicationContext;
 		appContext.set(IWorkbench.class.getName(), this);
+		if (uiRoot instanceof MApplication) {
+			appModel = (MApplication) uiRoot;
+		}
 
 		if (uiRoot instanceof MApplication) {
 			init((MApplication) uiRoot);
@@ -106,5 +110,9 @@ public class E4Workbench implements IWorkbench {
 
 	public static IEclipseContext getServiceContext() {
 		return EclipseContextFactory.getServiceContext(Activator.getDefault().getContext());
+	}
+
+	public MApplication getApplication() {
+		return appModel;
 	}
 }

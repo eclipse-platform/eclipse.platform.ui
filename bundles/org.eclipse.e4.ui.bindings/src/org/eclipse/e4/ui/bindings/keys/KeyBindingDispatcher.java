@@ -234,7 +234,7 @@ public class KeyBindingDispatcher {
 	 *             caller of this method to decide whether to log the message, display a dialog, or
 	 *             ignore this exception entirely.
 	 */
-	final boolean executeCommand(final ParameterizedCommand parameterizedCommand,
+	public final boolean executeCommand(final ParameterizedCommand parameterizedCommand,
 			final Event trigger) throws CommandException {
 
 		// Reset the key binding state (close window, clear status line, etc.)

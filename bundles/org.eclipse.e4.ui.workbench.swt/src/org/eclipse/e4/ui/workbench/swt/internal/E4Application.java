@@ -56,12 +56,43 @@ public class E4Application implements IApplication {
 	private String[] args;
 
 	private ResourceHandler handler;
+	private Display display = null;
+
+	public Display getApplicationDisplay() {
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
 
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
 
-		Display display = new Display();
+		Display display = getApplicationDisplay();
 
+		E4Workbench workbench = createE4Workbench(applicationContext);
+
+		// Create and run the UI (if any)
+		workbench.createAndRunUI(workbench.getApplication());
+
+		// Save the model into the targetURI
+		saveModel();
+
+		workbench.close();
+
+		return 0;
+	}
+
+	public void saveModel() {
+		try {
+			handler.save();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public E4Workbench createE4Workbench(IApplicationContext applicationContext) {
 		args = (String[]) applicationContext.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
 		IEclipseContext appContext = createDefaultContext();
@@ -104,25 +135,7 @@ public class E4Application implements IApplication {
 		// Instantiate the Workbench (which is responsible for
 		// 'running' the UI (if any)...
 		E4Workbench workbench = new E4Workbench(appModel, appContext);
-
-		// Create and run the UI (if any)
-		workbench.createAndRunUI(appModel);
-
-		// Save the model into the targetURI
-		saveModel();
-
-		workbench.close();
-
-		return 0;
-	}
-
-	private void saveModel() {
-		try {
-			handler.save();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return workbench;
 	}
 
 	private MApplication loadApplicationModel(IApplicationContext appContext,
