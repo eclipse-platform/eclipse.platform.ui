@@ -483,6 +483,17 @@ public class JobManager implements IJobManager {
 		return null;
 	}
 
+	public ISchedulingRule currentRule() {
+		//check thread job first, because actual current job may have null rule
+		Job currentJob = implicitJobs.getThreadJob(Thread.currentThread());
+		if (currentJob != null)
+			return currentJob.getRule();
+		currentJob = currentJob();
+		if (currentJob != null)
+			return currentJob.getRule();
+		return null;
+	}
+
 	/**
 	 * Returns the delay in milliseconds that a job with a given priority can
 	 * tolerate waiting.

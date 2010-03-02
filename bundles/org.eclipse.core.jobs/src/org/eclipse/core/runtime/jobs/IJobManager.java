@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,6 +140,22 @@ public interface IJobManager {
 	 * @return a progress monitor
 	 */
 	public IProgressMonitor createProgressGroup();
+
+	/**
+	 * Returns the scheduling rule currently held by this thread, or <code>null</code>
+	 * if the current thread does not hold any scheduling rule.
+	 * <p>
+	 * If this method is called from within the scope of a running job with a non-null
+	 * scheduling rule, then this method is equivalent to calling <code>currentJob().getRule()</code>.
+	 * Otherwise, this method will return the first scheduling rule obtained by this 
+	 * thread via {@link #beginRule(ISchedulingRule, IProgressMonitor)} that has not
+	 * yet had a corresponding call to {@link #endRule(ISchedulingRule)}.
+	 * </p>
+	 * 
+	 * @return the current rule or <code>null</code>
+	 * @since 3.5
+	 */
+	public ISchedulingRule currentRule();
 
 	/**
 	 * Returns the job that is currently running in this thread, or <code>null</code> if there
