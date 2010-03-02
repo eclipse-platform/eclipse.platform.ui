@@ -35,7 +35,9 @@ import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -357,10 +359,42 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#run(boolean, boolean,
 	 * org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+	public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		// TODO Auto-generated method stub
-		runnable.run(new NullProgressMonitor());
+		final StatusLineManager manager = getStatusLineManager();
+		if (manager == null) {
+			runnable.run(new NullProgressMonitor());
+			return;
+		}
+
+		boolean enabled = manager.isCancelEnabled();
+		try {
+			manager.setCancelEnabled(cancelable);
+
+			final Exception[] holder = new Exception[1];
+			BusyIndicator.showWhile(getWorkbench().getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						ModalContext.run(runnable, fork, manager.getProgressMonitor(),
+								getWorkbench().getDisplay());
+					} catch (InvocationTargetException ite) {
+						holder[0] = ite;
+					} catch (InterruptedException ie) {
+						holder[0] = ie;
+					}
+				}
+			});
+
+			if (holder[0] != null) {
+				if (holder[0] instanceof InvocationTargetException) {
+					throw (InvocationTargetException) holder[0];
+				} else if (holder[0] instanceof InterruptedException) {
+					throw (InterruptedException) holder[0];
+				}
+			}
+		} finally {
+			manager.setCancelEnabled(enabled);
+		}
 	}
 
 	/*
