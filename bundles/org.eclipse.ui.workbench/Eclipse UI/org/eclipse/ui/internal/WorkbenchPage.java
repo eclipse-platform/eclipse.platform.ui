@@ -119,40 +119,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			firePartBroughtToTop(part);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.e4.workbench.modeling.IPartListener#partDeactivated(org
-		 * .eclipse.e4.ui.model.application.MPart)
-		 */
 		public void partDeactivated(MPart part) {
-			// TODO Auto-generated method stub
-
+			firePartDeactivated(part);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.e4.workbench.modeling.IPartListener#partHidden(org.eclipse
-		 * .e4.ui.model.application.MPart)
-		 */
 		public void partHidden(MPart part) {
-			// TODO Auto-generated method stub
-
+			firePartHidden(part);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.e4.workbench.modeling.IPartListener#partVisible(org.eclipse
-		 * .e4.ui.model.application.MPart)
-		 */
 		public void partVisible(MPart part) {
-			// TODO Auto-generated method stub
-
+			firePartVisible(part);
 		}
 	}
 
@@ -203,28 +179,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 
 	private E4PartListener e4PartListener = new E4PartListener();
-
-	private EventHandler selectedHandler = new EventHandler() {
-		public void handleEvent(Event event) {
-			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			Object oldSelected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-
-			if (oldSelected instanceof MPart) {
-				MPart oldSelectedPart = (MPart) oldSelected;
-				if (oldSelectedPart.isToBeRendered()) {
-					firePartHidden(oldSelectedPart);
-				}
-			}
-
-			if (selected instanceof MPart) {
-				MPart selectedPart = (MPart) selected;
-				if (selectedPart.isToBeRendered()) {
-					firePartBroughtToTop(selectedPart);
-					firePartVisible(selectedPart);
-				}
-			}
-		}
-	};
 
 	protected WorkbenchWindow legacyWindow;
 
@@ -1488,11 +1442,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		partService.addPartListener(e4PartListener);
 		window.getContext().set(IPartService.class.getName(), this);
 
-		IEventBroker eventBroker = (IEventBroker) window.getContext().get(
-				IEventBroker.class.getName());
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
-
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
 			String uri = part.getURI();
@@ -2382,6 +2331,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partActivated(partReference);
+			}
+		}
+	}
+
+	private void firePartDeactivated(MPart part) {
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			for (Object listener : partListenerList.getListeners()) {
+				((IPartListener) listener).partDeactivated(workbenchPart);
+			}
+
+			for (Object listener : partListener2List.getListeners()) {
+				((IPartListener2) listener).partDeactivated(partReference);
 			}
 		}
 	}
