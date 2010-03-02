@@ -21,8 +21,8 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.Workbench;
 import org.eclipse.ui.tests.helpers.TestFacade;
 
 public class TestFacadeE4Impl extends TestFacade {
