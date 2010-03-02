@@ -93,6 +93,11 @@ public interface ISourceViewer extends ITextViewer {
 	 * @since 3.2
 	 */
 	int QUICK_ASSIST= ITextOperationTarget.STRIP_PREFIX + 10;
+	
+	/*
+	 * XXX: Next free number is HyperlinkManager.OPEN_HYPERLINK + 1
+	 */
+
 
 	/**
 	 * Configures the source viewer using the given configuration. Prior to 3.0 this

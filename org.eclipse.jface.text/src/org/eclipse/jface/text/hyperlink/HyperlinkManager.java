@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
@@ -45,6 +46,18 @@ import org.eclipse.jface.text.TextEvent;
  * @since 3.1
  */
 public class HyperlinkManager implements ITextListener, Listener, KeyListener, MouseListener, MouseMoveListener, FocusListener, MouseTrackListener {
+
+
+	/**
+	 * Text operation code for requesting to open the hyperlink at the caret position.
+	 * <p>
+	 * FIXME: Not yet implemented. Will be implemented during M7.
+	 * </p>
+	 * 
+	 * @since 3.6
+	 */
+	public static final int OPEN_HYPERLINK= ISourceViewer.QUICK_ASSIST + 1;
+
 
 	/**
 	 * Detection strategy.
@@ -527,4 +540,17 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	public void mouseHover(MouseEvent e) {
 	}
 
+	/**
+	 * Opens the hyperlink at the caret location or opens a chooser
+	 * if more than one hyperlink is available.
+	 * <p>
+	 * FIXME: Will be implemented during M7.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if at least one hyperlink has been found at the caret location, <code>false</code> otherwise
+	 * @since 3.6
+	 */
+	public boolean openHyperlink() {
+		return false;
+	}
 }
