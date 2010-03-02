@@ -52,24 +52,24 @@ import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * Dialog to customize how files and resources are created in a project hierarchy
+ * Dialog to let the user customise how files and resources are created in a project 
+ * hierarchy after the user drag and drop items on a workspace container.
+ * 
+ * Files and folders can be created either by copying the source objects, creating 
+ * linked resources, and/or creating virtual folders.
  * @since 3.6
  *
  */
-public class ImportTypeDialog extends TrayDialog implements SelectionListener {
+public class ImportTypeDialog extends TrayDialog {
 
-	/**
-	 * Do not perform an import operation
-	 */
-	public final static int IMPORT_NONE 			= 0;
 	/**
 	 * Copy the files and folders to the destination
 	 */
 	public final static int IMPORT_COPY 			= 1;
 	/**
-	 * Recreate the file and folder hierarchy using groups and links
+	 * Import only files
 	 */
-	public final static int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
+	public final static int IMPORT_FILES_ONLY		= 16;
 	/**
 	 * Create linked resources for each file and folder
 	 */
@@ -79,213 +79,77 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 	 */
 	public final static int IMPORT_MOVE 			= 8;
 	/**
-	 * Import only files
+	 * Do not perform an import operation
 	 */
-	public final static int IMPORT_FILES_ONLY		= 16;
+	public final static int IMPORT_NONE 			= 0;
+	/**
+	 * Recreate the file and folder hierarchy using groups and links
+	 */
+	public final static int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
+	
+	private Button alwaysPerformThisOperation = null;
+
+
+	private Button copyButton = null;
+
+	private int currentSelection;
+	private Image fileImage;
+
+	private Image folderAndFileImage;
+
+	private Button linkButton = null;
+
+	private Image linkedFileImage;
+
+	private Image linkedFolderAndFileImage;
+
+	private Button moveButton = null;
+
+	private int operationMask;
+	private String preferredVariable;
+	private IResource receivingResource = null;
+	private Button shadowCopyButton = null;
+	private boolean targetIsVirtual;
+	private String variable = null;
+	private Button variableCheckbox = null;
+	private Combo variableCombo = null;
+	private Image virtualFolderAndFileImage;
 	
 	/**
+	 * Creates the Import Type Dialog when resources are dragged and dropped from an Eclipse
+	 * view.
+	 * 
 	 * @param shell
+	 * 			the parent Shell
 	 * @param dropOperation
-	 * @param names
-	 * @param target
-	 */
-	public ImportTypeDialog(Shell shell, int dropOperation, String[] names, IContainer target) {
-		this(shell, selectAppropriateMask(dropOperation, names, target), getPreferredVariable(names, target), target.isVirtual());
-	}
-
-
-	/**
-	 * @param shell
-	 * @param dropOperation
+	 * 		The dropOperation that was used by the user
 	 * @param sources
+	 * 		The list of resources that were dragged
 	 * @param target
+	 * 		The target container onto which the resources were dropped
 	 */
 	public ImportTypeDialog(Shell shell, int dropOperation,
 			IResource[] sources, IContainer target) {
 		this(shell, selectAppropriateMask(dropOperation, sources, target), getPreferredVariable(sources, target), target.isVirtual());
 	}
-
+	
 	/**
-	 * @param names
-	 * @param target
-	 * @return the most appropriate path variable given the context
-	 */
-	private static String getPreferredVariable(String[] names,
-			IContainer target) {
-		IPath[] paths = new IPath[names.length];
-		for (int i = 0; i < names.length; i++) {
-			paths[i] = Path.fromOSString(names[i]);
-		}
-		return getPreferredVariable(paths, target);
-	}
-	/**
-	 * @param sources
-	 * @param target
-	 * @return the most appropriate path variable given the context
-	 */
-	private static String getPreferredVariable(IResource[] sources,
-			IContainer target) {
-		IPath[] paths = new IPath[sources.length];
-		for (int i = 0; i < sources.length; i++) {
-			paths[i] = sources[i].getLocation();
-		}
-		return getPreferredVariable(paths, target);
-	}
-
-	/**
-	 * Find the most appropriate path variable for a set of paths.
-	 * The first thing is to find a common root for all the paths.
-	 * So for the following paths:
-	 * 		c:\foo\path\bar\dir1\file1.txt
-	 * 		c:\foo\path\bar\dir2\file2.txt
-	 * The following root will be selected:
-	 * 		c:\foo\path\bar\
-	 * Then, given all the path variable locations, the variable
-	 * who's distance (in segments) from the common root in the smallest
-	 * will be chosen.
-	 * A priority is given as to variables enclosing the root, as others
-	 * only being enclosed by the root.
-	 *
-	 * So if there's two variables, being 
-	 * 		FOO - c:\foo\
-	 * 		DIR1 - c:\foo\path\bar\dir1
-	 * And the common root is:
-	 * 		c:\foo\path\bar
-	 * FOO will be selected over DIR1, even through the distance between 
-	 * the common root and DIR1 is (1), and the distance between the 
-	 * common root and FOO is (2).  This is because selecting DIR1 would
-	 * cause the location to be relative to its parent.
-	 * @param paths
-	 * @param target
-	 * @return the most appropriate path variable given the context
-	 */
-	private static String getPreferredVariable(IPath[] paths,
-			IContainer target) {
-		IPath commonRoot = null;
-		for (int i = 0; i < paths.length; i++) {
-			if (paths[i] != null) {
-				if (commonRoot == null)
-					commonRoot = paths[i];
-				else  {
-					int count = commonRoot.matchingFirstSegments(paths[i]);
-					int remainingSegments = commonRoot.segmentCount() - count;
-					if (remainingSegments <= 0)
-						return null;
-					commonRoot = commonRoot.removeLastSegments(remainingSegments);
-				}
-			}
-		}
-		
-		String mostAppropriate = null;
-		String mostAppropriateToParent = null;
-		int mostAppropriateCount = Integer.MAX_VALUE;
-		int mostAppropriateCountToParent = Integer.MAX_VALUE;
-		IPathVariableManager pathVariableManager = target.getProject().getPathVariableManager();
-		String [] variables = pathVariableManager.getPathVariableNames(target);
-		
-		for (int i = 0; i < variables.length; i++) {
-			IPathVariable var = pathVariableManager.getPathVariable(variables[i], target);
-			if (var.isPreferred()) {
-				URI value = pathVariableManager.getValue(variables[i], target);
-				if (value != null) {
-					IPath path = URIUtil.toPath(value);
-					if (path != null) {
-						int difference = path.matchingFirstSegments(commonRoot);
-						if (difference > 0) {
-							if (difference < mostAppropriateCount) {
-								mostAppropriateCount = difference;
-								mostAppropriate = variables[i];
-							}
-						}
-						else {
-							// calculate if commonRoot could be relative to the parent of path
-							difference = commonRoot.matchingFirstSegments(path);
-							if (difference > 0) {
-								if (difference < mostAppropriateCountToParent) {
-									mostAppropriateCountToParent = difference;
-									mostAppropriateToParent = variables[i];
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if (mostAppropriate == null) {
-			if (mostAppropriateToParent == null)
-				return "PROJECT_LOC"; //$NON-NLS-1$
-			return mostAppropriateToParent;
-		}
-		return mostAppropriate;
-	}
-
-	/**
+	 * Creates the Import Type Dialog when files are dragged and dropped from the 
+	 * operating system's shell (Windows Explorer on Windows Platform, for example).
+	 * 
+	 * @param shell
+	 * 			the parent Shell
 	 * @param dropOperation
+	 * 		The dropOperation that was used by the user
 	 * @param names
+	 * 		The list of files that were dragged
 	 * @param target
-	 * @return the appropriate import mask given the files dropped on the target
+	 * 		The target container onto which the files were dropped
 	 */
-	private static int selectAppropriateMask(int dropOperation, String[] names, IContainer target) {
-		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
-			mask |= ImportTypeDialog.IMPORT_COPY;
-		if (areOnlyFiles(names))
-			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
-		return mask;
+	public ImportTypeDialog(Shell shell, int dropOperation, String[] names, IContainer target) {
+		this(shell, selectAppropriateMask(dropOperation, names, target), getPreferredVariable(names, target), target.isVirtual());
 	}
-
-	/**
-	 * @param dropOperation
-	 * @param resources
-	 * @param target
-	 * @return the appropriate import mask given the files dropped on the target
-	 */
-	private static int selectAppropriateMask(int dropOperation, IResource[] resources, IContainer target) {
-		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
-			mask |= ImportTypeDialog.IMPORT_COPY;
-		if (areOnlyFiles(resources))
-			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
-		return mask;
-	}
-
-	private static boolean areOnlyFiles(String[] names) {
-		for (int i = 0; i < names.length; i++) {
-			File file = new File(names[i]);
-			if (file.exists() && !file.isFile())
-				return false;
-		}
-		return true;
-	}
-
-	private static boolean areOnlyFiles(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() != IResource.FILE)
-				return false;
-		}
-		return true;
-	}
-
-	private Image fileImage;
-	private Image linkedFileImage;
-	private Image folderAndFileImage;
-	private Image virtualFolderAndFileImage;
-	private Image linkedFolderAndFileImage;
-	private int operationMask;
-	private int currentSelection;
-	private Button copyButton = null;
-	private Button shadowCopyButton = null;
-	private Button linkButton = null;
-	private Button moveButton = null;
-	private Combo variableCombo = null;
-	private Button alwaysPerformThisOperation = null;
-	private Button variableCheckbox = null;
-	private String variable = null;
-	private IResource receivingResource = null;
-	private boolean targetIsVirtual;
-	private String preferredVariable;
-
+	
 	/**
 	 * @param parentShell
 	 * @param operationMask
@@ -340,35 +204,9 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 		desc = new AlignedCompositeImageDescriptor(linkedFileDescriptor, linkedFolderDescriptor);
 		linkedFolderAndFileImage = desc.createImage();
 		
-		if (Boolean.valueOf(readContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE)).booleanValue())
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE))
 			variable = preferredVariable;
-	}
-
-	class AlignedCompositeImageDescriptor extends CompositeImageDescriptor {
-
-		ImageDescriptor first, second;
-		
-		private int SPACE = 4;
-		AlignedCompositeImageDescriptor(ImageDescriptor first, ImageDescriptor second) {
-			this.first = first;
-			this.second = second;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-		 */
-		protected void drawCompositeImage(int width, int height) {
-            drawImage(first.getImageData(), 0, 0);
-            drawImage(second.getImageData(), first.getImageData().width + SPACE, 0);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-		 */
-		protected Point getSize() {
-			return new Point(first.getImageData().width + second.getImageData().width + SPACE, 
-					Math.max(first.getImageData().height, second.getImageData().height));
-		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -382,61 +220,21 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 		linkedFolderAndFileImage.dispose();
 		return super.close();
 	}
-
-	// the format of the context is operationMask,value:operationMask,value:operationMask,value
-	private String readContextPreference(String key) {
-		String value = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(key);
-		String [] keyPairs = value.split(":"); //$NON-NLS-1$
-		for (int i = 0; i < keyPairs.length; i++) {
-			String [] element = keyPairs[i].split(","); //$NON-NLS-1$
-			if (element.length == 2) {
-				if (element[0].equals(Integer.toString(operationMask)))
-					return element[1];
-			}
-		}
-		return ""; //$NON-NLS-1$
-	}
 	
-	private void writeContextPreference(String key, String value) {
-		String oldValue = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(key);
-		StringBuffer buffer = new StringBuffer();
-		String [] keyPairs = oldValue.split(":"); //$NON-NLS-1$
-		boolean found = false;
-		for (int i = 0; i < keyPairs.length; i++) {
-			if (i > 0)
-				buffer.append(":"); //$NON-NLS-1$
-			String [] element = keyPairs[i].split(","); //$NON-NLS-1$
-			if (element.length == 2) {
-				if (element[0].equals(Integer.toString(operationMask))) {
-					buffer.append(element[0] + "," + value); //$NON-NLS-1$
-					found = true;
-				}
-				else
-					buffer.append(keyPairs[i]);
-			}
-		}
-		if (!found) {
-			if (buffer.length() > 0)
-				buffer.append(":"); //$NON-NLS-1$
-			buffer.append(Integer.toString(operationMask) + "," + value); //$NON-NLS-1$
-		}
-		String newValue = buffer.toString();
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(key, newValue);
+	/**
+	 * Get the user selection from the dialog.
+	 * @return The current selection (one of IMPORT_COPY, IMPORT_VIRTUAL_FOLDERS_AND_LINKS, IMPORT_LINK and IMPORT_MOVE)
+	 */
+	public int getSelection() {
+		return currentSelection;
 	}
 	
 	/**
+	 * Get the selected variable if the selection is either IMPORT_VIRTUAL_FOLDERS_AND_LINKS or IMPORT_LINK 
 	 * @return The currently selected variable, or AUTOMATIC or ABSOLUTE_PATH
 	 */
 	public String getVariable() {
 		return variable;
-	}
-
-
-	/**
-	 * @return The current selection (one of IMPORT_COPY, IMPORT_GROUPS_AND_LINKS, IMPORT_LINK and IMPORT_MOVE)
-	 */
-	public int getSelection() {
-		return currentSelection;
 	}
 	
 	/* (non-Javadoc)
@@ -468,6 +266,158 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 
 		return super.open();
 	}
+	
+	/** Set the project that is the destination of the import operation
+	 * @param resource
+	 */
+	public void setResource(IResource resource) {
+		receivingResource = resource;
+	}
+	
+	private void editVariables() {
+		String selectedItem = variable;
+		PathVariableEditDialog dialog = new PathVariableEditDialog(getShell());
+		dialog.setResource(receivingResource);
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			String[] variableNames = (String[]) dialog.getResult();
+			if (variableNames != null && variableNames.length >= 1) {
+				selectedItem = variableNames[0];
+			}
+		}
+		setupVariableContent();
+		if (selectedItem != null) {
+			selectVariable(selectedItem);
+		}
+	}
+	
+	private boolean hasFlag(int flag) {
+		return (operationMask & flag) != 0;
+	}
+
+	// the format of the context is operationMask,value:operationMask,value:operationMask,value
+	private String readContextPreference(String key) {
+		String value = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(key);
+		String [] keyPairs = value.split(":"); //$NON-NLS-1$
+		for (int i = 0; i < keyPairs.length; i++) {
+			String [] element = keyPairs[i].split(","); //$NON-NLS-1$
+			if (element.length == 2) {
+				if (element[0].equals(Integer.toString(operationMask)))
+					return element[1];
+			}
+		}
+		return ""; //$NON-NLS-1$
+	}
+	
+	private void refreshSelection() {
+		if (copyButton != null)
+			copyButton.setSelection(currentSelection == IMPORT_COPY);
+		if (shadowCopyButton != null)
+			shadowCopyButton.setSelection(currentSelection == IMPORT_VIRTUAL_FOLDERS_AND_LINKS);
+		if (linkButton != null)
+			linkButton.setSelection(currentSelection == IMPORT_LINK);
+		if (moveButton != null)
+			moveButton.setSelection(currentSelection == IMPORT_MOVE);
+		if (variableCheckbox != null)
+			variableCheckbox.setEnabled((currentSelection & (IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK)) != 0);
+		if (variableCombo != null)
+			variableCombo.setEnabled(variableCheckbox.getSelection() && variableCheckbox.isEnabled());
+		setupVariableCheckboxToolTip();
+	}
+	
+	private void selectVariable(String var) {
+		String[] items = variableCombo.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (var.equals(items[i])) {
+				variableCombo.select(i);
+				variable = items[i];
+				return;
+			}
+		}
+		variableCombo.select(0);
+		variable = items[0];
+	}
+
+
+	private void setupVariableCheckboxToolTip() {
+		if (variableCheckbox != null) {
+			if (variableCheckbox.getSelection())
+				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltipSet);
+			else
+				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltip);
+		}
+	}
+	
+	private void setupVariableContent() {
+		IPathVariableManager pathVariableManager;
+		if (receivingResource != null)
+			pathVariableManager = receivingResource.getProject().getPathVariableManager();
+		else
+			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+		String[] variables = pathVariableManager.getPathVariableNames(receivingResource);
+		
+		ArrayList items = new ArrayList();
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].equals("PARENT")) //$NON-NLS-1$
+				continue;
+			items.add(variables[i]);
+		}
+		items.add(IDEWorkbenchMessages.ImportTypeDialog_editVariables);
+		variableCombo.setItems((String[]) items.toArray(new String[0]));
+		super.getShell().layout(true);
+	}
+
+	private void writeContextPreference(String key, String value) {
+		String oldValue = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(key);
+		StringBuffer buffer = new StringBuffer();
+		String [] keyPairs = oldValue.split(":"); //$NON-NLS-1$
+		boolean found = false;
+		for (int i = 0; i < keyPairs.length; i++) {
+			if (i > 0)
+				buffer.append(":"); //$NON-NLS-1$
+			String [] element = keyPairs[i].split(","); //$NON-NLS-1$
+			if (element.length == 2) {
+				if (element[0].equals(Integer.toString(operationMask))) {
+					buffer.append(element[0] + "," + value); //$NON-NLS-1$
+					found = true;
+				}
+				else
+					buffer.append(keyPairs[i]);
+			}
+		}
+		if (!found) {
+			if (buffer.length() > 0)
+				buffer.append(":"); //$NON-NLS-1$
+			buffer.append(Integer.toString(operationMask) + "," + value); //$NON-NLS-1$
+		}
+		String newValue = buffer.toString();
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(key, newValue);
+	}
+
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == IDialogConstants.OK_ID) {
+			writeContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, Integer.toString(currentSelection));
+
+			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+			store.putValue(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, Boolean.toString(variable != null));
+			if (alwaysPerformThisOperation.getSelection()) {
+				String mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT;
+				switch(currentSelection) {
+				case IMPORT_COPY:
+				case IMPORT_MOVE:
+					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY;
+					break;
+				case IMPORT_LINK:
+					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK;
+					break;
+				case IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
+					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER;
+					break;
+				}
+				store.putValue(targetIsVirtual? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE:IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, mode);
+			}
+		}
+		super.buttonPressed(buttonId);
+	}
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -476,31 +426,6 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 		shell.setText(title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IIDEHelpContextIds.IMPORT_TYPE_DIALOG);
-	}
-
-	protected Control createMessageArea(Composite parent) {
-		Composite composite = new Composite(parent, 0);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
- 		composite.setLayoutData(gridData);
-
-		
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginTop= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		composite.setLayout(layout);
-
-		String message = (operationMask & IMPORT_FILES_ONLY) != 0 ? IDEWorkbenchMessages.ImportTypeDialog_questionFilesOnly:
-			IDEWorkbenchMessages.ImportTypeDialog_question;
-
-		// create message
-		if (message != null) {
-			Label messageLabel = new Label(composite, SWT.WRAP);
-			messageLabel.setText(message);
-			gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-			messageLabel.setLayoutData(gridData);
-		}
-		return composite;
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -523,6 +448,17 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 
 		layout.marginWidth += indent;
 		composite.setLayout(layout);
+		SelectionListener listener = new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				currentSelection = ((Integer) e.widget.getData()).intValue();
+				refreshSelection();
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				currentSelection = ((Integer) e.widget.getData()).intValue();
+				refreshSelection();
+			}
+		};
 		
 		if (hasFlag(IMPORT_COPY)) {
 			copyButton = new Button(composite, SWT.RADIO);
@@ -530,7 +466,7 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			copyButton.setLayoutData(gridData);
 			copyButton.setData(new Integer(IMPORT_COPY));
-			copyButton.addSelectionListener(this);
+			copyButton.addSelectionListener(listener);
 			if (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK))
 				copyButton.setImage(hasFlag(IMPORT_FILES_ONLY) ? fileImage:folderAndFileImage);
 		}
@@ -541,7 +477,7 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			moveButton.setLayoutData(gridData);
 			moveButton.setData(new Integer(IMPORT_MOVE));
-			moveButton.addSelectionListener(this);
+			moveButton.addSelectionListener(listener);
 		}
 
 		if (hasFlag(IMPORT_LINK) && !linkIsOnlyChoice) {
@@ -550,7 +486,7 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			linkButton.setLayoutData(gridData);
 			linkButton.setData(new Integer(IMPORT_LINK));
-			linkButton.addSelectionListener(this);
+			linkButton.addSelectionListener(listener);
 			linkButton.setImage(hasFlag(IMPORT_FILES_ONLY) ? linkedFileImage:linkedFolderAndFileImage);
 		}
 
@@ -560,7 +496,7 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			shadowCopyButton.setLayoutData(gridData);
 			shadowCopyButton.setData(new Integer(IMPORT_VIRTUAL_FOLDERS_AND_LINKS));
-			shadowCopyButton.addSelectionListener(this);
+			shadowCopyButton.addSelectionListener(listener);
 			shadowCopyButton.setImage(virtualFolderAndFileImage);
 		}
 
@@ -579,10 +515,10 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 			gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 			variableCheckbox.setLayoutData(gridData);
 			variableCheckbox.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetDefaultSelected(SelectionEvent e) {
 					selectRelativeCombo();
 				}
-				public void widgetDefaultSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e) {
 					selectRelativeCombo();
 				}
 				private void selectRelativeCombo() {
@@ -639,123 +575,248 @@ public class ImportTypeDialog extends TrayDialog implements SelectionListener {
 		return composite;
 	}
 
-	private void setupVariableCheckboxToolTip() {
-		if (variableCheckbox != null) {
-			if (variableCheckbox.getSelection())
-				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltipSet);
-			else
-				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltip);
-		}
-	}
+	protected Control createMessageArea(Composite parent) {
+		Composite composite = new Composite(parent, 0);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+ 		composite.setLayoutData(gridData);
 
-	private boolean hasFlag(int flag) {
-		return (operationMask & flag) != 0;
-	}
-	
-	private void editVariables() {
-		String selectedItem = variable;
-		PathVariableEditDialog dialog = new PathVariableEditDialog(getShell());
-		dialog.setResource(receivingResource);
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			String[] variableNames = (String[]) dialog.getResult();
-			if (variableNames != null && variableNames.length >= 1) {
-				selectedItem = variableNames[0];
-			}
-		}
-		setupVariableContent();
-		if (selectedItem != null) {
-			selectVariable(selectedItem);
-		}
-	}
-
-	private void selectVariable(String var) {
-		String[] items = variableCombo.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (var.equals(items[i])) {
-				variableCombo.select(i);
-				variable = items[i];
-				return;
-			}
-		}
-		variableCombo.select(0);
-		variable = items[0];
-	}
-
-	private void setupVariableContent() {
-		IPathVariableManager pathVariableManager;
-		if (receivingResource != null)
-			pathVariableManager = receivingResource.getProject().getPathVariableManager();
-		else
-			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-		String[] variables = pathVariableManager.getPathVariableNames(receivingResource);
 		
-		ArrayList items = new ArrayList();
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].equals("PARENT")) //$NON-NLS-1$
-				continue;
-			items.add(variables[i]);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginTop= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		composite.setLayout(layout);
+
+		String message = (operationMask & IMPORT_FILES_ONLY) != 0 ? IDEWorkbenchMessages.ImportTypeDialog_questionFilesOnly:
+			IDEWorkbenchMessages.ImportTypeDialog_question;
+
+		// create message
+		if (message != null) {
+			Label messageLabel = new Label(composite, SWT.WRAP);
+			messageLabel.setText(message);
+			gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+			messageLabel.setLayoutData(gridData);
 		}
-		items.add(IDEWorkbenchMessages.ImportTypeDialog_editVariables);
-		variableCombo.setItems((String[]) items.toArray(new String[0]));
-		super.getShell().layout(true);
+		return composite;
 	}
 	
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.OK_ID) {
-			writeContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, Integer.toString(currentSelection));
-			writeContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, Boolean.toString(variable != null));
+	/**
+	 * @param resources
+	 * 		The list of items that were dragged
+	 * @return true if a set of paths are files only or a mix of files and folders, false otherwise
+	 */
+	private static boolean areOnlyFiles(IResource[] resources) {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() != IResource.FILE)
+				return false;
+		}
+		return true;
+	}
 
-			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-			if (alwaysPerformThisOperation.getSelection()) {
-				String mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT;
-				switch(currentSelection) {
-				case IMPORT_COPY:
-				case IMPORT_MOVE:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY;
-					break;
-				case IMPORT_LINK:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK;
-					break;
-				case IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER;
-					break;
+	/**
+	 * @param names
+	 * 		The list of items that were dragged
+	 * @return true if a set of paths are files only or a mix of files and folders, false otherwise
+	 */
+	private static boolean areOnlyFiles(String[] names) {
+		for (int i = 0; i < names.length; i++) {
+			File file = new File(names[i]);
+			if (file.exists() && !file.isFile())
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Find the most appropriate path variable for a set of paths.
+	 * The first thing is to find a common root for all the paths.
+	 * So for the following paths:
+	 * 		c:\foo\path\bar\dir1\file1.txt
+	 * 		c:\foo\path\bar\dir2\file2.txt
+	 * The following root will be selected:
+	 * 		c:\foo\path\bar\
+	 * Then, given all the path variable locations, the variable
+	 * who's distance (in segments) from the common root in the smallest
+	 * will be chosen.
+	 * A priority is given as to variables enclosing the root, as others
+	 * only being enclosed by the root.
+	 *
+	 * So if there's two variables, being 
+	 * 		FOO - c:\foo\
+	 * 		DIR1 - c:\foo\path\bar\dir1
+	 * And the common root is:
+	 * 		c:\foo\path\bar
+	 * FOO will be selected over DIR1, even through the distance between 
+	 * the common root and DIR1 is (1), and the distance between the 
+	 * common root and FOO is (2).  This is because selecting DIR1 would
+	 * cause the location to be relative to its parent.
+
+	 * @param paths
+	 * 		The list of items that were dragged
+	 * @param target
+	 * 		The target container onto which the items were dropped
+	 * @return the most appropriate path variable given the context
+	 */
+	private static String getPreferredVariable(IPath[] paths,
+			IContainer target) {
+		IPath commonRoot = null;
+		for (int i = 0; i < paths.length; i++) {
+			if (paths[i] != null) {
+				if (commonRoot == null)
+					commonRoot = paths[i];
+				else  {
+					int count = commonRoot.matchingFirstSegments(paths[i]);
+					int remainingSegments = commonRoot.segmentCount() - count;
+					if (remainingSegments <= 0)
+						return null;
+					commonRoot = commonRoot.removeLastSegments(remainingSegments);
 				}
-				store.putValue(targetIsVirtual? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE:IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, mode);
 			}
 		}
-		super.buttonPressed(buttonId);
-	}
-
-	public void widgetDefaultSelected(SelectionEvent e) {
-		currentSelection = ((Integer) e.widget.getData()).intValue();
-		refreshSelection();
-	}
-
-	public void widgetSelected(SelectionEvent e) {
-		currentSelection = ((Integer) e.widget.getData()).intValue();
-		refreshSelection();
+		
+		String mostAppropriate = null;
+		String mostAppropriateToParent = null;
+		int mostAppropriateCount = Integer.MAX_VALUE;
+		int mostAppropriateCountToParent = Integer.MAX_VALUE;
+		IPathVariableManager pathVariableManager = target.getProject().getPathVariableManager();
+		String [] variables = pathVariableManager.getPathVariableNames(target);
+		
+		for (int i = 0; i < variables.length; i++) {
+			IPathVariable var = pathVariableManager.getPathVariable(variables[i], target);
+			if (var.isPreferred()) {
+				URI rawValue = pathVariableManager.getValue(variables[i], target);
+				URI value = pathVariableManager.resolveURI(rawValue, target);
+				if (value != null) {
+					IPath path = URIUtil.toPath(value);
+					if (path != null) {
+						int difference = path.matchingFirstSegments(commonRoot);
+						if (difference > 0) {
+							if (difference < mostAppropriateCount) {
+								mostAppropriateCount = difference;
+								mostAppropriate = variables[i];
+							}
+						}
+						else {
+							// calculate if commonRoot could be relative to the parent of path
+							difference = commonRoot.matchingFirstSegments(path);
+							if (difference > 0) {
+								if (difference < mostAppropriateCountToParent) {
+									mostAppropriateCountToParent = difference;
+									mostAppropriateToParent = variables[i];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (mostAppropriate == null) {
+			if (mostAppropriateToParent == null)
+				return "PROJECT_LOC"; //$NON-NLS-1$
+			return mostAppropriateToParent;
+		}
+		return mostAppropriate;
 	}
 	
-	private void refreshSelection() {
-		if (copyButton != null)
-			copyButton.setSelection(currentSelection == IMPORT_COPY);
-		if (shadowCopyButton != null)
-			shadowCopyButton.setSelection(currentSelection == IMPORT_VIRTUAL_FOLDERS_AND_LINKS);
-		if (linkButton != null)
-			linkButton.setSelection(currentSelection == IMPORT_LINK);
-		if (moveButton != null)
-			moveButton.setSelection(currentSelection == IMPORT_MOVE);
-		if (variableCheckbox != null)
-			variableCheckbox.setEnabled((currentSelection & (IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK)) != 0);
-		if (variableCombo != null)
-			variableCombo.setEnabled(variableCheckbox.getSelection() && variableCheckbox.isEnabled());
-		setupVariableCheckboxToolTip();
+	/**
+	 * Return the most appropriate path variable given the context
+	 * @param sources
+	 * 		The list of resources that were dragged
+	 * @param target
+	 * 		The target container onto which the resources were dropped
+	 * @return the most appropriate path variable given the context
+	 */
+	private static String getPreferredVariable(IResource[] sources,
+			IContainer target) {
+		IPath[] paths = new IPath[sources.length];
+		for (int i = 0; i < sources.length; i++) {
+			paths[i] = sources[i].getLocation();
+		}
+		return getPreferredVariable(paths, target);
 	}
 
-	/** Set the project that is the destination of the import operation
-	 * @param resource
+	/**
+	 * Return the most appropriate path variable given the context
+	 * @param names
+	 * 		The list of files that were dragged
+	 * @param target
+	 * 		The target container onto which the files were dropped
+	 * @return the most appropriate path variable given the context
 	 */
-	public void setResource(IResource resource) {
-		receivingResource = resource;
+	private static String getPreferredVariable(String[] names,
+			IContainer target) {
+		IPath[] paths = new IPath[names.length];
+		for (int i = 0; i < names.length; i++) {
+			paths[i] = Path.fromOSString(names[i]);
+		}
+		return getPreferredVariable(paths, target);
+	}
+
+	/**
+	 * Select the most appropriate mode that should be used for the dialog given
+	 * the items dropped on the container, the container type, and the drop operation.
+	 *
+	 * @param dropOperation
+	 * @param resources
+	 * 		The list of items that were dragged
+	 * @param target
+	 * 		The target container onto which the items were dropped
+	 * @return the appropriate import mask given the files dropped on the target
+	 */
+	private static int selectAppropriateMask(int dropOperation, IResource[] resources, IContainer target) {
+		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
+		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
+			mask |= ImportTypeDialog.IMPORT_COPY;
+		if (areOnlyFiles(resources))
+			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
+		return mask;
+	}
+	
+	/**
+	 * Select the most appropriate mode that should be used for the dialog given
+	 * the items dropped on the container, the container type, and the drop operation.
+	 * 
+	 * @param dropOperation
+	 * @param names
+	 * 		The list of items that were dragged
+	 * @param target
+	 * 		The target container onto which the items were dropped
+	 * @return the appropriate import mask given the files dropped on the target
+	 */
+	private static int selectAppropriateMask(int dropOperation, String[] names, IContainer target) {
+		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
+		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
+			mask |= ImportTypeDialog.IMPORT_COPY;
+		if (areOnlyFiles(names))
+			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
+		return mask;
+	}
+
+	private class AlignedCompositeImageDescriptor extends CompositeImageDescriptor {
+
+		private int SPACE = 4;
+		
+		ImageDescriptor first, second;
+		AlignedCompositeImageDescriptor(ImageDescriptor first, ImageDescriptor second) {
+			this.first = first;
+			this.second = second;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
+		 */
+		protected void drawCompositeImage(int width, int height) {
+            drawImage(first.getImageData(), 0, 0);
+            drawImage(second.getImageData(), first.getImageData().width + SPACE, 0);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
+		 */
+		protected Point getSize() {
+			return new Point(first.getImageData().width + second.getImageData().width + SPACE, 
+					Math.max(first.getImageData().height, second.getImageData().height));
+		}
+		
 	}
 }
