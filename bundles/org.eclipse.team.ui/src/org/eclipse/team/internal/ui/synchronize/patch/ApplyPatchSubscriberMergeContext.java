@@ -21,7 +21,7 @@ import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 
-class ApplyPatchSubscriberMergeContext extends SubscriberMergeContext {
+public class ApplyPatchSubscriberMergeContext extends SubscriberMergeContext {
 
 	protected ApplyPatchSubscriberMergeContext(Subscriber subscriber,
 			ISynchronizationScopeManager manager) {

@@ -28,8 +28,9 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchModelCompareEditorInput;
-import org.eclipse.team.internal.ui.synchronize.patch.PatchModelProvider;
+import org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchSubscriberMergeContext;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
@@ -112,7 +113,7 @@ public class OpenInCompareAction extends Action {
 			ICompareInput input = msp.asCompareInput(object);
 			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
 			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
-				if (configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER).equals(PatchModelProvider.ID))
+				if (isApplyPatchModelPresent(configuration))
 					return openCompareEditor(workbenchPage, new ApplyPatchModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
 				else
 					return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
@@ -120,7 +121,13 @@ public class OpenInCompareAction extends Action {
 		}
 		return null;
 	}
-	
+
+	private static boolean isApplyPatchModelPresent(
+			ISynchronizePageConfiguration configuration) {
+		Object object = configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+		return object instanceof ApplyPatchSubscriberMergeContext;
+	}
+
 	private static boolean isOkToOpen(final ISynchronizePageSite site, final ISynchronizeParticipant participant, final ICompareInput input) {
 		if (participant instanceof ModelSynchronizeParticipant && input instanceof ISynchronizationCompareInput) {
 			final ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
