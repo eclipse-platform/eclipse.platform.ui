@@ -34,6 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.e4.compatibility.ActionBars;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
@@ -196,8 +197,11 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		((IEditorPart) part).init(new EditorSite(getModel(), part, descriptor
-				.getConfigurationElement()), getEditorInput());
+		EditorSite editorSite = new EditorSite(getModel(), part, descriptor
+				.getConfigurationElement());
+		editorSite.setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(),
+				editorSite, getModel()));
+		((IEditorPart) part).init(editorSite, getEditorInput());
 		// TODO set editor action bars, if you dare
 	}
 }
