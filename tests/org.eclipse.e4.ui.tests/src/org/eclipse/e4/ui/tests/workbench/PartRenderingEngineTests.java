@@ -581,6 +581,32 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partB, stack.getSelectedElement());
 	}
 
+	public void testCreateGuiBug298415() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getChildren().add(part);
+
+		IPresentationEngine renderer = (IPresentationEngine) appContext
+				.get(IPresentationEngine.class.getName());
+		renderer.createGui(part);
+		renderer.removeGui(part);
+
+		while (Display.getCurrent().readAndDispatch()) {
+			// spin the event loop
+		}
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
