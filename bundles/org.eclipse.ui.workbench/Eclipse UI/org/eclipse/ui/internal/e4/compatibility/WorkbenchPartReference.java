@@ -136,13 +136,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getId()
-	 */
-	public String getId() {
-		return part.getId();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void addPropertyListener(IPropertyListener listener) {

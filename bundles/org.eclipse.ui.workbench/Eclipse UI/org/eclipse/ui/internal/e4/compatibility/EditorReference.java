@@ -74,6 +74,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return descriptor;
 	}
 
+	public String getId() {
+		return descriptor.getId();
+	}
+
 	public String getFactoryId() {
 		// FIXME compat getFactoryId
 		E4Util.unsupported("getFactoryId"); //$NON-NLS-1$

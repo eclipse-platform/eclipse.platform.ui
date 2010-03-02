@@ -449,7 +449,27 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
 		default:
-			// TODO Auto-generated catch block
+			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0
+					&& (matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
+				editorRefs = new ArrayList<IEditorReference>();
+				for (IEditorReference editorRef : editorReferences) {
+					if (editorRef.getId().equals(editorId)) {
+						IEditorPart editor = editorRef.getEditor(false);
+						if (editor == null) {
+							try {
+								if (input.equals(editorRef.getEditorInput())) {
+									editorRefs.add(editorRef);
+								}
+							} catch (PartInitException e) {
+								WorkbenchPlugin.log(e);
+							}
+						} else if (editor.getEditorInput().equals(input)) {
+							editorRefs.add(editorRef);
+						}
+					}
+				}
+				return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
+			}
 			return new IEditorReference[0];
 		}
 	}

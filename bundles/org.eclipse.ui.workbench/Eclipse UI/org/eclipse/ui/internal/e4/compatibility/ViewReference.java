@@ -37,8 +37,16 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		return descriptor.getLabel();
 	}
 
+	public String getId() {
+		return descriptor.getId();
+	}
+
 	public String getSecondaryId() {
-		// TODO Auto-generated method stub
+		for (String tag : getModel().getTags()) {
+			if (tag.startsWith(WorkbenchPage.SECONDARY_ID_HEADER)) {
+				return tag.substring(WorkbenchPage.SECONDARY_ID_HEADER.length());
+			}
+		}
 		return null;
 	}
 
