@@ -67,6 +67,8 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -156,6 +158,7 @@ import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
@@ -171,6 +174,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -204,6 +208,7 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.themes.IThemeManager;
+import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.BundleContext;
@@ -1436,7 +1441,136 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			}
 		});
+
+		// watch for parts' "toBeRendered" attribute being flipped to true, if
+		// they need to be rendered, then they need a corresponding 3.x
+		// reference
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.TOBERENDERED), new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
+					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+					if (element instanceof MPart) {
+						MPart part = (MPart) element;
+						createReference(part);
+					}
+				}
+			}
+		});
+
+		// watch for parts' contexts being set, once they've been set, we need
+		// to inject the ViewReference/EditorReference into the context
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				new EventHandler() {
+					public void handleEvent(org.osgi.service.event.Event event) {
+						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+						if (element instanceof MPart) {
+							MPart part = (MPart) element;
+							IEclipseContext context = part.getContext();
+							if (context != null) {
+								setReference(part, context);
+							}
+						}
+					}
+				});
+
+		// watch for windows' widget being set, when the shell is set, we need a
+		// corresponding IWorkbenchWindow created for them
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.WIDGET), new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (element instanceof MWindow) {
+					MWindow window = (MWindow) element;
+					if (((MElementContainer<?>) window.getParent()) instanceof MApplication
+							&& window.getWidget() != null) {
+						IPerspectiveDescriptor desc = getPerspectiveRegistry()
+								.findPerspectiveWithId(
+										getPerspectiveRegistry().getDefaultPerspective());
+						WorkbenchWindow wwindow = new WorkbenchWindow(getAdvisor().getDefaultPageInput(), desc);
+						ContextInjectionFactory.inject(wwindow, window.getContext());
+					}
+				}
+			}
+		});
 		WorkbenchPlugin.getDefault().getViewRegistry();
+	}
+
+	/**
+	 * Returns a workbench page that will contain the specified part. If no page
+	 * can be located, one will be instantiated.
+	 * 
+	 * @param part
+	 *            the model part to query a parent workbench page for
+	 * @return the workbench page that contains the specified part
+	 */
+	private WorkbenchPage getWorkbenchPage(MPart part) {
+		IEclipseContext context = getWindowContext(part);
+		WorkbenchPage page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+		if (page == null) {
+			MWindow window = (MWindow) context.get(MWindow.class.getName());
+			Workbench workbench = (Workbench) PlatformUI.getWorkbench();
+			workbench.openWorkbenchWindow(null, null, window);
+			page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
+		}
+		return page;
+	}
+
+	/**
+	 * Sets the 3.x reference of the specified part into its context.
+	 * 
+	 * @param part
+	 *            the model part that requires a 3.x part reference
+	 * @param context
+	 *            the part's context
+	 */
+	private void setReference(MPart part, IEclipseContext context) {
+		String uri = part.getURI();
+		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
+			WorkbenchPage page = getWorkbenchPage(part);
+			ViewReference ref = page.getViewReference(part);
+			if (ref == null) {
+				ref = createViewReference(part, page);
+			}
+			context.set(ViewReference.class.getName(), ref);
+		}
+	}
+
+	private ViewReference createViewReference(MPart part, WorkbenchPage page) {
+		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(part.getId());
+		ViewReference ref = new ViewReference(window.getModel().getContext(), page, part,
+				(ViewDescriptor) desc);
+		page.addViewReference(ref);
+		return ref;
+	}
+
+	/**
+	 * Creates a workbench part reference for the specified part if one does not
+	 * already exist.
+	 * 
+	 * @param part
+	 *            the model part to create a 3.x part reference for
+	 */
+	private void createReference(MPart part) {
+		String uri = part.getURI();
+		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
+			WorkbenchPage page = getWorkbenchPage(part);
+			ViewReference ref = page.getViewReference(part);
+			if (ref == null) {
+				ref = createViewReference(part, page);
+			}
+		}
+	}
+
+	private IEclipseContext getWindowContext(MPart part) {
+		MElementContainer<?> parent = part.getParent();
+		while (!(parent instanceof MWindow)) {
+			parent = parent.getParent();
+		}
+
+		return ((MWindow) parent).getContext();
 	}
 
 	private final void initializeLazyServices() {
