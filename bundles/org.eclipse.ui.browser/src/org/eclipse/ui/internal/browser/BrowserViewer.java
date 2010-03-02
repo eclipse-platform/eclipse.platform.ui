@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,9 @@ import org.eclipse.ui.PlatformUI;
  * @since 1.0
  */
 public class BrowserViewer extends Composite {
-    /**
+    private static final String BROWSER_PROPERTY = "org.eclipse.swt.browser.Browser"; //$NON-NLS-1$
+
+	/**
      * Style parameter (value 1) indicating that the URL and Go button will be
      * on the local toolbar.
      */
@@ -616,8 +618,17 @@ public class BrowserViewer extends Composite {
             refresh();
             return true;
         }
-        if (browser!=null)
-            return browser.setUrl(url);
+        if (browser!=null) {
+        	String oldProperty = System.getProperty(BROWSER_PROPERTY);
+        	System.setProperty(BROWSER_PROPERTY,"no-cache");  //$NON-NLS-1$
+            boolean result = browser.setUrl(url);
+            if (oldProperty == null) {
+                System.clearProperty(BROWSER_PROPERTY);
+            } else {
+                System.setProperty(BROWSER_PROPERTY, oldProperty);  
+            }
+			return result;
+        }
         return text.setUrl(url);
     }
  
