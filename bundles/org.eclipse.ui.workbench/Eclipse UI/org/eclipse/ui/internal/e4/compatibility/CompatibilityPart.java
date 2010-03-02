@@ -60,7 +60,7 @@ public abstract class CompatibilityPart {
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		parent.addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
-				WorkbenchPartReference reference = (WorkbenchPartReference) getReference();
+				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 
@@ -126,6 +126,9 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
+
+		// notify the workbench we've been opened
+		((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
 	}
 
 	void doSave(@Optional IProgressMonitor monitor) {
