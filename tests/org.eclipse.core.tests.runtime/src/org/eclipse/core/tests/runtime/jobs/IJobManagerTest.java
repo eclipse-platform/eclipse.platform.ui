@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.*;
@@ -256,6 +255,107 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		//assert that currentJob returned the correct value
 		assertTrue("1.0", success[0]);
+	}
+
+	/**
+	 * Tests for {@link IJobManager#currentRule()}.
+	 */
+	public void testCurrentRule() {
+		//first test when not running in a job
+		runRuleSequence();
+
+		//next test in a job with no rule of its own
+		final List<AssertionFailedError> errors = new ArrayList<AssertionFailedError>();
+		Job sequenceJob = new Job("testCurrentRule") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					runRuleSequence();
+				} catch (AssertionFailedError e) {
+					errors.add(e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		sequenceJob.schedule();
+		waitForCompletion(sequenceJob);
+		if (!errors.isEmpty())
+			throw errors.iterator().next();
+
+		//now test in a job that has a scheduling rule
+		ISchedulingRule jobRule = new PathRule("/testCurrentRule");
+		sequenceJob.setRule(jobRule);
+		sequenceJob.schedule();
+		waitForCompletion(sequenceJob);
+		if (!errors.isEmpty())
+			throw errors.iterator().next();
+
+	}
+
+	/**
+	 * Helper method for testing {@link IJobManager#currentRule()}.
+	 */
+	protected void runRuleSequence() {
+		if (runRuleSequenceInJobWithRule())
+			return;
+		ISchedulingRule parent = new PathRule("/testCurrentRule/parent");
+		ISchedulingRule child = new PathRule("/testCurrentRule/parent/child");
+		assertNull(manager.currentRule());
+		manager.beginRule(null, null);
+		assertNull(manager.currentRule());
+		manager.endRule(null);
+		assertNull(manager.currentRule());
+		manager.beginRule(parent, null);
+		assertEquals(parent, manager.currentRule());
+		//nested null rule
+		manager.beginRule(null, null);
+		assertEquals(parent, manager.currentRule());
+		//nested non-null rule
+		manager.beginRule(child, null);
+		assertEquals(parent, manager.currentRule());
+		manager.endRule(child);
+		assertEquals(parent, manager.currentRule());
+		manager.endRule(null);
+		assertEquals(parent, manager.currentRule());
+		manager.endRule(parent);
+		assertNull(manager.currentRule());
+	}
+
+	/**
+	 * Runs a sequence of begin/end rules and asserts that the
+	 * job rule is always returned by {@link IJobManager#currentRule()}.
+	 * Returns <code>false</code> if not invoked from within a job with 
+	 * a scheduling rule.
+	 */
+	private boolean runRuleSequenceInJobWithRule() {
+		Job currentJob = manager.currentJob();
+		if (currentJob == null)
+			return false;
+		ISchedulingRule jobRule = currentJob.getRule();
+		if (jobRule == null)
+			return false;
+		//we are in a job with a rule, so now run our rule sequence
+		ISchedulingRule parent = new PathRule("/testCurrentRule/parent");
+		ISchedulingRule child = new PathRule("/testCurrentRule/parent/child");
+		assertEquals(jobRule, manager.currentRule());
+		manager.beginRule(null, null);
+		assertEquals(jobRule, manager.currentRule());
+		manager.endRule(null);
+		assertEquals(jobRule, manager.currentRule());
+		manager.beginRule(parent, null);
+		assertEquals(jobRule, manager.currentRule());
+		//nested null rule
+		manager.beginRule(null, null);
+		assertEquals(jobRule, manager.currentRule());
+		//nested non-null rule
+		manager.beginRule(child, null);
+		assertEquals(jobRule, manager.currentRule());
+		manager.endRule(child);
+		assertEquals(jobRule, manager.currentRule());
+		manager.endRule(null);
+		assertEquals(jobRule, manager.currentRule());
+		manager.endRule(parent);
+		assertEquals(jobRule, manager.currentRule());
+		return true;
 	}
 
 	public void testDelayedJob() {
