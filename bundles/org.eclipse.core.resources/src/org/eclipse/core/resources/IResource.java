@@ -1723,6 +1723,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * 
 	 * @return <code>true</code> if this resource has filters, and 
 	 *   <code>false</code> otherwise
+	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
 	 * @since 3.6
 	 */
 	public boolean hasFilters();
