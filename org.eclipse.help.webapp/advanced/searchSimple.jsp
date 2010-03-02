@@ -20,7 +20,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title><%=ServletResources.getString("Search", request)%></title>
+<title><%=ServletResources.getString("SearchLabel", request)%></title>
      
 <style type="text/css">
 /* need this one for Mozilla */
@@ -211,8 +211,8 @@ function onloadHandler(e)
 		<table id="searchTable" align="<%=isRTL?"right":"left"%>" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td <%=isRTL?"nowrap":""%>>
-					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
-					&nbsp;<%=ServletResources.getLabel("Search", request)%>
+					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("SearchLabel", request)%>">
+					&nbsp;<%=ServletResources.getLabel("SearchLabel", request)%>
 					</label>
 				</td>
 				<td>
