@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -489,6 +490,8 @@ public interface IContainer extends IResource, IAdaptable {
 	 * 
 	 * @param type ({@link IResourceFilterDescription#INCLUDE_ONLY} or 
 	 * {@link IResourceFilterDescription#EXCLUDE_ALL} and/or {@link IResourceFilterDescription#INHERITABLE})
+	 * @param matcherDescription the description of the matcher that will determine
+	 * which {@link IFileInfo} instances will be excluded from the resource tree
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
 	 * @param monitor a progress monitor, or <code>null</code> if progress reporting is not desired
