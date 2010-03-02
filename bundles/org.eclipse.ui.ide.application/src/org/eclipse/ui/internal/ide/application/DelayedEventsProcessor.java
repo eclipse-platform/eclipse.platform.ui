@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * Helper class used to process delayed events.
  * Events currently supported:
  * <ul>
- * <li>SWT.OpenDoc</li>
+ * <li>SWT.OpenDocument</li>
  * </ul>
  * @since 3.3
  */
@@ -52,7 +52,7 @@ public class DelayedEventsProcessor implements Listener {
 	 * @param display display used as a source of event
 	 */
 	public DelayedEventsProcessor(Display display) {
-		display.addListener(SWT.OpenDoc, this);
+		display.addListener(SWT.OpenDocument, this);
 	}
 
 	/* (non-Javadoc)
