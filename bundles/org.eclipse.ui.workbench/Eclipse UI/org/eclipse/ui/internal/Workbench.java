@@ -1475,26 +1475,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 						}
 					}
 				});
-
-		// watch for windows' widget being set, when the shell is set, we need a
-		// corresponding IWorkbenchWindow created for them
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET), new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (element instanceof MWindow) {
-					MWindow window = (MWindow) element;
-					if (((MElementContainer<?>) window.getParent()) instanceof MApplication
-							&& window.getWidget() != null) {
-						IPerspectiveDescriptor desc = getPerspectiveRegistry()
-								.findPerspectiveWithId(
-										getPerspectiveRegistry().getDefaultPerspective());
-						WorkbenchWindow wwindow = new WorkbenchWindow(getAdvisor().getDefaultPageInput(), desc);
-						ContextInjectionFactory.inject(wwindow, window.getContext());
-					}
-				}
-			}
-		});
 		
 		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
 		descriptor.setCloseable(true);
