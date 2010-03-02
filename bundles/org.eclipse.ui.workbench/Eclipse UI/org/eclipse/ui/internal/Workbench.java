@@ -69,6 +69,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -1494,6 +1495,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			}
 		});
+		
+		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		descriptor.setCloseable(true);
+		descriptor.setAllowMultiple(true);
+		descriptor.setId("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		descriptor.setURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
+		descriptor.setCategory("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+		application.getDescriptors().add(descriptor);
+
 		WorkbenchPlugin.getDefault().getViewRegistry();
 	}
 
