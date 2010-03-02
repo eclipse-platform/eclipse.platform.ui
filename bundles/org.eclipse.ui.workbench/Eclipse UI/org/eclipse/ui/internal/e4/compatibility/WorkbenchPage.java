@@ -419,7 +419,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart getActiveEditor() {
 		IWorkbenchPart part = getActivePart();
-		return (IEditorPart) (part instanceof IEditorPart ? part : null);
+		if (part instanceof IEditorPart) {
+			return (IEditorPart) part;
+		}
+
+		for (MPart model : activationList) {
+			Object object = model.getObject();
+			if (object instanceof CompatibilityEditor) {
+				return ((CompatibilityEditor) object).getEditor();
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -435,8 +445,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
 		switch (matchFlags) {
-		case MATCH_NONE:
-			return new IEditorReference[0];
 		case MATCH_INPUT:
 			List<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
 			for (IEditorReference editorRef : editorReferences) {
