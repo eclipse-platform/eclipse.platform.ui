@@ -425,6 +425,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_progress;
 	public static String WizardNewFolderCreationPage_errorTitle;
 	public static String WizardNewFolderCreationPage_internalErrorTitle;
+	public static String WizardNewFolderCreationPage_resourceWillBeFilteredWarning;
 	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
 
@@ -436,6 +437,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFileCreationPage_internalErrorTitle;
 	public static String WizardNewFileCreationPage_internalErrorMessage;
 	public static String WizardNewFileCreationPage_title;
+	public static String WizardNewFileCreationPage_resourceWillBeFilteredWarning;
 
 
 	// --- Linked Resource ---

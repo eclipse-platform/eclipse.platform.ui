@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -702,7 +703,26 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			setMessage(null);
 			setErrorMessage(null);
 		}
+		
+		if (isFilteredByParent())
+			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning, IMessageProvider.WARNING);
+		
 		return valid;
 	}
-
+	
+	private boolean isFilteredByParent() {
+		boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
+		if (createVirtualFolder)
+			return false;
+		if (linkTargetPath != null)
+			return false;
+		IPath containerPath = resourceGroup.getContainerFullPath();
+		String resourceName = resourceGroup.getResource();
+		if (resourceName.length() > 0) {
+			IPath newFolderPath = containerPath.append(resourceName);
+			IFolder newFolderHandle = createFolderHandle(newFolderPath);
+			return newFolderHandle.isFiltered();
+		}
+		return false;
+	}
 }

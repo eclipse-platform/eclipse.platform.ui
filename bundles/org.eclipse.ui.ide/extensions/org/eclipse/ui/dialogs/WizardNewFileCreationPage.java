@@ -765,7 +765,22 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				}
 			}
 		}
+		if (isFilteredByParent())
+			setMessage(IDEWorkbenchMessages.WizardNewFileCreationPage_resourceWillBeFilteredWarning, IMessageProvider.WARNING);
 		return valid;
+	}
+
+	private boolean isFilteredByParent() {
+		if (linkTargetPath != null)
+			return false;
+		IPath containerPath = resourceGroup.getContainerFullPath();
+		String resourceName = resourceGroup.getResource();
+		if (resourceName.length() > 0) {
+			IPath newFolderPath = containerPath.append(resourceName);
+			IFile newFileHandle = createFileHandle(newFolderPath);
+			return newFileHandle.isFiltered();
+		}
+		return false;
 	}
 
 	/*
