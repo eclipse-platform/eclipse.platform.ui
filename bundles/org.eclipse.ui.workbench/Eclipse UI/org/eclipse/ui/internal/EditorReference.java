@@ -14,17 +14,21 @@ package org.eclipse.ui.internal;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -34,7 +38,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.e4.compatibility.ActionBars;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
@@ -199,9 +202,66 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		EditorSite editorSite = new EditorSite(getModel(), part, descriptor
 				.getConfigurationElement());
-		editorSite.setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(),
-				editorSite, getModel()));
+		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
+				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
-		// TODO set editor action bars, if you dare
+	}
+
+	private static HashMap<String, EditorActionBars> actionCache = new HashMap<String, EditorActionBars>();
+
+	/*
+	 * Creates the action bars for an editor. Editors of the same type should
+	 * share a single editor action bar, so this implementation may return an
+	 * existing action bar vector.
+	 */
+	private static EditorActionBars createEditorActionBars(WorkbenchPage page,
+			EditorDescriptor desc, final IEditorSite site) {
+		// Get the editor type.
+		String type = desc.getId();
+
+		// If an action bar already exists for this editor type return it.
+		EditorActionBars actionBars = actionCache.get(type);
+		if (actionBars != null) {
+			actionBars.addRef();
+			return actionBars;
+		}
+
+		// Create a new action bar set.
+		actionBars = new EditorActionBars(page, site.getWorkbenchWindow(), type);
+		actionBars.addRef();
+		actionCache.put(type, actionBars);
+
+		// Read base contributor.
+		IEditorActionBarContributor contr = desc.createActionBarContributor();
+		if (contr != null) {
+			actionBars.setEditorContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Read action extensions.
+		EditorActionBuilder builder = new EditorActionBuilder();
+		contr = builder.readActionExtensions(desc);
+		if (contr != null) {
+			actionBars.setExtensionContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Return action bars.
+		return actionBars;
+	}
+
+	public static void disposeEditorActionBars(EditorActionBars actionBars) {
+		actionBars.removeRef();
+		if (actionBars.getRef() <= 0) {
+			String type = actionBars.getEditorType();
+			actionCache.remove(type);
+			// refresh the cool bar manager before disposing of a cool item
+			ICoolBarManager2 coolBar = (ICoolBarManager2) ((WorkbenchWindow) actionBars.getPage()
+					.getWorkbenchWindow()).getCoolBarManager2();
+			if (coolBar != null) {
+				coolBar.refresh();
+			}
+			actionBars.dispose();
+		}
 	}
 }

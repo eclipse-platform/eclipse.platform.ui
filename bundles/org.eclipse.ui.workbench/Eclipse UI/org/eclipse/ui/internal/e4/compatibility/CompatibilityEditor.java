@@ -23,8 +23,10 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorReference;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
@@ -100,8 +102,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 			IEditorReference ref = it.next();
 			if (ref == reference) {
 				it.remove();
-				return;
+				continue;
 			}
 		}
+		EditorActionBars bars = (EditorActionBars) ((IEditorSite) wrapped.getSite())
+				.getActionBars();
+		EditorReference.disposeEditorActionBars(bars);
 	}
 }
