@@ -48,7 +48,6 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -289,7 +288,8 @@ public class WBWRenderer extends SWTPartRenderer {
 				.getWidth(), wbwModel.getHeight());
 		wbwShell.setVisible(element.isVisible());
 
-		wbwShell.setLayout(new FillLayout());
+		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
+		wbwShell.setLayout(tl);
 		newWidget = wbwShell;
 		bindWidget(element, newWidget);
 
@@ -302,12 +302,6 @@ public class WBWRenderer extends SWTPartRenderer {
 		localContext.set(Shell.class.getName(), wbwShell);
 		localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 
-		if (element instanceof MWindow) {
-			TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
-			wbwShell.setLayout(tl);
-		} else {
-			wbwShell.setLayout(new FillLayout());
-		}
 		if (wbwModel.getLabel() != null)
 			wbwShell.setText(wbwModel.getLabel());
 
