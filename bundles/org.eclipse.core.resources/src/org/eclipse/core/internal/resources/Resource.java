@@ -2161,6 +2161,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isFiltered()
 	 */
 	public boolean isFiltered() {
+		if (isLinked() || isVirtual())
+			return false;
 		Resource currentResource = this;
 		while (currentResource != null && currentResource.getParent() != null) {
 			Resource parent = (Resource) currentResource.getParent();
