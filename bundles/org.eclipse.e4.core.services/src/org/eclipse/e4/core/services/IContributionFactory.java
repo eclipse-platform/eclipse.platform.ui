@@ -11,11 +11,15 @@
 package org.eclipse.e4.core.services;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.osgi.framework.Bundle;
 
 public interface IContributionFactory {
 
-	public Object call(Object object, String uriString, String methodName,
-			IEclipseContext context, Object defaultValue);
+	public Object call(Object object, String uriString, String methodName, IEclipseContext context,
+			Object defaultValue);
 
 	public Object create(String uriString, IEclipseContext context);
+
+	public Bundle getBundle(String uriString);
+
 }
