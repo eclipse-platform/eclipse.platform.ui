@@ -256,17 +256,24 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
-	public MPart findPart(String id) {
-		MUIElement searchRoot = rootContainer;
-
-		// If the model is using perspectives then re-direct the search to the
-		// currently active perspective
+	private MElementContainer<MUIElement> getActivePerspective() {
 		if (rootContainer.getChildren().size() > 0
 				&& rootContainer.getChildren().get(0) instanceof MPerspectiveStack) {
 			// HACK!! find the perspective stack, should use an id ...
 			MElementContainer<MUIElement> perspStack = (MElementContainer<MUIElement>) rootContainer
 					.getChildren().get(0);
-			searchRoot = perspStack.getSelectedElement();
+			return (MElementContainer<MUIElement>) perspStack.getSelectedElement();
+		}
+		return null;
+	}
+
+	public MPart findPart(String id) {
+		MUIElement searchRoot = rootContainer;
+
+		// If the model is using perspectives then re-direct the search to the
+		// currently active perspective
+		if (getActivePerspective() != null) {
+			searchRoot = getActivePerspective();
 		}
 
 		MApplicationElement element = modelService.find(id, searchRoot);
@@ -424,17 +431,23 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MElementContainer<?> getLastContainer() {
-		List<MUIElement> children = rootContainer.getChildren();
+		MElementContainer<MUIElement> searchRoot = rootContainer;
+		if (getActivePerspective() != null) {
+			searchRoot = getActivePerspective();
+			rootContainer = searchRoot;
+		}
+
+		List<MUIElement> children = searchRoot.getChildren();
 		if (children.size() == 0) {
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-			rootContainer.getChildren().add(stack);
+			searchRoot.getChildren().add(stack);
 			return stack;
 		}
 
 		MElementContainer<?> lastContainer = getLastContainer(rootContainer, children);
 		if (lastContainer == null) {
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-			rootContainer.getChildren().add(stack);
+			searchRoot.getChildren().add(stack);
 			return stack;
 		}
 		return lastContainer;
