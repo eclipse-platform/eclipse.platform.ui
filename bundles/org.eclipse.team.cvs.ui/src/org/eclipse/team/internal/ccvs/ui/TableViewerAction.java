@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class TableViewerAction extends Action {
 				buf.append(firstTag.getName());
 				while (selectionIter.hasNext()) {
 					String tagName = ((ITag) selectionIter.next()).getName();
-					buf.append(getLineSeparator()).append(tagName);
+					buf.append(System.getProperty("line.separator", "\n")).append(tagName); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
 				Clipboard clipboard = new Clipboard(Display.getDefault());
@@ -68,12 +68,5 @@ public class TableViewerAction extends Action {
 				}
 			}
 		}
-	}
-	
-	private String getLineSeparator() {
-		String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
-		if (lineSeparator == null)
-			lineSeparator= "\r\n"; //$NON-NLS-1$
-		return lineSeparator;
 	}
 }
