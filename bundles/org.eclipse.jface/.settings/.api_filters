@@ -10,13 +10,13 @@
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.bindings.keys.IKeyLookup"/>
-                <message_argument value="F19_NAME"/>
+                <message_argument value="F20_NAME"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.bindings.keys.IKeyLookup"/>
-                <message_argument value="F20_NAME"/>
+                <message_argument value="F19_NAME"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
@@ -29,22 +29,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.jface.bindings.keys.IKeyLookup"/>
                 <message_argument value="F16_NAME"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/dialogs/PopupDialog.java" type="org.eclipse.jface.dialogs.PopupDialog">
-        <filter id="388194388">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.dialogs.PopupDialog"/>
-                <message_argument value="HOVER_SHELLSTYLE"/>
-                <message_argument value="540680"/>
-            </message_arguments>
-        </filter>
-        <filter id="388194388">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.dialogs.PopupDialog"/>
-                <message_argument value="INFOPOPUP_SHELLSTYLE"/>
-                <message_argument value="8"/>
             </message_arguments>
         </filter>
     </resource>
