@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -624,4 +624,40 @@ public class TitleAreaDialog extends TrayDialog {
 		childData.bottom = new FormAttachment(100, 0);
 		workArea.setLayoutData(childData);
 	}
+	
+	/**
+	 * Returns the current message text for this dialog.  This message is 
+	 * displayed in the message line of the dialog when the error message
+	 * is <code>null</code>.  If there is a non-null error message, this
+	 * message is not shown, but is stored so that it can be shown in
+	 * the message line whenever {@link #setErrorMessage(String)} is called with
+	 * a <code>null</code> parameter.
+	 * 
+	 * @return the message text, which is never <code>null</code>. 
+	 * 
+	 * @see #setMessage(String)
+	 * @see #setErrorMessage(String)
+	 * 
+	 * @since 3.6
+	 */
+	
+    public String getMessage() {
+    	return message;
+    }
+    
+	/**
+	 * Returns the current error message being shown in the dialog, or 
+	 * <code>null</code> if there is no error message being shown.
+	 * 
+	 * @return the error message, which may be <code>null</code>. 
+	 * 
+	 * @see #setErrorMessage(String)
+	 * @see #setMessage(String)
+	 * 
+	 * @since 3.6
+	 */
+	
+    public String getErrorMessage() {
+    	return errorMessage;
+    }
 }
