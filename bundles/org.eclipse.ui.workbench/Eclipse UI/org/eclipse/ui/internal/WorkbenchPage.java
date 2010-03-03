@@ -51,6 +51,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -2324,10 +2325,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 
 	public void processEventLoop() {
-		Display display = getWorkbenchWindow().getShell().getDisplay();
+		Shell shell = getWorkbenchWindow().getShell();
+		if (shell == null || shell.isDisposed()) {
+			return;
+		}
+		
+		Display display = shell.getDisplay();
 		if (display.isDisposed()) {
 			return;
 		}
+		
 		while (display.readAndDispatch())
 			;
 	}
