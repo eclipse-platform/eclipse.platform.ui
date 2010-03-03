@@ -1,11 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2010 BestSolution.at and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ListViewer;
@@ -27,6 +43,11 @@ public class PartEditor extends AbstractComponentEditor {
 	private Image image;
 	private DataBindingContext context;
 
+	private IListProperty PART__MENUS = EMFProperties.list(MApplicationPackage.Literals.PART__MENUS);
+	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
+	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+
+
 	@Override
 	public Image getImage(Display display) {
 		if( image == null ) {
@@ -37,12 +58,12 @@ public class PartEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public String getLabel() {
+	public String getLabel(Object element) {
 		return "Part Descriptor";
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(Object element) {
 		return "Part Descriptor Bla Bla Bla Bla";
 	}
 
@@ -203,4 +224,44 @@ public class PartEditor extends AbstractComponentEditor {
 
 		return parent;
 	}
+
+	@Override
+	public IObservableList getChildList(Object element) {
+		WritableList list = new WritableList();
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MENU, PART__MENUS, element, "Menus") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		return list;
+	}
+
+	@Override
+	public String getDetailLabel(Object element) {
+		MPart o = (MPart) element;
+		return o.getLabel();
+	}
+
 }

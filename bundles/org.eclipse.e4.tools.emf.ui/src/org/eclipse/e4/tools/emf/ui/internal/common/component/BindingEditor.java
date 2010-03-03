@@ -13,18 +13,13 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class ModelComponentsEditor extends AbstractComponentEditor {
-	private IListProperty MODEL_COMPONENTS__COMPONENTS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
-
+public class BindingEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -32,41 +27,40 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Display display) {
-		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_view_icons.png"));
-		}
-		return image;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "Model Components";
+		return "Binding";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Some bla bla bla bla";
+		return "Binding bla bla bla";
 	}
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
 		if( composite == null ) {
 			context = new DataBindingContext();
-			composite = createForm(parent);
+			composite = createForm(parent,context, master);
 		}
 		master.setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent) {
-		parent = new Composite(parent, SWT.NONE);
-
+	private Composite createForm(Composite parent, DataBindingContext context2,
+			WritableValue master) {
+		parent = new Composite(parent,SWT.NONE);
 		return parent;
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		return MODEL_COMPONENTS__COMPONENTS.observe(element);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

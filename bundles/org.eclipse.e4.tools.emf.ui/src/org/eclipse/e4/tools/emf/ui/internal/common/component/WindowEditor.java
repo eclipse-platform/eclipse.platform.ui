@@ -13,20 +13,20 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class ApplicationEditor extends AbstractComponentEditor {
+public class WindowEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -37,10 +37,11 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty APPLICATION__COMMANDS = EMFProperties.list(MApplicationPackage.Literals.APPLICATION__COMMANDS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
+
 	@Override
 	public Image getImage(Display display) {
 		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application.png"));
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_xp.png"));
 		}
 
 		return image;
@@ -48,12 +49,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Application";
+		return "Window";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Application bla, bla, bla";
+		return "Window bla bla bla";
 	}
 
 	@Override
@@ -66,9 +67,9 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		return composite;
 	}
 
-	protected Composite createForm(Composite parent, DataBindingContext context, IObservableValue master) {
+	private Composite createForm(Composite parent, DataBindingContext context2,
+			WritableValue master) {
 		parent = new Composite(parent,SWT.NONE);
-
 		return parent;
 	}
 
@@ -102,7 +103,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOWS, ELEMENT_CONTAINER__CHILDREN, element, "Windows") {
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOWS, ELEMENT_CONTAINER__CHILDREN, element, "Controls") {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -116,8 +117,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+		return ((MWindow)element).getLabel();
 	}
+
 
 }

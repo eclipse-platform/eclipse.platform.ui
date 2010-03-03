@@ -17,22 +17,20 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MModelComponents;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
@@ -51,10 +49,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class ModelEditor {
-	private static final int VIRTUAL_MENU = 1;
-	private static final int VIRTUAL_PART = 2;
-	private static final int VIRTUAL_HANDLER = 3;
-	private static final int VIRTUAL_BINDING = 4;
+	public static final int VIRTUAL_MENU    = 1;
+	public static final int VIRTUAL_PART    = 2;
+	public static final int VIRTUAL_HANDLER = 3;
+	public static final int VIRTUAL_BINDING = 4;
+	public static final int VIRTUAL_COMMAND = 5;
+	public static final int VIRTUAL_WINDOWS = 6;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 //	private List<AbstractComponentEditor> editors = new ArrayList<AbstractComponentEditor>();
@@ -73,6 +73,8 @@ public class ModelEditor {
 
 		Composite parent = new Composite(form,SWT.NONE);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
+//		parent.setData("org.eclipse.e4.ui.css.CssClassName","contentContainer");
 		FillLayout l = new FillLayout();
 		l.marginWidth=5;
 		parent.setLayout(l);
@@ -83,7 +85,7 @@ public class ModelEditor {
 		gl.marginHeight=0;
 		editingArea.setLayout(gl);
 		editingArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		editingArea.setData("org.eclipse.e4.ui.css.CssClassName","contentContainer");
+//		editingArea.setData("org.eclipse.e4.ui.css.CssClassName","contentContainer");
 
 		Composite headerContainer = new Composite(editingArea,SWT.NONE);
 		headerContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -112,7 +114,7 @@ public class ModelEditor {
 						EObject obj = (EObject) s.getFirstElement();
 						AbstractComponentEditor editor = editorMap.get(obj.eClass());
 						if( editor != null ) {
-							textLabel.setText(editor.getLabel());
+							textLabel.setText(editor.getLabel(obj));
 							iconLabel.setImage(editor.getImage(iconLabel.getDisplay()));
 							Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -136,7 +138,7 @@ public class ModelEditor {
 		ShadowComposite editingArea = new ShadowComposite(parent,SWT.NONE);
 		editingArea.setLayout(new FillLayout());
 		TreeViewer viewer = new TreeViewer(editingArea);
-		viewer.setLabelProvider(new ComponentLabelProvider());
+		viewer.setLabelProvider(new ComponentLabelProvider(this));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
 		viewer.setContentProvider(contentProvider);
@@ -151,82 +153,38 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor());
 		registerEditor( MApplicationPackage.Literals.PART, new PartEditor());
 		registerEditor( MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor());
+		registerEditor( MApplicationPackage.Literals.KEY_BINDING, new BindingEditor());
+		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor());
+		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor());
+		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor());
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
 		editorMap.put(eClass, editor);
 	}
 
+	public AbstractComponentEditor getEditor(EClass eClass) {
+		return editorMap.get(eClass);
+	}
+
 	private static class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 
 	}
 
-	private static class ObservableFactoryImpl implements IObservableFactory {
-		private IListProperty MODEL_COMPONENTS__COMPONENTS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
-		private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
-		private IListProperty PART__MENUS = EMFProperties.list(MApplicationPackage.Literals.PART__MENUS);
-		private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-		private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+	private class ObservableFactoryImpl implements IObservableFactory {
 
 		public IObservable createObservable(Object target) {
 			if( target instanceof IObservableList ) {
 				return (IObservable) target;
-			} else if( target instanceof MModelComponents ) {
-				return MODEL_COMPONENTS__COMPONENTS.observe(target);
-			} else if( target instanceof MModelComponent ) {
-				WritableList list = new WritableList();
-				list.add(new VirtualEntry<Object>( VIRTUAL_MENU, MODEL_COMPONENT__CHILDREN, target, "Menus") {
-
-					@Override
-					protected boolean accepted(Object o) {
-						return false;
-					}
-
-				});
-				list.add(new VirtualEntry<Object>( VIRTUAL_PART, MODEL_COMPONENT__CHILDREN, target, "Parts") {
-
-					@Override
-					protected boolean accepted(Object o) {
-						return o instanceof MPart;
-					}
-
-				});
-				return list;
 			} else if( target instanceof VirtualEntry<?> ) {
 				return ((VirtualEntry<?>)target).getList();
-			} else if( target instanceof MPart ) {
-				WritableList list = new WritableList();
-				list.add(new VirtualEntry<Object>( VIRTUAL_MENU, PART__MENUS, target, "Menus") {
-
-					@Override
-					protected boolean accepted(Object o) {
-						return true;
-					}
-
-				});
-
-				list.add(new VirtualEntry<Object>( VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, target, "Handlers") {
-
-					@Override
-					protected boolean accepted(Object o) {
-						return true;
-					}
-
-				});
-
-				list.add(new VirtualEntry<Object>( VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, target, "Bindings") {
-
-					@Override
-					protected boolean accepted(Object o) {
-						return true;
-					}
-
-				});
-
-				return list;
+			} else {
+				AbstractComponentEditor editor = editorMap.get(((EObject)target).eClass());
+				if( editor != null ) {
+					return editor.getChildList(target);
+				}
 			}
 
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}

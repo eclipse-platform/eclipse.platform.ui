@@ -11,10 +11,18 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MModelComponent;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ListViewer;
@@ -33,6 +41,8 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	private WritableValue master = new WritableValue();
 	private Image image;
 	private DataBindingContext context;
+
+	private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
@@ -140,12 +150,41 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public String getLabel() {
+	public String getLabel(Object element) {
 		return "Model Component";
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(Object element) {
 		return "The model component ... bla bla bla";
 	}
+
+	@Override
+	public IObservableList getChildList(Object element) {
+		WritableList list = new WritableList();
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MENU, MODEL_COMPONENT__CHILDREN, element, "Menus") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return o instanceof MMenu;
+			}
+
+		});
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PART, MODEL_COMPONENT__CHILDREN, element, "Parts") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return o instanceof MPart;
+			}
+
+		});
+		return list;
+	}
+
+	@Override
+	public String getDetailLabel(Object element) {
+		MModelComponent o = (MModelComponent) element;
+		return "parentId: " + o.getParentID();
+	}
+
 }

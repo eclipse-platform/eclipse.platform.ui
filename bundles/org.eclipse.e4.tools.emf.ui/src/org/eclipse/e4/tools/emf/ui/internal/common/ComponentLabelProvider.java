@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -30,33 +32,41 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 	private Image partImage;
 	private Image partDescriptorImage;
 
+	private ModelEditor editor;
+
+	public ComponentLabelProvider(ModelEditor editor) {
+		this.editor = editor;
+	}
+
 	@Override
     public void update(final ViewerCell cell) {
-		if( cell.getElement() instanceof MModelComponents ) {
-			cell.setText("Model Components");
-			if( modelComponentsImage == null ) {
-				modelComponentsImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/application_view_icons.png"));
-			}
-			cell.setImage(modelComponentsImage);
-		} else if( cell.getElement() instanceof MModelComponent ) {
-			MModelComponent m = (MModelComponent) cell.getElement();
-			StyledString styledString = new StyledString("Model Component", null);
-			String decoration = " - " + m.getParentID();
-			Styler styler = new Styler() {
+		if( cell.getElement() instanceof EObject ) {
 
-				@Override
-				public void applyStyles(TextStyle textStyle) {
-					textStyle.foreground = cell.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+			EObject o = (EObject) cell.getElement();
+			AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
+			if( elementEditor != null ) {
+				String label = elementEditor.getLabel(o);
+				String detailText = elementEditor.getDetailLabel(o);
+				if( detailText == null ) {
+					cell.setText(label);
+				} else {
+					StyledString styledString = new StyledString(label, null);
+					Styler styler = new Styler() {
+
+						@Override
+						public void applyStyles(TextStyle textStyle) {
+							textStyle.foreground = cell.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+						}
+					};
+
+			        styledString.append(" - " + detailText, styler);
+					cell.setText(styledString.getString());
+					cell.setStyleRanges(styledString.getStyleRanges());
 				}
-			};
-
-	        styledString.append(decoration, styler);
-			cell.setText(styledString.getString());
-			cell.setStyleRanges(styledString.getStyleRanges());
-			if( modelComonentImage == null ) {
-				modelComonentImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/package_go.png"));
+				cell.setImage(elementEditor.getImage(cell.getControl().getDisplay()));
+			} else {
+				cell.setText(cell.getElement().toString());
 			}
-			cell.setImage(modelComonentImage);
 		} else if( cell.getElement() instanceof VirtualEntry<?> ) {
 			String s = cell.getElement().toString();
 			cell.setText(s);
@@ -71,35 +81,6 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				}
 				cell.setImage(menusImage);
 			}
-		} else if( cell.getElement() instanceof MPart ) {
-			MPart part = (MPart) cell.getElement();
-			String label;
-			if( cell.getElement() instanceof MPartDescriptor ) {
-				label = "Part Descriptor";
-				if( partDescriptorImage == null ) {
-					partDescriptorImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/application_form_edit.png"));
-				}
-				cell.setImage(partImage);
-			} else {
-				label = "Part";
-				if( partImage == null ) {
-					partImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/application_form.png"));
-				}
-				cell.setImage(partImage);
-			}
-			StyledString styledString = new StyledString(label, null);
-			String decoration = " - " + part.getLabel();
-			Styler styler = new Styler() {
-
-				@Override
-				public void applyStyles(TextStyle textStyle) {
-					textStyle.foreground = cell.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
-				}
-			};
-
-	        styledString.append(decoration, styler);
-	        cell.setText(styledString.getString());
-			cell.setStyleRanges(styledString.getStyleRanges());
 		} else {
 			cell.setText(cell.getElement()+"");
 		}

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -17,7 +18,11 @@ import org.eclipse.swt.widgets.Display;
 public abstract class AbstractComponentEditor {
 //	public abstract boolean canHandle(Object object);
 	public abstract Image getImage(Display display);
-	public abstract String getLabel();
-	public abstract String getDescription();
+	public abstract String getLabel(Object element);
+	public abstract String getDetailLabel(Object element);
+
+	public abstract String getDescription(Object element);
 	public abstract Composite getEditor(Composite parent, Object object);
+	public abstract IObservableList getChildList(Object element);
+
 }
