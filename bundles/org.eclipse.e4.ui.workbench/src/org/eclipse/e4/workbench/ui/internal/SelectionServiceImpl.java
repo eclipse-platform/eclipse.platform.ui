@@ -112,7 +112,7 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
-		if (part != null) {
+		if ((part != null) && (activePart != part)) {
 			activePart = part;
 			IEclipseContext rootContext = serviceRoot.getContext();
 			if (rootContext == context) {

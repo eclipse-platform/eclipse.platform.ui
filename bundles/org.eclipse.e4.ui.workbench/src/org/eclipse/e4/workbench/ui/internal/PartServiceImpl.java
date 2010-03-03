@@ -30,6 +30,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -116,6 +118,7 @@ public class PartServiceImpl implements EPartService {
 	private Logger logger;
 
 	@Inject
+	@Optional
 	private ISaveHandler saveHandler;
 
 	@Inject
@@ -157,8 +160,12 @@ public class PartServiceImpl implements EPartService {
 			// service though
 			application.getContext().runAndTrack(new IRunAndTrack() {
 				public boolean notify(ContextChangeEvent event) {
-					IEclipseContext childContext = (IEclipseContext) event.getContext().getLocal(
-							IContextConstants.ACTIVE_CHILD);
+
+					IObjectProvider provider = event.getContext();
+					IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
+
+					IEclipseContext childContext = (IEclipseContext) eventsContext
+							.getLocal(IContextConstants.ACTIVE_CHILD);
 					if (childContext != null) {
 						rootContainer = (MElementContainer<MUIElement>) childContext
 								.get(MWindow.class.getName());
