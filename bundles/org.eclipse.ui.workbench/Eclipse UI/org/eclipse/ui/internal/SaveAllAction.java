@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
@@ -20,7 +21,6 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * Global action that saves all targets in the
@@ -148,8 +148,14 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
 			setEnabled(true);
 		}
 		else {
-			// TODO compat: if the saveables are dirty
-			E4Util.unsupported("Are the saveables dirty?"); //$NON-NLS-1$
+			IWorkbenchPage page = getActivePage();
+			if (page == null) {
+				setEnabled(false);
+			} else {
+				EPartService partService = (EPartService) page.getWorkbenchWindow().getService(
+						EPartService.class);
+				setEnabled(!partService.getDirtyParts().isEmpty());
+			}
 		}
     }
 
