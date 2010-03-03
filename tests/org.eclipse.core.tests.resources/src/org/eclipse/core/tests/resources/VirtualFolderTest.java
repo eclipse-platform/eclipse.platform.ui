@@ -476,4 +476,13 @@ public class VirtualFolderTest extends ResourceTest {
 			Workspace.clear(linkedFolderLocation.toFile());
 		}
 	}
+
+	/* Regression for Bug 296470 */
+	public void testGetVirtualFolderAttributes() {
+		long timeStamp = existingVirtualFolderInExistingProject.getLocalTimeStamp();
+		assertEquals("1.0", timeStamp, IResource.NULL_STAMP);
+
+		ResourceAttributes attributes = existingVirtualFolderInExistingProject.getResourceAttributes();
+		assertEquals("1.1", attributes, null);
+	}
 }
