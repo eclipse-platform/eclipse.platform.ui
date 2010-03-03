@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.actions.ActionFactory;
 
+import com.ibm.icu.util.StringTokenizer;
+
 /**
  * Try to paste a CVS connection string from clipboard as a repository location
  */
@@ -26,19 +28,23 @@ public class PasteConnectionStringAction extends ActionDelegate implements
 		IViewActionDelegate {
 
 	private IAction action;
-	
+
 	public void run(IAction action) {
 		Clipboard clipboard = new Clipboard(PlatformUI.getWorkbench()
 				.getDisplay());
 		try {
 			Object contents = clipboard.getContents(TextTransfer.getInstance());
 			if (contents != null && contents instanceof String) {
-				String connectionString = (String) contents;
-				CVSRepositoryLocation location = CVSRepositoryLocation
-						.fromString(connectionString);
-				if (location != null) {
-					KnownRepositories.getInstance().addRepository(location,
-							true);
+				StringTokenizer st = new StringTokenizer((String) contents,
+						System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+				while (st.hasMoreTokens()) {
+					String connectionString = st.nextToken();
+					CVSRepositoryLocation location = CVSRepositoryLocation
+							.fromString(connectionString);
+					if (location != null) {
+						KnownRepositories.getInstance().addRepository(location,
+								true);
+					}
 				}
 			}
 		} catch (Exception e) {
