@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -256,7 +257,19 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		MApplicationElement element = modelService.find(id, rootContainer);
+		MUIElement searchRoot = rootContainer;
+
+		// If the model is using perspectives then re-direct the search to the
+		// currently active perspective
+		if (rootContainer.getChildren().size() > 0
+				&& rootContainer.getChildren().get(0) instanceof MPerspectiveStack) {
+			// HACK!! find the perspective stack, should use an id ...
+			MElementContainer<MUIElement> perspStack = (MElementContainer<MUIElement>) rootContainer
+					.getChildren().get(0);
+			searchRoot = perspStack.getSelectedElement();
+		}
+
+		MApplicationElement element = modelService.find(id, searchRoot);
 		return element instanceof MPart ? (MPart) element : null;
 	}
 
