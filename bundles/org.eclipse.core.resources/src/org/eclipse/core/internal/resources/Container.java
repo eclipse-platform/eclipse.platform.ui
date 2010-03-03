@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -35,6 +36,55 @@ public abstract class Container extends Resource implements IContainer {
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < members.length; i++)
 			((Resource) members[i]).convertToPhantom();
+	}
+	/**
+	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
+	 */
+	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(getProject());
+		monitor = Policy.monitorFor(monitor);
+		FilterDescription filter = null;
+		try {
+			String message = NLS.bind(Messages.links_creating, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			Policy.checkCanceled(monitor);
+			checkValidPath(path, FOLDER | PROJECT, true);
+			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_FILTER_ADD, this));
+				workspace.beginOperation(true);
+				monitor.worked(Policy.opWork * 5 / 100);
+				//save the filter in the project description
+				filter = new FilterDescription(this, type, matcherDescription);
+				filter.setId(System.currentTimeMillis());
+				
+				Project project = (Project) getProject();
+				project.internalGetDescription().addFilter(getProjectRelativePath(), filter);
+				project.writeDescription(IResource.NONE);
+				monitor.worked(Policy.opWork * 5 / 100);
+
+				//refresh to discover any new resources below this folder
+				if (getType() != IResource.FILE) {
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 90 / 100);
+					} else {
+						refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+					}
+				} else
+					monitor.worked(Policy.opWork * 90 / 100);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
+		return filter;
 	}
 
 	/* (non-Javadoc)
@@ -117,6 +167,27 @@ public abstract class Container extends Resource implements IContainer {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IContainer#getFilters()
+	 */
+	public IResourceFilterDescription[] getFilters() throws CoreException {
+		IResourceFilterDescription[] results = null;
+		checkValidPath(path, FOLDER | PROJECT, true);
+		Project project = (Project) getProject();
+		ProjectDescription desc = project.internalGetDescription();
+		if (desc != null) {
+			LinkedList/*<FilterDescription>*/ list = desc.getFilter(getProjectRelativePath());
+			if (list != null) {
+				results = new IResourceFilterDescription[list.size()];
+				for (int i = 0; i < list.size(); i++) {
+					results[i] = (FilterDescription) list.get(i);
+				}
+				return results;
+			}
+		}
+		return new IResourceFilterDescription[0];
+	}
+
+	/* (non-Javadoc)
 	 * @see IContainer#getFile(IPath)
 	 */
 	public IFile getFile(IPath childPath) {
@@ -183,6 +254,47 @@ public abstract class Container extends Resource implements IContainer {
 		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
 			workspace.refreshManager.refresh(this);
 		return getChildren(memberFlags);
+	}
+
+	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = NLS.bind(Messages.links_creating, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			Policy.checkCanceled(monitor);
+			checkValidPath(path, FOLDER | PROJECT, true);
+			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_FILTER_REMOVE, this));
+				workspace.beginOperation(true);
+				monitor.worked(Policy.opWork * 5 / 100);
+				//save the filter in the project description
+				Project project = (Project) getProject();
+				project.internalGetDescription().removeFilter(getProjectRelativePath(), (FilterDescription)filterDescription);
+				project.writeDescription(IResource.NONE);
+				monitor.worked(Policy.opWork * 5 / 100);
+
+				//refresh to discover any new resources below this linked location
+				if (getType() != IResource.FILE) {
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 90 / 100);
+					} else {
+						refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+					}
+				} else
+					monitor.worked(Policy.opWork * 90 / 100);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
