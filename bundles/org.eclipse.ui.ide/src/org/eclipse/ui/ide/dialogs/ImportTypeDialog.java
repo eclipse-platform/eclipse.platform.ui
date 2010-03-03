@@ -57,6 +57,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * Files and folders can be created either by copying the source objects, creating 
  * linked resources, and/or creating virtual folders.
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.6
  *
  */
