@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 public interface ISynchronizeModelProvider {
 	
     /**
-     * Property constant used to indicate that the veiwer sorter has changed.
+     * Property constant used to indicate that the viewer sorter has changed.
      * Property change notifications for the viewer sorter change do not include
      * the old and new viewer sorter. Instead, clients should re-obtain the sorter
      * from the provider.
@@ -47,7 +47,7 @@ public interface ISynchronizeModelProvider {
 	public ISynchronizeModelProviderDescriptor getDescriptor();
 	
 	/**
-	 * Return the <code>AbstractTreeViewer</code> asociated with this content
+	 * Return the <code>AbstractTreeViewer</code> associated with this content
 	 * provider or <code>null</code> if the viewer is not of the proper type.
 	 * @return the viewer
 	 */
@@ -55,6 +55,7 @@ public interface ISynchronizeModelProvider {
 
 	/**
 	 * Builds the viewer model based on the contents of the sync set.
+	 * @param monitor the progress monitor
 	 * @return the root element of the generated model.
 	 */
 	public abstract ISynchronizeModelElement prepareInput(IProgressMonitor monitor);
