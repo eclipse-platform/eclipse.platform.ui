@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -1600,5 +1601,19 @@ public class FilteredResourceTest extends ResourceTest {
 		}
 
 		assertEquals("2.1", filters.length, 0);
+	}
+
+	/* Regression test for Bug 304276 */
+	public void testInvalidCharactersInRegExFilter() {
+		RegexFileInfoMatcher matcher = new RegexFileInfoMatcher();
+		try {
+			matcher.initialize(existingProject, "*:*");
+			FileInfo info = new FileInfo(existingFileInExistingProject.getName());
+			info.setDirectory(false);
+			boolean result = matcher.matches(info);
+			assertEquals("1.0", result, false);
+		} catch (Throwable t) {
+			fail("1.1", t);
+		}
 	}
 }
