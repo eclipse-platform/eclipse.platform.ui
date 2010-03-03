@@ -524,6 +524,32 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("9.8", members[0].getName(), "foo.h");
 	}
 
+	public void testIResource_isFiltered() {
+		IFolder folder = existingFolderInExistingProject.getFolder("virtual_folder.txt");
+		IFile file = existingFolderInExistingProject.getFile("linked_file.txt");
+
+		try {
+			folder.create(IResource.VIRTUAL, true, getMonitor());
+		} catch (CoreException e1) {
+			fail("0.79", e1);
+		}
+		try {
+			file.createLink(existingFileInExistingProject.getLocation(), 0, getMonitor());
+		} catch (CoreException e1) {
+			fail("0.89", e1);
+		}
+
+		FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.txt");
+		try {
+			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		assertEquals("1.0", folder.isFiltered(), false);
+		assertEquals("1.1", file.isFiltered(), false);
+	}
+
 	/**
 	 * Tests the creation of two different filters on a linked folder and the original.
 	 * Check that creating and modifying files in the workspace doesn't make them appear in
