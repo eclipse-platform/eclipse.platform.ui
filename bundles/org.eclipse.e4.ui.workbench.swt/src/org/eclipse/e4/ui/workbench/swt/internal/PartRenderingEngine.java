@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
@@ -26,6 +27,9 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.internal.core.services.bundle.BundleContextStrategy;
+import org.eclipse.e4.internal.core.services.bundle.CompositeContextStrategy;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -56,6 +60,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.Bundle;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -261,8 +266,20 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (ctxt.getContext() == null) {
 				IEclipseContext parentContext = element.getParent() == null ? appContext
 						: getContext(element.getParent());
+				IEclipseContextStrategy strategy;
+				if (element instanceof MContribution) {
+					IContributionFactory contributionFactory = (IContributionFactory) parentContext
+							.get(IContributionFactory.class.getName());
+					MContribution contribution = (MContribution) element;
+					Bundle bundle = contributionFactory.getBundle(contribution
+							.getURI());
+					strategy = new CompositeContextStrategy(UISchedulerStrategy
+							.getInstance(), new BundleContextStrategy(bundle));
+				} else {
+					strategy = UISchedulerStrategy.getInstance();
+				}
 				IEclipseContext lclContext = EclipseContextFactory.create(
-						parentContext, UISchedulerStrategy.getInstance());
+						parentContext, strategy);
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
 				ctxt.setContext(lclContext);
@@ -404,6 +421,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (element instanceof MContext) {
 			MContext ctxt = (MContext) element;
 			IEclipseContext lclContext = ctxt.getContext();
+			IEclipseContext parentContext = (IEclipseContext) lclContext
+					.get(IContextConstants.PARENT);
 			ctxt.setContext(null);
 			if (lclContext instanceof IDisposable) {
 				((IDisposable) lclContext).dispose();

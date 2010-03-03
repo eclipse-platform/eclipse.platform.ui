@@ -237,4 +237,9 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		return Activator.getDefault().getBundleForName(platformURI.segment(1));
 	}
 
+	public Bundle getBundle(String uriString) {
+		URI uri = URI.createURI(uriString);
+		return getBundle(uri);
+	}
+
 }
