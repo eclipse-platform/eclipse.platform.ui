@@ -22,6 +22,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.tests.services.TestActivator;
 
 /**
@@ -131,7 +132,9 @@ public class RunAndTrackTest extends TestCase {
 
 			public boolean notify(ContextChangeEvent event) {
 				oldValue = event.getOldValue();
-				newValue = event.getContext().get(NAME);
+				IObjectProvider provider = event.getContext();
+				IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
+				newValue = eventsContext.get(NAME);
 				return true;
 			}
 		}
@@ -176,7 +179,9 @@ public class RunAndTrackTest extends TestCase {
 			public boolean notify(ContextChangeEvent event) {
 				// must get a value so we aren't removed
 				eventType = event.getEventType();
-				event.getContext().get(NAME);
+				IObjectProvider provider = event.getContext();
+				IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
+				eventsContext.get(NAME);
 				return true;
 			}
 		}

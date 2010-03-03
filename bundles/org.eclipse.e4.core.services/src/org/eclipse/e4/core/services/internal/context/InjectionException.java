@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.util.List;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+public class InjectionException extends Exception {
 
-/**
- * This class exists only for the purpose of automated testing. Clients should never reference this
- * class.
- * 
- * @noreference
- */
-public final class TestHelper {
-	private TestHelper() {
-		// don't allow instantiation
+	private static final long serialVersionUID = 3098545573510654907L;
+
+	public InjectionException() {
+		super();
 	}
 
-	public static List getListeners(IEclipseContext context) {
-		return ((EclipseContext) context).listeners;
+	public InjectionException(Throwable e) {
+		super(e);
 	}
+
+	public InjectionException(String msg) {
+		super(msg);
+	}
+
+	public InjectionException(String msg, Throwable e) {
+		super(msg, e);
+	}
+
 }

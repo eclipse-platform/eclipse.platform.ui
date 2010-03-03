@@ -15,7 +15,9 @@ import java.util.WeakHashMap;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
+import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
 
@@ -94,6 +96,12 @@ public final class EclipseContextFactory {
 	 */
 	public static ContextChangeEvent createContextEvent(IEclipseContext context, int eventType,
 			Object[] args, String name, Object oldValue) {
-		return new ContextChangeEvent(context, eventType, args, name, oldValue);
+		return new ContextChangeEvent(new ObjectProviderContext(context), eventType, args, name,
+				oldValue);
+	}
+
+	public static ContextChangeEvent createContextEvent(IObjectProvider provider, int eventType,
+			Object[] args, String name, Object oldValue) {
+		return new ContextChangeEvent(provider, eventType, args, name, oldValue);
 	}
 }

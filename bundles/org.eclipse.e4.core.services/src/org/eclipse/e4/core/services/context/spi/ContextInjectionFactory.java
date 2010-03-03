@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
+import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 
 /**
@@ -89,8 +90,8 @@ final public class ContextInjectionFactory {
 	static public Object inject(Object object, IEclipseContext context) {
 		// TBD IEclipseContext might have a delayed runAndTrack. In this case
 		// the object might be returned before the actual injection took place.
-		context.runAndTrack(ObjectProviderContext.getObjectProvider(context),
-				new Object[] { object });
+		ObjectProviderContext provider = ObjectProviderContext.getObjectProvider(context);
+		provider.init(object);
 		return object;
 	}
 
@@ -145,8 +146,7 @@ final public class ContextInjectionFactory {
 	 *            the context previously injected into the object
 	 */
 	static public void uninject(Object object, IEclipseContext context) {
-		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
-		objectProvider.getInjector().uninject(object);
+		((EclipseContext) context).removeListenersTo(object);
 	}
 
 	/**
@@ -169,7 +169,7 @@ final public class ContextInjectionFactory {
 		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
 		Object result = objectProvider.getInjector().make(clazz);
 		if (result != null)
-			context.runAndTrack(objectProvider, new Object[] { result });
+			inject(result, context);
 		return result;
 	}
 }

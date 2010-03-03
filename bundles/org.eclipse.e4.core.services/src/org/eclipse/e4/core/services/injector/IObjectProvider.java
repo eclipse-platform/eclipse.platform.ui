@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.injector;
 
+import org.eclipse.e4.core.services.context.IRunAndTrack;
+
 /**
  * This interface describes an "object provider" - something that knows how to instantiate objects
  * corresponding to the key. NOTE: This is a preliminary form; this API will change.
@@ -26,4 +28,5 @@ public interface IObjectProvider {
 
 	public String getKey(IObjectDescriptor key);
 
+	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 }

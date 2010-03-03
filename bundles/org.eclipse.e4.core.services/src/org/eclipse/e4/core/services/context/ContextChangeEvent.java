@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context;
 
+import org.eclipse.e4.core.services.injector.IObjectProvider;
+
 /**
  * An event describing a change to an {@link IEclipseContext}. The following types of events are
  * currently defined:
@@ -59,7 +61,7 @@ public final class ContextChangeEvent {
 	public static final int UNINJECTED = 4;
 
 	private Object[] args;
-	private IEclipseContext context;
+	private IObjectProvider context;
 	private int eventType;
 	private String key;
 
@@ -73,7 +75,7 @@ public final class ContextChangeEvent {
 	 * @param args
 	 * @param name
 	 */
-	ContextChangeEvent(IEclipseContext context, int eventType, Object[] args, String name,
+	ContextChangeEvent(IObjectProvider context, int eventType, Object[] args, String name,
 			Object oldValue) {
 		this.context = context;
 		this.key = name;
@@ -97,7 +99,7 @@ public final class ContextChangeEvent {
 	 * 
 	 * @return the context where the change occurred
 	 */
-	public IEclipseContext getContext() {
+	public IObjectProvider getContext() {
 		return context;
 	}
 

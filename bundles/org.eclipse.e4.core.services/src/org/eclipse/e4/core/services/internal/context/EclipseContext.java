@@ -122,6 +122,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.runnable = runnable;
 		}
 
+		public Object getObject() {
+			if (runnable instanceof IRunAndTrackObject)
+				return ((IRunAndTrackObject) runnable).getObject();
+			return null;
+		}
+
 		final protected void doHandleInvalid(ContextChangeEvent event, List scheduledList) {
 			int eventType = event.getEventType();
 			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
@@ -189,7 +195,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	};
 
 	static class DebugSnap {
-		Set listeners = new HashSet();
+		List listeners = new ArrayList();
 		Map localValueComputations = Collections.synchronizedMap(new HashMap());
 		Map localValues = Collections.synchronizedMap(new HashMap());
 	}
@@ -205,7 +211,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final Set listeners = new HashSet();
+	final List listeners = new ArrayList();
 
 	final Map localValueComputations = Collections.synchronizedMap(new HashMap());
 	final Map localValues = Collections.synchronizedMap(new HashMap());
@@ -243,7 +249,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public void debugSnap() {
 		snapshot = new DebugSnap();
-		snapshot.listeners = new HashSet(listeners);
+		snapshot.listeners = new ArrayList(listeners);
 		snapshot.localValueComputations = new HashMap(localValueComputations);
 		snapshot.localValues = new HashMap(localValues);
 	}
@@ -254,9 +260,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void debugDiff() {
 		if (snapshot == null)
 			return;
-		Set listenerDiff = new HashSet(listeners);
+		List listenerDiff = new ArrayList(listeners);
 		listenerDiff.removeAll(snapshot.listeners);
-		listenerDiff = new HashSet(listenerDiff);// shrink the set
+		listenerDiff = new ArrayList(listenerDiff);// shrink the set
 		System.out.println("Listener diff: ");
 		for (Iterator it = listenerDiff.iterator(); it.hasNext();) {
 			System.out.println("\t" + it.next());
@@ -286,11 +292,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.DISPOSE, null, null, null);
-		for (int i = 0; i < ls.length; i++) {
+		// reverse order of listeners
+		for (int i = ls.length - 1; i >= 0; i--) {
 			List scheduled = new ArrayList();
 			ls[i].handleInvalid(event, scheduled);
 			processScheduled(scheduled);
 		}
+
+		// TBD used by OSGI Context startegy - is this needed? Looks like @PreDestroy
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
 	}
@@ -426,6 +435,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public void set(String name, Object value) {
+		if (IContextConstants.PARENT.equals(name)) {
+			// TBD make setting parent a separate operation
+			List scheduled = new ArrayList();
+			handleReparent((EclipseContext) value, scheduled);
+			localValues.put(IContextConstants.PARENT, value);
+			processScheduled(scheduled);
+			return;
+		}
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
@@ -511,4 +528,44 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return false;
 	}
 
+	public void removeListenersTo(Object object) {
+		if (object == null)
+			return;
+		synchronized (listeners) {
+			ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+					ContextChangeEvent.UNINJECTED, null, null, null);
+			for (Iterator i = listeners.iterator(); i.hasNext();) {
+				Computation computation = (Computation) i.next();
+				if (computation instanceof TrackableComputationExt) {
+					if (object == ((TrackableComputationExt) computation).getObject()) {
+						((IRunAndTrack) computation).notify(event);
+						i.remove();
+					}
+				}
+			}
+		}
+	}
+
+	private void handleReparent(EclipseContext newParent, List scheduled) {
+		// 1) everybody who depends on me: I need to collect combined list of names injected
+		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Set usedNames = new HashSet();
+		for (int i = 0; i < ls.length; i++) {
+			Set listenerNames = ls[i].dependsOnNames(this);
+			if (listenerNames == null)
+				continue; // should not happen?
+			usedNames.addAll(listenerNames); // also removes duplicates 
+		}
+		// 2) for each used name:
+		for (Iterator i = usedNames.iterator(); i.hasNext();) {
+			String name = (String) i.next();
+			if (localValues.containsKey(name))
+				continue; // it is a local value
+			Object oldValue = get(name);
+			Object newValue = (newParent != null) ? newParent.get(name) : null;
+			if (oldValue != newValue)
+				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
+		}
+		localValueComputations.clear();
+	}
 }

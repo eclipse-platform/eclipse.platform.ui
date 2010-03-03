@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.injector.Injector;
 
-public class ObjectProviderContext implements IObjectProvider, IRunAndTrack {
+public class ObjectProviderContext implements IObjectProvider {
 
 	final static private String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 
@@ -69,52 +67,11 @@ public class ObjectProviderContext implements IObjectProvider, IRunAndTrack {
 		return "ContextToInjectorLink(" + context + ')'; //$NON-NLS-1$
 	}
 
-	// /////////////////////////////////////////////////////////////////////////////////
-	// Context events
-
-	public boolean notify(ContextChangeEvent event) {
-		switch (event.getEventType()) {
-		case ContextChangeEvent.INITIAL:
-			injector.inject(event.getArguments()[0]);
-			break;
-		case ContextChangeEvent.UNINJECTED:
-			injector.uninject(event.getArguments()[0]);
-			break;
-		case ContextChangeEvent.DISPOSE:
-			if (event.getContext() == context)
-				injector.dispose();
-			else
-				injector.reinject();
-			break;
-		case ContextChangeEvent.ADDED: {
-			String name = event.getName();
-			if (IContextConstants.PARENT.equals(name))
-				handleParentChange(event);
-			else
-				injector.added(new InjectionProperties(true, name, false, null));
-			break;
-		}
-		case ContextChangeEvent.REMOVED: {
-			String name = event.getName();
-			if (IContextConstants.PARENT.equals(name))
-				handleParentChange(event);
-			else
-				injector.removed(new InjectionProperties(true, name, false, null));
-			break;
-		}
-		}
-		return true; // only dispose of the injector when the context has been disposed
+	public IEclipseContext getContext() {
+		return context;
 	}
 
-	private void handleParentChange(final ContextChangeEvent event) {
-		IEclipseContext eventContext = (IEclipseContext) event.getContext();
-		IEclipseContext oldParent = (IEclipseContext) event.getOldValue();
-		IEclipseContext newParent = (IEclipseContext) eventContext.get(IContextConstants.PARENT);
-		if (oldParent == newParent)
-			return;
-		injector.reparent(getObjectProvider(oldParent));
-	}
-
+	// TBD remove?
 	static public ObjectProviderContext getObjectProvider(IEclipseContext context) {
 		String key = ObjectProviderContext.class.getName();
 		if (context.containsKey(key, true))
@@ -126,4 +83,25 @@ public class ObjectProviderContext implements IObjectProvider, IRunAndTrack {
 		return objectProvider;
 	}
 
+	public void init(Object userObject) {
+		injector.inject(userObject);
+	}
+
+	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
+		context.runAndTrack(runnable, args);
+	}
+
+	// TBD remove?
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (!(obj instanceof ObjectProviderContext))
+			return false;
+		return context.equals(((ObjectProviderContext) obj).context);
+	}
+
+	// TBD remove?
+	public int hashCode() {
+		return context.hashCode();
+	}
 }

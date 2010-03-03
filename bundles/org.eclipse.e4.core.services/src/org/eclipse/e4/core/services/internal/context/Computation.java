@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 abstract class Computation {
 	Map dependencies = new HashMap();
@@ -48,7 +49,9 @@ abstract class Computation {
 	public abstract boolean equals(Object arg0);
 
 	final void handleInvalid(ContextChangeEvent event, List scheduled) {
-		IEclipseContext context = event.getContext();
+		IObjectProvider provider = event.getContext();
+		IEclipseContext context = ((ObjectProviderContext) provider).getContext();
+
 		String name = event.getName();
 		Set names = (Set) dependencies.get(context);
 		if (name == null && event.getEventType() == ContextChangeEvent.DISPOSE) {
@@ -149,6 +152,10 @@ abstract class Computation {
 			if (properties.isEmpty())
 				dependencies.remove(context);
 		}
+	}
+
+	public Set dependsOnNames(IEclipseContext context) {
+		return (Set) dependencies.get(context);
 	}
 
 }

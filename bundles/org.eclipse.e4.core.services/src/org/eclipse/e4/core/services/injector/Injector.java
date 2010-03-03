@@ -12,7 +12,6 @@ package org.eclipse.e4.core.services.injector;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.internal.context.ContextInjector;
 
 /**
@@ -20,7 +19,7 @@ import org.eclipse.e4.core.services.internal.context.ContextInjector;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-final public class Injector implements IDisposable {
+final public class Injector {
 
 	final private ContextInjector eInjector;
 
@@ -30,22 +29,6 @@ final public class Injector implements IDisposable {
 
 	public boolean inject(Object object) {
 		return eInjector.inject(object);
-	}
-
-	public void reinject() {
-		eInjector.reinject();
-	}
-
-	public boolean uninject(Object object) {
-		return eInjector.uninject(object);
-	}
-
-	public void added(IObjectDescriptor descriptor) {
-		eInjector.added(descriptor);
-	}
-
-	public void removed(IObjectDescriptor descriptor) {
-		eInjector.removed(descriptor);
 	}
 
 	public Object make(Class clazz) throws InvocationTargetException, InstantiationException {
@@ -64,14 +47,6 @@ final public class Injector implements IDisposable {
 
 	public boolean injectStatic(Class clazz) {
 		return eInjector.injectStatic(clazz);
-	}
-
-	public void reparent(IObjectProvider oldParent) {
-		eInjector.reparent(oldParent);
-	}
-
-	public void dispose() {
-		eInjector.dispose();
 	}
 
 }
