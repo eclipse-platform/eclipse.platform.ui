@@ -696,7 +696,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					continue;
 				//project did not require deletion, so fall through below and refresh it
 			}
-			if (!((Resource)alias).isFilteredFromParent())
+			if (!((Resource)alias).isFiltered())
 				localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}

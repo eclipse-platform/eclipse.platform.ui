@@ -2150,15 +2150,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/**  Calculates whether the current resource is filtered out from the resource tree
+	/* (non-Javadoc)
+	 *  Calculates whether the current resource is filtered out from the resource tree
 	 *  by resource filters.  This can happen because resource filters apply to the resource, 
 	 *  or because resource filters apply to one of its parent.  For example, if "/foo/bar"
-	 * is filtered out, then calling isFilteredFromParent() on "/foo/bar/sub/file.txt" will 
-	 * return true as well, even though there's no resource filters that apply to "file.txt" per se.
+	 *  is filtered out, then calling isFilteredFromParent() on "/foo/bar/sub/file.txt" will 
+	 *  return true as well, even though there's no resource filters that apply to "file.txt" per se.
 	 * 
 	 * @return true is the resource is filtered out from the resource tree
+	 * @see IResource#isFiltered()
 	 */
-	public boolean isFilteredFromParent() {
+	public boolean isFiltered() {
 		Resource currentResource = this;
 		while (currentResource != null && currentResource.getParent() != null) {
 			Resource parent = (Resource) currentResource.getParent();

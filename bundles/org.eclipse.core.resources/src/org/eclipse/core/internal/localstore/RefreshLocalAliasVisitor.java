@@ -34,7 +34,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++) {
-				if (aliases[i].getProject().isOpen() && !((Resource) aliases[i]).isFilteredFromParent())
+				if (aliases[i].getProject().isOpen() && !((Resource) aliases[i]).isFiltered())
 					super.createResource(node, (Resource) aliases[i]);
 			}
 	}
@@ -48,11 +48,11 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 		if (aliases != null) {
 			boolean wasFilteredOut = false;
 			if (store.fetchInfo() != null && store.fetchInfo().exists())
-				wasFilteredOut = target.isFilteredFromParent();
+				wasFilteredOut = target.isFiltered();
 			for (int i = 0; i < aliases.length; i++) {
 				if (aliases[i].getProject().isOpen()) {
 					if (wasFilteredOut) {
-						if (((Resource) aliases[i]).isFilteredFromParent())
+						if (((Resource) aliases[i]).isFiltered())
 							super.deleteResource(node, (Resource) aliases[i]);
 					}
 					else

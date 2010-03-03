@@ -158,6 +158,9 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.0", members.length, 1);
 		assertEquals("2.1", members[0].getType(), IResource.FILE);
 		assertEquals("2.2", members[0].getName(), "foo");
+
+		assertEquals("2.3", bar.isFiltered(), true);
+		assertEquals("2.4", foo.isFiltered(), false);
 	}
 
 	/**
@@ -215,6 +218,8 @@ public class FilteredResourceTest extends ResourceTest {
 				assertEquals("2.2", members[i].getName(), "foo");
 			}
 		}
+		assertEquals("2.1", bar.isFiltered(), true);
+		assertEquals("2.2", foo.isFiltered(), false);
 	}
 
 	/**
@@ -279,6 +284,9 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.0", members.length, 1);
 		assertEquals("2.1", members[0].getType(), IResource.FILE);
 		assertEquals("2.2", members[0].getName(), "foo");
+
+		assertEquals("2.1", bar.isFiltered(), true);
+		assertEquals("2.2", foo.isFiltered(), false);
 	}
 
 	/**
