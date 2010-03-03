@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.util.Util;
@@ -69,7 +70,11 @@ public abstract class CompatibilityPart {
 				reference.invalidate();
 
 				if (wrapped != null) {
+					PartSite site = (PartSite) wrapped.getSite();
 					wrapped.dispose();
+					if (site != null) {
+						site.dispose();
+					}
 				}
 			}
 		});
