@@ -196,7 +196,7 @@ public class IPathVariableTest extends ResourceTest {
 
 		// remove one
 		try {
-			manager.setValue("one", null);
+			manager.setValue("one", (IPath) null);
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
@@ -207,7 +207,7 @@ public class IPathVariableTest extends ResourceTest {
 
 		// remove the last one	
 		try {
-			manager.setValue("two", null);
+			manager.setValue("two", (IPath) null);
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
@@ -263,7 +263,7 @@ public class IPathVariableTest extends ResourceTest {
 
 		// setting with value == null will remove
 		try {
-			manager.setValue("one", null);
+			manager.setValue("one", (IPath) null);
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
@@ -312,7 +312,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 		assertTrue("1.1", manager.isDefined("one"));
 		try {
-			manager.setValue("one", null);
+			manager.setValue("one", (IPath) null);
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
@@ -409,7 +409,7 @@ public class IPathVariableTest extends ResourceTest {
 	}
 
 	private IPath getVariableRelativePathLocation(IProject project, IPath location) {
-		URI variableRelativePathLocation = project.getPathVariableManager().getVariableRelativePathLocation(URIUtil.toURI(location), project);
+		URI variableRelativePathLocation = project.getPathVariableManager().getVariableRelativePathLocation(URIUtil.toURI(location));
 		if (variableRelativePathLocation != null)
 			return URIUtil.toPath(variableRelativePathLocation);
 		return null;
@@ -493,7 +493,7 @@ public class IPathVariableTest extends ResourceTest {
 	}
 
 	private IPath convertToRelative(IPathVariableManager manager, IPath path, boolean force, String variableHint) throws CoreException {
-		return URIUtil.toPath(manager.convertToRelative(URIUtil.toURI(path), project, force, variableHint));
+		return URIUtil.toPath(manager.convertToRelative(URIUtil.toURI(path), force, variableHint));
 	}
 
 	/**
@@ -587,7 +587,7 @@ public class IPathVariableTest extends ResourceTest {
 		assertEquals("8.0", expected, actual);
 
 		try {
-			manager.setValue("TWO", null);
+			manager.setValue("TWO", (IPath) null);
 		} catch (CoreException e) {
 			fail("8.1", e);
 		}
@@ -628,6 +628,24 @@ public class IPathVariableTest extends ResourceTest {
 		assertTrue("1.3", !manager.validateName(" FOO").isOK());
 		assertTrue("1.4", !manager.validateName("FOO ").isOK());
 
+	}
+
+	/**
+	 * Regression test for Bug 304195
+	 */
+	public void testEmptyURIResolution() {
+		IPath path = new Path(new String());
+		URI uri = URIUtil.toURI(path);
+		try {
+			manager.resolveURI(uri);
+		} catch (Throwable e) {
+			fail("1.2", e);
+		}
+		try {
+			getWorkspace().getPathVariableManager().resolveURI(uri);
+		} catch (Throwable e) {
+			fail("1.2", e);
+		}
 	}
 
 	/**
@@ -673,7 +691,7 @@ public class IPathVariableTest extends ResourceTest {
 			// remove a variable
 			listener.reset();
 			try {
-				manager.setValue("one", null);
+				manager.setValue("one", (IPath) null);
 			} catch (CoreException e) {
 				fail("3.0", e);
 			}
@@ -703,7 +721,7 @@ public class IPathVariableTest extends ResourceTest {
 		super.tearDown();
 		String[] names = manager.getPathVariableNames();
 		for (int i = 0; i < names.length; i++) {
-			manager.setValue(names[i], null);
+			manager.setValue(names[i], (IPath) null);
 		}
 	}
 
