@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,14 +28,14 @@ import org.eclipse.ui.IActionBars;
  * Manages the models that can be displayed by a synchronize page
  */
 public abstract class SynchronizeModelManager extends SynchronizePageActionGroup {
-	
+
 	private static final String P_LAST_PROVIDER = TeamUIPlugin.ID + ".P_LAST_MODELPROVIDER"; //$NON-NLS-1$
-	
+
 	private ISynchronizeModelProvider modelProvider;
 	private List toggleModelProviderActions;
 	private ISynchronizePageConfiguration configuration;
 	private TreeViewerAdvisor advisor;
-	
+
 	/**
 	 * Action that allows changing the model providers supported by this advisor.
 	 */
@@ -71,26 +69,27 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 			}
 		}
 	}
-	
+
 	public SynchronizeModelManager(ISynchronizePageConfiguration configuration) {
 		Assert.isNotNull(configuration, "configuration cannot be null"); //$NON-NLS-1$
 		this.configuration = configuration;
 		configuration.addActionContribution(this);
 	}
-	
+
 	/**
 	 * Initialize the model manager to be used with the provided advisor.
+	 * @param advisor the tree viewer advisor
 	 */
 	public void setViewerAdvisor(TreeViewerAdvisor advisor) {
 		this.advisor = advisor;
 	}
-	
+
 	/**
 	 * Return the list of supported model providers for this advisor.
 	 * @return the supported models
 	 */
 	protected abstract ISynchronizeModelProviderDescriptor[] getSupportedModelProviders();
-	
+
 	/**
 	 * Get the model provider that will be used to create the input
 	 * for the adviser's viewer.
@@ -105,7 +104,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	public ISynchronizeModelProvider getActiveModelProvider() {
 		return modelProvider;
 	}
-    
+
 	protected String getDefaultProviderId() {
 		String defaultLayout = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 		if (defaultLayout.equals(IPreferenceIds.TREE_LAYOUT)) {
@@ -115,9 +114,9 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		    return FlatModelProvider.FlatModelProviderDescriptor.ID;
 		}
 		// Return compressed folder is the others were not a match
-        return CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID;
+		return CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID;
 	}
-	
+
 	/**
 	 * Return the id of the selected provider. By default, this is the 
 	 * id of the active provider. However, subclasses that use a composite
@@ -126,18 +125,18 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	 * @return the id of the selected provider
 	 */
 	protected String getSelectedProviderId() {
-	    ISynchronizeModelProvider provider = getActiveModelProvider();
-	    if (provider != null) {
-	        return provider.getDescriptor().getId();
-	    }
-	    return getDefaultProviderId();
+		ISynchronizeModelProvider provider = getActiveModelProvider();
+		if (provider != null) {
+			return provider.getDescriptor().getId();
+		}
+		return getDefaultProviderId();
 	}
-	
+
 	/**
 	 * Replace the active provider with a provider for the given id.
 	 * The new provider is created and initialized and assigned
 	 * as the input of the viewer.
-	 * @param id the id used to consfigure the new model provider
+	 * @param id the id used to configure the new model provider
 	 * @param monitor a progress monitor
 	 */
 	protected void setInput(String id, IProgressMonitor monitor) {
@@ -150,18 +149,18 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		modelProvider.prepareInput(monitor);
 		setInput();
 	}
-	
+
 	/**
-     * Save the settings for the currently active provider
-     */
-    protected void saveProviderSettings(String id) {
-        IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
-		if(pageSettings != null) {
+	 * Save the settings for the currently active provider
+	 */
+	protected void saveProviderSettings(String id) {
+		IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
+		if (pageSettings != null) {
 			pageSettings.put(P_LAST_PROVIDER, id);
 		}
-    }
+	}
 
-    /**
+	/**
 	 * Set the input of the viewer to the root model element.
 	 */
 	protected void setInput() {
@@ -178,7 +177,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	 */
 	public ISynchronizeModelElement getModelRoot() {
 		if (modelProvider != null && modelProvider instanceof SynchronizeModelProvider) {
-		    ((SynchronizeModelProvider)modelProvider).waitUntilDone(new IProgressMonitor() {
+			((SynchronizeModelProvider)modelProvider).waitUntilDone(new IProgressMonitor() {
 				public void beginTask(String name, int totalWork) {
 				}
 				public void done() {
@@ -203,7 +202,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 			return null;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
@@ -231,7 +230,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		    setInput();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#setActionBars(org.eclipse.ui.IActionBars)
 	 */
@@ -271,7 +270,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		}
 		super.dispose();
 	}
-	
+
 	/**
 	 * Returns the configuration
 	 * @return the configuration.
@@ -279,12 +278,12 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	public ISynchronizePageConfiguration getConfiguration() {
 		return configuration;
 	}
-	
+
 	/**
 	 * Return the sync info set that is contained in the configuration.
 	 * @return the sync info set that is contained in the configuration
 	 */
-    protected SyncInfoSet getSyncInfoSet() {
+	protected SyncInfoSet getSyncInfoSet() {
 		return (SyncInfoSet)getConfiguration().getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
 	}
 }
