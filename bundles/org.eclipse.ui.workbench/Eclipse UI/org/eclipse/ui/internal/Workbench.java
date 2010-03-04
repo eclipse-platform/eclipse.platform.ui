@@ -1077,9 +1077,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			MWindow window) {
 		IEclipseContext windowContext = window.getContext();
 		if (windowContext == null) {
-			windowContext = org.eclipse.e4.workbench.ui.internal.Workbench.initializeContext(
+			windowContext = E4Workbench.initializeContext(
 					e4Context, window);
-			org.eclipse.e4.workbench.ui.internal.Workbench.processHierarchy(window);
+			E4Workbench.processHierarchy(window);
 		}
 		IWorkbenchWindow result = (IWorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
