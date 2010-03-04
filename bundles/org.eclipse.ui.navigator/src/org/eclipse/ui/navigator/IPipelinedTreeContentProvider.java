@@ -54,7 +54,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * should be modified to contain the correct children to return to the
 	 * viewer.
 	 * 
-	 * 
 	 * @param aParent
 	 *            A parent from the viewer
 	 * @param theCurrentChildren
