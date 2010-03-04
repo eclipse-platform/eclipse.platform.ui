@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eugene Ostroukhov <eugeneo@symbian.org> -  Bug 287887 [Wizards] [api] Cancel button has two distinct roles
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ProgressIndicator;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +31,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A standard implementation of an IProgressMonitor. It consists
@@ -69,43 +83,81 @@ public class ProgressMonitorPart extends Composite implements
 			}
         }
     };
+    
+    /** toolbar for managing stop button **/
+    private ToolBar fToolBar;
 
-    /**
-     * Creates a ProgressMonitorPart.
-     * @param parent The SWT parent of the part.
-     * @param layout The SWT grid bag layout used by the part. A client
-     * can supply the layout to control how the progress monitor part
-     * is layed out. If null is passed the part uses its default layout.
-     */
-    public ProgressMonitorPart(Composite parent, Layout layout) {
-        this(parent, layout, SWT.DEFAULT);
-    }
+    /** default tool item for canceling tasks **/
+	private ToolItem fStopButton;
+	
+	/** <code>true</code> if this monitor part should show stop button **/
+	private boolean fHasStopButton = false;
 
-    /**
-     * Creates a ProgressMonitorPart.
-     * @param parent The SWT parent of the part.
-     * @param layout The SWT grid bag layout used by the part. A client
-     * can supply the layout to control how the progress monitor part
-     * is layed out. If null is passed the part uses its default layout.
-     * @param progressIndicatorHeight The height of the progress indicator in pixel.
-     */
-    public ProgressMonitorPart(Composite parent, Layout layout,
-            int progressIndicatorHeight) {
-        super(parent, SWT.NONE);
-        initialize(layout, progressIndicatorHeight);
-    }
 
-    /**
-     * Attaches the progress monitor part to the given cancel
-     * component.
-     * @param cancelComponent the control whose selection will
-     * trigger a cancel
-     */
-    public void attachToCancelComponent(Control cancelComponent) {
-        Assert.isNotNull(cancelComponent);
-        fCancelComponent = cancelComponent;
-        fCancelComponent.addListener(SWT.Selection, fCancelListener);
-    }
+	/**
+	 * Creates a ProgressMonitorPart that does not provide a stop button.
+	 * 
+	 * @param parent The SWT parent of the part.
+	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
+	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
+	 *            uses its default layout.
+	 */
+	public ProgressMonitorPart(Composite parent, Layout layout) {
+		this(parent, layout, false);
+	}
+
+	/**
+	 * Creates a ProgressMonitorPart that does not provide a stop button.
+	 * 
+	 * @param parent The SWT parent of the part.
+	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
+	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
+	 *            uses its default layout.
+	 * @param progressIndicatorHeight The height of the progress indicator in pixels. This value may
+	 *            be SWT.DEFAULT in order to get the default height as calculated by the widget and
+	 *            its layout.
+	 */
+	public ProgressMonitorPart(Composite parent, Layout layout, int progressIndicatorHeight) {
+		super(parent, SWT.NONE);
+		initialize(layout, progressIndicatorHeight);
+	}
+
+	/**
+	 * Creates a ProgressMonitorPart.
+	 * 
+	 * @param parent the SWT parent of the part
+	 * @param layout the SWT grid layout used by the part. A client can supply the layout to control
+	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
+	 *            uses its default layout.
+	 * @param createStopButton <code>true</code> if the progress indicator should include a stop
+	 *            button that can be used to cancel any currently running task, and
+	 *            <code>false</code> if no such stop button should be created.
+	 * 
+	 * @since 3.6
+	 */
+	public ProgressMonitorPart(Composite parent, Layout layout, boolean createStopButton) {
+		super(parent, SWT.NONE);
+		fHasStopButton= createStopButton;
+		initialize(layout, SWT.DEFAULT);
+	}
+
+	/**
+	 * Attaches the progress monitor part to the given cancel component.
+	 * 
+	 * @param cancelComponent the control whose selection will trigger a cancel. This parameter will
+	 *            be ignored and hence can be <code>null</code> if a stop button was requested upon
+	 *            construction and instead the stop button will enabled and serve as the cancel
+	 *            component.
+	 * @see #ProgressMonitorPart(Composite, Layout, boolean)
+	 */
+	public void attachToCancelComponent(Control cancelComponent) {
+		if (fHasStopButton)
+			setCancelEnabled(true);
+		else {
+			fCancelComponent = cancelComponent;
+			fCancelComponent.addListener(SWT.Selection, fCancelListener);
+		}
+	}
 
     /**
      * Implements <code>IProgressMonitor.beginTask</code>.
@@ -120,6 +172,10 @@ public class ProgressMonitorPart extends Composite implements
         } else {
             fProgressIndicator.beginTask(totalWork);
         }
+        if (fToolBar != null && !fToolBar.isDisposed()) {
+        	fToolBar.setVisible(true);
+        	fToolBar.setFocus();
+        }
     }
 
     /**
@@ -131,6 +187,8 @@ public class ProgressMonitorPart extends Composite implements
         fSubTaskName = ""; //$NON-NLS-1$
         fProgressIndicator.sendRemainingWork();
         fProgressIndicator.done();
+        if (fToolBar != null && !fToolBar.isDisposed())
+        	fToolBar.setVisible(false);
     }
 
     /**
@@ -169,14 +227,19 @@ public class ProgressMonitorPart extends Composite implements
             GridLayout l = new GridLayout();
             l.marginWidth = 0;
             l.marginHeight = 0;
-            l.numColumns = 1;
             layout = l;
         }
+        int numColumns = 1;
+        if (fHasStopButton)
+        	numColumns++;
         setLayout(layout);
+        
+        if (layout instanceof GridLayout)
+        	((GridLayout)layout).numColumns = numColumns;
 
         fLabel = new Label(this, SWT.LEFT);
-        fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+        fLabel.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, numColumns, 1));
+		
         if (progressIndicatorHeight == SWT.DEFAULT) {
             GC gc = new GC(fLabel);
             FontMetrics fm = gc.getFontMetrics();
@@ -188,9 +251,53 @@ public class ProgressMonitorPart extends Composite implements
         GridData gd = new GridData();
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
-        gd.verticalAlignment = GridData.CENTER;
-        gd.heightHint = progressIndicatorHeight;
+        gd.grabExcessVerticalSpace = false;
+    	gd.verticalAlignment = GridData.CENTER;
+    	gd.heightHint = progressIndicatorHeight;
         fProgressIndicator.setLayoutData(gd);
+
+        if (fHasStopButton) {
+        	fToolBar = new ToolBar(this, SWT.FLAT);
+
+        	gd = new GridData();
+            gd.grabExcessHorizontalSpace = false;
+            gd.grabExcessVerticalSpace = false;
+        	gd.verticalAlignment = GridData.CENTER;
+        	fToolBar.setLayoutData(gd);
+        	fStopButton = new ToolItem(fToolBar, SWT.PUSH);
+        	// It would have been nice to use the fCancelListener, but that
+        	// listener operates on the fCancelComponent which must be a control.
+        	fStopButton.addSelectionListener(new SelectionAdapter() {
+        		public void widgetSelected(SelectionEvent e) {
+        			setCanceled(true);
+        			if (fStopButton != null) {
+        				fStopButton.setEnabled(false);
+        			}
+        		}
+        	});
+        	final Image stopImage = ImageDescriptor.createFromFile(
+        			ProgressMonitorPart.class, "images/stop.gif").createImage(getDisplay()); //$NON-NLS-1$
+        	final Cursor arrowCursor = new Cursor(this.getDisplay(), SWT.CURSOR_ARROW);
+        	fToolBar.setCursor(arrowCursor);
+        	fStopButton.setImage(stopImage);
+        	fStopButton.addDisposeListener(new DisposeListener() {
+        		public void widgetDisposed(DisposeEvent e) {
+        			stopImage.dispose();
+        			arrowCursor.dispose();
+        		}
+        	});
+			fStopButton.setToolTipText(JFaceResources.getString("ProgressMonitorPart.cancelToolTip")); //$NON-NLS-1$
+
+			// XXX: workaround for https://bugs.eclipse.org/304672
+			fToolBar.addMouseTrackListener(new MouseTrackAdapter() {
+				public void mouseExit(MouseEvent e) {
+					if (fStopButton.isEnabled()) {
+						fProgressIndicator.setFocus();
+						fToolBar.setFocus();
+					}
+				}
+			});
+        }
     }
 
     /**
@@ -209,16 +316,23 @@ public class ProgressMonitorPart extends Composite implements
         return fIsCanceled;
     }
 
-    /**
-     * Detach the progress monitor part from the given cancel
-     * component
-     * @param cc
-     */
-    public void removeFromCancelComponent(Control cc) {
-        Assert.isTrue(fCancelComponent == cc && fCancelComponent != null);
-        fCancelComponent.removeListener(SWT.Selection, fCancelListener);
-        fCancelComponent = null;
-    }
+	/**
+	 * Detach the progress monitor part from the given cancel component.
+	 * 
+	 * @param cancelComponent the control that was previously used as a cancel component. This
+	 *            parameter will be ignored and hence can be <code>null</code> if a stop button was
+	 *            requested upon construction and instead the stop button will be disabled.
+	 * @see #ProgressMonitorPart(Composite, Layout, boolean)
+	 */
+	public void removeFromCancelComponent(Control cancelComponent) {
+		if (fHasStopButton) {
+			setCancelEnabled(false);
+		} else {
+			Assert.isTrue(fCancelComponent == cancelComponent && fCancelComponent != null);
+			fCancelComponent.removeListener(SWT.Selection, fCancelListener);
+			fCancelComponent = null;
+		}
+	}
 
     /**
      * Implements <code>IProgressMonitor.setCanceled</code>.
@@ -316,5 +430,13 @@ public class ProgressMonitorPart extends Composite implements
         blockedStatus = reason;
         updateLabel();
 
+    }
+    
+   private void setCancelEnabled(boolean enabled) {
+    	if (fStopButton != null && !fStopButton.isDisposed()) {
+    		fStopButton.setEnabled(enabled);
+    		if (enabled)
+    			fToolBar.setFocus();
+    	}
     }
 }

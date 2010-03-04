@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Gross (schtoo@schtoo.com) - patch for bug 16179
+ *     Eugene Ostroukhov <eugeneo@symbian.org> -  Bug 287887 [Wizards] [api] Cancel button has two distinct roles
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
@@ -16,10 +17,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -34,24 +57,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * A dialog to show a wizard to the end user.
@@ -95,6 +100,17 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	// The number of long running operation executed from the dialog.
 	private long activeRunningOperations = 0;
 
+	/**
+	 * The time in milliseconds where the last job finished. 'Enter' key presses are ignored for the
+	 * next {@link #RESTORE_ENTER_DELAY} milliseconds.
+	 * <p>
+	 * The value <code>-1</code> indicates that the traverse listener needs to be installed.
+	 * </p>
+	 * 
+	 * @since 3.6
+	 */
+	private long timeWhenLastJobFinished= -1;
+
 	// The current page message and description
 	private String pageMessage;
 
@@ -106,8 +122,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	private ProgressMonitorPart progressMonitorPart;
 
 	private Cursor waitCursor;
-
-	private Cursor arrowCursor;
 
 	private MessageDialog windowClosingDialog;
 
@@ -136,6 +150,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	private int pageHeight = SWT.DEFAULT;
 
 	private static final String FOCUS_CONTROL = "focusControl"; //$NON-NLS-1$
+
+	/**
+	 * A delay in milliseconds that reduces the risk that the user accidentally triggers a
+	 * button by pressing the 'Enter' key immediately after a job has finished.
+	 * 
+	 * @since 3.6
+	 */
+	private static final int RESTORE_ENTER_DELAY= 500;
 
 	private boolean lockedUI = false;
 
@@ -313,24 +335,43 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			if (focusControl != null && focusControl.getShell() != getShell()) {
 				focusControl = null;
 			}
-			boolean needsProgressMonitor = wizard.needsProgressMonitor();
-			cancelButton.removeSelectionListener(cancelListener);
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
 			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
 			setDisplayCursor(waitCursor);
-			// Set the arrow cursor to the cancel component.
-			arrowCursor = new Cursor(d, SWT.CURSOR_ARROW);
-			cancelButton.setCursor(arrowCursor);
 			// Deactivate shell
-			savedState = saveUIState(needsProgressMonitor && enableCancelButton);
+			savedState = saveUIState();
 			if (focusControl != null) {
 				savedState.put(FOCUS_CONTROL, focusControl);
 			}
-			// Attach the progress monitor part to the cancel button
-			if (needsProgressMonitor) {
-				progressMonitorPart.attachToCancelComponent(cancelButton);
+			// Activate cancel behavior.
+			if (wizard.needsProgressMonitor()) {
+				if (enableCancelButton) {
+					progressMonitorPart.attachToCancelComponent(null);
+				}
 				progressMonitorPart.setVisible(true);
+			}
+			
+			// Install traverse listener once in order to implement 'Enter' and 'Space' key blocking
+			if (timeWhenLastJobFinished == -1) {
+				timeWhenLastJobFinished= 0;
+				getShell().addTraverseListener(new TraverseListener() {
+					public void keyTraversed(TraverseEvent e) {
+						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
+							// We want to ignore the keystroke when we detect that it has been received within the
+							// delay period after the last operation has finished.  This prevents the user from accidentally
+							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed exactly
+							// when the operation finished, thus traversing the wizard.  If there is another operation still
+							// running, the UI is locked anyway so we are not in this code.  This listener should fire only
+							// after the UI state is restored (which by definition means all jobs are done.
+							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
+							if (timeWhenLastJobFinished != 0 && System.currentTimeMillis() - timeWhenLastJobFinished < RESTORE_ENTER_DELAY) {
+								e.doit= false;
+								return;
+							}
+							timeWhenLastJobFinished= 0;
+						}}		
+				});
 			}
 		}
 		return savedState;
@@ -565,9 +606,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		pageContainer.setLayoutData(gd);
 		pageContainer.setFont(parent.getFont());
 		// Insert a progress monitor
-		GridLayout pmlayout = new GridLayout();
-		pmlayout.numColumns = 1;
-		progressMonitorPart = createProgressMonitorPart(composite, pmlayout);
+		progressMonitorPart = createProgressMonitorPart(composite, new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		progressMonitorPart.setLayoutData(gridData);
 		progressMonitorPart.setVisible(false);
@@ -588,7 +627,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 */
 	protected ProgressMonitorPart createProgressMonitorPart(
 			Composite composite, GridLayout pmlayout) {
-		return new ProgressMonitorPart(composite, pmlayout, SWT.DEFAULT) {
+		return new ProgressMonitorPart(composite, pmlayout, true) {
 			String currentTask = null;
 
 			/*
@@ -950,11 +989,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			if (getProgressMonitor() != null) {
 				getProgressMonitor().done();
 			}
-			activeRunningOperations--;
 			// Stop if this is the last one
 			if (state != null) {
+				timeWhenLastJobFinished= System.currentTimeMillis();
 				stopped(state);
 			}
+			activeRunningOperations--;
 		}
 	}
 
@@ -995,13 +1035,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *         with <code>restoreUIState</code>
 	 * @see #restoreUIState
 	 */
-	private Map saveUIState(boolean keepCancelEnabled) {
+	private Map saveUIState() {
 		Map savedState = new HashMap(10);
 		saveEnableStateAndSet(backButton, savedState, "back", false); //$NON-NLS-1$
 		saveEnableStateAndSet(nextButton, savedState, "next", false); //$NON-NLS-1$
 		saveEnableStateAndSet(finishButton, savedState, "finish", false); //$NON-NLS-1$
-		saveEnableStateAndSet(cancelButton, savedState,
-				"cancel", keepCancelEnabled); //$NON-NLS-1$
+		saveEnableStateAndSet(cancelButton, savedState,	"cancel", false); //$NON-NLS-1$
 		saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
 		if (currentPage != null) {
 			savedState
@@ -1217,17 +1256,13 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		if (getShell() != null && !getShell().isDisposed()) {
 			if (wizard.needsProgressMonitor()) {
 				progressMonitorPart.setVisible(false);
-				progressMonitorPart.removeFromCancelComponent(cancelButton);
+				progressMonitorPart.removeFromCancelComponent(null);
 			}
 			Map state = (Map) savedState;
 			restoreUIState(state);
-			cancelButton.addSelectionListener(cancelListener);
 			setDisplayCursor(null);
-			cancelButton.setCursor(null);
 			waitCursor.dispose();
 			waitCursor = null;
-			arrowCursor.dispose();
-			arrowCursor = null;
 			Control focusControl = (Control) state.get(FOCUS_CONTROL);
 			if (focusControl != null && !focusControl.isDisposed()) {
 				focusControl.setFocus();
