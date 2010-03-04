@@ -2291,6 +2291,76 @@ public class EPartServiceTest extends TestCase {
 		testSavePart(ISaveHandler.Save.CANCEL, false, false, false);
 	}
 
+	private void testSavePart_NoHandler(boolean beforeDirty,
+			boolean throwException, boolean confirm) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		saveablePart.setDirty(beforeDirty);
+		saveablePart
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		window.getChildren().add(saveablePart);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		ClientEditor editor = (ClientEditor) saveablePart.getObject();
+		editor.setThrowException(throwException);
+
+		// no handlers
+		applicationContext.set(ISaveHandler.class.getName(), null);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		if (beforeDirty) {
+			assertEquals(!throwException, partService.savePart(saveablePart,
+					confirm));
+		} else {
+			assertTrue(
+					"The part is not dirty, the save operation should have complete successfully",
+					partService.savePart(saveablePart, confirm));
+		}
+
+		assertEquals(beforeDirty && throwException, saveablePart.isDirty());
+		assertEquals(beforeDirty, editor.wasSaveCalled());
+	}
+
+	public void testSavePart_NoHandler_TTT() {
+		testSavePart_NoHandler(true, true, true);
+	}
+
+	public void testSavePart_NoHandler_TTF() {
+		testSavePart_NoHandler(true, true, false);
+	}
+
+	public void testSavePart_NoHandler_TFT() {
+		testSavePart_NoHandler(true, false, true);
+	}
+
+	public void testSavePart_NoHandler_TFF() {
+		testSavePart_NoHandler(true, false, false);
+	}
+
+	public void testSavePart_NoHandler_FTT() {
+		testSavePart_NoHandler(false, true, true);
+	}
+
+	public void testSavePart_NoHandler_FTF() {
+		testSavePart_NoHandler(false, true, false);
+	}
+
+	public void testSavePart_NoHandler_FFT() {
+		testSavePart_NoHandler(false, false, true);
+	}
+
+	public void testSavePart_NoHandler_FFF() {
+		testSavePart_NoHandler(false, false, false);
+	}
+
 	private MPart createSaveablePart(MElementContainer<MPSCElement> container,
 			boolean beforeDirty) {
 		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
@@ -3726,6 +3796,75 @@ public class EPartServiceTest extends TestCase {
 	public void testSaveAll_CC_False_FF_FF() {
 		testSaveAll(new Save[] { Save.CANCEL, Save.CANCEL }, false,
 				new boolean[] { false, false }, new boolean[] { false, false });
+	}
+
+	private void testSaveAll_NoHandler(boolean beforeDirty,
+			boolean throwException, boolean confirm) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		saveablePart.setDirty(beforeDirty);
+		saveablePart
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		window.getChildren().add(saveablePart);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		ClientEditor editor = (ClientEditor) saveablePart.getObject();
+		editor.setThrowException(throwException);
+
+		// no handlers
+		applicationContext.set(ISaveHandler.class.getName(), null);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		if (beforeDirty) {
+			assertEquals(!throwException, partService.saveAll(confirm));
+		} else {
+			assertTrue(
+					"The part is not dirty, the save operation should have complete successfully",
+					partService.savePart(saveablePart, confirm));
+		}
+
+		assertEquals(beforeDirty && throwException, saveablePart.isDirty());
+		assertEquals(beforeDirty, editor.wasSaveCalled());
+	}
+
+	public void testSaveAll_NoHandler_TTT() {
+		testSaveAll_NoHandler(true, true, true);
+	}
+
+	public void testSaveAll_NoHandler_TTF() {
+		testSaveAll_NoHandler(true, true, false);
+	}
+
+	public void testSaveAll_NoHandler_TFT() {
+		testSaveAll_NoHandler(true, false, true);
+	}
+
+	public void testSaveAll_NoHandler_TFF() {
+		testSaveAll_NoHandler(true, false, false);
+	}
+
+	public void testSaveAll_NoHandler_FTT() {
+		testSaveAll_NoHandler(false, true, true);
+	}
+
+	public void testSaveAll_NoHandler_FTF() {
+		testSaveAll_NoHandler(false, true, false);
+	}
+
+	public void testSaveAll_NoHandler_FFT() {
+		testSaveAll_NoHandler(false, false, true);
+	}
+
+	public void testSaveAll_NoHandler_FFF() {
+		testSaveAll_NoHandler(false, false, false);
 	}
 
 	public void testSwitchWindows() {

@@ -633,7 +633,7 @@ public class PartServiceImpl implements EPartService {
 			return true;
 		}
 
-		if (confirm) {
+		if (confirm && saveHandler != null) {
 			List<MPart> dirtyPartsList = Collections.unmodifiableList(new ArrayList<MPart>(
 					dirtyParts));
 			Save[] decisions = saveHandler.promptToSave(dirtyPartsList);
