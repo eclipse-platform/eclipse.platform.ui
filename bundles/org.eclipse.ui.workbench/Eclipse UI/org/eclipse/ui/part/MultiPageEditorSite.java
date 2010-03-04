@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IDisposable;
-import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -115,14 +114,17 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		this.multiPageEditor = multiPageEditor;
 		this.editor = editor;
 
-		final IServiceLocator parentServiceLocator = multiPageEditor.getSite();
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
+		PartSite site = (PartSite) multiPageEditor.getSite();
+
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) site
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
 				multiPageEditor.getSite(), null, new IDisposable(){
 					public void dispose() {
 						getMultiPageEditor().close();
 					}});
+
+		serviceLocator.setContext(site.getModel().getContext());
 
 		initializeDefaultServices();
 	}
