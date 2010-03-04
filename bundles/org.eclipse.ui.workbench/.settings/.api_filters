@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <component id="org.eclipse.ui.workbench" version="2">
     <resource path="Eclipse UI/org/eclipse/ui/branding/IBundleGroupConstants.java" type="org.eclipse.ui.branding.IBundleGroupConstants">
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.branding.IBundleGroupConstants"/>
-                <message_argument value="BRANDING_BUNDLE_VERSION"/>
+                <message_argument value="BRANDING_BUNDLE_ID"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.branding.IBundleGroupConstants"/>
-                <message_argument value="BRANDING_BUNDLE_ID"/>
+                <message_argument value="BRANDING_BUNDLE_VERSION"/>
             </message_arguments>
         </filter>
     </resource>
@@ -34,6 +34,20 @@
             <message_arguments>
                 <message_argument value="org.eclipse.ui.part.AbstractMultiEditor"/>
                 <message_argument value="setChildren(IEditorPart[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/progress/IProgressConstants.java" type="org.eclipse.ui.progress.IProgressConstants">
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.progress.IProgressConstants"/>
+                <message_argument value="SHOW_IN_TASKBAR_ICON_PROPERTY"/>
+            </message_arguments>
+        </filter>
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.progress.IProgressConstants"/>
+                <message_argument value="COMMAND_PROPERTY"/>
             </message_arguments>
         </filter>
     </resource>
