@@ -18,6 +18,7 @@
    <extension-point id="index" name="%index_extension_point_name" schema="schema/index.exsd"/>
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.exsd"/>
    <extension-point id="criteriaDefinition" name="%criteriaDefinition_extension_point_name" schema="schema/criteriaDefinition.exsd"/>
+   <extension-point id="criteriaProvider" name="Help Criteria Provider" schema="schema/criteriaProvider.exsd"/>
    <extension
          point="org.eclipse.help.contentExtension">
       <contentExtensionProvider class="org.eclipse.help.internal.extension.ContentExtensionFileProvider"/>

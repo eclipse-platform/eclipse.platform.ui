@@ -27,6 +27,7 @@ import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.criteria.CriteriaProviderRegistry;
 import org.eclipse.help.internal.dynamic.DocumentProcessor;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
@@ -475,11 +476,11 @@ public class TocAssembler {
 				ICriteria[] criteria = new ICriteria[0];
 				if (element instanceof Topic) {
 					Topic topic = (Topic) element;
-					criteria = topic.getCriteria();
+					criteria = CriteriaProviderRegistry.getInstance().getAllCriteria(topic);
 				}
 				else if (element instanceof Toc) {
 					Toc toc = (Toc) element;
-					criteria = toc.getCriteria();
+					criteria = CriteriaProviderRegistry.getInstance().getAllCriteria(toc);
 				}
 
 				HelpPlugin.getCriteriaManager().addCriteriaValues(criteria, locale);

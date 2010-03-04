@@ -23,13 +23,12 @@ import org.eclipse.help.ICriteria;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IToc;
-import org.eclipse.help.IToc2;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.ITopic2;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.base.util.CriteriaUtilities;
+import org.eclipse.help.internal.criteria.CriteriaProviderRegistry;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.IHelpWorkingSetManager;
@@ -86,7 +85,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 			}
 			return false;
 		}
-		ICriteria[] criteriaOfToc = ((IToc2) toc).getCriteria();
+		ICriteria[] criteriaOfToc = CriteriaProviderRegistry.getInstance().getAllCriteria(toc);
 		return isCriteriaInScope(criteriaOfToc);
 	}
 	
@@ -188,7 +187,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 			}
 			return false;
 		}
-		ICriteria[] criteriaOfTopic = ((ITopic2) topic).getCriteria();
+		ICriteria[] criteriaOfTopic = CriteriaProviderRegistry.getInstance().getAllCriteria(topic);
 		return isCriteriaInScope(criteriaOfTopic);
 	}
 
