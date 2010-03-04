@@ -14,8 +14,6 @@ package org.eclipse.jface.wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
@@ -287,16 +285,6 @@ public class ProgressMonitorPart extends Composite implements
         		}
         	});
 			fStopButton.setToolTipText(JFaceResources.getString("ProgressMonitorPart.cancelToolTip")); //$NON-NLS-1$
-
-			// XXX: workaround for https://bugs.eclipse.org/304672
-			fToolBar.addMouseTrackListener(new MouseTrackAdapter() {
-				public void mouseExit(MouseEvent e) {
-					if (fStopButton.isEnabled()) {
-						fProgressIndicator.setFocus();
-						fToolBar.setFocus();
-					}
-				}
-			});
         }
     }
 
