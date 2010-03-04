@@ -623,10 +623,9 @@ public class BrowserViewer extends Composite {
         	System.setProperty(BROWSER_PROPERTY,"no-cache");  //$NON-NLS-1$
             boolean result = browser.setUrl(url);
             if (oldProperty == null) {
-                System.clearProperty(BROWSER_PROPERTY);
-            } else {
-                System.setProperty(BROWSER_PROPERTY, oldProperty);  
-            }
+                oldProperty = ""; //$NON-NLS-1$
+            } 
+            System.setProperty(BROWSER_PROPERTY, oldProperty);  
 			return result;
         }
         return text.setUrl(url);
