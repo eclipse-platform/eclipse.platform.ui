@@ -18,7 +18,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -73,6 +72,7 @@ public class WizardProgressMonitorTest extends TestCase {
 	}
 
 	protected void performAsserts() {
+		
 		assertEquals("The progress monitor's label should have been cleared", //$NON-NLS-1$
 				"", dialog.getProgressMonitorLabelText()); //$NON-NLS-1$
 		
@@ -136,7 +136,7 @@ public class WizardProgressMonitorTest extends TestCase {
 	class ProgressMonitorPartSubclass extends ProgressMonitorPart {
 
 		ProgressMonitorPartSubclass(Composite parent, Layout layout) {
-			super(parent, layout, SWT.DEFAULT);
+			super(parent, layout, true);
 		}
 
 		public String getLabelText() {
