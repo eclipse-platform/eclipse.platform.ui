@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,40 +28,40 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		IConfigurationWizard {
 
 	public ApplyPatchSynchronizationWizard() {
-		// TODO: get selection, available when launched from toolbar or main menu
+		// TODO: get selection, available when launched from toolbar or main
+		// menu
 		super((IStorage) null, (IResource) null, new CompareConfiguration());
 	}
 
-	private boolean isPreviewInSyncViewSelected() {
-		return ((PatchPreviewModePage)getPage(PatchPreviewModePage.PATCH_PREVIEW_MODE_PAGE_NAME)).isPreviewInSyncViewSelected();
-	}
-
 	public boolean performFinish() {
-		if (isPreviewInSyncViewSelected()) {
-			ApplyPatchSubscriber subscriber = new ApplyPatchSubscriber(getPatcher());
+		ApplyPatchSubscriber subscriber = new ApplyPatchSubscriber(getPatcher());
 
-			// Get ResourceMappings for root resources from the patch.
-			ResourceMapping[] inputMappings = Utils.getResourceMappings(subscriber.roots());
+		// Get ResourceMappings for root resources from the patch.
+		ResourceMapping[] inputMappings = Utils.getResourceMappings(subscriber
+				.roots());
 
-			// Take the given mappings, consult logical models and construct the complete set of resources to be operated on.
-			// Use SubscriberResourceMappingContext which uses subscriber to access to the remote state of local resources.
-			SubscriberScopeManager scopeManager = new SubscriberScopeManager(subscriber.getName(), inputMappings, subscriber, true);
+		// Take the given mappings, consult logical models and construct the
+		// complete set of resources to be operated on.
+		// Use SubscriberResourceMappingContext which uses subscriber to access
+		// to the remote state of local resources.
+		SubscriberScopeManager scopeManager = new SubscriberScopeManager(
+				subscriber.getName(), inputMappings, subscriber, true);
 
-			// Initialize the diff tree.
-			// TODO: are we going to perform head-less auto-merges? do we need to subclass MergeContext?
-			SubscriberMergeContext mergeContext = ApplyPatchSubscriberMergeContext.createContext(subscriber, scopeManager);
+		// Initialize the diff tree.
+		// TODO: are we going to perform head-less auto-merges? do we need to
+		// subclass MergeContext?
+		SubscriberMergeContext mergeContext = ApplyPatchSubscriberMergeContext
+				.createContext(subscriber, scopeManager);
 
-			// Create the participant and show it.
-			ModelSynchronizeParticipant participant = new ApplyPatchModelSynchronizeParticipant(mergeContext);
-			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
-			// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
-			participant.run(null /* no site */);
-			return true;
-		} else {
-			// apply the patch
-			return super.performFinish();
-			 // TODO: Next, synchronize the affected files, but only when the wizard has been opened from the sync view.
-		}
+		// Create the participant and show it.
+		ModelSynchronizeParticipant participant = new ApplyPatchModelSynchronizeParticipant(
+				mergeContext);
+		TeamUI.getSynchronizeManager().addSynchronizeParticipants(
+				new ISynchronizeParticipant[] { participant });
+		// We don't know in which site to show progress because a participant
+		// could actually be shown in multiple sites.
+		participant.run(null /* no site */);
+		return true;
 	}
 
 	public void init(IWorkbench workbench, IProject project) {
@@ -73,18 +73,14 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 			addPage(fPatchWizardPage = new InputPatchPage(this));
 		if (getPatch() == null || !getPatcher().isWorkspacePatch())
 			addPage(fPatchTargetPage = new PatchTargetPage(getPatcher()));
-		addPage(new PatchPreviewModePage());
-		fPreviewPage2 = new PreviewPatchPage2(getPatcher(),
-				getCompareConfiguration());
-		addPage(fPreviewPage2);
+		addPage(new PatchParsedPage());
 	}
 
 	public boolean canFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
-		if (currentPage.getName().equals(
-				PatchPreviewModePage.PATCH_PREVIEW_MODE_PAGE_NAME)
-				&& isPreviewInSyncViewSelected()) {
-			return true;
+		if (currentPage.getName()
+				.equals(PatchParsedPage.PATCH_PARSED_PAGE_NAME)) {
+			return currentPage.isPageComplete();
 		}
 		return super.canFinish();
 	}

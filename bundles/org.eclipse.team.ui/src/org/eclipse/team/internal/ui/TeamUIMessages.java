@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -713,12 +713,11 @@ public class TeamUIMessages extends NLS {
 	public static String SelectAncestorDialog_title;
 	public static String SelectAncestorDialog_message;
 	public static String SelectAncestorDialog_option;
-	
-	public static String PatchPreviewModePage_title;
-	public static String PatchPreviewModePage_description;
-	public static String PatchPreviewModePage_previewInPatchWizard;
-	public static String PatchPreviewModePage_previewInSynchronizeView;
-	
+
+	public static String PatchParsedPage_title;
+	public static String PatchParsedPage_description;
+	public static String PatchParsedPage_clickFinishToGoToSynchronizeView;
+
 	public static String NotFound;
 
 }
