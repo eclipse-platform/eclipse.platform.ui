@@ -69,13 +69,13 @@ public abstract class CompatibilityPart {
 
 				reference.invalidate();
 
+				if (wrapped != null) {
+					wrapped.dispose();
+				}
+
 				PartSite site = reference.getSite();
 				if (site != null) {
 					site.dispose();
-				}
-
-				if (wrapped != null) {
-					wrapped.dispose();
 				}
 			}
 		});
