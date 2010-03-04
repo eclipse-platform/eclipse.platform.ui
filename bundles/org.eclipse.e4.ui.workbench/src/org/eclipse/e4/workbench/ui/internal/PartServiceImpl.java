@@ -304,7 +304,11 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		return isInContainer(rootContainer, part);
+		MElementContainer<MUIElement> activePerspective = getActivePerspective();
+		if (activePerspective == null) {
+			return isInContainer(rootContainer, part);
+		}
+		return isInContainer(activePerspective, part);
 	}
 
 	private boolean isInContainer(MElementContainer<?> container, MPart part) {
@@ -441,7 +445,6 @@ public class PartServiceImpl implements EPartService {
 		MElementContainer<MUIElement> searchRoot = rootContainer;
 		if (getActivePerspective() != null) {
 			searchRoot = getActivePerspective();
-			rootContainer = searchRoot;
 		}
 
 		List<MUIElement> children = searchRoot.getChildren();
@@ -451,7 +454,7 @@ public class PartServiceImpl implements EPartService {
 			return stack;
 		}
 
-		MElementContainer<?> lastContainer = getLastContainer(rootContainer, children);
+		MElementContainer<?> lastContainer = getLastContainer(searchRoot, children);
 		if (lastContainer == null) {
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 			searchRoot.getChildren().add(stack);
