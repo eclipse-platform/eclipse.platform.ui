@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tasktop Technologies - Bug 302529 [UX] [Progress] Show Eclipse IDE progress in the Eclipse icon on the Windows 7 Task Bar
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -78,6 +79,8 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TaskBar;
+import org.eclipse.swt.widgets.TaskItem;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -127,6 +130,7 @@ import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory;
 import org.eclipse.ui.internal.progress.ProgressRegion;
+import org.eclipse.ui.internal.progress.TaskBarProgressManager;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -3318,7 +3322,31 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			progressRegion = new ProgressRegion();
 			progressRegion.createContents(shell, this);
 		}
+		if (shell.getDisplay() != null && shell.getDisplay().getSystemTaskBar() != null) {
+			// only create the TaskBarProgressManager if there is a TaskBar that
+			// the progress can be displayed on
+			TaskItem taskItem = null;
+			TaskBar systemTaskBar = shell.getDisplay().getSystemTaskBar();
+			taskItem = systemTaskBar.getItem(shell);
+			if (taskItem == null) {
+				// try to get the application TaskItem
+				taskItem = systemTaskBar.getItem(null);
+			}
 
+			if (taskItem != null) {
+				// If there is a TaskItem, see if there is
+				// TaskBarProgressManager already associated with it to make
+				// sure that we don't duplicate the progress information
+				String taskBarProgressManagerKey = TaskBarProgressManager.class.getName()
+						+ ".instance"; //$NON-NLS-1$
+				Object data = taskItem.getData(taskBarProgressManagerKey);
+				if (data == null || !(data instanceof TaskBarProgressManager)) {
+					taskItem.setData(taskBarProgressManagerKey,
+							new TaskBarProgressManager(taskItem));
+				}
+			}
+			
+		}
 	}
 
 	class PageList {

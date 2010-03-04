@@ -37,14 +37,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="Eclipse UI/org/eclipse/ui/progress/IProgressConstants.java" type="org.eclipse.ui.progress.IProgressConstants">
-        <filter id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.progress.IProgressConstants"/>
-                <message_argument value="COMMAND_PROPERTY"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/services/IEvaluationReference.java" type="org.eclipse.ui.services.IEvaluationReference">
         <filter id="403853384">
             <message_arguments>

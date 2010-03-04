@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tasktop Technologies - Bug 302529 [UX] [Progress] Show Eclipse IDE progress in the Eclipse icon on the Windows 7 Task Bar
  *******************************************************************************/
 package org.eclipse.ui.progress;
 
@@ -148,4 +149,17 @@ public interface IProgressConstants {
      */
     public static final QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "delayErrorPrompt"); //$NON-NLS-1$
+
+	/**
+	 * This property provides a hint to the progress UI to show the progress of
+	 * the job in the application TaskBar
+	 * <p>
+	 * The property must be of type <code>Boolean</code> and the hint is used if
+	 * its value is <code>true</code>.
+	 * </p>
+	 * 
+	 * @since 3.6
+	 */
+	public static final QualifiedName SHOW_IN_TASKBAR_ICON_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "inTaskBarIcon"); //$NON-NLS-1$
 }
