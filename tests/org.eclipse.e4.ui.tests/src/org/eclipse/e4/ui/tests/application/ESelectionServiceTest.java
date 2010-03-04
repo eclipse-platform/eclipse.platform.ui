@@ -29,12 +29,12 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.e4.workbench.modeling.ISelectionListener;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notifier;
 
 public class ESelectionServiceTest extends TestCase {
@@ -897,7 +897,7 @@ public class ESelectionServiceTest extends TestCase {
 			MApplication application) {
 		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
-		Workbench.processHierarchy(application);
+		E4Workbench.processHierarchy(application);
 		((Notifier) application).eAdapters().add(
 				new UIEventPublisher(applicationContext));
 	}

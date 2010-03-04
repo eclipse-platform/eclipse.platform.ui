@@ -11,15 +11,48 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.TriggerSequence;
+import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -84,7 +117,7 @@ public class E4Workbench implements IWorkbench {
 		E4CommandProcessor.processCommands(appElement.getContext(), appElement.getCommands());
 
 		// Do a top level processHierarchy for the application?
-		Workbench.processHierarchy(appElement);
+		processHierarchy(appElement);
 	}
 
 	/**
@@ -114,5 +147,209 @@ public class E4Workbench implements IWorkbench {
 
 	public MApplication getApplication() {
 		return appModel;
+	}
+
+	public static IEclipseContext createWorkbenchContext(final IEclipseContext applicationContext,
+			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
+			IContributionFactory contributionFactory) {
+		Activator
+				.trace(
+						Policy.DEBUG_CONTEXTS,
+						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
+		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext,
+				UISchedulerStrategy.getInstance());
+		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
+				new WorkbenchLogger(), mainContext));
+		mainContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
+
+		// setup for commands and handlers
+		if (contributionFactory != null) {
+			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
+		}
+		mainContext.set(ContextManager.class.getName(), new ContextManager());
+
+		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
+		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
+		mainContext.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
+				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
+				if (o instanceof MPart) {
+					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getId());
+				}
+				return true;
+			}
+
+			/*
+			 * For debugging purposes only
+			 */
+			@Override
+			public String toString() {
+				return IServiceConstants.ACTIVE_PART_ID;
+			}
+		}, null);
+		// EHandlerService comes from a ContextFunction
+		// EContextService comes from a ContextFunction
+		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
+		mainContext.set(IExtensionRegistry.class.getName(), registry);
+		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				Class adapterType = null;
+				if (arguments.length > 0 && arguments[0] instanceof Class) {
+					adapterType = (Class) arguments[0];
+				}
+				Object newInput = null;
+				Object newValue = context.get(IServiceConstants.SELECTION);
+				if (adapterType == null || adapterType.isInstance(newValue)) {
+					newInput = newValue;
+				} else if (newValue != null && adapterType != null) {
+					IAdapterManager adapters = (IAdapterManager) applicationContext
+							.get(IAdapterManager.class.getName());
+					if (adapters != null) {
+						Object adapted = adapters.loadAdapter(newValue, adapterType.getName());
+						if (adapted != null) {
+							newInput = adapted;
+						}
+					}
+				}
+				return newInput;
+			}
+		});
+		mainContext.set(IServiceConstants.ACTIVE_SHELL, new ActiveChildLookupFunction(
+				IServiceConstants.ACTIVE_SHELL, null));
+
+		initializeNullStyling(mainContext);
+
+		return mainContext;
+	}
+
+	public static void processHierarchy(Object me) {
+		if (me instanceof MApplication) {
+			MContext contextAware = (MContext) me;
+			IEclipseContext c = contextAware.getContext();
+			IEventBroker broker = (IEventBroker) c.get(IEventBroker.class.getName());
+			PartServiceImpl.addListener(broker);
+		}
+
+		if (me instanceof MHandlerContainer) {
+			MContext contextModel = (MContext) me;
+			MHandlerContainer container = (MHandlerContainer) contextModel;
+			IEclipseContext context = contextModel.getContext();
+			if (context != null) {
+				IContributionFactory cf = (IContributionFactory) context
+						.get(IContributionFactory.class.getName());
+				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
+				EList<MHandler> handlers = container.getHandlers();
+				for (MHandler handler : handlers) {
+					String commandId = handler.getCommand().getId();
+					if (handler.getObject() == null) {
+						handler.setObject(cf.create(handler.getURI(), context));
+					}
+					hs.activateHandler(commandId, handler.getObject());
+				}
+			}
+		}
+		if (me instanceof MBindingContainer) {
+			MContext contextModel = (MContext) me;
+			MBindingContainer container = (MBindingContainer) me;
+			IEclipseContext context = contextModel.getContext();
+			if (context != null) {
+				ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+				EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
+				EList<MKeyBinding> bindings = container.getBindings();
+				for (MKeyBinding binding : bindings) {
+					Map<String, Object> parameters = null;
+					EList<MParameter> modelParms = binding.getParameters();
+					if (modelParms != null && !modelParms.isEmpty()) {
+						parameters = new HashMap<String, Object>();
+						for (MParameter mParm : modelParms) {
+							parameters.put(mParm.getTag(), mParm.getValue());
+						}
+					}
+					ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(),
+							parameters);
+					TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
+					if (cmd == null || sequence == null) {
+						System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
+					} else {
+						bs.activateBinding(sequence, cmd);
+					}
+				}
+			}
+		}
+		if (me instanceof MWindow) {
+			MContext contextAware = (MContext) me;
+			IEclipseContext c = contextAware.getContext();
+			if (c != null) {
+				c.set(EPartService.PART_SERVICE_ROOT, me);
+			}
+		}
+		if (me instanceof MElementContainer<?>) {
+			EList children = ((MElementContainer) me).getChildren();
+			Iterator i = children.iterator();
+			while (i.hasNext()) {
+				MUIElement e = (MUIElement) i.next();
+				processHierarchy(e);
+			}
+		}
+	}
+
+	/**
+	 * Create the context chain. It both creates the chain for the current model, and adds eAdapters
+	 * so it can add new contexts when new model items are added.
+	 * 
+	 * @param parentContext
+	 *            The parent context
+	 * @param contextModel
+	 *            needs a context created
+	 */
+	public static IEclipseContext initializeContext(IEclipseContext parentContext,
+			MContext contextModel) {
+		final IEclipseContext context;
+		if (contextModel.getContext() != null) {
+			context = contextModel.getContext();
+		} else {
+			context = EclipseContextFactory
+					.create(parentContext, UISchedulerStrategy.getInstance());
+			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + contextModel + ')'); //$NON-NLS-1$
+		}
+
+		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$
+				+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+		// fill in the interfaces, so MContributedPart.class.getName() will
+		// return the model element, for example.
+		final Class[] interfaces = contextModel.getClass().getInterfaces();
+		for (Class intf : interfaces) {
+			Activator.trace(Policy.DEBUG_CONTEXTS, "Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+					+ contextModel.getClass().getName(), null);
+			context.set(intf.getName(), contextModel);
+		}
+
+		// declares modifiable variables from the model
+		EList<String> containedProperties = contextModel.getVariables();
+		for (String name : containedProperties) {
+			context.declareModifiable(name);
+		}
+
+		contextModel.setContext(context);
+		return context;
+	}
+
+	/*
+	 * For use when there is no real styling engine present. Has no behaviour but conforms to
+	 * IStylingEngine API.
+	 * 
+	 * @param appContext
+	 */
+	private static void initializeNullStyling(IEclipseContext appContext) {
+		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+			}
+
+			public void setId(Object widget, String id) {
+			}
+
+			public void style(Object widget) {
+			}
+		});
 	}
 }

@@ -34,7 +34,7 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -307,10 +307,10 @@ public abstract class HeadlessApplicationTest extends
 		// take care of generating the contexts.
 		EList<MWindow> windows = application.getChildren();
 		for (MWindow window : windows) {
-			Workbench.initializeContext(appContext, window);
+			E4Workbench.initializeContext(appContext, window);
 		}
 
-		Workbench.processHierarchy(application);
+		E4Workbench.processHierarchy(application);
 
 		processPartContributions(application.getContext(), resource);
 

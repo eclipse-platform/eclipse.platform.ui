@@ -29,6 +29,8 @@ import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
@@ -38,8 +40,8 @@ import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notifier;
 
 public class EPartServiceTest extends TestCase {
@@ -1532,6 +1534,66 @@ public class EPartServiceTest extends TestCase {
 
 	public void testShowPart_Id_MultipleExists_FalseCREATE() {
 		testShowPart_Id_MultipleExists(false, PartState.CREATE);
+	}
+
+	public void testShowPart_Id_PartInInactivePerspective() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = MApplicationFactory.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPerspective perspectiveB = MApplicationFactory.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+
+		MPart part = partService.showPart("partId", PartState.ACTIVATE);
+		MElementContainer<?> parent = part.getParent();
+		while (parent != null) {
+			if (parent == perspectiveA) {
+				break;
+			} else if (parent == perspectiveB) {
+				fail("Parent should not have been perspectiveB");
+			}
+			parent = parent.getParent();
+		}
+		assertNotNull(parent);
+
+		perspectiveStack.setSelectedElement(perspectiveB);
+
+		MPart part2 = partService.showPart("partId", PartState.ACTIVATE);
+		parent = part2.getParent();
+		while (parent != null) {
+			if (parent == perspectiveB) {
+				break;
+			} else if (parent == perspectiveA) {
+				fail("Parent should not have been perspectiveA");
+			}
+			parent = parent.getParent();
+		}
+		assertNotNull(parent);
+		assertFalse(part == part2);
 	}
 
 	private void testShowPart_Part(PartState partState) {
@@ -3996,7 +4058,7 @@ public class EPartServiceTest extends TestCase {
 			MApplication application) {
 		application.setContext(applicationContext);
 		applicationContext.set(MApplication.class.getName(), application);
-		Workbench.processHierarchy(application);
+		E4Workbench.processHierarchy(application);
 		((Notifier) application).eAdapters().add(
 				new UIEventPublisher(applicationContext));
 

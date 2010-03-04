@@ -24,8 +24,8 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -102,7 +102,7 @@ public class RenderingTestCase extends TestCase {
 				.getServiceContext(Activator.getDefault().getBundle()
 						.getBundleContext());
 
-		appContext = Workbench.createWorkbenchContext(serviceContext,
+		appContext = E4Workbench.createWorkbenchContext(serviceContext,
 				RegistryFactory.getRegistry(), null, null);
 		MApplication app = MApplicationFactory.eINSTANCE.createApplication();
 

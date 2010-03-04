@@ -14,7 +14,7 @@ import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -44,9 +44,9 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		final MPart part = (MPart) element;
 
 		// Create a context for this part
-		IEclipseContext localContext = Workbench.initializeContext(
+		IEclipseContext localContext = E4Workbench.initializeContext(
 				parentContext, part);
-		Workbench.processHierarchy(part);
+		E4Workbench.processHierarchy(part);
 
 		for (String variables : part.getVariables()) {
 			int delimiterIndex = variables.indexOf("::"); //$NON-NLS-1$

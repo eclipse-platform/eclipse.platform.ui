@@ -35,7 +35,7 @@ import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DnDManager;
 import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DragHost;
 import org.eclipse.jface.dialogs.Dialog;
@@ -300,7 +300,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);
-		localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
+		localContext.set(E4Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 
 		if (wbwModel.getLabel() != null)
 			wbwShell.setText(wbwModel.getLabel());

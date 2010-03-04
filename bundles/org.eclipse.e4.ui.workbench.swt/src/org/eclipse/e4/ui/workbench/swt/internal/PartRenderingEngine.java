@@ -50,7 +50,6 @@ import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
@@ -290,7 +289,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					lclContext.declareModifiable(variable);
 				}
 
-				Workbench.processHierarchy(element);
+				E4Workbench.processHierarchy(element);
 			}
 		}
 
