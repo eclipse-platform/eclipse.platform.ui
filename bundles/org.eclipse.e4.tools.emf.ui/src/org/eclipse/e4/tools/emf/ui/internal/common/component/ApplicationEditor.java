@@ -38,9 +38,9 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 	@Override
-	public Image getImage(Display display) {
+	public Image getImage(Object element, Display display) {
 		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application.png"));
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_osx.png"));
 		}
 
 		return image;

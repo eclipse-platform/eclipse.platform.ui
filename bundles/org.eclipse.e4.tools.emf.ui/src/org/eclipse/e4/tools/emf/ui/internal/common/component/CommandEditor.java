@@ -26,9 +26,12 @@ public class CommandEditor extends AbstractComponentEditor {
 	private DataBindingContext context;
 
 	@Override
-	public Image getImage(Display display) {
-		// TODO Auto-generated method stub
-		return null;
+	public Image getImage(Object element, Display display) {
+		if( image == null ) {
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/lightning_go.png"));
+		}
+
+		return image;
 	}
 
 	@Override

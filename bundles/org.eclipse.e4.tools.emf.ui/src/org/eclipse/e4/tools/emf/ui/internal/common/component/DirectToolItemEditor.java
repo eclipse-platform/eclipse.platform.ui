@@ -8,20 +8,30 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.ui.common.component;
+package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public abstract class AbstractComponentEditor {
-	public abstract Image getImage(Object element,Display display);
-	public abstract String getLabel(Object element);
-	public abstract String getDetailLabel(Object element);
+public class DirectToolItemEditor extends ToolItemEditor {
+	private Image image;
 
-	public abstract String getDescription(Object element);
-	public abstract Composite getEditor(Composite parent, Object object);
-	public abstract IObservableList getChildList(Object element);
+	@Override
+	public Image getImage(Object element, Display display) {
+		if( image == null ) {
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/brick_go.png"));
+		}
 
+		return image;
+	}
+
+	@Override
+	public String getLabel(Object element) {
+		return "Direct Tool Item";
+	}
+
+	@Override
+	public String getDescription(Object element) {
+		return "Direct Tool Item bla bla bla";
+	}
 }

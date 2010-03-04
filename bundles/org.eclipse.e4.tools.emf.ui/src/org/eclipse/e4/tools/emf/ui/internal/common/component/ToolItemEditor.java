@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class HandlerEditor extends AbstractComponentEditor {
+public class ToolItemEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -28,19 +28,20 @@ public class HandlerEditor extends AbstractComponentEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/cog.png"));
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/brick.png"));
 		}
+
 		return image;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "Handler";
+		return "Tool Item";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Handler bla bla bla";
+		return "Tool Item bla bla bla";
 	}
 
 	@Override

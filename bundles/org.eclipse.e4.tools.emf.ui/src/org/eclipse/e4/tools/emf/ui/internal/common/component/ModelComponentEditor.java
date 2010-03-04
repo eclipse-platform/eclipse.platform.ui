@@ -142,7 +142,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Display display) {
+	public Image getImage(Object element, Display display) {
 		if( image == null ) {
 			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/package_go.png"));
 		}

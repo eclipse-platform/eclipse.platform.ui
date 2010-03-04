@@ -24,12 +24,19 @@ import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PartSashContainerEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PartStackEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -115,7 +122,7 @@ public class ModelEditor {
 						AbstractComponentEditor editor = editorMap.get(obj.eClass());
 						if( editor != null ) {
 							textLabel.setText(editor.getLabel(obj));
-							iconLabel.setImage(editor.getImage(iconLabel.getDisplay()));
+							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
 							Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 							layout.topControl = comp;
@@ -143,6 +150,7 @@ public class ModelEditor {
 				new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(modelProvider.getRoot());
+		viewer.expandAll();
 
 		return viewer;
 	}
@@ -157,6 +165,13 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor());
 		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor());
 		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor());
+		registerEditor( MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor());
+		registerEditor( MApplicationPackage.Literals.PART_STACK, new PartStackEditor());
+		registerEditor( MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor());
+		registerEditor( MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor());
+		registerEditor( MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor());
+		registerEditor( MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor());
+		registerEditor( MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor());
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

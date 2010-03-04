@@ -31,7 +31,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 	private DataBindingContext context;
 
 	@Override
-	public Image getImage(Display display) {
+	public Image getImage(Object element, Display display) {
 		if( image == null ) {
 			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_view_icons.png"));
 		}

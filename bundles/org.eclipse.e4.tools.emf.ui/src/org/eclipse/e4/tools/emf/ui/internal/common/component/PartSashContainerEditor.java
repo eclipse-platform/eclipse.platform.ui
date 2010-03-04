@@ -1,46 +1,54 @@
-/*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class HandlerEditor extends AbstractComponentEditor {
+public class PartSashContainerEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private WritableValue master = new WritableValue();
-	private Image image;
+	private Image vImage;
+	private Image hImage;
 	private DataBindingContext context;
+
+	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/cog.png"));
+		boolean horizontal = ((MPartSashContainer)element).isHorizontal();
+
+		if( vImage == null && ! horizontal ) {
+			vImage = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_tile_vertical.png"));
 		}
-		return image;
+
+		if( hImage == null && horizontal ) {
+			hImage = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_tile_horizontal.png"));
+		}
+
+		if( horizontal ) {
+			return hImage;
+		} else {
+			return vImage;
+		}
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "Handler";
+		return "Sash";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Handler bla bla bla";
+		return "Sash bla bla bla";
 	}
 
 	@Override
@@ -61,8 +69,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+		return ELEMENT_CONTAINER__CHILDREN.observe(element);
 	}
 
 	@Override

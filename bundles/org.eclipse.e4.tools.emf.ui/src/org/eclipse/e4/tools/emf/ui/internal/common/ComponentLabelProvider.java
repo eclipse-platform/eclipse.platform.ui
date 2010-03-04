@@ -63,7 +63,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 					cell.setText(styledString.getString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 				}
-				cell.setImage(elementEditor.getImage(cell.getControl().getDisplay()));
+				cell.setImage(elementEditor.getImage(o, cell.getControl().getDisplay()));
 			} else {
 				cell.setText(cell.getElement().toString());
 			}
@@ -75,11 +75,6 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 					partsImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/application_double.png"));
 				}
 				cell.setImage(partsImage);
-			} else if( "Menus".equals(s) ) {
-				if( menusImage == null ) {
-					menusImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/cog.png"));
-				}
-				cell.setImage(menusImage);
 			}
 		} else {
 			cell.setText(cell.getElement()+"");

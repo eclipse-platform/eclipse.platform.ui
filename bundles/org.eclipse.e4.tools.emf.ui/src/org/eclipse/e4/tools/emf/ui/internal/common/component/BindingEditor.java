@@ -26,9 +26,12 @@ public class BindingEditor extends AbstractComponentEditor {
 	private DataBindingContext context;
 
 	@Override
-	public Image getImage(Display display) {
-		// TODO Auto-generated method stub
-		return null;
+	public Image getImage(Object element, Display display) {
+		if( image == null ) {
+			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/link.png"));
+		}
+
+		return image;
 	}
 
 	@Override

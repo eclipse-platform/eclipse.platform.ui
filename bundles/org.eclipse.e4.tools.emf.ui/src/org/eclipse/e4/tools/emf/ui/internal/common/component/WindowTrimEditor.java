@@ -1,46 +1,40 @@
-/*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class HandlerEditor extends AbstractComponentEditor {
+public class WindowTrimEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
 	private DataBindingContext context;
 
+	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+
+
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/cog.png"));
-		}
-		return image;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "Handler";
+		return "Window Trim";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Handler bla bla bla";
+		return "Window Trim bla bla bla";
 	}
 
 	@Override
@@ -61,8 +55,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+		return ELEMENT_CONTAINER__CHILDREN.observe(element);
 	}
 
 	@Override
