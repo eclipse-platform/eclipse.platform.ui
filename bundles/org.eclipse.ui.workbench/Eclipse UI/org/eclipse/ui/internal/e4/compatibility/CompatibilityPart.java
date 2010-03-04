@@ -63,18 +63,19 @@ public abstract class CompatibilityPart {
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		parent.addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
-				WorkbenchPartReference reference = (WorkbenchPartReference) getReference();
+				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 
 				reference.invalidate();
 
+				PartSite site = reference.getSite();
+				if (site != null) {
+					site.dispose();
+				}
+
 				if (wrapped != null) {
-					PartSite site = (PartSite) wrapped.getSite();
 					wrapped.dispose();
-					if (site != null) {
-						site.dispose();
-					}
 				}
 			}
 		});

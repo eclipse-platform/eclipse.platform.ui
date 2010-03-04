@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
 	private String factoryId;
+	private EditorSite editorSite;
 
 	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor) {
@@ -200,11 +201,16 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		EditorSite editorSite = new EditorSite(getModel(), part, descriptor
+		editorSite = new EditorSite(getModel(), part, descriptor
 				.getConfigurationElement());
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
+	}
+
+	@Override
+	public PartSite getSite() {
+		return editorSite;
 	}
 
 	private static HashMap<String, EditorActionBars> actionCache = new HashMap<String, EditorActionBars>();
