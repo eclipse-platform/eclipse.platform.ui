@@ -1155,7 +1155,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 					Widget item = getVariablesViewer().findItem(ss.getPaths()[0]);
 					if (item instanceof TreeItem) {
 						TreeItem ti = (TreeItem) item;
-						ti.setExpanded(!ti.getExpanded());
+						if (ti.getExpanded()) {
+							ti.setExpanded(false);
+						} else {
+							// need to trigger proper children updates when expanding
+							getVariablesViewer().expandToLevel(ss.getPaths()[0], 1);
+						}
 					}
 					
 				}
