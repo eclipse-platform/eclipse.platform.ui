@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Johann Draschwandtner (Wind River) - [300988] Support filtering variables
  *******************************************************************************/
 package org.eclipse.debug.ui;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
@@ -55,6 +59,30 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	private Text fArgumentText;
 	private String fArgumentValue;
 	private Button fEditVariablesButton;
+	private Button fHideNonApplicableButton;
+
+	/** 
+	 * Base class for custom variable filters. Clients may extend this class
+	 * to filter specific dynamic variables from the selection dialog. 
+	 * 
+	 * @since 3.6
+	 */
+	public static class VariableFilter {
+		/**
+		 * Returns whether the given variable should be filtered.
+		 *  
+		 * @param var variable to be consider
+		 * @return <code>true</code> to filter the variable, otherwise <code>false</code>
+		 */
+		public boolean isFiltered(IDynamicVariable var) {
+			return false;
+		}
+	}
+
+	//no filtering by default
+	private ArrayList fFilters = new ArrayList();
+	//when filtering is on, do not show all by default
+	private boolean fShowAllSelected = false;
 
 	/**
 	 * Constructs a new string substitution variable selection dialog.
@@ -94,6 +122,71 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		return null;
 	}
 
+	/** 
+	 *  Add the given variable filter. Has no effect if the given filter has
+	 *  already been added. Must be called before the dialog is opened.
+	 *  
+	 *  @param filter the filter to add
+	 * @since 3.6
+	 */
+	public void addVariableFilter(VariableFilter filter) {
+		if(!fFilters.contains(filter)) {
+			fFilters.add(filter);
+		}
+	}
+
+	/**
+	 * Sets the filters, replacing any previous filters.
+	 *  Must be called before the dialog is opened.
+	 * 
+	 * @param filters
+	 *            an array of variable filters, use empty Array or <code>null</code> to reset all Filters.
+	 * @since 3.6
+	 */
+	public void setFilters(VariableFilter[] filters) {
+		fFilters.clear();
+		if(filters != null && filters.length > 0) {
+			fFilters.addAll(Arrays.asList(filters));
+		}
+	}
+
+	private void updateElements() {
+		final Display display = DebugUIPlugin.getStandardDisplay();
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+				display.asyncExec(new Runnable() {
+					public void run() {
+						setListElements(elements);
+					}
+				});
+			}
+		});		
+	}
+	
+	protected void setListElements(Object[] elements) {
+		ArrayList filtered = new ArrayList();
+		filtered.addAll(Arrays.asList(elements));
+		if(!fFilters.isEmpty() && !fShowAllSelected) {
+			for (int i = 0; i < elements.length; i++) {
+				if(elements[i] instanceof IDynamicVariable) {
+					boolean bFiltered = false;
+					for (int j = 0; (j < fFilters.size()) && !bFiltered; j++) {
+						VariableFilter filter = (VariableFilter)fFilters.get(j);
+						if(filter.isFiltered((IDynamicVariable)elements[i])) {
+							filtered.remove(elements[i]);
+							bFiltered = true;
+						}
+					}
+				}
+			}
+		}
+		if((fHideNonApplicableButton != null) && !fHideNonApplicableButton.isDisposed()) {
+			fHideNonApplicableButton.setEnabled(!fShowAllSelected || (elements.length == filtered.size()));
+		}
+		super.setListElements(filtered.toArray());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -120,9 +213,23 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 */
 	private void createArgumentArea(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		SWTFactory.createHorizontalSpacer(container, 1);
 		
-		fEditVariablesButton = SWTFactory.createPushButton(container, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
+		Composite btnContainer = SWTFactory.createComposite(container, parent.getFont(), 3, 2, GridData.FILL_HORIZONTAL, 0, 0);
+		if (!fFilters.isEmpty()) {
+			fHideNonApplicableButton = SWTFactory.createCheckButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_9, null, !fShowAllSelected, 1);
+			fHideNonApplicableButton.setEnabled(!fFilters.isEmpty());
+			fHideNonApplicableButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					fShowAllSelected = !fHideNonApplicableButton.getSelection();
+					updateElements();
+				}
+			});
+			SWTFactory.createHorizontalSpacer(btnContainer, 1);
+		} else {
+			SWTFactory.createHorizontalSpacer(btnContainer, 2);
+		}
+		
+		fEditVariablesButton = SWTFactory.createPushButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
 		fEditVariablesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editVariables();

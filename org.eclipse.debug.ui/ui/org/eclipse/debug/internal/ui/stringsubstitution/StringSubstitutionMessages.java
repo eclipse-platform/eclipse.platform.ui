@@ -1,11 +1,12 @@
 /**********************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2010 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * Johann Draschwandtner (Wind River) - [300988] Support filtering variables
  **********************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
@@ -48,6 +49,7 @@ public class StringSubstitutionMessages extends NLS {
 	public static String StringVariableSelectionDialog_7;
 	public static String StringVariableSelectionDialog_8;
 	public static String StringVariableSelectionDialog_0;
+	public static String StringVariableSelectionDialog_9;
 
 	static {
 		// load message values from bundle file
