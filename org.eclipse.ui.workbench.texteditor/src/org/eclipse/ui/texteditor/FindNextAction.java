@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -348,7 +348,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private void readConfiguration() {
 		IDialogSettings s= getDialogSettings();
 
-		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
+		fWrapInit= s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
 		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
 		fRegExSearch= s.getBoolean("isRegEx"); //$NON-NLS-1$
