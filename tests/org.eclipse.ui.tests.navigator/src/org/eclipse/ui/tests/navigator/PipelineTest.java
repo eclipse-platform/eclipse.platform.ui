@@ -116,7 +116,7 @@ public class PipelineTest extends NavigatorTestBase {
 		IFile f = _project.getFile("newfile");
 
 		TestContentProviderPipelined._throw = true;
-		// This will throw, have to look in the look to see the message
+		// This will throw, have to look in the log to see the message
 		_viewer.add(_project, new Object[] { f });
 
 	}	
