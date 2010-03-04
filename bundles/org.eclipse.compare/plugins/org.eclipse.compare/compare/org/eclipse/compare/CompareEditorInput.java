@@ -775,11 +775,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						Object input= fStructureInputPane.getInput();
 						if (input != null)
 							internalSetContentPaneInput(input);
+						if (!Utilities.okToUse(fStructurePane1) || !Utilities.okToUse(fStructurePane2))
+							return;
 						fStructurePane2.setInput(null); // clear downstream pane
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
 						internalSetContentPaneInput(input);
+						if (!Utilities.okToUse(fStructurePane1) || !Utilities.okToUse(fStructurePane2))
+							return;						
 						if (structureCompareOnSingleClick() || hasUnusableContentViewer())
 							fStructurePane1.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane

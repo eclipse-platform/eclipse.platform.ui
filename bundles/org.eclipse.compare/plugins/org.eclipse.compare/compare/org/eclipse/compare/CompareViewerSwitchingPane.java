@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,19 @@
 package org.eclipse.compare;
 
 import org.eclipse.compare.contentmergeviewer.IFlushable;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.NullViewer;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -268,6 +274,9 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 
 		// set input
 		fViewer.setInput(input);
+
+		if (getViewer() == null || !Utilities.okToUse(getViewer().getControl()))
+			return;
 
 		Image image= null;
 		if (!(fViewer instanceof NullViewer) && input instanceof ICompareInput)

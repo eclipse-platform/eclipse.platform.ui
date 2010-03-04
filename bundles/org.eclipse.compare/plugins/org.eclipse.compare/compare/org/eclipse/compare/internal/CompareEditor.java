@@ -35,6 +35,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -451,7 +452,15 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				setState(CREATING_CONTROL);
 				if (getSite().getSelectionProvider() == null)
 					getSite().setSelectionProvider(new CompareEditorSelectionProvider());
-				fControl= ci.createContents(fPageBook);
+				try {
+					fControl = ci.createContents(fPageBook);
+				} catch (SWTException e) {
+					// closed while creating
+					if (e.code == SWT.ERROR_WIDGET_DISPOSED) {
+						setState(CANCELED);
+						return;
+					}
+				}
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
 				if (isActive()) {
