@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
+ * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import org.eclipse.core.runtime.IPath;
 
 import java.net.URI;
 import java.util.*;
@@ -820,6 +823,24 @@ public class Project extends Container implements IProject {
 	}
 
 	/* (non-Javadoc)
+	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
+	 */
+	public void loadSnapshot(int options, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException {
+		if ((options & SNAPSHOT_TREE) != 0) {
+			// load a snapshot of refresh information when project is opened
+			if (isOpen()) {
+				String message = Messages.resources_projectMustNotBeOpen;
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+				throw new CoreException(status);
+			}
+			// copy the snapshot from the URI into the project metadata
+			IPath snapshotPath = workspace.getMetaArea().getRefreshLocationFor(this);
+			IFileStore snapshotFileStore = EFS.getStore(org.eclipse.core.filesystem.URIUtil.toURI(snapshotPath));
+			EFS.getStore(snapshotLocation).copy(snapshotFileStore, EFS.OVERWRITE, monitor);
+		}
+	}
+	/* (non-Javadoc)
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
 	public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
@@ -921,14 +942,24 @@ public class Project extends Container implements IProject {
 				}
 				startup();
 				//request a refresh if the project is new and has unknown members on disk
-				// or restore of the project is not fully succesfull
+				// or restore of the project is not fully successful
 				if ((!used && unknownChildren) || !minorIssuesDuringRestore) {
+					boolean refreshed = false;
+					if (!used) {
+						refreshed = workspace.getSaveManager().restoreFromRefreshSnapshot(
+								this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+						if (refreshed) {	// account for the refresh work
+							monitor.worked(Policy.opWork * 60 / 100);
+						}
+					}
 					//refresh either in background or foreground
-					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
-						workspace.refreshManager.refresh(this);
-						monitor.worked(Policy.opWork * 80 / 100);
-					} else {
-						refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 80 / 100));
+					if (!refreshed) {
+						if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+							workspace.refreshManager.refresh(this);
+							monitor.worked(Policy.opWork * 60 / 100);
+						} else {
+							refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
+						}
 					}
 				}
 				//creation of this project may affect overlapping resources
@@ -1035,6 +1066,32 @@ public class Project extends Container implements IProject {
 		return status;
 	}
 
+	/* (non-Javadoc)
+	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor)
+	 */
+	public void saveSnapshot(int options, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException {
+		if ((options & SNAPSHOT_TREE) != 0) {
+			// write a snapshot of refresh information
+			monitor = Policy.monitorFor(monitor);
+			try {
+				String msg = NLS.bind(Messages.resources_copying, getName());
+				monitor.beginTask(msg, Policy.totalWork);
+				try {
+					IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+					workspace.getSaveManager().saveRefreshSnapshot(
+							this, snapshotLocation, sub);
+					monitor.worked(Policy.opWork / 2);
+				} catch (OperationCanceledException e) {
+					//workspace.getWorkManager().operationCanceled();
+					throw e;
+				}
+			} finally {
+				monitor.done();
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 */

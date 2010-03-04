@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *******************************************************************************/
 package org.eclipse.core.resources;
+
+import java.net.URI;
 
 import java.util.Map;
 import org.eclipse.core.runtime.*;
@@ -41,6 +44,15 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProject extends IContainer, IAdaptable {
+	/**
+	 * Option constant (value 1) indicating that a snapshot to be
+	 * loaded or saved contains a resource tree (refresh information).
+	 * @see #loadSnapshot(int, URI, IProgressMonitor)
+	 * @see #saveSnapshot(int, URI, IProgressMonitor)
+	 * @since 3.6
+	 */
+	public static final int SNAPSHOT_TREE = 1;
+
 	/**
 	 * Invokes the <code>build</code> method of the specified builder 
 	 * for this project. Does nothing if this project is closed.  If this project
@@ -569,6 +581,29 @@ public interface IProject extends IContainer, IAdaptable {
 	public boolean isOpen();
 
 	/**
+	 * Loads a snapshot of project meta-data from the given location URI.
+	 * Must be called after the project has been created, but before it is
+	 * opened. The options constant controls what kind of snapshot information
+	 * to load. Valid option values include:<ul>
+	 * <li>@link{IProject#SNAPSHOT_TREE} - load resource tree (refresh info)
+	 * </ul>
+	 * 
+	 * @param options kind of snapshot information to load
+	 * @param snapshotLocation URI to load from
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *		reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> The snapshot was not found at the specified URI.</li>
+	  * </ul>
+	 * @exception OperationCanceledException if the operation is canceled.
+	 * @see #saveSnapshot(int, URI, IProgressMonitor) 
+	 * @since 3.6
+	 */
+	public void loadSnapshot(int options, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException;
+
+	/**
 	 * Renames this project so that it is located at the name in 
 	 * the given description.  
 	 * <p>
@@ -621,13 +656,21 @@ public interface IProject extends IContainer, IAdaptable {
 	 * of its resources from information stored on disk.
 	 * </p>
 	 * <p>
-	 * The <code>BACKGROUND_REFRESH</code> update flag controls how
-	 * this method behaves when a project is opened for the first time on a location
-	 * that has existing resources on disk.  If this flag is specified, resources on disk
-	 * will be added to the project in the background after this method returns.
-	 * Child resources of the project may not be available until this background
-	 * refresh completes. If this flag is not specified, resources on disk are added 
-	 * to the project in the foreground before this method returns.
+	 * When a project is opened for the first time, initial information about the
+	 * project's existing resources can be obtained in the following ways:
+	 * <ul>
+	 * <li>If a {@link #loadSnapshot(int, URI, IProgressMonitor)} call has been made
+	 * before the open, resources are restored from that file (a file written by
+	 * {@link #saveSnapshot(int, URI, IProgressMonitor)}). When the snapshot includes
+	 * resource tree information and can be loaded without error, no refresh is initiated,
+	 * so the project's resource tree will match what the snapshot provides.
+	 * <li>Otherwise, when the {@link IResource#BACKGROUND_REFRESH} flag is specified,
+	 * resources on disk will be added to the project in the background after
+	 * this method returns. Child resources of the project may not be available
+	 * until this background refresh completes.
+	 * <li>Otherwise, resource information is obtained with a refresh operation in the
+	 * foreground, before this method returns.
+	 * </ul>
 	 * </p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event that includes
@@ -687,6 +730,28 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 */
 	public void open(IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Writes a snapshot of project meta-data into the given location URI.
+	 * The options constant controls what kind of snapshot information to
+	 * write. Valid option values include:<ul>
+	 * <li>@link{IProject#SNAPSHOT_TREE} - save resource tree (refresh info)
+	 * </ul>
+	 * 
+	 * @param options kind of snapshot information to save
+	 * @param snapshotLocation URI for saving the snapshot to
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *		reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> The URI is not writable or an error occurs writing the data.</li>
+	  * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @see #loadSnapshot(int, URI, IProgressMonitor) 
+	 * @since 3.6
+	 */
+	public void saveSnapshot(int options, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Changes this project resource to match the given project

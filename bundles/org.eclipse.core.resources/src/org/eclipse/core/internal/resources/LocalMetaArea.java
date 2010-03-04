@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -31,6 +32,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_PROJECT_LOCATION = ".location"; //$NON-NLS-1$
 	/* package */static final String F_PROJECTS = ".projects"; //$NON-NLS-1$
 	/* package */static final String F_PROPERTIES = ".properties"; //$NON-NLS-1$
+	/* package */static final String F_REFRESH = ".refresh"; //$NON-NLS-1$
 	/* package */static final String F_ROOT = ".root"; //$NON-NLS-1$
 	/* package */static final String F_SAFE_TABLE = ".safetable"; //$NON-NLS-1$
 	/* package */static final String F_SNAP = ".snap"; //$NON-NLS-1$
@@ -60,6 +62,13 @@ public class LocalMetaArea implements ICoreConstants {
 	 */
 	public void clearOldDescription(IProject target) {
 		Workspace.clear(getOldDescriptionLocationFor(target).toFile());
+	}
+
+	/**
+	 * Delete the refresh snapshot once it has been used to open a new project.
+	 */
+	public void clearRefresh(IProject target) {
+		Workspace.clear(getRefreshLocationFor(target).toFile());
 	}
 
 	public void create(IProject target) {
@@ -145,6 +154,15 @@ public class LocalMetaArea implements ICoreConstants {
 		int type = resource.getType();
 		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 		return locationFor(resource).append(F_PROPERTIES);
+	}
+
+	/**
+	 * Returns the path of the file in which to save the refresh snapshot for
+	 * the given project.
+	 */
+	public IPath getRefreshLocationFor(IProject project) {
+		Assert.isNotNull(project);
+		return locationFor(project).append(F_REFRESH);
 	}
 
 	public IPath getSafeTableLocationFor(String pluginId) {

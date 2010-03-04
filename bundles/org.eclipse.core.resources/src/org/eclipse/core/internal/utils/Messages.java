@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -238,6 +239,7 @@ public class Messages extends NLS {
 	public static String resources_pathNull;
 	public static String resources_projectDesc;
 	public static String resources_projectDescSync;
+	public static String resources_projectMustNotBeOpen;
 	public static String resources_projectPath;
 	public static String resources_pruningHistory;
 	public static String resources_reading;

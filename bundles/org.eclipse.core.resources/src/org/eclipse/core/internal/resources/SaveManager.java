@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,21 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.OperationCanceledException;
+
+import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.filesystem.EFS;
+
+import java.net.URI;
+
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
@@ -708,6 +718,43 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	/**
+	 * Restores the contents of this project from a refresh snapshot, if possible.
+	 * Throws an exception if the snapshot is found but an error occurs when reading
+	 * the file.
+	 * @return <code><code>true</code> if the project data was restored successfully,
+	 * and <code>false</code> if the refresh snapshot was not found or could not be opened.
+	 * @exception CoreException if an error occurred reading the snapshot file.
+	 */
+	protected boolean restoreFromRefreshSnapshot(Project project,
+			IProgressMonitor monitor) throws CoreException {
+		boolean status = true;
+		IPath snapshotPath = workspace.getMetaArea().getRefreshLocationFor(project);
+		java.io.File snapshotFile = snapshotPath.toFile();
+		if (!snapshotFile.exists())
+			return false;
+		if (Policy.DEBUG_RESTORE)
+			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+		long start = System.currentTimeMillis();
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask("", 40); //$NON-NLS-1$
+			status = restoreTreeFromRefreshSnapshot(project,
+					snapshotFile, Policy.subMonitorFor(monitor, 40));
+			if (status) {
+				// load the project description and set internal description
+				ProjectDescription description = workspace.getFileSystemManager().read(project, true);
+				project.internalSetDescription(description, false);
+				workspace.getMetaArea().clearRefresh(project);
+			}
+		} finally {
+			monitor.done();
+		}
+		if (Policy.DEBUG_RESTORE)
+			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return status;
+	}
+
+	/**
 	 * Reads the markers which were originally saved
 	 * for the tree rooted by the given resource.
 	 */
@@ -970,6 +1017,47 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		return true;
 	}
 	
+	/**
+	 * Restores a tree saved as a refresh snapshot to a specified URI.
+	 * @return <code>true</code> if the snapshot exists, <code>false</code> otherwise.
+	 * @exception CoreException if the project could not be restored.
+	 */
+	protected boolean restoreTreeFromRefreshSnapshot(Project project,
+			java.io.File snapshotFile, IProgressMonitor monitor) throws CoreException {
+		long start = System.currentTimeMillis();
+		monitor = Policy.monitorFor(monitor);
+		String message;
+		IPath snapshotPath = null;
+		try {
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+			InputStream snapIn = new FileInputStream(snapshotFile);
+			ZipInputStream zip = new ZipInputStream(snapIn);
+			ZipEntry treeEntry = zip.getNextEntry();
+			if (treeEntry == null || !treeEntry.getName().equals("resource-index.tree")) { //$NON-NLS-1$
+				zip.close();
+				return false;
+			}
+			DataInputStream input = new DataInputStream(zip);
+			try {
+				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
+				reader.readTree(project, input, Policy.subMonitorFor(monitor, Policy.totalWork));
+			} finally {
+				input.close();
+				zip.close();
+			}
+		} catch (IOException e) {
+			snapshotPath = new Path(snapshotFile.getPath());
+			message = NLS.bind(Messages.resources_readMeta, snapshotPath);
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, snapshotPath, message, e);
+		} finally {
+			monitor.done();
+		}
+		if (Policy.DEBUG_RESTORE_TREE) {
+			System.out.println("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return true;
+	}
+	
 	class InternalMonitorWrapper extends ProgressMonitorWrapper{
 		private boolean ignoreCancel;
 		
@@ -1161,6 +1249,60 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Writes a snapshot of project refresh information to the specified
+	 * location.
+	 * @param project the project to write a refresh snapshot for
+	 * @param monitor progress monitor
+	 * @exception CoreException if there is a problem writing the snapshot.
+	 */
+	public void saveRefreshSnapshot(Project project, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException {
+		IFileStore store = EFS.getStore(snapshotLocation);
+		IPath snapshotPath = new Path(snapshotLocation.getPath());
+		java.io.File tmpTree = null;
+		try {
+			tmpTree = java.io.File.createTempFile("tmp", ".tree");	//$NON-NLS-1$//$NON-NLS-2$
+		} catch (IOException e) {
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL,
+					snapshotPath, Messages.resources_copyProblem, e);
+		}
+		ZipOutputStream out = null;
+		try {
+			FileOutputStream fis = new FileOutputStream(tmpTree);
+			DataOutputStream output = new DataOutputStream(fis);
+			try {
+				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
+				writeTree(project, output, monitor);
+			} finally {
+				output.close();
+			}
+			OutputStream snapOut = store.openOutputStream(EFS.NONE, monitor);
+			out = new ZipOutputStream(snapOut);
+			out.setLevel(Deflater.BEST_COMPRESSION);
+			ZipEntry e = new ZipEntry("resource-index.tree"); //$NON-NLS-1$
+			out.putNextEntry(e);
+			int read = 0;
+			byte[] buffer = new byte[4096];
+			InputStream in = new FileInputStream(tmpTree);
+			try {
+				while ((read = in.read(buffer)) >= 0) {
+					out.write(buffer, 0, read);
+				}
+				out.closeEntry();
+			} finally {
+				in.close();
+			}
+		} catch (IOException e) {
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, snapshotPath, Messages.resources_copyProblem, e);
+		} finally {
+			if (out!=null) {
+				try { out.close(); } catch (IOException e) { /*ignore*/ }
+			}
+			if (tmpTree!=null) tmpTree.delete();
+		}
+	}
+	
 	/**
 	 * Writes the current state of the entire workspace tree to disk.
 	 * This is used during workspace save.  saveTree(Project)
