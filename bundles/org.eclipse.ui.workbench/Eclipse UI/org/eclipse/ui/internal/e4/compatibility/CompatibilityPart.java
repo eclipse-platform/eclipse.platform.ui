@@ -117,7 +117,7 @@ public abstract class CompatibilityPart {
 		createPartControl(wrapped, composite);
 		delegateSetFocus();
 
-		part.setLabel(wrapped.getTitle());
+		part.setLabel(computeLabel());
 		part.setTooltip(wrapped.getTitleToolTip());
 
 		wrapped.addPropertyListener(new IPropertyListener() {
