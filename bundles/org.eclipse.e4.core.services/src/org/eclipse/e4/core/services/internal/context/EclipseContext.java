@@ -154,10 +154,11 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			} finally {
 				currentComputation.set(oldComputation);
 			}
+			EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event.getContext()).getContext();
 			if (result)
-				startListening();
+				startListening(eventsContext);
 			else
-				removeAll();
+				removeAll(eventsContext);
 			return result;
 		}
 

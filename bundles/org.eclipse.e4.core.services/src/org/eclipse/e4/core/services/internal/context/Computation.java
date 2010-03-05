@@ -97,14 +97,16 @@ abstract class Computation {
 	/**
 	 * Remove this computation from all contexts that are tracking it
 	 */
-	protected void removeAll() {
+	protected void removeAll(EclipseContext originatingContext) {
 		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
 			((EclipseContext) it.next()).listeners.remove(this);
 		}
 		dependencies.clear();
+		// Bug 304859
+		originatingContext.listeners.remove(this);
 	}
 
-	void startListening() {
+	void startListening(EclipseContext originatingContext) {
 		if (EclipseContext.DEBUG)
 			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
 					+ mapToString(dependencies));
@@ -131,6 +133,9 @@ abstract class Computation {
 			} else
 				c.listeners.add(this);
 		}
+		// Bug 304859
+		if (!dependencies.containsKey(originatingContext))
+			originatingContext.listeners.remove(this);
 	}
 
 	protected void stopListening(IEclipseContext context, String name) {
@@ -145,7 +150,8 @@ abstract class Computation {
 		if (properties != null) {
 			if (EclipseContext.DEBUG)
 				System.out.println(toString() + " no longer listening to " + context + "," + name); //$NON-NLS-1$
-			((EclipseContext) context).listeners.remove(this); // XXX
+			// Bug 304859 - causes reordering of listeners
+			// ((EclipseContext) context).listeners.remove(this); // XXX
 			// IEclipseContext
 			properties.remove(name);
 			// if we no longer track any values in the context, remove dependency

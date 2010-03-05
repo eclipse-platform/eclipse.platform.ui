@@ -115,7 +115,7 @@ public class ValueComputation extends Computation {
 			IObjectProvider provider = event.getContext();
 			IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
 			if (originatingContext.equals(eventsContext)) {
-				removeAll();
+				removeAll(originatingContext);
 				return;
 			}
 		}
@@ -145,7 +145,7 @@ public class ValueComputation extends Computation {
 			EclipseContext.currentComputation.set(oldComputation); // XXX
 			// IEclipseContext
 		}
-		startListening();
+		startListening(originatingContext);
 		return cachedValue;
 	}
 
