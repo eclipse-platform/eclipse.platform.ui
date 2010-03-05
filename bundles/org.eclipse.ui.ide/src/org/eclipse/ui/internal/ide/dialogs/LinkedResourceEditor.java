@@ -629,7 +629,7 @@ public class LinkedResourceEditor {
 			IResource res = (IResource) it.next();
 			IPath location = res.getLocation();
 			try {
-				IPath newLocation = URIUtil.toPath(fProject.getPathVariableManager().convertToRelative(URIUtil.toURI(location), res, true, null));
+				IPath newLocation = URIUtil.toPath(res.getPathVariableManager().convertToRelative(URIUtil.toURI(location), true, null));
 				if (newLocation == null || newLocation.equals(location))
 					remaining.add(res);
 				else {
@@ -654,7 +654,7 @@ public class LinkedResourceEditor {
 		remaining = new ArrayList();
 		// try for each to match with an existing variable
 		String[] variables = fProject.getPathVariableManager()
-				.getPathVariableNames(fProject);
+				.getPathVariableNames();
 
 		it = resources.iterator();
 		int amountLeft = 0;
@@ -665,9 +665,8 @@ public class LinkedResourceEditor {
 			int maxCount = 0;
 			int variable = -1;
 			for (int i = 0; i < variables.length; i++) {
-				IPath resolvePath = URIUtil.toPath(fProject
-				.getPathVariableManager().resolveURI(
-						URIUtil.toURI(Path.fromOSString(variables[i])), res));
+				IPath resolvePath = URIUtil.toPath(res.getPathVariableManager().resolveURI(
+						URIUtil.toURI(Path.fromOSString(variables[i]))));
 				if (resolvePath
 						.isPrefixOf(convertToProperCase(location))) {
 					int count = location
@@ -729,7 +728,7 @@ public class LinkedResourceEditor {
 			if (commonPath.segmentCount() > 1) {
 				String variableName = getSuitablePathVariable(commonPath);
 				try {
-					fProject.getPathVariableManager().setValue(variableName, fProject,
+					fProject.getPathVariableManager().setURIValue(variableName,
 							URIUtil.toURI(commonPath));
 				} catch (CoreException e) {
 					report
@@ -785,7 +784,7 @@ public class LinkedResourceEditor {
 			IPath commonPath = resLocation.removeLastSegments(1);
 			String variableName = getSuitablePathVariable(commonPath);
 			try {
-				fProject.getPathVariableManager().setValue(variableName, fProject, 
+				fProject.getPathVariableManager().setURIValue(variableName, 
 						URIUtil.toURI(commonPath));
 			} catch (CoreException e) {
 				report
@@ -845,7 +844,7 @@ public class LinkedResourceEditor {
 		}
 		variableName = buf.toString();
 		int index = 1;
-		while (fProject.getPathVariableManager().isDefined(variableName, fProject)) {
+		while (fProject.getPathVariableManager().isDefined(variableName)) {
 			variableName += index;
 			index++;
 		}
@@ -860,7 +859,7 @@ public class LinkedResourceEditor {
 		PathVariableDialog dialog = new PathVariableDialog(
 				fConvertAbsoluteButton.getShell(),
 				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
-				resource.getProject().getPathVariableManager(), null);
+				resource.getPathVariableManager(), null);
 		if (location != null)
 			dialog.setLinkLocation(location);
 		dialog.setResource(resource);

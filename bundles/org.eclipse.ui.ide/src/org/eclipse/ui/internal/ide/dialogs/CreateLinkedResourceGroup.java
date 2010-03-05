@@ -409,12 +409,12 @@ public class CreateLinkedResourceGroup {
 			IPathVariableManager pathVariableManager;
 
 			if (updatableResourceName.getResource() != null)
-				pathVariableManager = updatableResourceName.getResource().getProject().getPathVariableManager();
+				pathVariableManager = updatableResourceName.getResource().getPathVariableManager();
 			else
 				pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 
 			URI path = URIUtil.toURI(linkTargetPath);
-				URI resolved = pathVariableManager.resolveURI(path, updatableResourceName.getResource());
+				URI resolved = pathVariableManager.resolveURI(path);
 				if (path != resolved) {
 					// we know this is a path variable, but return unresolved
 					// path so resource will be created with variable intact
@@ -563,13 +563,13 @@ public class CreateLinkedResourceGroup {
 		IPathVariableManager pathVariableManager;
 		// use the resolved link target name
 		if (updatableResourceName.getResource() != null)
-			pathVariableManager = updatableResourceName.getResource().getProject().getPathVariableManager();
+			pathVariableManager = updatableResourceName.getResource().getPathVariableManager();
 		else
 			pathVariableManager = ResourcesPlugin
 									.getWorkspace().getPathVariableManager();
 		IPath path = new Path(linkTarget);
 		URI uri = URIUtil.toURI(path);
-		URI resolvedURI = pathVariableManager.resolveURI(uri, updatableResourceName.getResource());
+		URI resolvedURI = pathVariableManager.resolveURI(uri);
 		IPath resolvedPath = URIUtil.toPath(resolvedURI);
 		
 		if (path.equals(resolvedPath)) {
@@ -675,14 +675,7 @@ public class CreateLinkedResourceGroup {
 			return locationStatus;
 		}
 
-		IPathVariableManager pathVariableManager;
-		// use the resolved link target name
-		if (updatableResourceName.getResource() != null)
-			pathVariableManager = updatableResourceName.getResource().getProject().getPathVariableManager();
-		else
-			pathVariableManager = workspace.getPathVariableManager();
-
-		URI resolved = pathVariableManager.resolveURI(locationURI, linkHandle);
+		URI resolved = linkHandle.getPathVariableManager().resolveURI(locationURI);
 		if (resolved.getScheme() == null) {
 			return createStatus(
 					IStatus.WARNING,

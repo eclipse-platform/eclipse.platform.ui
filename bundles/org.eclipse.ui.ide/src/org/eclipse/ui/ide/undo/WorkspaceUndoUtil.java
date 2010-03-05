@@ -22,7 +22,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -362,8 +361,7 @@ public class WorkspaceUndoUtil {
 
 							}
 						} else
-							folder.createLink(createRelativePath(
-									folder.getProject().getPathVariableManager(), source
+							folder.createLink(createRelativePath(source
 									.getLocationURI(), relativeToVariable, folder), 0,
 									new SubProgressMonitor(monitor, 1));
 					} else
@@ -390,8 +388,7 @@ public class WorkspaceUndoUtil {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
 							file.createLink(createRelativePath(
-									file.getProject().getPathVariableManager(), source
-									.getLocationURI(), relativeToVariable, file), 0,
+									source.getLocationURI(), relativeToVariable, file), 0,
 									new SubProgressMonitor(monitor, 1));
 						} else {
 							IFolder folder = workspaceRoot
@@ -415,7 +412,6 @@ public class WorkspaceUndoUtil {
 								}
 							} else
 								folder.createLink(createRelativePath(
-										folder.getProject().getPathVariableManager(),
 										source.getLocationURI(), relativeToVariable, folder),
 										0, new SubProgressMonitor(monitor, 1));
 						}
@@ -463,7 +459,6 @@ public class WorkspaceUndoUtil {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
 							file.createLink(createRelativePath(
-									file.getProject().getPathVariableManager(),
 									source.getLocationURI(), relativeToVariable, file), 0,
 									new SubProgressMonitor(monitor, 1));
 						} else {
@@ -486,9 +481,7 @@ public class WorkspaceUndoUtil {
 
 								}
 							} else
-								folder.createLink(createRelativePath(
-										folder.getProject().getPathVariableManager(),
-										source.getLocationURI(), relativeToVariable, folder),
+								folder.createLink(createRelativePath(source.getLocationURI(), relativeToVariable, folder),
 										0, new SubProgressMonitor(monitor, 1));
 						}
 					} else
@@ -524,13 +517,13 @@ public class WorkspaceUndoUtil {
 	 * @param resource 
 	 * @return an URI that was made relative to a variable
 	 */
-	static private URI createRelativePath(IPathVariableManager pvm, URI locationURI, String relativeVariable, IResource resource) {
+	static private URI createRelativePath(URI locationURI, String relativeVariable, IResource resource) {
 		if (relativeVariable == null)
 			return locationURI;
 		IPath location = URIUtil.toPath(locationURI);
 		IPath result;
 		try {
-			result = URIUtil.toPath(pvm.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+			result = URIUtil.toPath(resource.getPathVariableManager().convertToRelative(URIUtil.toURI(location), true, relativeVariable));
 		} catch (CoreException e) {
 			return locationURI;
 		}

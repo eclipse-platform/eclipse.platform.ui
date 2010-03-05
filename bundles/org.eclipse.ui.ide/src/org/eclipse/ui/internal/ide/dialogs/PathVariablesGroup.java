@@ -335,7 +335,7 @@ public class PathVariablesGroup {
 			String varName = (String) cell.getElement();
 			cell.setText(varName);
 			IPath value = (IPath) tempPathVariables.get(varName);
-        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value), currentResource);
+        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
         	IPath resolvedValue = URIUtil.toPath(resolvedURI);
             IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
             if (!isBuiltInVariable(varName))
@@ -350,7 +350,7 @@ public class PathVariablesGroup {
     {
 		public String getToolTipText(Object element) {
             IPath value = (IPath) tempPathVariables.get(element);
-        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value), currentResource);
+        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
         	IPath resolvedValue = URIUtil.toPath(resolvedURI);
             return TextProcessor.process(resolvedValue.toOSString());
 		}
@@ -533,14 +533,14 @@ public class PathVariablesGroup {
      * (Re-)Initialize collections used to mantain temporary variable state.
      */
     private void initTemporaryState() {
-        String[] varNames = pathVariableManager.getPathVariableNames(currentResource);
+        String[] varNames = pathVariableManager.getPathVariableNames();
 
         tempPathVariables.clear();
         for (int i = 0; i < varNames.length; i++) {
         	// hide the PARENT variable
         	if (varNames[i].equals(PARENT_VARIABLE_NAME))
         		continue;
-            URI uri = pathVariableManager.getValue(varNames[i], currentResource);
+            URI uri = pathVariableManager.getURIValue(varNames[i]);
             // the value may not exist any more
             if (uri != null) {
                 IPath value = URIUtil.toPath(uri);
@@ -601,7 +601,7 @@ public class PathVariablesGroup {
                 String removedVariableName = (String) removed.next();
                 // only removes variables that have not been added again
                 if (!tempPathVariables.containsKey(removedVariableName)) {
-					pathVariableManager.setValue(removedVariableName, currentResource, null);
+					pathVariableManager.setURIValue(removedVariableName, null);
 				}
             }
 
@@ -612,7 +612,7 @@ public class PathVariablesGroup {
                 String variableName = (String) entry.getKey();
                 IPath variableValue = (IPath) entry.getValue();
                 if (!isBuiltInVariable(variableName))
-                    pathVariableManager.setValue(variableName, currentResource, URIUtil.toURI(variableValue));
+                    pathVariableManager.setURIValue(variableName, URIUtil.toURI(variableValue));
             }
             // re-initialize temporary state
             initTemporaryState();
@@ -657,7 +657,7 @@ public class PathVariablesGroup {
      */
     private boolean isBuiltInVariable(String varName) {
         if (currentResource != null) {
-        	IPathVariable variable = pathVariableManager.getPathVariable(varName, currentResource);
+        	IPathVariable variable = pathVariableManager.getPathVariable(varName);
             if (variable != null) 
             	return variable.isReadOnly();
         }
@@ -721,7 +721,7 @@ public class PathVariablesGroup {
     public void setResource(IResource resource) {
     	currentResource = resource;
         if (resource != null)
-        	pathVariableManager = resource.getProject().getPathVariableManager();
+        	pathVariableManager = resource.getPathVariableManager();
         else
         	pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
         removedVariableNames = new HashSet();

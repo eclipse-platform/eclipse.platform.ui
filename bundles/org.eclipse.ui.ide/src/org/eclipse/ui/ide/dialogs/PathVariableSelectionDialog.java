@@ -112,11 +112,11 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                     .getSelection()[0];
 			IPathVariable pathVariable = null;
 			if (currentResource != null)
-				pathVariable = currentResource.getProject().getPathVariableManager().getPathVariable(selection.name, currentResource);
+				pathVariable = currentResource.getPathVariableManager().getPathVariable(selection.name);
 			if (pathVariable != null
-					&& pathVariable.getExtensions(selection.name, currentResource) != null) {
+					&& pathVariable.getExtensions() != null) {
 				EnvSelectionDialog dialog = new EnvSelectionDialog(getShell(),
-						pathVariable.getExtensions(selection.name, currentResource));
+						pathVariable.getExtensions());
             dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
             dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
 				if (dialog.open() == Window.OK
@@ -138,8 +138,8 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 				// system locations
 				IPath selectionPath = selection.path;
 				if (currentResource != null)
-					selectionPath = URIUtil.toPath(currentResource.getProject().getPathVariableManager()
-							.resolveURI(URIUtil.toURI(selectionPath), currentResource));
+					selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
+							.resolveURI(URIUtil.toURI(selectionPath)));
             try {
 					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
 			} catch (CoreException e) {
@@ -230,7 +230,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         IPath extensionPath = new Path(extensionFile.toString());
 		IPath selectionPath = variable.path;
 		if (currentResource != null)
-			selectionPath = URIUtil.toPath(currentResource.getProject().getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath), currentResource));
+			selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
 		int matchCount = extensionPath.matchingFirstSegments(selectionPath);
         IPath resultPath = new Path(variable.name);
 
@@ -254,14 +254,13 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         if (selection.length == 1) {
 			IPath selectionPath = selection[0].path;
 			if (currentResource != null)
-				selectionPath = URIUtil.toPath(currentResource.getProject().getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath), currentResource));
+				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(selectionPath);
 			IPathVariable pathVariable = null;
 			if (currentResource != null)
-				pathVariable = currentResource.getProject().getPathVariableManager().getPathVariable(selection[0].name, currentResource);
+				pathVariable = currentResource.getPathVariableManager().getPathVariable(selection[0].name);
 			if (info.exists() && info.isDirectory()
-					|| (pathVariable != null && pathVariable.getExtensions(selection[0].name,
-							currentResource) != null)) {
+					|| (pathVariable != null && pathVariable.getExtensions() != null)) {
 				extendButton.setEnabled(true);
 			} else {
 				extendButton.setEnabled(false);

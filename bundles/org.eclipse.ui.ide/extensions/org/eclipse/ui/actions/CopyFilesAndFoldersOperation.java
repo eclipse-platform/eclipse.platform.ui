@@ -26,7 +26,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -463,9 +462,7 @@ public class CopyFilesAndFoldersOperation {
 							&& (source.isVirtual() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
-							file.createLink(createRelativePath(file
-									.getProject().getPathVariableManager(),
-									source.getLocationURI(), file), 0,
+							file.createLink(createRelativePath(source.getLocationURI(), file), 0,
 									new SubProgressMonitor(subMonitor, 1));
 						} else {
 							IFolder folder = workspaceRoot
@@ -481,9 +478,7 @@ public class CopyFilesAndFoldersOperation {
 											new SubProgressMonitor(subMonitor,
 													1));
 							} else
-								folder.createLink(createRelativePath(folder
-										.getProject().getPathVariableManager(),
-										source.getLocationURI(), folder), 0,
+								folder.createLink(createRelativePath(source.getLocationURI(), folder), 0,
 								new SubProgressMonitor(subMonitor, 1));
 						}
 					} else
@@ -507,13 +502,13 @@ public class CopyFilesAndFoldersOperation {
 	 * @param locationURI
 	 * @return an URI that was made relative to a variable
 	 */
-	private URI createRelativePath(IPathVariableManager pvm, URI locationURI, IResource resource) {
+	private URI createRelativePath(URI locationURI, IResource resource) {
 		if (relativeVariable == null)
 			return locationURI;
 		IPath location = URIUtil.toPath(locationURI);
 		IPath result;
 		try {
-			result = URIUtil.toPath(pvm.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+			result = URIUtil.toPath(resource.getPathVariableManager().convertToRelative(URIUtil.toURI(location), true, relativeVariable));
 		} catch (CoreException e) {
 			return locationURI;
 		}

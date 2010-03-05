@@ -257,7 +257,7 @@ public class IDEResourceInfoUtils {
 		}
 		if (isLinked && isPathVariable) {
 			String tmp = URIUtil.toPath(resource.getRawLocationURI()).toOSString();
-			return resource.getProject().getPathVariableManager().convertToUserEditableFormat(tmp, true);
+			return resource.getPathVariableManager().convertToUserEditableFormat(tmp, true);
 		}
 		if (store != null) {
 			return store.toString();

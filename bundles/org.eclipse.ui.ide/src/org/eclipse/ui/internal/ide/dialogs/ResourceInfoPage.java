@@ -316,12 +316,12 @@ public class ResourceInfoPage extends PropertyPage {
 	protected void editLinkLocation() {
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
-		String locationFormat = resource.getProject().getPathVariableManager().convertFromUserEditableFormat(locationValue.getText(), true, resource);
+		String locationFormat = resource.getPathVariableManager().convertFromUserEditableFormat(locationValue.getText(), true);
 		IPath location = Path.fromOSString(locationFormat);
 
 		PathVariableDialog dialog = new PathVariableDialog(getShell(),
 				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
-				resource.getProject().getPathVariableManager(), null);
+				resource.getPathVariableManager(), null);
 		dialog.setLinkLocation(location);
 		dialog.setResource(resource);
 		// opens the dialog - just returns if the user cancels it
@@ -337,11 +337,11 @@ public class ResourceInfoPage extends PropertyPage {
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
 
-		String userEditableFormat = resource.getProject().getPathVariableManager().convertToUserEditableFormat(newResourceLocation.toOSString(), true);
+		String userEditableFormat = resource.getPathVariableManager().convertToUserEditableFormat(newResourceLocation.toOSString(), true);
 		locationValue.setText(userEditableFormat);
 
-		URI resolvedURI = resource.getProject().getPathVariableManager()
-				.resolveURI(URIUtil.toURI(newResourceLocation), resource);
+		URI resolvedURI = resource.getPathVariableManager()
+				.resolveURI(URIUtil.toURI(newResourceLocation));
 		IPath resolved = URIUtil.toPath(resolvedURI);
 		if (!IDEResourceInfoUtils.exists(resolved.toOSString())) {
 			resolvedLocationValue

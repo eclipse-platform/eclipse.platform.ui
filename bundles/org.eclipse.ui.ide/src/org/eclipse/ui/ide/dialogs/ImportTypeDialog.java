@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -351,10 +350,10 @@ public class ImportTypeDialog extends TrayDialog {
 	private void setupVariableContent() {
 		IPathVariableManager pathVariableManager;
 		if (receivingResource != null)
-			pathVariableManager = receivingResource.getProject().getPathVariableManager();
+			pathVariableManager = receivingResource.getPathVariableManager();
 		else
 			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-		String[] variables = pathVariableManager.getPathVariableNames(receivingResource);
+		String[] variables = pathVariableManager.getPathVariableNames();
 		
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < variables.length; i++) {
@@ -679,14 +678,13 @@ public class ImportTypeDialog extends TrayDialog {
 		String mostAppropriateToParent = null;
 		int mostAppropriateCount = Integer.MAX_VALUE;
 		int mostAppropriateCountToParent = Integer.MAX_VALUE;
-		IPathVariableManager pathVariableManager = target.getProject().getPathVariableManager();
-		String [] variables = pathVariableManager.getPathVariableNames(target);
+		IPathVariableManager pathVariableManager = target.getPathVariableManager();
+		String [] variables = pathVariableManager.getPathVariableNames();
 		
 		for (int i = 0; i < variables.length; i++) {
-			IPathVariable var = pathVariableManager.getPathVariable(variables[i], target);
-			if (var.isPreferred()) {
-				URI rawValue = pathVariableManager.getValue(variables[i], target);
-				URI value = pathVariableManager.resolveURI(rawValue, target);
+			if (isPreferred(variables[i])) {
+				URI rawValue = pathVariableManager.getURIValue(variables[i]);
+				URI value = pathVariableManager.resolveURI(rawValue);
 				if (value != null) {
 					IPath path = URIUtil.toPath(value);
 					if (path != null) {
@@ -720,6 +718,12 @@ public class ImportTypeDialog extends TrayDialog {
 		return mostAppropriate;
 	}
 	
+	private static boolean isPreferred(String variableName) {
+		return !(variableName.equals("WORKSPACE_LOC") || //$NON-NLS-1$
+				variableName.equals("PARENT_LOC") || //$NON-NLS-1$
+				variableName.equals("PARENT")); //$NON-NLS-1$
+	}
+
 	/**
 	 * Return the most appropriate path variable given the context
 	 * @param sources

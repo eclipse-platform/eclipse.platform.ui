@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IPathVariableManager;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -321,7 +320,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 							null);
                 else if (createLinks)
                     ((IFolder) currentFolder).createLink(createRelativePath(
-                            currentFolder.getProject(), path, currentFolder), 0, null);
+                            path, currentFolder), 0, null);
                 else
                     ((IFolder) currentFolder).create(false, true, null);
             }
@@ -573,7 +572,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             } else {
                 if (createVirtualFolder || createLinks)
                     targetResource.createLink(createRelativePath(
-                            containerResource.getProject(), new Path(provider
+                            new Path(provider
                                     .getFullPath(fileObject)), targetResource), 0, null);
                 else
                     targetResource.create(contentStream, false, null);
@@ -728,8 +727,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             else if (createLinks) {
             	IFolder newFolder = workspace.getRoot().getFolder(resourcePath);
             	newFolder.createLink(
-                        createRelativePath(containerResource.getProject(),
-                                new Path(provider.getFullPath(folderObject)), newFolder),
+                        createRelativePath(new Path(provider.getFullPath(folderObject)), newFolder),
                         0, null);
                 policy = POLICY_SKIP_CHILDREN;
             } else
@@ -750,14 +748,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param resource 
      * @return an URI that was made relative to a variable
      */
-    private IPath createRelativePath(IProject project, IPath location, IResource resource) {
+    private IPath createRelativePath(IPath location, IResource resource) {
 		if (relativeVariable == null)
 			return location;
 		if (relativeVariable.equals(ABSOLUTE_PATH))
 			return location;
-		IPathVariableManager pathVariableManager = project.getPathVariableManager();
+		IPathVariableManager pathVariableManager = resource.getPathVariableManager();
 		try {
-			return URIUtil.toPath(pathVariableManager.convertToRelative(URIUtil.toURI(location), resource, true, relativeVariable));
+			return URIUtil.toPath(pathVariableManager.convertToRelative(URIUtil.toURI(location), true, relativeVariable));
 		} catch (CoreException e) {
 			return location;
 		}

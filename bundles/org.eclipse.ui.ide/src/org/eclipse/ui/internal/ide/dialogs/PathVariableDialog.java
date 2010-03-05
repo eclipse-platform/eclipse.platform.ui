@@ -376,21 +376,21 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     private IPathVariableManager getPathVariableManager() {
     	if (currentResource != null)
-    		return currentResource.getProject().getPathVariableManager();
+    		return currentResource.getPathVariableManager();
     	return ResourcesPlugin.getWorkspace().getPathVariableManager();
     }
     
     private String getVariableResolvedValue() {
         if (currentResource != null) {
-        	IPathVariableManager pathVariableManager2 = currentResource.getProject().getPathVariableManager();
-			String[] variables = pathVariableManager2.getPathVariableNames(currentResource);
-    		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION, currentResource);
+        	IPathVariableManager pathVariableManager2 = currentResource.getPathVariableManager();
+			String[] variables = pathVariableManager2.getPathVariableNames();
+    		String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION);
     		URI uri = URIUtil.toURI(Path.fromOSString(internalFormat));
-        	URI resolvedURI = pathVariableManager2.resolveURI(uri, currentResource);
+        	URI resolvedURI = pathVariableManager2.resolveURI(uri);
         	String resolveValue = URIUtil.toPath(resolvedURI).toOSString();
         	// Delete intermediate variables that might have been created as
         	// as a side effect of converting arbitrary relative paths to an internal string. 
-        	String[] newVariables = pathVariableManager2.getPathVariableNames(currentResource);
+        	String[] newVariables = pathVariableManager2.getPathVariableNames();
         	for (int i = 0; i < newVariables.length; i++) {
         		boolean found = false;
             	for (int j = 0; j < variables.length; j++) {
@@ -401,7 +401,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             	}
             	if (!found) {
 					try {
-						pathVariableManager2.setValue(newVariables[i], currentResource, null);
+						pathVariableManager2.setURIValue(newVariables[i], null);
 					} catch (CoreException e) {
 						// do nothing
 					}
@@ -657,7 +657,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     public String getVariableValue() {
     	if (currentResource != null) {
-    		String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION, currentResource);
+    		String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION);
     		return internalFormat;
     	}
     	return variableValue;
