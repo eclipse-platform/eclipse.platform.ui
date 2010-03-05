@@ -115,16 +115,18 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
-		lastActivePart = activePart;
-		activePart = p;
+		if (activePart != p) {
+			lastActivePart = activePart;
+			activePart = p;
 
-		if (constructed) {
-			if (lastActivePart != null && lastActivePart != activePart) {
-				firePartDeactivated(lastActivePart);
-			}
+			if (constructed) {
+				if (lastActivePart != null && lastActivePart != activePart) {
+					firePartDeactivated(lastActivePart);
+				}
 
-			if (activePart != null) {
-				firePartActivated(activePart);
+				if (activePart != null) {
+					firePartActivated(activePart);
+				}
 			}
 		}
 	}
