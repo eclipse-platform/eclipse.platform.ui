@@ -101,21 +101,28 @@ public class ApplyPatchSubscriber extends Subscriber {
 	}
 
 	public IResource[] members(IResource resource) throws TeamException {
+		//XXX: what if there is an addition in the patch that needs to add 3 subfolders?
 		try {
 			if(resource.getType() == IResource.FILE)
 				// file has no IResource members
 				return new IResource[0];
 			IContainer container = (IContainer) resource;
-
+			
 			// workspace container members
-			List existingChildren = new ArrayList(Arrays.asList(container.members()));
+			List existingChildren = new ArrayList();
+
+			if (container.isAccessible())
+				existingChildren.addAll(Arrays.asList(container.members()));
 
 			// patch members, subscriber location
 			FilePatch2[] diffs = getPatcher().getDiffs();
 			for (int i = 0; i < diffs.length; i++) {
 				IResource file = PatchModelProvider.getFile(diffs[i], getPatcher());
-				if (!container.exists(file.getProjectRelativePath())) {
-					existingChildren.add(file);
+				if (container.getFullPath().isPrefixOf(file.getFullPath())) {
+					// XXX: check segments
+					if (!container.exists(file.getProjectRelativePath())) {
+						existingChildren.add(file);
+					}
 				}
 			}
 			return (IResource[]) existingChildren.toArray(new IResource[existingChildren.size()]);
@@ -146,7 +153,8 @@ public class ApplyPatchSubscriber extends Subscriber {
 				// return array of projects from the patch
 				DiffProject diffProject = ((PatchProjectDiffNode)children[i]).getDiffProject();
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(diffProject.getName());
-				roots.add(project);
+				if (project.isAccessible())
+					roots.add(project);
 			}
 		} else {
 			roots.add(getPatcher().getTarget());

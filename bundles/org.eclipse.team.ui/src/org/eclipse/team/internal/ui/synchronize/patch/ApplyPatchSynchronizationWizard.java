@@ -11,13 +11,17 @@
 package org.eclipse.team.internal.ui.synchronize.patch;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.internal.patch.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.wizards.PatchInaccessibleProjectsPage;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -27,6 +31,8 @@ import org.eclipse.ui.IWorkbench;
 public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		IConfigurationWizard {
 
+	private PatchInaccessibleProjectsPage fPatchInaccessibleProjectsPage;
+
 	public ApplyPatchSynchronizationWizard() {
 		// TODO: get selection, available when launched from toolbar or main
 		// menu
@@ -34,6 +40,13 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 	}
 
 	public boolean performFinish() {
+		if (fPatchInaccessibleProjectsPage != null) {
+			IProject[] projects = fPatchInaccessibleProjectsPage
+					.getSelectedProjects();
+			if (projects != null && projects.length != 0)
+				openSelectedProjects(projects);
+		}
+
 		ApplyPatchSubscriber subscriber = new ApplyPatchSubscriber(getPatcher());
 
 		// Get ResourceMappings for root resources from the patch.
@@ -72,12 +85,38 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		if (getPatch() == null)
 			addPage(fPatchWizardPage = new InputPatchPage(this));
 		if (getPatch() == null || !getPatcher().isWorkspacePatch())
-			addPage(fPatchTargetPage = new PatchTargetPage(getPatcher()));
+			addPage(fPatchTargetPage = new PatchTargetPage(getPatcher()) {
+				public IWizardPage getNextPage() {
+					if (!isTargetingInaccessibleProjects())
+						return super.getNextPage().getNextPage();
+					return super.getNextPage();
+				}
+			});
+		if (getPatch() == null || isTargetingInaccessibleProjects())
+			addPage(fPatchInaccessibleProjectsPage = new PatchInaccessibleProjectsPage(
+					getPatcher()));
 		addPage(new PatchParsedPage());
+	}
+
+	private boolean isTargetingInaccessibleProjects() {
+		DiffProject[] diffProjects = getPatcher().getDiffProjects();
+		if (diffProjects != null) {
+			for (int i = 0; i < diffProjects.length; i++) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(diffProjects[i].getName());
+				if (!project.isAccessible())
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean canFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
+		if (currentPage.getName().equals(
+				PatchInaccessibleProjectsPage.PATCH_INACCESSIBLE_PROJECTS_NAME)) {
+			return currentPage.isPageComplete();
+		}
 		if (currentPage.getName()
 				.equals(PatchParsedPage.PATCH_PARSED_PAGE_NAME)) {
 			return currentPage.isPageComplete();
@@ -89,4 +128,33 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		// make the patcher available to other classes in the package
 		return super.getPatcher();
 	}
+
+	private void openSelectedProjects(final IProject projects[]) {
+		Job openProjectsJob = new Job(
+				TeamUIMessages.PatchInaccessibleProjectsPage_openingProjects) {
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask(
+						TeamUIMessages.PatchInaccessibleProjectsPage_openingProjects,
+						projects.length);
+				MultiStatus errorStatus = new MultiStatus(
+						TeamUIPlugin.ID,
+						IStatus.ERROR,
+						TeamUIMessages.PatchInaccessibleProjectsPage_openingProjects,
+						null);
+				for (int i = 0; i < projects.length; i++) {
+					IProject project = (IProject) projects[i];
+					try {
+						project.open(new SubProgressMonitor(monitor, 1));
+					} catch (CoreException e) {
+						errorStatus.add(e.getStatus());
+					}
+				}
+				monitor.done();
+				return errorStatus;
+			}
+		};
+		openProjectsJob.setUser(true);
+		openProjectsJob.schedule();
+	}
+
 }

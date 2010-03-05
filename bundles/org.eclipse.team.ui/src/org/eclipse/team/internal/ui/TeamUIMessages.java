@@ -718,6 +718,13 @@ public class TeamUIMessages extends NLS {
 	public static String PatchParsedPage_description;
 	public static String PatchParsedPage_clickFinishToGoToSynchronizeView;
 
+	public static String PatchInaccessibleProjectsPage_title;
+	public static String PatchInaccessibleProjectsPage_message;
+	public static String PatchInaccessibleProjectsPage_projectDoesNotExistInWorkspace;
+	public static String PatchInaccessibleProjectsPage_selectExisting;
+	public static String PatchInaccessibleProjectsPage_deselectAll;
+	public static String PatchInaccessibleProjectsPage_openingProjects;
+
 	public static String NotFound;
 
 }
