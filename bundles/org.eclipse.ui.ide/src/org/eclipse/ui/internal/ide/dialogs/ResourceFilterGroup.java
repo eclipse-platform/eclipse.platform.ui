@@ -265,6 +265,13 @@ public class ResourceFilterGroup {
 				return children.getLast().equals(o);
 			return false;
 		}
+
+		public void removeAll() {
+			if (children.size() > 0) {
+				super.removeAll();
+				changed = true;
+			}
+		}
 	}
 
 	class TreeContentProvider implements ITreeContentProvider {
@@ -984,6 +991,7 @@ public class ResourceFilterGroup {
 		if (resource == null)
 			return;
 		filters = new Filters(resource);
+		filters.removeAll();
 		filterView.setInput(filters);
 		filterView.refresh();
 	}
@@ -1364,6 +1372,18 @@ class FilterCopy extends UIResourceFilterDescription {
 	public FilterCopy(UIResourceFilterDescription filter) {
 		internalCopy(filter);
 		original = filter;
+	}
+
+	public void removeAll() {
+		initializeChildren();
+		Iterator it = children.iterator();
+		while (it.hasNext()) {
+			FilterCopy child = (FilterCopy) it.next();
+			if (child.parent == this)
+				child.parent = null;
+		}
+		children.clear();
+		serializeChildren();
 	}
 
 	public void setParent(FilterCopy parent) {
