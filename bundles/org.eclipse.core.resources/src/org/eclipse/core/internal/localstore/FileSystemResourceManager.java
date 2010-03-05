@@ -97,7 +97,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			for (Iterator it = links.values().iterator(); it.hasNext();) {
 				LinkDescription link = (LinkDescription) it.next();
 				IResource resource = project.getWorkspace().getRoot().findMember(project.getFullPath().append(link.getProjectRelativePath()));
-				testLocation = project.getPathVariableManager().resolveURI(link.getLocationURI(), resource);
+				testLocation = resource.getPathVariableManager().resolveURI(link.getLocationURI());
 				// if we are looking for file: locations try to get a file: location for this link
 				if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
 					testLocation = getFileURI(testLocation);

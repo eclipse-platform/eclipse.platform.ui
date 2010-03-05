@@ -33,10 +33,10 @@ public abstract class PathVariableResolver {
 	 * @param variable
 	 *            The current variable name.
 	 * @param resource
-	 *            The resource  that the variable is being resolved for.
+	 *            The resource that the variable is being resolved for.
 	 * @return the possible variable extensions or null if none are supported.
 	 */
-	public Object[] getExtensions(String variable, IResource resource) {
+	public String[] getExtensions(String variable, IResource resource) {
 		return null;
 	}
 

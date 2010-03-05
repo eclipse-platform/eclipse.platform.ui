@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.*;
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IPathVariable;
+import org.eclipse.core.resources.IPathVariableManager;
 
 /**
  * Implements the IPathVariable interface
@@ -21,18 +19,24 @@ import org.eclipse.core.resources.IPathVariable;
 public class PathVariable implements IPathVariable {
 
 	private String variableName;
+	IPathVariableManager manager;
 	
-	public PathVariable(String name) {
+	public PathVariable(IPathVariableManager manager, String name) {
 		variableName = name;
+		this.manager = manager;
 	}
 
 	/**
-	 * @see IPathVariable#getExtensions(String, IResource)
+	 * @see IPathVariable#getExtensions()
 	 */
-	public Object[] getExtensions(String variable, IResource resource) {
+	public String[] getExtensions() {
 		ProjectVariableProviderManager.Descriptor descriptor = ProjectVariableProviderManager.getDefault().findDescriptor(variableName);
-		if (descriptor != null)
-			return descriptor.getExtensions(variable, resource);
+		if (descriptor != null) {
+			if (manager instanceof ProjectPathVariableManager)
+				return descriptor.getExtensions(variableName, ((ProjectPathVariableManager) manager).getResource());
+			if (manager instanceof PathVariableManager)
+				return descriptor.getExtensions(variableName, null);
+		}
 		return null;
 	}
 
@@ -43,11 +47,5 @@ public class PathVariable implements IPathVariable {
 	public boolean isReadOnly() {
 		ProjectVariableProviderManager.Descriptor descriptor = ProjectVariableProviderManager.getDefault().findDescriptor(variableName);
 		return descriptor != null;
-	}
-
-	public boolean isPreferred() {
-		return !(variableName.equals(WorkspaceLocationVariableResolver.NAME) ||
-				variableName.equals(WorkspaceParentLocationVariableResolver.NAME) ||
-				variableName.equals(ParentVariableResolver.NAME));
 	}
 }

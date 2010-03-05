@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
+import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
+
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver;
@@ -25,12 +28,12 @@ import org.eclipse.core.runtime.*;
 
 public class PathVariableUtil {
 	
-	static public String getUniqueVariableName(String variable, IPathVariableManager pathVariableManager, IResource resource) {
+	static public String getUniqueVariableName(String variable, IResource resource) {
 		int index = 1;
 		variable = getValidVariableName(variable);
 		String destVariable = variable;
 
-		while (pathVariableManager.isDefined(destVariable, resource)) {
+		while (resource.getPathVariableManager().isDefined(destVariable)) {
 			destVariable = variable + index;
 			index++;
 		}
@@ -77,15 +80,15 @@ public class PathVariableUtil {
 	}
 	
 	static private IPath convertToRelative(IPathVariableManager pathVariableManager, IPath originalPath, IResource resource, boolean force, String variableHint, boolean skipWorkspace, boolean generateMacro) throws CoreException {
-		if (variableHint != null && pathVariableManager.isDefined(variableHint, resource)) {
-			IPath value = URIUtil.toPath(pathVariableManager.getValue(variableHint, resource));
+		if (variableHint != null && pathVariableManager.isDefined(variableHint)) {
+			IPath value = URIUtil.toPath(pathVariableManager.getURIValue(variableHint));
 			if (value != null)
 				return wrapInProperFormat(makeRelativeToVariable(pathVariableManager, originalPath, resource, force, variableHint, generateMacro), generateMacro);
 		}
 		IPath path = convertToProperCase(originalPath);
 		IPath newPath = null;
 		int maxMatchLength = -1;
-		String[] existingVariables = pathVariableManager.getPathVariableNames(resource);
+		String[] existingVariables = pathVariableManager.getPathVariableNames();
 		for (int i = 0; i < existingVariables.length; i++) {
 			String variable = existingVariables[i];
 			if (skipWorkspace) {
@@ -99,9 +102,9 @@ public class PathVariableUtil {
 			if (variable.equals(ParentVariableResolver.NAME))
 				continue;
 			// find closest path to the original path
-			IPath value = URIUtil.toPath(pathVariableManager.getValue(variable, resource));
+			IPath value = URIUtil.toPath(pathVariableManager.getURIValue(variable));
 			if (value != null) {
-				value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
+				value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value))));
 				if (value.isPrefixOf(path)) {
 					int matchLength = value.segmentCount();
 					if (matchLength > maxMatchLength) {
@@ -129,9 +132,9 @@ public class PathVariableUtil {
 						continue;
 					if (variable.equals(ParentVariableResolver.NAME))
 						continue;
-					IPath value = URIUtil.toPath(pathVariableManager.getValue(variable, resource));
+					IPath value = URIUtil.toPath(pathVariableManager.getURIValue(variable));
 					if (value != null) {
-						value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
+						value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value))));
 						if (matchingPath.isPrefixOf(value)) {
 							int difference = value.segmentCount() - originalSegmentCount;
 							if (difference < minDifference) {
@@ -146,8 +149,8 @@ public class PathVariableUtil {
 			}
 			if (originalSegmentCount == 0) {
 				String variable = ProjectLocationVariableResolver.NAME;
-				IPath value = URIUtil.toPath(pathVariableManager.getValue(variable, resource));
-				value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
+				IPath value = URIUtil.toPath(pathVariableManager.getURIValue(variable));
+				value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value))));
 				if (originalPath.isPrefixOf(value))
 					newPath = makeRelativeToVariable(pathVariableManager, originalPath, resource, force, variable, generateMacro);
 				if (newPath != null)
@@ -168,8 +171,8 @@ public class PathVariableUtil {
 
 	private static IPath makeRelativeToVariable(IPathVariableManager pathVariableManager, IPath originalPath, IResource resource, boolean force, String variableHint, boolean generateMacro) {
 		IPath path = convertToProperCase(originalPath);
-		IPath value = URIUtil.toPath(pathVariableManager.getValue(variableHint, resource));
-		value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value), resource)));
+		IPath value = URIUtil.toPath(pathVariableManager.getURIValue(variableHint));
+		value = convertToProperCase(URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(value))));
 		int valueSegmentCount = value.segmentCount();
 		if (value.isPrefixOf(path)) {
 			// transform "c:/foo/bar" into "FOO/bar"
@@ -249,7 +252,7 @@ public class PathVariableUtil {
 		return Path.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
 	}
 
-	public static String convertFromUserEditableFormatInternal(IPathVariableManager manager, String userFormat, boolean locationFormat, IResource resource) {
+	public static String convertFromUserEditableFormatInternal(IPathVariableManager manager, String userFormat, boolean locationFormat) {
 		char pathPrefix = 0;
 		if ((userFormat.length() > 0) && (userFormat.charAt(0) == '/' || userFormat.charAt(0) == '\\'))
 			pathPrefix = userFormat.charAt(0);
@@ -301,14 +304,14 @@ public class PathVariableUtil {
 										IPath intermediateValue = Path.fromPortableString(components[j]);
 										int intermediateVariableIndex = 1;
 										String originalIntermediateVariableName = intermediateVariable;
-										while (manager.isDefined(intermediateVariable, resource)) {
-											IPath tmpValue = URIUtil.toPath(manager.getValue(intermediateVariable, resource));
+										while (manager.isDefined(intermediateVariable)) {
+											IPath tmpValue = URIUtil.toPath(manager.getURIValue(intermediateVariable));
 											if (tmpValue.equals(intermediateValue))
 												break;
 											intermediateVariable = originalIntermediateVariableName + intermediateVariableIndex;
 										}
-										if (!manager.isDefined(intermediateVariable, resource))
-											manager.setValue(intermediateVariable, resource, URIUtil.toURI(intermediateValue));
+										if (!manager.isDefined(intermediateVariable))
+											manager.setURIValue(intermediateVariable, URIUtil.toURI(intermediateValue));
 										variable = intermediateVariable;
 										prefix = new String();
 									}
@@ -489,5 +492,17 @@ public class PathVariableUtil {
 			}
 		}
 		return value.length();
+	}
+
+	/**
+	 * Returns whether this variable is suited for programmatically determining 
+	 * which variable is the most appropriate when creating new linked resources.
+	 * 
+	 * @return true if the path variable is preferred.
+	 */
+	static public boolean isPreferred(String variableName) {
+		return !(variableName.equals(WorkspaceLocationVariableResolver.NAME) ||
+				variableName.equals(WorkspaceParentLocationVariableResolver.NAME) ||
+				variableName.equals(ParentVariableResolver.NAME));
 	}
 }

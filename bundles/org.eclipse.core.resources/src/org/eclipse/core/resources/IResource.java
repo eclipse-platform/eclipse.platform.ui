@@ -1355,6 +1355,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public String getName();
 
 	/**
+	 * Returns the path variable manager for this resource.
+	 * 
+	 * @return the path variable manager
+	 * @see IPathVariableManager
+	 * @since 3.6
+	 */
+	public IPathVariableManager getPathVariableManager();
+
+	/**
 	 * Returns the resource which is the parent of this resource,
 	 * or <code>null</code> if it has no parent (that is, this
 	 * resource is the workspace root).
@@ -1720,12 +1729,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns whether this resource would be excluded from 
-	 * workspace tree when its parent is synchronised with the underlying 
+	 * workspace tree when its parent is synchronized with the underlying 
 	 * file system resource, due to the parent resource filter list.
 	 * 
 	 * This method does not verify if this resource is being effectively filtered
 	 * out, only that it would be if the resource existed in the workspace, and
-	 * its parent content was synchronised.
+	 * its parent content was synchronized.
 	 * 
 	 * The resource need not to exist in the workspace nor in the
 	 * file system.

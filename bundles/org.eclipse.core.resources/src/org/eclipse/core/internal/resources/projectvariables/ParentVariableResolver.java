@@ -11,15 +11,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.projectvariables;
 
-import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
-
-import org.eclipse.core.filesystem.URIUtil;
-
 import java.net.URI;
-
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
-
-import java.util.*;
+import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
 
 /**
  * Path Variable representing the parent directory of the variable provided
@@ -34,17 +29,6 @@ public class ParentVariableResolver extends PathVariableResolver {
 
 	public ParentVariableResolver() {
 		// nothing
-	}
-
-	public Object[] getExtensions(String variable, IResource resource) {
-		LinkedList result = new LinkedList();
-		Iterator it = Arrays.asList(resource.getProject().getPathVariableManager().getPathVariableNames()).iterator();
-		while(it.hasNext()) {
-			String value = (String) it.next();
-			if (!value.equals("PARENT"))  		//$NON-NLS-1$
-				result.add("1-" + value); 	//$NON-NLS-1$
-		}
-		return result.toArray();
 	}
 
 	public String getValue(String variable, IResource resource) {
@@ -68,10 +52,10 @@ public class ParentVariableResolver extends PathVariableResolver {
 		}
 		String argument = countRemaining.substring(index + 1);
 		
-		URI value = resource.getProject().getPathVariableManager().getValue(argument, resource);
+		URI value = resource.getPathVariableManager().getURIValue(argument);
 		if (value == null)
 			return null;
-		value = resource.getProject().getPathVariableManager().resolveURI(value, resource);
+		value = resource.getPathVariableManager().resolveURI(value);
 		value = URIUtil.toURI(URIUtil.toPath(value).removeLastSegments(count));
 			
 		return value.toASCIIString();

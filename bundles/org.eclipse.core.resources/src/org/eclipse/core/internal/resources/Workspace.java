@@ -849,35 +849,32 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	String copyVariable(IResource source, IResource dest, String variable)
 			throws CoreException {
-		IPathVariableManager destPathVariableManager = dest.getProject()
-				.getPathVariableManager();
-		IPathVariableManager srcPathVariableManager = source.getProject()
-				.getPathVariableManager();
+		IPathVariableManager destPathVariableManager = dest.getPathVariableManager();
+		IPathVariableManager srcPathVariableManager = source.getPathVariableManager();
 
-		IPath srcValue = URIUtil.toPath(srcPathVariableManager.getValue(variable, source));
+		IPath srcValue = URIUtil.toPath(srcPathVariableManager.getURIValue(variable));
 		if (srcValue == null) // if the variable doesn't exist, return another
 								// variable that doesn't exist either
-			return PathVariableUtil.getUniqueVariableName(variable, destPathVariableManager, dest);
-		IPath resolvedSrcValue = URIUtil.toPath(srcPathVariableManager.resolveURI(URIUtil.toURI(srcValue), source));
+			return PathVariableUtil.getUniqueVariableName(variable, dest);
+		IPath resolvedSrcValue = URIUtil.toPath(srcPathVariableManager.resolveURI(URIUtil.toURI(srcValue)));
 
 		boolean variableExisted = false;
 		// look if the exact same variable exists
-		if (destPathVariableManager.isDefined(variable, dest)) {
+		if (destPathVariableManager.isDefined(variable)) {
 			variableExisted = true;
 			IPath destValue = 
-				URIUtil.toPath(destPathVariableManager.getValue(variable, dest));
-			if (destValue != null && URIUtil.toPath(destPathVariableManager.resolveURI(URIUtil.toURI(destValue), dest)).equals(
+				URIUtil.toPath(destPathVariableManager.getURIValue(variable));
+			if (destValue != null && URIUtil.toPath(destPathVariableManager.resolveURI(URIUtil.toURI(destValue))).equals(
 					resolvedSrcValue))
 				return variable;
 		}
 		// look if one variable in the destination project matches
-		String[] variables = destPathVariableManager.getPathVariableNames(dest);
+		String[] variables = destPathVariableManager.getPathVariableNames();
 		for (int i = 0; i < variables.length; i++) {
-			IPathVariable pathVariable = destPathVariableManager.getPathVariable(variables[i], dest);
-			if (!pathVariable.isPreferred())
+			if (!PathVariableUtil.isPreferred(variables[i]))
 				continue;
 			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager
-					.resolveURI(destPathVariableManager.getValue(variables[i], dest), dest));
+					.resolveURI(destPathVariableManager.getURIValue(variables[i])));
 			if (resolveDestVariable != null && resolveDestVariable.equals(resolvedSrcValue)) {
 				return variables[i];
 			}
@@ -885,8 +882,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// if the variable doesn't exist in the dest project, or
 		// if the value is different than the source project, we have to create
 		// an equivalent.
-		String destVariable = PathVariableUtil.getUniqueVariableName(variable,
-				destPathVariableManager, dest);
+		String destVariable = PathVariableUtil.getUniqueVariableName(variable, dest);
 
 		boolean shouldConvertToRelative = true;
 		if (!srcValue.equals(resolvedSrcValue) && !variableExisted) {
@@ -930,7 +926,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (relativeSrcValue != null)
 				srcValue = relativeSrcValue;
 		}
-		destPathVariableManager.setValue(destVariable, dest, URIUtil.toURI(srcValue));
+		destPathVariableManager.setURIValue(destVariable, URIUtil.toURI(srcValue));
 		return destVariable;
 	}
 

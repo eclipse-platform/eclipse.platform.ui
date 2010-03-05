@@ -41,23 +41,11 @@ public interface IPathVariable {
 	public boolean isReadOnly();
 
 	/**
-	 * Returns whether this variable is suited for programmatically determining 
-	 * which variable is the most appropriate when creating new linked resources.
-	 * 
-	 * @return true if the path variable is preferred.
-	 */
-	public boolean isPreferred();
-
-	/**
 	 * If the variable supports extensions (specified as
 	 * "${VARNAME-EXTENSIONNAME}"), this method can return the list of possible
 	 * extensions, or null if none are supported.
 	 * 
-	 * @param variable
-	 *            The current variable name.
-	 * @param resource
-	 *            The resource that the variable is being resolved for.
 	 * @return the possible variable extensions or null if none are supported.
 	 */
-	public Object[] getExtensions(String variable, IResource resource);
+	public String[] getExtensions();
 }

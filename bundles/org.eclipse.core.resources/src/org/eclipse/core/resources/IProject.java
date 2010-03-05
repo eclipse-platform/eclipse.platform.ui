@@ -908,13 +908,4 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @since 2.0
 	 */
 	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Returns the path variable manager for this project.
-	 * 
-	 * @return the path variable manager
-	 * @see IPathVariableManager
-	 * @since 3.6
-	 */
-	public IPathVariableManager getPathVariableManager();
 }

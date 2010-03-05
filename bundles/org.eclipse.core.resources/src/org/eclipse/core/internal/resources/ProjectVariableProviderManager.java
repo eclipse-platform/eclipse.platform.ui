@@ -58,7 +58,7 @@ public class ProjectVariableProviderManager {
 			return provider.getValue(variable, resource);
 		}
 
-		public Object[] getExtensions(String variable, IResource resource) {
+		public String[] getExtensions(String variable, IResource resource) {
 			if (provider != null)
 				return provider.getExtensions(variable, resource);
 			return null;

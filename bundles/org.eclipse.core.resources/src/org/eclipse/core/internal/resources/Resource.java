@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.resources.IPathVariableManager;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -171,11 +173,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (variableUndefined)
 			return null;
 		//check if the file exists
-		URI resolved;
-		if (parent.getProject() != null)
-			resolved = parent.getProject().getPathVariableManager().resolveURI(localLocation, this);
-		else
-			resolved = workspace.getPathVariableManager().resolveURI(localLocation, this);
+		URI resolved = getPathVariableManager().resolveURI(localLocation);
 		IFileStore store = EFS.getStore(resolved);
 		IFileInfo fileInfo = store.fetchInfo();
 		boolean localExists = fileInfo.exists();
@@ -2021,6 +2019,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				}
 				break;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#getPathVariableManager()
+	 */
+	public IPathVariableManager getPathVariableManager() {
+		if (getProject() == null)
+			return workspace.getPathVariableManager();
+		return new ProjectPathVariableManager(this);
 	}
 
 	/* (non-Javadoc)

@@ -132,11 +132,11 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariable(String, IResource)
+	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariable(String)
 	 */
-	public IPathVariable getPathVariable(String name, IResource resource) {
-		if (isDefined(name, resource))
-			return new PathVariable(name);
+	public IPathVariable getPathVariable(String name) {
+		if (isDefined(name))
+			return new PathVariable(this, name);
 		return null;
 	}
 
@@ -309,20 +309,20 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 	/**
 	 * @throws CoreException 
-	 * @see IPathVariableManager#convertToRelative(URI,IResource, boolean, String)
+	 * @see IPathVariableManager#convertToRelative(URI, boolean, String)
 	 */
-	public URI convertToRelative(URI path, IResource resource, boolean force, String variableHint) throws CoreException {
+	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException {
 		return PathVariableUtil.convertToRelative(this, path, null, false, variableHint);
 	}
 
-	public URI getValue(String name, IResource resource) {
+	public URI getURIValue(String name) {
 		IPath path = getValue(name);
 		if (path != null)
 			return URIUtil.toURI(path);
 		return null;
 	}
 
-	public void setValue(String name, IResource resource, URI value) throws CoreException {
+	public void setURIValue(String name, URI value) throws CoreException {
 		if (value != null)
 			setValue(name, URIUtil.toPath(value));
 		else
@@ -353,9 +353,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * 
 	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
 	 */
-	public URI getVariableRelativePathLocation(URI location, IResource resource) {
+	public URI getVariableRelativePathLocation(URI location) {
 		try {
-			URI result = convertToRelative(location, resource, false, null);
+			URI result = convertToRelative(location, false, null);
 			if (!result.equals(location))
 				return result;
 		} catch (CoreException e) {
@@ -371,7 +371,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
 
-	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat, IResource resource) {
-		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat, resource);
+	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat) {
+		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat);
 	}
 }

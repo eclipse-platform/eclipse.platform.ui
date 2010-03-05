@@ -11,22 +11,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.core.resources.IProject;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.core.resources.IWorkspaceRoot;
-
 import java.io.File;
 import java.net.URI;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.internal.utils.FileUtil;
-import org.eclipse.core.resources.IPathVariableManager;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -68,12 +58,16 @@ public class FileStoreRoot {
 		if (workspacePath.segmentCount() > 0) {
 			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace()
 					.getRoot();
-			if (workspacePath.segmentCount() > 1)
-				workspacePath = workspacePath.removeLastSegments(workspacePath
-						.segmentCount() - 1);
-			IResource resource = workspaceRoot.findMember(workspacePath);
-			if (resource != null && resource.getType() == IResource.PROJECT)
-				return ((IProject) resource).getPathVariableManager();
+			IPath path = (IPath) workspacePath.clone();
+			while (path.segmentCount() > 0) {
+				IResource resource = workspaceRoot.findMember(path);
+				if (resource != null) {
+					if (path.segmentCount() < workspacePath.segmentCount())
+						resource = ((IContainer) resource).getFile(workspacePath.removeFirstSegments(path.segmentCount()));
+					return resource.getPathVariableManager();
+				}
+				path = path.removeLastSegments(1);
+			}
 		}
 		return ResourcesPlugin.getWorkspace().getPathVariableManager();
 	}
@@ -85,7 +79,7 @@ public class FileStoreRoot {
 	 */
 	public URI computeURI(IPath workspacePath) {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
-		final URI rootURI = getManager(workspacePath).resolveURI(root, getResource(workspacePath));
+		final URI rootURI = getManager(workspacePath).resolveURI(root);
 		if (childPath.segmentCount() == 0)
 			return rootURI;
 		try {
@@ -95,17 +89,6 @@ public class FileStoreRoot {
 		}
 	}
 
-	private IResource getResource(IPath workspacePath) {
-		if (workspacePath.segmentCount() > 0) {
-			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace()
-					.getRoot();
-			IResource resource = workspaceRoot.findMember(workspacePath);
-			if (resource != null)
-				return resource;
-		}
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-
 	/**
 	 * Creates an IFileStore for a given workspace path.
 	 * @exception CoreException If the file system for that resource is undefined
@@ -113,7 +96,7 @@ public class FileStoreRoot {
 	IFileStore createStore(IPath workspacePath, IResource resource) throws CoreException {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
 		IFileStore rootStore;
-		final URI uri = getManager(workspacePath).resolveURI(root, resource);
+		final URI uri = resource.getPathVariableManager().resolveURI(root);
 		if (!uri.isAbsolute()) {
 			//handles case where resource location cannot be resolved
 			//such as unresolved path variable or invalid file system scheme
@@ -137,7 +120,7 @@ public class FileStoreRoot {
 			location = localRoot;
 		else
 			location = localRoot.append(workspacePath.removeFirstSegments(chop));
-		location = URIUtil.toPath(getManager(workspacePath).resolveURI(URIUtil.toURI(location), resource));
+		location = URIUtil.toPath(resource.getPathVariableManager().resolveURI(URIUtil.toURI(location)));
 		//if path is still relative then path variable could not be resolved
 		if (!location.isAbsolute())
 			return null;

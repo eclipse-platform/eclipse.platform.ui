@@ -56,7 +56,6 @@ public interface IPathVariableManager {
 	 * </p>
 	 *  
 	 * @param path  The absolute path to be converted
-	 * @param resource the resource for which this variable is set
 	 * @param force indicates whether intermediate path variables should be created 
 	 * if the path is relative only to a parent of an existing path variable.
 	 * @param variableHint The name of the variable to which the path should be made 
@@ -68,7 +67,7 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @since 3.6
 	 */
-	public URI convertToRelative(URI path, IResource resource, boolean force, String variableHint) throws CoreException;
+	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException;
 
 	/**
 	 * Sets the path variable with the given name to be the specified value.
@@ -98,7 +97,7 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable 
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
-	 * @deprecated use setValue(String, IResource, URI) instead.
+	 * @deprecated use setValue(String, URI) instead.
 	 * <ul>
 	 * <li>The variable name is not valid</li>
 	 * <li>The variable value is relative</li>
@@ -132,7 +131,6 @@ public interface IPathVariableManager {
 	 * this method, notification will be sent to all registered listeners.</p>
 	 * 
 	 * @param name the name of the variable 
-	 * @param resource the resource for which this variable is set
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -141,7 +139,7 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @since 3.6
 	 */
-	public void setValue(String name, IResource resource, URI value) throws CoreException;
+	public void setURIValue(String name, URI value) throws CoreException;
 
 	/**
 	 * Returns the {@link IPathVariable} corresponding to the given variable name.
@@ -152,7 +150,7 @@ public interface IPathVariableManager {
 	 *    variable defined with the given name
 	 * @since 3.6
 	 */
-	public IPathVariable getPathVariable(String name, IResource resource);
+	public IPathVariable getPathVariable(String name);
 
 	/**
 	 * Returns the value of the path variable with the given name. If there is
@@ -161,7 +159,7 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
-	 * @deprecated use getValue(String, IResource) instead.
+	 * @deprecated use getURIValue(String) instead.
 	 */
 	public IPath getValue(String name);
 
@@ -170,28 +168,18 @@ public interface IPathVariableManager {
 	 * no variable defined with the given name, returns <code>null</code>.
 	 * 
 	 * @param name the name of the variable to return the value for  
-	 * @param resource the resource for which this variable is resolved  
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
 	 * @since 3.6
 	 */
-	public URI getValue(String name, IResource resource);
+	public URI getURIValue(String name);
 
 	/**
 	 * Returns an array containing all defined path variable names.
 	 *  
 	 * @return an array containing all defined path variable names
-	 * @deprecated use getPathVariableNames(IResource) instead.
 	 */
 	public String[] getPathVariableNames();
-
-	/**
-	 * Returns an array containing all defined path variable names.
-	 *  
-	 * @return an array containing all defined path variable names
-	 * @since 3.6
-	 */
-	public String[] getPathVariableNames(IResource resource);
 
 	/**
 	 * Registers the given listener to receive notification of changes to path
@@ -230,30 +218,8 @@ public interface IPathVariableManager {
 	 * @param uri  the URI to be resolved
 	 * @return the resolved URI or <code>null</code>
 	 * @since 3.2
-	 * @deprecated use resolveURI(URI, IResource) instead.
 	 */
 	public URI resolveURI(URI uri);
-
-	/**
-	 * Resolves a relative <code>URI</code> object potentially containing a
-	 * variable reference as its first segment, replacing the variable reference
-	 * (if any) with the variable's value (which is a concrete absolute URI).
-	 * If the given URI is absolute or has a non- <code>null</code> device then
-	 * no variable substitution is done and that URI is returned as is.  If the
-	 * given URI is relative and has a <code>null</code> device, but the first
-	 * segment does not correspond to a defined variable, then the URI is
-	 * returned as is.
-	 * <p>
-	 * If the given URI is <code>null</code> then <code>null</code> will be
-	 * returned.  In all other cases the result will be non-<code>null</code>.
-	 * </p>
-	 * 
-	 * @param uri  the URI to be resolved
-	 * @param resource the resource for which this variable is resolved  
-	 * @return the resolved URI or <code>null</code>
-	 * @since 3.6
-	 */
-	public URI resolveURI(URI uri, IResource resource);
 
 	/**
 	 * Resolves a relative <code>IPath</code> object potentially containing a
@@ -288,7 +254,7 @@ public interface IPathVariableManager {
 	 * 
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
-	 * @deprecated use resolveURI(URI, IResource) instead.
+	 * @deprecated use resolveURI(URI) instead.
 	 */
 	public IPath resolvePath(IPath path);
 
@@ -300,22 +266,8 @@ public interface IPathVariableManager {
 	 * @param name the variable's name
 	 * @return <code>true</code> if the variable exists, <code>false</code>
 	 *    otherwise
-	 * @deprecated use isDefined(String, IResource) instead.
 	 */
 	public boolean isDefined(String name);
-
-	/**
-	 * Returns <code>true</code> if the given variable is defined and
-	 * <code>false</code> otherwise. Returns <code>false</code> if the given
-	 * name is not a valid path variable name.
-	 * 
-	 * @param name the variable's name
-	 * @param resource the resource for which this variable is resolved  
-	 * @return <code>true</code> if the variable exists, <code>false</code>
-	 *    otherwise
-	 * @since 3.6
-	 */
-	public boolean isDefined(String name, IResource resource);
 
 	/**
 	 * Validates the given name as the name for a path variable. A valid path
@@ -364,12 +316,11 @@ public interface IPathVariableManager {
 	 * 
 	 * @param location
 	 *            a path in the local file system
-	 * @param resource the resource for which this variable is resolved  
 	 * @return the corresponding variable relative path, or <code>null</code>
 	 *         if no such path is available
 	 * @since 3.6
 	 */
-	public URI getVariableRelativePathLocation(URI location, IResource resource);
+	public URI getVariableRelativePathLocation(URI location);
 
 	/**
 	 * Converts the internal format of the linked resource location if the PARENT
@@ -391,9 +342,8 @@ public interface IPathVariableManager {
 	 * path variables will be created.
 	 * @param value the value encoded using OS string (as returned from Path.toOSString())
 	 * @param locationFormat indicates whether the value contains a string that is stored in the linked resource location rather than in the path variable value
-	 * @param resource the resource for which this variable is resolved  
 	 * @return the converted path variable value
 	 * @since 3.6
 	 */
-	public String convertFromUserEditableFormat(String value, boolean locationFormat, IResource resource);
+	public String convertFromUserEditableFormat(String value, boolean locationFormat);
 }

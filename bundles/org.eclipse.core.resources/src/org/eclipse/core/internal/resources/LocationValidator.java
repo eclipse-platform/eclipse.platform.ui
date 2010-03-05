@@ -68,11 +68,7 @@ public class LocationValidator {
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
-		IPath location;
-		if (resource.getProject() != null)
-			location = resource.getProject().getPathVariableManager().resolvePath(unresolvedLocation);
-		else
-			location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
+		IPath location = resource.getPathVariableManager().resolvePath(unresolvedLocation);
 		if (location.isEmpty())
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), Messages.links_noPath);
 		//check that the location is absolute
@@ -107,11 +103,7 @@ public class LocationValidator {
 			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
-		URI location;
-		if (resource.getProject() != null)
-			location = resource.getProject().getPathVariableManager().resolveURI(unresolvedLocation, resource);
-		else
-			location = workspace.getPathVariableManager().resolveURI(unresolvedLocation, resource);
+		URI location = resource.getPathVariableManager().resolveURI(unresolvedLocation);
 		//check nature veto
 		String[] natureIds = ((Project) resource.getProject()).internalGetDescription().getNatureIds();
 
@@ -347,9 +339,9 @@ public class LocationValidator {
 			return Status.OK_STATUS;
 		URI location;
 		if (context != null)
-			location = context.getPathVariableManager().resolveURI(unresolvedLocation, context);
+			location = context.getPathVariableManager().resolveURI(unresolvedLocation);
 		else
-			location = workspace.getPathVariableManager().resolveURI(unresolvedLocation, context);
+			location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
 		//check the standard path name restrictions
 		IStatus result = validateSegments(location);
 		if (!result.isOK())
