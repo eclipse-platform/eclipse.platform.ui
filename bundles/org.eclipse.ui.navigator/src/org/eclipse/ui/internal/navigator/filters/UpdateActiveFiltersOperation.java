@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,15 @@
 
 package org.eclipse.ui.internal.navigator.filters;
 
-import java.util.Arrays;
-
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
-import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.INavigatorFilterService;
 
 /**
  * Ensures that a given set of filters is <i>active</i> and the complement of
@@ -48,8 +41,6 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 
 	private final INavigatorContentService contentService;
 
-	private boolean disableTheComplement;
-
 	/**
 	 * Create an operation to activate extensions and refresh the viewer.
 	 * 
@@ -61,10 +52,9 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 	 *            in the <i>active</i> state after this operation executes. The
 	 *            complement of this set will likewise be in the <i>inactive</i>
 	 *            state after this operation executes.
-	 *            @param toDisableTheComplement True indicates that all filters not in the set should be made inactive.
 	 */
 	public UpdateActiveFiltersOperation(CommonViewer aCommonViewer,
-			String[] theActiveFilterIds, boolean toDisableTheComplement) {
+			String[] theActiveFilterIds) {
 		super(
 				CommonNavigatorMessages.UpdateFiltersOperation_Update_CommonViewer_Filter_);
 		Assert.isNotNull(theActiveFilterIds);
@@ -72,7 +62,6 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 		commonViewer = aCommonViewer;
 		contentService = commonViewer.getNavigatorContentService();
 		filterIdsToActivate = theActiveFilterIds;
-		disableTheComplement = toDisableTheComplement;
 
 	}
 
@@ -83,84 +72,7 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
-
-		boolean updateFilterActivation = false;
-		
-		// we sort the array in order to use Array.binarySearch();
-		Arrays.sort(filterIdsToActivate);
-		
-
-		try {
-			commonViewer.getControl().setRedraw(false);
-
-			INavigatorFilterService filterService = contentService
-					.getFilterService();
-
-			if(disableTheComplement) {
-			
-				ICommonFilterDescriptor[] visibleFilterDescriptors = filterService
-						.getVisibleFilterDescriptors();
-
-				int indexofFilterIdToBeActivated;
-
-				/* is there a delta? */
-				for (int i = 0; i < visibleFilterDescriptors.length
-						&& !updateFilterActivation; i++) {
-					indexofFilterIdToBeActivated = Arrays.binarySearch(
-							filterIdsToActivate, visibleFilterDescriptors[i]
-									.getId());
-
-					/*
-					 * Either we have a filter that should be active that isn't
-					 * XOR a filter that shouldn't be active that is currently
-					 */
-					if (indexofFilterIdToBeActivated >= 0
-							^ filterService
-									.isActive(visibleFilterDescriptors[i]
-											.getId())) {
-						updateFilterActivation = true;
-					}
-				}
-
-				/* If so, update */
-				if (updateFilterActivation) {
-
-					filterService.setActiveFilterIds(filterIdsToActivate);
-					filterService.persistFilterActivationState();
-
-					commonViewer.resetFilters();
-
-					ViewerFilter[] visibleFilters = filterService
-							.getVisibleFilters(true);
-					for (int i = 0; i < visibleFilters.length; i++) {
-						commonViewer.addFilter(visibleFilters[i]);
-					}
-
-					// the action providers may no longer be enabled, so we
-					// reset the selection.
-					commonViewer.setSelection(StructuredSelection.EMPTY);
-				}
-			} else {
-				NavigatorFilterService internalFilterService = (NavigatorFilterService)filterService;
-				
-				internalFilterService.addActiveFilterIds(filterIdsToActivate);
-
-				ICommonFilterDescriptor[] visibleDescriptors = filterService
-						.getVisibleFilterDescriptors();
-				for (int i = 0; i < visibleDescriptors.length; i++) {
-					if(Arrays.binarySearch(filterIdsToActivate, visibleDescriptors[i].getId()) >= 0 ) {
-						commonViewer.addFilter(internalFilterService.getViewerFilter(visibleDescriptors[i]));
-					}
-				}
-
-				// the action providers may no longer be enabled, so we
-				// reset the selection.
-				commonViewer.setSelection(StructuredSelection.EMPTY);
-			}
-
-		} finally {
-			commonViewer.getControl().setRedraw(true);
-		}
+		contentService.getFilterService().activateFilterIdsAndUpdateViewer(filterIdsToActivate);
 		return Status.OK_STATUS;
 	}
 

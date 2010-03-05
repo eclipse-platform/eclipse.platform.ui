@@ -80,6 +80,20 @@ public interface INavigatorFilterService {
 	boolean isActive(String aFilterId);
 
 	/**
+	 * Cause the specified set of filters to be activated, and any filters not
+	 * specified to be deactivated. Updates the viewer filters for the
+	 * associated viewer. This is a higher level operation that handles the
+	 * filter activation completely, in contrast to
+	 * {@link #setActiveFilterIds(String[])} which does not set the viewer
+	 * filter state. This is probably the one you want if you are changing
+	 * filters.
+	 * 
+	 * @param theFilterIds
+	 *            An array of filter ids to activate.
+	 */
+	public void activateFilterIdsAndUpdateViewer(String[] theFilterIds);
+
+	/**
 	 * Activate the set of given filters. An <i>active</i> filter will always be
 	 * returned from {@link #getVisibleFilters(boolean)}. An <i>inactive</i> filter will
 	 * only be returned from {@link #getVisibleFilters(boolean)} when it is

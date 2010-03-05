@@ -245,7 +245,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 			} 
 			UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
-					commonViewer, filterIdsToActivate, true);
+					commonViewer, filterIdsToActivate);
 			updateFilters.execute(null, null);
 		}
 

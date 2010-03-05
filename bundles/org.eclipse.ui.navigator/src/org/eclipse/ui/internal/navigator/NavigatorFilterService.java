@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptor;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptorManager;
@@ -214,6 +216,68 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		synchronized (activeFilters) {
 			activeFilters.clear();
 			activeFilters.addAll(Arrays.asList(theFilterIds));
+		}
+	}
+	
+	public void activateFilterIdsAndUpdateViewer(String[] filterIdsToActivate) {
+		boolean updateFilterActivation = false;
+		
+		StructuredViewer commonViewer = (StructuredViewer) contentService.getViewer();
+		
+		// we sort the array in order to use Array.binarySearch();
+		Arrays.sort(filterIdsToActivate);
+		
+		try {
+			commonViewer.getControl().setRedraw(false);
+
+			INavigatorFilterService filterService = contentService
+					.getFilterService();
+
+				ICommonFilterDescriptor[] visibleFilterDescriptors = filterService
+						.getVisibleFilterDescriptors();
+
+				int indexofFilterIdToBeActivated;
+
+				/* is there a delta? */
+				for (int i = 0; i < visibleFilterDescriptors.length
+						&& !updateFilterActivation; i++) {
+					indexofFilterIdToBeActivated = Arrays.binarySearch(
+							filterIdsToActivate, visibleFilterDescriptors[i]
+									.getId());
+
+					/*
+					 * Either we have a filter that should be active that isn't
+					 * XOR a filter that shouldn't be active that is currently
+					 */
+					if (indexofFilterIdToBeActivated >= 0
+							^ filterService
+									.isActive(visibleFilterDescriptors[i]
+											.getId())) {
+						updateFilterActivation = true;
+					}
+				}
+
+				/* If so, update */
+				if (updateFilterActivation) {
+
+					filterService.setActiveFilterIds(filterIdsToActivate);
+					filterService.persistFilterActivationState();
+
+					commonViewer.resetFilters();
+
+					ViewerFilter[] visibleFilters = filterService
+							.getVisibleFilters(true);
+					for (int i = 0; i < visibleFilters.length; i++) {
+						commonViewer.addFilter(visibleFilters[i]);
+					}
+
+					// the action providers may no longer be enabled, so we
+					// reset the selection.
+					commonViewer.setSelection(StructuredSelection.EMPTY);
+				}
+
+		} finally {
+			commonViewer.getControl().setRedraw(true);
 		}
 	}
 

@@ -58,6 +58,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_HIDE_EXTENSIONS = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
 	public static final String TEST_VIEWER_INHERITED = "org.eclipse.ui.tests.navigator.InheritedTestView";
 	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";
+	public static final String TEST_VIEWER_FILTER = "org.eclipse.ui.tests.navigator.FilterTestView";
 
 	public static final String TEST_VIEW_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestView";
 
@@ -108,6 +109,9 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_HELP_CONTEXT = "org.eclipse.ui.tests.navigator.testHelpContext";
 
 	public static final String TEST_C_CONTENT = "org.eclipse.ui.tests.navigator.cdt.content";
+
+	public static final String TEST_FILTER_P1 = "org.eclipse.ui.tests.navigator.filters.p1";
+	public static final String TEST_FILTER_P2 = "org.eclipse.ui.tests.navigator.filters.p2";
 
 	protected String _navigatorInstanceId;
 
@@ -171,6 +175,8 @@ public class NavigatorTestBase extends TestCase {
 			_projectCount = 3;
 		}
 
+		//lookAt();
+		
 		showNavigator();
 		refreshViewer();
 

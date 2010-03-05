@@ -10,6 +10,12 @@
             name="%test.navigator.viewName"/>
             
       <view
+            id="org.eclipse.ui.tests.navigator.FilterTestView"
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            name="Filter Test View"/>     
+            
+      <view
             id="org.eclipse.ui.tests.navigator.ProgrammaticTestView"
             allowMultiple="false"
             class="org.eclipse.ui.navigator.CommonNavigator"
@@ -132,6 +138,15 @@
              <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
          </includes>
       </viewerActionBinding>
+
+      <viewer viewerId="org.eclipse.ui.tests.navigator.FilterTestView"/>      
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.FilterTestView">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
+            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+         </includes>
+      </viewerContentBinding>
 
       <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
       <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView">
@@ -1129,6 +1144,34 @@
             <instanceof value="org.eclipse.ui.navigator.INavigatorContentService"/>
          </filterExpression>
       </commonFilter>
+
+      <commonFilter
+            id="org.eclipse.ui.tests.navigator.filters.p1"
+            description="Hides p1 desc"
+            name="Hides p1 name">
+         <filterExpression>
+			<and>
+            	<instanceof
+                	  value="org.eclipse.core.resources.IProject">
+            	</instanceof>
+                <test property="org.eclipse.core.resources.name" value="p1"/>
+            </and>    
+         </filterExpression>
+      </commonFilter>      
+
+      <commonFilter
+            id="org.eclipse.ui.tests.navigator.filters.p2"
+            description="Hides p2 desc"
+            name="Hides p2 name">
+         <filterExpression>
+			<and>
+            	<instanceof
+                	  value="org.eclipse.core.resources.IProject">
+            	</instanceof>
+                <test property="org.eclipse.core.resources.name" value="p2"/>
+            </and>    
+         </filterExpression>
+      </commonFilter>      
 
       <commonWizard
             associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
