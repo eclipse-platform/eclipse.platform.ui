@@ -1260,7 +1260,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if(changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
 			setLastSashWeights(DEFAULT_SASH_WEIGHTS);
 			fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-			fDetailPane.display(new StructuredSelection(new Object[]{this})); // bogus selection to force detail pane / sash reset
 			fSashForm.layout(true);
 		}
 	}
