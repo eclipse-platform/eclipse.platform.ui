@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
@@ -26,7 +25,12 @@ import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
@@ -44,6 +48,7 @@ import org.eclipse.jface.commands.RadioState;
 import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
@@ -930,18 +935,18 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// ATT_NAME_FILTER);
 
 			// TODO Read the object class. This influences the visibility.
-			// final boolean adaptable = readBoolean(element,
-			// ATT_ADAPTABLE,
-			// false);
-
+			final boolean adaptable = readBoolean(element, ATT_ADAPTABLE, false);
 
 			// TODO Read the filter elements.
 			// TODO Read the enablement elements.
 
 			// TODO Figure out an appropriate visibility expression.
 			// Read the visibility element, if any.
-			final Expression visibleWhenExpression = readVisibility(element,
+			Expression visibleWhenExpression = readVisibility(element,
 					id, warningsToLog);
+			if (visibleWhenExpression == null) {
+				visibleWhenExpression = new ObjectClassExpression(objectClass, adaptable);
+			}
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog,
@@ -951,6 +956,59 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		logWarnings(
 				warningsToLog,
 				"Warnings while parsing the object contributions from the 'org.eclipse.ui.popupMenus' extension point"); //$NON-NLS-1$
+	}
+
+	private static class ObjectClassExpression extends Expression {
+		String objectClass;
+		boolean adapt = false;
+
+		public ObjectClassExpression(String objectClass, boolean adapt) {
+			this.objectClass = objectClass;
+			this.adapt = adapt;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.expressions.Expression#collectExpressionInfo(org
+		 * .eclipse.core.expressions.ExpressionInfo)
+		 */
+		public void collectExpressionInfo(ExpressionInfo info) {
+			info.addVariableNameAccess(ISources.ACTIVE_MENU_SELECTION_NAME);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core
+		 * .expressions.IEvaluationContext)
+		 */
+		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+			Object s = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (s == null || s == IEvaluationContext.UNDEFINED_VARIABLE) {
+				return EvaluationResult.FALSE;
+			}
+			if (adapt) {
+				int status = Platform.getAdapterManager().queryAdapter(s, objectClass);
+				switch (status) {
+				case IAdapterManager.LOADED:
+					return EvaluationResult.TRUE;
+				case IAdapterManager.NOT_LOADED:
+					return EvaluationResult.NOT_LOADED;
+
+				default:
+					break;
+				}
+			} else {
+				if (objectClass.equals(s.getClass().getName())) {
+					return EvaluationResult.TRUE;
+				}
+			}
+			return EvaluationResult.FALSE;
+		}
+
 	}
 
 	/**
