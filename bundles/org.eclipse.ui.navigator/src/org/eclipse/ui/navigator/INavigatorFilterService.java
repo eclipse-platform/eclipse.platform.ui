@@ -90,6 +90,7 @@ public interface INavigatorFilterService {
 	 * 
 	 * @param theFilterIds
 	 *            An array of filter ids to activate.
+	 * @since 3.5
 	 */
 	public void activateFilterIdsAndUpdateViewer(String[] theFilterIds);
 
