@@ -524,10 +524,4 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @since 3.6
 	 */
 	public IResourceFilterDescription[] getFilters() throws CoreException;
-	
-	/**
-	 * This method will be removed along with the UI part of the fix for Bug 297731
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 }
