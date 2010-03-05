@@ -21,31 +21,17 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="compare/org/eclipse/compare/CompareUI.java" type="org.eclipse.compare.CompareUI">
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.compare.CompareUI"/>
-                <message_argument value="addStructureViewerAlias(String, String)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.compare.CompareUI"/>
-                <message_argument value="removeAllStructureViewerAliases(String)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="compare/org/eclipse/compare/CompareViewerSwitchingPane.java" type="org.eclipse.compare.CompareViewerSwitchingPane">
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="getTitleArgument()"/>
+                <message_argument value="setTitleArgument(String)"/>
             </message_arguments>
         </filter>
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="setTitleArgument(String)"/>
+                <message_argument value="getTitleArgument()"/>
             </message_arguments>
         </filter>
     </resource>
