@@ -1858,6 +1858,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (mperspective.getId().equals(perspective.getId())) {
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
+				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
 				return;
 			}
 		}
