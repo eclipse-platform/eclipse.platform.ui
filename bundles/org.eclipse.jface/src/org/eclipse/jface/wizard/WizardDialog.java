@@ -111,6 +111,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 */
 	private long timeWhenLastJobFinished= -1;
 
+	// Tells whether a subclass provided the progress monitor part
+	private boolean useCustomProgressMonitorPart= true;
+
 	// The current page message and description
 	private String pageMessage;
 
@@ -122,6 +125,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	private ProgressMonitorPart progressMonitorPart;
 
 	private Cursor waitCursor;
+
+	private Cursor arrowCursor;
 
 	private MessageDialog windowClosingDialog;
 
@@ -335,19 +340,29 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			if (focusControl != null && focusControl.getShell() != getShell()) {
 				focusControl = null;
 			}
+			boolean needsProgressMonitor = wizard.needsProgressMonitor();
+			
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
 			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
 			setDisplayCursor(waitCursor);
+			
+			if (useCustomProgressMonitorPart) {
+				cancelButton.removeSelectionListener(cancelListener);
+				// Set the arrow cursor to the cancel component.
+				arrowCursor = new Cursor(d, SWT.CURSOR_ARROW);
+				cancelButton.setCursor(arrowCursor);
+			}
+			
 			// Deactivate shell
-			savedState = saveUIState();
+			savedState = saveUIState(useCustomProgressMonitorPart && needsProgressMonitor && enableCancelButton);
 			if (focusControl != null) {
 				savedState.put(FOCUS_CONTROL, focusControl);
 			}
 			// Activate cancel behavior.
-			if (wizard.needsProgressMonitor()) {
-				if (enableCancelButton) {
-					progressMonitorPart.attachToCancelComponent(null);
+			if (needsProgressMonitor) {
+				if (enableCancelButton || useCustomProgressMonitorPart) {
+					progressMonitorPart.attachToCancelComponent(cancelButton);
 				}
 				progressMonitorPart.setVisible(true);
 			}
@@ -370,7 +385,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 								return;
 							}
 							timeWhenLastJobFinished= 0;
-						}}		
+						}}
 				});
 			}
 		}
@@ -606,7 +621,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		pageContainer.setLayoutData(gd);
 		pageContainer.setFont(parent.getFont());
 		// Insert a progress monitor
-		progressMonitorPart = createProgressMonitorPart(composite, new GridLayout());
+		progressMonitorPart= createProgressMonitorPart(composite, new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		progressMonitorPart.setLayoutData(gridData);
 		progressMonitorPart.setVisible(false);
@@ -619,21 +634,18 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	}
 
 	/**
-	 * Create the progress monitor part in the receiver.
+	 * Hook method for subclasses to create a custom progress monitor part.
+	 * <p>
+	 * The default implementation creates a progress monitor with a stop button will be created.
+	 * </p>
 	 * 
-	 * Since release 3.6, the part returned by this method is assumed to have been created
-	 * using the {@link ProgressMonitorPart#ProgressMonitorPart(Composite, Layout, boolean)}
-	 * constructor, with the last parameter set to <code>true</code>, so that an internal stop
-	 * button will be created.  If this is not the case, then users will not be able to cancel
-	 * any operations that are being run in the wizard using the 
-	 * {@link #run(boolean, boolean, IRunnableWithProgress)} method.
-     *
-	 * @param composite
-	 * @param pmlayout
-	 * @return ProgressMonitorPart
+	 * @param composite the parent composite
+	 * @param pmlayout the layout
+	 * @return ProgressMonitorPart the progress monitor part
 	 */
 	protected ProgressMonitorPart createProgressMonitorPart(
 			Composite composite, GridLayout pmlayout) {
+		useCustomProgressMonitorPart= false;
 		return new ProgressMonitorPart(composite, pmlayout, true) {
 			String currentTask = null;
 
@@ -1042,12 +1054,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *         with <code>restoreUIState</code>
 	 * @see #restoreUIState
 	 */
-	private Map saveUIState() {
+	private Map saveUIState(boolean keepCancelEnabled) {
 		Map savedState = new HashMap(10);
 		saveEnableStateAndSet(backButton, savedState, "back", false); //$NON-NLS-1$
 		saveEnableStateAndSet(nextButton, savedState, "next", false); //$NON-NLS-1$
 		saveEnableStateAndSet(finishButton, savedState, "finish", false); //$NON-NLS-1$
-		saveEnableStateAndSet(cancelButton, savedState,	"cancel", false); //$NON-NLS-1$
+		saveEnableStateAndSet(cancelButton, savedState,	"cancel", keepCancelEnabled); //$NON-NLS-1$
 		saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
 		if (currentPage != null) {
 			savedState
@@ -1263,11 +1275,17 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		if (getShell() != null && !getShell().isDisposed()) {
 			if (wizard.needsProgressMonitor()) {
 				progressMonitorPart.setVisible(false);
-				progressMonitorPart.removeFromCancelComponent(null);
+				progressMonitorPart.removeFromCancelComponent(cancelButton);
 			}
 			Map state = (Map) savedState;
 			restoreUIState(state);
 			setDisplayCursor(null);
+			if (useCustomProgressMonitorPart) {
+				cancelButton.addSelectionListener(cancelListener);
+				cancelButton.setCursor(null);
+				arrowCursor.dispose();
+				arrowCursor = null;
+			}
 			waitCursor.dispose();
 			waitCursor = null;
 			Control focusControl = (Control) state.get(FOCUS_CONTROL);
