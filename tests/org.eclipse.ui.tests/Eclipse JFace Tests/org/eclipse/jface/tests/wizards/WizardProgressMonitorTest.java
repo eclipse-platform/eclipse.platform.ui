@@ -54,6 +54,9 @@ public class WizardProgressMonitorTest extends TestCase {
 		// make up some random task names
 		final String[] taskNames = { "Task A", "Task B" }; //$NON-NLS-1$ //$NON-NLS-2$
 
+		// normal "stop button" behavior
+		dialog.useStopButton = true;
+		
 		// open the dialog
 		dialog.open();
 
@@ -107,6 +110,8 @@ public class WizardProgressMonitorTest extends TestCase {
 	 * progress monitor's label text.
 	 */
 	class ProgressMonitoringWizardDialog extends WizardDialog {
+		
+		boolean useStopButton;
 
 		ProgressMonitoringWizardDialog(IWizard newWizard) {
 			super(null, newWizard);
@@ -114,7 +119,7 @@ public class WizardProgressMonitorTest extends TestCase {
 
 		protected ProgressMonitorPart createProgressMonitorPart(
 				Composite composite, GridLayout pmlayout) {
-			return new ProgressMonitorPartSubclass(composite, pmlayout);
+			return new ProgressMonitorPartSubclass(composite, pmlayout, useStopButton);
 		}
 
 		public String getProgressMonitorLabelText() {
@@ -135,8 +140,8 @@ public class WizardProgressMonitorTest extends TestCase {
 	 */
 	class ProgressMonitorPartSubclass extends ProgressMonitorPart {
 
-		ProgressMonitorPartSubclass(Composite parent, Layout layout) {
-			super(parent, layout, true);
+		ProgressMonitorPartSubclass(Composite parent, Layout layout, boolean useStopButton) {
+			super(parent, layout, useStopButton);
 		}
 
 		public String getLabelText() {
@@ -147,6 +152,38 @@ public class WizardProgressMonitorTest extends TestCase {
 			return fSubTaskName;
 		}
 
+	}
+	
+	/**
+	 * This test ensures that a wizard dialog subclass which overrides the
+	 * #getProgressMonitorPart method and returns a monitor without the stop button
+	 * will fail gracefully.  That is, the runnable will run as expected.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
+	 */
+	public void testProgressMonitorWithoutStopButtonBug287887() throws Exception {
+		// make up some random task names
+		final String[] taskNames = { "Task A", "Task B" }; //$NON-NLS-1$ //$NON-NLS-2$
+
+		// no stop button, this is an invalid configuration
+		dialog.useStopButton = false;
+		
+		// open the dialog
+		dialog.open();
+
+		// run task A, we don't fork so we can make a UI call within the
+		// runnable
+		dialog.run(false, true, getRunnable(taskNames[0]));
+		
+		performAsserts();
+
+		// run task B now, again, we don't fork so we can make a UI call within
+		// the runnable
+		dialog.run(false, true, getRunnable(taskNames[1]));
+		
+		// check that the label has been cleared
+		performAsserts();
+		
+		// we are successful simply by getting here without exception
 	}
 
 }

@@ -32,14 +32,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 
 /**
  * A standard implementation of an IProgressMonitor. It consists
@@ -50,6 +51,8 @@ import org.eclipse.jface.resource.JFaceResources;
  */
 public class ProgressMonitorPart extends Composite implements
         IProgressMonitorWithBlocking {
+	
+	private static final String BAD_CANCEL_COMPONENT = "Invalid cancel component used with ProgressMonitorPart.  The user will be unable to cancel the wizard operation.  See WizardDialog.getProgressMonitorPart()"; //$NON-NLS-1$
 
 	/** the label */
     protected Label fLabel;
@@ -152,8 +155,15 @@ public class ProgressMonitorPart extends Composite implements
 		if (fHasStopButton)
 			setCancelEnabled(true);
 		else {
-			fCancelComponent = cancelComponent;
-			fCancelComponent.addListener(SWT.Selection, fCancelListener);
+			if (cancelComponent == null) {
+				IStatus status = new Status(IStatus.ERROR, 
+						"org.eclipse.jface", //$NON-NLS-1$
+						0, BAD_CANCEL_COMPONENT, null);
+				Policy.getLog().log(status);
+			} else {
+				fCancelComponent = cancelComponent;
+				fCancelComponent.addListener(SWT.Selection, fCancelListener);
+			}
 		}
 	}
 
@@ -316,9 +326,15 @@ public class ProgressMonitorPart extends Composite implements
 		if (fHasStopButton) {
 			setCancelEnabled(false);
 		} else {
-			Assert.isTrue(fCancelComponent == cancelComponent && fCancelComponent != null);
-			fCancelComponent.removeListener(SWT.Selection, fCancelListener);
-			fCancelComponent = null;
+			if (fCancelComponent == null || fCancelComponent != cancelComponent) {
+				IStatus status = new Status(IStatus.ERROR, 
+						"org.eclipse.jface", //$NON-NLS-1$
+						0, BAD_CANCEL_COMPONENT, null);
+				Policy.getLog().log(status);
+			} else {
+				fCancelComponent.removeListener(SWT.Selection, fCancelListener);
+				fCancelComponent = null;
+			}
 		}
 	}
 

@@ -621,6 +621,13 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/**
 	 * Create the progress monitor part in the receiver.
 	 * 
+	 * Since release 3.6, the part returned by this method is assumed to have been created
+	 * using the {@link ProgressMonitorPart#ProgressMonitorPart(Composite, Layout, boolean)}
+	 * constructor, with the last parameter set to <code>true</code>, so that an internal stop
+	 * button will be created.  If this is not the case, then users will not be able to cancel
+	 * any operations that are being run in the wizard using the 
+	 * {@link #run(boolean, boolean, IRunnableWithProgress)} method.
+     *
 	 * @param composite
 	 * @param pmlayout
 	 * @return ProgressMonitorPart
