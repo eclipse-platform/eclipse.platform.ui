@@ -15,7 +15,7 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
@@ -405,12 +405,12 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		toDelete.add(targetPath);
 
 		try {
-			variableBasedLocation = convertToRelative(existingProjectInSubDirectory.getPathVariableManager(), targetPath, file, true, null);
+			variableBasedLocation = convertToRelative(targetPath, file, true, null);
 		} catch (CoreException e1) {
 			fail("0.99", e1);
 		}
 
-		IPath resolvedPath = URIUtil.toPath(existingProjectInSubDirectory.getPathVariableManager().resolveURI(URIUtil.toURI(variableBasedLocation), file));
+		IPath resolvedPath = URIUtil.toPath(file.getPathVariableManager().resolveURI(URIUtil.toURI(variableBasedLocation)));
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("1.0", file);
 
@@ -434,8 +434,8 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertEquals("3,3", newFile.getLocation(), resolvedPath);
 	}
 
-	private IPath convertToRelative(IPathVariableManager manager, IPath path, IResource res, boolean force, String variableHint) throws CoreException {
-		return URIUtil.toPath(manager.convertToRelative(URIUtil.toURI(path), res, force, variableHint));
+	private IPath convertToRelative(IPath path, IResource res, boolean force, String variableHint) throws CoreException {
+		return URIUtil.toPath(res.getPathVariableManager().convertToRelative(URIUtil.toURI(path), force, variableHint));
 	}
 
 	/**
@@ -1272,28 +1272,19 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	 */
 	public void testGetPathVariable() {
 		final IPathVariableManager manager = existingProject.getPathVariableManager();
-		IPathVariable variable = manager.getPathVariable("PROJECT_LOC", existingProject);
+		IPathVariable variable = manager.getPathVariable("PROJECT_LOC");
 		assertTrue("1.0", variable != null);
 		assertTrue("1.1", variable.isReadOnly());
-		assertEquals("1.2", null, variable.getExtensions("PROJECT_LOC", existingProject));
+		assertEquals("1.2", null, variable.getExtensions());
 
-		variable = manager.getPathVariable("PROJECT_LOC_does_not_exist", existingProject);
+		variable = manager.getPathVariable("PROJECT_LOC_does_not_exist");
 		assertTrue("2.0", variable == null);
 
-		variable = manager.getPathVariable("PARENT", existingProject);
+		variable = manager.getPathVariable("PARENT");
 		assertTrue("3.0", variable != null);
 		assertTrue("3.1", variable.isReadOnly());
-		Object[] extensions = variable.getExtensions("PARENT", existingProject);
-		assertTrue("3.2", extensions != null);
-		List list = Arrays.asList(extensions);
-		assertEquals("3.2", 7, extensions.length);
-		assertTrue("3.3", list.contains("1-ECLIPSE_HOME"));
-		assertTrue("3.4", list.contains("1-WORKSPACE_LOC"));
-		assertTrue("3.4", list.contains("1-PARENT_LOC"));
-		assertTrue("3.5", list.contains("1-PROJECT_LOC"));
-		assertTrue("3.6", list.contains("1-" + PROJECT_RELATIVE_VARIABLE_NAME));
-		assertTrue("3.7", list.contains("1-" + PROJECT_VARIABLE_NAME));
-		assertTrue("3.8", list.contains("1-" + VARIABLE_NAME));
+		Object[] extensions = variable.getExtensions();
+		assertTrue("3.2", extensions == null);
 
 		try {
 			IPath newLocation = super.getRandomLocation();
@@ -1302,10 +1293,10 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		} catch (CoreException e) {
 			fail("4.1", e);
 		}
-		variable = manager.getPathVariable(PROJECT_VARIABLE_NAME, existingProject);
+		variable = manager.getPathVariable(PROJECT_VARIABLE_NAME);
 		assertTrue("4.0", variable != null);
 		assertTrue("4.1", !variable.isReadOnly());
-		assertEquals("4.2", null, variable.getExtensions(PROJECT_VARIABLE_NAME, existingProject));
+		assertEquals("4.2", null, variable.getExtensions());
 	}
 
 	/** 
@@ -1329,22 +1320,22 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		toDelete.add(targetPath);
 
 		try {
-			variableBasedLocation = convertToRelative(pathVariableManager, targetPath, file, true, null);
+			variableBasedLocation = convertToRelative(targetPath, file, true, null);
 		} catch (CoreException e1) {
 			fail("2.0", e1);
 		}
-		IPath resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation), file));
+		IPath resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation)));
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("3.0", file);
 		assertEquals("3.1", targetPath, resolvedPath);
 
 		try {
-			variableBasedLocation = convertToRelative(pathVariableManager, targetPath, file, true, null);
+			variableBasedLocation = convertToRelative(targetPath, file, true, null);
 		} catch (CoreException e1) {
 			fail("4.0", e1);
 		}
 
-		resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation), file));
+		resolvedPath = URIUtil.toPath(pathVariableManager.resolveURI(URIUtil.toURI(variableBasedLocation)));
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("5.0", file);
 		assertEquals("5.1", targetPath, resolvedPath);
@@ -1374,7 +1365,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		for (int i = 0; i < table.length; i++) {
 			String result = pathVariableManager.convertToUserEditableFormat(toOS(table[i][0]), false);
 			assertEquals("1." + i, toOS(table[i][1]), result);
-			String original = pathVariableManager.convertFromUserEditableFormat(result, false, existingProject);
+			String original = pathVariableManager.convertFromUserEditableFormat(result, false);
 			assertEquals("2." + i, toOS(table[i].length == 2 ? table[i][0] : table[i][2]), original);
 		}
 
@@ -1399,7 +1390,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		for (int i = 0; i < table.length; i++) {
 			String result = pathVariableManager.convertToUserEditableFormat(toOS(tableLocationFormat[i][0]), true);
 			assertEquals("3." + i, toOS(tableLocationFormat[i][1]), result);
-			String original = pathVariableManager.convertFromUserEditableFormat(result, true, existingProject);
+			String original = pathVariableManager.convertFromUserEditableFormat(result, true);
 			assertEquals("4." + i, toOS(tableLocationFormat[i].length == 2 ? tableLocationFormat[i][0] : tableLocationFormat[i][2]), original);
 		}
 	}
