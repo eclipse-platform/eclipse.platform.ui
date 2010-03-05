@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,6 +185,19 @@ public abstract class Container extends Resource implements IContainer {
 			}
 		}
 		return new IResourceFilterDescription[0];
+	}
+	
+	public boolean hasFilters() {
+		IProject project = getProject();
+		if (project == null)
+			return false;
+		ProjectDescription desc = ((Project) project).internalGetDescription();
+		if (desc == null)
+			return false;
+		LinkedList/*<FilterDescription>*/ filters = desc.getFilter(getProjectRelativePath());
+		if ((filters != null) && (filters.size() > 0))
+			return true;
+		return false;
 	}
 
 	/* (non-Javadoc)

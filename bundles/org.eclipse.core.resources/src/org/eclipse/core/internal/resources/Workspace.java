@@ -779,7 +779,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 
 		// update filters in project descriptions
-		if (source.hasFilters() && source.getProject().exists()) {
+		if (source.getProject().exists() && source instanceof Container && ((Container) source).hasFilters()) {
 			Project sourceProject = (Project) source.getProject();
 			LinkedList/*<FilterDescription>*/ originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
 			LinkedList/*<FilterDescription>*/ filterDescriptions = FilterDescription.copy(originalDescriptions, destinationResource);

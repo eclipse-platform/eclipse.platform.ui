@@ -1719,16 +1719,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isVirtual();
 
 	/**
-	 * Returns whether this resource has filters.
-	 * 
-	 * @return <code>true</code> if this resource has filters, and 
-	 *   <code>false</code> otherwise
-	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
-	 * @since 3.6
-	 */
-	public boolean hasFilters();
-
-	/**
 	 * Returns whether this resource would be excluded from 
 	 * workspace tree when its parent is synchronised with the underlying 
 	 * file system resource, due to the parent resource filter list.

@@ -1440,22 +1440,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#hasFilters()
-	 */
-	public boolean hasFilters() {
-		IProject project = getProject();
-		if (project == null)
-			return false;
-		ProjectDescription desc = ((Project) project).internalGetDescription();
-		if (desc == null)
-			return false;
-		LinkedList/*<FilterDescription>*/  filters = desc.getFilter(getProjectRelativePath());
-		if ((filters != null) && (filters.size() > 0))
-			return true;
-		return false;
-	}
-
 	/**
 	 * @see IResource#isLocal(int)
 	 * @deprecated
