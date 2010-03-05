@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,20 +12,43 @@ package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.CompareViewerPane;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -140,10 +163,14 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 		initializeImageCache();
 	}
 
-
 	private void initializeImageCache() {
+		initializeImageCache(patcher.getConfiguration());
+	}
+	
+	private static LocalResourceManager initializeImageCache(PatchConfiguration patchConfiguration) {
 		LocalResourceManager imageCache = new LocalResourceManager(JFaceResources.getResources());
-		patcher.setProperty(IMAGE_CACHE_KEY, imageCache);
+		patchConfiguration.setProperty(IMAGE_CACHE_KEY, imageCache);
+		return imageCache;
 	}
 	
 	protected void handleDispose() {
@@ -152,7 +179,11 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	}
 
 	public static LocalResourceManager getImageCache(PatchConfiguration patchConfiguration) {
-		return (LocalResourceManager)patchConfiguration.getProperty(IMAGE_CACHE_KEY);
+		LocalResourceManager cache = (LocalResourceManager)patchConfiguration.getProperty(IMAGE_CACHE_KEY);
+		if (cache == null) {
+			return initializeImageCache(patchConfiguration);
+		}
+		return cache;
 	}
 
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
