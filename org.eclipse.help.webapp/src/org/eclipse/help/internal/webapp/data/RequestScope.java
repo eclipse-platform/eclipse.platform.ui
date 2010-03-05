@@ -110,8 +110,10 @@ public class RequestScope {
 		return scopeString;
 	}
 	
-	public static String getScopeButtonState() {
-		if (ScopeRegistry.getInstance().getScopes().length > 0) {
+	public static String getFilterButtonState() {
+		boolean  scope = Platform.getPreferencesService().getBoolean
+            (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_FILTER_DIALOG, false, null); 
+		if (scope && ScopeRegistry.getInstance().getScopes().length > 0) {
 			return "off"; //$NON-NLS-1$
 		}
 		return "hidden"; //$NON-NLS-1$

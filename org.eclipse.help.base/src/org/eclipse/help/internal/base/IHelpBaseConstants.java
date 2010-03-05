@@ -21,6 +21,7 @@ public interface IHelpBaseConstants {
 	String P_IN_EDITOR = "in editor"; //$NON-NLS-1$
 	String P_IN_BROWSER = "in browser"; //$NON-NLS-1$
 	String P_KEY_HELP_SCOPE = "scope"; //$NON-NLS-1$
+	String P_KEY_FILTER_DIALOG = "filterDialog"; //$NON-NLS-1$
 	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
 	String P_KEY_SEARCH_FROM_BROWSER = "search_from_browser"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ON = "remoteHelpOn"; //$NON-NLS-1$

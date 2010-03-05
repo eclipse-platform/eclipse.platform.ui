@@ -21,6 +21,6 @@
 	<jsp:param name="image"    value="filter.gif"/>
 	<jsp:param name="action"   value="filter"/>
 	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value="<%=(RequestScope.getScopeButtonState())%>"/>
+	<jsp:param name="state"    value="<%=(RequestScope.getFilterButtonState())%>"/>
 
 </jsp:include>
