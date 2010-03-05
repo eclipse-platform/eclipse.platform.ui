@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -126,7 +127,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	}
 	
 	public void handleActivation(Control c, IWorkbenchPart wpart) {
-		contextHelpPart.handleActivation(null, null, c, wpart, false);
+		IContextProvider provider = (wpart == null) ? null : (IContextProvider) wpart.getAdapter(IContextProvider.class);
+		contextHelpPart.handleActivation(provider, null, c, wpart, false);
 	}
 	
 	public void setDefaultText(String defaultText) {
