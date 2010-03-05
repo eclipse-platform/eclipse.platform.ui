@@ -27,7 +27,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.Policy;
-import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
@@ -47,7 +46,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	private NavigatorContentDescriptor descriptor;
 
-	private ICommonContentProvider contentProvider;
+	private SafeDelegateTreeContentProvider contentProvider;
 
 	private ICommonLabelProvider labelProvider;
 
@@ -113,20 +112,14 @@ public class NavigatorContentExtension implements IMementoAware,
 	 * org.eclipse.ui.navigator.INavigatorContentExtension#getContentProvider()
 	 */
 	public ITreeContentProvider getContentProvider() {
-
-		ITreeContentProvider provider = internalGetContentProvider();
-		if (provider != SkeletonTreeContentProvider.INSTANCE) {
-			return ((SafeDelegateTreeContentProvider) provider)
-					.getDelegateContentProvider();
-		}
-		return provider;
+		return internalGetContentProvider().getDelegateContentProvider();
 	}
 
 	/**
 	 * 
 	 * @return The internal content provider that is wrapped by this extension.
 	 */
-	public ITreeContentProvider internalGetContentProvider() {
+	public SafeDelegateTreeContentProvider internalGetContentProvider() {
 		if (contentProvider != null || contentProviderInitializationFailed) {
 			return contentProvider;
 		}
@@ -142,7 +135,7 @@ public class NavigatorContentExtension implements IMementoAware,
 								getId(), contentService, appliedMemento));
 						viewerManager.initialize(contentProvider);
 					} else {
-						contentProvider = SkeletonTreeContentProvider.INSTANCE;
+						contentProvider = new SafeDelegateTreeContentProvider(SkeletonTreeContentProvider.INSTANCE);
 					}
 				}
 			} catch (CoreException e) {
@@ -153,7 +146,7 @@ public class NavigatorContentExtension implements IMementoAware,
 				e.printStackTrace();
 			}
 			if (contentProviderInitializationFailed) {
-				contentProvider = SkeletonTreeContentProvider.INSTANCE;
+				contentProvider = new SafeDelegateTreeContentProvider(SkeletonTreeContentProvider.INSTANCE);
 			}
 		}
 		return contentProvider;

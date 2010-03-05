@@ -33,6 +33,10 @@ public class M2ContentProvider extends ResourceWrapperContentProvider {
 		currentChildren.addAll(newElements);
 	}
 
+	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
+		return currentHasChildren;
+	}
+
 	protected Object _convertToModelObject(Object object) {
 		return M2Core.getModelObject(object);
 	}

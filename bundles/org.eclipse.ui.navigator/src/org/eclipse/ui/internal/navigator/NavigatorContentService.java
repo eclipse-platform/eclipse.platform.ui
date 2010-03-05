@@ -382,7 +382,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						.next();
 				if (ext.isLoaded()) {
 					structuredViewerManager
-							.initialize(ext.getContentProvider());
+							.initialize(ext.internalGetContentProvider());
 				}
 			}
 

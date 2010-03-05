@@ -26,6 +26,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.IPipelinedTreeContentProvider2;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
@@ -33,7 +34,7 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
  * @since 3.2
  */
 public class SafeDelegateTreeContentProvider implements
-		IPipelinedTreeContentProvider, ITreePathContentProvider {
+		IPipelinedTreeContentProvider2, ITreePathContentProvider {
 
 	private static final TreePath[] NO_PATHS = new TreePath[0];
 
@@ -44,6 +45,27 @@ public class SafeDelegateTreeContentProvider implements
 	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider) {
 		super();
 		contentProvider = aContentProvider;
+	}
+	
+	/**
+	 * @return true if the underlying content provider implements IPipelinedTreeContentProvider
+	 */
+	public boolean isPipelined() {
+		return contentProvider instanceof IPipelinedTreeContentProvider;
+	}
+
+	/**
+	 * @return true if the underlying content provider implements IPipelinedTreeContentProviderHasChildren
+	 */
+	public boolean isPipelinedHasChildren() {
+		return contentProvider instanceof IPipelinedTreeContentProvider2;
+	}
+
+	/**
+	 * @return true if the underlying content provider implements ITreePathContentProvider
+	 */
+	public boolean isTreePath() {
+		return contentProvider instanceof ITreePathContentProvider;
 	}
 
 	/**
@@ -301,6 +323,17 @@ public class SafeDelegateTreeContentProvider implements
 			return new TreePath[] { new TreePath(segments.toArray()) };
 		}
 		return NO_PATHS;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProviderHasChildren#hasPipelinedChildren(java.lang.Object, boolean)
+	 */
+	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
+		if (contentProvider instanceof IPipelinedTreeContentProvider2) {
+			return ((IPipelinedTreeContentProvider2) contentProvider)
+					.hasPipelinedChildren(anInput, currentHasChildren);
+		}
+		return currentHasChildren;
 	}
 
 }

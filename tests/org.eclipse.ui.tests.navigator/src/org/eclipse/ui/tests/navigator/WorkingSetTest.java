@@ -127,7 +127,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
-
+		
 		// bug 268250 [CommonNavigator] Project labels missing in Project Explorer when working sets are top level elements
 		TreeItem projectItem = items[0].getItem(0);
 		assertEquals("p1", projectItem.getText());

@@ -169,8 +169,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			try {
 				overridingExtension = (NavigatorContentExtension) extensionsItr.next();
 				trackedSet.setContributor((NavigatorContentDescriptor) overridingExtension.getDescriptor(), null);
-				if (overridingExtension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
-					((IPipelinedTreeContentProvider) overridingExtension.getContentProvider()).interceptRemove(aRemoveModification);
+				if (overridingExtension.internalGetContentProvider().isPipelined()) {
+					((IPipelinedTreeContentProvider) overridingExtension.internalGetContentProvider()).interceptRemove(aRemoveModification);
 				}
 				trackedSet.setContributor(null, null);
 				if (overridingExtension.getDescriptor().hasOverridingExtensions())
@@ -229,10 +229,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
 		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) {
 			try {
-				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				if (overridingExtensionsForPossibleChild[i].internalGetContentProvider().isPipelined()) {
 
 					intercepted |= ((IPipelinedTreeContentProvider) overridingExtensionsForPossibleChild[i]
-							.getContentProvider())
+							.internalGetContentProvider())
 							.interceptRefresh(aRefreshSynchronization);
 					
 					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())
@@ -295,10 +295,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
 		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) {
 			try {
-				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				if (overridingExtensionsForPossibleChild[i].internalGetContentProvider().isPipelined()) {
 
 					intercepted |= ((IPipelinedTreeContentProvider) overridingExtensionsForPossibleChild[i]
-							.getContentProvider())
+							.internalGetContentProvider())
 							.interceptUpdate(anUpdateSynchronization);
 					
 					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())

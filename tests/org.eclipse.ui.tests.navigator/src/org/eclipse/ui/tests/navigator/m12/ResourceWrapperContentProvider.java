@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.IPipelinedTreeContentProvider2;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 
 public abstract class ResourceWrapperContentProvider implements
-		IPipelinedTreeContentProvider {
+		IPipelinedTreeContentProvider2 {
 	protected static final Object[] NO_CHILDREN = new Object[0];
 
 	protected static final String INTERCEPT_ADD = "ADD";

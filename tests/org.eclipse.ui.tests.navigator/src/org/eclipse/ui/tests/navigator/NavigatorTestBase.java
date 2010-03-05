@@ -181,6 +181,10 @@ public class NavigatorTestBase extends TestCase {
 
 	}
 
+	protected void lookAt() {
+		DisplayHelper.sleep(1000000);
+	}
+	
 	protected void waitForModelObjects() throws Exception {
 		_project.findMember(TestContentProvider.MODEL_FILE_PATH).touch(null);
 		// Let build run to load the model objects

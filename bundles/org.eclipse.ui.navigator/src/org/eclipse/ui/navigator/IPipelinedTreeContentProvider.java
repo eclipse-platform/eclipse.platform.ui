@@ -13,36 +13,19 @@ package org.eclipse.ui.navigator;
 
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-
 /**
  * 
- * A pipelined content provider allows an extension to reshape the contributions
- * of an upstream content extension.
+ * To correctly implement pipelining you should implement
+ * {@link IPipelinedTreeContentProvider2} which provides the
+ * additional
+ * {@link IPipelinedTreeContentProvider2#hasChildren(Object)} method.
+ * This allows the calculation of hasChildren to match what will be provided in
+ * calculating the children. If you don't implement the hasChildren, you may get
+ * "false positive" hasChildrens which will result in a "+" indication in the
+ * tree in the event that the pipelined children calculation.
  * 
- * <p>
- * An "upstream" extension is either:
- * <ul>
- * <li>the extension overridden by this extension using the
- * <b>org.eclipse.ui.navigatorContent/navigatorContent/override</b> element, or</li>
- * <li>another extension that overrides the same extension this extension
- * overrides, but with higher priority than this extension.</li>
- * </ul>
- * </p>
- * <p>
- * Overridden extensions form a tree where the nodes of the tree represent the
- * content extensions, children represent overriding extensions, and the
- * children are sorted by priority. Pipeline contributions traverse the tree,
- * allowing children to override the contributions of their parent, giving
- * precedence to the children of highest priority.
- * </p>
+ * The only reason these are two separate interfaces is historical.
  * 
- * <p>
- * {@link ITreeContentProvider} is respected by the Common Navigator.
- * </p>
- * 
- * @see INavigatorPipelineService
- * @see INavigatorContentService#getPipelineService()
  * @since 3.2
  * 
  */
@@ -121,8 +104,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * @return The new shape modification to use. Clients should <b>never</b>
 	 *         return <b>null</b> from this method.
 	 */
-	PipelinedShapeModification interceptAdd(
-			PipelinedShapeModification anAddModification);
+	PipelinedShapeModification interceptAdd(PipelinedShapeModification anAddModification);
 
 	/**
 	 * Intercept attempts to remove elements directly from the viewer.
@@ -156,8 +138,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * @return The new shape modification to use. Clients should <b>never</b>
 	 *         return <b>null</b> from this method.
 	 */
-	PipelinedShapeModification interceptRemove(
-			PipelinedShapeModification aRemoveModification);
+	PipelinedShapeModification interceptRemove(PipelinedShapeModification aRemoveModification);
 
 	/**
 	 * Intercept calls to viewer <code>refresh()</code> methods.

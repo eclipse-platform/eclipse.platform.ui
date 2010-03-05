@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.eclipse.ui.tests.navigator.extension.TestContentProviderNoChildren;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
 
 public class PipelineTest extends NavigatorTestBase {
@@ -122,7 +122,8 @@ public class PipelineTest extends NavigatorTestBase {
 	}	
 	
 	// Bug 299661 hasChildren() does not handle overrides correctly
-	public void testHasNoChildrenOverride() throws Exception {
+	public void testHasNoChildrenOverride(boolean hasChildren) throws Exception {
+		TestContentProviderNoChildren._hasChildrenTrue = hasChildren;
 		_contentService.bindExtensions(new String[] {
 				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_NO_CHILDREN},
 				false);
@@ -131,14 +132,23 @@ public class PipelineTest extends NavigatorTestBase {
 						TEST_CONTENT_NO_CHILDREN }, true);
 
 		refreshViewer();
-		_viewer.expandAll();
-		TreeItem[] rootItems = _viewer.getTree().getItems();
-		for (int i= 0; i < rootItems.length; i++) {
-			assertEquals(0, rootItems[i].getItems().length);
-		}
 		
-		if (false)
-			DisplayHelper.sleep(10000000);
+		TreeItem[] rootItems;
+		rootItems = _viewer.getTree().getItems();
+		assertEquals("p1", rootItems[0].getText());
+		assertEquals(hasChildren ? 1: 0, rootItems[0].getItems().length);
+
+		_viewer.expandAll();
+		rootItems = _viewer.getTree().getItems();
+		assertEquals(0, rootItems[0].getItems().length);
+	}	
+	
+	public void testHasNoChildrenOverrideHasChildren() throws Exception {
+		testHasNoChildrenOverride(true);
+	}	
+	
+	public void testHasNoChildrenOverride() throws Exception {
+		testHasNoChildrenOverride(false);
 	}	
 	
 	

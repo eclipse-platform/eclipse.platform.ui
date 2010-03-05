@@ -50,6 +50,10 @@ public class M1ContentProvider extends ResourceWrapperContentProvider {
 		}
 	}
 
+	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
+		return currentHasChildren;
+	}
+
 	protected Object _convertToModelObject(Object object) {
 		if (object instanceof IResource) {
 			return M1Core.getModelObject((IResource) object);

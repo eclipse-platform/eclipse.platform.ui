@@ -476,7 +476,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		NavigatorContentExtension extension = contentService
 				.getExtension(descriptor, true);
 		ITreeContentProvider contentProvider = extension
-				.getContentProvider();
+				.internalGetContentProvider();
         
         return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
 	}
