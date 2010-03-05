@@ -1581,6 +1581,8 @@ public class EPartServiceTest extends TestCase {
 		assertNotNull(parent);
 
 		perspectiveStack.setSelectedElement(perspectiveB);
+		window.getContext().set(IContextConstants.ACTIVE_CHILD,
+				perspectiveB.getContext());
 
 		MPart part2 = partService.showPart("partId", PartState.ACTIVATE);
 		parent = part2.getParent();

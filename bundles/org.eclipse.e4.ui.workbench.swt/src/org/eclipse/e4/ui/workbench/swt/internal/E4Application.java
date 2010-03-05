@@ -24,15 +24,20 @@ import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.internal.ActiveChildLookupFunction;
 import org.eclipse.e4.workbench.ui.internal.ActivePartLookupFunction;
@@ -232,6 +237,37 @@ public class E4Application implements IApplication {
 				return IServiceConstants.ACTIVE_PART_ID;
 			}
 		}, null);
+		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				MContext perceivedRoot = (MContext) context.get(MWindow.class
+						.getName());
+				if (perceivedRoot == null) {
+					perceivedRoot = (MContext) context.get(MApplication.class
+							.getName());
+					if (perceivedRoot == null) {
+						return null;
+					}
+				}
+
+				IEclipseContext current = perceivedRoot.getContext();
+				if (current == null) {
+					return null;
+				}
+
+				IEclipseContext next = (IEclipseContext) current
+						.getLocal(IContextConstants.ACTIVE_CHILD);
+				while (next != null) {
+					current = next;
+					next = (IEclipseContext) current
+							.getLocal(IContextConstants.ACTIVE_CHILD);
+				}
+				Object object = current.get(MPerspective.class.getName());
+				return object == null ? current.get(MWindow.class.getName())
+						: object;
+			}
+		});
+
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 		appContext.set(IExceptionHandler.class.getName(), exceptionHandler);

@@ -14,8 +14,8 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.services.annotations.Optional;
@@ -24,9 +24,9 @@ import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -55,7 +55,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	 */
 	@Inject
 	@Named(EPartService.PART_SERVICE_ROOT)
-	private MWindow serviceRoot;
+	private MContext serviceRoot;
 
 	@Inject
 	private IEventBroker eventBroker;
@@ -128,7 +128,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		return isInContainer(serviceRoot, part);
+		return isInContainer((MElementContainer<?>) serviceRoot, part);
 	}
 
 	private boolean isInContainer(MElementContainer<?> container, MPart part) {

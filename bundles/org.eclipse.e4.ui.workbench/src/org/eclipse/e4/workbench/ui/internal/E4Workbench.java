@@ -43,11 +43,8 @@ import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
@@ -223,13 +220,6 @@ public class E4Workbench implements IWorkbench {
 	}
 
 	public static void processHierarchy(Object me) {
-		if (me instanceof MApplication) {
-			MContext contextAware = (MContext) me;
-			IEclipseContext c = contextAware.getContext();
-			IEventBroker broker = (IEventBroker) c.get(IEventBroker.class.getName());
-			PartServiceImpl.addListener(broker);
-		}
-
 		if (me instanceof MHandlerContainer) {
 			MContext contextModel = (MContext) me;
 			MHandlerContainer container = (MHandlerContainer) contextModel;
@@ -274,13 +264,6 @@ public class E4Workbench implements IWorkbench {
 						bs.activateBinding(sequence, cmd);
 					}
 				}
-			}
-		}
-		if (me instanceof MWindow) {
-			MContext contextAware = (MContext) me;
-			IEclipseContext c = contextAware.getContext();
-			if (c != null) {
-				c.set(EPartService.PART_SERVICE_ROOT, me);
 			}
 		}
 		if (me instanceof MElementContainer<?>) {

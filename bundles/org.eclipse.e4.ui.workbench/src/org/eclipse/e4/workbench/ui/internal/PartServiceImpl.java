@@ -40,7 +40,6 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -59,23 +58,6 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class PartServiceImpl implements EPartService {
-
-	public static void addListener(IEventBroker broker) {
-		EventHandler windowHandler = new EventHandler() {
-			public void handleEvent(Event event) {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (element instanceof MWindow) {
-					MContext contextAware = (MContext) element;
-					IEclipseContext context = contextAware.getContext();
-					if (context != null) {
-						context.set(EPartService.PART_SERVICE_ROOT, element);
-					}
-				}
-			}
-		};
-		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
-				windowHandler);
-	}
 
 	private EventHandler selectedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -105,8 +87,6 @@ public class PartServiceImpl implements EPartService {
 	 */
 	@Inject
 	@Named(EPartService.PART_SERVICE_ROOT)
-	@Optional
-	// technically this should be a mandatory parameter
 	private MElementContainer<MUIElement> rootContainer;
 
 	@Inject
@@ -264,27 +244,8 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
-	private MElementContainer<MUIElement> getActivePerspective() {
-		if (rootContainer.getChildren().size() > 0
-				&& rootContainer.getChildren().get(0) instanceof MPerspectiveStack) {
-			// HACK!! find the perspective stack, should use an id ...
-			MElementContainer<MUIElement> perspStack = (MElementContainer<MUIElement>) rootContainer
-					.getChildren().get(0);
-			return (MElementContainer<MUIElement>) perspStack.getSelectedElement();
-		}
-		return null;
-	}
-
 	public MPart findPart(String id) {
-		MUIElement searchRoot = rootContainer;
-
-		// If the model is using perspectives then re-direct the search to the
-		// currently active perspective
-		if (getActivePerspective() != null) {
-			searchRoot = getActivePerspective();
-		}
-
-		MApplicationElement element = modelService.find(id, searchRoot);
+		MApplicationElement element = modelService.find(id, rootContainer);
 		return element instanceof MPart ? (MPart) element : null;
 	}
 
@@ -305,11 +266,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		MElementContainer<MUIElement> activePerspective = getActivePerspective();
-		if (activePerspective == null) {
-			return isInContainer(rootContainer, part);
-		}
-		return isInContainer(activePerspective, part);
+		return isInContainer(rootContainer, part);
 	}
 
 	private boolean isInContainer(MElementContainer<?> container, MPart part) {
@@ -444,10 +401,6 @@ public class PartServiceImpl implements EPartService {
 
 	private MElementContainer<?> getLastContainer() {
 		MElementContainer<MUIElement> searchRoot = rootContainer;
-		if (getActivePerspective() != null) {
-			searchRoot = getActivePerspective();
-		}
-
 		List<MUIElement> children = searchRoot.getChildren();
 		if (children.size() == 0) {
 			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();

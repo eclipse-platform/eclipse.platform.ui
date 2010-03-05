@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -1876,6 +1877,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		perspectives.getChildren().add(modelPerspective);
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
+		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
 
 		// FIXME: we need to fire events
 	}
