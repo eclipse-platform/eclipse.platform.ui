@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ package org.eclipse.core.internal.resources;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * Class for describing the characteristics of filters that are stored
@@ -133,5 +132,9 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 				return compare;
 		}
 		return 0;
+	}
+
+	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
+		((Container)getResource()).removeFilter(this, updateFlags, monitor);
 	}
 }

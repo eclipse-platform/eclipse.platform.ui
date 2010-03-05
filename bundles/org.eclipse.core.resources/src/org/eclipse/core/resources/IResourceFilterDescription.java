@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.runtime.*;
+
 /**
  * A description of a resource filter.
  * 
@@ -78,5 +80,40 @@ public interface IResourceFilterDescription {
 	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
 	 */
 	public int getType();
+	
+	/**
+	 * Deletes this filter description from its associated resource.
+	 * <p>
+	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls when
+	 * changes to the resource hierarchy under this container resulting from the filter 
+	 * removal take effect. If this flag is specified, the resource hierarchy is updated in a 
+	 * separate thread after this method returns. If the flag is not specified, any resource 
+	 * changes resulting from the filter removal will occur before this method returns.
+	 * </p>
+	 * <p> 
+	 * This operation changes resources; these changes will be reported
+	 * in a subsequent resource change event that will include an indication 
+	 * of any resources that have been added as a result of the filter removal.
+	 * </p>
+	 * <p>
+	 * This operation is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
+	 * 
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   ({@link IResource#BACKGROUND_REFRESH})
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this filter could not be removed. Reasons include:
+	 * <ul>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 * @see IContainer#getFilters()
+	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
+	 */
+	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 }

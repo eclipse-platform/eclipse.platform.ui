@@ -474,7 +474,7 @@ public class FilteredResourceTest extends ResourceTest {
 
 		// remove the first filter
 		try {
-			existingFolderInExistingFolder.removeFilter(filterDescription2, 0, getMonitor());
+			filterDescription2.delete(0, getMonitor());
 		} catch (CoreException e) {
 			fail("8.0");
 		}
@@ -745,7 +745,7 @@ public class FilteredResourceTest extends ResourceTest {
 
 			// Filter out all children from existingFolderInExistingProject 
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
-			folder1.removeFilter(filterDescription1, 0, getMonitor());
+			filterDescription1.delete(0, getMonitor());
 			assertTrue(folder1.getFilters().length == 0);
 		} catch (CoreException e) {
 			fail("3.0", e);
@@ -886,7 +886,7 @@ public class FilteredResourceTest extends ResourceTest {
 
 			// Filter out all children from existingFolderInExistingProject 
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
-			folder1.removeFilter(filterDescription1, 0, getMonitor());
+			filterDescription1.delete(0, getMonitor());
 			assertTrue(folder1.getFilters().length == 0);
 		} catch (CoreException e) {
 			fail("4.0", e);
@@ -1005,7 +1005,7 @@ public class FilteredResourceTest extends ResourceTest {
 		}
 
 		try {
-			existingFolderInExistingFolder.removeFilter(filterDescription, 0, getMonitor());
+			filterDescription.delete(0, getMonitor());
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -1065,7 +1065,7 @@ public class FilteredResourceTest extends ResourceTest {
 		}
 
 		try {
-			existingFolderInExistingFolder.removeFilter(filterDescription, 0, getMonitor());
+			filterDescription.delete(0, getMonitor());
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
