@@ -59,12 +59,12 @@ public class PartEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Part Descriptor";
+		return "Part";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Part Descriptor Bla Bla Bla Bla";
+		return "Part Bla Bla Bla Bla";
 	}
 
 	@Override
