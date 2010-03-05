@@ -16,7 +16,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.scope.WorkingSetScope;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
@@ -58,7 +61,7 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(mgr, mgr2);
 		assertEquals(mgr.hashCode(), mgr2.hashCode());
 	}
-	
+
 	public void testWSMWithToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -73,6 +76,64 @@ public class WorkingSetManagerTest extends TestCase {
 		assertTrue(resources[0].equals(toc));
 	};
 
+	public void testWSMWithTocContainsThatToc() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		AdaptableToc toc = mgr.getAdaptableToc(tocs[0].getHref());
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		mgr.addWorkingSet(wset);
+		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
+		assertTrue(scope.inScope(tocs[0]));
+	};
+	
+	public void testWSMWithTocContainsNoOtherToc() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		AdaptableToc toc = mgr.getAdaptableToc(tocs[0].getHref());
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		mgr.addWorkingSet(wset);
+		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
+		for (int i = 1; i < tocs.length; i++) {
+		    assertFalse(scope.inScope(tocs[i]));
+		}
+	};
+
+	public void testWSMWithTocContainsThatTocsTopics() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		AdaptableToc toc = mgr.getAdaptableToc(tocs[0].getHref());
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		mgr.addWorkingSet(wset);
+		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
+		for (int i = 1; i < tocs.length; i++) {
+			ITopic[] topics = tocs[i].getTopics();
+		    for (int t = 0; t < topics.length; t++) {
+			    assertFalse(scope.inScope(topics[t]));
+		    }
+		}
+	};
+	
+	public void testWSMWithTocContainsNoOtherTocsTopics() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		AdaptableToc toc = mgr.getAdaptableToc(tocs[0].getHref());
+		assertNotNull(toc);
+		wset.setElements(new AdaptableHelpResource[] { toc });
+		mgr.addWorkingSet(wset);
+		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
+		ITopic[] topics = tocs[0].getTopics();
+		for (int t = 0; t < topics.length; t++) {
+			assertTrue(scope.inScope(topics[t]));
+		}
+	};
+	
 	public void testSaveRestoreWSMWithToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -91,20 +152,65 @@ public class WorkingSetManagerTest extends TestCase {
 	
 	public void testSaveRestoreWSMWithAllTocs() {
 		WorkingSetManager mgr = new WorkingSetManager();
-		WorkingSet wset = new WorkingSet("test");
+		createWsetWithAllTocs(mgr, "test");
+		mgr.saveState();
+		WorkingSetManager mgr2 = new WorkingSetManager();
+		WorkingSet[] readWsets = mgr2.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		assertEquals(tocs.length, resources.length);
+	}
+
+	public void testTocInScopeWithAllTocs() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		createWsetWithAllTocs(mgr, "test1");
+		mgr.saveState();
+		WorkingSetScope scope = new WorkingSetScope("test1", mgr, "scope");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		for (int i = 0; i < tocs.length; i++) {
+		    assertTrue(scope.inScope(tocs[i]));
+		}
+	}
+
+	public void testTopLevelTopicsInScopeWithAllTocs() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		createWsetWithAllTocs(mgr, "test1a");
+		WorkingSetScope scope = new WorkingSetScope("test1a", mgr, "scope");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		for (int i = 0; i < tocs.length; i++) {;
+			ITopic[] topics = tocs[i].getTopics();
+			for (int j = 0; j < topics.length; j++) {
+		         assertTrue(scope.inScope(topics[j]));
+			}
+		}
+	}
+	
+	public void testSecondLevelTopicsInScopeWithAllTocs() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		createWsetWithAllTocs(mgr, "test1b");
+		WorkingSetScope scope = new WorkingSetScope("test1b", mgr, "scope");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		for (int i = 0; i < tocs.length; i++) {;
+			ITopic[] topics = tocs[i].getTopics();
+			for (int j = 0; j < topics.length; j++) {
+				ITopic[] subtopics = topics[j].getSubtopics();
+				for (int k = 0; k < subtopics.length; k++) {
+		            assertTrue(scope.inScope(subtopics[k]));
+				}
+			}
+		}
+	}
+
+	private void createWsetWithAllTocs(WorkingSetManager mgr, String name) {
+		WorkingSet wset = new WorkingSet(name);
 		List tocList = new ArrayList();
-		Toc[] tocs = HelpPlugin.getTocManager().getTocs("en");
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 		for (int i = 0; i < tocs.length; i++) {
 			tocList.add(mgr.getAdaptableToc(tocs[i].getHref()));
 		}
 		wset.setElements((AdaptableHelpResource[]) tocList.toArray(new AdaptableToc[0]));
 		mgr.addWorkingSet(wset);
-		mgr.saveState();
-		WorkingSetManager mgr2 = new WorkingSetManager();
-		mgr2.restoreState();WorkingSet[] readWsets = mgr2.getWorkingSets();
-		assertEquals(1, readWsets.length);
-		AdaptableHelpResource[] resources = readWsets[0].getElements();
-		assertEquals(tocs.length, resources.length);
 	};
 
 	public void testWSMWithTopics() {
