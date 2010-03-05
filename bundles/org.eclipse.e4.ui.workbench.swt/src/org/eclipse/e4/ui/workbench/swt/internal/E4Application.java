@@ -31,8 +31,10 @@ import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -263,8 +265,18 @@ public class E4Application implements IApplication {
 							.getLocal(IContextConstants.ACTIVE_CHILD);
 				}
 				Object object = current.get(MPerspective.class.getName());
-				return object == null ? current.get(MWindow.class.getName())
-						: object;
+				if (object == null) {
+					// we need to consider detached windows
+					MUIElement window = (MUIElement) current.get(MWindow.class
+							.getName());
+					MElementContainer<?> parent = window.getParent();
+					while (parent != null && !(parent instanceof MApplication)) {
+						window = parent;
+						parent = parent.getParent();
+					}
+					return window;
+				}
+				return object;
 			}
 		});
 
