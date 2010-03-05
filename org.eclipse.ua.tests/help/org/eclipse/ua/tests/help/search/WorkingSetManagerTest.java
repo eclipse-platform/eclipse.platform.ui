@@ -11,14 +11,19 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.criteria.CriterionResource;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.internal.workingset.WorkingSetManager;
-
-import junit.framework.TestCase;
 
 public class WorkingSetManagerTest extends TestCase {
 	
@@ -82,6 +87,24 @@ public class WorkingSetManagerTest extends TestCase {
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
 		assertTrue(resources[0].equals(toc));
+	};
+	
+	public void testSaveRestoreWSMWithAllTocs() {
+		WorkingSetManager mgr = new WorkingSetManager();
+		WorkingSet wset = new WorkingSet("test");
+		List tocList = new ArrayList();
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs("en");
+		for (int i = 0; i < tocs.length; i++) {
+			tocList.add(mgr.getAdaptableToc(tocs[i].getHref()));
+		}
+		wset.setElements((AdaptableHelpResource[]) tocList.toArray(new AdaptableToc[0]));
+		mgr.addWorkingSet(wset);
+		mgr.saveState();
+		WorkingSetManager mgr2 = new WorkingSetManager();
+		mgr2.restoreState();WorkingSet[] readWsets = mgr2.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		assertEquals(tocs.length, resources.length);
 	};
 
 	public void testWSMWithTopics() {
