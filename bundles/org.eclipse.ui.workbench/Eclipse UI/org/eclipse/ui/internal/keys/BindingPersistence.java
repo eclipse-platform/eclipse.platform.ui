@@ -232,7 +232,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 *         <code>null</code>, but may be empty or point to an undefined
 	 *         scheme.
 	 */
-	static final String getDefaultSchemeId() {
+	public static final String getDefaultSchemeId() {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		return store
 				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);

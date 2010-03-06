@@ -16,8 +16,8 @@ import java.util.HashSet;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.bindings.TriggerSequence;
-import org.eclipse.e4.ui.bindings.internal.BindingServiceImpl.Binding;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 
 /**
  *
@@ -48,7 +48,7 @@ public class CommandSequencesLookupFunction extends ContextFunction {
 			ArrayList<Binding> tmp = (ArrayList<Binding>) current.getLocal(cmdBindingId);
 			if (tmp != null) {
 				for (Binding binding : tmp) {
-					set.add(binding.sequence);
+					set.add(binding.getTriggerSequence());
 				}
 			}
 			current = (IEclipseContext) current.getLocal(IContextConstants.PARENT);

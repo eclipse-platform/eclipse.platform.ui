@@ -12,7 +12,8 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 
 public class BindingLookupTest extends TestCase {
 	private static final String TEST_CAT1 = "test.cat1";
@@ -58,13 +59,13 @@ public class BindingLookupTest extends TestCase {
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = bs.createSequence("CTRL+5 T");
 		bs.activateBinding(seq, cmd);
-		ParameterizedCommand perfectMatch = bs.getPerfectMatch(seq);
-		assertEquals(cmd, perfectMatch);
+		Binding perfectMatch = bs.getPerfectMatch(seq);
+		assertEquals(cmd, perfectMatch.getParameterizedCommand());
 		bs.deactivateBinding(seq, cmd);
 		assertNull(bs.getPerfectMatch(seq));
 
 		bs.activateBinding(seq, cmd);
-		assertEquals(cmd, bs.getPerfectMatch(seq));
+		assertEquals(cmd, bs.getPerfectMatch(seq).getParameterizedCommand());
 	}
 
 	public void testMultipleBindings() throws Exception {
@@ -78,8 +79,8 @@ public class BindingLookupTest extends TestCase {
 		bs.activateBinding(seq, cmd);
 		bs.activateBinding(seq2, cmd);
 
-		assertEquals(cmd, bs.getPerfectMatch(seq));
-		assertEquals(cmd, bs.getPerfectMatch(seq2));
+		assertEquals(cmd, bs.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd, bs.getPerfectMatch(seq2).getParameterizedCommand());
 	}
 
 	public void testLookupChildBinding() throws Exception {
@@ -95,8 +96,8 @@ public class BindingLookupTest extends TestCase {
 		bs1.activateBinding(seq, cmd);
 		EBindingService wBS = (EBindingService) workbenchContext
 				.get(EBindingService.class.getName());
-		assertEquals(cmd, wBS.getPerfectMatch(seq));
-		assertEquals(cmd, bs1.getPerfectMatch(seq));
+		assertEquals(cmd, wBS.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd, bs1.getPerfectMatch(seq).getParameterizedCommand());
 
 		bs1.deactivateBinding(seq, cmd);
 		assertNull(wBS.getPerfectMatch(seq));
@@ -126,9 +127,9 @@ public class BindingLookupTest extends TestCase {
 				.getName());
 		bs2.activateBinding(seq, cmd2);
 
-		assertEquals(cmd1, wBS.getPerfectMatch(seq));
-		assertEquals(cmd1, bs1.getPerfectMatch(seq));
-		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+		assertEquals(cmd1, wBS.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
 	}
 
 	public void testLookupWithDifferentActiveChild() throws Exception {
@@ -154,24 +155,24 @@ public class BindingLookupTest extends TestCase {
 				.getName());
 		bs2.activateBinding(seq, cmd2);
 
-		assertEquals(cmd1, bs1.getPerfectMatch(seq));
-		assertEquals(cmd2, bs2.getPerfectMatch(seq));
-		assertEquals(cmd1, wBS.getPerfectMatch(seq));
+		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd1, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
-		assertEquals(cmd1, bs1.getPerfectMatch(seq));
-		assertEquals(cmd2, bs2.getPerfectMatch(seq));
-		assertEquals(cmd2, wBS.getPerfectMatch(seq));
+		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
-		assertEquals(cmd1, bs1.getPerfectMatch(seq));
-		assertEquals(cmd2, bs2.getPerfectMatch(seq));
-		assertEquals(cmd1, wBS.getPerfectMatch(seq));
+		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd1, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
-		assertEquals(cmd1, bs1.getPerfectMatch(seq));
-		assertEquals(cmd2, bs2.getPerfectMatch(seq));
-		assertEquals(cmd2, wBS.getPerfectMatch(seq));
+		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
+		assertEquals(cmd2, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
 		assertTrue(wBS.isPerfectMatch(seq));
 	}
@@ -361,19 +362,19 @@ public class BindingLookupTest extends TestCase {
 				.getName());
 
 		TriggerSequence seq = bs1.createSequence("CTRL+5 T");
-		bs1.activateBinding(seq, cmd);
+		Binding b1 = bs1.activateBinding(seq, cmd);
 		TriggerSequence sseq = bs1.createSequence("CTRL+5 Y");
-		bs1.activateBinding(sseq, cmd2);
-		HashSet<ParameterizedCommand> commandMatches = new HashSet<ParameterizedCommand>();
-		commandMatches.add(cmd2);
-		commandMatches.add(cmd);
+		Binding b2 = bs1.activateBinding(sseq, cmd2);
+		HashSet<Binding> commandMatches = new HashSet<Binding>();
+		commandMatches.add(b2);
+		commandMatches.add(b1);
 		
 		TriggerSequence partialMatch = bs1.createSequence("CTRL+5");
 		TriggerSequence partialNoMatch = bs1.createSequence("CTRL+8");
 		assertFalse(bs1.isPartialMatch(partialNoMatch));
 		assertTrue(bs1.isPartialMatch(partialMatch));
 		
-		Collection<ParameterizedCommand> matches = bs1.getPartialMatches(partialMatch);
+		Collection<Binding> matches = bs1.getPartialMatches(partialMatch);
 		assertEquals(commandMatches, matches);
 	}
 }

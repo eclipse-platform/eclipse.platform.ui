@@ -15,90 +15,46 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.bindings.Trigger;
-import org.eclipse.e4.ui.bindings.TriggerSequence;
-import org.eclipse.e4.ui.bindings.keys.IKeyLookup;
-import org.eclipse.e4.ui.bindings.keys.KeyLookupFactory;
-import org.eclipse.e4.ui.bindings.keys.KeySequence;
-import org.eclipse.e4.ui.bindings.keys.KeyStroke;
-import org.eclipse.e4.ui.bindings.keys.ParseException;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
 
 /**
  *
  */
 public class BindingServiceImpl implements EBindingService {
+	static HashMap<Binding, String[]> prefixCache = new HashMap<Binding, String[]>();
 
-	static final class Binding {
-		public TriggerSequence sequence;
-		public ParameterizedCommand command;
-		private String[] prefixes;
-		private String bindingId;
-		private String commandId;
-		private int hashCode = -1;
-
-		public Binding(TriggerSequence s, ParameterizedCommand c) {
-			sequence = s;
-			command = c;
-		}
-
-		String[] getPrefixes() {
-			if (prefixes == null) {
-				TriggerSequence[] prefs = sequence.getPrefixes();
-				prefixes = new String[prefs.length - 1];
-				for (int i = 1; i < prefs.length; i++) {
-					prefixes[i - 1] = B_SEQ + prefs[i];
-				}
+	static String[] getPrefixes(Binding b) {
+		String[] prefixes = prefixCache.get(b);
+		if (prefixes == null) {
+			TriggerSequence[] prefs = b.getTriggerSequence().getPrefixes();
+			prefixes = new String[prefs.length - 1];
+			prefixCache.put(b, prefixes);
+			for (int i = 1; i < prefs.length; i++) {
+				prefixes[i - 1] = B_SEQ + prefs[i];
 			}
-			return prefixes;
 		}
+		return prefixes;
+	}
 
-		String getBindingId() {
-			if (bindingId == null) {
-				bindingId = B_ID + sequence.format();
-			}
-			return bindingId;
-		}
+	static String getBindingId(Binding b) {
+		return B_ID + b.getTriggerSequence().format();
+	}
 
-		String getCommandId() {
-			if (commandId == null) {
-				commandId = P_ID + command.serialize();
-			}
-			return commandId;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object o) {
-			if (o == this) {
-				return true;
-			}
-			if (!(o instanceof Binding)) {
-				return false;
-			}
-			Binding b = (Binding) o;
-			return sequence.equals(b.sequence) && command.equals(b.command);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			if (hashCode == -1) {
-				hashCode = sequence.hashCode() * 81 + command.hashCode();
-			}
-			return hashCode;
-		}
+	static String getCommandId(Binding b) {
+		return P_ID + b.getParameterizedCommand().serialize();
 	}
 
 	static final Comparator<Binding> BEST_SEQUENCE = new Comparator<Binding>() {
@@ -106,8 +62,8 @@ public class BindingServiceImpl implements EBindingService {
 			/*
 			 * Check to see which has the least number of triggers in the trigger sequence.
 			 */
-			final Trigger[] bestTriggers = o1.sequence.getTriggers();
-			final Trigger[] currentTriggers = o2.sequence.getTriggers();
+			final Trigger[] bestTriggers = o1.getTriggerSequence().getTriggers();
+			final Trigger[] currentTriggers = o2.getTriggerSequence().getTriggers();
 			int compareTo = bestTriggers.length - currentTriggers.length;
 			if (compareTo != 0) {
 				return compareTo;
@@ -123,7 +79,8 @@ public class BindingServiceImpl implements EBindingService {
 			}
 
 			// If this is still a tie, then just chose the shortest text.
-			return o1.sequence.format().length() - o2.sequence.format().length();
+			return o1.getTriggerSequence().format().length()
+					- o2.getTriggerSequence().format().length();
 		}
 
 		private final int countStrokes(final Trigger[] triggers) {
@@ -171,18 +128,49 @@ public class BindingServiceImpl implements EBindingService {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.e4.ui.bindings.EBindingService#createBinding(org.eclipse.jface.bindings.
+	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand, java.lang.String,
+	 * java.lang.String)
+	 */
+	public Binding createBinding(TriggerSequence sequence, ParameterizedCommand command,
+			String schemeId, String contextId) {
+		return new KeyBinding((KeySequence) sequence, command,
+				"org.eclipse.ui.defaultAcceleratorConfiguration", "org.eclipse.ui.context.window", //$NON-NLS-1$ //$NON-NLS-2$
+				null, null, null, Binding.SYSTEM);
+	}
+
+	private Binding createDefaultBinding(TriggerSequence sequence, ParameterizedCommand command) {
+		return createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
+				"org.eclipse.ui.context.window"); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#activateBinding(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand)
 	 */
-	public void activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
-		Binding binding = new Binding(sequence, command);
-		context.set(binding.getBindingId(), binding);
+	public Binding activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
+		Binding binding = createDefaultBinding(sequence, command);
 
+		activateBinding(binding);
+		return binding;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.bindings.EBindingService#activateBinding(org.eclipse.jface.bindings.Binding
+	 * )
+	 */
+	public void activateBinding(Binding binding) {
+		context.set(getBindingId(binding), binding);
 		// add mapping from command to keys
-		addLocalArray(binding.getCommandId(), binding);
+		addLocalArray(getCommandId(binding), binding);
 
 		// deal with partial bindings
-		String[] prefixes = binding.getPrefixes();
+		String[] prefixes = getPrefixes(binding);
 		for (int i = 0; i < prefixes.length; i++) {
 			addLocalArray(prefixes[i], binding);
 		}
@@ -215,15 +203,29 @@ public class BindingServiceImpl implements EBindingService {
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#deactivateBinding(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand)
 	 */
-	public void deactivateBinding(TriggerSequence sequence, ParameterizedCommand command) {
-		Binding binding = new Binding(sequence, command);
-		context.remove(binding.getBindingId());
+	public Binding deactivateBinding(TriggerSequence sequence, ParameterizedCommand command) {
+		Binding binding = createDefaultBinding(sequence, command);
+		Binding oldBinding = (Binding) context.get(getBindingId(binding));
+		deactivateBinding(binding);
+
+		return oldBinding;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.bindings.EBindingService#deactivateBinding(org.eclipse.jface.bindings.Binding
+	 * )
+	 */
+	public void deactivateBinding(Binding binding) {
+		context.remove(getBindingId(binding));
 
 		// remove the command to trigger bindings
-		removeLocalArray(binding.getCommandId(), binding);
+		removeLocalArray(getCommandId(binding), binding);
 
 		// deal with removing the partial binding
-		String[] prefixes = binding.getPrefixes();
+		String[] prefixes = getPrefixes(binding);
 		for (int i = 0; i < prefixes.length; i++) {
 			removeLocalArray(prefixes[i], binding);
 		}
@@ -249,7 +251,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getConflictsFor(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence)
 	 */
-	public Collection<ParameterizedCommand> getConflictsFor(TriggerSequence sequence) {
+	public Collection<Binding> getConflictsFor(TriggerSequence sequence) {
 		return null;
 	}
 
@@ -259,9 +261,8 @@ public class BindingServiceImpl implements EBindingService {
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getPerfectMatch(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence)
 	 */
-	public ParameterizedCommand getPerfectMatch(TriggerSequence trigger) {
-		Binding binding = (Binding) context.get(BINDING_LOOKUP, lookupBinding(trigger.format()));
-		return binding == null ? null : binding.command;
+	public Binding getPerfectMatch(TriggerSequence trigger) {
+		return (Binding) context.get(BINDING_LOOKUP, lookupBinding(trigger.format()));
 	}
 
 	/*
@@ -285,7 +286,7 @@ public class BindingServiceImpl implements EBindingService {
 		ArrayList<Binding> tmp = (ArrayList<Binding>) context.get(CMD_LOOKUP,
 				lookupCommand(cmdString));
 		if (tmp != null && !tmp.isEmpty()) {
-			return tmp.get(0).sequence;
+			return tmp.get(0).getTriggerSequence();
 		}
 		return null;
 	}
@@ -317,9 +318,9 @@ public class BindingServiceImpl implements EBindingService {
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getPartialMatches(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence)
 	 */
-	public Collection<ParameterizedCommand> getPartialMatches(TriggerSequence sequence) {
-		return (Collection<ParameterizedCommand>) context.get(LOOKUP_PARTIAL_MATCH,
-				lookupSequence(sequence.format()));
+	public Collection<Binding> getPartialMatches(TriggerSequence sequence) {
+		return (Collection<Binding>) context.get(LOOKUP_PARTIAL_MATCH, lookupSequence(sequence
+				.format()));
 	}
 
 	/**

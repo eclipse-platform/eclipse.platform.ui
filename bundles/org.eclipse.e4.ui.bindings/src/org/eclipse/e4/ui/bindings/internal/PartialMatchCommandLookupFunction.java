@@ -13,11 +13,10 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.bindings.internal.BindingServiceImpl.Binding;
+import org.eclipse.jface.bindings.Binding;
 
 /**
  *
@@ -44,12 +43,12 @@ public class PartialMatchCommandLookupFunction extends ContextFunction {
 			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		}
 
-		HashSet<ParameterizedCommand> set = new HashSet<ParameterizedCommand>();
+		HashSet<Binding> set = new HashSet<Binding>();
 		while (current != null) {
 			ArrayList<Binding> tmp = (ArrayList<Binding>) current.getLocal(bindingPrefixId);
 			if (tmp != null) {
 				for (Binding binding : tmp) {
-					set.add(binding.command);
+					set.add(binding);
 				}
 			}
 			current = (IEclipseContext) current.getLocal(IContextConstants.PARENT);

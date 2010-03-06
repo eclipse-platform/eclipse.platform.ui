@@ -1743,6 +1743,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 				bindingManager = new BindingManager(contextManager, commandManager);
+				serviceLocator.registerService(BindingManager.class, bindingManager);
 				try {
 					bindingService[0] = (IBindingService) ContextInjectionFactory.make(
 							BindingService.class, e4Context);

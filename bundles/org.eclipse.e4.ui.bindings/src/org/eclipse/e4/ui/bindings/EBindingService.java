@@ -2,17 +2,26 @@ package org.eclipse.e4.ui.bindings;
 
 import java.util.Collection;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 
 public interface EBindingService {
-	void activateBinding(TriggerSequence sequence, ParameterizedCommand command);
+	Binding createBinding(TriggerSequence sequence, ParameterizedCommand command, String schemeId,
+			String contextId);
 
-	void deactivateBinding(TriggerSequence sequence, ParameterizedCommand command);
+	Binding activateBinding(TriggerSequence sequence, ParameterizedCommand command);
+
+	void activateBinding(Binding binding);
+
+	Binding deactivateBinding(TriggerSequence sequence, ParameterizedCommand command);
+
+	void deactivateBinding(Binding binding);
 
 	TriggerSequence createSequence(String sequence);
 
-	Collection<ParameterizedCommand> getConflictsFor(TriggerSequence sequence);
+	Collection<Binding> getConflictsFor(TriggerSequence sequence);
 
-	ParameterizedCommand getPerfectMatch(TriggerSequence trigger);
+	Binding getPerfectMatch(TriggerSequence trigger);
 
 	boolean isPartialMatch(TriggerSequence keySequence);
 
@@ -22,5 +31,5 @@ public interface EBindingService {
 
 	Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command);
 
-	Collection<ParameterizedCommand> getPartialMatches(TriggerSequence sequence);
+	Collection<Binding> getPartialMatches(TriggerSequence sequence);
 }

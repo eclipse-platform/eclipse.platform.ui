@@ -494,6 +494,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				try {
 					KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
 							.make(KeyBindingDispatcher.class, appContext);
+					appContext.set(KeyBindingDispatcher.class.getName(),
+							dispatcher);
 					org.eclipse.swt.widgets.Listener listener = dispatcher
 							.getKeyDownFilter();
 					display.addFilter(SWT.KeyDown, listener);

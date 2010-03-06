@@ -13,17 +13,20 @@ package org.eclipse.ui.internal.keys;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.util.Util;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -46,6 +49,13 @@ public final class BindingService implements IBindingService {
 
 	@Inject
 	private ECommandService commandService;
+
+	@Inject
+	private BindingManager manager;
+
+	@Inject
+	@Optional
+	private KeyBindingDispatcher dispatcher;
 
 	/*
 	 * (non-Javadoc)
@@ -89,9 +99,8 @@ public final class BindingService implements IBindingService {
 	 * core.commands.ParameterizedCommand)
 	 */
 	public TriggerSequence[] getActiveBindingsFor(ParameterizedCommand parameterizedCommand) {
-		// TODO compat getActiveBindingsFor
-		E4Util.unsupported("getActiveBindingsFor"); //$NON-NLS-1$
-		return new TriggerSequence[0];
+		Collection<TriggerSequence> seq = bindingService.getSequencesFor(parameterizedCommand);
+		return seq.toArray(new TriggerSequence[seq.size()]);
 	}
 
 	/*
@@ -102,9 +111,7 @@ public final class BindingService implements IBindingService {
 	 * )
 	 */
 	public TriggerSequence[] getActiveBindingsFor(String commandId) {
-		// TODO compat getActiveBindingsFor
-		E4Util.unsupported("getActiveBindingsFor"); //$NON-NLS-1$
-		return new TriggerSequence[0];
+		return getActiveBindingsFor(commandService.createCommand(commandId, null));
 	}
 
 	/*
@@ -113,9 +120,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getActiveScheme()
 	 */
 	public Scheme getActiveScheme() {
-		// TODO compat getActiveScheme
-		E4Util.unsupported("getActiveScheme"); //$NON-NLS-1$
-		return null;
+		return manager.getActiveScheme();
 	}
 
 	/*
@@ -152,13 +157,8 @@ public final class BindingService implements IBindingService {
 	 * java.lang.String)
 	 */
 	public String getBestActiveBindingFormattedFor(String commandId) {
-		Command command = commandService.getCommand(commandId);
-		if (command == null) {
-			return null;
-		}
-
-		org.eclipse.e4.ui.bindings.TriggerSequence sequence = bindingService
-				.getBestSequenceFor(new ParameterizedCommand(command, null));
+		TriggerSequence sequence = bindingService.getBestSequenceFor(commandService.createCommand(
+				commandId, null));
 		return sequence == null ? null : sequence.format();
 	}
 
@@ -168,9 +168,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getBindings()
 	 */
 	public Binding[] getBindings() {
-		// TODO compat getBindings
-		E4Util.unsupported("getBindings"); //$NON-NLS-1$
-		return null;
+		return manager.getBindings();
 	}
 
 	/*
@@ -179,9 +177,10 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getBuffer()
 	 */
 	public TriggerSequence getBuffer() {
-		// TODO compat getBuffer
-		E4Util.unsupported("getBuffer"); //$NON-NLS-1$
-		return null;
+		if (dispatcher == null) {
+			return KeySequence.getInstance();
+		}
+		return dispatcher.getBuffer();
 	}
 
 	/*
@@ -190,9 +189,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getDefaultSchemeId()
 	 */
 	public String getDefaultSchemeId() {
-		// TODO compat getDefaultSchemeId
-		E4Util.unsupported("getDefaultSchemeId"); //$NON-NLS-1$
-		return null;
+		return BindingPersistence.getDefaultSchemeId();
 	}
 
 	/*
@@ -201,9 +198,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getDefinedSchemes()
 	 */
 	public Scheme[] getDefinedSchemes() {
-		// TODO compat getDefinedSchemes
-		E4Util.unsupported("getDefinedSchemes"); //$NON-NLS-1$
-		return null;
+		return manager.getDefinedSchemes();
 	}
 
 	/*
@@ -212,9 +207,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getLocale()
 	 */
 	public String getLocale() {
-		// TODO compat getLocale
-		E4Util.unsupported("getLocale"); //$NON-NLS-1$
-		return Locale.getDefault().toString();
+		return manager.getLocale();
 	}
 
 	/*
@@ -225,9 +218,28 @@ public final class BindingService implements IBindingService {
 	 * .bindings.TriggerSequence)
 	 */
 	public Map getPartialMatches(TriggerSequence trigger) {
-		// TODO compat getPartialMatches
-		E4Util.unsupported("getPartialMatches"); //$NON-NLS-1$
-		return Collections.EMPTY_MAP;
+		final TriggerSequence[] prefixes = trigger.getPrefixes();
+		final int prefixesLength = prefixes.length;
+		if (prefixesLength == 0) {
+			return Collections.EMPTY_MAP;
+		}
+		
+		Collection<Binding> partialMatches = bindingService.getPartialMatches(trigger);
+		Map<TriggerSequence,Object> prefixTable = new HashMap<TriggerSequence, Object>();
+		for (Binding binding : partialMatches) {
+			for (int i = 0; i < prefixesLength; i++) {
+				final TriggerSequence prefix = prefixes[i];
+				final Object value = prefixTable.get(prefix);
+				if ((prefixTable.containsKey(prefix)) && (value instanceof Map)) {
+					((Map) value).put(prefixTable, binding);
+				} else {
+					final Map map = new HashMap();
+					prefixTable.put(prefix, map);
+					map.put(prefixTable, binding);
+				}
+			}
+		}
+		return prefixTable;
 	}
 
 	/*
@@ -238,9 +250,7 @@ public final class BindingService implements IBindingService {
 	 * .bindings.TriggerSequence)
 	 */
 	public Binding getPerfectMatch(TriggerSequence trigger) {
-		// TODO compat getPerfectMatch
-		E4Util.unsupported("getPerfectMatch"); //$NON-NLS-1$
-		return null;
+		return bindingService.getPerfectMatch(trigger);
 	}
 
 	/*
@@ -258,9 +268,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#getScheme(java.lang.String)
 	 */
 	public Scheme getScheme(String schemeId) {
-		// TODO compat getScheme
-		E4Util.unsupported("getScheme"); //$NON-NLS-1$
-		return null;
+		return manager.getScheme(schemeId);
 	}
 
 	/*
@@ -269,9 +277,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#isKeyFilterEnabled()
 	 */
 	public boolean isKeyFilterEnabled() {
-		// TODO compat isKeyFilterEnabled
-		E4Util.unsupported("isKeyFilterEnabled"); //$NON-NLS-1$
-		return false;
+		return dispatcher == null ? false : dispatcher.getKeyDownFilter().isEnabled();
 	}
 
 	/*
@@ -282,9 +288,7 @@ public final class BindingService implements IBindingService {
 	 * bindings.TriggerSequence)
 	 */
 	public boolean isPartialMatch(TriggerSequence trigger) {
-		// TODO compat isPartialMatch
-		E4Util.unsupported("isPartialMatch"); //$NON-NLS-1$
-		return false;
+		return bindingService.isPartialMatch(trigger);
 	}
 
 	/*
@@ -295,9 +299,7 @@ public final class BindingService implements IBindingService {
 	 * bindings.TriggerSequence)
 	 */
 	public boolean isPerfectMatch(TriggerSequence trigger) {
-		// TODO compat isPerfectMatch
-		E4Util.unsupported("isPerfectMatch"); //$NON-NLS-1$
-		return false;
+		return bindingService.isPerfectMatch(trigger);
 	}
 
 	/*
@@ -318,8 +320,8 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
-		// TODO compat readRegistryAndPreferences
-		E4Util.unsupported("BindingService#readRegistryAndPreferences"); //$NON-NLS-1$
+		BindingPersistence reader = new BindingPersistence(manager, commandService);
+		reader.reRead();
 	}
 
 	/*
@@ -340,8 +342,9 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#setKeyFilterEnabled(boolean)
 	 */
 	public void setKeyFilterEnabled(boolean enabled) {
-		// TODO compat setKeyFilterEnabled
-		E4Util.unsupported("setKeyFilterEnabled"); //$NON-NLS-1$
+		if (dispatcher != null) {
+			dispatcher.getKeyDownFilter().setEnabled(enabled);
+		}
 	}
 
 	/*
@@ -352,9 +355,7 @@ public final class BindingService implements IBindingService {
 	 * .bindings.TriggerSequence)
 	 */
 	public Collection getConflictsFor(TriggerSequence sequence) {
-		// TODO compat getConflictsFor
-		E4Util.unsupported("getConflictsFor"); //$NON-NLS-1$
-		return null;
+		return bindingService.getConflictsFor(sequence);
 	}
 
 }

@@ -22,6 +22,11 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
@@ -370,7 +375,8 @@ public class KeyBindingDispatcher {
 	 * @return The perfectly matching command; <code>null</code> if no command matches.
 	 */
 	private ParameterizedCommand getPerfectMatch(KeySequence keySequence) {
-		return getBindingService().getPerfectMatch(keySequence);
+		Binding perfectMatch = getBindingService().getPerfectMatch(keySequence);
+		return perfectMatch == null ? null : perfectMatch.getParameterizedCommand();
 	}
 
 	/**
@@ -516,6 +522,10 @@ public class KeyBindingDispatcher {
 
 	private void resetState(boolean b) {
 		state = KeySequence.getInstance();
+	}
+
+	final public KeySequence getBuffer() {
+		return state;
 	}
 
 	@Inject
