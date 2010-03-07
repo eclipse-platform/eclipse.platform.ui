@@ -134,6 +134,18 @@ When an extension is deactivated by the user, the content and label providers ar
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="appearsBefore" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the ID of the navigator content that this navigator content appears before.  This navigator content will be processed before the specified navigator content is processed.
+&lt;br/&gt;&lt;br/&gt;
+The overall order in which the navigator content extensions are processed is calculated by first sorting all of the NCEs by priority, and then rearranging them according to the &lt;b&gt;appearsBefore&lt;/b&gt; relationship. Once the overall order is determined, a unique sequence number is assigned to each navigator content descriptior which is available through the API.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.navigator.navigatorContent/navigatorContent/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="contentProvider" type="string">
             <annotation>
                <documentation>

@@ -96,7 +96,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 		if (element instanceof IResource) {
 			return getColorName() + ((IResource) element).getName();
 		}
-		return null;
+		return element.toString();
 	}
 
 	public String getDescription(Object anElement) {

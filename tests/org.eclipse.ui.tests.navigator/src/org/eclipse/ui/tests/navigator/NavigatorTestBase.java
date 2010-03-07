@@ -74,6 +74,12 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_WITH = "org.eclipse.ui.tests.navigator.testContentWith";
 	public static final String TEST_CONTENT_NO_CHILDREN = "org.eclipse.ui.tests.navigator.testContentNoChildren";
 
+	public static final String TEST_CONTENT_RESOURCE_UNSORTED = "org.eclipse.ui.tests.navigator.resourceContent.unsorted";
+
+	public static final String TEST_SIMPLE_CHILDREN1 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent1";
+	public static final String TEST_SIMPLE_CHILDREN2 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent2";
+	public static final String TEST_SIMPLE_CHILDREN3 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent3";
+	
 	public static final String TEST_CONTENT_M12_VIEW = "org.eclipse.ui.tests.navigator.M12View";
 	public static final String TEST_CONTENT_M12_M1_CONTENT = "org.eclipse.ui.tests.navigator.m12.M1";
 	public static final String TEST_CONTENT_M12_M1_CONTENT_FIRST_CLASS = "org.eclipse.ui.tests.navigator.m12.M1FirstClass";

@@ -36,7 +36,7 @@ import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
-import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
+import org.eclipse.ui.internal.navigator.extensions.ExtensionSequenceNumberComparator;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -436,7 +436,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		// TODO optimize this
 		if (saveablesProviders == null) {
 			inactivePluginsWithSaveablesProviders = new HashMap();
-			saveablesProviderMap = new TreeMap(ExtensionPriorityComparator.INSTANCE);
+			saveablesProviderMap = new TreeMap(ExtensionSequenceNumberComparator.INSTANCE);
 			INavigatorContentDescriptor[] descriptors = contentService
 					.getActiveDescriptorsWithSaveables();
 			List result = new ArrayList();

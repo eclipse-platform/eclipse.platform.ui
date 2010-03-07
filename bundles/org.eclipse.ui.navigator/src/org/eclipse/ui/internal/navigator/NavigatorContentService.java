@@ -44,7 +44,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
-import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
+import org.eclipse.ui.internal.navigator.extensions.ExtensionSequenceNumberComparator;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
@@ -538,9 +538,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			boolean toRespectViewerRoots) {
 
 		SortedSet rootExtensions = new TreeSet(
-				ExtensionPriorityComparator.INSTANCE);
+				ExtensionSequenceNumberComparator.INSTANCE);
 		if (toRespectViewerRoots
-				&& viewerDescriptor.hasOverriddenRootExtensions()) {
+				/*&& viewerDescriptor.hasOverriddenRootExtensions()*/) {
 
 			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
@@ -576,7 +576,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Set findOverrideableContentExtensionsForPossibleChild(
 			Object anElement) {
 		Set overrideableExtensions = new TreeSet(
-				ExtensionPriorityComparator.INSTANCE);
+				ExtensionSequenceNumberComparator.INSTANCE);
 		Set descriptors = findDescriptorsWithPossibleChild(anElement, false);
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) iter
@@ -776,7 +776,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		// Here we use the cache, since objects are inserted into the
 		// cache in response to the trigger point
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
-		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+		Set result = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
 		if (descriptor != null) {
 			result.add(descriptor);
 		}
@@ -816,7 +816,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Set findDescriptorsWithPossibleChild(Object anElement,
 			boolean toComputeOverrides) {
 		// Don't use the cache which is only used for triggerPoints
-		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+		Set result = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
 				.findDescriptorsForPossibleChild(anElement, assistant,
 						toComputeOverrides));
@@ -1196,7 +1196,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (theDescriptors.size() == 0) {
 			return Collections.EMPTY_SET;
 		}
-		Set resultInstances = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+		Set resultInstances = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
 		for (Iterator descriptorIter = theDescriptors.iterator(); descriptorIter
 				.hasNext();) {
 			NavigatorContentExtension extension = getExtension(

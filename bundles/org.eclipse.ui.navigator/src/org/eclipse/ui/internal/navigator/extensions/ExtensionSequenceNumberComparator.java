@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,17 +20,17 @@ import org.eclipse.ui.navigator.INavigatorContentExtension;
  * @since 3.2
  * 
  */
-public class ExtensionPriorityComparator implements Comparator {
+public class ExtensionSequenceNumberComparator implements Comparator {
 
 	/**
 	 * The initialized singleton instance.
 	 */
-	public static final ExtensionPriorityComparator INSTANCE = new ExtensionPriorityComparator(true);
+	public static final ExtensionSequenceNumberComparator INSTANCE = new ExtensionSequenceNumberComparator(true);
 
 	/**
 	 * The initialized singleton instance.
 	 */
-	public static final ExtensionPriorityComparator DESCENDING = new ExtensionPriorityComparator(false);
+	public static final ExtensionSequenceNumberComparator DESCENDING = new ExtensionSequenceNumberComparator(false);
 	
 	private final int sortAscending;
 	
@@ -41,7 +41,7 @@ public class ExtensionPriorityComparator implements Comparator {
 	 *            <code>true</code> for ascending sort order or
 	 *            <code>false</code> for descending sort order.
 	 */
-	public ExtensionPriorityComparator(boolean toSortAscending) {
+	public ExtensionSequenceNumberComparator(boolean toSortAscending) {
 		sortAscending = toSortAscending ? 1 : -1; 
 	}
 
@@ -57,25 +57,25 @@ public class ExtensionPriorityComparator implements Comparator {
 
 		if (o1 instanceof INavigatorContentDescriptor) {
 			lvalue = (INavigatorContentDescriptor) o1;
-		} else if (o1 instanceof INavigatorContentExtension) {
-			lvalue = ((INavigatorContentExtension) o1).getDescriptor();
+		} else if (o1 instanceof NavigatorContentExtension) {
+			lvalue = ((NavigatorContentExtension) o1).getDescriptor();
 		}
 
 		if (o2 instanceof INavigatorContentDescriptor) {
 			rvalue = (INavigatorContentDescriptor) o2;
 		} else if (o2 instanceof INavigatorContentExtension) {
-			rvalue = ((INavigatorContentExtension) o2).getDescriptor();
+			rvalue = ((NavigatorContentExtension) o2).getDescriptor();
 		}
 
 		if (lvalue == null || rvalue == null) {
 			return  -1 * sortAscending;
 		}
 
-		int c = lvalue.getPriority() - rvalue.getPriority();
+		int c = lvalue.getSequenceNumber() - rvalue.getSequenceNumber();
 		if (c != 0) {
 			return c * sortAscending;
 		}
-		return lvalue.getId().compareTo(rvalue.getId()) * sortAscending;
+		return 0;
 
 	}
 

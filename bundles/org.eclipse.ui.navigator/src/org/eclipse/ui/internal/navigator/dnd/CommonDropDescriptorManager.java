@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
+import org.eclipse.ui.internal.navigator.extensions.ExtensionSequenceNumberComparator;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -40,7 +40,7 @@ public class CommonDropDescriptorManager {
 	 * A map of (INavigatorContentDescriptor,
 	 * CommonDropAdapterDescriptor)-pairs.
 	 */
-	private final Map dropDescriptors = new TreeMap(ExtensionPriorityComparator.INSTANCE);
+	private final Map dropDescriptors = new TreeMap(ExtensionSequenceNumberComparator.INSTANCE);
 
 	/**
 	 * 

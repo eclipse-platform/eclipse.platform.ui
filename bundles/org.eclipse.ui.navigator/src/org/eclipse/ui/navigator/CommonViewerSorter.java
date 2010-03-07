@@ -74,7 +74,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			return 0;
 
 		INavigatorContentDescriptor source = getSource(element);
-		return source != null ? source.getPriority() : Priority.NORMAL_PRIORITY_VALUE;
+		return source != null ? source.getSequenceNumber() : Priority.NORMAL_PRIORITY_VALUE;
 	}
 
 	private void logMissingExtension(Object parent, Object object) {
@@ -104,43 +104,38 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			return -1;
 		}
 
-		// shortcut if contributed by same source
-		if(sourceOfLvalue == sourceOfRvalue) {
-			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
-			if (sorter != null) {
-				return sorter.compare(viewer, e1, e2);
-			}
-		} 
-
-		boolean flags[] = new boolean[4];
-		flags[0] = sourceOfLvalue.isTriggerPoint(e1);
-		flags[1] = sourceOfLvalue.isTriggerPoint(e2);
-		flags[2] = sourceOfRvalue.isTriggerPoint(e1);
-		flags[3] = sourceOfRvalue.isTriggerPoint(e2);
-		
-		int whoknows  = 0;		 
-		whoknows  = whoknows  | (flags[0] & flags[1] ? LEFT_UNDERSTANDS : 0); 
-		whoknows  = whoknows  | (flags[2] & flags[3] ? RIGHT_UNDERSTANDS : 0); 
-		
-
 		ViewerSorter sorter = null;
-		
-		switch(whoknows) {
-			case BOTH_UNDERSTAND: 
-				sorter = sourceOfLvalue.getPriority() > sourceOfRvalue.getPriority() ? 
-						sorterService.findSorter(sourceOfLvalue, parent, e1, e2) : 
-						sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
+
+		// shortcut if contributed by same source
+		if (sourceOfLvalue == sourceOfRvalue) {
+			sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
+		} else {
+
+			boolean flags[] = new boolean[4];
+			flags[0] = sourceOfLvalue.isTriggerPoint(e1);
+			flags[1] = sourceOfLvalue.isTriggerPoint(e2);
+			flags[2] = sourceOfRvalue.isTriggerPoint(e1);
+			flags[3] = sourceOfRvalue.isTriggerPoint(e2);
+
+			int whoknows = 0;
+			whoknows = whoknows | (flags[0] & flags[1] ? LEFT_UNDERSTANDS : 0);
+			whoknows = whoknows | (flags[2] & flags[3] ? RIGHT_UNDERSTANDS : 0);
+
+			switch (whoknows) {
+			case BOTH_UNDERSTAND:
+				sorter = sourceOfLvalue.getSequenceNumber() > sourceOfRvalue.getSequenceNumber() ? sorterService
+						.findSorter(sourceOfLvalue, parent, e1, e2)
+						: sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
 				break;
-			case LEFT_UNDERSTANDS: 
-				sorter =  sorterService.findSorter(sourceOfLvalue,
-					parent, e1, e2) ;
-					break;
-			case RIGHT_UNDERSTANDS: 
-				sorter =  sorterService.findSorter(sourceOfRvalue,
-					parent, e1, e2) ;
-					break;
+			case LEFT_UNDERSTANDS:
+				sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
+				break;
+			case RIGHT_UNDERSTANDS:
+				sorter = sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
+				break;
+			}
 		}
-		 
+
 		if (sorter != null) {
 			return sorter.compare(viewer, e1, e2);
 		}

@@ -56,7 +56,28 @@ public interface INavigatorContentDescriptor {
 	 *         if no priority was specified.
 	 */
 	int getPriority();
-
+	
+	/**
+	 * Returns the extension that this extension must appear before.
+	 * 
+	 * @return The value specified by the <i>appearsBefore</i> attribute of the
+	 *         &lt;navigatorContent/&gt; element.
+	 *         
+	 * @since 3.5        
+	 */
+	public String getAppearsBeforeId();
+	
+	/**
+	 * Returns the unique sequence number of this extension.  This is calculated based on
+	 * the priority and the appears before and represents the order the extension will appear
+	 * relative to the other extensions
+	 * 
+	 * @return The sequence number of the extension
+	 *         
+	 * @since 3.5        
+	 */
+	public int getSequenceNumber();
+	
 	/**
 	 * The enabledByDefault attribute specifies whether an extension should be
 	 * activated in the context of a viewer automatically. Users may override

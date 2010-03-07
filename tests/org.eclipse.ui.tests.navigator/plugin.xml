@@ -222,7 +222,57 @@
       	 </actionProvider>
 
       </navigatorContent>
+
+
+      <navigatorContent
+            name="Unsorted Resources"
+            priority="low"
+            icon="$nl$/icons/full/eview16/resource_persp.gif"
+            activeByDefault="true"
+			            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"			
+            id="org.eclipse.ui.tests.navigator.resourceContent.unsorted">         
+         <enablement>
+		         <or>         
+		            <adapt type="org.eclipse.core.resources.IProject" /> 
+		            <instanceof 
+		                  	value="org.eclipse.core.resources.IResource" /> 
+		         </or>
+         </enablement>
+	  </navigatorContent>
       
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testSimpleChildrenContent1"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider1"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Simple Children 1">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>            
+      </navigatorContent>
+
+      <navigatorContent
+            appearsBefore="org.eclipse.ui.tests.navigator.testSimpleChildrenContent1"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider2"
+            id="org.eclipse.ui.tests.navigator.testSimpleChildrenContent2"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan"
+            name="Test Simple Children 2">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>            
+      </navigatorContent>
+
+      <navigatorContent
+            appearsBefore="org.eclipse.ui.tests.navigator.testSimpleChildrenContent2"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider3"
+            id="org.eclipse.ui.tests.navigator.testSimpleChildrenContent3"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderPlainRed"
+            name="Test Simple Children 3">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>            
+      </navigatorContent>
+
       <navigatorContent
             id="org.eclipse.ui.tests.navigator.testContent2"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"

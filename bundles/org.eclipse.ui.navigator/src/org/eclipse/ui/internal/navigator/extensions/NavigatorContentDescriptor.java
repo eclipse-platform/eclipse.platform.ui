@@ -63,6 +63,14 @@ public final class NavigatorContentDescriptor implements
 
 	private int priority = Priority.NORMAL_PRIORITY_VALUE;
 
+	/**
+	 * This is calculated based on the priority and appearsBeforeId when all of the descriptors
+	 * are first loaded. This is what's used to sort on after that.
+	 */
+	private int sequenceNumber;
+	
+	private String appearsBeforeId;
+
 	private Expression enablement;
 
 	private Expression possibleChildren;
@@ -134,6 +142,28 @@ public final class NavigatorContentDescriptor implements
 		return priority;
 	}
 
+	
+	/**
+	 * @return the sequence number
+	 */
+	public int getSequenceNumber() {
+		return sequenceNumber;
+	}
+
+	
+	void setSequenceNumber(int num) {
+		sequenceNumber = num;
+	}
+	
+	/**
+	 * 
+	 * @return The value specified by the <i>appearsBefore</i> attribute of the
+	 *         &lt;navigatorContent/&gt; element.
+	 */
+	public String getAppearsBeforeId() {
+		return appearsBeforeId;
+	}
+	
 	/**
 	 * Parses the configuration element.
 	 * 
@@ -163,6 +193,7 @@ public final class NavigatorContentDescriptor implements
 		providesSaveables = (providesSaveablesString != null && providesSaveablesString
 				.length() > 0) ? Boolean.valueOf(providesSaveablesString)
 						.booleanValue() : false;
+		appearsBeforeId = configElement.getAttribute(ATT_APPEARS_BEFORE);
 
 		if (priorityString != null) {
 			try {
@@ -173,6 +204,11 @@ public final class NavigatorContentDescriptor implements
 				priority = Priority.NORMAL_PRIORITY_VALUE;
 			}
 		}
+		
+		// We start with this because the sort ExtensionPriorityComparator works 
+		// from the sequenceNumber
+		sequenceNumber = priority;
+		
 		if (id == null) {
 			throw new WorkbenchException(NLS.bind(
 					CommonNavigatorMessages.Attribute_Missing_Warning,
@@ -423,7 +459,7 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public Set getOverriddingExtensions() {
 		if (overridingExtensions == null) {
-			overridingExtensions = new TreeSet(ExtensionPriorityComparator.DESCENDING);
+			overridingExtensions = new TreeSet(ExtensionSequenceNumberComparator.DESCENDING);
 		}
 		return overridingExtensions;
 	}
@@ -453,7 +489,7 @@ public final class NavigatorContentDescriptor implements
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "Content[" + id + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+		return "Content[" + id  + "(" + sequenceNumber + ") " + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	
 	/* (non-Javadoc)

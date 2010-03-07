@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -133,7 +135,7 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[allDescriptors
 				.size()];
 		finalDescriptors = (NavigatorContentDescriptor[]) allDescriptors.values().toArray(finalDescriptors);
-		Arrays.sort(finalDescriptors, ExtensionPriorityComparator.INSTANCE);
+		Arrays.sort(finalDescriptors, ExtensionSequenceNumberComparator.INSTANCE);
 		return finalDescriptors;
 	}
 
@@ -145,7 +147,7 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[saveablesProviderDescriptors
 				.size()];
 		saveablesProviderDescriptors.toArray(finalDescriptors);
-		Arrays.sort(finalDescriptors, ExtensionPriorityComparator.INSTANCE);
+		Arrays.sort(finalDescriptors, ExtensionSequenceNumberComparator.INSTANCE);
 		return finalDescriptors;
 	}
 
@@ -195,7 +197,7 @@ public class NavigatorContentDescriptorManager {
 		EvaluationCache cache = getEvaluationCache(
 				cachedEvaluations, aVisibilityAssistant);
 
-		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+		Set descriptors = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
 		NavigatorContentDescriptor[] cachedDescriptors = null;
 		if ((cachedDescriptors = cache.getDescriptors(anElement)) != null) {
 			descriptors.addAll(Arrays.asList(cachedDescriptors));
@@ -256,7 +258,7 @@ public class NavigatorContentDescriptorManager {
 
 				boolean isOverridden;
 
-				Set overridingDescriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+				Set overridingDescriptors = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
 				isOverridden = addDescriptorsConsideringOverrides(anElement, descriptor.getOverriddingExtensions(),
 						aVisibilityAssistant, overridingDescriptors, possibleChild);
 
@@ -426,6 +428,48 @@ public class NavigatorContentDescriptorManager {
 			}
 		}
 	}
+	
+	private int findId(List list, String id) {
+		for (int i = 0, len = list.size(); i < len; i++) {
+			NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+			if (desc.getId().equals(id))
+				return i;
+		}
+		throw new RuntimeException("Can't find id: " + id); //$NON-NLS-1$
+	}
+	
+	private void computeSequenceNumbers() {
+		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
+
+		LinkedList list = new LinkedList();
+		for (int i = 0; i < descs.length; i++) {
+			list.add(descs[i]);
+		}
+		
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			for (int i = 0, len = list.size(); i < len; i++) {
+				NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+				if (desc.getAppearsBeforeId() != null) {
+					int beforeInd = findId(list, desc.getAppearsBeforeId());
+					if (beforeInd < i) {
+						list.add(beforeInd, desc);
+						list.remove(i + 1);
+						changed = true;
+					}
+				}
+			}
+		}
+		
+		for (int i = 0, len = list.size(); i < len; i++) {
+			NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+			desc.setSequenceNumber(i);
+			if (Policy.DEBUG_EXTENSION_SETUP) {
+				System.out.println("Descriptors by sequence: " + desc); //$NON-NLS-1$
+			}
+		}
+	}
 
 	private ImageRegistry getImageRegistry() {
 		if (imageRegistry == null) {
@@ -444,6 +488,7 @@ public class NavigatorContentDescriptorManager {
 		 */
 		public void readRegistry() {
 			super.readRegistry();
+			computeSequenceNumbers();
 			computeOverrides();
 		}
 
