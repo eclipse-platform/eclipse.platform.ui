@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension
+		point="org.eclipse.jdt.ui.javaCompletionProposalComputer"
+		id="e4ProposalCategory"
+		name="e4 proposals">
+		<proposalCategory
+			icon="$nl$/icons/full/elcl16/e4assist_co.gif"/>
+	</extension>
+	<extension
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer"
+         id="e4BuilderCompletionProposalComputer">
+      <javaCompletionProposalComputer
+            activate="true"
+            categoryId="org.eclipse.e4.tools.jdt.templates.e4ProposalCategory"
+            class="org.eclipse.e4.internal.tools.jdt.templates.E4TemplateCompletionProposalComputer">
+			<partition type="__dftl_partition_content_type"/>
+      </javaCompletionProposalComputer>
+    </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="e4"
+            class="org.eclipse.e4.internal.tools.jdt.templates.E4ContextType"
+            id="e4"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
+      </contextType>
+      <contextType
+            name="e4 statements"
+            class="org.eclipse.e4.internal.tools.jdt.templates.E4ContextType"
+            id="e4-statements"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
+      </contextType>
+      <contextType
+            name="e4 members"
+            class="org.eclipse.e4.internal.tools.jdt.templates.E4ContextType"
+            id="e4-members"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
+      </contextType>
+      <include
+            file="templates/default-e4templates.xml"
+            translations="$nl$/templates/default-e4templates.properties">
+      </include>
+   </extension>
+
+</plugin>

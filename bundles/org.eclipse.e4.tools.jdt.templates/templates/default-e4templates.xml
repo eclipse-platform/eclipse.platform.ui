@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *******************************************************************************/
+-->
+
+<templates>
+
+<template name="e4-parent" description="Injected Parent Composite" id="org.eclipse.e4.tools.jdt.templates.parent" context="e4-members" enabled="true" autoinsert="false">@Inject
+Composite parent;</template>
+
+<template name="e4-preference" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
+void setPreferenceValue(@Named("preference-PREFERENCE_KEY") String preferenceValue) {
+	${cursor}
+}</template>
+
+<template name="e4-adapter" description="Injected Adapter Service" id="org.eclipse.e4.tools.jdt.templates.adapter" context="e4-members" enabled="true" autoinsert="false">@Inject
+Adapter adapter;</template>
+
+<template name="e4-preferences" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
+IEclipsePreferences preferences;</template>
+
+<template name="e4-statushandler" description="Injected Status Handler" id="org.eclipse.e4.tools.jdt.templates.statushandler" context="e4-members" enabled="true" autoinsert="false">@Inject
+IStatusHandler statusHandler;</template>
+
+<template name="e4-logger" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
+Logger logger;</template>
+
+<template name="e4-eventbroker" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
+IEventBroker eventBroker;</template>
+
+<template name="e4-stylingengine" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
+IStylingEngine stylingEngine;</template>
+
+<template name="e4-event" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
+void handleSomeEvent(Payload payloadObject) {
+	${cursor}
+}</template>
+
+<template name="e4-init" description="Initialization Method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
+void init() {
+	${cursor}
+}</template>
+
+<template name="e4-dispose" description="Dispose Method" id="org.eclipse.e4.tools.jdt.templates.dispose" context="e4-members" enabled="true" autoinsert="false">@PreDestroy
+void dispose() {
+	${cursor}
+}</template>
+
+</templates>
