@@ -39,7 +39,7 @@ public class CommonSorterDescriptorManager {
 	private static final CommonSorterDescriptor[] NO_SORTER_DESCRIPTORS = new CommonSorterDescriptor[0];
 
 	private final Map sortersMap = new HashMap();
-
+	
 	/**
 	 * 
 	 * @return An initialized singleton instance of the
@@ -65,26 +65,9 @@ public class CommonSorterDescriptorManager {
 	public CommonSorterDescriptor[] findApplicableSorters(
 			NavigatorContentService contentService, Object aParent) {
 
-		// FIXME - this could end up being null if the object
-		// was removed from the cache
 		INavigatorContentDescriptor sourceOfContribution = contentService
 				.getSourceOfContribution(aParent);
-
-		List applicableSorters = new ArrayList();
-
-		CommonSorterDescriptor descriptor;
-		Set sorters = getCommonSorters(sourceOfContribution);
-		for (Iterator sortersItr = sorters.iterator(); sortersItr.hasNext();) {
-			descriptor = (CommonSorterDescriptor) sortersItr.next();
-			if (descriptor.isEnabledForParent(aParent)) {
-				applicableSorters.add(descriptor);
-			}
-		}
-		if (applicableSorters.size() == 0) {
-			return NO_SORTER_DESCRIPTORS;
-		}
-		return (CommonSorterDescriptor[]) applicableSorters
-				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
+		return findApplicableSorters(contentService, sourceOfContribution, aParent);
 	}
 
 	/**
@@ -95,17 +78,12 @@ public class CommonSorterDescriptorManager {
 	 *            The source of each *value.
 	 * @param aParent
 	 *            The parent used to search for a sorter.
-	 * @param anLvalue
-	 *            The left operand to compare.
-	 * @param anRvalue
-	 *            The right operand to compare.
 	 * @return The set of filters that are 'visible' to the given viewer
 	 *         descriptor.
 	 */
 	public CommonSorterDescriptor[] findApplicableSorters(
 			NavigatorContentService aContentService,
-			INavigatorContentDescriptor theSource, Object aParent,
-			Object anLvalue, Object anRvalue) {
+			INavigatorContentDescriptor theSource, Object aParent) {
 
 		List applicableSorters = new ArrayList();
 

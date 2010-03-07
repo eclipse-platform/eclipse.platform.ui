@@ -96,6 +96,8 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterModel.override";
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE_NOSORT = "org.eclipse.ui.tests.navigator.testContentSorterModel.override.nosort";
 	public static final String TEST_CONTENT_SORTER_RESOURCE = "org.eclipse.ui.tests.navigator.testContentSorterResource";
+	public static final String TEST_CONTENT_SORTER_RESOURCE_SORTONLY = "org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly";
+	public static final String TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly.override";
 	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterResource.override";
 	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER = "org.eclipse.ui.tests.navigator.testContentSorterResource.override.sorter";
 

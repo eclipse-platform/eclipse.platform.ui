@@ -134,7 +134,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private NavigatorFilterService navigatorFilterService;
 
-	private INavigatorSorterService navigatorSorterService;
+	private NavigatorSorterService navigatorSorterService;
 
 	private INavigatorPipelineService navigatorPipelineService;
 
@@ -346,6 +346,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public void dispose() {
 		if (navigatorSaveablesService != null) {
 			assistant.removeListener(navigatorSaveablesService);
+		}
+		if (navigatorSorterService != null) {
+			assistant.removeListener(navigatorSorterService);
 		}
 		synchronized (this) {
 			for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
@@ -1040,6 +1043,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public INavigatorSorterService getSorterService() {
 		if (navigatorSorterService == null) {
 			navigatorSorterService = new NavigatorSorterService(this);
+			assistant.addListener(navigatorSorterService);
 		}
 		return navigatorSorterService;
 	}

@@ -135,7 +135,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 				break;
 			}
 		}
-
+		
 		if (sorter != null) {
 			return sorter.compare(viewer, e1, e2);
 		}

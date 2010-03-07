@@ -91,6 +91,15 @@ public interface INavigatorContentDescriptor {
 	boolean isActiveByDefault();
 
 	/**
+	 * True if this content extension is used only to specify a commonSorter 
+	 * in order to provide only sorting.
+	 * @return true if sort only
+	 * 
+	 * @since 3.5
+	 */
+	boolean isSortOnly();
+	
+	/**
 	 * Determine if this content extension is enabled for the given element.
 	 * 
 	 * @param anElement

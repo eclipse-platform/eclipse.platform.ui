@@ -92,6 +92,9 @@ public interface INavigatorContentExtPtConstants {
 	String ATT_ACTIVE_BY_DEFAULT = "activeByDefault"; //$NON-NLS-1$
 
 	/** */
+	String ATT_SORT_ONLY = "sortOnly"; //$NON-NLS-1$
+
+	/** */
 	String ATT_PROVIDES_SAVEABLES = "providesSaveables"; //$NON-NLS-1$
 	
 	/** */

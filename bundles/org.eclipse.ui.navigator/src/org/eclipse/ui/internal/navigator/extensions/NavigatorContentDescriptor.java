@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,8 @@ public final class NavigatorContentDescriptor implements
 
 	private IPluginContribution contribution;
 
+	private boolean sortOnly;
+	
 	private Set overridingExtensions;
 	private List overridingExtensionsList; // FIXME: will replace 'overridingExtensions' in 3.6
 
@@ -144,7 +146,6 @@ public final class NavigatorContentDescriptor implements
 		return priority;
 	}
 
-	
 	/**
 	 * @return the sequence number
 	 */
@@ -152,7 +153,6 @@ public final class NavigatorContentDescriptor implements
 		return sequenceNumber;
 	}
 
-	
 	void setSequenceNumber(int num) {
 		sequenceNumber = num;
 	}
@@ -164,6 +164,10 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public String getAppearsBeforeId() {
 		return appearsBeforeId;
+	}
+
+	public boolean isSortOnly() {
+		return sortOnly;
 	}
 	
 	/**
@@ -186,8 +190,7 @@ public final class NavigatorContentDescriptor implements
 		String activeByDefaultString = configElement
 				.getAttribute(ATT_ACTIVE_BY_DEFAULT);
 		activeByDefault = (activeByDefaultString != null && activeByDefaultString
-				.length() > 0) ? Boolean.valueOf(
-				configElement.getAttribute(ATT_ACTIVE_BY_DEFAULT))
+				.length() > 0) ? Boolean.valueOf(activeByDefaultString)
 				.booleanValue() : true;
 
 		String providesSaveablesString = configElement
@@ -210,6 +213,10 @@ public final class NavigatorContentDescriptor implements
 		// We start with this because the sort ExtensionPriorityComparator works 
 		// from the sequenceNumber
 		sequenceNumber = priority;
+
+		String sortOnlyString = configElement.getAttribute(ATT_SORT_ONLY);
+		sortOnly = (sortOnlyString != null && sortOnlyString.length() > 0) ? Boolean.valueOf(
+				sortOnlyString).booleanValue() : false;
 		
 		if (id == null) {
 			throw new WorkbenchException(NLS.bind(
@@ -221,8 +228,36 @@ public final class NavigatorContentDescriptor implements
 									.getNamespaceIdentifier() }));
 		}
 
-		IConfigurationElement[] children = configElement
-				.getChildren(TAG_ENABLEMENT);
+		contribution = new IPluginContribution() {
+
+			public String getLocalId() {
+				return getId();
+			}
+
+			public String getPluginId() {
+				return configElement.getDeclaringExtension().getNamespaceIdentifier();
+			}
+
+		};
+
+		IConfigurationElement[] children;
+		
+		children = configElement.getChildren(TAG_INITIAL_ACTIVATION);
+		if (children.length > 0) {
+			if (children.length == 1) {
+				initialActivation = new CustomAndExpression(children[0]);
+			} else {
+				throw new WorkbenchException(NLS.bind(
+						CommonNavigatorMessages.Attribute_Missing_Warning, new Object[] {
+								TAG_INITIAL_ACTIVATION, id,
+								configElement.getDeclaringExtension().getNamespaceIdentifier() }));
+			}
+		}
+
+		if (sortOnly)
+			return;
+
+		children = configElement.getChildren(TAG_ENABLEMENT);
 		if (children.length == 0) {
 
 			children = configElement.getChildren(TAG_TRIGGER_POINTS);
@@ -267,18 +302,6 @@ public final class NavigatorContentDescriptor implements
 									.getNamespaceIdentifier() }));
 		}
 
-		contribution = new IPluginContribution() {
-
-			public String getLocalId() {
-				return getId();
-			}
-
-			public String getPluginId() {
-				return configElement.getDeclaringExtension().getNamespaceIdentifier();
-			}
-
-		};
-
 		children = configElement.getChildren(TAG_OVERRIDE);
 		if (children.length == 0) {
 			overridePolicy = OverridePolicy.get(OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt_LITERAL);
@@ -296,17 +319,6 @@ public final class NavigatorContentDescriptor implements
 							.getNamespaceIdentifier() }));
 		}
 
-		children = configElement.getChildren(TAG_INITIAL_ACTIVATION);
-		if (children.length > 0) {
-			if (children.length == 1) {
-				initialActivation = new CustomAndExpression(children[0]);
-			} else {
-				throw new WorkbenchException(NLS.bind(
-						CommonNavigatorMessages.Attribute_Missing_Warning, new Object[] {
-								TAG_INITIAL_ACTIVATION, id,
-								configElement.getDeclaringExtension().getNamespaceIdentifier() }));
-			}
-		}
 	}
 
 	/**

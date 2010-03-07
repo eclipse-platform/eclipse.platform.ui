@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2010 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,38 +100,87 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.add(newData, _project.getFile("AddedFile2.txt"));
 	}
 
-	/* 
-	 * This test will not work properly until real sort overriding is implemented.  It worked 
-	 * for a while in 3.5 as a side effect of bug 273660, however with the correct fix
-	 * in bug 287103 the tests needs to be disabled.
-	 */
-	public void XXtestSorterContentOverride() throws Exception {
+	// Bug 141724 Allow sorting to be overridden
+	public void testSorterContentOverride() throws Exception {
 		waitForModelObjects();
 
-		_contentService.bindExtensions(
-				new String[] { TEST_CONTENT_SORTER_MODEL_OVERRIDE }, false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_SORTER_MODEL_OVERRIDE }, false);
-
 		INavigatorContentDescriptor desc = _contentService
-				.getContentDescriptorById(TEST_CONTENT_SORTER_MODEL_OVERRIDE);
+		.getContentDescriptorById(TEST_CONTENT_SORTER_RESOURCE_SORTONLY);
 
 		// Make it sort backwards so we can tell
-		TestSorterDataAndResource sorter = (TestSorterDataAndResource) _contentService
-				.getSorterService().findSorter(desc, _project, null, null);
+		TestSorterResource sorter = (TestSorterResource) _contentService
+			.getSorterService().findSorter(desc, _project, null, null);
 		sorter._forward = false;
 
-		_viewer.setExpandedState(_project,	true);
+		_contentService.bindExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
+
+		_viewer.expandAll();
 		TreeItem[] items = _viewer.getTree().getItems();
+		TreeItem[] childItems;
 
-		TreeItem addedParent = items[_projectInd].getItem(3);
-		_viewer.setExpandedState(addedParent.getData(), true);
-		assertEquals("BlueParent", addedParent.getText());
+		// Backwards
+		assertEquals("p2", items[0].getText());
+		assertEquals("p1", items[1].getText());
+		assertEquals("Test", items[2].getText());
+		assertEquals("file6.txt", items[0].getItems()[0].getText());
+		assertEquals("f2", items[1].getItems()[0].getText());
+
+		_contentService.getActivationService().deactivateExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
 		
-		// Backwards sort because of override
-		assertEquals("BlueChild2", addedParent.getItem(0).getText());
-		assertEquals("BlueChild1", addedParent.getItem(1).getText());
+		refreshViewer();
+		_viewer.expandAll();
+		DisplayHelper.sleep(1000);
 
+		// Forwards
+		items = _viewer.getTree().getItems();
+		assertEquals("p2", items[1].getText());
+		assertEquals("p1", items[0].getText());
+		// Always at the end because it's not a resource
+		assertEquals("Test", items[2].getText());
+		childItems = items[1].getItems();
+		assertEquals("f1", childItems[0].getText());
+		childItems = items[0].getItems();
+		assertEquals("f1", childItems[0].getText());
+
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
+
+		refreshViewer();
+		_viewer.expandAll();
+		DisplayHelper.sleep(1000);
+
+		// Backwards
+		items = _viewer.getTree().getItems();
+		assertEquals("p2", items[0].getText());
+		assertEquals("p1", items[1].getText());
+		assertEquals("Test", items[2].getText());
+		assertEquals("file6.txt", items[0].getItems()[0].getText());
+		assertEquals("f2", items[1].getItems()[0].getText());
+
+		// And override again
+		_contentService.bindExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE }, false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE }, false);
+		
+		refreshViewer();
+		_viewer.expandAll();
+		DisplayHelper.sleep(1000);
+
+		// Forwards - Test in front - since the override sorter sorts differently
+		// than the resource extension sorter
+		items = _viewer.getTree().getItems();
+		assertEquals("p2", items[2].getText());
+		assertEquals("p1", items[1].getText());
+		assertEquals("Test", items[0].getText());
+		childItems = items[2].getItems();
+		assertEquals("f1", childItems[0].getText());
+		childItems = items[1].getItems();
+		assertEquals("f1", childItems[0].getText());
 	}
 
 	// Here we want to make sure the sorting is done by the 
@@ -243,9 +292,6 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.setSelection(sel);
 		_viewer.setExpandedState(cont, true);
 
-		if (false)
-			DisplayHelper.sleep(1000000000);
-
 		TreeItem[] items = _viewer.getTree().getItems();
 
 		// p2/file6.txt (don't use _p2Ind because of sorter)
@@ -253,72 +299,5 @@ public class SorterTest extends NavigatorTestBase {
 		assertEquals("file6.txt", file1.getText());
 	}
 
-	public void NOtestSorterResourceOverride() throws Exception {
-
-		_contentService.bindExtensions(
-				new String[] { TEST_CONTENT_SORTER_RESOURCE_OVERRIDE }, false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_SORTER_RESOURCE_OVERRIDE }, false);
-		
-		refreshViewer();
-
-		INavigatorContentDescriptor desc = _contentService
-				.getContentDescriptorById(TEST_CONTENT_SORTER_RESOURCE_OVERRIDE);
-
-		TestSorterResource sorter = (TestSorterResource) _contentService
-				.getSorterService().findSorter(desc, _p2, null, null);
-		sorter._forward = false;
-
-		IStructuredSelection sel;
-		// p2/f1
-		IContainer cont = (IContainer) _p2.members()[1];
-		sel = new StructuredSelection(cont.members()[0]);
-		_viewer.setSelection(sel);
-		// _viewer.setExpandedState(cont, true);
-
-		if (false)
-			DisplayHelper.sleep(1000000000);
-
-		TreeItem[] items = _viewer.getTree().getItems();
-
-		// p2/file6.txt (don't use _p2Ind because of the reverse sort)
-		TreeItem file1 = items[2].getItem(0);
-		assertEquals("file6.txt", file1.getText());
-	}
-
-	public void NOtestSorterResourceOverrideSorter() throws Exception {
-
-		_contentService.bindExtensions(new String[] {
-				TEST_CONTENT_SORTER_RESOURCE_OVERRIDE,
-				TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER }, false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_SORTER_RESOURCE_OVERRIDE,
-						TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER }, false);
-
-		refreshViewer();
-
-		INavigatorContentDescriptor desc = _contentService
-				.getContentDescriptorById(TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER);
-
-		TestSorterResource sorter = (TestSorterResource) _contentService
-				.getSorterService().findSorter(desc, _p2, null, null);
-		sorter._forward = false;
-
-		IStructuredSelection sel;
-		// p2/f1
-		IContainer cont = (IContainer) _p2.members()[1];
-		sel = new StructuredSelection(cont.members()[0]);
-		_viewer.setSelection(sel);
-		//_viewer.setExpandedState(cont, true);
-
-		if (false)
-			DisplayHelper.sleep(1000000000);
-
-		TreeItem[] items = _viewer.getTree().getItems();
-
-		// p2/file6.txt (don't use _p2Ind because of the reverse sort)
-		TreeItem file1 = items[2].getItem(0);
-		assertEquals("file6.txt", file1.getText());
-	}
 
 }

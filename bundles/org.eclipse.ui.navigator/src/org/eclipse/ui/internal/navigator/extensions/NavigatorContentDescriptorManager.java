@@ -114,6 +114,8 @@ public class NavigatorContentDescriptorManager {
 
 	private final Set saveablesProviderDescriptors = new HashSet();
 
+	private final Set sortOnlyDescriptors = new HashSet();
+
 	private final Set firstClassDescriptorsSet = new HashSet();
 
 	/**
@@ -147,6 +149,18 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[saveablesProviderDescriptors
 				.size()];
 		saveablesProviderDescriptors.toArray(finalDescriptors);
+		Arrays.sort(finalDescriptors, ExtensionSequenceNumberComparator.INSTANCE);
+		return finalDescriptors;
+	}
+
+	/**
+	 * 
+	 * @return Returns all content descriptors that are sort only
+	 */
+	public NavigatorContentDescriptor[] getSortOnlyContentDescriptors() {
+		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[sortOnlyDescriptors
+				.size()];
+		sortOnlyDescriptors.toArray(finalDescriptors);
 		Arrays.sort(finalDescriptors, ExtensionSequenceNumberComparator.INSTANCE);
 		return finalDescriptors;
 	}
@@ -368,6 +382,12 @@ public class NavigatorContentDescriptorManager {
 					saveablesProviderDescriptors.add(desc);
 					if (Policy.DEBUG_EXTENSION_SETUP) {
 						System.out.println("Saveables provider descriptor: " + desc); //$NON-NLS-1$
+					}
+				}
+				if (desc.isSortOnly()) {
+					sortOnlyDescriptors.add(desc);
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println("SortOnly descriptor: " + desc); //$NON-NLS-1$
 					}
 				}
 			}

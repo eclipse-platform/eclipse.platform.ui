@@ -543,6 +543,37 @@
       </navigatorContent>
 
       <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly"
+			sortOnly="true"
+			activeByDefault="false"
+            name="Test Navigator Extension [Resource Sorter - SortOnly]">
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterResource">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+        </commonSorter>
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly.override"
+	        appearsBefore="org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly"
+            sortOnly="true"
+			activeByDefault="false"
+            name="Test Navigator Extension [Resource Sorter - SortOnly Override]">
+
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterResource">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+        </commonSorter>
+
+      </navigatorContent>
+      
+      <navigatorContent
             id="org.eclipse.ui.tests.navigator.testContentSorterResource"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
             labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
