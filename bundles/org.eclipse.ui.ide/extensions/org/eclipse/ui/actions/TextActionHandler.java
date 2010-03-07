@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,8 @@ public class TextActionHandler {
     private Listener textControlListener = new TextControlListener();
 
     private Text activeTextControl;
+
+	private IActionBars actionBars;
 
     private MouseAdapter mouseAdapter = new MouseAdapter() {
         public void mouseUp(MouseEvent e) {
@@ -356,18 +358,29 @@ public class TextActionHandler {
      */
     public TextActionHandler(IActionBars actionBar) {
         super();
-        actionBar.setGlobalActionHandler(ActionFactory.CUT.getId(),
-                textCutAction);
-        actionBar.setGlobalActionHandler(ActionFactory.COPY.getId(),
-                textCopyAction);
-        actionBar.setGlobalActionHandler(ActionFactory.PASTE.getId(),
-                textPasteAction);
-        actionBar.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
-                textSelectAllAction);
-        actionBar.setGlobalActionHandler(ActionFactory.DELETE.getId(),
-                textDeleteAction);
+        actionBars = actionBar;
+        updateActionBars();
     }
 
+    /**
+     * Updates the actions bars.
+     * 
+	 * @since 3.6 
+	 */
+	public void updateActionBars() {
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),
+                textCutAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+                textCopyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+                textPasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+                textSelectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
+                textDeleteAction);
+	}
+
+    
     /**
      * Add a <code>Text</code> control to the handler
      * so that the Cut, Copy, Paste, Delete, and Select All 
