@@ -76,10 +76,18 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 		Utils.debug("Starting update configurator..."); //$NON-NLS-1$
 
-		String reconcile = ctx.getProperty("org.eclipse.update.reconcile"); //$NON-NLS-1$
-		if (reconcile == null || reconcile.equalsIgnoreCase("true")) //$NON-NLS-1$
+		if (isReconciling())
 			installBundles();
 		registerBundleGroupProvider();
+	}
+	
+	/**
+	 * Returns whether the update configurator should be doing its own reconciling work
+	 */
+	public static boolean isReconciling() {
+		String reconcile = context.getProperty("org.eclipse.update.reconcile"); //$NON-NLS-1$
+		return reconcile == null || reconcile.equalsIgnoreCase("true"); //$NON-NLS-1$
+		
 	}
 
 	private void registerBundleGroupProvider() {
@@ -253,7 +261,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			if (activationPolicy != null) {
 				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_ACTIVATIONPOLICY, activationPolicy);
 				if (elements != null && elements.length > 0) {
-					// if the value is "lazy" then it has a lazy activation poliyc
+					// if the value is "lazy" then it has a lazy activation policy
 					if (Constants.ACTIVATION_LAZY.equals(elements[0].getValue()))
 						return true;
 				}
