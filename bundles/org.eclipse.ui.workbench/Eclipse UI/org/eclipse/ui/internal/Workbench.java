@@ -13,6 +13,8 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -72,7 +74,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;

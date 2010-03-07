@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +40,6 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.EPartService.PartState;
