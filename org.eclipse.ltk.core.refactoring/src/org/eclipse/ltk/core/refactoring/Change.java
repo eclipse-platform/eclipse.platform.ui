@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Platform;
  * execute a change directly then the following life cycle has to be honored:
  * <ul>
  *   <li>After a single change or a tree of changes has been created, the
- *       method <code>initializeValidationState</code> has to be called.</li>
+ *       method <code>initializeValidationData</code> has to be called.</li>
  *   <li>The method <code>isValid</code> can be used to determine if a change
  *       can still be applied to the workspace. If the method returns a {@link
  *       RefactoringStatus} with a severity of FATAL then the change has to be
@@ -45,8 +45,8 @@ import org.eclipse.core.runtime.Platform;
  *       objects managed by the undo stack are no longer needed. The method
  *       <code>dispose</code> is typically implemented to unregister listeners
  *       registered during the
- *       method <code>initializeValidationState</code>. There is no guarantee
- *       that <code>initializeValidationState</code>, <code>isValid</code>,
+ *       method <code>initializeValidationData</code>. There is no guarantee
+ *       that <code>initializeValidationData</code>, <code>isValid</code>,
  *       or <code>perform</code> has been called before <code>dispose</code>
  *       is called.
  * </ul>
@@ -54,8 +54,8 @@ import org.eclipse.core.runtime.Platform;
  * <pre>
  *   Change change= createChange();
  *   try {
- *     change.initializeValidationState(pm);
- *
+ *     change.initializeValidationData(pm);
+ * 
  *     ....
  *
  *     if (!change.isEnabled())
@@ -65,7 +65,7 @@ import org.eclipse.core.runtime.Platform;
  *         return;
  *     Change undo= change.perform(new SubProgressMonitor(pm, 1));
  *     if (undo != null) {
- *        undo.initializeValidationState(new SubProgressMonitor(pm, 1));
+ *        undo.initializeValidationData(new SubProgressMonitor(pm, 1));
  *        // do something with the undo object
  *     }
  *   } finally {
@@ -89,7 +89,7 @@ import org.eclipse.core.runtime.Platform;
  * <p>
  * Clients may subclass this class.
  * </p>
- *
+ * 
  * @since 3.0
  */
 public abstract class Change implements IAdaptable {
@@ -255,9 +255,9 @@ public abstract class Change implements IAdaptable {
 	public abstract Change perform(IProgressMonitor pm) throws CoreException;
 
 	/**
-	 * Disposes this change. Subclasses that override this method typically
-	 * unregister listeners which got registered during the call to <code>
-	 * initializeValidationState</code>.
+	 * Disposes this change. Subclasses that override this method typically unregister listeners
+	 * which got registered during the call to <code>
+	 * initializeValidationData</code>.
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>
