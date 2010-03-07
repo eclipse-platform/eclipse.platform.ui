@@ -24,8 +24,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.internal.services.ServicesActivator;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 // TBD rename InjectorImpl
 /**
@@ -131,11 +134,11 @@ public class ContextInjector {
 	 * 
 	 * @throws InvocationTargetException
 	 */
-	private boolean processMethods(Object userObject, Class objectsClass, ArrayList classHierarchy,
-			boolean processStatic) throws InvocationTargetException {
+	private boolean processMethods(final Object userObject, Class objectsClass,
+			ArrayList classHierarchy, boolean processStatic) throws InvocationTargetException {
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
+			final Method method = methods[i];
 			if (isOverridden(method, classHierarchy))
 				continue; // process in the subclass
 			if (Modifier.isStatic(method.getModifiers()) != processStatic)
@@ -143,6 +146,30 @@ public class ContextInjector {
 			InjectionProperties properties = annotationSupport.getInjectProperties(method);
 			if (method.getName().startsWith(IContextConstants.INJECTION_PREFIX))
 				properties.setInject(true);
+
+			if (properties.getHandlesEvent() != null) {
+				IEventBroker eventBroker = (IEventBroker) context.get(new InjectionProperties(true,
+						null, false, IEventBroker.class));
+				eventBroker.subscribe(properties.getHandlesEvent(), null, new EventHandler() {
+					public void handleEvent(Event event) {
+						Object data = event.getProperty(IEventBroker.DATA);
+						boolean wasAccessible = method.isAccessible();
+						if (!wasAccessible) {
+							method.setAccessible(true);
+						}
+						try {
+							method.invoke(userObject, data);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						} finally {
+							if (!wasAccessible) {
+								method.setAccessible(false);
+							}
+						}
+					}
+				}, properties.getEventHeadless());
+				continue;
+			}
 
 			if (!properties.shouldInject())
 				continue;

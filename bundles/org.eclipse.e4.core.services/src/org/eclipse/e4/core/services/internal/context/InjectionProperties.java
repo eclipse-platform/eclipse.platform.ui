@@ -23,6 +23,8 @@ public class InjectionProperties implements IObjectDescriptor {
 	private Object provider; // <= shouldn't this be IObjectProvider?
 	private Class qualifier;
 	private Class elementClass;
+	private String handlesEvent;
+	private boolean eventHeadless;
 
 	public InjectionProperties(boolean inject, String propertyToInject, boolean optional,
 			Class elementClass) {
@@ -75,5 +77,21 @@ public class InjectionProperties implements IObjectDescriptor {
 
 	public Class getQualifier() {
 		return qualifier;
+	}
+
+	public void setHandlesEvent(String handlesEvent) {
+		this.handlesEvent = handlesEvent;
+	}
+
+	public String getHandlesEvent() {
+		return handlesEvent;
+	}
+
+	public void setEventHeadless(boolean eventHeadless) {
+		this.eventHeadless = eventHeadless;
+	}
+
+	public boolean getEventHeadless() {
+		return eventHeadless;
 	}
 }
