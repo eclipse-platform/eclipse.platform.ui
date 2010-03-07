@@ -51,13 +51,6 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		processLanguages();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.core.services.IContributionFactory#call(java.lang.Object,
-	 * java.lang.String, java.lang.String, org.eclipse.e4.core.services.context.IEclipseContext,
-	 * java.lang.Object)
-	 */
 	public Object call(Object object, String uriString, String methodName, IEclipseContext context,
 			Object defaultValue) {
 		if (uriString != null) {
@@ -155,12 +148,6 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.core.services.IContributionFactory#create(java.lang.String ,
-	 * org.eclipse.e4.core.services.context.IEclipseContext)
-	 */
 	public Object create(String uriString, IEclipseContext context) {
 		if (uriString == null) {
 			return null;

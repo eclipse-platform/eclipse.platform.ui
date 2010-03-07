@@ -16,13 +16,13 @@ import java.util.List;
 
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.UIEvents.ApplicationElement;
 import org.eclipse.e4.workbench.ui.UIEvents.Command;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +22,6 @@ import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;

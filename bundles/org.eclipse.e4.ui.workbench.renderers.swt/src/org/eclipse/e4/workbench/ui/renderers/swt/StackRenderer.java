@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
@@ -24,7 +26,6 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;

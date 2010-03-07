@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -19,7 +21,6 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;

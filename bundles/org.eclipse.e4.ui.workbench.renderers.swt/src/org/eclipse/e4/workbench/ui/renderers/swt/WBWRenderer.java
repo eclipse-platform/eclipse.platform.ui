@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +32,6 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;

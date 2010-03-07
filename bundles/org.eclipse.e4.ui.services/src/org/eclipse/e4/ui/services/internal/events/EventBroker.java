@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -20,7 +22,6 @@ import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.internal.services.Activator;
 import org.eclipse.e4.ui.internal.services.ServiceMessages;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

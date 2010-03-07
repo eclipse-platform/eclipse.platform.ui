@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
@@ -40,7 +42,6 @@ import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;

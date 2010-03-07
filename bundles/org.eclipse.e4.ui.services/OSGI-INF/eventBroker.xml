@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.core.services.context.IContextFunction"/>
    </service>
-   <property name="service.context.key" type="String" value="org.eclipse.e4.ui.services.events.IEventBroker"/>
+   <property name="service.context.key" type="String" value="org.eclipse.e4.core.services.events.IEventBroker"/>
 </scr:component>

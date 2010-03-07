@@ -12,7 +12,7 @@ package org.eclipse.e4.demo.e4photo;
 
 import javax.inject.Inject;
 
-import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;

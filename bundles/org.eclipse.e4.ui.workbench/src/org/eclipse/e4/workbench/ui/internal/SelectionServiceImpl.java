@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,7 +30,6 @@ import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.e4.workbench.modeling.ISelectionListener;

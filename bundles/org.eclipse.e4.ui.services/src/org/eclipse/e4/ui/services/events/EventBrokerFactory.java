@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.events;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.e4.core.services.Logger;

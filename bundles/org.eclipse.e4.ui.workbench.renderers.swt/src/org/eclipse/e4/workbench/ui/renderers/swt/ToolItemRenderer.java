@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,6 @@ import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.bindings.TriggerSequence;
