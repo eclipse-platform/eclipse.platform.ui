@@ -22,6 +22,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 /**
  * @since 3.6
@@ -49,7 +50,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		String commandId = "org.eclipse.ui.tests.progressViewCommand";
 		Command command = commandService.getCommand(commandId);
 		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command, null);
-		okJob.setProperty(IProgressConstants.COMMAND_PROPERTY, parameterizedCommand);
+		okJob.setProperty(IProgressConstants2.COMMAND_PROPERTY, parameterizedCommand);
 		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 		okJob.schedule();
 

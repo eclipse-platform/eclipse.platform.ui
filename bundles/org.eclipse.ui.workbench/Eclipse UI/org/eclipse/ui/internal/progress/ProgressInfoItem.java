@@ -62,6 +62,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -811,9 +812,9 @@ public class ProgressInfoItem extends Composite {
 
 		// check for action property
 		Object actionProperty = linkJob
-				.getProperty(IProgressConstants.ACTION_PROPERTY);
+.getProperty(IProgressConstants.ACTION_PROPERTY);
 		Object commandProperty = linkJob
-				.getProperty(IProgressConstants.COMMAND_PROPERTY);
+.getProperty(IProgressConstants2.COMMAND_PROPERTY);
 
 		if (actionProperty != null && commandProperty != null) {
 			// if both are specified, then use neither

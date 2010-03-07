@@ -17,10 +17,15 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Constants relating to progress UI functionality of the workbench plug-in.
  * <p>
- * The four constants define property keys that are used to associate
- * UI related information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>).
+ * The constants define property keys that are used to associate UI related
+ * information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>).
+ * <p>
+ * In release 3.6, additional constants have been defined in
+ * {@link IProgressConstants2}. Clients are encouraged to use the newer class in
+ * order to get access to all of the available constants.
  * 
  * @see org.eclipse.core.runtime.jobs.Job#setProperty
+ * @see IProgressConstants2
  * @since 3.0
  */
 public interface IProgressConstants {
@@ -99,6 +104,7 @@ public interface IProgressConstants {
 	 * <code>COMMAND_PROPERTY</code> should be used
 	 * </p>
 	 * 
+	 * @deprecated This will be moving to IProgressConstants2 before API freeze.
 	 * @see org.eclipse.core.commands.ParameterizedCommand
 	 * @since 3.6
 	 **/
@@ -149,17 +155,4 @@ public interface IProgressConstants {
      */
     public static final QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "delayErrorPrompt"); //$NON-NLS-1$
-
-	/**
-	 * This property provides a hint to the progress UI to show the progress of
-	 * the job in the application TaskBar
-	 * <p>
-	 * The property must be of type <code>Boolean</code> and the hint is used if
-	 * its value is <code>true</code>.
-	 * </p>
-	 * 
-	 * @since 3.6
-	 */
-	public static final QualifiedName SHOW_IN_TASKBAR_ICON_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "inTaskBarIcon"); //$NON-NLS-1$
 }

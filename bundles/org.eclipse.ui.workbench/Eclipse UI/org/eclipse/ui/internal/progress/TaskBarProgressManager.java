@@ -25,13 +25,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.TaskItem;
-import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The TaskBarProgressManager is the class that displays progress in the
  * application TaskBar if the job specifies that it should show progress (@see
- * {@link IProgressConstants#SHOW_IN_TASKBAR_ICON_PROPERTY}
+ * {@link IProgressConstants2#SHOW_IN_TASKBAR_ICON_PROPERTY}
  * 
  * @since 3.6
  */
@@ -239,7 +239,7 @@ public class TaskBarProgressManager {
 			private boolean shouldShowSystemProgress(JobInfo info) {
 				Boolean showInTaskBarIcon = Boolean.FALSE;
 				Object property = info.getJob().getProperty(
-						IProgressConstants.SHOW_IN_TASKBAR_ICON_PROPERTY);
+						IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY);
 
 				if (property instanceof Boolean) {
 					showInTaskBarIcon = (Boolean) property;

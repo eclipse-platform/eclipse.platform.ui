@@ -45,7 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -135,14 +135,14 @@ public class ProgressAnimationItem extends AnimationItem implements
 	 */
 	private void execute(JobInfo ji, Job job) {
 
-		Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
+		Object prop = job.getProperty(IProgressConstants2.ACTION_PROPERTY);
 		if (prop instanceof IAction && ((IAction) prop).isEnabled()) {
 			IAction action = (IAction) prop;
 			action.run();
 			removeTopElement(ji);
 		}
 
-		prop = job.getProperty(IProgressConstants.COMMAND_PROPERTY);
+		prop = job.getProperty(IProgressConstants2.COMMAND_PROPERTY);
 		if (prop instanceof ParameterizedCommand) {
 			ParameterizedCommand command = (ParameterizedCommand) prop;
 			IWorkbenchWindow window = getWindow();
@@ -184,7 +184,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	}
 
 	private IAction getAction(Job job) {
-		Object property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
+		Object property = job.getProperty(IProgressConstants2.ACTION_PROPERTY);
 		if (property instanceof IAction) {
 			return (IAction) property;
 		}
