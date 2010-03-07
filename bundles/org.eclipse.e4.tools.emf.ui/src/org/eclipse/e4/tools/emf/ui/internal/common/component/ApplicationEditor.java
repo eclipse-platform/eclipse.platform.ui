@@ -24,12 +24,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class ApplicationEditor extends AbstractComponentEditor {
+
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -39,6 +41,11 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 	private IListProperty APPLICATION__COMMANDS = EMFProperties.list(MApplicationPackage.Literals.APPLICATION__COMMANDS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+
+	public ApplicationEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Image getImage(Object element, Display display) {

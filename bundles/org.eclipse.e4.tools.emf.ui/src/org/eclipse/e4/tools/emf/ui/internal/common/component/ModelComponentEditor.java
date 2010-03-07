@@ -24,6 +24,8 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -37,12 +39,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ModelComponentEditor extends AbstractComponentEditor {
+
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
 	private DataBindingContext context;
 
-	private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
+	private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list( MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
+
+	public ModelComponentEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
@@ -84,7 +92,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
 
 		// ------------------------------------------------------------
 
@@ -111,7 +119,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 
 		t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.MODEL_COMPONENT__PARENT_ID).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.MODEL_COMPONENT__PARENT_ID).observeDetail(master));
 
 		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 		b.setText("Find ...");
@@ -125,7 +133,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.MODEL_COMPONENT__POSITION_IN_PARENT).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.MODEL_COMPONENT__POSITION_IN_PARENT).observeDetail(master));
 
 		// ------------------------------------------------------------
 
@@ -136,7 +144,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.MODEL_COMPONENT__PROCESSOR).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.MODEL_COMPONENT__PROCESSOR).observeDetail(master));
 
 		return parent;
 	}

@@ -17,18 +17,25 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class ModelComponentsEditor extends AbstractComponentEditor {
+
 	private IListProperty MODEL_COMPONENTS__COMPONENTS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
 
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
 	private DataBindingContext context;
+
+	public ModelComponentsEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Image getImage(Object element, Display display) {

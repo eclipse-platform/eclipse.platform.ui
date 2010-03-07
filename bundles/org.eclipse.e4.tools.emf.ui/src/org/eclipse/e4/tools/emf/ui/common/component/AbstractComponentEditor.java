@@ -16,11 +16,22 @@ import java.net.URL;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
+	private EditingDomain editingDomain;
+
+	public AbstractComponentEditor(EditingDomain editingDomain) {
+		this.editingDomain = editingDomain;
+	}
+
+	public EditingDomain getEditingDomain() {
+		return editingDomain;
+	}
+
 	public abstract Image getImage(Object element,Display display);
 	public abstract String getLabel(Object element);
 	public abstract String getDetailLabel(Object element);

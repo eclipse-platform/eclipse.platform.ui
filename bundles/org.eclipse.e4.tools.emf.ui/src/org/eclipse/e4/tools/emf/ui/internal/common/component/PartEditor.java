@@ -26,6 +26,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class PartEditor extends AbstractComponentEditor {
+
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -50,6 +53,10 @@ public class PartEditor extends AbstractComponentEditor {
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 
+	public PartEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
@@ -98,24 +105,7 @@ public class PartEditor extends AbstractComponentEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Tags");
-
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-
-		l = new Label(parent, SWT.NONE);
-		ListViewer viewer = new ListViewer(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.heightHint = 80;
-		viewer.getList().setLayoutData(gd);
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
 
 		// ------------------------------------------------------------
 
@@ -126,7 +116,7 @@ public class PartEditor extends AbstractComponentEditor {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
 
 		// ------------------------------------------------------------
 
@@ -137,7 +127,7 @@ public class PartEditor extends AbstractComponentEditor {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
 
 		// ------------------------------------------------------------
 
@@ -146,7 +136,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 		b.setText("Find ...");
@@ -158,7 +148,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
 
 		b = new Button(parent, SWT.PUSH|SWT.FLAT);
 		b.setText("Find ...");
@@ -166,14 +156,21 @@ public class PartEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 
 		l = new Label(parent, SWT.NONE);
-		l.setText("Variables");
+		l.setText("Tags");
+		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
-		t = new Text(parent, SWT.BORDER);
+		ListViewer viewer = new ListViewer(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
+		gd.heightHint = 80;
+		viewer.getList().setLayoutData(gd);
+
+		// ------------------------------------------------------------
 
 		l = new Label(parent, SWT.NONE);
+		l.setText("Variables");
+		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+
 		viewer = new ListViewer(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
@@ -184,13 +181,8 @@ public class PartEditor extends AbstractComponentEditor {
 
 		l = new Label(parent, SWT.NONE);
 		l.setText("Properties");
+		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-
-		l = new Label(parent, SWT.NONE);
 		TableViewer tableviewer = new TableViewer(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
@@ -206,29 +198,29 @@ public class PartEditor extends AbstractComponentEditor {
 		column.getColumn().setText("Value");
 		column.getColumn().setWidth(200);
 
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("");
-
-		Composite booleanContainer = new Composite(parent,SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		booleanContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		booleanContainer.setLayoutData(gd);
-		booleanContainer.setLayout(new GridLayout(4,false));
-
-		Button checkbox = new Button(booleanContainer, SWT.CHECK);
-		checkbox.setText("to render");
-
-		checkbox = new Button(booleanContainer, SWT.CHECK);
-		checkbox.setText("on Top");
-
-		checkbox = new Button(booleanContainer, SWT.CHECK);
-		checkbox.setText("visible");
-
-		checkbox = new Button(booleanContainer, SWT.CHECK);
-		checkbox.setText("closeable");
+//		// ------------------------------------------------------------
+//
+//		l = new Label(parent, SWT.NONE);
+//		l.setText("");
+//
+//		Composite booleanContainer = new Composite(parent,SWT.NONE);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.horizontalSpan=2;
+//		booleanContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
+//		booleanContainer.setLayoutData(gd);
+//		booleanContainer.setLayout(new GridLayout(4,false));
+//
+//		Button checkbox = new Button(booleanContainer, SWT.CHECK);
+//		checkbox.setText("to render");
+//
+//		checkbox = new Button(booleanContainer, SWT.CHECK);
+//		checkbox.setText("on Top");
+//
+//		checkbox = new Button(booleanContainer, SWT.CHECK);
+//		checkbox.setText("visible");
+//
+//		checkbox = new Button(booleanContainer, SWT.CHECK);
+//		checkbox.setText("closeable");
 
 		return parent;
 	}

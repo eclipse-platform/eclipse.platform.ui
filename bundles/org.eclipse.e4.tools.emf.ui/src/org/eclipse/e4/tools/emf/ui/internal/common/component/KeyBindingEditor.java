@@ -17,16 +17,23 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class KeyBindingEditor extends AbstractComponentEditor {
+
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
 	private DataBindingContext context;
+
+	public KeyBindingEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Image getImage(Object element, Display display) {

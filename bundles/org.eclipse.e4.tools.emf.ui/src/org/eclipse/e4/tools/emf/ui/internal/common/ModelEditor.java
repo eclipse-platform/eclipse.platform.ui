@@ -156,22 +156,22 @@ public class ModelEditor {
 	}
 
 	private void registerDefaultEditors() {
-		registerEditor( MApplicationPackage.Literals.APPLICATION, new ApplicationEditor());
-		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor());
-		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor());
-		registerEditor( MApplicationPackage.Literals.PART, new PartEditor());
-		registerEditor( MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor());
-		registerEditor( MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor());
-		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor());
-		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor());
-		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor());
-		registerEditor( MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor());
-		registerEditor( MApplicationPackage.Literals.PART_STACK, new PartStackEditor());
-		registerEditor( MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor());
-		registerEditor( MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor());
-		registerEditor( MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor());
-		registerEditor( MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor());
-		registerEditor( MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor());
+		registerEditor( MApplicationPackage.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor(modelProvider.getEditingDomain()));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

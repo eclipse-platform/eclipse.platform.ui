@@ -24,12 +24,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class WindowEditor extends AbstractComponentEditor {
+
 	private Composite composite;
 	private WritableValue master = new WritableValue();
 	private Image image;
@@ -37,9 +39,12 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
-	private IListProperty APPLICATION__COMMANDS = EMFProperties.list(MApplicationPackage.Literals.APPLICATION__COMMANDS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
+	public WindowEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
@@ -94,15 +99,6 @@ public class WindowEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element, "Commands") {
 
 			@Override
 			protected boolean accepted(Object o) {

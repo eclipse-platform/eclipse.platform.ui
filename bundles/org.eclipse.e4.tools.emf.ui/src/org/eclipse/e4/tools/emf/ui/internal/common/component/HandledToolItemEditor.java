@@ -10,7 +10,62 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+
 public class HandledToolItemEditor extends ToolItemEditor {
+	private Image image;
+
+	public HandledToolItemEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+	}
+
+	@Override
+	public Image getImage(Object element, Display display) {
+		if (image == null) {
+			try {
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/HandledToolItem.gif"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return image;
+	}
+
+	@Override
+	protected void createSubTypeFormElements(Composite parent, DataBindingContext context, WritableValue master) {
+		IValueProperty textProp = WidgetProperties.text();
+
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("Command");
+
+		Text t = new Text(parent, SWT.BORDER);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t.setEnabled(false);
+		context.bindValue(textProp.observe(t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLED_ITEM__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(master));
+
+		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+		b.setText("Find ...");
+	}
 
 	@Override
 	public String getLabel(Object element) {

@@ -14,7 +14,8 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +24,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class PartDescriptorEditor extends PartEditor {
+
+	public PartDescriptorEditor(EditingDomain editingDomain) {
+		super(editingDomain);
+	}
 
 	@Override
 	protected Composite createForm(Composite parent, DataBindingContext context, IObservableValue master) {
@@ -37,7 +42,7 @@ public class PartDescriptorEditor extends PartEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFProperties.value(MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
+		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
 
 		// ------------------------------------------------------------
 
