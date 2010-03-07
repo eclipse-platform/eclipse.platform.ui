@@ -259,7 +259,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
     }
 
     /**
-     * Runs the operation created in <code>createOperaiton</code>
+     * Runs the operation created in <code>createOperation</code>
      * 
      * @param resources source resources to pass to the operation
      * @param destination destination container to pass to the operation
