@@ -22,7 +22,7 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
@@ -161,7 +161,7 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor());
 		registerEditor( MApplicationPackage.Literals.PART, new PartEditor());
 		registerEditor( MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor());
-		registerEditor( MApplicationPackage.Literals.KEY_BINDING, new BindingEditor());
+		registerEditor( MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor());
 		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor());
 		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor());
 		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor());

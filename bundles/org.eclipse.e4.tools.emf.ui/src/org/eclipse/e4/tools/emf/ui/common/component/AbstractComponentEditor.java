@@ -10,7 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -24,4 +29,19 @@ public abstract class AbstractComponentEditor {
 	public abstract Composite getEditor(Composite parent, Object object);
 	public abstract IObservableList getChildList(Object element);
 
+	protected Image loadSharedImage(Display d, URL path) {
+		try {
+			URL url = FileLocator.resolve(path);
+			if( url != null ) {
+				InputStream in = url.openStream();
+				Image image = new Image(d, in);
+				in.close();
+				return image;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

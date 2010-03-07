@@ -1,5 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -22,8 +25,15 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		// TODO Auto-generated method stub
-		return null;
+		if( image == null ) {
+			try {
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Toolbar.gif"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return image;
 	}
 
 	@Override

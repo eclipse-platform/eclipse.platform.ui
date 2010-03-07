@@ -1,5 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -27,11 +30,21 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		boolean horizontal = ((MPartSashContainer)element).isHorizontal();
 
 		if( vImage == null && ! horizontal ) {
-			vImage = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_tile_vertical.png"));
+			try {
+				vImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/PartSashContainer_vertical.gif"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if( hImage == null && horizontal ) {
-			hImage = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/application_tile_horizontal.png"));
+			try {
+				hImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/PartSashContainer.gif"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if( horizontal ) {

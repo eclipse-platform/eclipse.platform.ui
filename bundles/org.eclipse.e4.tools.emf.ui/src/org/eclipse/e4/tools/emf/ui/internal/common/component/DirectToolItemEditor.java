@@ -10,20 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-
 public class DirectToolItemEditor extends ToolItemEditor {
-	private Image image;
-
-	@Override
-	public Image getImage(Object element, Display display) {
-		if( image == null ) {
-			image = new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/brick_go.png"));
-		}
-
-		return image;
-	}
 
 	@Override
 	public String getLabel(Object element) {
