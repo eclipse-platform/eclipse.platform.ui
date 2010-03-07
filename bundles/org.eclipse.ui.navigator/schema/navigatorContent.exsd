@@ -91,6 +91,7 @@ When an extension is deactivated by the user, the content and label providers ar
             <element ref="override" minOccurs="0" maxOccurs="1"/>
             <element ref="dropAssistant" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="commonWizard" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="initialActivation" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -655,6 +656,31 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
       <annotation>
          <documentation>
             Describe the possible drop targets that a particular &lt;b&gt;dropAssistant&lt;/b&gt; can handle.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="initialActivation">
+      <annotation>
+         <documentation>
+            A core expression which is checked with the navigator starts to determine of this navigator content extension is to be activated. Only meaningful if &lt;b&gt;activeByDefault&lt;/b&gt; is set to false.
          </documentation>
       </annotation>
       <complexType>

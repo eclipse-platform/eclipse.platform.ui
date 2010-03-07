@@ -75,6 +75,8 @@ public final class NavigatorContentDescriptor implements
 
 	private Expression possibleChildren;
 
+	private Expression initialActivation;
+	
 	private String icon;
 
 	private boolean activeByDefault;
@@ -293,6 +295,18 @@ public final class NavigatorContentDescriptor implements
 							id,configElement.getDeclaringExtension()
 							.getNamespaceIdentifier() }));
 		}
+
+		children = configElement.getChildren(TAG_INITIAL_ACTIVATION);
+		if (children.length > 0) {
+			if (children.length == 1) {
+				initialActivation = new CustomAndExpression(children[0]);
+			} else {
+				throw new WorkbenchException(NLS.bind(
+						CommonNavigatorMessages.Attribute_Missing_Warning, new Object[] {
+								TAG_INITIAL_ACTIVATION, id,
+								configElement.getDeclaringExtension().getNamespaceIdentifier() }));
+			}
+		}
 	}
 
 	/**
@@ -359,10 +373,20 @@ public final class NavigatorContentDescriptor implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#isEnabledByDefault()
+	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#isActiveByDefault()
 	 */
 	public boolean isActiveByDefault() {
-		return activeByDefault;
+		if (activeByDefault)
+			return true;
+		if (initialActivation == null)
+			return false;
+		try {
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(new Object());
+			return (initialActivation.evaluate(context) == EvaluationResult.TRUE);
+		} catch (CoreException e) {
+			NavigatorPlugin.logError(0, e.getMessage(), e);
+		}
+		return false;
 	}
 
 	/**

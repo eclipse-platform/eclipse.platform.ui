@@ -81,7 +81,10 @@ public interface INavigatorContentDescriptor {
 	/**
 	 * The enabledByDefault attribute specifies whether an extension should be
 	 * activated in the context of a viewer automatically. Users may override
-	 * this setting through the "Types of Content" dialog.
+	 * this setting through the "Types of Content" dialog. This will be true
+	 * if either the activeByDefault attribute of the navigatorContent element 
+	 * is true, or if an initialActivationExpression is specified which resolves
+	 * to true.
 	 * 
 	 * @return true if the extension is enabled by default.
 	 */

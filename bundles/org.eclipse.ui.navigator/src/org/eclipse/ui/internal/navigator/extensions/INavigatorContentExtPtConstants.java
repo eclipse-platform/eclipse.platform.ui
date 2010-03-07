@@ -53,6 +53,9 @@ public interface INavigatorContentExtPtConstants {
 	String TAG_OVERRIDE = "override"; //$NON-NLS-1$	
 
 	/** */
+	String TAG_INITIAL_ACTIVATION = "initialActivation"; //$NON-NLS-1$	
+
+	/** */
 	String TAG_FILTER_EXPRESSION = "filterExpression"; //$NON-NLS-1$
 
 	/** */

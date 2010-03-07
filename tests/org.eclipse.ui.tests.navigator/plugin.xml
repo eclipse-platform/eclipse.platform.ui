@@ -63,6 +63,12 @@
             class="org.eclipse.ui.navigator.resources.ProjectExplorer"
             name="Project Explorer M12 Abstract Model content test"/>
 
+      <view
+            id="org.eclipse.ui.tests.navigator.InitialActivationView"
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            name="Initial Activation View"/>
+            
    </extension>
 
    <extension
@@ -178,6 +184,13 @@
       
       <viewer viewerId="org.eclipse.ui.tests.navigator.M12View"/>
 
+      <viewer viewerId="org.eclipse.ui.tests.navigator.InitialActivationView"/>
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.InitialActivationView">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testInitialActivation*"/>
+         </includes>
+      </viewerContentBinding>
+
    </extension>
 
 
@@ -241,6 +254,34 @@
          </enablement>
 	  </navigatorContent>
       
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testInitialActivationTrue"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider1"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            activeByDefault="false"
+            name="Test Initial Activation True">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>
+         <initialActivation>
+            <or></or>
+         </initialActivation>            
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testInitialActivationFalse"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider1"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            activeByDefault="false"
+            name="Test Initial Activation False">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>
+         <initialActivation>
+            <not><or></or></not>
+         </initialActivation>            
+      </navigatorContent>
+
       <navigatorContent
             id="org.eclipse.ui.tests.navigator.testSimpleChildrenContent1"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider1"

@@ -31,6 +31,7 @@ public final class NavigatorTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public NavigatorTestSuite() {
+		addTest(new TestSuite(InitialActivationTest.class));
 		addTest(new TestSuite(ActionProviderTest.class));
 		addTest(new TestSuite(ExtensionsTest.class));
 		addTest(new TestSuite(FilterTest.class));

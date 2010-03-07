@@ -59,6 +59,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_INHERITED = "org.eclipse.ui.tests.navigator.InheritedTestView";
 	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";
 	public static final String TEST_VIEWER_FILTER = "org.eclipse.ui.tests.navigator.FilterTestView";
+	public static final String TEST_VIEWER_INITIAL_ACTIVATION = "org.eclipse.ui.tests.navigator.InitialActivationView";
 
 	public static final String TEST_VIEW_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestView";
 
@@ -75,6 +76,9 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_NO_CHILDREN = "org.eclipse.ui.tests.navigator.testContentNoChildren";
 
 	public static final String TEST_CONTENT_RESOURCE_UNSORTED = "org.eclipse.ui.tests.navigator.resourceContent.unsorted";
+
+	public static final String TEST_CONTENT_INITIAL_ACTIVATION_FALSE = "org.eclipse.ui.tests.navigator.testInitialActivationFalse";
+	public static final String TEST_CONTENT_INITIAL_ACTIVATION_TRUE = "org.eclipse.ui.tests.navigator.testInitialActivationTrue";
 
 	public static final String TEST_SIMPLE_CHILDREN1 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent1";
 	public static final String TEST_SIMPLE_CHILDREN2 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent2";
