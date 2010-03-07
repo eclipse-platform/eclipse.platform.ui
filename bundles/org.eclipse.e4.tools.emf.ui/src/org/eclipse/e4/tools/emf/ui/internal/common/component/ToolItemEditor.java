@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -20,17 +21,28 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.ItemType;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MToolItem;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -99,76 +111,171 @@ public class ToolItemEditor extends AbstractComponentEditor {
 		t.setLayoutData(gd);
 		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
 
-		if( this.getClass() != ToolItemEditor.class ) {
+		if (this.getClass() != ToolItemEditor.class) {
 			createFormSubTypeForm(parent, context, master);
 		}
 
 		return parent;
 	}
 
-	private void createFormSubTypeForm(Composite parent, DataBindingContext context, WritableValue master) {
+	private void createFormSubTypeForm(Composite parent, DataBindingContext context, final WritableValue master) {
 		IValueProperty textProp = WidgetProperties.text();
 
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Type");
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText("Type");
+			ComboViewer viewer = new ComboViewer(parent);
+			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
+			GridData gd = new GridData();
+			gd.horizontalSpan = 2;
+			viewer.getControl().setLayoutData(gd);
+			IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.ITEM__TYPE).observeDetail(master);
+			context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
+		}
 
-		StructuredViewer viewer = new ComboViewer(parent);
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		viewer.getControl().setLayoutData(gd);
-		IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.ITEM__TYPE).observeDetail(master);
-		context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Label");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Tooltip");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Icon URI");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Find ...");
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		}
 
 		// ------------------------------------------------------------
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Label");
-
-		Text t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Tooltip");
-
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Icon URI");
-
-		t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
-
-		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText("Find ...");
-		// ------------------------------------------------------------
 		createSubTypeFormElements(parent, context, master);
+
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Tags");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Tags");
-		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			final Text tagText = new Text(parent, SWT.BORDER);
+			tagText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			tagText.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
+						handleAddText(tagText);
+					}
+				}
+			});
 
-		viewer = new ListViewer(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		gd.heightHint = 80;
-		viewer.getControl().setLayoutData(gd);
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Add");
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					handleAddText(tagText);
+				}
+			});
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+
+			l = new Label(parent, SWT.NONE);
+			final TableViewer viewer = new TableViewer(parent);
+			viewer.setContentProvider(new ObservableListContentProvider());
+			viewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return element.toString();
+				}
+			});
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 120;
+			viewer.getControl().setLayoutData(gd);
+
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS);
+			viewer.setInput(prop.observeDetail(master));
+
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonComp.setLayout(gl);
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if( ! s.isEmpty() ) {
+						MApplicationElement appEl = (MApplicationElement) master.getValue();
+						Command cmd = RemoveCommand.create(getEditingDomain(), appEl, MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS, s.toList());
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
+		}
+	}
+
+	private void handleAddText(Text tagText) {
+		if (tagText.getText().trim().length() > 0) {
+			String[] tags = tagText.getText().split(";");
+			for( int i = 0; i < tags.length;i++ ) {
+				tags[i] = tags[i].trim();
+			}
+
+			MApplicationElement appEl = (MApplicationElement) master.getValue();
+			Command cmd = AddCommand.create(getEditingDomain(), appEl, MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS, Arrays.asList(tags));
+			if (cmd.canExecute()) {
+				getEditingDomain().getCommandStack().execute(cmd);
+			}
+			tagText.setText("");
+		}
 	}
 
 	protected void createSubTypeFormElements(Composite parent, DataBindingContext context, WritableValue master) {

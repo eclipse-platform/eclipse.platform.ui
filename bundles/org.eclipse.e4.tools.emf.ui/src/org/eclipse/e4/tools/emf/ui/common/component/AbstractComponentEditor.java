@@ -13,6 +13,8 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.FileLocator;
@@ -24,12 +26,44 @@ import org.eclipse.swt.widgets.Display;
 public abstract class AbstractComponentEditor {
 	private EditingDomain editingDomain;
 
+	private static Map<Integer, Image> IMAGE_MAP = new HashMap<Integer, Image>();
+	private static final String[] IMAGES = {
+		"/icons/full/obj16/zoom.png",
+		"/icons/full/obj16/table_add.png",
+		"/icons/full/obj16/table_delete.png",
+		"/icons/full/obj16/arrow_up.png",
+		"/icons/full/obj16/arrow_down.png",
+	};
+
+	protected static final int SEARCH_IMAGE = 0;
+	protected static final int TABLE_ADD_IMAGE = 1;
+	protected static final int TABLE_DELETE_IMAGE = 2;
+	protected static final int ARROW_UP = 3;
+	protected static final int ARROW_DOWN = 4;
+
 	public AbstractComponentEditor(EditingDomain editingDomain) {
 		this.editingDomain = editingDomain;
 	}
 
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
+	}
+
+	protected Image getImage( Display d, int id) {
+		Image img = IMAGE_MAP.get(id);
+		if( img == null ) {
+			try {
+				InputStream in = AbstractComponentEditor.class.getClassLoader().getResourceAsStream(IMAGES[id]);
+				img = new Image(d, in);
+				IMAGE_MAP.put(id, img);
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return img;
 	}
 
 	public abstract Image getImage(Object element,Display display);
