@@ -1,14 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-     Copyright (c) 2005, 2008 IBM Corporation and others.
-     All rights reserved. This program and the accompanying materials
-     are made available under the terms of the Eclipse Public License v1.0
-     which accompanies this distribution, and is available at
-     http://www.eclipse.org/legal/epl-v10.html
-    
-     Contributors:
-         IBM Corporation - initial API and implementation
- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
 <compositeCheatsheet name="User Assistance Test Suite">
    <taskGroup kind="set" name="All Tests" skip="false">
       <intro>
@@ -79,16 +69,6 @@
                   Conclusion
                </onCompletion>
                <param name="path" value="tasks/helpA7.xml">
-               </param>
-            </task>
-            <task kind="cheatsheet" name="A9:  Workbench Capabilities in Help" skip="true">
-               <intro>
-                  Test what happens when capabilities are enabled or disabled.
-               </intro>
-               <onCompletion>
-                  Conclusion
-               </onCompletion>
-               <param name="path" value="tasks/helpA9.xml">
                </param>
             </task>
             <task kind="cheatsheet" name="A10:  Dialog help" skip="true">
@@ -185,7 +165,7 @@ Performing simple searching.
          </taskGroup>
          <task kind="cheatsheet" name="Help Scenario C: Search" skip="false">
             <intro>
-               Perform search either from &quot;Help&quot; view in Eclipse  or from the browser opened by &quot;Help&quot;-&quot;Help Contents&quot;.
+               Perform search from the &quot;Help&quot; view in Eclipse&quot;.
             </intro>
             <onCompletion>
                Conclusion

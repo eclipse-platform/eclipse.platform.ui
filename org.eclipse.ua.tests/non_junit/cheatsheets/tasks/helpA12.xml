@@ -30,7 +30,7 @@
       <description>
          Tests for the ordering of keywords in index view
       </description>
-      <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
+      <subitem label="Verify that _keyword, -keyword, +keyword and =keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
       <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
       </subitem>
@@ -67,7 +67,7 @@
       <description>
          Tests for the ordering of keywords in help view
       </description>
-      <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
+      <subitem label="Verify that _keyword, -keyword, +keyword and =keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
       <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
       </subitem>

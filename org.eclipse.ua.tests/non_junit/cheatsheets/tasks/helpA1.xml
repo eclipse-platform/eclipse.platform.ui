@@ -24,7 +24,7 @@
          </command>
       </subitem>
       <subitem label="Choose &quot;Help&quot; on the left.  This should show help preference page on the right" skip="false">
-      </subitem>
+      </subitem>      <subitem            label="Hit &quot;Restore Defaults&quot;">      </subitem>
       <subitem label="On Windows and Linux help uses an embedded browser by default, and the preference should contain a dropdown to use the help browser or external browser. Leave this set to use the help browser. On MacOS, HP/UX and AIX ensure that this option is omitted since an external browser is always used." skip="false">
       </subitem>
       <subitem label="Hit OK to close the preferences dialog." skip="false">

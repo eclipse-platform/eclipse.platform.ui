@@ -12,7 +12,7 @@
 <cheatsheet title="Search">
    <intro>
       <description>
-         This tests support for advanced search.  Perform search either from &quot;Help&quot; page on Eclipse &quot; or from the browser opened by &quot;Help&quot;-&quot;Help Contents&quot;.
+         This tests support for advanced search.  Perform search either from the browser opened by &quot;Help&quot;-&quot;Help Contents&quot;.
       </description>
    </intro>
    <item title="Search for project close" dialog="false" skip="false">
