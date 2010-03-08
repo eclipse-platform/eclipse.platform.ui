@@ -1315,7 +1315,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testIllegalFileSepCharName() {
 		try {
-			newConfiguration(null, "some\\nested\\config");
+			newConfiguration(null, new Path("some").append("nested").append("config").toOSString());
 		} catch (CoreException e) {
 			// i.e. expected code path
 			return;
@@ -1332,7 +1332,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testLegalFileSepCharName() {
 		try {
-			newConfiguration(getProject(), "some\\nested\\config");
+			newConfiguration(getProject(), new Path("some").append("nested").append("config").toOSString());
 		} catch (CoreException e) {
 			assertTrue("Should *not* be an illegal argument - can nest shared cofigurations", false);
 		}
