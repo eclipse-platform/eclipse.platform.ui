@@ -177,6 +177,17 @@
             helpContext="org.eclipse.ui.tests.navigator.testHelpContext">
       </viewer>
 
+      <viewer
+            viewerId="org.eclipse.ui.tests.navigator.InheritedTestViewAdditions" 
+            inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView"
+            helpContext="org.eclipse.ui.tests.navigator.testHelpContext">
+      </viewer>
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.InheritedTestViewAdditions">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testInitialActivationTrue"/>
+         </includes>
+      </viewerContentBinding>
+
 	  <viewer viewerId="org.eclipse.ui.tests.navigator.InheritedTestView"/>
 
 	  <!-- don't make the name match the View we want to make sure that works -->

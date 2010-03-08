@@ -207,4 +207,11 @@ class Binding {
 		}
 
 	}
+	
+	void addBinding(Binding otherBinding) {
+		includePatterns.addAll(otherBinding.includePatterns);
+		excludePatterns.addAll(otherBinding.excludePatterns);
+		rootPatterns.addAll(otherBinding.rootPatterns);
+	}
+	
 }

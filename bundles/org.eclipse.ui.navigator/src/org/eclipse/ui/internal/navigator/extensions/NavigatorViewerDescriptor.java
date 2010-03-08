@@ -370,5 +370,11 @@ public final class NavigatorViewerDescriptor implements
 					null);
 		}
 	}
+	
+	void updateFromParent(NavigatorViewerDescriptor parent) {
+		getActionBinding().addBinding(parent.getActionBinding());
+		getContentBinding().addBinding(parent.getContentBinding());
+		getDragAssistants().addAll(parent.getDragAssistants());
+	}
 
 }

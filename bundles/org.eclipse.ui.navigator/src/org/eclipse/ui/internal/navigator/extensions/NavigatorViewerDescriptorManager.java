@@ -46,9 +46,7 @@ public class NavigatorViewerDescriptorManager {
 			NavigatorViewerDescriptor desc = (NavigatorViewerDescriptor) it.next();
 			NavigatorViewerDescriptor parentDesc = (NavigatorViewerDescriptor) viewerDescriptors.get(desc.getInheritBindingsFromViewer());
 			if (parentDesc != null) {
-				desc.setActionBinding(parentDesc.getActionBinding());
-				desc.setContentBinding(parentDesc.getContentBinding());
-				desc.setDragAssistants(parentDesc.getDragAssistants());
+				desc.updateFromParent(parentDesc);
 			}
 		}
 	}
