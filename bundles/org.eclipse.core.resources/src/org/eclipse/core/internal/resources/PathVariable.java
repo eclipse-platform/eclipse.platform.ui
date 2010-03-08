@@ -20,22 +20,19 @@ public class PathVariable implements IPathVariable {
 
 	private String variableName;
 	IPathVariableManager manager;
-	
+
 	public PathVariable(IPathVariableManager manager, String name) {
 		variableName = name;
 		this.manager = manager;
 	}
 
-	/**
-	 * @see IPathVariable#getExtensions()
-	 */
 	public String[] getExtensions() {
 		ProjectVariableProviderManager.Descriptor descriptor = ProjectVariableProviderManager.getDefault().findDescriptor(variableName);
 		if (descriptor != null) {
 			if (manager instanceof ProjectPathVariableManager)
-				return descriptor.getExtensions(variableName, ((ProjectPathVariableManager) manager).getResource());
+				return descriptor.getVariableNames(variableName, ((ProjectPathVariableManager) manager).getResource());
 			if (manager instanceof PathVariableManager)
-				return descriptor.getExtensions(variableName, null);
+				return descriptor.getVariableNames(variableName, null);
 		}
 		return null;
 	}

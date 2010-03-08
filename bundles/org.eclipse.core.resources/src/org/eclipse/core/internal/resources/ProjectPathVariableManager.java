@@ -88,7 +88,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			return new String[0];
 		}
 		for (int i = 0; i < variableProviders.length; i++) {
-			result.add(variableProviders[i].getName());
+			String[] variableHints = variableProviders[i].getVariableNames(variableProviders[i].getName(), resource);
+			if (variableHints != null && variableHints.length > 0)
+				for (int k = 0; k < variableHints.length; k++)
+					result.add(variableProviders[i].getVariableNames(variableProviders[i].getName(), resource)[k]);
 		}
 		if (map != null)
 			result.addAll(map.keySet());
@@ -148,7 +151,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		else
 			name = varName;
 		for (int i = 0; i < variableProviders.length; i++) {
-			if (variableProviders[i].getName().equals(name))
+//			if (variableProviders[i].getName().equals(name))
+//				return variableProviders[i].getValue(varName, resource);
+			
+			if (name.startsWith(variableProviders[i].getName()))
 				return variableProviders[i].getValue(varName, resource);
 		}
 		return null;
@@ -159,7 +165,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 */
 	public boolean isDefined(String varName) {
 		for (int i = 0; i < variableProviders.length; i++) {
-			if (variableProviders[i].getName().equals(varName))
+//			if (variableProviders[i].getName().equals(varName))
+//				return true;
+			
+			if (varName.startsWith(variableProviders[i].getName()))
 				return true;
 		}
 		
@@ -322,7 +331,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 				return;
 
 			for (int i = 0; i < variableProviders.length; i++) {
-				if (variableProviders[i].getName().equals(varName))
+//				if (variableProviders[i].getName().equals(varName))
+//					return;
+				
+				if (varName.startsWith(variableProviders[i].getName()))
 					return;
 			}
 
@@ -465,5 +477,9 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 */
 	public IResource getResource() {
 		return resource;
+	}
+
+	public boolean isReadOnly(String name) {
+		return getPathVariable(name).isReadOnly();
 	}
 }

@@ -207,23 +207,23 @@
          point="org.eclipse.core.resources.variableResolvers">
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.EclipseHomeProjectVariable"
-            name="ECLIPSE_HOME">
+            variable="ECLIPSE_HOME">
       </variableResolver>
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.ProjectLocationVariableResolver"
-            name="PROJECT_LOC">
+            variable="PROJECT_LOC">
       </variableResolver>
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver"
-            name="WORKSPACE_LOC">
+            variable="WORKSPACE_LOC">
       </variableResolver>
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver"
-            name="PARENT">
+            variable="PARENT">
       </variableResolver>
       <variableResolver
             class="org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver"
-            name="PARENT_LOC">
+            variable="PARENT_LOC">
       </variableResolver>
    </extension>
    <extension

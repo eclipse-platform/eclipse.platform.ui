@@ -11,13 +11,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.projectvariables;
 
-import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
-
 import java.net.URI;
-
 import org.eclipse.core.resources.IContainer;
-
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
 
 /**
  * Returns the location of the parent resource
@@ -28,6 +25,10 @@ public class WorkspaceParentLocationVariableResolver extends PathVariableResolve
 
 	public WorkspaceParentLocationVariableResolver() {
 		// nothing
+	}
+
+	public String[] getVariableNames(String variable, IResource resource) {
+		return new String[] {NAME};
 	}
 
 	public String getValue(String variable, IResource resource) {

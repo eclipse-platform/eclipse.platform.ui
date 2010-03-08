@@ -33,7 +33,7 @@ public class ProjectVariableProviderManager {
 		String value = null;
 
 		public Descriptor(IExtension extension, IConfigurationElement element) throws RuntimeException, CoreException {
-			name = element.getAttribute("name"); //$NON-NLS-1$
+			name = element.getAttribute("variable"); //$NON-NLS-1$
 			value = element.getAttribute("value"); //$NON-NLS-1$
 			try {
 				provider = (PathVariableResolver) element.createExecutableExtension("class"); //$NON-NLS-1$
@@ -58,9 +58,9 @@ public class ProjectVariableProviderManager {
 			return provider.getValue(variable, resource);
 		}
 
-		public String[] getExtensions(String variable, IResource resource) {
+		public String[] getVariableNames(String variable, IResource resource) {
 			if (provider != null)
-				return provider.getExtensions(variable, resource);
+				return provider.getVariableNames(variable, resource);
 			return null;
 		}
 	}

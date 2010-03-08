@@ -68,10 +68,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="variable" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of the variable.
+                  The prefix for supported variables. We could use wildcards in the future.
                </documentation>
             </annotation>
          </attribute>
@@ -104,8 +104,8 @@
          &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.core.resources.variableResolvers&quot;&gt;
-	&lt;variableResolver class=&quot;org.eclipse.core.internal.resources.projectVariables.EclipseHomeProjectVariable&quot; name=&quot;ECLIPSE_HOME&quot;&gt;
-	&lt;/variableResolver&gt;
+ &lt;variableResolver class=&quot;org.eclipse.core.internal.resources.projectVariables.EclipseHomeProjectVariable&quot; name=&quot;ECLIPSE_HOME&quot;&gt;
+ &lt;/variableResolver&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

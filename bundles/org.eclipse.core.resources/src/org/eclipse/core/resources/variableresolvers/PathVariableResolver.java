@@ -22,9 +22,8 @@ import org.eclipse.core.resources.IResource;
 public abstract class PathVariableResolver {
 
 	/**
-	 * If the variable supports extensions (specified as
-	 * "${VARNAME-EXTENSIONNAME}"), this method can return the list of possible
-	 * extensions, or null if none are supported.
+	 * This method can return a list of possible variables resolved by
+	 * this resolver.
 	 * <p>
 	 * This default implementation always returns <code>null</code>. Subclasses
 	 * should override to provide custom extensions.
@@ -34,9 +33,9 @@ public abstract class PathVariableResolver {
 	 *            The current variable name.
 	 * @param resource
 	 *            The resource that the variable is being resolved for.
-	 * @return the possible variable extensions or null if none are supported.
+	 * @return the list of supported variables
 	 */
-	public String[] getExtensions(String variable, IResource resource) {
+	public String[] getVariableNames(String variable, IResource resource) {
 		return null;
 	}
 

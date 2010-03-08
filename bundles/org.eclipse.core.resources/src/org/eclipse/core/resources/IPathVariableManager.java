@@ -148,7 +148,7 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
-	 * @since 3.6
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IPathVariable getPathVariable(String name);
 
@@ -180,6 +180,9 @@ public interface IPathVariableManager {
 	 * @return an array containing all defined path variable names
 	 */
 	public String[] getPathVariableNames();
+
+	//	Should be added for 3.6
+	//	public String[] getPathVariableNames(String name);
 
 	/**
 	 * Registers the given listener to receive notification of changes to path
@@ -268,6 +271,11 @@ public interface IPathVariableManager {
 	 *    otherwise
 	 */
 	public boolean isDefined(String name);
+
+	/**
+	 * @since 3.6
+	 */
+	public boolean isReadOnly(String name);
 
 	/**
 	 * Validates the given name as the name for a path variable. A valid path

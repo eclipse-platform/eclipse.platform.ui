@@ -374,4 +374,8 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat) {
 		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat);
 	}
+
+	public boolean isReadOnly(String name) {
+		return getPathVariable(name).isReadOnly();
+	}
 }
