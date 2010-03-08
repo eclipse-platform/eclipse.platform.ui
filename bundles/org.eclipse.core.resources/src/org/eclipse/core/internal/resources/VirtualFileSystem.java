@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,20 +12,19 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.IFileStore;
-
 import org.eclipse.core.filesystem.provider.FileSystem;
 
 /**
- * A file system for resource groups
+ * A file system for virtual resources
  */
-public class GroupFileSystem extends FileSystem {
+public class VirtualFileSystem extends FileSystem {
 
-	public GroupFileSystem() {
+	public VirtualFileSystem() {
 		super();
 	}
 
 	public IFileStore getStore(URI uri) {
-		return new GroupFileStore(uri);
+		return new VirtualFileStore(uri);
 	}
 
 }

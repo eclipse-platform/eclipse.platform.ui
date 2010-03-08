@@ -77,7 +77,7 @@ public class Folder extends Container implements IFolder {
 	 */
 	public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {	
 		if ((updateFlags & IResource.VIRTUAL) == IResource.VIRTUAL) {
-			createLink(LinkDescription.GROUP_LOCATION, updateFlags, monitor);
+			createLink(LinkDescription.VIRTUAL_LOCATION, updateFlags, monitor);
 			return;
 		}
 		

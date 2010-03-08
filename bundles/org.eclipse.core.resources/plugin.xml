@@ -229,9 +229,9 @@
    <extension
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem
-            scheme="group">
+            scheme="virtual">
          <run
-               class="org.eclipse.core.internal.resources.GroupFileSystem">
+               class="org.eclipse.core.internal.resources.VirtualFileSystem">
          </run>
       </filesystem>
    </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.*;
  * in the project description.
  */
 public class LinkDescription implements Comparable {
-	public static final URI GROUP_LOCATION = getGroupLocation();
-	private static URI getGroupLocation() {
+	public static final URI VIRTUAL_LOCATION = getVirtualLocation();
+	private static URI getVirtualLocation() {
 		try {
-			return  new URI("group:/group"); //$NON-NLS-1$
+			return  new URI("virtual:/virtual"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
 			//cannot happen
 			return null;
@@ -80,7 +80,7 @@ public class LinkDescription implements Comparable {
 	}
 	
 	public boolean isGroup() {
-		return localLocation.equals(GROUP_LOCATION);
+		return localLocation.equals(VIRTUAL_LOCATION);
 	}
 
 	public int hashCode() {
