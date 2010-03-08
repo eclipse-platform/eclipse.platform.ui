@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -99,8 +98,7 @@ public class PageSite implements IPageSite, INestable {
 						// TODO compat: not tsure what this should do
 					}
 				});
-		e4Context = EclipseContextFactory.create(((PartSite) parentViewSite).getContext(),
-				UISchedulerStrategy.getInstance());
+		e4Context = EclipseContextFactory.create(((PartSite) parentViewSite).getContext(), null);
 		e4Context.set(IContextConstants.DEBUG_STRING, "PageSite"); //$NON-NLS-1$
 		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();

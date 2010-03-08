@@ -37,7 +37,6 @@ import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -300,7 +299,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		return new LegacyEvalContext(EclipseContextFactory.create(getFocusContext(PlatformUI
-				.getWorkbench().getDisplay()), UISchedulerStrategy.getInstance()));
+				.getWorkbench().getDisplay()), null));
 	}
 
 	/*
