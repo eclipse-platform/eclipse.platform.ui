@@ -22,8 +22,9 @@ public class InjectionMethod extends InjectionAbstract {
 
 	private final Method method;
 
-	public InjectionMethod(Object userObject, IObjectProvider primarySupplier, Method method) {
-		super(userObject, primarySupplier);
+	public InjectionMethod(Object userObject, IObjectProvider primarySupplier, Method method,
+			boolean batchProcess) {
+		super(userObject, primarySupplier, batchProcess);
 		this.method = method;
 		InjectionProperties methodProps = annotationSupport.getInjectProperties(method);
 		optional = methodProps.isOptional();

@@ -24,7 +24,7 @@ public class InjectionConstructor extends InjectionAbstract {
 
 	public InjectionConstructor(Object userObject, IObjectProvider primarySupplier,
 			Constructor constructor) {
-		super(userObject, primarySupplier);
+		super(userObject, primarySupplier, false);
 		this.constructor = constructor;
 	}
 

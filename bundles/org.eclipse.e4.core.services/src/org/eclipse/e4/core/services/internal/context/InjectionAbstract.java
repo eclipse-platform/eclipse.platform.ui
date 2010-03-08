@@ -24,14 +24,17 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 	final protected IObjectProvider primarySupplier;
 
 	protected boolean optional = false;
+	final private boolean batchProcess;
 
 	abstract public boolean notify(ContextChangeEvent event);
 
-	public InjectionAbstract(Object userObject, IObjectProvider primarySupplier) {
+	public InjectionAbstract(Object userObject, IObjectProvider primarySupplier,
+			boolean batchProcess) {
 		userObjectRef = new WeakReference(userObject);
 		// plug-in class that gets replaced in Java 1.5+
 		annotationSupport = new AnnotationsSupport(primarySupplier);
 		this.primarySupplier = primarySupplier;
+		this.batchProcess = batchProcess;
 	}
 
 	public Object getObject() {
@@ -98,6 +101,10 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 		// String msg = NLS.bind("Injection failed", destination.toString());
 		// RuntimeLog.log(new Status(IStatus.WARNING,
 		// IRuntimeConstants.PI_COMMON, 0, msg, e));
+	}
+
+	public boolean batchProcess() {
+		return batchProcess;
 	}
 
 }

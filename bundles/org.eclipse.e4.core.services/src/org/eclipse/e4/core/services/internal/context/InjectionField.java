@@ -21,8 +21,9 @@ public class InjectionField extends InjectionAbstract {
 
 	private final Field field;
 
-	public InjectionField(Object userObject, IObjectProvider primarySupplier, Field field) {
-		super(userObject, primarySupplier);
+	public InjectionField(Object userObject, IObjectProvider primarySupplier, Field field,
+			boolean batchProcess) {
+		super(userObject, primarySupplier, batchProcess);
 		this.field = field;
 		InjectionProperties fieldProps = annotationSupport.getInjectProperties(field);
 		optional = fieldProps.isOptional();

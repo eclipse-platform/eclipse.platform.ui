@@ -17,4 +17,6 @@ public interface IRunAndTrackObject extends IRunAndTrack {
 
 	public Object getObject();
 
+	public boolean batchProcess();
+
 }

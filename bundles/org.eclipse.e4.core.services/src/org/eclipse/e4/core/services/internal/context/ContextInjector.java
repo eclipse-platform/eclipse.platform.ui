@@ -124,7 +124,8 @@ public class ContextInjector {
 
 			if (!properties.shouldInject())
 				continue;
-			context.runAndTrack(new InjectionField(userObject, context, field), null);
+			context.runAndTrack(new InjectionField(userObject, context, field, properties
+					.groupUpdates()), null);
 		}
 		return true;
 	}
@@ -174,7 +175,8 @@ public class ContextInjector {
 			if (!properties.shouldInject())
 				continue;
 
-			context.runAndTrack(new InjectionMethod(userObject, context, method), null);
+			context.runAndTrack(new InjectionMethod(userObject, context, method, properties
+					.groupUpdates()), null);
 		}
 		return true;
 	}
@@ -228,7 +230,7 @@ public class ContextInjector {
 			if (!method.getName().equals(methodName))
 				continue;
 
-			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method);
+			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method, false);
 			try {
 				return injectMethod.invoke(false, false);
 			} catch (InjectionException e) {
@@ -255,7 +257,7 @@ public class ContextInjector {
 			if (!method.getName().equals(methodName))
 				continue;
 
-			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method);
+			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method, false);
 			try {
 				return injectMethod.invoke(false, false);
 			} catch (InjectionException e) {

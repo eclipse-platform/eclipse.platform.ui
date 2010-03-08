@@ -26,7 +26,7 @@ public class InjectionClass extends InjectionAbstract {
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
 	public InjectionClass(Object userObject, IObjectProvider primarySupplier) {
-		super(userObject, primarySupplier);
+		super(userObject, primarySupplier, false);
 	}
 
 	public boolean notify(ContextChangeEvent event) {
@@ -44,7 +44,9 @@ public class InjectionClass extends InjectionAbstract {
 			processPostConstruct(object, object.getClass(), new ArrayList(5));
 		}
 		IObjectProvider context = event.getContext();
-		context.get(new InjectionProperties(true, "e4_valid_context", true, null)); // pseudo-dependency to create a link
+		context.get(new InjectionProperties(true, "e4_valid_context", true, null)); // pseudo-dependency
+																					// to create a
+																					// link
 		return true;
 	}
 
@@ -62,7 +64,7 @@ public class InjectionClass extends InjectionAbstract {
 				continue;
 			if (!isOverridden(method, classHierarchy)) {
 				InjectionMethod methodInvoke = new InjectionMethod(getObject(), primarySupplier,
-						method);
+						method, false);
 				try {
 					methodInvoke.invoke(false, false);
 				} catch (InjectionException e) {
@@ -108,7 +110,7 @@ public class InjectionClass extends InjectionAbstract {
 				continue;
 			if (!isOverridden(method, classHierarchy)) {
 				InjectionMethod methodInvoke = new InjectionMethod(getObject(), primarySupplier,
-						method);
+						method, false);
 				try {
 					methodInvoke.invoke(false, false);
 				} catch (InjectionException e) {

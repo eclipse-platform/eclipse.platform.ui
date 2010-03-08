@@ -60,6 +60,12 @@ public final class ContextChangeEvent {
 	 */
 	public static final int UNINJECTED = 4;
 
+	/**
+	 * A change event type (value "5"), indicating that a context needs to process scheduled
+	 * updates.
+	 */
+	public static final int UPDATE = 5;
+
 	private Object[] args;
 	private IObjectProvider context;
 	private int eventType;

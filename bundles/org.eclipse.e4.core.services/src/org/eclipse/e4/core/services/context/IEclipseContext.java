@@ -192,4 +192,8 @@ public interface IEclipseContext {
 	 */
 	public void declareModifiable(String name);
 
+	/**
+	 * Process waiting updates for listeners that support batch notifications.
+	 */
+	public void processWaiting();
 }

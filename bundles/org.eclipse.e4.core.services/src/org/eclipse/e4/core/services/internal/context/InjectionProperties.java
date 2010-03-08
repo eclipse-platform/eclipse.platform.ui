@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class InjectionProperties implements IObjectDescriptor {
 	private Class elementClass;
 	private String handlesEvent;
 	private boolean eventHeadless;
+	private boolean groupUpdates = false;
 
 	public InjectionProperties(boolean inject, String propertyToInject, boolean optional,
 			Class elementClass) {
@@ -93,5 +94,13 @@ public class InjectionProperties implements IObjectDescriptor {
 
 	public boolean getEventHeadless() {
 		return eventHeadless;
+	}
+
+	public void setGroupUpdates(boolean groupUpdates) {
+		this.groupUpdates = groupUpdates;
+	}
+
+	public boolean groupUpdates() {
+		return groupUpdates;
 	}
 }

@@ -86,6 +86,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	static class TrackableComputationExt extends Computation implements IRunAndTrack {
 
+		private ContextChangeEvent cachedEvent;
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -146,15 +148,36 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 
 		public boolean notify(ContextChangeEvent event) {
+			// is this a structural event?
+			// structural changes: INITIAL, DISPOSE, UNINJECTED are always processed right away
+			int eventType = event.getEventType();
+			if ((runnable instanceof IRunAndTrackObject)
+					&& ((IRunAndTrackObject) runnable).batchProcess()) {
+				if ((eventType == ContextChangeEvent.ADDED)
+						|| (eventType == ContextChangeEvent.REMOVED)) {
+					cachedEvent = event;
+					EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event
+							.getContext()).getContext();
+					eventsContext.addWaiting(this);
+					// eventsContext.getRoot().waiting.add(this);
+					return true;
+				}
+			}
 			Computation oldComputation = (Computation) currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
 			try {
-				result = runnable.notify(event);
+				if (cachedEvent != null) {
+					result = runnable.notify(cachedEvent);
+					cachedEvent = null;
+				}
+				if (eventType != ContextChangeEvent.UPDATE)
+					result = runnable.notify(event);
 			} finally {
 				currentComputation.set(oldComputation);
 			}
-			EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event.getContext()).getContext();
+			EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event
+					.getContext()).getContext();
 			if (result)
 				startListening(eventsContext);
 			else
@@ -221,9 +244,13 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private ArrayList modifiable;
 
+	private ArrayList waiting; // list of Computations; null for all non-root entries
+
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
 		set(IContextConstants.PARENT, parent);
+		if (parent == null)
+			waiting = new ArrayList();
 	}
 
 	public boolean containsKey(String name) {
@@ -548,6 +575,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	private void handleReparent(EclipseContext newParent, List scheduled) {
+		// TBD should we lock waiting list while doing reparent?
+		// Add "boolean inReparent" on the root context and process right away?
+		processWaiting();
 		// 1) everybody who depends on me: I need to collect combined list of names injected
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		Set usedNames = new HashSet();
@@ -555,7 +585,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			Set listenerNames = ls[i].dependsOnNames(this);
 			if (listenerNames == null)
 				continue; // should not happen?
-			usedNames.addAll(listenerNames); // also removes duplicates 
+			usedNames.addAll(listenerNames); // also removes duplicates
 		}
 		// 2) for each used name:
 		for (Iterator i = usedNames.iterator(); i.hasNext();) {
@@ -569,4 +599,47 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 		localValueComputations.clear();
 	}
+
+	public void processWaiting() {
+		// traverse to the root node
+		EclipseContext parent = getParent();
+		if (parent != null) {
+			parent.processWaiting();
+			return;
+		}
+		if (waiting == null)
+			return;
+		// create update notifications
+		Computation[] ls = (Computation[]) waiting.toArray(new Computation[waiting.size()]);
+		waiting.clear();
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.UPDATE, null, null, null);
+		for (int i = 0; i < ls.length; i++) {
+			if (ls[i] instanceof TrackableComputationExt)
+				((TrackableComputationExt) ls[i]).notify(event);
+		}
+	}
+
+	public void addWaiting(Computation cp) {
+		// traverse to the root node
+		EclipseContext parent = getParent();
+		if (parent != null) {
+			parent.addWaiting(cp);
+			return;
+		}
+		if (waiting == null)
+			waiting = new ArrayList();
+		waiting.add(cp);
+	}
+
+	protected EclipseContext getRoot() {
+		EclipseContext current = this;
+		EclipseContext root;
+		do {
+			root = current;
+			current = current.getParent();
+		} while (current != null);
+		return root;
+	}
+
 }
