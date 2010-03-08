@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 
@@ -111,6 +112,42 @@ public class RefactoringWizardOpenOperation {
 	 *  the user.
 	 */
 	public int run(final Shell parent, final String dialogTitle) throws InterruptedException {
+		return run(parent, dialogTitle, null);
+	}
+	
+	/**
+	 * Opens the refactoring dialog for the refactoring wizard passed to the constructor.
+	 * The method first checks the initial conditions of the refactoring. If the condition
+	 * checking returns a status with a severity of {@link RefactoringStatus#FATAL} then
+	 * a message dialog is opened containing the corresponding status message. No wizard
+	 * dialog is opened in this situation. If the condition checking passes then the
+	 * refactoring dialog is opened.
+	 * <p>
+	 * The methods ensures that the workspace lock is held while the condition checking,
+	 * change creation and change execution is performed. Clients can't make any assumption
+	 * about the thread in which these steps are executed. However the framework ensures
+	 * that the workspace lock is transfered to the thread in which the execution of the
+	 * steps takes place.
+	 * </p>
+	 * @param parent the parent shell for the dialog or <code>null</code> if the dialog
+	 *  is a top level dialog
+	 * @param dialogTitle the dialog title of the message box presenting the failed
+	 *  condition check (if any)
+	 * @param context the runnable context to use for conditions checking before the
+	 *  refactoring wizard dialog is visible. If <code>null</code>, the workbench window's
+	 *  progress service is used.  
+	 *
+	 * @return {@link #INITIAL_CONDITION_CHECKING_FAILED} if the initial condition checking
+	 *  failed and no wizard dialog was presented. Otherwise either {@link IDialogConstants#OK_ID}
+	 *  or {@link IDialogConstants#CANCEL_ID} is returned depending on whether the user
+	 *  has pressed the OK or cancel button on the wizard dialog.
+	 *
+	 * @throws InterruptedException if the initial condition checking got canceled by
+	 *  the user.
+	 *  
+	 * @since 3.5
+	 */
+	public int run(final Shell parent, final String dialogTitle, final IRunnableContext context) throws InterruptedException {
 		Assert.isNotNull(dialogTitle);
 		final Refactoring refactoring= fWizard.getRefactoring();
 		final IJobManager manager= Job.getJobManager();
@@ -123,7 +160,7 @@ public class RefactoringWizardOpenOperation {
 					manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
 
 					refactoring.setValidationContext(parent);
-					fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
+					fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle, context);
 					if (fInitialConditions.hasFatalError()) {
 						String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 						MessageDialog.openInformation(parent, dialogTitle, message);
@@ -160,11 +197,17 @@ public class RefactoringWizardOpenOperation {
 
 	//---- private helper methods -----------------------------------------------------------------
 
-	private RefactoringStatus checkInitialConditions(Refactoring refactoring, Shell parent, String title) throws InterruptedException {
+	private RefactoringStatus checkInitialConditions(Refactoring refactoring, Shell parent, String title, IRunnableContext context) throws InterruptedException {
 		try {
 			CheckConditionsOperation cco= new CheckConditionsOperation(refactoring, CheckConditionsOperation.INITIAL_CONDITONS);
-			IProgressService service= PlatformUI.getWorkbench().getProgressService();
-			service.busyCursorWhile(new WorkbenchRunnableAdapter(cco, ResourcesPlugin.getWorkspace().getRoot()));
+			WorkbenchRunnableAdapter workbenchRunnableAdapter= new WorkbenchRunnableAdapter(cco, ResourcesPlugin.getWorkspace().getRoot());
+			if (context == null) {
+				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(workbenchRunnableAdapter);
+			} else if (context instanceof IProgressService) {
+				((IProgressService) context).busyCursorWhile(workbenchRunnableAdapter);
+			} else {
+				context.run(true, true, workbenchRunnableAdapter);
+			}
 			return cco.getStatus();
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e, parent, title,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,6 +156,8 @@ public abstract class RefactoringWizard extends Wizard {
 	private boolean fIsChangeCreationCancelable;
 	private boolean fForcePreviewReview;
 	private boolean fPreviewShown;
+
+	private IRunnableContext fRunnableContext;
 
 	/**
 	 * Creates a new refactoring wizard for the given refactoring.
@@ -398,11 +400,25 @@ public abstract class RefactoringWizard extends Wizard {
 		if (hasUserInput())
 			return super.getStartingPage();
 
+		IRunnableContext context= fRunnableContext != null ? fRunnableContext : PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		/*
 		 * XXX: Can return null if there's no user input page and change creation has been cancelled.
-		 * The only way to avoid this would be setChangeCreationCancelable(true).
+		 * The only way to avoid this would be setChangeCreationCancelable(false).
 		 */
-		return computeUserInputSuccessorPage(null, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		return computeUserInputSuccessorPage(null, context);
+	}
+
+	/**
+	 * Sets the runnable context that will be used to computing refactoring conditions and change
+	 * while the refactoring dialog is not yet shown. The default is to use the active workbench
+	 * window.
+	 * 
+	 * @param context a runnable context, or <code>null</code> to re-set the default
+	 * 
+	 * @since 3.5
+	 */
+	public void setInitialComputationContext(IRunnableContext context) {
+		fRunnableContext= context;
 	}
 
 	/**
