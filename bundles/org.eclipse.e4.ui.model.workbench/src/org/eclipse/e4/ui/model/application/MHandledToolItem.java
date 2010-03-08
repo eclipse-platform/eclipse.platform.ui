@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MHandledToolItem extends MElementContainer<MMenuItem>, MHandledItem, MToolItem {
+public interface MHandledToolItem extends MToolItem, MHandledItem {
 } // MHandledToolItem

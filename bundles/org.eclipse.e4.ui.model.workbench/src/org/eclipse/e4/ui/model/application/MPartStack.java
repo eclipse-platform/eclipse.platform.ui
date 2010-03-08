@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MPartStack extends MUIElement, MPSCElement, MGenericStack<MPart> {
+public interface MPartStack extends MGenericStack<MPart>, MPSCElement {
 } // MPartStack

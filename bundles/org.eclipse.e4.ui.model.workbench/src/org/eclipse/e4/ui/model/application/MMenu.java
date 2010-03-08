@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MMenu extends MUIElement, MElementContainer<MMenuItem> {
+public interface MMenu extends MElementContainer<MMenuItem> {
 } // MMenu

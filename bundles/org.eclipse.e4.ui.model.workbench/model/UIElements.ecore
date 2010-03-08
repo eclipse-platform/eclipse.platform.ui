@@ -117,7 +117,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Menu #//Item"/>
   <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//Contribution #//MenuItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="Menu">
-    <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//MenuItem"/>
     </eGenericSuperTypes>
@@ -128,9 +127,8 @@
       <eTypeArguments eClassifier="#//MenuItem"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//Contribution #//ToolItem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ToolItem #//Contribution"/>
   <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
-    <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//ToolItem"/>
     </eGenericSuperTypes>
@@ -140,10 +138,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//Command" containment="true"/>
-    <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//Window"/>
     </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
     <eGenericSuperTypes eClassifier="#//PartDescriptorContainer"/>
@@ -167,11 +165,10 @@
         eType="#//PartDescriptor" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PartStack">
-    <eGenericSuperTypes eClassifier="#//UIElement"/>
-    <eGenericSuperTypes eClassifier="#//PSCElement"/>
     <eGenericSuperTypes eClassifier="#//GenericStack">
       <eTypeArguments eClassifier="#//Part"/>
     </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
     <eGenericSuperTypes eClassifier="#//GenericTile">
@@ -186,10 +183,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//PSCElement"/>
     </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
@@ -199,7 +196,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//ModelComponent" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//ApplicationElement #//PartDescriptorContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//PartDescriptorContainer #//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
@@ -246,13 +243,7 @@
         eType="#//Parameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//MenuItem #//HandledItem"/>
-  <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem">
-    <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eClassifier="#//MenuItem"/>
-    </eGenericSuperTypes>
-    <eGenericSuperTypes eClassifier="#//HandledItem"/>
-    <eGenericSuperTypes eClassifier="#//ToolItem"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ToolItem #//HandledItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//KeySequence #//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
         eType="#//Command"/>
@@ -290,10 +281,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//UIElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Perspective">
-    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//PSCElement"/>
     </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>

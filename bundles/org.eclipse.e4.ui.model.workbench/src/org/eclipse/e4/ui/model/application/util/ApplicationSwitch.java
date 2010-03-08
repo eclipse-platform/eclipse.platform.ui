@@ -222,8 +222,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(directMenuItem);
 				if (result == null) result = caseElementContainer(directMenuItem);
 				if (result == null) result = caseUILabel(directMenuItem);
-				if (result == null) result = caseApplicationElement(directMenuItem);
 				if (result == null) result = caseUIElement(directMenuItem);
+				if (result == null) result = caseApplicationElement(directMenuItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -250,8 +250,8 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.DIRECT_TOOL_ITEM: {
 				MDirectToolItem directToolItem = (MDirectToolItem)theEObject;
 				T1 result = caseDirectToolItem(directToolItem);
-				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseToolItem(directToolItem);
+				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseItem(directToolItem);
 				if (result == null) result = caseElementContainer(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
@@ -278,8 +278,8 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.APPLICATION: {
 				MApplication application = (MApplication)theEObject;
 				T1 result = caseApplication(application);
-				if (result == null) result = caseContext(application);
 				if (result == null) result = caseElementContainer(application);
+				if (result == null) result = caseContext(application);
 				if (result == null) result = caseHandlerContainer(application);
 				if (result == null) result = caseBindingContainer(application);
 				if (result == null) result = casePartDescriptorContainer(application);
@@ -336,11 +336,11 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PART_STACK: {
 				MPartStack partStack = (MPartStack)theEObject;
 				T1 result = casePartStack(partStack);
-				if (result == null) result = casePSCElement(partStack);
 				if (result == null) result = caseGenericStack(partStack);
-				if (result == null) result = caseApplicationElement(partStack);
+				if (result == null) result = casePSCElement(partStack);
 				if (result == null) result = caseElementContainer(partStack);
 				if (result == null) result = caseUIElement(partStack);
+				if (result == null) result = caseApplicationElement(partStack);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -358,8 +358,8 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.WINDOW: {
 				MWindow window = (MWindow)theEObject;
 				T1 result = caseWindow(window);
-				if (result == null) result = caseUILabel(window);
 				if (result == null) result = caseElementContainer(window);
+				if (result == null) result = caseUILabel(window);
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
 				if (result == null) result = caseBindingContainer(window);
@@ -378,8 +378,8 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.MODEL_COMPONENT: {
 				MModelComponent modelComponent = (MModelComponent)theEObject;
 				T1 result = caseModelComponent(modelComponent);
-				if (result == null) result = caseApplicationElement(modelComponent);
 				if (result == null) result = casePartDescriptorContainer(modelComponent);
+				if (result == null) result = caseApplicationElement(modelComponent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -450,13 +450,13 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.HANDLED_TOOL_ITEM: {
 				MHandledToolItem handledToolItem = (MHandledToolItem)theEObject;
 				T1 result = caseHandledToolItem(handledToolItem);
-				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseToolItem(handledToolItem);
-				if (result == null) result = caseElementContainer(handledToolItem);
+				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
+				if (result == null) result = caseElementContainer(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
-				if (result == null) result = caseApplicationElement(handledToolItem);
 				if (result == null) result = caseUILabel(handledToolItem);
+				if (result == null) result = caseApplicationElement(handledToolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -524,8 +524,8 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PERSPECTIVE: {
 				MPerspective perspective = (MPerspective)theEObject;
 				T1 result = casePerspective(perspective);
-				if (result == null) result = caseUILabel(perspective);
 				if (result == null) result = caseElementContainer(perspective);
+				if (result == null) result = caseUILabel(perspective);
 				if (result == null) result = caseContext(perspective);
 				if (result == null) result = casePSCElement(perspective);
 				if (result == null) result = caseUIElement(perspective);

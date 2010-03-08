@@ -12,11 +12,13 @@ package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
@@ -31,7 +33,9 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
@@ -39,6 +43,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -50,17 +55,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getTags <em>Tags</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRenderer <em>Renderer</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isToBeRendered <em>To Be Rendered</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isOnTop <em>On Top</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isVisible <em>Visible</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getParent <em>Parent</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getContainerData <em>Container Data</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getSelectedElement <em>Selected Element</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
@@ -70,176 +67,46 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ApplicationImpl extends ContextImpl implements MApplication {
+public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MApplication {
 	/**
-	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getId()
+	 * @see #getContext()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String ID_EDEFAULT = null;
+	protected static final IEclipseContext CONTEXT_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * The cached value of the '{@link #getContext() <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getId()
+	 * @see #getContext()
 	 * @generated
 	 * @ordered
 	 */
-	protected String id = ID_EDEFAULT;
+	protected IEclipseContext context = CONTEXT_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
+	 * The cached value of the '{@link #getVariables() <em>Variables</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getTags()
+	 * @see #getVariables()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> tags;
+	protected EList<String> variables;
 
 	/**
-	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getWidget()
+	 * @see #getProperties()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object WIDGET_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getWidget() <em>Widget</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getWidget()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object widget = WIDGET_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRenderer()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object RENDERER_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRenderer()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object renderer = RENDERER_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isToBeRendered()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
-
-	/**
-	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isToBeRendered()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isOnTop()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean ON_TOP_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isOnTop()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean onTop = ON_TOP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
-
-	/**
-	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean visible = VISIBLE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getContainerData()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String CONTAINER_DATA_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getContainerData()
-	 * @generated
-	 * @ordered
-	 */
-	protected String containerData = CONTAINER_DATA_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getChildren()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MWindow> children;
-
-	/**
-	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSelectedElement()
-	 * @generated
-	 * @ordered
-	 */
-	protected MWindow selectedElement;
+	protected EMap<String, String> properties;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -305,8 +172,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getId() {
-		return id;
+	public IEclipseContext getContext() {
+		return context;
 	}
 
 	/**
@@ -314,11 +181,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setId(String newId) {
-		String oldId = id;
-		id = newId;
+	public void setContext(IEclipseContext newContext) {
+		IEclipseContext oldContext = context;
+		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ID, oldId, id));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__CONTEXT, oldContext, context));
 	}
 
 	/**
@@ -326,11 +193,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getTags() {
-		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__TAGS);
+	public EList<String> getVariables() {
+		if (variables == null) {
+			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__VARIABLES);
 		}
-		return tags;
+		return variables;
 	}
 
 	/**
@@ -338,217 +205,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getWidget() {
-		return widget;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setWidget(Object newWidget) {
-		Object oldWidget = widget;
-		widget = newWidget;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__WIDGET, oldWidget, widget));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getRenderer() {
-		return renderer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRenderer(Object newRenderer) {
-		Object oldRenderer = renderer;
-		renderer = newRenderer;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__RENDERER, oldRenderer, renderer));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isToBeRendered() {
-		return toBeRendered;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setToBeRendered(boolean newToBeRendered) {
-		boolean oldToBeRendered = toBeRendered;
-		toBeRendered = newToBeRendered;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isOnTop() {
-		return onTop;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setOnTop(boolean newOnTop) {
-		boolean oldOnTop = onTop;
-		onTop = newOnTop;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ON_TOP, oldOnTop, onTop));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isVisible() {
-		return visible;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setVisible(boolean newVisible) {
-		boolean oldVisible = visible;
-		visible = newVisible;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__VISIBLE, oldVisible, visible));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public MElementContainer<MUIElement> getParent() {
-		if (eContainerFeatureID() != MApplicationPackage.APPLICATION__PARENT) return null;
-		return (MElementContainer<MUIElement>)eContainer();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetParent(MElementContainer<MUIElement> newParent, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newParent, MApplicationPackage.APPLICATION__PARENT, msgs);
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setParent(MElementContainer<MUIElement> newParent) {
-		if (newParent != eInternalContainer() || (eContainerFeatureID() != MApplicationPackage.APPLICATION__PARENT && newParent != null)) {
-			if (EcoreUtil.isAncestor(this, (EObject)newParent))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString()); //$NON-NLS-1$
-			NotificationChain msgs = null;
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			if (newParent != null)
-				msgs = ((InternalEObject)newParent).eInverseAdd(this, MApplicationPackage.ELEMENT_CONTAINER__CHILDREN, MElementContainer.class, msgs);
-			msgs = basicSetParent(newParent, msgs);
-			if (msgs != null) msgs.dispatch();
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.APPLICATION__PROPERTIES);
 		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__PARENT, newParent, newParent));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getContainerData() {
-		return containerData;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setContainerData(String newContainerData) {
-		String oldContainerData = containerData;
-		containerData = newContainerData;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__CONTAINER_DATA, oldContainerData, containerData));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<MWindow> getChildren() {
-		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindow>(MUIElement.class, this, MApplicationPackage.APPLICATION__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
-		}
-		return children;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MWindow getSelectedElement() {
-		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
-			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MWindow)eResolveProxy(oldSelectedElement);
-			if (selectedElement != oldSelectedElement) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.APPLICATION__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
-			}
-		}
-		return selectedElement;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MWindow basicGetSelectedElement() {
-		return selectedElement;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSelectedElement(MWindow newSelectedElement) {
-		MWindow oldSelectedElement = selectedElement;
-		selectedElement = newSelectedElement;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+		return properties;
 	}
 
 	/**
@@ -604,32 +265,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case MApplicationPackage.APPLICATION__PARENT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetParent((MElementContainer<MUIElement>)otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__PARENT:
-				return basicSetParent(null, msgs);
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.APPLICATION__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__BINDINGS:
@@ -648,45 +288,15 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-		switch (eContainerFeatureID()) {
-			case MApplicationPackage.APPLICATION__PARENT:
-				return eInternalContainer().eInverseRemove(this, MApplicationPackage.ELEMENT_CONTAINER__CHILDREN, MElementContainer.class, msgs);
-		}
-		return super.eBasicRemoveFromContainerFeature(msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__ID:
-				return getId();
-			case MApplicationPackage.APPLICATION__TAGS:
-				return getTags();
-			case MApplicationPackage.APPLICATION__WIDGET:
-				return getWidget();
-			case MApplicationPackage.APPLICATION__RENDERER:
-				return getRenderer();
-			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
-				return isToBeRendered();
-			case MApplicationPackage.APPLICATION__ON_TOP:
-				return isOnTop();
-			case MApplicationPackage.APPLICATION__VISIBLE:
-				return isVisible();
-			case MApplicationPackage.APPLICATION__PARENT:
-				return getParent();
-			case MApplicationPackage.APPLICATION__CONTAINER_DATA:
-				return getContainerData();
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				return getChildren();
-			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
-				if (resolve) return getSelectedElement();
-				return basicGetSelectedElement();
+			case MApplicationPackage.APPLICATION__CONTEXT:
+				return getContext();
+			case MApplicationPackage.APPLICATION__VARIABLES:
+				return getVariables();
+			case MApplicationPackage.APPLICATION__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return getHandlers();
 			case MApplicationPackage.APPLICATION__BINDINGS:
@@ -708,40 +318,15 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__ID:
-				setId((String)newValue);
+			case MApplicationPackage.APPLICATION__CONTEXT:
+				setContext((IEclipseContext)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__TAGS:
-				getTags().clear();
-				getTags().addAll((Collection<? extends String>)newValue);
+			case MApplicationPackage.APPLICATION__VARIABLES:
+				getVariables().clear();
+				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__WIDGET:
-				setWidget(newValue);
-				return;
-			case MApplicationPackage.APPLICATION__RENDERER:
-				setRenderer(newValue);
-				return;
-			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
-				setToBeRendered((Boolean)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__ON_TOP:
-				setOnTop((Boolean)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__VISIBLE:
-				setVisible((Boolean)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__PARENT:
-				setParent((MElementContainer<MUIElement>)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__CONTAINER_DATA:
-				setContainerData((String)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends MWindow>)newValue);
-				return;
-			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
-				setSelectedElement((MWindow)newValue);
+			case MApplicationPackage.APPLICATION__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
 				return;
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				getHandlers().clear();
@@ -771,38 +356,14 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__ID:
-				setId(ID_EDEFAULT);
+			case MApplicationPackage.APPLICATION__CONTEXT:
+				setContext(CONTEXT_EDEFAULT);
 				return;
-			case MApplicationPackage.APPLICATION__TAGS:
-				getTags().clear();
+			case MApplicationPackage.APPLICATION__VARIABLES:
+				getVariables().clear();
 				return;
-			case MApplicationPackage.APPLICATION__WIDGET:
-				setWidget(WIDGET_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__RENDERER:
-				setRenderer(RENDERER_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
-				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__ON_TOP:
-				setOnTop(ON_TOP_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__VISIBLE:
-				setVisible(VISIBLE_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__PARENT:
-				setParent((MElementContainer<MUIElement>)null);
-				return;
-			case MApplicationPackage.APPLICATION__CONTAINER_DATA:
-				setContainerData(CONTAINER_DATA_EDEFAULT);
-				return;
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				getChildren().clear();
-				return;
-			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
-				setSelectedElement((MWindow)null);
+			case MApplicationPackage.APPLICATION__PROPERTIES:
+				getProperties().clear();
 				return;
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				getHandlers().clear();
@@ -828,28 +389,12 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.APPLICATION__TAGS:
-				return tags != null && !tags.isEmpty();
-			case MApplicationPackage.APPLICATION__WIDGET:
-				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.APPLICATION__RENDERER:
-				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
-			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
-				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
-			case MApplicationPackage.APPLICATION__ON_TOP:
-				return onTop != ON_TOP_EDEFAULT;
-			case MApplicationPackage.APPLICATION__VISIBLE:
-				return visible != VISIBLE_EDEFAULT;
-			case MApplicationPackage.APPLICATION__PARENT:
-				return getParent() != null;
-			case MApplicationPackage.APPLICATION__CONTAINER_DATA:
-				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
-			case MApplicationPackage.APPLICATION__CHILDREN:
-				return children != null && !children.isEmpty();
-			case MApplicationPackage.APPLICATION__SELECTED_ELEMENT:
-				return selectedElement != null;
+			case MApplicationPackage.APPLICATION__CONTEXT:
+				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+			case MApplicationPackage.APPLICATION__VARIABLES:
+				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.APPLICATION__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.APPLICATION__BINDINGS:
@@ -869,29 +414,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MApplicationElement.class) {
+		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
-				case MApplicationPackage.APPLICATION__TAGS: return MApplicationPackage.APPLICATION_ELEMENT__TAGS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MUIElement.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
-				case MApplicationPackage.APPLICATION__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
-				case MApplicationPackage.APPLICATION__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
-				case MApplicationPackage.APPLICATION__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
-				case MApplicationPackage.APPLICATION__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
-				case MApplicationPackage.APPLICATION__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
-				case MApplicationPackage.APPLICATION__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
-				default: return -1;
-			}
-		}
-		if (baseClass == MElementContainer.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
-				case MApplicationPackage.APPLICATION__SELECTED_ELEMENT: return MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+				case MApplicationPackage.APPLICATION__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
+				case MApplicationPackage.APPLICATION__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				case MApplicationPackage.APPLICATION__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -923,29 +450,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MApplicationElement.class) {
+		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.APPLICATION__ID;
-				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.APPLICATION__TAGS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MUIElement.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.APPLICATION__WIDGET;
-				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.APPLICATION__RENDERER;
-				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.APPLICATION__TO_BE_RENDERED;
-				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.APPLICATION__ON_TOP;
-				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.APPLICATION__VISIBLE;
-				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.APPLICATION__PARENT;
-				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.APPLICATION__CONTAINER_DATA;
-				default: return -1;
-			}
-		}
-		if (baseClass == MElementContainer.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.APPLICATION__CHILDREN;
-				case MApplicationPackage.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MApplicationPackage.APPLICATION__SELECTED_ELEMENT;
+				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.APPLICATION__CONTEXT;
+				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.APPLICATION__VARIABLES;
+				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.APPLICATION__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -980,22 +489,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (id: "); //$NON-NLS-1$
-		result.append(id);
-		result.append(", tags: "); //$NON-NLS-1$
-		result.append(tags);
-		result.append(", widget: "); //$NON-NLS-1$
-		result.append(widget);
-		result.append(", renderer: "); //$NON-NLS-1$
-		result.append(renderer);
-		result.append(", toBeRendered: "); //$NON-NLS-1$
-		result.append(toBeRendered);
-		result.append(", onTop: "); //$NON-NLS-1$
-		result.append(onTop);
-		result.append(", visible: "); //$NON-NLS-1$
-		result.append(visible);
-		result.append(", containerData: "); //$NON-NLS-1$
-		result.append(containerData);
+		result.append(" (context: "); //$NON-NLS-1$
+		result.append(context);
+		result.append(", variables: "); //$NON-NLS-1$
+		result.append(variables);
 		result.append(')');
 		return result.toString();
 	}

@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MDirectToolItem extends MContribution, MToolItem {
+public interface MDirectToolItem extends MToolItem, MContribution {
 } // MDirectToolItem

@@ -33,7 +33,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MModelComponent extends MApplicationElement, MPartDescriptorContainer {
+public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement {
 	/**
 	 * Returns the value of the '<em><b>Position In Parent</b></em>' attribute.
 	 * The default value is <code>""</code>.
