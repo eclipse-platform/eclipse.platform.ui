@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+  <children xsi:type="application:Window" width="800" height="600">
+    <children xsi:type="application:PartStack" id="modeleditorstack">
+      <tags>newtablook</tags>
+    </children>
+    <children xsi:type="application:Menu" id="e4.modeleditor.menu">
+      <children xsi:type="application:MenuItem" id="e4.modeleditor.menu.file" label="File">
+        <children xsi:type="application:DirectMenuItem" id="" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" label="Open File ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png"/>
+      </children>
+    </children>
+    <children xsi:type="application:WindowTrim">
+      <children xsi:type="application:ToolBar">
+        <children xsi:type="application:DirectToolItem" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler"/>
+      </children>
+    </children>
+  </children>
+</application:Application>
