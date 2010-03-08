@@ -22,18 +22,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -47,7 +38,6 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.FileFolderSelectionDialog;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
-import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 
 /**
  * A selection dialog which shows the path variables defined in the 
@@ -110,21 +100,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         if (buttonId == EXTEND_ID) {
             PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
                     .getSelection()[0];
-			IPathVariable pathVariable = null;
-			if (currentResource != null)
-				pathVariable = currentResource.getPathVariableManager().getPathVariable(selection.name);
-			if (pathVariable != null
-					&& pathVariable.getExtensions() != null) {
-				EnvSelectionDialog dialog = new EnvSelectionDialog(getShell(),
-						pathVariable.getExtensions());
-            dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
-            dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
-				if (dialog.open() == Window.OK
-						&& pathVariablesGroup.performOk()) {
-					setSelectionResult(new String[] { "${" + selection.name + "-" + dialog.getResult()[0] + "}" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					super.okPressed();
-				}
-			} else {
+			if (currentResource != null) {
 				FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
 						getShell(), false, variableType);
 				dialog
@@ -140,16 +116,16 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 				if (currentResource != null)
 					selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
 							.resolveURI(URIUtil.toURI(selectionPath)));
-            try {
-					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
-			} catch (CoreException e) {
-				ErrorDialog.openError(getShell(), null, null, e.getStatus());
-			}
-            if (dialog.open() == Window.OK
-                    && pathVariablesGroup.performOk()) {
-                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
-                super.okPressed();
-            }
+	            try {
+						dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
+				} catch (CoreException e) {
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				}
+	            if (dialog.open() == Window.OK
+	                    && pathVariablesGroup.performOk()) {
+	                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
+	                super.okPressed();
+	            }
 			}
         } else {
 			super.buttonPressed(buttonId);
@@ -280,80 +256,5 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 	public void setResource(IResource resource) {
 		currentResource = resource;
 		pathVariablesGroup.setResource(resource);
-	}
-
-	class EnvSelectionDialog extends SelectionDialog {
-
-		ListViewer viewer;
-		Object[] extensions;
-
-		protected EnvSelectionDialog(Shell parentShell, Object[] ext) {
-			super(parentShell);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-			extensions = ext;
-		}
-
-		protected Control createDialogArea(Composite parent) {
-			Composite composite = (Composite) super.createDialogArea(parent);
-
-			// Create label
-			createMessageArea(composite);
-			// Create list viewer
-			viewer = new ListViewer(composite, SWT.SINGLE | SWT.H_SCROLL
-					| SWT.V_SCROLL | SWT.BORDER);
-			GridData data = new GridData(GridData.FILL_BOTH);
-			data.heightHint = convertHeightInCharsToPixels(10);
-			data.widthHint = convertWidthInCharsToPixels(30);
-			viewer.getList().setLayoutData(data);
-			viewer.getList().setFont(parent.getFont());
-			// Set the label provider
-			viewer.setLabelProvider(new LabelProvider() {
-				public String getText(Object element) {
-					if (element instanceof String)
-						return (String) element;
-					return null;
-				}
-			});
-
-			// Set the content provider
-			SimpleListContentProvider cp = new SimpleListContentProvider();
-			cp.setElements(extensions);
-			viewer.setContentProvider(cp);
-			viewer.setInput(new Object());
-			// it is ignored but must be non-null
-
-			// Set the initial selection
-			viewer.setSelection(new StructuredSelection(
-					getInitialElementSelections()), true);
-
-			// Add a selection change listener
-			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					// Update OK button enablement
-					getOkButton().setEnabled(!event.getSelection().isEmpty());
-				}
-			});
-
-			// Add double-click listener
-			viewer.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event) {
-					okPressed();
-				}
-			});
-			return composite;
-		}
-
-		protected Control createButtonBar(Composite parent) {
-			Control result = super.createButtonBar(parent);
-			getOkButton().setEnabled(false);
-			return result;
-		}
-
-		protected void okPressed() {
-			IStructuredSelection selection = (IStructuredSelection) viewer
-					.getSelection();
-			setResult(selection.toList());
-			super.okPressed();
-		}
 	}
 }
