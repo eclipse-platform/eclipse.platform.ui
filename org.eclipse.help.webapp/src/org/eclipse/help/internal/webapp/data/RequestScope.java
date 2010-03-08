@@ -66,7 +66,7 @@ public class RequestScope {
 		AbstractHelpScope[] scopeArray;
 		String scopeString;
 		List scopes = new ArrayList();
-		if (HelpSystem.isShared()) {
+		if (!HelpSystem.isShared()) {
 			scopes.add(new FilterScope()); // Workbench is always filtered
 		}
 		scopeString = getScopeString(req);
