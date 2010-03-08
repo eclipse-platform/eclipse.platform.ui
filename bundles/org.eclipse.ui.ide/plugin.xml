@@ -1091,6 +1091,11 @@
             commandId="org.eclipse.ui.window.quickAccess"
             sequence="M1+3"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.spy"
+      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+M3+F3"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
    </extension>
 
    <extension

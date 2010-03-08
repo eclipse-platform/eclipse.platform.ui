@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -37,6 +39,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.testing.ContributionInfo;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -359,6 +362,11 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			// Create the top-level composite
 			{
 				Composite parent = (Composite) pane.getControl();
+				ViewDescriptor descriptor = (ViewDescriptor) this.factory.viewReg.find(getId());
+				if (descriptor != null && descriptor.getPluginId() != null) {
+					parent.setData(new ContributionInfo(descriptor.getPluginId(),
+							ContributionInfoMessages.ContributionInfo_View, null));
+				}
 				content = new Composite(parent, style);
 				content.setLayout(new FillLayout());
 

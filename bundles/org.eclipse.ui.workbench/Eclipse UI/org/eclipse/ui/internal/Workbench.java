@@ -13,6 +13,8 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -56,11 +58,11 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -190,6 +192,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
+import org.eclipse.ui.testing.ContributionInfo;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -2122,15 +2125,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	/**
-	 * Returns the ids of all plug-ins that extend the
+	 * Returns contribution infos for all plug-ins that extend the
 	 * <code>org.eclipse.ui.startup</code> extension point.
 	 * 
 	 * @return the ids of all plug-ins containing 1 or more startup extensions
 	 */
-	public String[] getEarlyActivatedPlugins() {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_STARTUP);
+	public ContributionInfo[] getEarlyActivatedPlugins() {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
 		ArrayList pluginIds = new ArrayList(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
@@ -2139,7 +2141,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 				pluginIds.add(id);
 			}
 		}
-		return (String[]) pluginIds.toArray(new String[pluginIds.size()]);
+		ContributionInfo[] result = new ContributionInfo[pluginIds.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new ContributionInfo((String) pluginIds.get(i),
+					ContributionInfoMessages.ContributionInfo_EarlyStartupPlugin, null);
+
+		}
+		return result;
 	}
 
 	/**

@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.part;
 
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -43,6 +44,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.testing.ContributionInfo;
 
 /**
  * Abstract superclass of all multi-page workbench views.
@@ -409,6 +411,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		PageRec rec = doCreatePage(part);
 		if (rec != null) {
 			mapPartToRec.put(part, rec);
+			rec.page.getControl().setData(
+					new ContributionInfo(part.getSite().getPluginId(),
+							ContributionInfoMessages.ContributionInfo_ViewContent, null));
 			preparePage(rec);
 		}
 		return rec;

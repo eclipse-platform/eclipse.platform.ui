@@ -986,6 +986,12 @@
             name="%command.quickAccess.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.SpyHandler"
+            description="%command.spy.description"
+            id="org.eclipse.ui.window.spy"
+            name="%command.spy.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.internal.WorkbenchEditorsHandler"
             description="%command.switchToEditor.description"
             id="org.eclipse.ui.window.switchToEditor"
@@ -2134,6 +2140,20 @@
          </adapter>
          <adapter
                type="org.eclipse.core.expressions.ICountable">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ui.IPluginContribution"
+            class="org.eclipse.ui.internal.testing.PluginContributionAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.testing.ContributionInfo">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ui.internal.progress.JobInfo"
+            class="org.eclipse.ui.internal.testing.PluginContributionAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.testing.ContributionInfo">
          </adapter>
       </factory>
    </extension>

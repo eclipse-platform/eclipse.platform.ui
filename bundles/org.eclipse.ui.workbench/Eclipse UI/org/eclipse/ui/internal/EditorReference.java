@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -52,6 +54,7 @@ import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.testing.ContributionInfo;
 
 public class EditorReference extends WorkbenchPartReference implements
         IEditorReference {
@@ -653,6 +656,11 @@ public class EditorReference extends WorkbenchPartReference implements
             actionBars = (EditorActionBars) site.getActionBars();
             
             Composite parent = (Composite)pane.getControl();
+			EditorDescriptor descriptor = getDescriptor();
+			if (descriptor != null && descriptor.getPluginId() != null) {
+				parent.setData(new ContributionInfo(descriptor.getPluginId(),
+						ContributionInfoMessages.ContributionInfo_Editor, null));
+			}
             content = new Composite(parent, style);
     
             content.setLayout(new FillLayout());
