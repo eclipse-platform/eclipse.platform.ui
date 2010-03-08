@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.graphics.Image;
@@ -35,11 +36,13 @@ public abstract class AbstractComponentEditor {
 		"/icons/full/obj16/arrow_down.png",
 	};
 
-	protected static final int SEARCH_IMAGE = 0;
-	protected static final int TABLE_ADD_IMAGE = 1;
-	protected static final int TABLE_DELETE_IMAGE = 2;
-	protected static final int ARROW_UP = 3;
-	protected static final int ARROW_DOWN = 4;
+	private WritableValue master = new WritableValue();
+
+	public static final int SEARCH_IMAGE = 0;
+	public static final int TABLE_ADD_IMAGE = 1;
+	public static final int TABLE_DELETE_IMAGE = 2;
+	public static final int ARROW_UP = 3;
+	public static final int ARROW_DOWN = 4;
 
 	public AbstractComponentEditor(EditingDomain editingDomain) {
 		this.editingDomain = editingDomain;
@@ -49,7 +52,11 @@ public abstract class AbstractComponentEditor {
 		return editingDomain;
 	}
 
-	protected Image getImage( Display d, int id) {
+	public WritableValue getMaster() {
+		return master;
+	}
+
+	public Image getImage( Display d, int id) {
 		Image img = IMAGE_MAP.get(id);
 		if( img == null ) {
 			try {

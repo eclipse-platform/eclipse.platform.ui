@@ -13,16 +13,14 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.SWT;
@@ -33,9 +31,8 @@ import org.eclipse.swt.widgets.Display;
 public class ApplicationEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private WritableValue master = new WritableValue();
 	private Image image;
-	private DataBindingContext context;
+	private EMFDataBindingContext context;
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
@@ -74,14 +71,14 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
 		if( composite == null ) {
-			context = new DataBindingContext();
-			composite = createForm(parent,context, master);
+			context = new EMFDataBindingContext();
+			composite = createForm(parent,context);
 		}
-		master.setValue(object);
+		getMaster().setValue(object);
 		return composite;
 	}
 
-	protected Composite createForm(Composite parent, DataBindingContext context, IObservableValue master) {
+	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
 		parent = new Composite(parent,SWT.NONE);
 
 		return parent;

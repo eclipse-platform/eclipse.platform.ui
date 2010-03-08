@@ -10,10 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -30,7 +30,7 @@ public class PartDescriptorEditor extends PartEditor {
 	}
 
 	@Override
-	protected Composite createForm(Composite parent, DataBindingContext context, IObservableValue master) {
+	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master) {
 		Composite comp = super.createForm(parent,context,master);
 
 		IValueProperty textProp = WidgetProperties.text();

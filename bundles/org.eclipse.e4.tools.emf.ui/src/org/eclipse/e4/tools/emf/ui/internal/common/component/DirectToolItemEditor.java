@@ -13,10 +13,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -52,7 +52,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 
 	@Override
-	protected void createSubTypeFormElements(Composite parent, DataBindingContext context, WritableValue master) {
+	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		IValueProperty textProp = WidgetProperties.text();
 
 		Label l = new Label(parent, SWT.NONE);

@@ -144,7 +144,7 @@ public class ModelEditor {
 		parent.setLayout(l);
 		ShadowComposite editingArea = new ShadowComposite(parent,SWT.NONE);
 		editingArea.setLayout(new FillLayout());
-		TreeViewer viewer = new TreeViewer(editingArea);
+		TreeViewer viewer = new TreeViewer(editingArea,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		viewer.setLabelProvider(new ComponentLabelProvider(this));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());

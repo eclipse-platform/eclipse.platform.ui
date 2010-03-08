@@ -13,25 +13,33 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class HandlerEditor extends AbstractComponentEditor {
 	private Composite composite;
-	private WritableValue master = new WritableValue();
 	private Image image;
-	private DataBindingContext context;
+	private EMFDataBindingContext context;
 
 	public HandlerEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-		// TODO Auto-generated constructor stub
 	}
 
 
@@ -61,16 +69,64 @@ public class HandlerEditor extends AbstractComponentEditor {
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
 		if( composite == null ) {
-			context = new DataBindingContext();
-			composite = createForm(parent,context, master);
+			context = new EMFDataBindingContext();
+			composite = createForm(parent,context);
 		}
-		master.setValue(object);
+		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, DataBindingContext context2,
-			WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context) {
 		parent = new Composite(parent,SWT.NONE);
+		parent.setLayout(new GridLayout(3, false));
+
+		IValueProperty textProp = WidgetProperties.text();
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Command");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			t.setEnabled(false);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
+
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setText("Find ...");
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Class URI");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(getMaster()));
+
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setText("Find ...");
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		}
+
+		ControlFactory.createTagsWidget(parent, this);
+
 		return parent;
 	}
 
@@ -82,7 +138,11 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
+		MHandler handler = (MHandler) element;
+		if( handler.getCommand() != null && handler.getCommand().getCommandName() != null && handler.getCommand().getCommandName().trim().length() > 0 ) {
+			return handler.getCommand().getCommandName();
+		}
+
 		return null;
 	}
 

@@ -13,27 +13,38 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class PartSashContainerEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private WritableValue master = new WritableValue();
 	private Image vImage;
 	private Image hImage;
-	private DataBindingContext context;
+	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
@@ -84,16 +95,51 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
 		if( composite == null ) {
-			context = new DataBindingContext();
-			composite = createForm(parent,context, master);
+			context = new EMFDataBindingContext();
+			composite = createForm(parent,context, getMaster());
 		}
-		master.setValue(object);
+		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, DataBindingContext context2,
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
 			WritableValue master) {
 		parent = new Composite(parent,SWT.NONE);
+		parent.setLayout(new GridLayout(3, false));
+
+		IValueProperty textProp = WidgetProperties.text();
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Orientation");
+
+			ComboViewer viewer = new ComboViewer(parent);
+			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((Boolean)element).booleanValue() ? "Horizontal" : "Vertical";
+				}
+			});
+			viewer.setInput(new Boolean[] { Boolean.TRUE, Boolean.FALSE });
+			IViewerValueProperty vProp = ViewerProperties.singleSelection();
+			context.bindValue(vProp.observe(viewer), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.GENERIC_TILE__HORIZONTAL).observeDetail(getMaster()));
+		}
+
+
 		return parent;
 	}
 

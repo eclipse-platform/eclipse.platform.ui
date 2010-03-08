@@ -13,31 +13,42 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class CommandEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private WritableValue master = new WritableValue();
 	private Image image;
-	private DataBindingContext context;
+	private EMFDataBindingContext context;
 
 	public CommandEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Command.gif"));
 			} catch (MalformedURLException e) {
@@ -61,17 +72,149 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
-			context = new DataBindingContext();
-			composite = createForm(parent,context, master);
+		if (composite == null) {
+			context = new EMFDataBindingContext();
+			composite = createForm(parent, context);
 		}
-		master.setValue(object);
+		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, DataBindingContext context2,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, EMFDataBindingContext context) {
+		parent = new Composite(parent, SWT.NONE);
+		parent.setLayout(new GridLayout(3, false));
+
+		IValueProperty textProp = WidgetProperties.text();
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Name");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND__COMMAND_NAME).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Description");
+			l.setLayoutData(new GridData(GridData.BEGINNING,GridData.BEGINNING,false,false));
+
+			Text t = new Text(parent, SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			gd.heightHint=100;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND__DESCRIPTION).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Parameters");
+			l.setLayoutData(new GridData(GridData.BEGINNING,GridData.BEGINNING,false,false));
+
+			TableViewer viewer = new TableViewer(parent,SWT.FULL_SELECTION|SWT.MULTI|SWT.BORDER);
+			viewer.getTable().setHeaderVisible(true);
+
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 120;
+			viewer.getControl().setLayoutData(gd);
+
+			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+			column.getColumn().setText("Name");
+			column.getColumn().setWidth(200);
+
+			column = new TableViewerColumn(viewer, SWT.NONE);
+			column.getColumn().setText("Type-Id");
+			column.getColumn().setWidth(200);
+
+			column = new TableViewerColumn(viewer, SWT.NONE);
+			column.getColumn().setText("Optional");
+			column.getColumn().setWidth(200);
+
+			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.COMMAND__PARAMETERS);
+			IValueProperty[] props = {
+					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__NAME),
+					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__TYPE_ID),
+					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__OPTIONAL)
+			};
+
+			ViewerSupport.bind(viewer, mProp.observeDetail(getMaster()), props);
+
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft=0;
+			gl.marginRight=0;
+			gl.marginWidth=0;
+			gl.marginHeight=0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Add ...");
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+//			b.addSelectionListener(new SelectionAdapter() {
+//				@Override
+//				public void widgetSelected(SelectionEvent e) {
+//					MHandledItem item = (MHandledItem) master.getValue();
+//					MParameter param = MApplicationFactory.eINSTANCE.createParameter();
+//					Command cmd = AddCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, param);
+//					if( cmd.canExecute() ) {
+//						getEditingDomain().getCommandStack().execute(cmd);
+//					}
+//					tableviewer.editElement(param, 0);
+//				}
+//			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+//			b.addSelectionListener(new SelectionAdapter() {
+//
+//				public void widgetSelected(SelectionEvent e) {
+//					IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
+//					if( !s.isEmpty() ) {
+//						MHandledItem item = (MHandledItem) master.getValue();
+//						Command cmd = RemoveCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, s.toList());
+//						if( cmd.canExecute() ) {
+//							getEditingDomain().getCommandStack().execute(cmd);
+//						}
+//					}
+//				}
+//
+//			});
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
+
+		ControlFactory.createTagsWidget(parent, this);
+
 		return parent;
 	}
 
@@ -83,7 +226,11 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
+		MCommand cmd = (MCommand) element;
+		if (cmd.getCommandName() != null && cmd.getCommandName().trim().length() > 0) {
+			return cmd.getCommandName();
+		}
+
 		return null;
 	}
 
