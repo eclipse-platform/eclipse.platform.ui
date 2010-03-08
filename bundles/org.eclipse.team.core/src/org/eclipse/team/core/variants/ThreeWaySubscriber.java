@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.team.internal.core.subscribers.ThreeWayBaseTree;
 
 /**
  * A resource variant tree subscriber whose trees use an underlying
- * <code>ThreeWaySycnrhonizer</code> to store and manage the
+ * <code>ThreeWaySynchronizer</code> to store and manage the
  * synchronization state for the local workspace. Subclasses need to
  * provide a subclass of <code>ThreeWayRemoteTree</code> and a method
  * to create resource variant handles from the bytes cached in the
