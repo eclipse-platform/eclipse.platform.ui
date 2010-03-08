@@ -31,12 +31,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -117,21 +115,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 			filteredTree.setQuickSelectionMode(true);
 
 	        viewer.setContentProvider(new WizardContentProvider());
-			viewer.setLabelProvider(new DelegatingLabelProviderWithTooltip(
-					new WorkbenchLabelProvider(), PlatformUI.getWorkbench()
-					.getDecoratorManager().getLabelDecorator(ContributingPluginDecorator.ID)) {
-						protected Object unwrapElement(Object element) {
-							if (element instanceof WorkbenchWizardElement) {
-								element = ((WorkbenchWizardElement) element)
-										.getConfigurationElement();
-							}
-							if (element instanceof WizardCollectionElement) {
-								element = ((WizardCollectionElement) element)
-										.getConfigurationElement();
-							}
-							return element;
-						}
-					});
+			viewer.setLabelProvider(new WorkbenchLabelProvider());
 	        viewer.setComparator(DataTransferWizardCollectionComparator.INSTANCE);
 	        
 	        ArrayList inputArray = new ArrayList();

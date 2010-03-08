@@ -222,6 +222,7 @@ import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
 import org.eclipse.ui.internal.splash.SplashHandlerFactory;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -245,6 +246,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
+import org.eclipse.ui.testing.ContributionInfo;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -2539,7 +2541,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 * 
 	 * @return the ids of all plug-ins containing 1 or more startup extensions
 	 */
-	public String[] getEarlyActivatedPlugins() {
+	public ContributionInfo[] getEarlyActivatedPlugins() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
@@ -2550,7 +2552,13 @@ UIEvents.Context.TOPIC_CONTEXT,
 				pluginIds.add(id);
 			}
 		}
-		return (String[]) pluginIds.toArray(new String[pluginIds.size()]);
+		ContributionInfo[] result = new ContributionInfo[pluginIds.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new ContributionInfo((String) pluginIds.get(i),
+					ContributionInfoMessages.ContributionInfo_EarlyStartupPlugin, null);
+
+		}
+		return result;
 	}
 
 	/**

@@ -151,4 +151,8 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		}
 		return null;
 	}
+
+	public ViewDescriptor getDescriptor() {
+		return descriptor;
+	}
 }

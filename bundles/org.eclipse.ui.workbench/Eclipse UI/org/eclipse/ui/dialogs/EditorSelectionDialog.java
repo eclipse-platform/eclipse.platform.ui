@@ -22,9 +22,7 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.TextProcessor;
@@ -49,7 +47,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 
@@ -204,9 +201,7 @@ public final class EditorSelectionDialog extends Dialog {
 		data.heightHint = editorTable.getItemHeight() * 12;
 		editorTableViewer = new TableViewer(editorTable);
 		editorTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		final ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager()
-				.getLabelDecorator(ContributingPluginDecorator.ID);
-		editorTableViewer.setLabelProvider(new ColumnLabelProvider() {
+		editorTableViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
 				IEditorDescriptor d = (IEditorDescriptor) element;
 				return TextProcessor.process(d.getLabel(), "."); //$NON-NLS-1$
@@ -216,18 +211,7 @@ public final class EditorSelectionDialog extends Dialog {
 				IEditorDescriptor d = (IEditorDescriptor) element;
 				return (Image) resourceManager.get(d.getImageDescriptor());
 			}
-
-			public String getToolTipText(Object element) {
-				if (decorator == null || !(element instanceof EditorDescriptor)) {
-					return null;
-				}
-				EditorDescriptor d = (EditorDescriptor) element;
-				return decorator.decorateText(getText(element), d.getConfigurationElement());
-			}
 		});
-		if (decorator != null) {
-			ColumnViewerToolTipSupport.enableFor(editorTableViewer);
-		}
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
 		browseExternalEditorsButton

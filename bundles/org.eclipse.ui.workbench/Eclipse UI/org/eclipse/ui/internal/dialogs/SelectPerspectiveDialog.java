@@ -40,8 +40,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
 import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
-import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
-import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
@@ -182,16 +180,7 @@ public class SelectPerspectiveDialog extends Dialog implements
         list = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
                 | SWT.BORDER);
         list.getTable().setFont(parent.getFont());
-		list.setLabelProvider(new DelegatingLabelProviderWithTooltip(
-				new PerspectiveLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager()
-						.getLabelDecorator(ContributingPluginDecorator.ID)) {
-			protected Object unwrapElement(Object element) {
-				if (element instanceof PerspectiveDescriptor) {
-					element = ((PerspectiveDescriptor) element).getConfigElement();
-				}
-				return element;
-			}
-		});
+		list.setLabelProvider(new PerspectiveLabelProvider());
         list.setContentProvider(new PerspContentProvider());
         list.addFilter(activityViewerFilter);
         list.setComparator(new ViewerComparator());

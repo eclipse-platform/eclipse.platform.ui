@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
@@ -24,7 +25,7 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * class a decorator definition applies to,
  */
 
-public abstract class DecoratorDefinition {
+public abstract class DecoratorDefinition implements IPluginContribution {
 	
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
     
@@ -285,4 +286,12 @@ public abstract class DecoratorDefinition {
     	return false;
        
     }
+
+	public String getPluginId() {
+		return getConfigurationElement().getContributor().getName();
+	}
+
+	public String getLocalId() {
+		return getId();
+	}
 }

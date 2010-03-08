@@ -48,6 +48,9 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+import org.eclipse.ui.testing.ContributionInfo;
 
 public class CompatibilityView extends CompatibilityPart {
 
@@ -153,6 +156,12 @@ public class CompatibilityView extends CompatibilityPart {
 		}
 
 		super.createPartControl(legacyPart, parent);
+
+		ViewDescriptor desc = reference.getDescriptor();
+		if (desc != null && desc.getPluginId() != null) {
+			parent.setData(new ContributionInfo(desc.getPluginId(),
+					ContributionInfoMessages.ContributionInfo_View, null));
+		}
 
 		// dispose the tb, it will be re-created when the tab is shown
 		toolBarParent.dispose();

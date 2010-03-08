@@ -47,11 +47,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -300,19 +298,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
   	
 		final TreeViewer treeViewer = filterTree.getViewer();
 		treeViewer.setContentProvider(new WizardContentProvider());
-		treeViewer.setLabelProvider(new DelegatingLabelProviderWithTooltip(
-				new WorkbenchLabelProvider(), PlatformUI.getWorkbench()
-				.getDecoratorManager().getLabelDecorator(ContributingPluginDecorator.ID)) {
-					protected Object unwrapElement(Object element) {
-						if (element instanceof WorkbenchWizardElement) {
-							element = ((WorkbenchWizardElement) element).getConfigurationElement();
-						}
-						if (element instanceof WizardCollectionElement) {
-							element = ((WizardCollectionElement) element).getConfigurationElement();
-						}
-						return element;
-					}
-				});
+		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
 		treeViewer.addSelectionChangedListener(this);
 

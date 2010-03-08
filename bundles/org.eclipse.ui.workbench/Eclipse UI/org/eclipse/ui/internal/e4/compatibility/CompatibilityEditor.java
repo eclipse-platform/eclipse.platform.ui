@@ -33,9 +33,11 @@ import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.testing.ContributionInfo;
 
 public class CompatibilityEditor extends CompatibilityPart {
 
@@ -106,6 +108,10 @@ public class CompatibilityEditor extends CompatibilityPart {
 				String iconURI = MenuHelper.getIconURI(element,
 						IWorkbenchRegistryConstants.ATT_ICON);
 				part.setIconURI(iconURI);
+			}
+			if (descriptor.getPluginId() != null) {
+				parent.setData(new ContributionInfo(descriptor.getPluginId(),
+						ContributionInfoMessages.ContributionInfo_Editor, null));
 			}
 		}
 

@@ -35,7 +35,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -62,7 +61,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -205,11 +203,6 @@ public class ProgressInfoItem extends Composite {
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
 		createChildren();
-		ILabelDecorator labelDecorator = PlatformUI.getWorkbench().getDecoratorManager()
-				.getLabelDecorator(ContributingPluginDecorator.ID);
-		if (labelDecorator != null && info.isJobInfo()) {
-			setToolTipText(labelDecorator.decorateText(getMainTitle(), ((JobInfo) info).getJob()));
-		}
 	}
 
 	/**
