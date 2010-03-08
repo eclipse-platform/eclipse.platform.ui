@@ -19,7 +19,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 
 /**
  *
@@ -205,7 +204,7 @@ public class ContextTest extends TestCase {
 	private IEclipseContext createContext(IEclipseContext parentContext,
 			String level) {
 		IEclipseContext appContext = EclipseContextFactory.create(
-				parentContext, UISchedulerStrategy.getInstance());
+				parentContext, null);
 		appContext.set(IContextConstants.DEBUG_STRING, level);
 		return appContext;
 	}

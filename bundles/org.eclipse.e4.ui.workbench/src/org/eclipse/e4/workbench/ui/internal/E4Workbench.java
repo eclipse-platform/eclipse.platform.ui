@@ -153,8 +153,7 @@ public class E4Workbench implements IWorkbench {
 				.trace(
 						Policy.DEBUG_CONTEXTS,
 						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
-		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext,
-				UISchedulerStrategy.getInstance());
+		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext, null);
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
 		mainContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
@@ -291,8 +290,7 @@ public class E4Workbench implements IWorkbench {
 		if (contextModel.getContext() != null) {
 			context = contextModel.getContext();
 		} else {
-			context = EclipseContextFactory
-					.create(parentContext, UISchedulerStrategy.getInstance());
+			context = EclipseContextFactory.create(parentContext, null);
 			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + contextModel + ')'); //$NON-NLS-1$
 		}
 

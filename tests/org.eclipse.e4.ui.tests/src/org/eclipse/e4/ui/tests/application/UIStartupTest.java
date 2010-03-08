@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.tests.application;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -27,7 +26,6 @@ import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
@@ -240,14 +238,9 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	private static IEclipseContext getActiveChildContext(
 			MApplication application) {
-		MPSCElement nonContainer = getNonContainer(application.getSelectedElement()
-				.getSelectedElement());
+		MPSCElement nonContainer = getNonContainer(application
+				.getSelectedElement().getSelectedElement());
 		return ((MContext) nonContainer).getContext();
-	}
-
-	@Override
-	protected ISchedulerStrategy getApplicationSchedulerStrategy() {
-		return UISchedulerStrategy.getInstance();
 	}
 
 	@Override

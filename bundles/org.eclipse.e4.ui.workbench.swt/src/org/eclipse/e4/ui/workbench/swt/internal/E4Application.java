@@ -47,7 +47,6 @@ import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.ExceptionHandler;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.ResourceHandler;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.WorkbenchLogger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -185,7 +184,7 @@ public class E4Application implements IApplication {
 	}
 
 	public static IEclipseContext createDefaultContext() {
-		return createDefaultContext(UISchedulerStrategy.getInstance());
+		return createDefaultContext(null);
 	}
 
 	public static IEclipseContext createDefaultContext(

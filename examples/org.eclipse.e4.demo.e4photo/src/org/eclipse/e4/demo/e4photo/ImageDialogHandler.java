@@ -21,7 +21,6 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -43,8 +42,7 @@ public class ImageDialogHandler {
 
 			theRenderer = renderer;
 			
-			dlgContext = EclipseContextFactory
-			.create(app.getContext(), UISchedulerStrategy.getInstance());
+			dlgContext = EclipseContextFactory.create(app.getContext(), null);
 
 			// 'adopt' the app's 'INPUT' (used to support selection, we should 
 			// replace this with a viable strategy to support 'local' selection

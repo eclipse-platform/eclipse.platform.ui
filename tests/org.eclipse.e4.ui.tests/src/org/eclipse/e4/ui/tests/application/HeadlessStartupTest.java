@@ -88,8 +88,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 			IEclipseContext osgiContext) {
 		assertNotNull(osgiContext);
 
-		final IEclipseContext appContext = createContext(osgiContext,
-				getApplicationSchedulerStrategy());
+		final IEclipseContext appContext = createContext(osgiContext, null);
 
 		appContext.set(IEclipseContext.class.getName(), appContext);
 

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
@@ -30,8 +28,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.internal.core.services.bundle.BundleContextStrategy;
-import org.eclipse.e4.internal.core.services.bundle.CompositeContextStrategy;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -50,7 +48,6 @@ import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
@@ -273,10 +270,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					MContribution contribution = (MContribution) element;
 					Bundle bundle = contributionFactory.getBundle(contribution
 							.getURI());
-					strategy = new CompositeContextStrategy(UISchedulerStrategy
-							.getInstance(), new BundleContextStrategy(bundle));
+					strategy = new BundleContextStrategy(bundle);
 				} else {
-					strategy = UISchedulerStrategy.getInstance();
+					strategy = null;
 				}
 				IEclipseContext lclContext = EclipseContextFactory.create(
 						parentContext, strategy);
