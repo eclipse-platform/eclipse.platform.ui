@@ -390,6 +390,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	public MPart findPart(IWorkbenchPart part) {
+		if (part == null) {
+			return null;
+		}
+
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
 			if (part == reference.getPart(false)) {
