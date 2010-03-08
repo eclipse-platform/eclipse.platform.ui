@@ -1306,6 +1306,52 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		}
 		
 	}
+	
+	/**
+	 * Ensures that client does not attempt to nest configurations in a sub directory when
+	 * using local metadata location. See bug 275741.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testIllegalFileSepCharName() {
+		try {
+			newConfiguration(null, "some\\nested\\config");
+		} catch (CoreException e) {
+			// i.e. expected code path
+			return;
+		}
+		assertTrue("Should be an illegal argument - cannot nest local configurations", false);
+	}
+	
+	/**
+	 * Ensures that client can nest configurations in a sub directory when
+	 * using a workspace location. See bug 275741. For behavior compatibility
+	 * a client should be able to use a slash in the configuration name.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testLegalFileSepCharName() {
+		try {
+			newConfiguration(getProject(), "some\\nested\\config");
+		} catch (CoreException e) {
+			assertTrue("Should *not* be an illegal argument - can nest shared cofigurations", false);
+		}
+	}	
+	
+	/**
+	 * Test that an illegal name with '<' causes an exception
+	 * 
+	 * @throws CoreException
+	 */
+	public void testIllegalCharName() {
+		try {
+			newConfiguration(getProject(), "<config>");
+		} catch (CoreException e) {
+			// expected code path
+			return;
+		}
+		assertTrue("Should be an illegal argument - illegal character used in name", false);
+	}		
 }
 
 

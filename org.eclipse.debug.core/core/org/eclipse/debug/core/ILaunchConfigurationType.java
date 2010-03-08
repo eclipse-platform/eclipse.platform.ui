@@ -276,7 +276,11 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * When <code>container</code> is </code>null</code>, the configuration
 	 * will reside locally in the metadata area.
 	 * Note: a launch configuration is not actually created until the working copy is saved.
-	 * 
+	 * <p>
+	 * The configuration <code>name</code> parameter cannot contain file separator characters
+	 * (sub directories) when the <code>container</code> is <code>null</code> (i.e. when the
+	 * configuration is to be stored in the local metadata area.
+	 * </p>
 	 * @param container the container in which the new configuration will
 	 *  reside, or <code>null</code> if the configuration should reside
 	 *  locally with the metadata.

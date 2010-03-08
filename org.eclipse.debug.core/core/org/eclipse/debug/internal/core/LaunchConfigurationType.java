@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -449,7 +451,21 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String)
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) {
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException {
+		// validate the configuration name - see bug 275741
+		IPath path = new Path(name);		
+		if (container == null) {
+			// not allowed to nest in sub directory when local
+			if (path.segmentCount() > 1) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), "Local configuration cannot be nested in a directory."));
+			}
+		}
+		// validate the name (last segment)
+		try {
+			DebugPlugin.getDefault().getLaunchManager().isValidLaunchConfigurationName(path.lastSegment());
+		} catch (IllegalArgumentException e) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), e.getMessage(), e));
+		}
 		return new LaunchConfigurationWorkingCopy(container, name, this);
 	}
 
