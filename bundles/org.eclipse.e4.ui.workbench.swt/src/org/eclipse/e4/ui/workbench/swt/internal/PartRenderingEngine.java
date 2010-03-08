@@ -554,6 +554,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						&& !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
+							appContext.processWaiting();
 							if (spinOnce)
 								return;
 							display.sleep();
