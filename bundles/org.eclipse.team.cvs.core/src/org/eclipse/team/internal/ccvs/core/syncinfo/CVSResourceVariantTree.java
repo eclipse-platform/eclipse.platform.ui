@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,7 +279,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * such as members that are explicitly flagged as not having a resource variant. This list
 	 * is used by the collection algorithm to flush variants for which there is no local and
 	 * no remote.
-	 * @param local the locla resource
+	 * @param local the local resource
 	 * @return the local children that have resource variant information cached
 	 * @throws TeamException
 	 */

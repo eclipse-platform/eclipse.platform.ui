@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.examples.localhistory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -33,6 +39,9 @@ public class LocalHistorySubscriber extends Subscriber {
 		return "Local History Subscriber"; //$NON-NLS-1$
 	}
 
+	/**
+	 * @param resource the resource being tested 
+	 */
 	public boolean isSupervised(IResource resource) {
 		// all resources in the workspace can potentially have resource history
 		return true;
@@ -78,6 +87,16 @@ public class LocalHistorySubscriber extends Subscriber {
 		return comparator;
 	}
 
+	/**
+	 * @param resources
+	 *            the resources to refresh
+	 * @param depth
+	 *            the depth
+	 * @param monitor
+	 *            progress monitor, or <code>null</code> if progress reporting
+	 *            and cancellation are not desired
+	 */
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) {
+		// do nothing
 	}
 }
