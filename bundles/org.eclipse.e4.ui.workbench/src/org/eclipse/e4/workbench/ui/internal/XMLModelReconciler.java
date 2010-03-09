@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.model.application.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -621,6 +622,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createPerspectiveStack();
 		} else if (type.equals(MPartDescriptor.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPartDescriptor();
+		} else if (type.equals(MInputPart.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createInputPart();
 		}
 		return null;
 	}
