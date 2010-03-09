@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
-  <children xsi:type="application:Window" width="800" height="600">
-    <children xsi:type="application:PartStack" id="modeleditorstack">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="__i2BcSuZEd-8CvvcO22KcQ" id="__i2BcSuZEd-8CvvcO22KcQ">
+  <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="__i8IECuZEd-8CvvcO22KcQ" width="800" height="600">
+    <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="modeleditorstack">
       <tags>newtablook</tags>
     </children>
-    <children xsi:type="application:WindowTrim">
-      <children xsi:type="application:ToolBar">
-        <children xsi:type="application:HandledToolItem" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="//@commands.0"/>
+    <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="__i_ycCuZEd-8CvvcO22KcQ">
+      <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="__jAZgCuZEd-8CvvcO22KcQ">
+        <children xsi:type="application:HandledToolItem" xmi:id="__jBnoCuZEd-8CvvcO22KcQ" id="__jBnoCuZEd-8CvvcO22KcQ" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="__jFSACuZEd-8CvvcO22KcQ"/>
       </children>
     </children>
-    <mainMenu>
-      <children xsi:type="application:MenuItem" id="e4.modeleditor.menu.file" label="File">
-        <children xsi:type="application:HandledMenuItem" label="Open XMI ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" command="//@commands.0"/>
+    <mainMenu xmi:id="__jCOsCuZEd-8CvvcO22KcQ" id="__jCOsCuZEd-8CvvcO22KcQ">
+      <children xsi:type="application:MenuItem" xmi:id="__jC1wCuZEd-8CvvcO22KcQ" id="e4.modeleditor.menu.file" label="File">
+        <children xsi:type="application:HandledMenuItem" xmi:id="__jDc0CuZEd-8CvvcO22KcQ" id="__jDc0CuZEd-8CvvcO22KcQ" label="Open XMI ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" command="__jFSACuZEd-8CvvcO22KcQ"/>
       </children>
     </mainMenu>
   </children>
-  <handlers URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="//@commands.0"/>
-  <commands id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
+  <handlers xmi:id="__jED4CuZEd-8CvvcO22KcQ" id="__jED4CuZEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="__jFSACuZEd-8CvvcO22KcQ"/>
+  <bindings xmi:id="__jEq8CuZEd-8CvvcO22KcQ" keySequence="M1+O" id="__jEq8CuZEd-8CvvcO22KcQ" command="__jFSACuZEd-8CvvcO22KcQ"/>
+  <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
 </application:Application>

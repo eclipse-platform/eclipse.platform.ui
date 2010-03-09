@@ -66,12 +66,6 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 		} else if( cell.getElement() instanceof VirtualEntry<?> ) {
 			String s = cell.getElement().toString();
 			cell.setText(s);
-			if( "Parts".equals(s) ) {
-				if( partsImage == null ) {
-					partsImage = new Image(cell.getControl().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/application_double.png"));
-				}
-				cell.setImage(partsImage);
-			}
 		} else {
 			cell.setText(cell.getElement()+"");
 		}

@@ -180,35 +180,9 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.setText("Add ...");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-//			b.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent e) {
-//					MHandledItem item = (MHandledItem) master.getValue();
-//					MParameter param = MApplicationFactory.eINSTANCE.createParameter();
-//					Command cmd = AddCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, param);
-//					if( cmd.canExecute() ) {
-//						getEditingDomain().getCommandStack().execute(cmd);
-//					}
-//					tableviewer.editElement(param, 0);
-//				}
-//			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Remove");
-//			b.addSelectionListener(new SelectionAdapter() {
-//
-//				public void widgetSelected(SelectionEvent e) {
-//					IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
-//					if( !s.isEmpty() ) {
-//						MHandledItem item = (MHandledItem) master.getValue();
-//						Command cmd = RemoveCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, s.toList());
-//						if( cmd.canExecute() ) {
-//							getEditingDomain().getCommandStack().execute(cmd);
-//						}
-//					}
-//				}
-//
-//			});
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}

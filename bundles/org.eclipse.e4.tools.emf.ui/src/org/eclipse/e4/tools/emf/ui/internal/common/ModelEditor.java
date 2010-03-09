@@ -40,6 +40,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -59,14 +60,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class ModelEditor {
-	public static final int VIRTUAL_MENU    = 1;
-	public static final int VIRTUAL_PART    = 2;
-	public static final int VIRTUAL_HANDLER = 3;
-	public static final int VIRTUAL_BINDING = 4;
-	public static final int VIRTUAL_COMMAND = 5;
-	public static final int VIRTUAL_WINDOWS = 6;
+	public static final int VIRTUAL_MENU    = 0;
+	public static final int VIRTUAL_PART    = 1;
+	public static final int VIRTUAL_HANDLER = 2;
+	public static final int VIRTUAL_BINDING = 3;
+	public static final int VIRTUAL_COMMAND = 4;
+	public static final int VIRTUAL_WINDOWS = 5;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
+	private AbstractComponentEditor[] virtualEditors;
+
 //	private List<AbstractComponentEditor> editors = new ArrayList<AbstractComponentEditor>();
 
 	private TreeViewer viewer;
@@ -76,6 +79,7 @@ public class ModelEditor {
 	public ModelEditor(Composite composite, IModelResource modelProvider) {
 		this.modelProvider = modelProvider;
 		registerDefaultEditors();
+		registerVirtualEditors();
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
@@ -131,6 +135,17 @@ public class ModelEditor {
 							layout.topControl = comp;
 							contentContainer.layout(true);
 						}
+					} else {
+						VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
+						AbstractComponentEditor editor = virtualEditors[entry.getId()];
+						if( editor != null ) {
+							textLabel.setText(editor.getLabel(entry));
+							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
+							Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
+							layout.topControl = comp;
+							contentContainer.layout(true);
+						}
 					}
 				}
 			}
@@ -156,6 +171,18 @@ public class ModelEditor {
 		viewer.expandAll();
 
 		return viewer;
+	}
+
+	private void registerVirtualEditors() {
+		virtualEditors = new AbstractComponentEditor[] {
+				null, // V-Menu
+				null, // V-Part
+				new VHandlerEditor(modelProvider.getEditingDomain()),
+				null, // V-Binding
+				null, // V-Command
+				null  // Windows
+			};
+
 	}
 
 	private void registerDefaultEditors() {

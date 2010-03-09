@@ -18,8 +18,11 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MPlaceholder;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
@@ -61,6 +64,31 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
+		MPlaceholder pl = (MPlaceholder) element;
+		if( pl.getRef() != null ) {
+			StringBuilder b = new StringBuilder();
+
+			b.append(((EObject)pl.getRef()).eClass().getName());
+			if( pl.getRef() instanceof MUILabel ) {
+				MUILabel label = (MUILabel) pl.getRef();
+				if( label.getLabel() != null && label.getLabel().trim().length() > 0 ) {
+					b.append(" (" + label.getLabel() + ")");
+				} else if( label.getTooltip() != null && label.getTooltip().trim().length() > 0 ) {
+					b.append(" (" + label.getTooltip() + ")");
+				} else {
+					if( pl.getRef().getId() != null && pl.getRef().getId().trim().length() > 0 ) {
+						b.append(pl.getRef().getId());
+					}
+				}
+			} else {
+				if( pl.getRef().getId() != null && pl.getRef().getId().trim().length() > 0 ) {
+					b.append(" (" + pl.getRef().getId() + ")");
+				}
+			}
+
+			return b.toString();
+		}
+
 		return null;
 	}
 
