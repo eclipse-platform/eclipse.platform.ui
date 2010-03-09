@@ -47,6 +47,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.dialogs.PathVariableEditDialog;
 import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
