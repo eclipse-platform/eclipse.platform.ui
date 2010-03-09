@@ -63,9 +63,9 @@ import org.eclipse.ui.part.ViewPart;
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.NavigatorActionService}: Manages instances
- * of {@link org.eclipse.ui.navigator.CommonActionProvider}s provided by
- * individual extensions and content extensions.
+ * {@link org.eclipse.ui.navigator.NavigatorActionService}: Manages instances of
+ * {@link org.eclipse.ui.navigator.CommonActionProvider}s provided by individual
+ * extensions and content extensions.
  * </p>
  * </li>
  * <li>
@@ -76,13 +76,14 @@ import org.eclipse.ui.part.ViewPart;
  * </p>
  * </li>
  * </ul>
+ * 
  * <p>
- * Clients are not expected to subclass CommonNavigator. Clients that wish to
- * define their own custom extensible navigator view need to specify an instance
- * of the <b>org.eclipse.ui.views</b> extension point:
+ * Clients that wish to define their own custom extensible navigator view using
+ * CommonNavigator need to specify an instance of the
+ * <b>org.eclipse.ui.views</b> extension point:
  * 
  * <pre>
- *   
+ * 
  *          &lt;extension
  *          		point=&quot;org.eclipse.ui.views&quot;&gt;
  *          	&lt;view
@@ -92,19 +93,37 @@ import org.eclipse.ui.part.ViewPart;
  *          		class=&quot;org.eclipse.ui.navigator.CommonNavigator&quot;
  *          		id=&quot;org.acme.MyCustomNavigatorID&quot;&gt;
  *          	&lt;/view&gt;
- *          &lt;/extension&gt; 
- *    
+ *          &lt;/extension&gt;
+ * 
  * </pre>
  * 
- * </p> 
+ * </p>
+ * 
+ * <p>
+ * CommonNavigator gets its initial input (during initialization) from the
+ * Workbench by calling getSite().getPage().getInput(). This is done in
+ * {@link #getInitialInput()}. Clients may create a subclass of CommonNavigator
+ * to provide their own means of getting the initial input. Or they may access
+ * the {@link CommonViewer} and set its input directly after startup.
+ * </p>
+ * 
+ * <p>
+ * In the IDE scenario, the default page input is IWorkspaceRoot, in the RCP
+ * scenario it is null and can be configured in the WorkbenchAdvisor.
+ * </p>
+ * 
+ * <p>
  * Clients that wish to extend the view menu provided via the
- * <b>org.eclipse.ui.popupMenu</b>s extension may specify the the <i>popupMenuId</i>
- * specified by <b>org.eclipse.ui.navigator.viewer</b> (or a nested <b>popupMenu</b> element) of their target viewer
- * as their target menu id.
+ * <b>org.eclipse.ui.popupMenu</b>s extension may specify the the
+ * <i>popupMenuId</i> specified by <b>org.eclipse.ui.navigator.viewer</b> (or a
+ * nested <b>popupMenu</b> element) of their target viewer as their target menu
+ * id.
+ * </p>
  * 
  * <p>
  * This class may be instantiated or subclassed
  * </p>
+ * 
  * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
