@@ -153,6 +153,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.WINDOW__HEIGHT).observeDetail(getMaster()));
 		}
 
+		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
 	}
