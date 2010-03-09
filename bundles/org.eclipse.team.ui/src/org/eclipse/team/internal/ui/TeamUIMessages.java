@@ -724,6 +724,17 @@ public class TeamUIMessages extends NLS {
 	public static String PatchInaccessibleProjectsPage_selectExisting;
 	public static String PatchInaccessibleProjectsPage_deselectAll;
 	public static String PatchInaccessibleProjectsPage_openingProjects;
+	
+	public static String IgnoreLeadingPathSegmentsDialog_title;
+	public static String IgnoreLeadingPathSegmentsDialog_message;
+	public static String IgnoreLeadingPathSegmentsDialog_notANumber;
+	public static String IgnoreLeadingPathSegmentsDialog_numberOutOfRange;
+
+	public static String FuzzFactorDialog_title;
+	public static String FuzzFactorDialog_message;
+	public static String FuzzFactorDialog_guess;
+	public static String FuzzFactorDialog_notANumber;
+	public static String FuzzFactorDialog_numberOutOfRange;
 
 	public static String NotFound;
 

@@ -13,15 +13,15 @@ package org.eclipse.team.internal.ui.synchronize.patch;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
+import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.IActionBars;
 
 public class ApplyPatchModelSynchronizeParticipant extends
 		ModelSynchronizeParticipant {
@@ -69,7 +69,42 @@ public class ApplyPatchModelSynchronizeParticipant extends
 			}
 			super.addToContextMenu(mergeActionId, action, manager);
 		}
-	}
+
+		public void fillActionBars(IActionBars actionBars) {
+			if (actionBars != null) {
+				IMenuManager menu = actionBars.getMenuManager();
+				ReversePatchAction reversePatchAction = new ReversePatchAction(
+						getConfiguration());
+				appendToGroup(menu,
+						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+						reversePatchAction);
+				Utils.initAction(reversePatchAction, "action.reversePatch."); //$NON-NLS-1$
+				FuzzFactorAction fuzzFactor = new FuzzFactorAction(
+						getConfiguration());
+				appendToGroup(menu,
+						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+						fuzzFactor);
+				Utils.initAction(fuzzFactor, "action.fuzzFactor."); //$NON-NLS-1$
+				IgnoreLeadingPathSegmentsAction ignoreAction = new IgnoreLeadingPathSegmentsAction(
+						getConfiguration());
+//				appendToGroup(menu,
+//						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+//						ignoreAction);
+				Utils.initAction(ignoreAction,
+						"action.ignoreLeadingPathSegments."); //$NON-NLS-1$
+				GererateRejFileAction generateAction = new GererateRejFileAction(
+						getConfiguration());
+				appendToGroup(menu,
+						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+						generateAction);
+				Utils.initAction(generateAction, "action.generateRejFile."); //$NON-NLS-1$
+				appendToGroup(menu,
+						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+						new Separator());
+			}
+			super.fillActionBars(actionBars);
+		}
+	};
 
 	public ModelProvider[] getEnabledModelProviders() {
 		ModelProvider[] enabledProviders = super.getEnabledModelProviders();
@@ -89,10 +124,11 @@ public class ApplyPatchModelSynchronizeParticipant extends
 		extended[extended.length - 1] = provider;
 		return extended;
 	}
-	
+
 	public ICompareInput asCompareInput(Object object) {
 		// consult adapter first
-		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(object);
+		ISynchronizationCompareAdapter adapter = Utils
+				.getCompareAdapter(object);
 		if (adapter != null)
 			return adapter.asCompareInput(getContext(), object);
 		if (object instanceof ICompareInput) {

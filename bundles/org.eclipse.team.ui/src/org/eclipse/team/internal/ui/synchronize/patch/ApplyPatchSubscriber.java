@@ -50,12 +50,12 @@ public class ApplyPatchSubscriber extends Subscriber {
 						return IN_SYNC;
 				}
 			}
-
+			int kind = super.calculateKind();
 			// mark diffs with problems as conflicts 
 			if (getRemote() != null 
 					&& getPatcher().getDiffResult(((PatchedFileVariant)getRemote()).getDiff()).containsProblems())
-				return CONFLICTING;
-			return super.calculateKind();
+				kind |= CONFLICTING;
+			return kind;
 		}
 	}
 
@@ -83,11 +83,13 @@ public class ApplyPatchSubscriber extends Subscriber {
 		try {
 			FilePatch2 diff = (FilePatch2) PatchModelProvider.getPatchObject(resource, getPatcher());
 			// use null as remote variant for deletions
-			IResourceVariant variant = null;
+			IResourceVariant remote = null;
 			if (diff.getDiffType(patcher.isReversed()) != FilePatch2.DELETION)
-				variant =  new PatchedFileVariant(getPatcher(), diff);
-			IResourceVariant base = resource.exists() ?  new LocalResourceVariant(resource) : null;
-			SyncInfo info = new ApplyPatchSyncInfo(resource, base, variant, getResourceComparator());
+				remote =  new PatchedFileVariant(getPatcher(), diff);
+			IResourceVariant base = null;
+			if (diff.getDiffType(patcher.isReversed()) != FilePatch2.ADDITION)
+				base = new LocalResourceVariant(resource);
+			SyncInfo info = new ApplyPatchSyncInfo(resource, base, remote, getResourceComparator());
 			info.init();
 			return info;
 		} catch (CoreException e) {
@@ -162,7 +164,7 @@ public class ApplyPatchSubscriber extends Subscriber {
 		return (IResource[]) roots.toArray(new IResource[0]);
 	}
 
-	WorkspacePatcher getPatcher() {
+	public WorkspacePatcher getPatcher() {
 		return patcher;
 	}
 
