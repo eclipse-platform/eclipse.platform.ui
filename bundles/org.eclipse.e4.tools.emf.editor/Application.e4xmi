@@ -6,13 +6,15 @@
     </children>
     <children xsi:type="application:WindowTrim">
       <children xsi:type="application:ToolBar">
-        <children xsi:type="application:DirectToolItem" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler"/>
+        <children xsi:type="application:HandledToolItem" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="//@commands.0"/>
       </children>
     </children>
     <mainMenu>
       <children xsi:type="application:MenuItem" id="e4.modeleditor.menu.file" label="File">
-        <children xsi:type="application:DirectMenuItem" id="" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" label="Open File ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png"/>
+        <children xsi:type="application:HandledMenuItem" label="Open XMI ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" command="//@commands.0"/>
       </children>
     </mainMenu>
   </children>
+  <handlers URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="//@commands.0"/>
+  <commands id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
 </application:Application>
