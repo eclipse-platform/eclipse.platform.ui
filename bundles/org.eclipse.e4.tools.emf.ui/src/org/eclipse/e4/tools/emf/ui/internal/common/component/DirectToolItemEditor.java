@@ -53,7 +53,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 	@Override
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		IWidgetValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Class URI");

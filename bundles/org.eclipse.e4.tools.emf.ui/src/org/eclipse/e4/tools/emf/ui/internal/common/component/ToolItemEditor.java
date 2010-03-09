@@ -86,7 +86,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
-		IWidgetValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Id");
@@ -105,7 +105,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 	}
 
 	private void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
-		IValueProperty textProp = WidgetProperties.text();
+		IValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		// ------------------------------------------------------------
 		{

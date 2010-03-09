@@ -92,7 +92,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		parent = new Composite(parent,SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
-		IWidgetValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		// ------------------------------------------------------------
 		{

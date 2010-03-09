@@ -33,7 +33,7 @@ public class PartDescriptorEditor extends PartEditor {
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master) {
 		Composite comp = super.createForm(parent,context,master);
 
-		IWidgetValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Label");
