@@ -290,6 +290,9 @@ public class LabelProviderTest extends NavigatorTestBase {
 		if (false)
 			DisplayHelper.sleep(10000000);
 		
+		// Wait a little bit still to give the rest of the tree time to refresh
+		DisplayHelper.sleep(500);
+		
 		rootItems = _viewer.getTree().getItems();
 		checkItems(rootItems, TestLabelProviderCyan.instance);
 	}
