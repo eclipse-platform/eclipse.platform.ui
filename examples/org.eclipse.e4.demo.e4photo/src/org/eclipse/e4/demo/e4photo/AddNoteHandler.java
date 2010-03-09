@@ -21,6 +21,7 @@ import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 
 public class AddNoteHandler {
+	public static final String PERSISTED_STATE = AddNoteHandler.class.getName() + ".persisted";
 	
 	// TBD this is an illustration of the problem with duplicate IDs. Editors have the same ID and that
 	// causes rendering engine to "reuse" the same part.
@@ -45,7 +46,7 @@ public class AddNoteHandler {
 		
 		path = path.removeFileExtension();
 		path = path.addFileExtension("txt");
-		editor.setPersistedState(path.toString());
+		editor.getPersistedState().put(PERSISTED_STATE, path.toString());
 		
 		exifPart.getParent().getChildren().add(editor);
 	}

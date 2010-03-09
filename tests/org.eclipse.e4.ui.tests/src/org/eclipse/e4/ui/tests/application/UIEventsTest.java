@@ -269,7 +269,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		allData.setURI("Some URI");
 		allData.setObject("Some onbject");
-		allData.setPersistedState("Some state");
+		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, contributionTester);
 
 		// ElementContainer

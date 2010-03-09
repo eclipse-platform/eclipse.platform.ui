@@ -26,14 +26,17 @@ import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -95,24 +98,14 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	protected Object object = OBJECT_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPersistedState()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String PERSISTED_STATE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected String persistedState = PERSISTED_STATE_EDEFAULT;
+	protected EMap<String, String> persistedState;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -180,7 +173,10 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getPersistedState() {
+	public EMap<String, String> getPersistedState() {
+		if (persistedState == null) {
+			persistedState = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE);
+		}
 		return persistedState;
 	}
 
@@ -189,11 +185,13 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPersistedState(String newPersistedState) {
-		String oldPersistedState = persistedState;
-		persistedState = newPersistedState;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE, oldPersistedState, persistedState));
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
+				return ((InternalEList<?>)getPersistedState()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -209,7 +207,8 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 			case MApplicationPackage.DIRECT_TOOL_ITEM__OBJECT:
 				return getObject();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
-				return getPersistedState();
+				if (coreType) return getPersistedState();
+				else return getPersistedState().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -230,7 +229,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 				setObject(newValue);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
-				setPersistedState((String)newValue);
+				((EStructuralFeature.Setting)getPersistedState()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -251,7 +250,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 				setObject(OBJECT_EDEFAULT);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
-				setPersistedState(PERSISTED_STATE_EDEFAULT);
+				getPersistedState().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -270,7 +269,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 			case MApplicationPackage.DIRECT_TOOL_ITEM__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
-				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
+				return persistedState != null && !persistedState.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -325,8 +324,6 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$
 		result.append(object);
-		result.append(", persistedState: "); //$NON-NLS-1$
-		result.append(persistedState);
 		result.append(')');
 		return result.toString();
 	}

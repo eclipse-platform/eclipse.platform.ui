@@ -111,6 +111,15 @@ public interface MApplicationFactory extends EFactory {
 	MPart createPart();
 
 	/**
+	 * Returns a new object of class '<em>Input Part</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Input Part</em>'.
+	 * @generated
+	 */
+	MInputPart createInputPart();
+
+	/**
 	 * Returns a new object of class '<em>Part Descriptor</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

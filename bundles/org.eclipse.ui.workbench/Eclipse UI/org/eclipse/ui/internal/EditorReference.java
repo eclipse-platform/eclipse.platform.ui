@@ -42,6 +42,8 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
 
+	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
+
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
 	private String factoryId;
@@ -65,7 +67,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				StringWriter writer = new StringWriter();
 				try {
 					root.save(writer);
-					part.setPersistedState(writer.toString());
+					part.getPersistedState().put(MEMENTO_KEY, writer.toString());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -156,7 +158,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			XMLMemento createReadRoot;
 			try {
 				createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
-						.getPersistedState()));
+						.getPersistedState().get(MEMENTO_KEY)));
 				input = restoreInput(createReadRoot);
 			} catch (WorkbenchException e) {
 				throw new PartInitException(e.getStatus());
@@ -177,7 +179,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		try {
 			if (descriptor == null) {
 				XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
-						.getPersistedState()));
+						.getPersistedState().get(MEMENTO_KEY)));
 				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
 						.getEditorRegistry();
 				descriptor = (EditorDescriptor) registry.findEditor(createReadRoot

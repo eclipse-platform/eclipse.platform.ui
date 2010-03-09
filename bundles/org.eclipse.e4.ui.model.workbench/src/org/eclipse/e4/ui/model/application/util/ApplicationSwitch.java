@@ -311,6 +311,23 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.INPUT_PART: {
+				MInputPart inputPart = (MInputPart)theEObject;
+				T1 result = caseInputPart(inputPart);
+				if (result == null) result = casePart(inputPart);
+				if (result == null) result = caseInput(inputPart);
+				if (result == null) result = caseContribution(inputPart);
+				if (result == null) result = caseContext(inputPart);
+				if (result == null) result = casePSCElement(inputPart);
+				if (result == null) result = caseUILabel(inputPart);
+				if (result == null) result = caseHandlerContainer(inputPart);
+				if (result == null) result = caseBindingContainer(inputPart);
+				if (result == null) result = caseDirtyable(inputPart);
+				if (result == null) result = caseUIElement(inputPart);
+				if (result == null) result = caseApplicationElement(inputPart);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.PART_DESCRIPTOR: {
 				MPartDescriptor partDescriptor = (MPartDescriptor)theEObject;
 				T1 result = casePartDescriptor(partDescriptor);
@@ -943,6 +960,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 casePart(MPart object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Input Part</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Input Part</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseInputPart(MInputPart object) {
 		return null;
 	}
 

@@ -31,7 +31,7 @@ public abstract class ModelReconcilerContributionTest extends
 		application.getChildren().add(window);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setPersistedState(applicationState);
+		part.getPersistedState().put("testing", applicationState);
 		window.getChildren().add(part);
 
 		saveModel();
@@ -39,32 +39,37 @@ public abstract class ModelReconcilerContributionTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setPersistedState(userChange);
+		part.getPersistedState().put("testing", userChange);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
 		part = (MPart) window.getChildren().get(0);
-		part.setPersistedState(newApplicationState);
+		part.getPersistedState().put("testing", newApplicationState);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(newApplicationState, part.getPersistedState());
+		assertEquals(newApplicationState, part.getPersistedState().get(
+				"testing"));
 
 		applyAll(deltas);
 
 		if (applicationState == null) {
 			if (userChange == null) {
-				assertEquals(newApplicationState, part.getPersistedState());
+				assertEquals(newApplicationState, part.getPersistedState().get(
+						"testing"));
 			} else {
-				assertEquals(userChange, part.getPersistedState());
+				assertEquals(userChange, part.getPersistedState()
+						.get("testing"));
 			}
 		} else {
 			if (userChange == null || !applicationState.equals(userChange)) {
-				assertEquals(userChange, part.getPersistedState());
+				assertEquals(userChange, part.getPersistedState()
+						.get("testing"));
 			} else {
-				assertEquals(newApplicationState, part.getPersistedState());
+				assertEquals(newApplicationState, part.getPersistedState().get(
+						"testing"));
 			}
 		}
 	}

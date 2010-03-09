@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application;
 
+import org.eclipse.emf.common.util.EMap;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -83,29 +85,20 @@ public interface MContribution extends MApplicationElement {
 	void setObject(Object value);
 
 	/**
-	 * Returns the value of the '<em><b>Persisted State</b></em>' attribute.
+	 * Returns the value of the '<em><b>Persisted State</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Persisted State</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Persisted State</em>' attribute.
-	 * @see #setPersistedState(String)
+	 * @return the value of the '<em>Persisted State</em>' map.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_PersistedState()
-	 * @model
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
 	 * @generated
 	 */
-	String getPersistedState();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Persisted State</em>' attribute.
-	 * @see #getPersistedState()
-	 * @generated
-	 */
-	void setPersistedState(String value);
+	EMap<String, String> getPersistedState();
 
 } // MContribution

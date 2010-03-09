@@ -76,6 +76,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.TOOL_BAR: return (EObject)createToolBar();
 			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.PART: return (EObject)createPart();
+			case MApplicationPackage.INPUT_PART: return (EObject)createInputPart();
 			case MApplicationPackage.PART_DESCRIPTOR: return (EObject)createPartDescriptor();
 			case MApplicationPackage.PART_DESCRIPTOR_CONTAINER: return (EObject)createPartDescriptorContainer();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
@@ -223,6 +224,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MPart createPart() {
 		PartImpl part = new PartImpl();
 		return part;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MInputPart createInputPart() {
+		InputPartImpl inputPart = new InputPartImpl();
+		return inputPart;
 	}
 
 	/**

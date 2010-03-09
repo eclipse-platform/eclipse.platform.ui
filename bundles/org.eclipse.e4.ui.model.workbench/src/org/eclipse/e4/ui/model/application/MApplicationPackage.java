@@ -332,7 +332,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartDescriptor()
 	 * @generated
 	 */
-	int PART_DESCRIPTOR = 26;
+	int PART_DESCRIPTOR = 27;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.
@@ -342,7 +342,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartDescriptorContainer()
 	 * @generated
 	 */
-	int PART_DESCRIPTOR_CONTAINER = 27;
+	int PART_DESCRIPTOR_CONTAINER = 28;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -352,7 +352,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartStack()
 	 * @generated
 	 */
-	int PART_STACK = 28;
+	int PART_STACK = 29;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
@@ -362,7 +362,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartSashContainer()
 	 * @generated
 	 */
-	int PART_SASH_CONTAINER = 29;
+	int PART_SASH_CONTAINER = 30;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowImpl <em>Window</em>}' class.
@@ -372,7 +372,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindow()
 	 * @generated
 	 */
-	int WINDOW = 30;
+	int WINDOW = 31;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
@@ -382,7 +382,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
 	 * @generated
 	 */
-	int MODEL_COMPONENTS = 31;
+	int MODEL_COMPONENTS = 32;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
@@ -392,7 +392,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
 	 * @generated
 	 */
-	int MODEL_COMPONENT = 32;
+	int MODEL_COMPONENT = 33;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
@@ -402,7 +402,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Commands_______________V()
 	 * @generated
 	 */
-	int VCOMMANDS_V = 33;
+	int VCOMMANDS_V = 34;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
@@ -412,7 +412,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
 	 * @generated
 	 */
-	int BINDING_CONTAINER = 34;
+	int BINDING_CONTAINER = 35;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.
@@ -422,7 +422,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
 	 * @generated
 	 */
-	int COMMAND = 35;
+	int COMMAND = 36;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
@@ -432,7 +432,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
 	 * @generated
 	 */
-	int COMMAND_PARAMETER = 36;
+	int COMMAND_PARAMETER = 37;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
@@ -442,7 +442,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
 	 * @generated
 	 */
-	int HANDLER = 37;
+	int HANDLER = 38;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
@@ -452,7 +452,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
 	 * @generated
 	 */
-	int HANDLER_CONTAINER = 38;
+	int HANDLER_CONTAINER = 39;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -462,7 +462,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 39;
+	int HANDLED_ITEM = 40;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
@@ -472,7 +472,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
 	 * @generated
 	 */
-	int HANDLED_MENU_ITEM = 40;
+	int HANDLED_MENU_ITEM = 41;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
@@ -482,7 +482,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
 	 * @generated
 	 */
-	int HANDLED_TOOL_ITEM = 41;
+	int HANDLED_TOOL_ITEM = 42;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
@@ -492,7 +492,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
 	 * @generated
 	 */
-	int KEY_SEQUENCE = 43;
+	int KEY_SEQUENCE = 44;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
@@ -502,7 +502,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
 	 * @generated
 	 */
-	int KEY_BINDING = 42;
+	int KEY_BINDING = 43;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -512,7 +512,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
 	 * @generated
 	 */
-	int PARAMETER = 44;
+	int PARAMETER = 45;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}' class.
@@ -522,7 +522,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Trim_______________V()
 	 * @generated
 	 */
-	int VTRIM_V = 45;
+	int VTRIM_V = 46;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
@@ -532,7 +532,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 	 * @generated
 	 */
-	int TRIM_CONTAINER = 46;
+	int TRIM_CONTAINER = 47;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
@@ -542,7 +542,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
 	 * @generated
 	 */
-	int WINDOW_TRIM = 47;
+	int WINDOW_TRIM = 48;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}' class.
@@ -552,7 +552,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________SharedElements_______________V()
 	 * @generated
 	 */
-	int VSHARED_ELEMENTS_V = 48;
+	int VSHARED_ELEMENTS_V = 49;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PlaceholderImpl <em>Placeholder</em>}' class.
@@ -562,7 +562,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPlaceholder()
 	 * @generated
 	 */
-	int PLACEHOLDER = 49;
+	int PLACEHOLDER = 50;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -572,7 +572,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 50;
+	int PERSPECTIVE = 51;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -582,7 +582,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 51;
+	int PERSPECTIVE_STACK = 52;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
@@ -592,7 +592,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 52;
+	int VTESTING_V = 53;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl <em>Test Harness</em>}' class.
@@ -602,7 +602,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 53;
+	int TEST_HARNESS = 54;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl <em>String To String Map</em>}' class.
@@ -714,7 +714,7 @@ public interface MApplicationPackage extends EPackage {
 	int CONTRIBUTION__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1731,7 +1731,7 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_MENU_ITEM__OBJECT = CONTRIBUTION__OBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2217,7 +2217,7 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__OBJECT = TOOL_ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2649,7 +2649,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART__OBJECT = CONTRIBUTION__OBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2838,6 +2838,250 @@ public interface MApplicationPackage extends EPackage {
 	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 19;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.InputPartImpl <em>Input Part</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.InputPartImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getInputPart()
+	 * @generated
+	 */
+	int INPUT_PART = 26;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__ID = PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__TAGS = PART__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__URI = PART__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__OBJECT = PART__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__CONTEXT = PART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__VARIABLES = PART__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__PROPERTIES = PART__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__WIDGET = PART__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__RENDERER = PART__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__TO_BE_RENDERED = PART__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__ON_TOP = PART__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__VISIBLE = PART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__PARENT = PART__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__CONTAINER_DATA = PART__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__LABEL = PART__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__ICON_URI = PART__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__TOOLTIP = PART__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__HANDLERS = PART__HANDLERS;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__BINDINGS = PART__BINDINGS;
+
+	/**
+	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__DIRTY = PART__DIRTY;
+
+	/**
+	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__MENUS = PART__MENUS;
+
+	/**
+	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__TOOLBAR = PART__TOOLBAR;
+
+	/**
+	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__CLOSEABLE = PART__CLOSEABLE;
+
+	/**
+	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__INPUT_URI = PART_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Input Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2874,7 +3118,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART_DESCRIPTOR__OBJECT = PART__OBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3828,7 +4072,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5259,7 +5503,7 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5455,7 +5699,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItemType()
 	 * @generated
 	 */
-	int ITEM_TYPE = 54;
+	int ITEM_TYPE = 55;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
@@ -5465,7 +5709,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
 	 * @generated
 	 */
-	int SIDE_VALUE = 55;
+	int SIDE_VALUE = 56;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -5475,7 +5719,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 56;
+	int IECLIPSE_CONTEXT = 57;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -5485,7 +5729,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 57;
+	int PARAMETERIZED_COMMAND = 58;
 
 
 	/**
@@ -5573,15 +5817,15 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getContribution_Object();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}'.
+	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Persisted State</em>'.
+	 * @return the meta object for the map '<em>Persisted State</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MContribution#getPersistedState()
 	 * @see #getContribution()
 	 * @generated
 	 */
-	EAttribute getContribution_PersistedState();
+	EReference getContribution_PersistedState();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirtyable <em>Dirtyable</em>}'.
@@ -6067,6 +6311,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPart_Closeable();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MInputPart <em>Input Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Input Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MInputPart
+	 * @generated
+	 */
+	EClass getInputPart();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartDescriptor <em>Part Descriptor</em>}'.
@@ -6893,12 +7147,12 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute CONTRIBUTION__OBJECT = eINSTANCE.getContribution_Object();
 
 		/**
-		 * The meta object literal for the '<em><b>Persisted State</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Persisted State</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
+		EReference CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.DirtyableImpl <em>Dirtyable</em>}' class.
@@ -7309,6 +7563,16 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PART__CLOSEABLE = eINSTANCE.getPart_Closeable();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.InputPartImpl <em>Input Part</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.InputPartImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getInputPart()
+		 * @generated
+		 */
+		EClass INPUT_PART = eINSTANCE.getInputPart();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorImpl <em>Part Descriptor</em>}' class.

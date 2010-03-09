@@ -181,6 +181,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createPartAdapter();
 			}
 			@Override
+			public Adapter caseInputPart(MInputPart object) {
+				return createInputPartAdapter();
+			}
+			@Override
 			public Adapter casePartDescriptor(MPartDescriptor object) {
 				return createPartDescriptorAdapter();
 			}
@@ -659,6 +663,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPartAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MInputPart <em>Input Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MInputPart
+	 * @generated
+	 */
+	public Adapter createInputPartAdapter() {
 		return null;
 	}
 

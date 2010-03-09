@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MInput;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MKeySequence;
@@ -265,6 +266,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass partEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass inputPartEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -635,8 +643,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getContribution_PersistedState() {
-		return (EAttribute)contributionEClass.getEStructuralFeatures().get(2);
+	public EReference getContribution_PersistedState() {
+		return (EReference)contributionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1051,6 +1059,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EAttribute getPart_Closeable() {
 		return (EAttribute)partEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getInputPart() {
+		return inputPartEClass;
 	}
 
 	/**
@@ -1717,7 +1734,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		contributionEClass = createEClass(CONTRIBUTION);
 		createEAttribute(contributionEClass, CONTRIBUTION__URI);
 		createEAttribute(contributionEClass, CONTRIBUTION__OBJECT);
-		createEAttribute(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
+		createEReference(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
 
 		dirtyableEClass = createEClass(DIRTYABLE);
 		createEAttribute(dirtyableEClass, DIRTYABLE__DIRTY);
@@ -1785,6 +1802,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEReference(partEClass, PART__MENUS);
 		createEReference(partEClass, PART__TOOLBAR);
 		createEAttribute(partEClass, PART__CLOSEABLE);
+
+		inputPartEClass = createEClass(INPUT_PART);
 
 		partDescriptorEClass = createEClass(PART_DESCRIPTOR);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__ALLOW_MULTIPLE);
@@ -1978,6 +1997,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
 		partEClass.getESuperTypes().add(this.getBindingContainer());
 		partEClass.getESuperTypes().add(this.getDirtyable());
+		inputPartEClass.getESuperTypes().add(this.getPart());
+		inputPartEClass.getESuperTypes().add(this.getInput());
 		partDescriptorEClass.getESuperTypes().add(this.getPart());
 		g1 = createEGenericType(this.getGenericStack());
 		g2 = createEGenericType(this.getPart());
@@ -2086,7 +2107,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_URI(), ecorePackage.getEString(), "URI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getContribution_PersistedState(), ecorePackage.getEString(), "persistedState", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(dirtyableEClass, MDirtyable.class, "Dirtyable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getDirtyable_Dirty(), ecorePackage.getEBoolean(), "dirty", null, 0, 1, MDirtyable.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -2159,6 +2180,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEReference(getPart_Menus(), this.getMenu(), null, "menus", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Toolbar(), this.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+
+		initEClass(inputPartEClass, MInputPart.class, "InputPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_AllowMultiple(), ecorePackage.getEBoolean(), "allowMultiple", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

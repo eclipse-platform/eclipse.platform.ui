@@ -221,24 +221,14 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected Object object = OBJECT_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPersistedState()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String PERSISTED_STATE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected String persistedState = PERSISTED_STATE_EDEFAULT;
+	protected EMap<String, String> persistedState;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -745,20 +735,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getPersistedState() {
+	public EMap<String, String> getPersistedState() {
+		if (persistedState == null) {
+			persistedState = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.TEST_HARNESS__PERSISTED_STATE);
+		}
 		return persistedState;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setPersistedState(String newPersistedState) {
-		String oldPersistedState = persistedState;
-		persistedState = newPersistedState;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__PERSISTED_STATE, oldPersistedState, persistedState));
 	}
 
 	/**
@@ -1220,6 +1201,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.TEST_HARNESS__PROPERTIES:
 				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
+				return ((InternalEList<?>)getPersistedState()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
@@ -1268,7 +1251,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__OBJECT:
 				return getObject();
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
-				return getPersistedState();
+				if (coreType) return getPersistedState();
+				else return getPersistedState().map();
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				return getWidget();
 			case MApplicationPackage.TEST_HARNESS__RENDERER:
@@ -1348,7 +1332,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				setObject(newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
-				setPersistedState((String)newValue);
+				((EStructuralFeature.Setting)getPersistedState()).set(newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				setWidget(newValue);
@@ -1445,7 +1429,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				setObject(OBJECT_EDEFAULT);
 				return;
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
-				setPersistedState(PERSISTED_STATE_EDEFAULT);
+				getPersistedState().clear();
 				return;
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
@@ -1533,7 +1517,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
-				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
+				return persistedState != null && !persistedState.isEmpty();
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.TEST_HARNESS__RENDERER:
@@ -1774,8 +1758,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$
 		result.append(object);
-		result.append(", persistedState: "); //$NON-NLS-1$
-		result.append(persistedState);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$
