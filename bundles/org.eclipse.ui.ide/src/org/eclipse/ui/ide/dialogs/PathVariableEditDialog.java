@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
-import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -28,7 +27,6 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
  * A dialog that allows a user to browse, edit, add, and remove path variables
  * for a given project.
  * 
- * @see IPathVariable
  * @since 3.6
  */
 public class PathVariableEditDialog extends SelectionDialog {
@@ -71,7 +69,9 @@ public class PathVariableEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 * @see
+	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
+	 * .Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -82,7 +82,9 @@ public class PathVariableEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
@@ -94,7 +96,9 @@ public class PathVariableEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		// create composite
@@ -132,7 +136,9 @@ public class PathVariableEditDialog extends SelectionDialog {
 
 	/**
 	 * Sets the project for which variables are being edited
-	 * @param resource The project whose variables are being edited
+	 * 
+	 * @param resource
+	 *            The project whose variables are being edited
 	 */
 	public void setResource(IResource resource) {
 		pathVariablesGroup.setResource(resource);

@@ -22,7 +22,6 @@ import java.util.TreeMap;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,8 +35,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.ToolTip;
@@ -657,9 +656,7 @@ public class PathVariablesGroup {
      */
     private boolean isBuiltInVariable(String varName) {
         if (currentResource != null) {
-        	IPathVariable variable = pathVariableManager.getPathVariable(varName);
-            if (variable != null) 
-            	return variable.isReadOnly();
+        	return !pathVariableManager.isUserDefined(varName);
         }
         return false;
     }

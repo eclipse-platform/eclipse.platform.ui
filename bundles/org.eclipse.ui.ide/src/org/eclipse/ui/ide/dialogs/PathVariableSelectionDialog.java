@@ -15,7 +15,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -232,11 +231,11 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			if (currentResource != null)
 				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(selectionPath);
-			IPathVariable pathVariable = null;
-			if (currentResource != null)
-				pathVariable = currentResource.getPathVariableManager().getPathVariable(selection[0].name);
+//			IPathVariable pathVariable = null;
+//			if (currentResource != null)
+//				pathVariable = currentResource.getPathVariableManager().getPathVariable(selection[0].name);
 			if (info.exists() && info.isDirectory()
-					|| (pathVariable != null && pathVariable.getExtensions() != null)) {
+					/*|| (pathVariable != null && pathVariable.getExtensions() != null)*/) {
 				extendButton.setEnabled(true);
 			} else {
 				extendButton.setEnabled(false);
