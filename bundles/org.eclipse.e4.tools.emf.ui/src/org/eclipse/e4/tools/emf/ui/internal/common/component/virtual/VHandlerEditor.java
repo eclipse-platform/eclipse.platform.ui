@@ -4,9 +4,15 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -54,7 +60,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent,context, getMaster());
 		}
-		getMaster().setValue(object);
+		getMaster().setValue(((VirtualEntry<?>)object).getOriginalParent());
 		return composite;
 	}
 
@@ -66,6 +72,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Handlers");
+			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			TableViewer viewer = new TableViewer(parent);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -85,6 +92,14 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			column.getColumn().setText("Class");
 			column.getColumn().setWidth(300);
 			
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
+			IValueProperty[] props = {
+				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID),
+				EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME)),
+				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI)
+			};
+			
+			ViewerSupport.bind(viewer, prop.observeDetail(getMaster()), props);
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
