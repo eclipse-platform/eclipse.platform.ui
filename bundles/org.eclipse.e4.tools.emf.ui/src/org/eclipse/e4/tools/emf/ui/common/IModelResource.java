@@ -19,4 +19,12 @@ public interface IModelResource {
 	public boolean isSaveable();
 	public IStatus save();
 	public EditingDomain getEditingDomain();
+	public boolean isDirty();
+	
+	public void addModelListener(ModelListener listener);
+	public void removeModelListener(ModelListener listener);
+	
+	public interface ModelListener {
+		public void dirtyChanged();
+	}
 }

@@ -14,11 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -53,14 +53,14 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 	@Override
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		IValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text();
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Class URI");
 
 		Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observe(t), EMFEditProperties.value( getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
+		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
 
 		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 		b.setText("Find ...");

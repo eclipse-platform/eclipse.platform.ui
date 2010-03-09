@@ -27,6 +27,7 @@ import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.CellEditor;
@@ -75,7 +76,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 	@Override
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, final WritableValue master) {
-		IValueProperty textProp = WidgetProperties.text();
+		IWidgetValueProperty textProp = WidgetProperties.text();
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Command");
@@ -83,7 +84,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.setEnabled(false);
-		context.bindValue(textProp.observe(t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLED_ITEM__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(master));
+		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLED_ITEM__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(master));
 
 		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 		b.setText("Find ...");

@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
@@ -49,6 +51,7 @@ import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -177,12 +180,16 @@ public class ModelEditor {
 		virtualEditors = new AbstractComponentEditor[] {
 				null, // V-Menu
 				null, // V-Part
-				new VHandlerEditor(modelProvider.getEditingDomain()),
+				new VHandlerEditor(modelProvider.getEditingDomain(),this),
 				null, // V-Binding
 				null, // V-Command
 				null  // Windows
 			};
 
+	}
+	
+	public void setSelection(Object element) {
+		viewer.setSelection(new StructuredSelection(element));
 	}
 
 	private void registerDefaultEditors() {
@@ -213,6 +220,14 @@ public class ModelEditor {
 
 	public AbstractComponentEditor getEditor(EClass eClass) {
 		return editorMap.get(eClass);
+	}
+	
+	public IStatus save() {
+		if( modelProvider.isSaveable() ) {
+			return modelProvider.save();
+		}
+		
+		return Status.CANCEL_STATUS;
 	}
 
 	private static class TreeStructureAdvisorImpl extends TreeStructureAdvisor {

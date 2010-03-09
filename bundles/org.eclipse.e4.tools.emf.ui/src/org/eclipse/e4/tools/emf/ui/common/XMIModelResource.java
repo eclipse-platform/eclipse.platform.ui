@@ -10,7 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -18,6 +21,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -30,12 +34,22 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 public class XMIModelResource implements IModelResource {
 	private EditingDomain editingDomain;
 	private Resource resource;
+	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
+	private boolean dirty;
 
 	public XMIModelResource(String uri) {
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
 				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 		ResourceSet resourceSet = new ResourceSetImpl();
 		BasicCommandStack commandStack = new BasicCommandStack();
+		commandStack.addCommandStackListener(new CommandStackListener() {
+			
+			public void commandStackChanged(EventObject event) {
+				dirty = true;
+				System.err.println("Exec");
+				fireDirtyChanged();
+			}
+		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory,
 				commandStack, resourceSet);
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -58,10 +72,31 @@ public class XMIModelResource implements IModelResource {
 		return true;
 	}
 
+	public void addModelListener(ModelListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeModelListener(ModelListener listener) {
+		listeners.remove(listener);
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	private void fireDirtyChanged() {
+		for( ModelListener listener : listeners ) {
+			listener.dirtyChanged();
+		}
+	}
+	
 	public IStatus save() {
 		Map<String, String> map = new HashMap<String, String>();
 		try {
 			resource.save(map);
+			editingDomain.getCommandStack().flush();
+			dirty = false;
+			fireDirtyChanged();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

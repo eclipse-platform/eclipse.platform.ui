@@ -7,15 +7,19 @@
     <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="__i_ycCuZEd-8CvvcO22KcQ">
       <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="__jAZgCuZEd-8CvvcO22KcQ">
         <children xsi:type="application:HandledToolItem" xmi:id="__jBnoCuZEd-8CvvcO22KcQ" id="__jBnoCuZEd-8CvvcO22KcQ" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="__jFSACuZEd-8CvvcO22KcQ"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_4DGF0CuuEd-8CvvcO22KcQ" id="_4DGF0CuuEd-8CvvcO22KcQ" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/disk.png" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
       </children>
     </children>
     <mainMenu xmi:id="__jCOsCuZEd-8CvvcO22KcQ" id="__jCOsCuZEd-8CvvcO22KcQ">
       <children xsi:type="application:MenuItem" xmi:id="__jC1wCuZEd-8CvvcO22KcQ" id="e4.modeleditor.menu.file" label="File">
         <children xsi:type="application:HandledMenuItem" xmi:id="__jDc0CuZEd-8CvvcO22KcQ" id="__jDc0CuZEd-8CvvcO22KcQ" label="Open XMI ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" command="__jFSACuZEd-8CvvcO22KcQ"/>
+        <children xsi:type="application:HandledMenuItem" xmi:id="_0xNeUCuuEd-8CvvcO22KcQ" id="_0xNeUCuuEd-8CvvcO22KcQ" label="Save" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
       </children>
     </mainMenu>
   </children>
   <handlers xmi:id="__jED4CuZEd-8CvvcO22KcQ" id="__jED4CuZEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="__jFSACuZEd-8CvvcO22KcQ"/>
+  <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="_xOkeACuuEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
   <bindings xmi:id="__jEq8CuZEd-8CvvcO22KcQ" keySequence="M1+O" id="__jEq8CuZEd-8CvvcO22KcQ" command="__jFSACuZEd-8CvvcO22KcQ"/>
   <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
+  <commands xmi:id="_sSBrgCuuEd-8CvvcO22KcQ" id="_sSBrgCuuEd-8CvvcO22KcQ" commandName="e4editor.savexmi"/>
 </application:Application>
