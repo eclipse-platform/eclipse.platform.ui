@@ -17,15 +17,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.swt.widgets.Composite;
 
 public class XMIFileEditor {
 	private ApplicationModelEditor editor;
 	
 	@Inject
-	public XMIFileEditor(Composite composite, final MPart part) {
-		final XMIModelResource resource = new XMIModelResource(part.getPersistedState());
+	public XMIFileEditor(Composite composite, final MInputPart part) {
+		final XMIModelResource resource = new XMIModelResource(part.getInputURI());
 		resource.addModelListener(new ModelListener() {
 			
 			public void dirtyChanged() {

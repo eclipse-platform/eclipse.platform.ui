@@ -14,7 +14,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EModelService;
@@ -32,12 +32,12 @@ public class OpenModelFileHandler {
 
 			MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
 			
-			MPart part = MApplicationFactory.eINSTANCE.createPart();
+			MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
 			part.setLabel(name);
 			part.setTooltip(file);
 			part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
 			part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
-			part.setPersistedState(filePath);
+			part.setInputURI(filePath);
 			
 			part.setCloseable(true);
 			stack.getChildren().add(part);
