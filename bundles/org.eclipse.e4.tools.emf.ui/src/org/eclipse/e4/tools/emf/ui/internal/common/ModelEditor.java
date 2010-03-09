@@ -33,6 +33,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEdito
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartSashContainerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartStackEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
@@ -172,6 +175,9 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PERSPECTIVE, new PerspectiveEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PLACEHOLDER, new PlaceholderEditor(modelProvider.getEditingDomain()));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

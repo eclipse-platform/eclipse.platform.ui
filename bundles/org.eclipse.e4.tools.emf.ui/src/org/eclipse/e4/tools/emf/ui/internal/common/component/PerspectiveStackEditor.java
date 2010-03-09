@@ -43,15 +43,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PartStackEditor extends AbstractComponentEditor {
-
+public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
-	public PartStackEditor(EditingDomain editingDomain) {
+	public PerspectiveStackEditor(EditingDomain editingDomain) {
 		super(editingDomain);
 	}
 
@@ -59,7 +58,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if( image == null ) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/PartStack.gif"));
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/PerspectiveStack.gif"));
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -71,12 +70,17 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Part Stack";
+		return "Perspective Stack";
+	}
+
+	@Override
+	public String getDetailLabel(Object element) {
+		return null;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Stack bla bla bla";
+		return "Perspective Stack Bla Bla Bla";
 	}
 
 	@Override
@@ -154,9 +158,4 @@ public class PartStackEditor extends AbstractComponentEditor {
 		return ELEMENT_CONTAINER__CHILDREN.observe(element);
 	}
 
-	@Override
-	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

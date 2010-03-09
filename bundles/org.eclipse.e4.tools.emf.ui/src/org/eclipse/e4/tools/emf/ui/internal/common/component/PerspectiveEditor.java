@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
@@ -23,6 +13,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -38,28 +29,28 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PartStackEditor extends AbstractComponentEditor {
-
+public class PerspectiveEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
-	public PartStackEditor(EditingDomain editingDomain) {
+	public PerspectiveEditor(EditingDomain editingDomain) {
 		super(editingDomain);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/PartStack.gif"));
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Perspective.gif"));
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -71,27 +62,36 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Part Stack";
+		return "Perspective";
+	}
+
+	@Override
+	public String getDetailLabel(Object element) {
+		MPerspective perspective = (MPerspective) element;
+		if (perspective.getLabel() != null && perspective.getLabel().trim().length() > 0) {
+			return perspective.getLabel();
+		}
+
+		return null;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Stack bla bla bla";
+		return "Perspective Bla Bla Bla";
 	}
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			composite = createForm(parent, context, getMaster());
 		}
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IValueProperty textProp = WidgetProperties.text();
@@ -103,7 +103,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
 		}
@@ -115,10 +115,10 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			ComboViewer viewer = new ComboViewer(parent);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			viewer.getControl().setLayoutData(gd);
 			IEMFEditListProperty listProp = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL);
+			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
 			IViewerValueProperty vProp = ViewerProperties.singleSelection();
 
 			final Binding[] binding = new Binding[1];
@@ -127,7 +127,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 			getMaster().addValueChangeListener(new IValueChangeListener() {
 
 				public void handleValueChange(ValueChangeEvent event) {
-					if( binding[0] != null ) {
+					if (binding[0] != null) {
 						binding[0].dispose();
 					}
 
@@ -144,6 +144,43 @@ public class PartStackEditor extends AbstractComponentEditor {
 			});
 		}
 
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Label");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Tooltip");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Icon URI");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Find ...");
+		}
+
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
@@ -154,9 +191,4 @@ public class PartStackEditor extends AbstractComponentEditor {
 		return ELEMENT_CONTAINER__CHILDREN.observe(element);
 	}
 
-	@Override
-	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
