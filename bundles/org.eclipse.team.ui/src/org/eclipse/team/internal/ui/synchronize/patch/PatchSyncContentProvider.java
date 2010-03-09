@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.patch;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.compare.internal.patch.HunkDiffNode;
 import org.eclipse.compare.internal.patch.PatchDiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -95,6 +98,19 @@ public class PatchSyncContentProvider extends SynchronizationContentProvider {
 		if (element instanceof HunkDiffNode)
 			return false;
 		return super.hasChildren(element);
+	}
+
+	public Object[] getChildren(Object parent) {
+		Object[] children = super.getChildren(parent);
+		List result = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof PatchDiffNode) {
+				PatchDiffNode node = (PatchDiffNode) children[i];
+				if (node.isEnabled())
+					result.add(node); // hide disabled nodes
+			}
+		}
+		return result.toArray();
 	}
 
 }
