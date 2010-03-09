@@ -17,8 +17,6 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
 import org.eclipse.emf.common.notify.Notification;
