@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map.Entry;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -25,9 +26,12 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -95,93 +99,165 @@ public class PartEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText("Id");
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
 
-		Text t = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));			
+		}
 
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Label");
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Label");
-
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Tooltip");
-
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));			
+		}
 
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Tooltip");
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Icon URI");
-
-		t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
-
-		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-		b.setText("Find ...");
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Class URI");
-
-		t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
-
-		b = new Button(parent, SWT.PUSH|SWT.FLAT);
-		b.setText("Find ...");
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));			
+		}
 
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Icon URI");
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Variables");
-		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
-		ListViewer viewer = new ListViewer(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.heightHint = 80;
-		viewer.getList().setLayoutData(gd);
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setText("Find ...");			
+		}
 
 		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Class URI");
 
-		l = new Label(parent, SWT.NONE);
-		l.setText("Properties");
-		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
 
-		TableViewer tableviewer = new TableViewer(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.heightHint = 80;
-		tableviewer.getTable().setHeaderVisible(true);
-		tableviewer.getControl().setLayoutData(gd);
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setText("Find ...");			
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Persited State");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
-		TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Key");
-		column.getColumn().setWidth(200);
+			TableViewer tableviewer = new TableViewer(parent);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			tableviewer.setContentProvider(cp);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 80;
+			tableviewer.getControl().setLayoutData(gd);
+			
+			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Key");
+			column.getColumn().setWidth(200);
+			column.setLabelProvider(new ColumnLabelProvider() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public String getText(Object element) {
+					Entry<String, String> entry = (Entry<String, String>) element;
+					return entry.getKey();
+				}
+			});
 
-		column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Value");
-		column.getColumn().setWidth(200);
+			//FIXME How can we react upon changes in the Map-Value?
+			column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Value");
+			column.getColumn().setWidth(200);
+			column.setLabelProvider(new ColumnLabelProvider() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public String getText(Object element) {
+					Entry<String, String> entry = (Entry<String, String>) element;
+					return entry.getValue();
+				}
+			});
+			
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__PERSISTED_STATE);
+			tableviewer.setInput(prop.observeDetail(getMaster()));
+			
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft=0;
+			gl.marginRight=0;
+			gl.marginWidth=0;
+			gl.marginHeight=0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Add ...");
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
+
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Variables");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+
+			ListViewer viewer = new ListViewer(parent);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			gd.heightHint = 80;
+			viewer.getList().setLayoutData(gd);
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Properties");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+
+			TableViewer tableviewer = new TableViewer(parent);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			gd.heightHint = 80;
+			tableviewer.getTable().setHeaderVisible(true);
+			tableviewer.getControl().setLayoutData(gd);
+
+			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Key");
+			column.getColumn().setWidth(200);
+
+			column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Value");
+			column.getColumn().setWidth(200);
+		}
+
 
 		ControlFactory.createTagsWidget(parent, this);
 
