@@ -18,7 +18,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -40,12 +40,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VHandlerEditor extends AbstractComponentEditor {
+public class VKeyBindingEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
 
-	public VHandlerEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public VKeyBindingEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
 	}
@@ -57,7 +57,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Handlers";
+		return "KeyBindings";
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Handlers Bla Bla Bla Bla Bla";
+		return "KeyBindings Bla Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Handlers");
+			l.setText("Keybindings");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			TableViewer viewer = new TableViewer(parent);
@@ -97,21 +97,22 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			viewer.getTable().setHeaderVisible(true);
 
 			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+			column.getColumn().setText("KeySequence");
+			column.getColumn().setWidth(100);
+			
+			column = new TableViewerColumn(viewer, SWT.NONE);
 			column.getColumn().setText("Command");
 			column.getColumn().setWidth(200);
 			
 			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Class");
-			column.getColumn().setWidth(300);
-			
-			column = new TableViewerColumn(viewer, SWT.NONE);
 			column.getColumn().setText("Id");
-			column.getColumn().setWidth(150);
+			column.getColumn().setWidth(170);
 
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
+			
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			IValueProperty[] props = {
-				EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME)),
-				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI),
+				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE),
+				EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.KEY_BINDING__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME)),
 				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)
 			};
 			
@@ -143,8 +144,8 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS, handler);
+					MKeyBinding handler = MApplicationFactory.eINSTANCE.createKeyBinding();
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, handler);
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -168,4 +169,5 @@ public class VHandlerEditor extends AbstractComponentEditor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

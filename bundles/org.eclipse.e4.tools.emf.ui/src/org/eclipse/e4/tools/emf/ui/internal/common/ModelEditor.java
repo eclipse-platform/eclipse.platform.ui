@@ -42,7 +42,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VKeyBindingEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -181,8 +183,8 @@ public class ModelEditor {
 				null, // V-Menu
 				null, // V-Part
 				new VHandlerEditor(modelProvider.getEditingDomain(),this),
-				null, // V-Binding
-				null, // V-Command
+				new VKeyBindingEditor(modelProvider.getEditingDomain(), this),
+				new VCommandEditor(modelProvider.getEditingDomain(), this),
 				null  // Windows
 			};
 
