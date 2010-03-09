@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.ui.common;
+package org.eclipse.e4.tools.emf.editor;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -20,6 +20,8 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.util.URI;
@@ -54,7 +56,7 @@ public class XMIModelResource implements IModelResource {
 				commandStack, resourceSet);
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-						new XMIResourceFactoryImpl());
+						new E4XMIResourceFactory());
 		resource = resourceSet.getResource(URI.createURI(uri), true);
 	}
 
