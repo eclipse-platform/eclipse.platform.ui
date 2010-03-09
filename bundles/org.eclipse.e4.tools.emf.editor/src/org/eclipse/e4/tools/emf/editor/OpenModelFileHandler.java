@@ -28,15 +28,17 @@ public class OpenModelFileHandler {
 		String file = dialog.open();
 		if( file != null ) {
 			String name = file.substring(file.lastIndexOf("/") + 1);
+			String filePath = "file://" + file;
 
 			MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
-
+			
 			MPart part = MApplicationFactory.eINSTANCE.createPart();
 			part.setLabel(name);
 			part.setTooltip(file);
 			part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
 			part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
-			part.setContainerData("file://" + file);
+			part.setPersistedState(filePath);
+			
 			part.setCloseable(true);
 			stack.getChildren().add(part);
 			stack.setSelectedElement(part);

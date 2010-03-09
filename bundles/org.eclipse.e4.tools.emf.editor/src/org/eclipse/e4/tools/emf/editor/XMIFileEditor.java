@@ -25,7 +25,7 @@ public class XMIFileEditor {
 	
 	@Inject
 	public XMIFileEditor(Composite composite, final MPart part) {
-		final XMIModelResource resource = new XMIModelResource(part.getContainerData());
+		final XMIModelResource resource = new XMIModelResource(part.getPersistedState());
 		resource.addModelListener(new ModelListener() {
 			
 			public void dirtyChanged() {

@@ -12,6 +12,6 @@ package org.eclipse.e4.tools.emf.editor;
 
 public class NewApplicationModelHandler {
 	public void execute() {
-		System.err.println("TODO Implement");
+		
 	}
 }
