@@ -148,19 +148,25 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	final protected void initializeCellEditorValue(CellEditor cellEditor,
 			ViewerCell cell) {
 		IObservableValue target = doCreateCellEditorObservable(cellEditor);
-		Assert
-				.isNotNull(target,
-						"doCreateCellEditorObservable(...) did not return an observable"); //$NON-NLS-1$
+		Assert.isNotNull(target,
+				"doCreateCellEditorObservable(...) did not return an observable"); //$NON-NLS-1$
 
 		IObservableValue model = doCreateElementObservable(cell.getElement(),
 				cell);
 		Assert.isNotNull(model,
 				"doCreateElementObservable(...) did not return an observable"); //$NON-NLS-1$
 
+		dirty = false;
+
 		Binding binding = createBinding(target, model);
-		Assert
-				.isNotNull(binding,
-						"createBinding(...) did not return a binding"); //$NON-NLS-1$
+
+		target.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				dirty = true;
+			}
+		});
+
+		Assert.isNotNull(binding, "createBinding(...) did not return a binding"); //$NON-NLS-1$
 
 		editingState = new EditingState(binding, target, model);
 
@@ -199,15 +205,8 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 */
 	protected Binding createBinding(IObservableValue target,
 			IObservableValue model) {
-		dirty = false;
-		Binding binding = dbc.bindValue(target, model, new UpdateValueStrategy(
+		return dbc.bindValue(target, model, new UpdateValueStrategy(
 				UpdateValueStrategy.POLICY_CONVERT), null);
-		target.addChangeListener(new IChangeListener() {
-			public void handleChange(ChangeEvent event) {
-				dirty = true;
-			}
-		});
-		return binding;
 	}
 
 	boolean dirty = false;

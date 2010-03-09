@@ -168,6 +168,7 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProv
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetTreeContentProviderTest;
+import org.eclipse.jface.tests.databinding.viewers.ObservableValueEditingSupportTest;
 import org.eclipse.jface.tests.databinding.viewers.ViewerSupportTest;
 import org.eclipse.jface.tests.databinding.viewers.ViewersObservablesTest;
 import org.eclipse.jface.tests.databinding.wizard.WizardPageSupportTest;
@@ -420,6 +421,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
 		addTestSuite(ObservableSetTreeContentProviderTest.class);
+		addTestSuite(ObservableValueEditingSupportTest.class);
 		addTestSuite(ViewersObservablesTest.class);
 		addTestSuite(ViewerSupportTest.class);
 

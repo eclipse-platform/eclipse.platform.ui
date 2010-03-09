@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -83,50 +84,68 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 	}
 
 	public void testSaveCellEditorValue_UpdatesModel() throws Exception {
-		Text text = new Text(shell, SWT.NONE);
 		shell.open();
 
 		String newValue = bean.getValue() + "a";
 
 		viewer.editElement(bean, 0);
-		editingSupport.editor.setValue(newValue);
+		editingSupport.target.setValue(newValue);
 
 		// force the focus to leave the editor updating the value
-		text.setFocus();
+		closeCellEditor();
 
+		assertTrue(editingSupport.binding.isDisposed());
 		assertEquals(newValue, bean.getValue());
 	}
 
+	/**
+	 * 
+	 */
+	protected void closeCellEditor() {
+		editingSupport.text.notifyListeners(SWT.DefaultSelection, new Event());
+	}
+
+	public void testSaveCellEditorValue_IgnoreIfNotDirty() throws Exception {
+		String initialValue = bean.getValue();
+
+		shell.open();
+
+		viewer.editElement(bean, 0);
+
+		// force the focus to leave the editor updating the value
+		closeCellEditor();
+
+		assertTrue(editingSupport.binding.isDisposed());
+		assertEquals(initialValue, bean.getValue());
+	}
+
 	public void testDisposesBinding() throws Exception {
-		Text text = new Text(shell, SWT.NONE);
 		shell.open();
 
 		viewer.editElement(bean, 0);
 		assertFalse("precondition", editingSupport.binding.isDisposed());
 
-		text.setFocus();
+		closeCellEditor();
 		assertTrue(editingSupport.binding.isDisposed());
 	}
 
 	public void testDisposesTargetObservable() throws Exception {
-		Text text = new Text(shell, SWT.NONE);
 		shell.open();
 
 		viewer.editElement(bean, 0);
-		assertTrue("precondition", editingSupport.target.isDisposed());
+		assertFalse("precondition", editingSupport.target.isDisposed());
 
-		text.setFocus();
+		closeCellEditor();
 		assertTrue(editingSupport.target.isDisposed());
 	}
 
 	public void testDisposesModelObservable() throws Exception {
-		Text text = new Text(shell, SWT.NONE);
 		shell.open();
 
 		viewer.editElement(bean, 0);
-		assertTrue("precondition", editingSupport.model.isDisposed());
+		assertFalse("precondition", editingSupport.model.isDisposed());
 
-		text.setFocus();
+		closeCellEditor();
 		assertTrue(editingSupport.model.isDisposed());
 	}
 
@@ -137,6 +156,8 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 	private static class ObservableValueEditingSupportStub extends
 			ObservableValueEditingSupport {
 		StringBuffer events = new StringBuffer();
+
+		Text text;
 
 		TextCellEditor editor;
 
@@ -172,6 +193,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 				CellEditor cellEditor) {
 			event("createCellEditorObservable");
 
+			text = (Text) cellEditor.getControl();
 			return target = SWTObservables.observeText(cellEditor.getControl(),
 					SWT.NONE);
 		}
