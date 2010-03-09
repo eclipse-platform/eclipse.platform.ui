@@ -54,6 +54,13 @@ public interface INavigatorViewerDescriptor {
 	String PROP_HIDE_LINK_WITH_EDITOR_ACTION = "org.eclipse.ui.navigator.hideLinkWithEditorAction"; //$NON-NLS-1$
 
 	/**
+	 * {@value} (string): The help context id to be used for the customize view dialog, if not specified
+	 * help will not be available.
+	 * @since 3.5
+	 */
+	String PROP_CUSTOMIZE_VIEW_DIALOG_HELP_CONTEXT = "org.eclipse.ui.navigator.customizeViewDialogHelpContext"; //$NON-NLS-1$
+
+	/**
 	 * Returns the id of the viewer targeted by this extension.
 	 * 
 	 * @return the id of the viewer targeted by this extension.

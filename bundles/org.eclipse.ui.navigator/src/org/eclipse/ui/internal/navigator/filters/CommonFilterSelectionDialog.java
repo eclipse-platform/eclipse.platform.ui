@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -48,7 +49,7 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
  * @since 3.2
  * 
  */
-public class CommonFilterSelectionDialog extends Dialog {
+public class CommonFilterSelectionDialog extends TrayDialog {
    
 	private static final String FILTER_ICON = "icons/full/elcl16/filter_ps.gif"; //$NON-NLS-1$
 	private static final String CONTENT_ICON = "icons/full/elcl16/content.gif"; //$NON-NLS-1$
@@ -71,6 +72,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private ISelectionChangedListener updateDescriptionSelectionListener; 
 
+	private String helpContext;
+	
 	/**
 	 * Public only for tests.
 	 * 
@@ -81,8 +84,21 @@ public class CommonFilterSelectionDialog extends Dialog {
 		setShellStyle(SWT.RESIZE | getShellStyle());
 
 		commonViewer = aCommonViewer;
-		contentService = commonViewer.getNavigatorContentService(); 
-	} 
+		contentService = commonViewer.getNavigatorContentService();
+
+		INavigatorViewerDescriptor viewerDescriptor = contentService.getViewerDescriptor();
+		helpContext = viewerDescriptor
+				.getStringConfigProperty(INavigatorViewerDescriptor.PROP_CUSTOMIZE_VIEW_DIALOG_HELP_CONTEXT);
+
+		if (helpContext != null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(
+					aCommonViewer.getControl().getShell(), helpContext);
+		}
+	}
+
+	public boolean isHelpAvailable() {
+		return helpContext != null;
+	}
 
 	/*
 	 * (non-Javadoc)

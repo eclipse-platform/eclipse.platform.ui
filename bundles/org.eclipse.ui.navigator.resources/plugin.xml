@@ -16,6 +16,7 @@
    <extension
          point="org.eclipse.ui.navigator.viewer">
        <viewer
+             helpContext="org.eclipse.ui.project_explorer_context"
              viewerId="org.eclipse.ui.navigator.ProjectExplorer">
           <popupMenu
                 allowsPlatformContributions="true"
@@ -48,6 +49,12 @@
                    separator="true"/>
              
           </popupMenu>
+          <options>
+             <property
+                   name="org.eclipse.ui.navigator.customizeViewDialogHelpContext"
+                   value="org.eclipse.ui.project_explorer_customization_dialog">
+             </property>
+          </options>
        </viewer>
        <viewerContentBinding 
              viewerId="org.eclipse.ui.navigator.ProjectExplorer">
