@@ -54,7 +54,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			list = Collections.synchronizedSet(new HashSet());
 			projectListeners.put(project, list);
 		}
-		((Set)list).add(listener);
+		((Set) list).add(listener);
 	}
 
 	/**
@@ -117,11 +117,11 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			SafeRunner.run(job);
 		}
 	}
-	
+
 	public void fireVariableChangeEvent(IProject project, String name, IPath value, int type) {
 		Object list = projectListeners.get(project);
 		if (list != null)
-			fireVariableChangeEvent(((Set)list), name, value, type);
+			fireVariableChangeEvent(((Set) list), name, value, type);
 	}
 
 	/**
@@ -129,15 +129,6 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	private String getKeyForName(String varName) {
 		return VARIABLE_PREFIX + varName;
-	}
-
-	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariable(String)
-	 */
-	public IPathVariable getPathVariable(String name) {
-		if (isDefined(name))
-			return new PathVariable(this, name);
-		return null;
 	}
 
 	/**
@@ -192,12 +183,11 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		listeners.remove(listener);
 	}
 
-
 	synchronized public void removeChangeListener(IPathVariableChangeListener listener, IProject project) {
 		Object list = projectListeners.get(project);
 		if (list != null) {
-			((Set)list).remove(listener);
-			if (((Set)list).isEmpty())
+			((Set) list).remove(listener);
+			if (((Set) list).isEmpty())
 				projectListeners.remove(project);
 		}
 	}
@@ -344,9 +334,6 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public String[] getPathVariableNames(IResource resource) {
 		return getPathVariableNames();
 	}
-	public boolean isDefined(String name, IResource resource) {
-		return isDefined(name);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -367,7 +354,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see IPathVariableManager#convertToUserEditableFormat(String, boolean)
 	 */
-	public String convertToUserEditableFormat(String value, boolean locationFormat) { 
+	public String convertToUserEditableFormat(String value, boolean locationFormat) {
 		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
 
@@ -375,7 +362,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat);
 	}
 
-	public boolean isReadOnly(String name) {
-		return getPathVariable(name).isReadOnly();
+	public boolean isUserDefined(String name) {
+		return ProjectVariableProviderManager.getDefault().findDescriptor(name) == null;
 	}
 }

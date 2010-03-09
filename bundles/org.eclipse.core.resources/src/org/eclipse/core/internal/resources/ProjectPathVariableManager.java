@@ -68,15 +68,6 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariable(String)
-	 */
-	public IPathVariable getPathVariable(String name) {
-		if (isDefined(name))
-			return new PathVariable(this, name);
-		return null;
-	}
-
-	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
 	public String[] getPathVariableNames() {
@@ -479,7 +470,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		return resource;
 	}
 
-	public boolean isReadOnly(String name) {
-		return getPathVariable(name).isReadOnly();
+	public boolean isUserDefined(String name) {
+		return ProjectVariableProviderManager.getDefault().findDescriptor(name) == null;
 	}
 }

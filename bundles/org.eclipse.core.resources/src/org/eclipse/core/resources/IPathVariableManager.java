@@ -39,7 +39,7 @@ public interface IPathVariableManager {
 
 	/** 
 	 * Converts an absolute path to path relative to some defined
-	 * {@link IPathVariable}. For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
+	 * variable. For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
 	 * granted that the path variable "FOO" value is "C:/foo".
 	 * <p>
 	 * The "force" argument will cause an intermediate path variable to be created if 
@@ -140,17 +140,6 @@ public interface IPathVariableManager {
 	 * @since 3.6
 	 */
 	public void setURIValue(String name, URI value) throws CoreException;
-
-	/**
-	 * Returns the {@link IPathVariable} corresponding to the given variable name.
-	 * If there is no variable defined with the given name, this method returns <code>null</code>.
-	 * 
-	 * @param name the name of the variable to return the value for  
-	 * @return the value for the variable, or <code>null</code> if there is no
-	 *    variable defined with the given name
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public IPathVariable getPathVariable(String name);
 
 	/**
 	 * Returns the value of the path variable with the given name. If there is
@@ -273,9 +262,12 @@ public interface IPathVariableManager {
 	public boolean isDefined(String name);
 
 	/**
+	 * Returns whether a variable is user defined or not.
+	 * 
+	 * @return true if the path is user defined.
 	 * @since 3.6
 	 */
-	public boolean isReadOnly(String name);
+	public boolean isUserDefined(String name);
 
 	/**
 	 * Validates the given name as the name for a path variable. A valid path
