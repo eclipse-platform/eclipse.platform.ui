@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.ui.internal.testing.ContributionInfoMessages;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,9 +38,11 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.testing.ContributionInfo;
 
@@ -411,9 +411,14 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		PageRec rec = doCreatePage(part);
 		if (rec != null) {
 			mapPartToRec.put(part, rec);
-			rec.page.getControl().setData(
-					new ContributionInfo(part.getSite().getPluginId(),
-							ContributionInfoMessages.ContributionInfo_ViewContent, null));
+			IWorkbenchPartSite site = part.getSite();
+			if (site != null && site.getPluginId() != null) {
+				rec.page.getControl().setData(
+						new ContributionInfo(site.getPluginId(),
+								ContributionInfoMessages.ContributionInfo_ViewContent, null));
+			} else {
+				rec.page.getControl().setData(null);
+			}
 			preparePage(rec);
 		}
 		return rec;
