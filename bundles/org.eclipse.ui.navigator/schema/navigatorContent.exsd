@@ -139,7 +139,7 @@ When an extension is deactivated by the user, the content and label providers ar
             <annotation>
                <documentation>
                   Specifies the ID of the navigator content that this navigator content appears before.  This navigator content will be processed before the specified navigator content is processed.
-&lt;br/&gt;&lt;br/&gt;
+&lt;br&gt;&lt;br&gt;
 The overall order in which the navigator content extensions are processed is calculated by first sorting all of the NCEs by priority, and then rearranging them according to the &lt;b&gt;appearsBefore&lt;/b&gt; relationship. Once the overall order is determined, a unique sequence number is assigned to each navigator content descriptior which is available through the API.
                </documentation>
                <appInfo>
@@ -206,7 +206,7 @@ Since 3.4, clients may also implement &lt;code&gt;org.eclipse.jface.viewers.Dele
             <annotation>
                <documentation>
                   Used when this navigtorContent extension is used only to specifiy &lt;b&gt;commonSorter&lt;/b&gt; elements for the purpose of specifying sorting independent of which NCE contributed an object. If this is true the only children of this element can be &lt;b&gt;commonSorter&lt;/b&gt; elements.
-&lt;br/&gt;&lt;br/&gt;
+&lt;br&gt;&lt;br&gt;
 The rules associated with the &lt;b&gt;priority&lt;/b&gt; and &lt;b&gt;appearsBefore&lt;/b&gt; are respected. When calculating the sort for a given object, the first NCE that satisfies the &lt;b&gt;commonSorter&lt;/b&gt;&apos;s &lt;b&gt;parentExpression&lt;/b&gt; will do the calculation.
                </documentation>
             </annotation>
