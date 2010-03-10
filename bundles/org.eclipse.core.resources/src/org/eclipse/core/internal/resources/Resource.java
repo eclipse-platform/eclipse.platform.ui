@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.core.resources.IPathVariableManager;
 
 import java.net.URI;
@@ -2041,6 +2043,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isFiltered()
 	 */
 	public boolean isFiltered() {
+		try {
+			return isFilteredWithException(false);
+		} catch (CoreException e) {
+			// nothing
+		}
+		return false;
+	}
+	
+	public boolean isFilteredWithException(boolean throwExeception) throws CoreException {
 		if (isLinked() || isVirtual())
 			return false;
 		Resource currentResource = this;
@@ -2057,7 +2068,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 						info.setDirectory(currentResource.getType() == IResource.FOLDER);
 						fileInfo = info;
 					}
-					IFileInfo[] filtered = parent.filterChildren(new IFileInfo[] {fileInfo});
+					IFileInfo[] filtered = parent.filterChildren(new IFileInfo[] {fileInfo}, throwExeception);
 					if (filtered.length == 0)
 						return true;
 				}
@@ -2067,7 +2078,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 	
-	public IFileInfo[] filterChildren(IFileInfo[] list) {
+	public IFileInfo[] filterChildren(IFileInfo[] list, boolean throwExeception) throws CoreException {
 		IPath relativePath = getProjectRelativePath();
 		Project project = (Project) getProject();
 		if ((project != null) && (relativePath != null)) {
@@ -2124,7 +2135,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				try {
 					list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, (IContainer) this, list);
 				} catch (CoreException e) {
-					// no handling, error has already been logged
+					if (throwExeception)
+						throw e;
 				}
 			}
 		}

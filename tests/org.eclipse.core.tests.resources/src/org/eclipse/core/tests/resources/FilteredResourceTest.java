@@ -159,8 +159,9 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.1", members[0].getType(), IResource.FILE);
 		assertEquals("2.2", members[0].getName(), "foo");
 
-		assertEquals("2.3", bar.isFiltered(), true);
-		assertEquals("2.4", foo.isFiltered(), false);
+		IWorkspace workspace = existingProject.getWorkspace();
+		assertTrue("2.3", !workspace.validateFiltered(bar).isOK());
+		assertTrue("2.4", workspace.validateFiltered(foo).isOK());
 	}
 
 	/**
@@ -218,8 +219,10 @@ public class FilteredResourceTest extends ResourceTest {
 				assertEquals("2.2", members[i].getName(), "foo");
 			}
 		}
-		assertEquals("2.1", bar.isFiltered(), true);
-		assertEquals("2.2", foo.isFiltered(), false);
+
+		IWorkspace workspace = existingProject.getWorkspace();
+		assertTrue("2.1", !workspace.validateFiltered(bar).isOK());
+		assertTrue("2.2", workspace.validateFiltered(foo).isOK());
 	}
 
 	/**
@@ -285,8 +288,9 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.1", members[0].getType(), IResource.FILE);
 		assertEquals("2.2", members[0].getName(), "foo");
 
-		assertEquals("2.1", bar.isFiltered(), true);
-		assertEquals("2.2", foo.isFiltered(), false);
+		IWorkspace workspace = existingProject.getWorkspace();
+		assertTrue("2.1", !workspace.validateFiltered(bar).isOK());
+		assertTrue("2.2", workspace.validateFiltered(foo).isOK());
 	}
 
 	/**
@@ -546,8 +550,9 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("0.99", e);
 		}
 
-		assertEquals("1.0", folder.isFiltered(), false);
-		assertEquals("1.1", file.isFiltered(), false);
+		IWorkspace workspace = existingProject.getWorkspace();
+		assertTrue("1.0", workspace.validateFiltered(folder).isOK());
+		assertTrue("1.1", workspace.validateFiltered(file).isOK());
 	}
 
 	/**

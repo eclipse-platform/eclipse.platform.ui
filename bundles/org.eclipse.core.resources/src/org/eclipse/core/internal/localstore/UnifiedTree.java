@@ -341,7 +341,7 @@ public class UnifiedTree {
 			IFileInfo[] list = fileTree != null ? fileTree.getChildInfos(store) : store.childInfos(EFS.NONE, null);
 			if (list == null)
 				return NO_CHILDREN;
-			list = ((Resource) node.getResource()).filterChildren(list);
+			list = ((Resource) node.getResource()).filterChildren(list, false);
 			int size = list.length;
 			if (size > 1)
 				quickSort(list, 0, size - 1);

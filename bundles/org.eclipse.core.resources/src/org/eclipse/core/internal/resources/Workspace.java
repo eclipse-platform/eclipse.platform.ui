@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -2299,5 +2304,18 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		SafeRunner.run(body);
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkspace#validateFiltered(IResource)
+	 */
+	public IStatus validateFiltered(IResource resource) {
+		try {
+			if (((Resource) resource).isFilteredWithException(true))
+				return new ResourceStatus(IStatus.ERROR, Messages.resources_errorResourceIsFiltered);
+		} catch (CoreException e) {
+			// if we can't validate it, we return OK
+		}
+		return Status.OK_STATUS;
 	}
 }

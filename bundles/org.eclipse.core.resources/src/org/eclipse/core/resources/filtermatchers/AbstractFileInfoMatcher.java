@@ -33,6 +33,9 @@ public abstract class AbstractFileInfoMatcher {
 	 * @param fileInfo the object to test
 	 * @return <code>true</code> if this filter matches the given file info,
 	 * and <code>false</code> otherwise.
+	 * @throws CoreException the implementor should throw a CoreException if, 
+	 * 		in the case that the parent or fileInfo doesn't exist in the workspace
+	 * 		or in the file system, the return value can't be determined.
 	 */
 	public abstract boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException;
 

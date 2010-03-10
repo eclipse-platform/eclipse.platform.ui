@@ -1391,6 +1391,37 @@ public interface IWorkspace extends IAdaptable {
 	public IStatus validateEdit(IFile[] files, Object context);
 
 	/**
+	 * Validates that the given resource will not (or would not, if the resource
+	 * doesn't exist in the workspace yet) be filtered out from the workspace by
+	 * its parent resource filters.
+	 * <p>
+	 * Note that if the resource or its parent doesn't exist yet in the workspace, 
+	 * it is possible that it will still be effectively filtered out once the resource
+	 * and/or its parent is created, even though this method doesn't report it.
+	 * 
+	 * But if this method reports the resource as filtered, even though it, or its 
+	 * parent, doesn't exist in the workspace yet, it means that the resource will
+	 * be filtered out by its parent resource filters once it exists in the workspace.
+	 * </p>
+	 * <p>
+	 * This method will return a status with severity <code>IStatus.ERROR</code>
+	 * if the resource will be filtered out - removed - out of the workspace by 
+	 * its parent resource filters. 
+	 * </p>
+	 * <p>
+	 * Note: linked resources and virtual folders are never filtered out by their
+	 * parent resource filters.
+	 * 
+	 * @param resource the resource to validate the location for
+	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * resource is not filtered by its parent resource filters, otherwise a status
+	 * object with severity <code>IStatus.ERROR</code> indicating that it will
+	 * @see IStatus#OK
+	 * @since 3.6
+	 */
+	public IStatus validateFiltered(IResource resource);
+
+	/**
 	 * Validates the given path as the location of the given resource on disk.
 	 * The path must be either an absolute file system path, or a relative path
 	 * whose first segment is the name of a defined workspace path variable. In

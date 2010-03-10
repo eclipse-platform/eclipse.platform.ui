@@ -287,6 +287,7 @@ public class Messages extends NLS {
 	public static String resources_workspaceOpen;
 	public static String resources_writeMeta;
 	public static String resources_writeWorkspaceMeta;
+	public static String resources_errorResourceIsFiltered;
 
 	public static String synchronizer_partnerNotRegistered;
 

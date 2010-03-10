@@ -1742,6 +1742,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return <code>true</code> if this resource would filtered, and
 	 *   <code>false</code> otherwise
 	 * @since 3.6
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public boolean isFiltered();
 
