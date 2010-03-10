@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="e4 photo demo" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.9.0" useFeatures="false" includeLaunchers="true">
+<product name="e4 photo demo" uid="org.eclipse.e4.demo.photo.product" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.9.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
