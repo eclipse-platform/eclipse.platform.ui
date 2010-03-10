@@ -31,11 +31,14 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 	}
 
 	protected void doSetList(Object source, List list, ListDiff diff) {
-		String[] strings = (String[]) list.toArray(new String[list.size()]);
-		doSetStringList((Control) source, strings, diff);
+		doUpdateList(source, diff);
 	}
 
-	abstract void doSetStringList(Control control, String[] list, ListDiff diff);
+	protected void doUpdateList(Object source, ListDiff diff) {
+		doUpdateStringList((Control) source, diff);
+	}
+
+	abstract void doUpdateStringList(Control control, ListDiff diff);
 
 	protected List doGetList(Object source) {
 		String[] list = doGetStringList((Control) source);

@@ -170,12 +170,10 @@ public class SimplePropertyObservableList extends AbstractObservableList
 
 	private void updateList(List list, ListDiff diff) {
 		if (!diff.isEmpty()) {
-			List newList = diff.simulateOn(list);
-
 			boolean wasUpdating = updating;
 			updating = true;
 			try {
-				property.setList(source, newList, diff);
+				property.updateList(source, diff);
 				modCount++;
 			} finally {
 				updating = wasUpdating;

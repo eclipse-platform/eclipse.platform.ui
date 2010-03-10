@@ -43,41 +43,7 @@ import org.eclipse.core.internal.databinding.property.value.SimplePropertyObserv
  * @since 1.2
  */
 public abstract class SimpleValueProperty extends ValueProperty {
-	/**
-	 * Returns the value of the property on the specified source object
-	 * 
-	 * @param source
-	 *            the property source (may be null)
-	 * @return the current value of the source's value property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final Object getValue(Object source) {
-		return source == null ? null : doGetValue(source);
-	}
-
-	/**
-	 * Returns the value of the property on the specified source object
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return the current value of the source's value property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
 	protected abstract Object doGetValue(Object source);
-
-	/**
-	 * Sets the source's value property to the specified value
-	 * 
-	 * @param source
-	 *            the property source
-	 * @param value
-	 *            the new value
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final void setValue(Object source, Object value) {
-		if (source != null)
-			doSetValue(source, value);
-	}
 
 	protected abstract void doSetValue(Object source, Object value);
 

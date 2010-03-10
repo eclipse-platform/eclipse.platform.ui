@@ -49,6 +49,10 @@ public final class SelfMapProperty extends SimpleMapProperty {
 	}
 
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
+		doUpdateMap(source, diff);
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
 		diff.applyTo((Map) source);
 	}
 

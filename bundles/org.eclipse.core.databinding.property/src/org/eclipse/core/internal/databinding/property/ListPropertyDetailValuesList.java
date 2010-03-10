@@ -12,9 +12,15 @@
 
 package org.eclipse.core.internal.databinding.property;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.list.ListProperty;
@@ -40,6 +46,36 @@ public class ListPropertyDetailValuesList extends ListProperty {
 
 	public Object getElementType() {
 		return detailProperty.getValueType();
+	}
+
+	protected List doGetList(Object source) {
+		List masterList = masterProperty.getList(source);
+		List detailList = new ArrayList(masterList.size());
+		for (Iterator it = masterList.iterator(); it.hasNext();)
+			detailList.add(detailProperty.getValue(it.next()));
+		return detailList;
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		final List masterList = masterProperty.getList(source);
+		diff.accept(new ListDiffVisitor() {
+			public void handleAdd(int index, Object element) {
+				throw new UnsupportedOperationException();
+			}
+
+			public void handleRemove(int index, Object element) {
+				throw new UnsupportedOperationException();
+			}
+
+			public void handleMove(int oldIndex, int newIndex, Object element) {
+				throw new UnsupportedOperationException();
+			}
+
+			public void handleReplace(int index, Object oldElement,
+					Object newElement) {
+				detailProperty.setValue(masterList.get(index), newElement);
+			}
+		});
 	}
 
 	public IObservableList observe(Realm realm, Object source) {

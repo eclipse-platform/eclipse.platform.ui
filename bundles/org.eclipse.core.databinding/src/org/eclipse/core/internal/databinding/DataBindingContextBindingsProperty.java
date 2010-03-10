@@ -11,20 +11,34 @@
 
 package org.eclipse.core.internal.databinding;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.list.ListProperty;
 
 /**
  * @since 3.3
- *
+ * 
  */
-public final class DataBindingContextBindingsProperty extends
-		ListProperty {
+public final class DataBindingContextBindingsProperty extends ListProperty {
 	public Object getElementType() {
 		return Binding.class;
+	}
+
+	protected List doGetList(Object source) {
+		return ((DataBindingContext) source).getBindings();
+	}
+
+	protected void doSetList(Object source, List list) {
+		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	public IObservableList observe(Realm realm, Object source) {

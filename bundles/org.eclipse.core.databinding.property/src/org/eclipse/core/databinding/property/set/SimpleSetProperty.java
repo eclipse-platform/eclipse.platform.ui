@@ -12,9 +12,9 @@
 
 package org.eclipse.core.databinding.property.set;
 
-import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
@@ -47,30 +47,6 @@ public abstract class SimpleSetProperty extends SetProperty {
 
 	// Accessors
 
-	/**
-	 * Returns a Set with the current contents of the source's set property
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return a Set with the current contents of the source's set property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final Set getSet(Object source) {
-		if (source == null)
-			return Collections.EMPTY_SET;
-		return Collections.unmodifiableSet(doGetSet(source));
-	}
-
-	/**
-	 * Returns an unmodifiable Set with the current contents of the source's set
-	 * property
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return an unmodifiable Set with the current contents of the source's set
-	 *         property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
 	protected abstract Set doGetSet(Object source);
 
 	// Mutators
@@ -103,6 +79,16 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doSetSet(Object source, Set set, SetDiff diff);
+
+	protected void doSetSet(Object source, Set set) {
+		SetDiff diff = Diffs.computeLazySetDiff(doGetSet(source), set);
+		doSetSet(source, set, diff);
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		Set set = diff.simulateOn(doGetSet(source));
+		doSetSet(source, set, diff);
+	}
 
 	// Listeners
 

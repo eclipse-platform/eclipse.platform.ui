@@ -12,9 +12,12 @@
 
 package org.eclipse.core.internal.databinding.property;
 
+import java.util.Set;
+
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SetProperty;
@@ -40,6 +43,21 @@ public class ValuePropertyDetailSet extends SetProperty {
 
 	public Object getElementType() {
 		return detailProperty.getElementType();
+	}
+
+	protected Set doGetSet(Object source) {
+		Object masterValue = masterProperty.getValue(source);
+		return detailProperty.getSet(masterValue);
+	}
+
+	protected void doSetSet(Object source, Set set) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.setSet(masterValue, set);
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.updateSet(masterValue, diff);
 	}
 
 	public IObservableSet observe(Realm realm, Object source) {

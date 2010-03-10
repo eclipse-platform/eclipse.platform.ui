@@ -62,6 +62,10 @@ public class PojoMapProperty extends SimpleMapProperty {
 	}
 
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
+		doSetMap(source, map);
+	}
+
+	protected void doSetMap(Object source, Map map) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
 	}
 

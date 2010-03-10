@@ -12,9 +12,12 @@
 
 package org.eclipse.core.internal.databinding.property;
 
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.map.MapProperty;
@@ -44,6 +47,21 @@ public class ValuePropertyDetailMap extends MapProperty {
 
 	public Object getValueType() {
 		return detailProperty.getValueType();
+	}
+
+	protected Map doGetMap(Object source) {
+		Object masterValue = masterProperty.getValue(source);
+		return detailProperty.getMap(masterValue);
+	}
+
+	protected void doSetMap(Object source, Map map) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.setMap(masterValue, map);
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.updateMap(masterValue, diff);
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {

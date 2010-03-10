@@ -13,6 +13,7 @@
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.Set;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanMapProperty;
@@ -21,6 +22,7 @@ import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SetProperty;
@@ -50,6 +52,18 @@ public class BeanSetPropertyDecorator extends SetProperty implements
 
 	public Object getElementType() {
 		return delegate.getElementType();
+	}
+
+	protected Set doGetSet(Object source) {
+		return delegate.getSet(source);
+	}
+
+	protected void doSetSet(Object source, Set set) {
+		delegate.setSet(source, set);
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		delegate.updateSet(source, diff);
 	}
 
 	public IBeanMapProperty values(String propertyName) {

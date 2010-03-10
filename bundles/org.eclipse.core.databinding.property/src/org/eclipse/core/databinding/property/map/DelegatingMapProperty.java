@@ -76,6 +76,18 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		return valueType;
 	}
 
+	protected Map doGetMap(Object source) {
+		return getDelegate(source).getMap(source);
+	}
+
+	protected void doSetMap(Object source, Map map) {
+		getDelegate(source).setMap(source, map);
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		getDelegate(source).updateMap(source, diff);
+	}
+
 	public IObservableMap observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
@@ -90,6 +102,12 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		}
 
 		protected void doSetMap(Object source, Map map, MapDiff diff) {
+		}
+
+		protected void doSetMap(Object source, Map map) {
+		}
+
+		protected void doUpdateMap(Object source, MapDiff diff) {
 		}
 
 		public INativePropertyListener adaptListener(

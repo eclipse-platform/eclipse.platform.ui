@@ -71,6 +71,18 @@ public abstract class DelegatingListProperty extends ListProperty {
 		return elementType;
 	}
 
+	protected List doGetList(Object source) {
+		return getDelegate(source).getList(source);
+	}
+
+	protected void doSetList(Object source, List list) {
+		getDelegate(source).setList(source, list);
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		getDelegate(source).updateList(source, diff);
+	}
+
 	public IObservableList observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
@@ -89,6 +101,12 @@ public abstract class DelegatingListProperty extends ListProperty {
 		}
 
 		protected void doSetList(Object source, List list, ListDiff diff) {
+		}
+
+		protected void doSetList(Object source, List list) {
+		}
+
+		protected void doUpdateList(Object source, ListDiff diff) {
 		}
 
 		public INativePropertyListener adaptListener(

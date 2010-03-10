@@ -55,6 +55,14 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 		return delegate.getValueType();
 	}
 
+	protected Object doGetValue(Object source) {
+		return delegate.getValue(source);
+	}
+
+	protected void doSetValue(Object source, Object value) {
+		delegate.setValue(source, value);
+	}
+
 	public IBeanValueProperty value(String propertyName) {
 		return value(propertyName, null);
 	}

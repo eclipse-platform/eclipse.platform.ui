@@ -31,6 +31,62 @@ import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
  * @since 1.2
  */
 public abstract class ValueProperty implements IValueProperty {
+	/**
+	 * @since 1.3
+	 */
+	public final Object getValue(Object source) {
+		if (source == null) {
+			return null;
+		}
+		return doGetValue(source);
+	}
+
+	/**
+	 * Returns the value of the property on the specified source object
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return the current value of the source's value property
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 1.3
+	 */
+	protected Object doGetValue(Object source) {
+		IObservableValue observable = observe(source);
+		try {
+			return observable.getValue();
+		} finally {
+			observable.dispose();
+		}
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public final void setValue(Object source, Object value) {
+		if (source != null) {
+			doSetValue(source, value);
+		}
+	}
+
+	/**
+	 * Sets the source's value property to the specified vlaue
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param value
+	 *            the new value
+	 * @since 1.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void doSetValue(Object source, Object value) {
+		IObservableValue observable = observe(source);
+		try {
+			observable.setValue(value);
+		} finally {
+			observable.dispose();
+		}
+	}
+
 	public IObservableValue observe(Object source) {
 		return observe(Realm.getDefault(), source);
 	}

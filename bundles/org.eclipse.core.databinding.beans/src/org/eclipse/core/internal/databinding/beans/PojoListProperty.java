@@ -61,6 +61,10 @@ public class PojoListProperty extends SimpleListProperty {
 	}
 
 	protected void doSetList(Object source, List list, ListDiff diff) {
+		doSetList(source, list);
+	}
+
+	protected void doSetList(Object source, List list) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertListToBeanPropertyType(list));
 	}

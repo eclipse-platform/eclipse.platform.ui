@@ -12,9 +12,9 @@
 
 package org.eclipse.core.databinding.property.list;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -47,30 +47,6 @@ public abstract class SimpleListProperty extends ListProperty {
 
 	// Accessors
 
-	/**
-	 * Returns an unmodifiable List with the current contents of the source's
-	 * list property
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return an unmodifiable List with the current contents of the source's
-	 *         list property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final List getList(Object source) {
-		if (source == null)
-			return Collections.EMPTY_LIST;
-		return Collections.unmodifiableList(doGetList(source));
-	}
-
-	/**
-	 * Returns a List with the current contents of the source's list property
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return a List with the current contents of the source's list property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
 	protected abstract List doGetList(Object source);
 
 	// Mutators
@@ -87,8 +63,9 @@ public abstract class SimpleListProperty extends ListProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final void setList(Object source, List list, ListDiff diff) {
-		if (source != null && !diff.isEmpty())
+		if (source != null && !diff.isEmpty()) {
 			doSetList(source, list, diff);
+		}
 	}
 
 	/**
@@ -103,6 +80,16 @@ public abstract class SimpleListProperty extends ListProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doSetList(Object source, List list, ListDiff diff);
+
+	protected void doSetList(Object source, List list) {
+		ListDiff diff = Diffs.computeLazyListDiff(doGetList(source), list);
+		doSetList(source, list, diff);
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		List list = diff.simulateOn(doGetList(source));
+		doSetList(source, list, diff);
+	}
 
 	/**
 	 * Returns a listener capable of adding or removing itself as a listener on

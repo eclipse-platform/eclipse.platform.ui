@@ -12,9 +12,12 @@
 
 package org.eclipse.core.internal.databinding.property;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.list.ListProperty;
@@ -40,6 +43,21 @@ public class ValuePropertyDetailList extends ListProperty {
 
 	public Object getElementType() {
 		return detailProperty.getElementType();
+	}
+
+	protected List doGetList(Object source) {
+		Object masterValue = masterProperty.getValue(source);
+		return detailProperty.getList(masterValue);
+	}
+
+	protected void doSetList(Object source, List list) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.setList(masterValue, list);
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.updateList(masterValue, diff);
 	}
 
 	public IObservableList observe(Realm realm, Object source) {

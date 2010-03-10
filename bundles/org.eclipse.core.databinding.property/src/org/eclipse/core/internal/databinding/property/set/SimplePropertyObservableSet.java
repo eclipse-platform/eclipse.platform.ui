@@ -149,12 +149,10 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 
 	private void updateSet(Set set, SetDiff diff) {
 		if (!diff.isEmpty()) {
-			Set newSet = diff.simulateOn(set);
-
 			boolean wasUpdating = updating;
 			updating = true;
 			try {
-				property.setSet(source, newSet, diff);
+				property.updateSet(source, diff);
 				modCount++;
 			} finally {
 				updating = wasUpdating;

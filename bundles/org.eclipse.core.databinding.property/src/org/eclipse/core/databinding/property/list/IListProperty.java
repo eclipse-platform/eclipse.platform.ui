@@ -12,8 +12,11 @@
 
 package org.eclipse.core.databinding.property.list;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
@@ -40,6 +43,53 @@ public interface IListProperty extends IProperty {
 	 *         if untyped
 	 */
 	public Object getElementType();
+
+	/**
+	 * Returns an unmodifiable List with the current contents of the source's
+	 * list property
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return an unmodifiable List with the current contents of the source's
+	 *         list property
+	 * @since 1.3
+	 */
+	public List getList(Object source);
+
+	/**
+	 * Updates the property on the source with the specified change
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableList} than through the property directly.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param list
+	 *            the new list
+	 * @since 1.3
+	 */
+	public void setList(Object source, List list);
+
+	/**
+	 * Updates the property on the source with the specified change
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableList} than through the property directly.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param diff
+	 *            a diff describing the change
+	 * @since 1.3
+	 */
+	public void updateList(Object source, ListDiff diff);
 
 	/**
 	 * Returns an observable list observing this list property on the given

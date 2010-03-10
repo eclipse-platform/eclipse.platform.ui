@@ -44,6 +44,16 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailProperty.getValueType();
 	}
 
+	protected Object doGetValue(Object source) {
+		Object masterValue = masterProperty.getValue(source);
+		return detailProperty.getValue(masterValue);
+	}
+
+	protected void doSetValue(Object source, Object value) {
+		Object masterValue = masterProperty.getValue(source);
+		detailProperty.setValue(masterValue, value);
+	}
+
 	public IObservableValue observe(Realm realm, Object source) {
 		IObservableValue masterValue;
 

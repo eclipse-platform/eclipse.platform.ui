@@ -42,6 +42,10 @@ public class SelfListProperty extends SimpleListProperty {
 	}
 
 	protected void doSetList(Object source, List list, ListDiff diff) {
+		doUpdateList(source, diff);
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
 		diff.applyTo((List) source);
 	}
 

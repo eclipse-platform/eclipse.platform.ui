@@ -12,13 +12,19 @@
 
 package org.eclipse.core.databinding.property.map;
 
+import java.util.Collections;
+import java.util.Map;
+
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
 import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap;
 
 /**
@@ -27,6 +33,86 @@ import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap
  * @since 1.2
  */
 public abstract class MapProperty implements IMapProperty {
+	/**
+	 * @since 1.3
+	 */
+	public final Map getMap(Object source) {
+		if (source == null) {
+			return Collections.EMPTY_MAP;
+		}
+		return Collections.unmodifiableMap(doGetMap(source));
+	}
+
+	/**
+	 * Returns a Map with the current contents of the source's map property
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return a Map with the current contents of the source's map property
+	 * @since 1.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected Map doGetMap(Object source) {
+		IObservableMap observable = observe(source);
+		try {
+			return new IdentityMap(observable);
+		} finally {
+			observable.dispose();
+		}
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public final void setMap(Object source, Map map) {
+		if (source != null) {
+			doSetMap(source, map);
+		}
+	}
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param map
+	 *            the new map
+	 * @since 1.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void doSetMap(Object source, Map map) {
+		MapDiff diff = Diffs.computeMapDiff(doGetMap(source), map);
+		doUpdateMap(source, diff);
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public final void updateMap(Object source, MapDiff diff) {
+		if (source != null) {
+			doUpdateMap(source, diff);
+		}
+	}
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param diff
+	 *            a diff describing the change
+	 * @since 1.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		IObservableMap observable = observe(source);
+		try {
+			diff.applyTo(observable);
+		} finally {
+			observable.dispose();
+		}
+	}
+
 	public IObservableMap observe(Object source) {
 		return observe(Realm.getDefault(), source);
 	}

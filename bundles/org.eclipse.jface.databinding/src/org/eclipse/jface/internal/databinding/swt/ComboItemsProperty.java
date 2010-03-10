@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public class ComboItemsProperty extends ControlStringListProperty {
-	protected void doSetStringList(final Control control, String[] list,
-			ListDiff diff) {
+	protected void doUpdateStringList(final Control control, ListDiff diff) {
 		diff.accept(new ListDiffVisitor() {
 			Combo combo = (Combo) control;
 

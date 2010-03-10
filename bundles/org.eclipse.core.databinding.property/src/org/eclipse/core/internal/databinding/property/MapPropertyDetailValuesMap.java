@@ -12,13 +12,18 @@
 
 package org.eclipse.core.internal.databinding.property;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.map.MapProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 3.3
@@ -44,6 +49,32 @@ public class MapPropertyDetailValuesMap extends MapProperty {
 
 	public Object getValueType() {
 		return detailProperty.getValueType();
+	}
+
+	protected Map doGetMap(Object source) {
+		Map masterMap = masterProperty.getMap(source);
+		Map detailMap = new IdentityMap();
+		for (Iterator it = masterMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			detailMap.put(entry.getKey(), detailProperty.getValue(entry
+					.getValue()));
+		}
+		return detailMap;
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		if (!diff.getAddedKeys().isEmpty())
+			throw new UnsupportedOperationException(toString()
+					+ " does not support entry additions"); //$NON-NLS-1$
+		if (!diff.getRemovedKeys().isEmpty())
+			throw new UnsupportedOperationException(toString()
+					+ " does not support entry removals"); //$NON-NLS-1$
+		Map masterMap = masterProperty.getMap(source);
+		for (Iterator it = diff.getChangedKeys().iterator(); it.hasNext();) {
+			Object key = it.next();
+			Object masterValue = masterMap.get(key);
+			detailProperty.setValue(masterValue, diff.getNewValue(key));
+		}
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {

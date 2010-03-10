@@ -44,6 +44,36 @@ public interface IValueProperty extends IProperty {
 	public Object getValueType();
 
 	/**
+	 * Returns the current value of this property on the specified property
+	 * source.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return the current value of this property on the specified property
+	 *         source.
+	 * @since 1.3
+	 */
+	public Object getValue(Object source);
+
+	/**
+	 * Sets this property on the specified property source to the specified
+	 * value.
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to call
+	 * {@link IObservableValue#setValue(Object)} on the observable instead.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param value
+	 *            the new property value
+	 * @since 1.3
+	 */
+	public void setValue(Object source, Object value);
+
+	/**
 	 * Returns an observable value observing this value property on the given
 	 * property source.
 	 * 

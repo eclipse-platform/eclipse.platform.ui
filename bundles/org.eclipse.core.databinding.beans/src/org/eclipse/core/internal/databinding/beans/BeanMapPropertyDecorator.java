@@ -13,12 +13,14 @@
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.Map;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanMapProperty;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.map.IMapProperty;
@@ -53,6 +55,18 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 
 	public Object getValueType() {
 		return delegate.getValueType();
+	}
+
+	protected Map doGetMap(Object source) {
+		return delegate.getMap(source);
+	}
+
+	protected void doSetMap(Object source, Map map) {
+		delegate.setMap(source, map);
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		delegate.updateMap(source, diff);
 	}
 
 	public IBeanMapProperty values(String propertyName) {

@@ -233,6 +233,11 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		protected void doSetSet(Object source, Set set, SetDiff diff) {
+			doUpdateSet(source, diff);
+		}
+
+		@Override
+		protected void doUpdateSet(Object source, SetDiff diff) {
 			ContactGroup group = (ContactGroup) source;
 			for (Iterator it = diff.getRemovals().iterator(); it.hasNext();) {
 				Contact contact = (Contact) it.next();

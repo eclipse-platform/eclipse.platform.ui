@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.List;
  * 
  */
 public class ListItemsProperty extends ControlStringListProperty {
-	protected void doSetStringList(final Control control, String[] items,
-			ListDiff diff) {
+	protected void doUpdateStringList(final Control control, ListDiff diff) {
 		diff.accept(new ListDiffVisitor() {
 			List list = (List) control;
 

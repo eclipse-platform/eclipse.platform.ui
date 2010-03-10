@@ -36,8 +36,13 @@ import org.eclipse.core.internal.databinding.observable.Util;
 public class Diffs {
 
 	/**
+	 * Returns a {@link ListDiff} describing the change between the specified
+	 * old and new list states.
+	 * 
 	 * @param oldList
+	 *            the old list state
 	 * @param newList
+	 *            the new list state
 	 * @return the differences between oldList and newList
 	 */
 	public static ListDiff computeListDiff(List oldList, List newList) {
@@ -47,7 +52,33 @@ public class Diffs {
 				.toArray(new ListDiffEntry[diffEntries.size()]));
 		return listDiff;
 	}
-	
+
+	/**
+	 * Returns a lazily computed {@link ListDiff} describing the change between
+	 * the specified old and new list states.
+	 * 
+	 * @param oldList
+	 *            the old list state
+	 * @param newList
+	 *            the new list state
+	 * @return a lazily computed {@link ListDiff} describing the change between
+	 *         the specified old and new list states.
+	 * @since 1.3
+	 */
+	public static ListDiff computeLazyListDiff(final List oldList,
+			final List newList) {
+		return new ListDiff() {
+			ListDiff lazyDiff;
+
+			public ListDiffEntry[] getDifferences() {
+				if (lazyDiff == null) {
+					lazyDiff = Diffs.computeListDiff(oldList, newList);
+				}
+				return lazyDiff.getDifferences();
+			}
+		};
+	}
+
 	/**
 	 * adapted from EMF's ListDifferenceAnalyzer
 	 */
@@ -57,47 +88,61 @@ public class Diffs {
 		for (Iterator it = newList.iterator(); it.hasNext();) {
 			Object newValue = it.next();
 			if (oldList.size() <= index) {
-				// append newValue to newList 
+				// append newValue to newList
 				listDiffs.add(createListDiffEntry(index, true, newValue));
 			} else {
 				boolean done;
 				do {
 					done = true;
 					Object oldValue = oldList.get(index);
-					if (oldValue == null ? newValue != null : !oldValue.equals(newValue)) {
-						int oldIndexOfNewValue = listIndexOf(oldList, newValue, index);
+					if (oldValue == null ? newValue != null : !oldValue
+							.equals(newValue)) {
+						int oldIndexOfNewValue = listIndexOf(oldList, newValue,
+								index);
 						if (oldIndexOfNewValue != -1) {
-							int newIndexOfOldValue = listIndexOf(newList, oldValue, index);
+							int newIndexOfOldValue = listIndexOf(newList,
+									oldValue, index);
 							if (newIndexOfOldValue == -1) {
 								// removing oldValue from list[index]
-								listDiffs.add(createListDiffEntry(index, false, oldValue));
+								listDiffs.add(createListDiffEntry(index, false,
+										oldValue));
 								oldList.remove(index);
 								done = false;
 							} else if (newIndexOfOldValue > oldIndexOfNewValue) {
-								// moving oldValue from list[index] to [newIndexOfOldValue] 
+								// moving oldValue from list[index] to
+								// [newIndexOfOldValue]
 								if (oldList.size() <= newIndexOfOldValue) {
-									// The element cannot be moved to the correct index
-									// now, however later iterations will insert elements
-									// in front of it, eventually moving it into the
+									// The element cannot be moved to the
+									// correct index
+									// now, however later iterations will insert
+									// elements
+									// in front of it, eventually moving it into
+									// the
 									// correct spot.
 									newIndexOfOldValue = oldList.size() - 1;
 								}
-								listDiffs.add(createListDiffEntry(index, false, oldValue));
+								listDiffs.add(createListDiffEntry(index, false,
+										oldValue));
 								oldList.remove(index);
-								listDiffs.add(createListDiffEntry(newIndexOfOldValue, true, oldValue));
+								listDiffs.add(createListDiffEntry(
+										newIndexOfOldValue, true, oldValue));
 								oldList.add(newIndexOfOldValue, oldValue);
 								done = false;
 							} else {
-								// move newValue from list[oldIndexOfNewValue] to [index]
-								listDiffs.add(createListDiffEntry(oldIndexOfNewValue, false, newValue));
+								// move newValue from list[oldIndexOfNewValue]
+								// to [index]
+								listDiffs.add(createListDiffEntry(
+										oldIndexOfNewValue, false, newValue));
 								oldList.remove(oldIndexOfNewValue);
-								listDiffs.add(createListDiffEntry(index, true, newValue));
+								listDiffs.add(createListDiffEntry(index, true,
+										newValue));
 								oldList.add(index, newValue);
 							}
 						} else {
 							// add newValue at list[index]
 							oldList.add(index, newValue);
-							listDiffs.add(createListDiffEntry(index, true, newValue));
+							listDiffs.add(createListDiffEntry(index, true,
+									newValue));
 						}
 					}
 				} while (!done);
@@ -118,9 +163,9 @@ public class Diffs {
 	 */
 	private static int listIndexOf(List list, Object object, int index) {
 		int size = list.size();
-		for (int i=index; i<size;i++) {
+		for (int i = index; i < size; i++) {
 			Object candidate = list.get(i);
-			if (candidate==null ? object==null : candidate.equals(object)) {
+			if (candidate == null ? object == null : candidate.equals(object)) {
 				return i;
 			}
 		}
@@ -144,9 +189,15 @@ public class Diffs {
 	}
 
 	/**
+	 * Returns a {@link SetDiff} describing the change between the specified old
+	 * and new set states.
+	 * 
 	 * @param oldSet
+	 *            the old set state
 	 * @param newSet
-	 * @return a set diff
+	 *            the new set state
+	 * @return a {@link SetDiff} describing the change between the specified old
+	 *         and new set states.
 	 */
 	public static SetDiff computeSetDiff(Set oldSet, Set newSet) {
 		Set additions = new HashSet(newSet);
@@ -157,12 +208,50 @@ public class Diffs {
 	}
 
 	/**
-	 * Computes the difference between two maps.
+	 * Returns a lazily computed {@link SetDiff} describing the change between
+	 * the specified old and new set states.
+	 * 
+	 * @param oldSet
+	 *            the old set state
+	 * @param newSet
+	 *            the new set state
+	 * @return a lazily computed {@link SetDiff} describing the change between
+	 *         the specified old and new set states.
+	 * @since 1.3
+	 */
+	public static SetDiff computeLazySetDiff(final Set oldSet, final Set newSet) {
+		return new SetDiff() {
+
+			private SetDiff lazyDiff;
+
+			private SetDiff getLazyDiff() {
+				if (lazyDiff == null) {
+					lazyDiff = computeSetDiff(oldSet, newSet);
+				}
+				return lazyDiff;
+			}
+
+			public Set getAdditions() {
+				return getLazyDiff().getAdditions();
+			}
+
+			public Set getRemovals() {
+				return getLazyDiff().getRemovals();
+			}
+
+		};
+	}
+
+	/**
+	 * Returns a {@link MapDiff} describing the change between the specified old
+	 * and new map states.
 	 * 
 	 * @param oldMap
+	 *            the old map state
 	 * @param newMap
-	 * @return a map diff representing the changes needed to turn oldMap into
-	 *         newMap
+	 *            the new map state
+	 * @return a {@link MapDiff} describing the change between the specified old
+	 *         and new map states.
 	 */
 	public static MapDiff computeMapDiff(Map oldMap, Map newMap) {
 		// starts out with all keys from the new map, we will remove keys from
@@ -215,7 +304,54 @@ public class Diffs {
 			}
 		};
 	}
-	
+
+	/**
+	 * Returns a lazily computed {@link MapDiff} describing the change between
+	 * the specified old and new map states.
+	 * 
+	 * @param oldMap
+	 *            the old map state
+	 * @param newMap
+	 *            the new map state
+	 * @return a lazily computed {@link MapDiff} describing the change between
+	 *         the specified old and new map states.
+	 * @since 1.3
+	 */
+	public static MapDiff computeLazyMapDiff(final Map oldMap, final Map newMap) {
+		return new MapDiff() {
+
+			private MapDiff lazyDiff;
+
+			private MapDiff getLazyDiff() {
+				if (lazyDiff == null) {
+					lazyDiff = computeMapDiff(oldMap, newMap);
+				}
+				return lazyDiff;
+			}
+
+			public Set getAddedKeys() {
+				return getLazyDiff().getAddedKeys();
+			}
+
+			public Set getRemovedKeys() {
+				return getLazyDiff().getRemovedKeys();
+			}
+
+			public Set getChangedKeys() {
+				return getLazyDiff().getChangedKeys();
+			}
+
+			public Object getOldValue(Object key) {
+				return getLazyDiff().getOldValue(key);
+			}
+
+			public Object getNewValue(Object key) {
+				return getLazyDiff().getNewValue(key);
+			}
+
+		};
+	}
+
 	/**
 	 * @param oldValue
 	 * @param newValue

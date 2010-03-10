@@ -13,12 +13,14 @@
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.List;
 
 import org.eclipse.core.databinding.beans.IBeanListProperty;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -45,6 +47,18 @@ public class PojoListPropertyDecorator extends ListProperty implements
 
 	public Object getElementType() {
 		return delegate.getElementType();
+	}
+
+	protected List doGetList(Object source) {
+		return delegate.getList(source);
+	}
+
+	protected void doSetList(Object source, List list) {
+		delegate.setList(source, list);
+	}
+
+	protected void doUpdateList(Object source, ListDiff diff) {
+		delegate.updateList(source, diff);
 	}
 
 	public IBeanListProperty values(String propertyName) {

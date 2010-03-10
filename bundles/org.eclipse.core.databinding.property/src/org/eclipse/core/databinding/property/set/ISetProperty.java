@@ -12,10 +12,13 @@
 
 package org.eclipse.core.databinding.property.set;
 
+import java.util.Set;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
@@ -42,6 +45,54 @@ public interface ISetProperty extends IProperty {
 	 *         if untyped
 	 */
 	public Object getElementType();
+
+	/**
+	 * Returns an unmodifiable Set with the current contents of the source's set
+	 * property
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return an unmodifiable Set with the current contents of the source's set
+	 *         property
+	 * @since 1.3
+	 */
+	public Set getSet(Object source);
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableSet} than through the property directly.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param set
+	 *            the new set
+	 * @since 1.3
+	 */
+	public void setSet(Object source, Set set);
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableSet} than through the property directly.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param diff
+	 *            a diff describing the change
+	 * @since 1.3
+	 */
+	public void updateSet(Object source, SetDiff diff);
 
 	/**
 	 * Returns an observable set observing this set property on the given

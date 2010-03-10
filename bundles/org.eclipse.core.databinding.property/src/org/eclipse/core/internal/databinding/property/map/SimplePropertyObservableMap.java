@@ -131,12 +131,10 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 
 	private void updateMap(Map map, MapDiff diff) {
 		if (!diff.isEmpty()) {
-			Map newMap = diff.simulateOn(map);
-
 			boolean wasUpdating = updating;
 			updating = true;
 			try {
-				property.setMap(source, newMap, diff);
+				property.updateMap(source, diff);
 				modCount++;
 			} finally {
 				updating = wasUpdating;

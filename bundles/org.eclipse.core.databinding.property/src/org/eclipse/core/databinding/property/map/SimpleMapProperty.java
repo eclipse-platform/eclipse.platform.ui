@@ -12,9 +12,9 @@
 
 package org.eclipse.core.databinding.property.map;
 
-import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
@@ -48,29 +48,6 @@ public abstract class SimpleMapProperty extends MapProperty {
 
 	// Accessors
 
-	/**
-	 * Returns an unmodifiable Map with the current contents of the source's map
-	 * property.
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return a Map with the current contents of the source's map property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final Map getMap(Object source) {
-		if (source == null)
-			return Collections.EMPTY_MAP;
-		return Collections.unmodifiableMap(doGetMap(source));
-	}
-
-	/**
-	 * Returns a Map with the current contents of the source's map property
-	 * 
-	 * @param source
-	 *            the property source
-	 * @return a Map with the current contents of the source's map property
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
 	protected abstract Map doGetMap(Object source);
 
 	// Mutators
@@ -103,6 +80,16 @@ public abstract class SimpleMapProperty extends MapProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doSetMap(Object source, Map map, MapDiff diff);
+
+	protected void doSetMap(Object source, Map map) {
+		MapDiff diff = Diffs.computeLazyMapDiff(doGetMap(source), map);
+		doSetMap(source, map, diff);
+	}
+
+	protected void doUpdateMap(Object source, MapDiff diff) {
+		Map map = diff.simulateOn(doGetMap(source));
+		doSetMap(source, map, diff);
+	}
 
 	// Listeners
 

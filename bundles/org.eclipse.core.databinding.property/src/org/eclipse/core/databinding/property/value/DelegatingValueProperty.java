@@ -68,6 +68,14 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 	 */
 	protected abstract IValueProperty doGetDelegate(Object source);
 
+	protected Object doGetValue(Object source) {
+		return getDelegate(source).getValue(source);
+	}
+
+	protected void doSetValue(Object source, Object value) {
+		getDelegate(source).setValue(source, value);
+	}
+
 	public Object getValueType() {
 		return valueType;
 	}

@@ -12,8 +12,11 @@
 
 package org.eclipse.core.databinding.property.map;
 
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
@@ -49,6 +52,53 @@ public interface IMapProperty extends IProperty {
 	 *         <code>null</code> if the collection is untyped.
 	 */
 	public Object getValueType();
+
+	/**
+	 * Returns an unmodifiable Map with the current contents of the source's map
+	 * property.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return a Map with the current contents of the source's map property
+	 * @since 1.3
+	 */
+	public Map getMap(Object source);
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableMap} than through the property directly.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param map
+	 *            the new map
+	 * @since 1.3
+	 */
+	public void setMap(Object source, Map map);
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * <p>
+	 * <b>Note:</b> This method is made available to facilitate basic property
+	 * access. However if the property source lacks property change
+	 * notification, then observables on the source object may not be notified
+	 * of the change. In most cases it is preferable to modify the source
+	 * through an {@link IObservableMap} than through the property directly.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @param diff
+	 *            a diff describing the change
+	 * @since 1.3
+	 */
+	public void updateMap(Object source, MapDiff diff);
 
 	/**
 	 * Returns an observable map observing this map property on the given

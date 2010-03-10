@@ -70,6 +70,18 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		return elementType;
 	}
 
+	protected Set doGetSet(Object source) {
+		return getDelegate(source).getSet(source);
+	}
+
+	protected void doSetSet(Object source, Set set) {
+		getDelegate(source).setSet(source, set);
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		getDelegate(source).updateSet(source, diff);
+	}
+
 	public IObservableSet observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
@@ -88,6 +100,12 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		}
 
 		protected void doSetSet(Object source, Set set, SetDiff diff) {
+		}
+
+		protected void doSetSet(Object source, Set set) {
+		}
+
+		protected void doUpdateSet(Object source, SetDiff diff) {
 		}
 
 		public INativePropertyListener adaptListener(

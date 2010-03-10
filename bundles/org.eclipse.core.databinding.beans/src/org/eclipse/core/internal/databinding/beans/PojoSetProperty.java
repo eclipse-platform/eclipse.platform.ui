@@ -62,6 +62,10 @@ public class PojoSetProperty extends SimpleSetProperty {
 	}
 
 	protected void doSetSet(Object source, Set set, SetDiff diff) {
+		doSetSet(source, set);
+	}
+
+	protected void doSetSet(Object source, Set set) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertSetToBeanPropertyType(set));
 	}

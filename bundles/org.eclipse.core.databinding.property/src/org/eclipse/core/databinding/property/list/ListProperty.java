@@ -12,9 +12,15 @@
 
 package org.eclipse.core.databinding.property.list;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -27,6 +33,84 @@ import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesLi
  * @since 1.2
  */
 public abstract class ListProperty implements IListProperty {
+	/**
+	 * @since 1.3
+	 */
+	public final List getList(Object source) {
+		if (source == null) {
+			return Collections.EMPTY_LIST;
+		}
+		return Collections.unmodifiableList(doGetList(source));
+	}
+
+	/**
+	 * Returns a List with the current contents of the source's list property
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return a List with the current contents of the source's list property
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 1.3
+	 */
+	protected List doGetList(Object source) {
+		IObservableList observable = observe(source);
+		try {
+			return new ArrayList(observable);
+		} finally {
+			observable.dispose();
+		}
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public final void setList(Object source, List list) {
+		if (source != null) {
+			doSetList(source, list);
+		}
+	}
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param list
+	 *            the new list
+	 * @since 1.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void doSetList(Object source, List list) {
+		doUpdateList(source, Diffs.computeListDiff(doGetList(source), list));
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public final void updateList(Object source, ListDiff diff) {
+		if (source != null) {
+			doUpdateList(source, diff);
+		}
+	}
+
+	/**
+	 * Updates the property on the source with the specified change
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param diff
+	 *            a diff describing the change
+	 * @since 1.3
+	 */
+	protected void doUpdateList(Object source, ListDiff diff) {
+		IObservableList observable = observe(source);
+		try {
+			diff.applyTo(observable);
+		} finally {
+			observable.dispose();
+		}
+	}
+
 	public IObservableList observe(Object source) {
 		return observe(Realm.getDefault(), source);
 	}

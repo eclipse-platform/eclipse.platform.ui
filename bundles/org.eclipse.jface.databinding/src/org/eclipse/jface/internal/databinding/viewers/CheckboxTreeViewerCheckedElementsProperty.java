@@ -39,6 +39,10 @@ public class CheckboxTreeViewerCheckedElementsProperty extends
 	}
 
 	protected void doSetSet(Object source, Set set, SetDiff diff) {
+		doSetSet(source, set);
+	}
+
+	protected void doSetSet(Object source, Set set) {
 		CheckboxTreeViewer viewer = (CheckboxTreeViewer) source;
 		viewer.setCheckedElements(set.toArray());
 	}

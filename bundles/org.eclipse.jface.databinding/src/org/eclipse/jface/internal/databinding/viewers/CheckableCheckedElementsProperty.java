@@ -12,10 +12,12 @@
 
 package org.eclipse.jface.internal.databinding.viewers;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.set.SetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.ICheckable;
@@ -39,6 +41,25 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 
 	public Object getElementType() {
 		return elementType;
+	}
+
+	protected Set doGetSet(Object source) {
+		throw new UnsupportedOperationException(
+				"Cannot query the checked elements on an ICheckable"); //$NON-NLS-1$
+	}
+
+	protected void doSetSet(Object source, Set set) {
+		throw new UnsupportedOperationException(
+				"Cannot batch replace the checked elements on an ICheckable.  " + //$NON-NLS-1$
+						"Use updateSet(SetDiff) instead"); //$NON-NLS-1$
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		ICheckable checkable = (ICheckable) source;
+		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();)
+			checkable.setChecked(it.next(), true);
+		for (Iterator it = diff.getRemovals().iterator(); it.hasNext();)
+			checkable.setChecked(it.next(), false);
 	}
 
 	public IObservableSet observe(Object source) {

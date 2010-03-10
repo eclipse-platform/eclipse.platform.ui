@@ -58,6 +58,10 @@ public class SelectionProviderMultipleSelectionProperty extends
 	}
 
 	protected void doSetList(Object source, List list, ListDiff diff) {
+		doSetList(source, list);
+	}
+
+	protected void doSetList(Object source, List list) {
 		((ISelectionProvider) source)
 				.setSelection(new StructuredSelection(list));
 	}

@@ -38,6 +38,10 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 	}
 
 	public void doSetSet(Object source, Set set, SetDiff diff) {
+		doSetSet(source, set);
+	}
+
+	protected void doSetSet(Object source, Set set) {
 		StructuredViewer viewer = (StructuredViewer) source;
 		viewer.getControl().setRedraw(false);
 		try {

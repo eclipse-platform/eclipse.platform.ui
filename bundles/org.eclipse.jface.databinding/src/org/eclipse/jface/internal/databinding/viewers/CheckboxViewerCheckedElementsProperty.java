@@ -13,6 +13,7 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -48,6 +49,14 @@ public abstract class CheckboxViewerCheckedElementsProperty extends
 
 	protected final Set createElementSet(StructuredViewer viewer) {
 		return ViewerElementSet.withComparer(viewer.getComparer());
+	}
+
+	protected void doUpdateSet(Object source, SetDiff diff) {
+		ICheckable checkable = (ICheckable) source;
+		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();)
+			checkable.setChecked(it.next(), true);
+		for (Iterator it = diff.getRemovals().iterator(); it.hasNext();)
+			checkable.setChecked(it.next(), false);
 	}
 
 	public INativePropertyListener adaptListener(
