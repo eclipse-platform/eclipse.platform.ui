@@ -184,7 +184,7 @@ public class PartEditor extends AbstractComponentEditor {
 					Entry<String, String> entry = (Entry<String, String>) element;
 					return entry.getKey();
 				}
-			});
+			}); 
 
 			//FIXME How can we react upon changes in the Map-Value?
 			column = new TableViewerColumn(tableviewer, SWT.NONE);
