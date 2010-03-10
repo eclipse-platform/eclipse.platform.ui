@@ -49,6 +49,17 @@ public class ApplyPatchSubscriber extends Subscriber {
 					if (patcher.isManuallyMerged((Hunk) hunks[i]))
 						return IN_SYNC;
 				}
+			} else {
+				// deletions don't have the remote variant, but still can be manually merged
+				Object patchObject = PatchModelProvider.getPatchObject(getLocal(), patcher);
+				if (patchObject instanceof FilePatch2) {
+					FilePatch2 filePatch2 = (FilePatch2) patchObject;
+					IHunk[] hunks = filePatch2.getHunks();
+					for (int i = 0; i < hunks.length; i++) {
+						if (patcher.isManuallyMerged((Hunk) hunks[i]))
+							return IN_SYNC;
+					}
+				}
 			}
 			int kind = super.calculateKind();
 			// mark diffs with problems as conflicts 
