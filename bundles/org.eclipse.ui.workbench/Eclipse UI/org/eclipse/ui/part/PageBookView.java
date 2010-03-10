@@ -38,7 +38,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -411,13 +410,19 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		PageRec rec = doCreatePage(part);
 		if (rec != null) {
 			mapPartToRec.put(part, rec);
-			IWorkbenchPartSite site = part.getSite();
-			if (site != null && site.getPluginId() != null) {
-				rec.page.getControl().setData(
-						new ContributionInfo(site.getPluginId(),
+			// super-defensive programming, see bug 201301 comment 14:
+			if (rec.page != null) {
+				Control control = rec.page.getControl();
+				if (control != null && !control.isDisposed()) {
+					if (part != null && part.getSite() != null
+							&& part.getSite().getPluginId() != null) {
+						// set contribution information
+						control.setData(new ContributionInfo(part.getSite().getPluginId(),
 								ContributionInfoMessages.ContributionInfo_ViewContent, null));
-			} else {
-				rec.page.getControl().setData(null);
+					} else {
+						control.setData(null);
+					}
+				}
 			}
 			preparePage(rec);
 		}
