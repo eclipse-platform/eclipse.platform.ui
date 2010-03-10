@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 241585, 247394, 226289, 194734, 190881, 266754,
  *                    268688
+ *     Ovidio Mallo - bug 303847
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -211,6 +212,26 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 */
 	public Object getValueType() {
 		return valueType;
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public Object remove(Object key) {
+		checkRealm();
+
+		Object oldValue = get(key);
+		keySet().remove(key);
+
+		return oldValue;
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public boolean containsKey(Object key) {
+		getterCalled();
+		return keySet().contains(key);
 	}
 
 	public Set entrySet() {
