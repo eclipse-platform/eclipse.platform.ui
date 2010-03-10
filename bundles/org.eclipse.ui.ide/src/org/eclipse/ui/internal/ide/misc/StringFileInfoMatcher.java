@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.ui.internal.ide.StringMatcher;
@@ -39,7 +40,7 @@ public class StringFileInfoMatcher extends AbstractFileInfoMatcher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
 	 */
-	public boolean matches(IFileInfo fileInfo) {
+	public boolean matches(IContainer parent, IFileInfo fileInfo) {
 		if (matcher != null)
 			return matcher.match(fileInfo.getName());
 		return false;

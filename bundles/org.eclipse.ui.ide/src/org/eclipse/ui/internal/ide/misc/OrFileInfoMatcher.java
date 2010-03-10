@@ -12,7 +12,9 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.filtermatchers.CompoundFileInfoMatcher;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A Resource Filter Type Factory for supporting the OR logical preposition
@@ -22,10 +24,10 @@ public class OrFileInfoMatcher extends CompoundFileInfoMatcher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
 	 */
-	public boolean matches(IFileInfo fileInfo) {
+	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		if (filterTypes.length > 0) {
 			for (int i = 0; i < filterTypes.length; i++) {
-				if (filterTypes[i].matches(fileInfo))
+				if (filterTypes[i].matches(parent, fileInfo))
 					return true;
 			}
 			return false;
