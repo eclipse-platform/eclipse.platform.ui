@@ -2122,7 +2122,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}
 			if ((currentIncludeFilters.size() > 0) || (currentExcludeFilters.size() > 0)) {
 				try {
-					list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, list);
+					list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, (IContainer) this, list);
 				} catch (CoreException e) {
 					// no handling, error has already been logged
 				}

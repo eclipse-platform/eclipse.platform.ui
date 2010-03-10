@@ -1644,7 +1644,7 @@ public class FilteredResourceTest extends ResourceTest {
 			matcher.initialize(existingProject, "*:*");
 			FileInfo info = new FileInfo(existingFileInExistingProject.getName());
 			info.setDirectory(false);
-			boolean result = matcher.matches(info);
+			boolean result = matcher.matches(existingFileInExistingProject.getParent(), info);
 			assertEquals("1.0", result, false);
 		} catch (Throwable t) {
 			fail("1.1", t);

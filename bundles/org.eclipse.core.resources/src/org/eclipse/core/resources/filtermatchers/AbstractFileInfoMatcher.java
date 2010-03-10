@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources.filtermatchers;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.core.filesystem.IFileInfo;
@@ -31,7 +34,7 @@ public abstract class AbstractFileInfoMatcher {
 	 * @return <code>true</code> if this filter matches the given file info,
 	 * and <code>false</code> otherwise.
 	 */
-	public abstract boolean matches(IFileInfo fileInfo);
+	public abstract boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException;
 
 	public abstract void initialize(IProject project, Object arguments);
 }

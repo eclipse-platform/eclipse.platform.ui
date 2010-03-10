@@ -34,7 +34,7 @@ public class Filter {
 		this.project = project;
 	}
 
-	public boolean match(IFileInfo fileInfo) throws CoreException {
+	public boolean match(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		if (provider == null) {
 			IFilterMatcherDescriptor filterDescriptor = project.getWorkspace().getFilterMatcherDescriptor(getId());
 			if (filterDescriptor != null)
@@ -46,7 +46,7 @@ public class Filter {
 			provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
 		}
 		if (provider != null)
-			return provider.matches(fileInfo);
+			return provider.matches(parent, fileInfo);
 		return false;
 	}
 
@@ -79,12 +79,12 @@ public class Filter {
 		return (getType() & IResourceFilterDescription.FILES) != 0;
 	}
 
-	public static IFileInfo[] filter(IProject project, LinkedList/*Filter*/includeFilters, LinkedList/*Filter*/excludeFilters, IFileInfo[] list) throws CoreException {
-		IFileInfo[] result = filterIncludes(project, includeFilters, list);
-		return filterExcludes(project, excludeFilters, result);
+	public static IFileInfo[] filter(IProject project, LinkedList/*Filter*/includeFilters, LinkedList/*Filter*/excludeFilters, IContainer parent, IFileInfo[] list) throws CoreException {
+		IFileInfo[] result = filterIncludes(project, includeFilters, parent, list);
+		return filterExcludes(project, excludeFilters, parent, result);
 	}
 
-	public static IFileInfo[] filterIncludes(IProject project, LinkedList/*Filter*/filters, IFileInfo[] list) throws CoreException {
+	public static IFileInfo[] filterIncludes(IProject project, LinkedList/*Filter*/filters, IContainer parent, IFileInfo[] list) throws CoreException {
 		if (filters.size() > 0) {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
@@ -97,7 +97,7 @@ public class Filter {
 					Filter filter = (Filter) objIt.next();
 					if (filter.appliesTo(info)) {
 						filtersWereApplicable = true;
-						if (filter.match(info)) {
+						if (filter.match(parent, info)) {
 							result[outputIndex++] = info;
 							break;
 						}
@@ -116,7 +116,7 @@ public class Filter {
 		return list;
 	}
 
-	public static IFileInfo[] filterExcludes(IProject project, LinkedList/*Filter*/filters, IFileInfo[] list) throws CoreException {
+	public static IFileInfo[] filterExcludes(IProject project, LinkedList/*Filter*/filters, IContainer parent, IFileInfo[] list) throws CoreException {
 		if (filters.size() > 0) {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
@@ -128,7 +128,7 @@ public class Filter {
 				while (objIt.hasNext()) {
 					Filter filter = (Filter) objIt.next();
 					if (filter.appliesTo(info)) {
-						if (filter.match(info)) {
+						if (filter.match(parent, info)) {
 							shouldBeExcluded = true;
 							break;
 						}

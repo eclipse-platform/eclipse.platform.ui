@@ -11,13 +11,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.CoreException;
 
-import java.util.regex.PatternSyntaxException;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 
@@ -33,7 +32,7 @@ public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 		// nothing to do
 	}
 
-	public boolean matches(IFileInfo fileInfo) {
+	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		if (pattern != null) {
 			Matcher m = pattern.matcher(fileInfo.getName());
 			return m.matches();
