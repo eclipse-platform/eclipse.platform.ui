@@ -52,9 +52,8 @@
    </item>
    <item title="Narrow scope" dialog="false" skip="false">
       <description>
-         Narrow the search scope
-      </description>
-      <subitem label="Click &quot;Search scope:&quot;.  The scope selection window will open.  Click &quot;New&quot;, Select some books or sections, but leave the book that was noted in step 2 unchecked." skip="false">
+         Create a new scope </description>
+      <subitem label="Click &quot;Scope:&quot;.  The scope selection window will open.  Click &quot;New&quot;, Select some books or sections, but leave the book that was noted in step 2 unchecked." skip="false">
       </subitem>
       <subitem label="Type a name for your new scope.  Close dialog windows, ensure that the scope name appears on the search tool bar." skip="false">
       </subitem>

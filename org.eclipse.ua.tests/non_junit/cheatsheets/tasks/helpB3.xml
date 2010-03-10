@@ -59,7 +59,7 @@
             label="In the TOC select the parent of the highlighted element">
       </subitem>
       <subitem
-            label="Press the button that looks like a flashlight and verify that a dialog opens.">
+            label="Press the button that looks like a flashlight, select &quot;search selected topic and all subtopics&quot; from the dropdown menu and verify that a dialog opens.opic and all subtopics&quot; and verify that a dialog opens.">
       </subitem>
       <subitem
             label="Verify that the input is set to &quot;participation&quot; and hit &quot;OK&quot;">
@@ -88,7 +88,7 @@
    </item>   <item         title="Check Toc is Filtered">      <description>         Click on the contents tab to show the table of contents. Verify that only one book, &quot;Workbench User Guide&quot; shows.      </description>   </item>
    <item title="Search again" dialog="false" skip="false">
       <description>
-   Search again for the same word, &quot;participation&quot;. You should see fewer results than were returned by the unscoped search.earch.
+   Search again for the same word, &quot;participation&quot;. You should see fewer results than were returned by the unscoped search.
       </description>
    </item>
    <item title="Select an item" dialog="false" skip="false">
