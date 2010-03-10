@@ -179,6 +179,12 @@ public abstract class ModelReconciler {
 			.getPart_Toolbar().getName();
 
 	/**
+	 * Attribute defined by MInputs (value is <code>inputURI</code>).
+	 */
+	public static final String INPUT_INPUTURI_ATTNAME = MApplicationPackage.eINSTANCE
+			.getInput_InputURI().getName();
+
+	/**
 	 * Attribute defined by MGenericTiles (value is <code>horizontal</code>).
 	 */
 	public static final String GENERICTILE_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
