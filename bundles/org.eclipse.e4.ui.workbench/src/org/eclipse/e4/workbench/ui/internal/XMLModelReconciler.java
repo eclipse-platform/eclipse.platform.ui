@@ -25,35 +25,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
@@ -62,7 +49,10 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.change.ChangeDescription;
@@ -81,6 +71,8 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private static final String REFERENCE_ELEMENT_NAME = "reference"; //$NON-NLS-1$
 	private static final String ORIGINALREFERENCE_ELEMENT_NAME = "originalReference"; //$NON-NLS-1$
+
+	private static final String NAMESPACE_ATTNAME = "e4namespace"; //$NON-NLS-1$
 
 	/**
 	 * The name of the root element that describes the model deltas in XML form (value is
@@ -619,47 +611,15 @@ public class XMLModelReconciler extends ModelReconciler {
 				userReferences, currentReferences);
 	}
 
-	private static EObject createObject(String type) {
-		if (type.equals(MPart.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPart();
-		} else if (type.equals(MCommand.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createCommand();
-		} else if (type.equals(MHandler.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createHandler();
-		} else if (type.equals(MKeyBinding.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createKeyBinding();
-		} else if (type.equals(MMenu.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createMenu();
-		} else if (type.equals(MWindow.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createWindow();
-		} else if (type.equals(MToolBar.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createToolBar();
-		} else if (type.equals(MToolItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createToolItem();
-		} else if (type.equals(MDirectToolItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createDirectToolItem();
-		} else if (type.equals(MHandledToolItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createHandledToolItem();
-		} else if (type.equals(MMenuItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createMenuItem();
-		} else if (type.equals(MDirectMenuItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createDirectMenuItem();
-		} else if (type.equals(MHandledMenuItem.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createHandledMenuItem();
-		} else if (type.equals(MPartStack.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPartStack();
-		} else if (type.equals(MPartSashContainer.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPartSashContainer();
-		} else if (type.equals(MWindowTrim.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createWindowTrim();
-		} else if (type.equals(MPerspective.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPerspective();
-		} else if (type.equals(MPerspectiveStack.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPerspectiveStack();
-		} else if (type.equals(MPartDescriptor.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createPartDescriptor();
-		} else if (type.equals(MInputPart.class.getSimpleName())) {
-			return (EObject) MApplicationFactory.eINSTANCE.createInputPart();
+	private static EObject createObject(String namespace, String type) {
+		EFactory factory = EPackage.Registry.INSTANCE.getEFactory(namespace);
+		for (EClassifier classifier : factory.getEPackage().getEClassifiers()) {
+			if (classifier instanceof EClass) {
+				EClass cls = (EClass) classifier;
+				if (cls.getInstanceClassName().equals(type)) {
+					return factory.create(cls);
+				}
+			}
 		}
 		return null;
 	}
@@ -673,9 +633,12 @@ public class XMLModelReconciler extends ModelReconciler {
 		return createObject(deltas, element, references);
 	}
 
-	private Object createObject(Collection<ModelDelta> deltas, String typeName, Element element,
+	private Object createObject(Collection<ModelDelta> deltas, Element element,
 			List<Object> references) {
-		EObject object = createObject(typeName);
+		String typeName = element.getAttribute(TYPE_ATTNAME);
+		String namespace = element.getAttribute(NAMESPACE_ATTNAME);
+
+		EObject object = createObject(namespace, typeName);
 		CompositeDelta compositeDelta = new CompositeDelta(object);
 
 		E4XMIResource resource = (E4XMIResource) rootObject.eResource();
@@ -763,11 +726,6 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		return compositeDelta;
-	}
-
-	private Object createObject(Collection<ModelDelta> deltas, Element reference,
-			List<Object> references) {
-		return createObject(deltas, reference.getAttribute(TYPE_ATTNAME), reference, references);
 	}
 
 	private ModelDelta createUnorderedChainedAttributeDelta(EObject object,
@@ -931,7 +889,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		Class<?> rootInterface = object.getClass().getInterfaces()[0];
 		// this technically doesn't have to be tagged with this name, it's not parsed, but makes the
 		// XML more readable
-		return createElement(document, rootInterface.getSimpleName(), object);
+		return createElement(document, rootInterface.getCanonicalName(), object);
 	}
 
 	private Element createElement(Document document, String elementName, EObject object) {
@@ -1363,7 +1321,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		referenceElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		// note what we need to create by storing the type
 		referenceElement.setAttribute(TYPE_ATTNAME, eObject.getClass().getInterfaces()[0]
-				.getSimpleName());
+				.getCanonicalName());
 
 		for (EStructuralFeature collectedFeature : collectFeatures(eObject)) {
 			String featureName = collectedFeature.getName();
@@ -1379,11 +1337,15 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private Element createUniqueReferenceElement(Document document, EObject eObject) {
+		EClass cls = eObject.eClass();
+		EPackage pkg = (EPackage) cls.eContainer();
+
 		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
 
 		E4XMIResource resource = (E4XMIResource) rootObject.eResource();
 		String internalId = resource.getInternalId(eObject);
 		referenceElement.setAttribute(XMIID_ATTNAME, internalId);
+		referenceElement.setAttribute(NAMESPACE_ATTNAME, pkg.getNsURI());
 
 		return referenceElement;
 	}
