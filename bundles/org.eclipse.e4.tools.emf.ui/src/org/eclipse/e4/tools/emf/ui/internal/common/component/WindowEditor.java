@@ -22,6 +22,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -216,12 +217,21 @@ public class WindowEditor extends AbstractComponentEditor {
 			}
 
 		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOW_TRIMS, ELEMENT_CONTAINER__CHILDREN, element, "Trims") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return o instanceof MWindowTrim;
+			}
+
+		});
 
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOW_CONTROLS, ELEMENT_CONTAINER__CHILDREN, element, "Controls") {
 
 			@Override
 			protected boolean accepted(Object o) {
-				return true;
+				return !(o instanceof MWindowTrim);
 			}
 
 		});
