@@ -197,9 +197,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private ListenerList propertyChangeListeners = new ListenerList();
 
-    private PageSelectionService selectionService = new PageSelectionService(
-            this);
-
     private IActionBars actionBars;
     
     private ActionSetManager actionSets;
@@ -348,21 +345,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * (non-Javadoc) Method declared on ISelectionListener.
      */
     public void addSelectionListener(ISelectionListener listener) {
-        selectionService.addSelectionListener(listener);
+		getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
     }
 
     /*
      * (non-Javadoc) Method declared on ISelectionListener.
      */
     public void addSelectionListener(String partId, ISelectionListener listener) {
-        selectionService.addSelectionListener(partId, listener);
+		getWorkbenchWindow().getSelectionService().addSelectionListener(partId, listener);
     }
 
     /*
      * (non-Javadoc) Method declared on ISelectionListener.
      */
     public void addPostSelectionListener(ISelectionListener listener) {
-        selectionService.addPostSelectionListener(listener);
+		getWorkbenchWindow().getSelectionService().addPostSelectionListener(listener);
     }
 
     /*
@@ -370,7 +367,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void addPostSelectionListener(String partId,
             ISelectionListener listener) {
-        selectionService.addPostSelectionListener(partId, listener);
+		getWorkbenchWindow().getSelectionService().addPostSelectionListener(partId, listener);
     }
     
     /**
@@ -1331,14 +1328,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * (non-Javadoc) Method declared on ISelectionService
      */
     public ISelection getSelection() {
-        return selectionService.getSelection();
+		return getWorkbenchWindow().getSelectionService().getSelection();
     }
 
     /*
      * (non-Javadoc) Method declared on ISelectionService
      */
     public ISelection getSelection(String partId) {
-        return selectionService.getSelection(partId);
+		return getWorkbenchWindow().getSelectionService().getSelection(partId);
     }
 
     /**
@@ -1693,7 +1690,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * (non-Javadoc) Method declared on ISelectionListener.
      */
     public void removeSelectionListener(ISelectionListener listener) {
-        selectionService.removeSelectionListener(listener);
+		getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
     }
 
     /*
@@ -1701,14 +1698,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void removeSelectionListener(String partId,
             ISelectionListener listener) {
-        selectionService.removeSelectionListener(partId, listener);
+		getWorkbenchWindow().getSelectionService().removeSelectionListener(partId, listener);
     }
 
     /*
      * (non-Javadoc) Method declared on ISelectionListener.
      */
     public void removePostSelectionListener(ISelectionListener listener) {
-        selectionService.removePostSelectionListener(listener);
+		getWorkbenchWindow().getSelectionService().removePostSelectionListener(listener);
     }
 
     /*
@@ -1716,7 +1713,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void removePostSelectionListener(String partId,
             ISelectionListener listener) {
-        selectionService.removePostSelectionListener(partId, listener);
+		getWorkbenchWindow().getSelectionService().removePostSelectionListener(partId, listener);
     }
 
 
