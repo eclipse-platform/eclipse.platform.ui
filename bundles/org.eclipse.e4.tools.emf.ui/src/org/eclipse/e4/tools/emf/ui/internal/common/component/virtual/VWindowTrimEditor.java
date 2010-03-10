@@ -18,10 +18,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -119,67 +116,15 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 			b.setText("Down");
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add Sash");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPartSashContainer handler = MApplicationFactory.eINSTANCE.createPartSashContainer();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
 			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add PartStack");
+			b.setText("Add Trim");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MPartStack handler = MApplicationFactory.eINSTANCE.createPartStack();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
-			
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add PerspectiveStack");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPerspectiveStack handler = MApplicationFactory.eINSTANCE.createPerspectiveStack();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
-			
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add Part");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPart handler = MApplicationFactory.eINSTANCE.createPart();
+					MWindowTrim handler = MApplicationFactory.eINSTANCE.createWindowTrim();
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
 					
 					if( cmd.canExecute() ) {
