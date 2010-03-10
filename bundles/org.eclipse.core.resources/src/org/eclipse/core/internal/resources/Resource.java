@@ -17,10 +17,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IPathVariableManager;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;

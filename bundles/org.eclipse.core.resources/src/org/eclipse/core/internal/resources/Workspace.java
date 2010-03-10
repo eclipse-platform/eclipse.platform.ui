@@ -13,11 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IStatus;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;

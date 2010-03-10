@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,11 @@
  *******************************************************************************/
 package org.eclipse.core.resources.filtermatchers;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileInfoFilter;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A factory for instantiating {@link IFileInfoFilter} instances
