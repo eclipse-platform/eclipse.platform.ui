@@ -218,6 +218,36 @@ public abstract class ModelReconcilerContributionTest extends
 		testContribution_PersistedState("state", "state2", "state2");
 	}
 
+	public void testContribution_NewPersistedState() {
+		MApplication application = createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.getPersistedState().put("key", "value");
+		window.getChildren().add(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		part = (MPart) window.getChildren().get(0);
+		assertEquals("value", part.getPersistedState().get("key"));
+	}
+
 	private void testContribution_URI(String applicationURI, String userChange,
 			String newApplicationURI) {
 		MApplication application = createApplication();

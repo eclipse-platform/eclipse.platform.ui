@@ -237,6 +237,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getPart_Closeable();
 		} else if (featureName.equals(INPUT_INPUTURI_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getInput_InputURI();
+		} else if (featureName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getContext_Properties();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -738,6 +740,19 @@ public class XMLModelReconciler extends ModelReconciler {
 							ModelDelta delta = createUnorderedChainedAttributeDelta(object,
 									attributeFeature, item, attributeName);
 							deltas.add(delta);
+						} else if (isStringToStringMap(attributeName)) {
+							EStructuralFeature feature = getStructuralFeature(object, attributeName);
+							EMap map = (EMap) object.eGet(feature);
+
+							NodeList attributes = (NodeList) item;
+							for (int j = 0; j < attributes.getLength(); j++) {
+								Node entry = attributes.item(j);
+								if (entry instanceof Element) {
+									Element keyValue = (Element) entry;
+									map.put(keyValue.getAttribute(ENTRY_ATTVALUE_KEY), keyValue
+											.getAttribute(ENTRY_ATTVALUE_VALUE));
+								}
+							}
 						} else {
 							object.eSet(attributeFeature, getValue(attributeFeature, item
 									.getAttribute(attributeName)));
@@ -1410,6 +1425,14 @@ public class XMLModelReconciler extends ModelReconciler {
 					attributeElement.setAttribute(featureName, String.valueOf(attribute));
 					referenceAttributeElement.appendChild(attributeElement);
 				}
+			} else if (isStringToStringMap(featureName)) {
+				EMap<?, ?> map = (EMap<?, ?>) object.eGet(feature);
+				for (Entry<?, ?> entry : map.entrySet()) {
+					Element entryElement = document.createElement(featureName);
+					entryElement.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
+					entryElement.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
+					referenceAttributeElement.appendChild(entryElement);
+				}
 			} else {
 				referenceAttributeElement.setAttribute(featureName, String.valueOf(object
 						.eGet(feature)));
@@ -1418,6 +1441,11 @@ public class XMLModelReconciler extends ModelReconciler {
 			referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		}
 		return referenceAttributeElement;
+	}
+
+	private static boolean isStringToStringMap(String featureName) {
+		return featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)
+				|| featureName.equals(CONTEXT_PROPERTIES_ATTNAME);
 	}
 
 	/**
