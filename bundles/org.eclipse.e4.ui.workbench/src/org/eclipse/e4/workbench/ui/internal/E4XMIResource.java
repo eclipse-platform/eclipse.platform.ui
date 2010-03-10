@@ -12,6 +12,7 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.util.URI;
@@ -69,6 +70,10 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	@Override
 	public String getID(EObject eObject) {
+		if (eObject instanceof Entry<?, ?>) {
+			return null;
+		}
+
 		String id = super.getID(eObject);
 		if (id != null) {
 			return id;

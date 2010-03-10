@@ -35,6 +35,12 @@ public abstract class ModelReconciler {
 			.getApplication_Commands().getName();
 
 	/**
+	 * Attribute defined by MContexts (value is <code>properties</code>).
+	 */
+	public static final String CONTEXT_PROPERTIES_ATTNAME = MApplicationPackage.eINSTANCE
+			.getContext_Properties().getName();
+
+	/**
 	 * Attribute defined by MContributions (value is <code>persistedState</code>).
 	 */
 	public static final String CONTRIBUTION_PERSISTEDSTATE_ATTNAME = MApplicationPackage.eINSTANCE

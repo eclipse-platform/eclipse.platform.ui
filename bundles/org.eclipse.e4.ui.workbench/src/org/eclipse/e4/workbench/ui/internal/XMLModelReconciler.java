@@ -29,6 +29,8 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -93,6 +95,9 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private static final String UNSET_ATTNAME = "unset"; //$NON-NLS-1$
 	private static final String UNSET_ATTVALUE_TRUE = "true"; //$NON-NLS-1$
+
+	private static final String ENTRY_ATTVALUE_KEY = "key"; //$NON-NLS-1$
+	private static final String ENTRY_ATTVALUE_VALUE = "value"; //$NON-NLS-1$
 
 	private ChangeRecorder changeRecorder;
 
@@ -274,7 +279,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			EObject object, Element element, String id) {
 		if (object instanceof MApplicationElement || object instanceof MKeyBinding) {
 			if (getLocalId(object).equals(id)) {
-				constructObjectDeltas(deltas, references, object, element);
+				constructDeltas(deltas, references, object, element);
 				return true;
 			}
 		}
@@ -344,6 +349,33 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		return false;
+	}
+
+	private void constructDeltas(Collection<ModelDelta> deltas, List<Object> references,
+			EObject object, Element element) {
+		String elementName = element.getNodeName();
+		if (elementName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
+			constructEntryDelta(deltas, MApplicationPackage.eINSTANCE.getContext_Properties(),
+					object, element);
+		} else if (elementName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
+			constructEntryDelta(deltas, MApplicationPackage.eINSTANCE
+					.getContribution_PersistedState(), object, element);
+		} else {
+			constructObjectDeltas(deltas, references, object, element);
+		}
+	}
+
+	private void constructEntryDelta(Collection<ModelDelta> deltas, EStructuralFeature feature,
+			EObject object, Element element) {
+		if (element.getAttribute(UNSET_ATTNAME).equals(UNSET_ATTVALUE_TRUE)) {
+			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature, element
+					.getAttribute(ENTRY_ATTVALUE_KEY), null);
+			deltas.add(delta);
+		} else {
+			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature, element
+					.getAttribute(ENTRY_ATTVALUE_KEY), element.getAttribute(ENTRY_ATTVALUE_VALUE));
+			deltas.add(delta);
+		}
 	}
 
 	private void constructObjectDeltas(Collection<ModelDelta> deltas, List<Object> references,
@@ -797,6 +829,14 @@ public class XMLModelReconciler extends ModelReconciler {
 	 */
 	private Element persist(Document document, Entry<EObject, EList<FeatureChange>> entry,
 			EObject object) {
+		if (object instanceof Entry<?, ?>) {
+			return persistEntry(document, object);
+		}
+		return persistObject(document, entry, object);
+	}
+
+	private Element persistObject(Document document, Entry<EObject, EList<FeatureChange>> entry,
+			EObject object) {
 		if (getOriginalId(object) == null) {
 			return null;
 		}
@@ -826,15 +866,62 @@ public class XMLModelReconciler extends ModelReconciler {
 		return modelChange;
 	}
 
-	private Element createElement(Document document, EObject object) {
-		String id = getOriginalId(object);
+	private String getEntryElementName(EObject object, Entry<?, ?> entry) {
+		if (object instanceof MContext) {
+			for (Entry<String, String> property : ((MContext) object).getProperties().entrySet()) {
+				if (property == entry) {
+					return CONTEXT_PROPERTIES_ATTNAME;
+				}
+			}
+		}
 
+		if (object instanceof MContribution) {
+			for (Entry<String, String> state : ((MContribution) object).getPersistedState()
+					.entrySet()) {
+				if (state == entry) {
+					return CONTRIBUTION_PERSISTEDSTATE_ATTNAME;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private Element persistEntry(Document document, EObject object) {
+		EObject container = object.eContainer();
+		if (getOriginalId(container) == null) {
+			return null;
+		}
+
+		Entry<?, ?> entry = (Entry<?, ?>) object;
+		String elementName = getEntryElementName(container, entry);
+		if (elementName == null) {
+			return null;
+		}
+
+		Element element = createElement(document, elementName, container);
+		element.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
+
+		String value = (String) entry.getValue();
+		if (value == null) {
+			element.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
+		} else {
+			element.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
+		}
+
+		return element;
+	}
+
+	private Element createElement(Document document, EObject object) {
 		Class<?> rootInterface = object.getClass().getInterfaces()[0];
 		// this technically doesn't have to be tagged with this name, it's not parsed, but makes the
 		// XML more readable
-		Element modelChange = document.createElement(rootInterface.getSimpleName());
-		modelChange.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
+		return createElement(document, rootInterface.getSimpleName(), object);
+	}
 
+	private Element createElement(Document document, String elementName, EObject object) {
+		Element modelChange = document.createElement(elementName);
+		modelChange.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, getOriginalId(object));
 		return modelChange;
 	}
 
@@ -1257,7 +1344,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		Element referenceElement = createUniqueReferenceElement(document, eObject);
 
 		// object did not exist, mark it as such so it can be created during the
-		// delta application phase
+		// when the deltas are applied
 		referenceElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		// note what we need to create by storing the type
 		referenceElement.setAttribute(TYPE_ATTNAME, eObject.getClass().getInterfaces()[0]
