@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor;
 
+import java.util.Collection;
+
 import javax.inject.Named;
 
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -18,32 +20,37 @@ import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class OpenModelFileHandler {
-	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, MApplication application, EModelService modelService) {
+	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, MApplication application, EModelService modelService, EPartService partService) {
 		
 		FileDialog dialog = new FileDialog(shell);
 		String file = dialog.open();
 		if( file != null ) {
 			String name = file.substring(file.lastIndexOf("/") + 1);
 			String filePath = "file://" + file;
-
-			MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
-			
-			MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
-			part.setLabel(name);
-			part.setTooltip(file);
-			part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
-			part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
-			part.setInputURI(filePath);
-			
-			part.setCloseable(true);
-			stack.getChildren().add(part);
-			stack.setSelectedElement(part);
-
-			System.err.println(stack);
+			Collection<MInputPart> parts = partService.getInputParts(filePath);
+			if( parts.size() == 0 ) {
+				
+				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
+				
+				MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
+				part.setLabel(name);
+				part.setTooltip(file);
+				part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
+				part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
+				part.setInputURI(filePath);
+				
+				part.setCloseable(true);
+				stack.getChildren().add(part);
+				stack.setSelectedElement(part);				
+			} else {
+				partService.showPart(parts.iterator().next(), PartState.ACTIVATE);
+			}
 		}
 	}
 }
