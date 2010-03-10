@@ -18,6 +18,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -25,6 +26,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
@@ -438,6 +440,53 @@ public class EPartServiceTest extends TestCase {
 
 		for (MPart partA : partsA) {
 			assertFalse(partsB.contains(partA));
+		}
+	}
+
+	public void testGetInputParts() {
+		final String uri1 = "file:///a.txt";
+		final String uri2 = "file:///b.txt";
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part);
+
+		MInputPart inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		inputPart.setInputURI(uri1);
+		window.getChildren().add(inputPart);
+
+		part = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part);
+
+		inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		inputPart.setInputURI(uri2);
+		window.getChildren().add(inputPart);
+
+		inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		inputPart.setInputURI(uri1);
+		window.getChildren().add(inputPart);
+
+		part = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(6, partService.getParts().size());
+		assertEquals(2, partService.getInputParts(uri1).size());
+		assertEquals(1, partService.getInputParts(uri2).size());
+		assertEquals(0, partService.getInputParts("totally unknown").size());
+		try {
+			partService.getInputParts(null);
+			fail("Passing null should throw an AssertionFailedException");
+		} catch (AssertionFailedException e) {
 		}
 	}
 

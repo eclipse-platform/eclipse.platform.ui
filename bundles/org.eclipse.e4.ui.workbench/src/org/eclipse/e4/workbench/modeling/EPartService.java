@@ -11,6 +11,8 @@
 package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
+import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MPart;
 
 /**
@@ -239,4 +241,15 @@ public interface EPartService {
 	 */
 	public boolean saveAll(boolean confirm);
 
+	/**
+	 * Returns a collection of all {@link MInputPart} with the inputURI-Attribute set to the given
+	 * value
+	 * 
+	 * @param inputUri
+	 *            the input uri to search for, must not be <code>null</code>
+	 * @return list of parts or an empty collection
+	 * @throws AssertionFailedException
+	 *             if null passed as argument
+	 */
+	public Collection<MInputPart> getInputParts(String inputUri);
 }

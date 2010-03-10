@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +30,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -39,6 +38,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -621,5 +621,23 @@ public class PartServiceImpl implements EPartService {
 			}
 		}
 		return success;
+	}
+
+	private Collection<MInputPart> getInputParts() {
+		return modelService.findElements(rootContainer, null, MInputPart.class, null);
+	}
+
+	public Collection<MInputPart> getInputParts(String inputUri) {
+		Assert.isNotNull(inputUri, "Input uri must not be null"); //$NON-NLS-1$
+
+		Collection<MInputPart> rv = new ArrayList<MInputPart>();
+
+		for (MInputPart p : getInputParts()) {
+			if (inputUri.equals(p.getInputURI())) {
+				rv.add(p);
+			}
+		}
+
+		return rv;
 	}
 }
