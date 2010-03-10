@@ -43,8 +43,10 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VKeyBindingEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -71,6 +73,7 @@ public class ModelEditor {
 	public static final int VIRTUAL_BINDING = 3;
 	public static final int VIRTUAL_COMMAND = 4;
 	public static final int VIRTUAL_WINDOWS = 5;
+	public static final int VIRTUAL_WINDOW_CONTROLS = 6;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
@@ -157,6 +160,7 @@ public class ModelEditor {
 		});
 
 		form.setWeights(new int[] { 1 , 2 });
+		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
 	}
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
@@ -185,7 +189,8 @@ public class ModelEditor {
 				new VHandlerEditor(modelProvider.getEditingDomain(),this),
 				new VKeyBindingEditor(modelProvider.getEditingDomain(), this),
 				new VCommandEditor(modelProvider.getEditingDomain(), this),
-				null  // Windows
+				new VWindowEditor(modelProvider.getEditingDomain(), this),
+				new VControlEditor(modelProvider.getEditingDomain(), this)
 			};
 
 	}
