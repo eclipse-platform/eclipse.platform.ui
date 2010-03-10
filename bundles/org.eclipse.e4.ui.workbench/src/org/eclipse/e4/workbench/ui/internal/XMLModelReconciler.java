@@ -269,7 +269,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	static Object findReference(List<Object> references, String id) {
 		for (Object reference : references) {
-			if (getLocalId(reference).equals(id)) {
+			if (reference instanceof MApplicationElement && getLocalId(reference).equals(id)) {
 				return reference;
 			}
 		}
