@@ -288,7 +288,6 @@
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//Context"/>
-    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
     <eGenericSuperTypes eClassifier="#//UIElement"/>

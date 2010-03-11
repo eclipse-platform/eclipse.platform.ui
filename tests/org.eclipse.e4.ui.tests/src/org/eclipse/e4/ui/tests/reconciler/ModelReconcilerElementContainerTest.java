@@ -177,10 +177,14 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
+		MPerspectiveStack stack = MApplicationFactory.eINSTANCE
+				.createPerspectiveStack();
+
 		MPerspective perspective = MApplicationFactory.eINSTANCE
 				.createPerspective();
 		perspective.setLabel("newEditor");
-		window.getChildren().add(perspective);
+		stack.getChildren().add(perspective);
+		window.getChildren().add(stack);
 
 		Object state = reconciler.serialize();
 
@@ -194,8 +198,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		applyAll(deltas);
 
 		assertEquals(1, window.getChildren().size());
+		assertEquals(1, ((MPerspectiveStack) window.getChildren().get(0))
+				.getChildren().size());
 
-		perspective = (MPerspective) window.getChildren().get(0);
+		perspective = ((MPerspectiveStack) window.getChildren().get(0))
+				.getChildren().get(0);
 		assertEquals("newEditor", perspective.getLabel());
 	}
 

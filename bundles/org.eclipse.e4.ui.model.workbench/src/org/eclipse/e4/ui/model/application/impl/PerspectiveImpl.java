@@ -430,11 +430,6 @@ public class PerspectiveImpl extends ElementContainerImpl<MPSCElement> implement
 				default: return -1;
 			}
 		}
-		if (baseClass == MPSCElement.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -458,11 +453,6 @@ public class PerspectiveImpl extends ElementContainerImpl<MPSCElement> implement
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.PERSPECTIVE__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.PERSPECTIVE__VARIABLES;
 				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.PERSPECTIVE__PROPERTIES;
-				default: return -1;
-			}
-		}
-		if (baseClass == MPSCElement.class) {
-			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

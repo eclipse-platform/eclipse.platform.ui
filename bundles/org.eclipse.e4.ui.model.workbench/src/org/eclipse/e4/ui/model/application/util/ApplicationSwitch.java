@@ -544,7 +544,6 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseElementContainer(perspective);
 				if (result == null) result = caseUILabel(perspective);
 				if (result == null) result = caseContext(perspective);
-				if (result == null) result = casePSCElement(perspective);
 				if (result == null) result = caseUIElement(perspective);
 				if (result == null) result = caseApplicationElement(perspective);
 				if (result == null) result = defaultCase(theEObject);
