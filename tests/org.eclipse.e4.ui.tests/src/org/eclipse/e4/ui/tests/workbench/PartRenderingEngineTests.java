@@ -193,7 +193,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.getChildren().add(window);
 
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("aStack");
+		stack.getTags().add("aStack");
 		window.getChildren().add(stack);
 
 		wb = new E4Workbench(application, appContext);

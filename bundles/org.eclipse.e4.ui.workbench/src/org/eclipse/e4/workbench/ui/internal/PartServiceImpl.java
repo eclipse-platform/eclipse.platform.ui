@@ -386,20 +386,32 @@ public class PartServiceImpl implements EPartService {
 			}
 
 			String category = descriptor.getCategory();
-			MUIElement container = modelService.find(category, rootContainer);
-			if (container instanceof MElementContainer<?>) {
-				((MElementContainer<MPart>) container).getChildren().add(providedPart);
+			if (category == null) {
+				addToLastContainer(null, providedPart);
 			} else {
-				MElementContainer<?> lastContainer = getLastContainer();
-				((List) lastContainer.getChildren()).add(providedPart);
-
-				String id = lastContainer.getId();
-				if (id == null || id.length() == 0) {
-					lastContainer.setId(category);
+				List<Object> elements = modelService.findElements(rootContainer, null, null,
+						Collections.singletonList(category));
+				if (elements.isEmpty()) {
+					addToLastContainer(category, providedPart);
+				} else {
+					Object element = elements.get(0);
+					if (element instanceof MElementContainer<?>) {
+						((MElementContainer<MPart>) element).getChildren().add(providedPart);
+					} else {
+						addToLastContainer(category, providedPart);
+					}
 				}
 			}
 		}
 		return providedPart;
+	}
+
+	private void addToLastContainer(String category, MPart part) {
+		MElementContainer<?> lastContainer = getLastContainer();
+		((List) lastContainer.getChildren()).add(part);
+		if (category != null) {
+			lastContainer.getTags().add(category);
+		}
 	}
 
 	private MElementContainer<?> getLastContainer() {
