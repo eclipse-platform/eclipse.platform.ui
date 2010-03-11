@@ -20,6 +20,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -78,6 +79,9 @@ public class FuzzFactorDialog extends Dialog {
 		Button guessButton = new Button(composite, SWT.NONE);
 		guessButton.setText(TeamUIMessages.FuzzFactorDialog_guess);
 		data = new GridData();
+        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        Point minSize = guessButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = Math.max(widthHint, minSize.x);
 		guessButton.setLayoutData(data);
 		guessButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
