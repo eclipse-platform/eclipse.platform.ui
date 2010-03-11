@@ -956,7 +956,7 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(window.getChildren().get(0) instanceof MPartStack);
 
 		MPartStack stack = (MPartStack) window.getChildren().get(0);
-		assertEquals("categoryId", stack.getId());
+		assertTrue(stack.getTags().contains("categoryId"));
 
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part, stack.getChildren().get(0));
@@ -988,7 +988,7 @@ public class EPartServiceTest extends TestCase {
 		application.getDescriptors().add(partDescriptor);
 
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("categoryId");
+		stack.getTags().add("categoryId");
 		window.getChildren().add(stack);
 
 		initialize(applicationContext, application);
@@ -1138,7 +1138,7 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
 		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
-		partStackB.setId("aCategory");
+		partStackB.getTags().add("aCategory");
 		window.getChildren().add(partStackB);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
@@ -1178,7 +1178,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("stackId");
+		stack.getTags().add("stackId");
 		window.getChildren().add(stack);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
@@ -1317,7 +1317,7 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
 		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
-		partStackB.setId("aCategory");
+		partStackB.getTags().add("aCategory");
 		window.getChildren().add(partStackB);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
@@ -1357,7 +1357,7 @@ public class EPartServiceTest extends TestCase {
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("stackId");
+		stack.getTags().add("stackId");
 		window.getChildren().add(stack);
 
 		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
@@ -1826,7 +1826,7 @@ public class EPartServiceTest extends TestCase {
 		application.setSelectedElement(window);
 
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("categoryId");
+		stack.getTags().add("categoryId");
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
