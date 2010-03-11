@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -1875,6 +1876,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		modelLayout = new ModeledPageLayout(application, modelService, window, modelPerspective,
 				perspective, this);
 		factory.createInitialLayout(modelLayout);
+		tagPerspective(modelPerspective);
 
 		// add it to the stack
 		perspectives.getChildren().add(modelPerspective);
@@ -1883,6 +1885,81 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
 
 		// FIXME: we need to fire events
+	}
+
+	/**
+	 * Alters known 3.x perspective part folders into their e4 counterparts.
+	 */
+	private void tagPerspective(MPerspective perspective) {
+		String id = perspective.getId();
+		if (id == null) {
+			return;
+		}
+
+		// see bug 305557
+		if (id.equals("org.eclipse.jdt.ui.JavaPerspective")) { //$NON-NLS-1$
+			tagJavaPerspective(perspective);
+		} else if (id.equals("org.eclipse.team.cvs.ui.cvsPerspective")) { //$NON-NLS-1$
+			tagCVSPerspective(perspective);
+		} else if (id.equals("org.eclipse.team.ui.TeamSynchronizingPerspective")) { //$NON-NLS-1$
+			tagTeamPerspective(perspective);
+		} else if (id.equals("org.eclipse.debug.ui.DebugPerspective")) { //$NON-NLS-1$
+			tagDebugPerspective(perspective);
+		}
+	}
+
+	private void tagJavaPerspective(MPerspective perspective) {
+		MUIElement element = modelService.find("left", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("bottom", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("right", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+		}
+	}
+
+	private void tagCVSPerspective(MPerspective perspective) {
+		MUIElement element = modelService.find("top", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+	}
+
+	private void tagTeamPerspective(MPerspective perspective) {
+		MUIElement element = modelService.find("top", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("top2", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+		}
+	}
+
+	private void tagDebugPerspective(MPerspective perspective) {
+		MUIElement element = modelService.find(
+				"org.eclipse.debug.internal.ui.NavigatorFolderView", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("org.eclipse.debug.internal.ui.ConsoleFolderView", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("org.eclipse.debug.internal.ui.OutlineFolderView", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+		}
 	}
 
 	/**
