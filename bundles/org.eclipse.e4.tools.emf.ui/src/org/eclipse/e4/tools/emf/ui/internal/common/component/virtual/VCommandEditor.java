@@ -10,22 +10,27 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -43,6 +48,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
+	private TableViewer viewer;
 
 	public VCommandEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
@@ -75,7 +81,9 @@ public class VCommandEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent,context, getMaster());
 		}
-		getMaster().setValue(((VirtualEntry<?>)object).getOriginalParent());
+		VirtualEntry<?> o = (VirtualEntry<?>)object;
+		viewer.setInput(o.getList());
+		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
@@ -89,29 +97,32 @@ public class VCommandEditor extends AbstractComponentEditor {
 			l.setText("Commands");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-			TableViewer viewer = new TableViewer(parent);
+			viewer = new TableViewer(parent);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
 			viewer.getTable().setHeaderVisible(true);
 
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Name");
-			column.getColumn().setWidth(200);
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
+					
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Name");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
 			
-			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Id");
-			column.getColumn().setWidth(200);
-			
-			
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.APPLICATION__COMMANDS);
-			IValueProperty[] props = {
-				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID),
-				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND__COMMAND_NAME)
-			};
-			
-			ViewerSupport.bind(viewer, prop.observeDetail(getMaster()), props);
-			
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND__COMMAND_NAME);
+					
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Id");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
+						
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
 			GridLayout gl = new GridLayout();
@@ -152,8 +163,19 @@ public class VCommandEditor extends AbstractComponentEditor {
 			b.setText("Remove");
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						List<?> commands = ((IStructuredSelection)viewer.getSelection()).toList();
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, commands);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
 		}
-
 
 		return parent;
 	}

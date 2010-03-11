@@ -10,23 +10,28 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -44,6 +49,7 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
+	private TableViewer viewer;
 
 	public VKeyBindingEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
@@ -72,17 +78,18 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			composite = createForm(parent, context, getMaster());
 		}
-		getMaster().setValue(((VirtualEntry<?>)object).getOriginalParent());
+		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		viewer.setInput(o.getList());
+		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		{
@@ -90,41 +97,49 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 			l.setText("Keybindings");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-			TableViewer viewer = new TableViewer(parent);
+			viewer = new TableViewer(parent);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
+
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
 			viewer.getTable().setHeaderVisible(true);
 
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("KeySequence");
-			column.getColumn().setWidth(100);
-			
-			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Command");
-			column.getColumn().setWidth(200);
-			
-			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Id");
-			column.getColumn().setWidth(170);
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE);
 
-			
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
-			IValueProperty[] props = {
-				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE),
-				EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.KEY_BINDING__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME)),
-				EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)
-			};
-			
-			ViewerSupport.bind(viewer, prop.observeDetail(getMaster()), props);
-			
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("KeySequence");
+				column.getColumn().setWidth(100);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
+
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.KEY_BINDING__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME));
+
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Command");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
+
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
+
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Id");
+				column.getColumn().setWidth(170);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -146,8 +161,8 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					MKeyBinding handler = MApplicationFactory.eINSTANCE.createKeyBinding();
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, handler);
-					
-					if( cmd.canExecute() ) {
+
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						editor.setSelection(handler);
 					}
@@ -158,8 +173,19 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 			b.setText("Remove");
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						List<?> keybinding = ((IStructuredSelection)viewer.getSelection()).toList();
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, keybinding);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
 		}
-
 
 		return parent;
 	}
