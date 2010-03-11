@@ -74,6 +74,18 @@ table {
     padding-right : 45px;
 }
 
+#navigation-links a {
+  float:right;
+  margin-left:auto;
+  margin-left : 10px;
+}
+
+#action-links a {
+    float:left;
+    margin-left:20px;
+    margin-right : auto;
+}
+
 div div#rss-news {  
    position:static;
    margin-left:0px;
