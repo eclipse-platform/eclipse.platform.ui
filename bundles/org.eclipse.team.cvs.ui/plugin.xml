@@ -1321,11 +1321,13 @@
             description="%ShowAnnotationAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             name="%ShowAnnotationAction.name"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
             id="org.eclipse.team.cvs.ui.showAnnotation"/>
       <command
             description="%ShowHistoryAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             name="%ShowHistoryAction.name"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
             id="org.eclipse.team.cvs.ui.showHistory"/>
       <command
             description="%AddAction.tooltip"
