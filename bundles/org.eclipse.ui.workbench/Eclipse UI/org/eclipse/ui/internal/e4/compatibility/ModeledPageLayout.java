@@ -68,6 +68,7 @@ public class ModeledPageLayout implements IPageLayout {
 		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
 		// temporary HACK for bug 303982
 		editorStack.getTags().add("newtablook"); //$NON-NLS-1$
+		editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		editorStack.setId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		esc.getChildren().add(editorStack);
 		esc.setId(getEditorArea());

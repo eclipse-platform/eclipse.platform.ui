@@ -1905,6 +1905,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			tagTeamPerspective(perspective);
 		} else if (id.equals("org.eclipse.debug.ui.DebugPerspective")) { //$NON-NLS-1$
 			tagDebugPerspective(perspective);
+		} else if (id.equals("org.eclipse.ui.resourcePerspective")) { //$NON-NLS-1$
+			tagResourcePerspective(perspective);
+		} else if (id.equals("org.eclipse.pde.ui.PDEPerspective")) { //$NON-NLS-1$
+			tagPluginDevelopmentPerspective(perspective);
 		}
 	}
 
@@ -1959,6 +1963,35 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		element = modelService.find("org.eclipse.debug.internal.ui.OutlineFolderView", perspective); //$NON-NLS-1$
 		if (element != null) {
 			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+		}
+	}
+
+	private void tagResourcePerspective(MPerspective perspective) {
+		MUIElement element = modelService.find("topLeft", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("bottomRight", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("bottomLeft", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+		}
+	}
+
+	private void tagPluginDevelopmentPerspective(MPerspective perspective) {
+		MUIElement element = modelService.find("topLeft", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+		}
+
+		element = modelService.find("bottomRight", perspective); //$NON-NLS-1$
+		if (element != null) {
+			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 		}
 	}
 
