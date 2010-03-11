@@ -1575,9 +1575,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// actionPersistence);
 		// actionPersistence.read();
 
-		ContextInjectionFactory.inject(page, model.getContext());
-		page.setPerspective(perspective);
-
 		try {
 			selectionService = (ISelectionService) ContextInjectionFactory.make(
 					SelectionService.class, model.getContext());
@@ -1586,6 +1583,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		} catch (InstantiationException e) {
 			WorkbenchPlugin.log(e);
 		}
+
+		ContextInjectionFactory.inject(page, model.getContext());
+		page.setPerspective(perspective);
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
 		windowContext.set(IHandlerService.class.getName(), hs);
