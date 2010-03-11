@@ -47,7 +47,6 @@ public class XMIModelResource implements IModelResource {
 			
 			public void commandStackChanged(EventObject event) {
 				dirty = true;
-				System.err.println("Exec");
 				fireDirtyChanged();
 			}
 		});

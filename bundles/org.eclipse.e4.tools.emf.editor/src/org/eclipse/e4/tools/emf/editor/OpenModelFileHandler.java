@@ -35,7 +35,6 @@ public class OpenModelFileHandler {
 			String filePath = "file://" + file;
 			Collection<MInputPart> parts = partService.getInputParts(filePath);
 			if( parts.size() == 0 ) {
-				
 				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
 				
 				MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();

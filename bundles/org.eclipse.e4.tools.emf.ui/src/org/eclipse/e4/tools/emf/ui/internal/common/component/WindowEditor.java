@@ -190,6 +190,8 @@ public class WindowEditor extends AbstractComponentEditor {
 
 			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		}
 
 		ControlFactory.createTagsWidget(parent, this);

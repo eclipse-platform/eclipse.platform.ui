@@ -168,6 +168,7 @@ public class PartEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
 			TableViewer tableviewer = new TableViewer(parent);
+			tableviewer.getTable().setHeaderVisible(true);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			tableviewer.setContentProvider(cp);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);

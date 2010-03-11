@@ -12,6 +12,10 @@
     </children>
     <mainMenu xmi:id="__jCOsCuZEd-8CvvcO22KcQ" id="__jCOsCuZEd-8CvvcO22KcQ">
       <children xsi:type="application:MenuItem" xmi:id="__jC1wCuZEd-8CvvcO22KcQ" id="e4.modeleditor.menu.file" label="File">
+        <children xsi:type="application:MenuItem" xmi:id="_Y6zcYC1UEd-7-u-s9onsPg" id="_Y6zcYC1UEd-7-u-s9onsPg" label="New">
+          <children xsi:type="application:HandledMenuItem" xmi:id="_XhEM0C1VEd-7-u-s9onsPg" id="_XhEM0C1VEd-7-u-s9onsPg" label="Application Model" command="_yPmhcC1UEd-7-u-s9onsPg"/>
+          <children xsi:type="application:HandledMenuItem" xmi:id="_bFadUC1VEd-7-u-s9onsPg" id="_bFadUC1VEd-7-u-s9onsPg" label="Model Contribution" command="_HHdhIC1VEd-7-u-s9onsPg"/>
+        </children>
         <children xsi:type="application:HandledMenuItem" xmi:id="__jDc0CuZEd-8CvvcO22KcQ" id="__jDc0CuZEd-8CvvcO22KcQ" label="Open XMI ..." iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" command="__jFSACuZEd-8CvvcO22KcQ"/>
         <children xsi:type="application:HandledMenuItem" xmi:id="_0xNeUCuuEd-8CvvcO22KcQ" id="_0xNeUCuuEd-8CvvcO22KcQ" label="Save" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
       </children>
@@ -19,7 +23,12 @@
   </children>
   <handlers xmi:id="__jED4CuZEd-8CvvcO22KcQ" id="__jED4CuZEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="__jFSACuZEd-8CvvcO22KcQ"/>
   <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="_xOkeACuuEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
+  <handlers xmi:id="_wgmB8C1UEd-7-u-s9onsPg" id="_wgmB8C1UEd-7-u-s9onsPg" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_yPmhcC1UEd-7-u-s9onsPg"/>
+  <handlers xmi:id="_KustkC1VEd-7-u-s9onsPg" id="_KustkC1VEd-7-u-s9onsPg" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_HHdhIC1VEd-7-u-s9onsPg"/>
   <bindings xmi:id="__jEq8CuZEd-8CvvcO22KcQ" keySequence="M1+O" id="__jEq8CuZEd-8CvvcO22KcQ" command="__jFSACuZEd-8CvvcO22KcQ"/>
+  <bindings xmi:id="_kQp6UC1UEd-7-u-s9onsPg" keySequence="M1+S" id="_kQp6UC1UEd-7-u-s9onsPg" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
   <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
   <commands xmi:id="_sSBrgCuuEd-8CvvcO22KcQ" id="_sSBrgCuuEd-8CvvcO22KcQ" commandName="e4editor.savexmi"/>
+  <commands xmi:id="_yPmhcC1UEd-7-u-s9onsPg" id="_yPmhcC1UEd-7-u-s9onsPg" commandName="e4editor.newappmodel"/>
+  <commands xmi:id="_HHdhIC1VEd-7-u-s9onsPg" id="_HHdhIC1VEd-7-u-s9onsPg" commandName="e4editor.newcontribmodel"/>
 </application:Application>
