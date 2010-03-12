@@ -87,9 +87,11 @@ public class RequestScope {
 				WebappWorkingSetManager manager = new WebappWorkingSetManager(req,
 						resp, UrlUtil.getLocale(req, resp));
 				String wset = manager.getCurrentWorkingSet();
-				WorkingSetScope workingSetScope = new WorkingSetScope(
-						wset, manager, HelpBaseResources.SearchScopeFilterName);
-				scopes.add(workingSetScope);
+				if (wset != null && wset.length() > 0) {
+					WorkingSetScope workingSetScope = new WorkingSetScope(wset,
+							manager, HelpBaseResources.SearchScopeFilterName);
+					scopes.add(workingSetScope);
+				}
 			} catch (Exception e) {
 			}
 		}
