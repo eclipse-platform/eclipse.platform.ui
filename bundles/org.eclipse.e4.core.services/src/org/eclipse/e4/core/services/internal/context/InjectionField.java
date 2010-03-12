@@ -12,6 +12,7 @@ package org.eclipse.e4.core.services.internal.context;
 
 import java.lang.reflect.Field;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 /**
@@ -25,7 +26,8 @@ public class InjectionField extends InjectionAbstract {
 			boolean batchProcess) {
 		super(userObject, primarySupplier, batchProcess);
 		this.field = field;
-		InjectionProperties fieldProps = annotationSupport.getInjectProperties(field);
+		InjectionProperties fieldProps = annotationSupport.getInjectProperties(field,
+				primarySupplier);
 		optional = fieldProps.isOptional();
 	}
 
@@ -40,10 +42,14 @@ public class InjectionField extends InjectionAbstract {
 		boolean ignoreMissing = ignoreMissing(eventType, changed);
 		boolean injectWithNulls = injectNulls(eventType, changed);
 
-		InjectionProperties properties = annotationSupport.getInjectProperties(field);
+		InjectionProperties properties = annotationSupport.getInjectProperties(field,
+				primarySupplier);
+		IObjectDescriptor objectDescriptor = primarySupplier.makeDescriptor(properties
+				.getPropertyName(), field.getType());
 		Object value;
 		try {
-			value = getValue(properties, field.getType(), ignoreMissing, injectWithNulls);
+			value = getValue(objectDescriptor, properties, field.getType(), ignoreMissing,
+					injectWithNulls);
 		} catch (IllegalArgumentException e) {
 			String msg = "Could not set " + field.getName();
 			logError(msg, e);

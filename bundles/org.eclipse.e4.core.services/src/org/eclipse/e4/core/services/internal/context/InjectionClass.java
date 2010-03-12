@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 public class InjectionClass extends InjectionAbstract {
@@ -44,9 +45,9 @@ public class InjectionClass extends InjectionAbstract {
 			processPostConstruct(object, object.getClass(), new ArrayList(5));
 		}
 		IObjectProvider context = event.getContext();
-		context.get(new InjectionProperties(true, "e4_valid_context", true, null)); // pseudo-dependency
-																					// to create a
-																					// link
+		// pseudo-dependency to create a link
+		IObjectDescriptor desc = primarySupplier.makeDescriptor("e4_valid_context", null);
+		context.get(desc);
 		return true;
 	}
 

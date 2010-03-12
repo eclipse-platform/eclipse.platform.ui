@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.injector;
 
+import org.eclipse.e4.core.services.internal.context.InjectorImpl;
+
 /**
- * Description of an object to be created for IObjectProvider. NOTE: This is a preliminary form;
- * this API will change.
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public interface IObjectDescriptor {
+final public class InjectorFactory {
 
-	public String getPropertyName();
+	private static IInjector injector = new InjectorImpl();
 
-	public Class getElementClass();
+	private InjectorFactory() {
+		// prevents instantiation
+	}
 
-	public String getKey();
+	public static IInjector getInjector() {
+		return injector;
+	}
+
 }

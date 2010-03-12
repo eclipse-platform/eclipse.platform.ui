@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,48 +25,46 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.internal.services.ServicesActivator;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.injector.IInjector;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-// TBD rename InjectorImpl
 /**
- * Reflection-based context injector.
+ * Reflection-based dependency injector.
  */
-public class ContextInjector {
+public class InjectorImpl implements IInjector {
 
 	final static private String DEBUG_INJECTOR = "org.eclipse.e4.core.services/debug/injector"; //$NON-NLS-1$
 	final static private boolean shouldTrace = ServicesActivator.getDefault()
 			.getBooleanDebugOption(DEBUG_INJECTOR, false);
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
-	// TBD rename objectProvider
-	final protected IObjectProvider context;
-	final private AnnotationsSupport annotationSupport;
+	// plug-in class that gets replaced in Java 1.5+
+	final private static AnnotationsSupport annotationSupport = new AnnotationsSupport(); // XXX
+																							// remove;
 
-	public ContextInjector(IObjectProvider context) {
-		this.context = context;
-		// plug-in class that gets replaced in Java 1.5+
-		annotationSupport = new AnnotationsSupport(context); // XXX remove
+	public InjectorImpl() {
+		// placeholder
 	}
 
-	public boolean inject(Object userObject) {
+	public boolean inject(Object userObject, IObjectProvider objectProvider) {
 		boolean result = false;
 		try {
-			result = processClassHierarchy(userObject, false /* process static */);
+			result = processClassHierarchy(userObject, false /* process static */, objectProvider);
 		} catch (InvocationTargetException e) {
 			logExternalError("Exception occured while processing injecting", userObject, e);
 		}
-		context.runAndTrack(new InjectionClass(userObject, context), null);
+		objectProvider.runAndTrack(new InjectionClass(userObject, objectProvider), null);
 		return result;
 	}
 
 	// TBD use null object to inject statics
-	public boolean injectStatic(Class clazz) {
+	public boolean injectStatic(Class clazz, IObjectProvider objectProvider) {
 		try {
-			Object object = make(clazz);
-			return processClassHierarchy(object, true /* process static */);
+			Object object = make(clazz, objectProvider);
+			return processClassHierarchy(object, true /* process static */, objectProvider);
 		} catch (InvocationTargetException e) {
 			// try-catch won't be necessary once we stop creating an object
 			e.printStackTrace();
@@ -83,28 +81,29 @@ public class ContextInjector {
 	 * @throws InvocationTargetException
 	 */
 	private boolean processClass(Object userObject, Class objectsClass, ArrayList classHierarchy,
-			boolean processStatic) throws InvocationTargetException {
+			boolean processStatic, IObjectProvider objectProvider) throws InvocationTargetException {
 		// order: superclass, fields, methods
 		if (objectsClass != null) {
 			Class superClass = objectsClass.getSuperclass();
 			if (!superClass.getName().equals(JAVA_OBJECT)) {
 				classHierarchy.add(objectsClass);
-				if (!processClass(userObject, superClass, classHierarchy, processStatic))
+				if (!processClass(userObject, superClass, classHierarchy, processStatic,
+						objectProvider))
 					return false;
 				classHierarchy.remove(objectsClass);
 			}
 		}
-		if (!processFields(userObject, objectsClass, processStatic))
+		if (!processFields(userObject, objectsClass, processStatic, objectProvider))
 			return false;
-		if (!processMethods(userObject, objectsClass, classHierarchy, processStatic))
+		if (!processMethods(userObject, objectsClass, classHierarchy, processStatic, objectProvider))
 			return false;
 		return true;
 	}
 
-	private boolean processClassHierarchy(Object userObject, boolean processStatic)
-			throws InvocationTargetException {
+	private boolean processClassHierarchy(Object userObject, boolean processStatic,
+			IObjectProvider objectProvider) throws InvocationTargetException {
 		if (!processClass(userObject, (userObject == null) ? null : userObject.getClass(),
-				new ArrayList(5), processStatic))
+				new ArrayList(5), processStatic, objectProvider))
 			return false;
 		return true;
 	}
@@ -112,20 +111,22 @@ public class ContextInjector {
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private boolean processFields(Object userObject, Class objectsClass, boolean processStatic) {
+	private boolean processFields(Object userObject, Class objectsClass, boolean processStatic,
+			IObjectProvider objectProvider) {
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			if (Modifier.isStatic(field.getModifiers()) != processStatic)
 				continue;
-			InjectionProperties properties = annotationSupport.getInjectProperties(field);
+			InjectionProperties properties = annotationSupport.getInjectProperties(field,
+					objectProvider);
 			if (field.getName().startsWith(IContextConstants.INJECTION_PREFIX))
 				properties.setInject(true);
 
 			if (!properties.shouldInject())
 				continue;
-			context.runAndTrack(new InjectionField(userObject, context, field, properties
-					.groupUpdates()), null);
+			objectProvider.runAndTrack(new InjectionField(userObject, objectProvider, field,
+					properties.groupUpdates()), null);
 		}
 		return true;
 	}
@@ -136,7 +137,8 @@ public class ContextInjector {
 	 * @throws InvocationTargetException
 	 */
 	private boolean processMethods(final Object userObject, Class objectsClass,
-			ArrayList classHierarchy, boolean processStatic) throws InvocationTargetException {
+			ArrayList classHierarchy, boolean processStatic, IObjectProvider objectProvider)
+			throws InvocationTargetException {
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			final Method method = methods[i];
@@ -144,13 +146,15 @@ public class ContextInjector {
 				continue; // process in the subclass
 			if (Modifier.isStatic(method.getModifiers()) != processStatic)
 				continue;
-			InjectionProperties properties = annotationSupport.getInjectProperties(method);
+			InjectionProperties properties = annotationSupport.getInjectProperties(method,
+					objectProvider);
 			if (method.getName().startsWith(IContextConstants.INJECTION_PREFIX))
 				properties.setInject(true);
 
 			if (properties.getHandlesEvent() != null) {
-				IEventBroker eventBroker = (IEventBroker) context.get(new InjectionProperties(true,
-						null, false, IEventBroker.class));
+				// XXX this is wrong, but it will be removed anyway
+				IEventBroker eventBroker = (IEventBroker) objectProvider
+						.get(new ContextObjectDescriptor(null, IEventBroker.class));
 				eventBroker.subscribe(properties.getHandlesEvent(), null, new EventHandler() {
 					public void handleEvent(Event event) {
 						Object data = event.getProperty(IEventBroker.DATA);
@@ -175,8 +179,8 @@ public class ContextInjector {
 			if (!properties.shouldInject())
 				continue;
 
-			context.runAndTrack(new InjectionMethod(userObject, context, method, properties
-					.groupUpdates()), null);
+			objectProvider.runAndTrack(new InjectionMethod(userObject, objectProvider, method,
+					properties.groupUpdates()), null);
 		}
 		return true;
 	}
@@ -222,15 +226,16 @@ public class ContextInjector {
 		return false;
 	}
 
-	public Object invoke(Object userObject, String methodName) throws InvocationTargetException,
-			CoreException {
+	public Object invoke(Object userObject, String methodName, IObjectProvider objectProvider)
+			throws InvocationTargetException, CoreException {
 		Method[] methods = userObject.getClass().getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
 			if (!method.getName().equals(methodName))
 				continue;
 
-			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method, false);
+			InjectionMethod injectMethod = new InjectionMethod(userObject, objectProvider, method,
+					false);
 			try {
 				return injectMethod.invoke(false, false);
 			} catch (InjectionException e) {
@@ -244,20 +249,22 @@ public class ContextInjector {
 		throw new CoreException(status);
 	}
 
-	public Object invoke(Object userObject, String methodName, Object defaultValue)
-			throws InvocationTargetException {
-		return invokeUsingClass(userObject, userObject.getClass(), methodName, defaultValue);
+	public Object invoke(Object userObject, String methodName, Object defaultValue,
+			IObjectProvider objectProvider) throws InvocationTargetException {
+		return invokeUsingClass(userObject, userObject.getClass(), methodName, defaultValue,
+				objectProvider);
 	}
 
 	public Object invokeUsingClass(Object userObject, Class currentClass, String methodName,
-			Object defaultValue) throws InvocationTargetException {
+			Object defaultValue, IObjectProvider objectProvider) throws InvocationTargetException {
 		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
 			if (!method.getName().equals(methodName))
 				continue;
 
-			InjectionMethod injectMethod = new InjectionMethod(userObject, context, method, false);
+			InjectionMethod injectMethod = new InjectionMethod(userObject, objectProvider, method,
+					false);
 			try {
 				return injectMethod.invoke(false, false);
 			} catch (InjectionException e) {
@@ -268,10 +275,11 @@ public class ContextInjector {
 		if (superClass == null) {
 			return defaultValue;
 		}
-		return invokeUsingClass(userObject, superClass, methodName, defaultValue);
+		return invokeUsingClass(userObject, superClass, methodName, defaultValue, objectProvider);
 	}
 
-	public Object make(Class clazz) throws InvocationTargetException, InstantiationException {
+	public Object make(Class clazz, IObjectProvider objectProvider)
+			throws InvocationTargetException, InstantiationException {
 		Constructor[] constructors = clazz.getDeclaredConstructors();
 
 		// Sort the constructors by descending number of constructor arguments
@@ -295,15 +303,18 @@ public class ContextInjector {
 				continue;
 
 			// unless this is the default constructor, it has to be tagged
-			InjectionProperties cProps = annotationSupport.getInjectProperties(constructor);
+			InjectionProperties cProps = annotationSupport.getInjectProperties(constructor,
+					objectProvider);
 			if (!cProps.shouldInject() && constructor.getParameterTypes().length != 0)
 				continue;
 
-			InjectionConstructor injectedConstructor = new InjectionConstructor(null, context,
-					constructor);
+			InjectionConstructor injectedConstructor = new InjectionConstructor(null,
+					objectProvider, constructor);
 			Object newInstance = injectedConstructor.make();
-			if (newInstance != null)
+			if (newInstance != null) {
+				inject(newInstance, objectProvider);
 				return newInstance;
+			}
 		}
 
 		if (shouldTrace)

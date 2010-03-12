@@ -13,6 +13,7 @@ package org.eclipse.e4.core.services.internal.context;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 /**
@@ -26,7 +27,8 @@ public class InjectionMethod extends InjectionAbstract {
 			boolean batchProcess) {
 		super(userObject, primarySupplier, batchProcess);
 		this.method = method;
-		InjectionProperties methodProps = annotationSupport.getInjectProperties(method);
+		InjectionProperties methodProps = annotationSupport.getInjectProperties(method,
+				primarySupplier);
 		optional = methodProps.isOptional();
 	}
 
@@ -67,12 +69,15 @@ public class InjectionMethod extends InjectionAbstract {
 
 	private Object[] processParams(boolean ignoreMissing, boolean injectWithNulls) {
 		Class[] parameterTypes = method.getParameterTypes();
-		InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
+		InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method,
+				primarySupplier);
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
 			try {
-				Object actualValue = getValue(properties[i], parameterTypes[i], ignoreMissing,
-						injectWithNulls);
+				IObjectDescriptor objectDescriptor = primarySupplier.makeDescriptor(properties[i]
+						.getPropertyName(), parameterTypes[i]);
+				Object actualValue = getValue(objectDescriptor, properties[i], parameterTypes[i],
+						ignoreMissing, injectWithNulls);
 				if (actualValue == NOT_A_VALUE)
 					return null;
 				actualParams[i] = actualValue;

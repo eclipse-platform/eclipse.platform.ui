@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
+import org.eclipse.e4.core.services.injector.IInjector;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.InjectorFactory;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 
@@ -73,6 +76,8 @@ import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
  */
 final public class ContextInjectionFactory {
 
+	final private static IInjector injector = InjectorFactory.getInjector();
+
 	private ContextInjectionFactory() {
 		// prevents instantiations
 	}
@@ -88,10 +93,8 @@ final public class ContextInjectionFactory {
 	 * @return Returns the injected object
 	 */
 	static public Object inject(Object object, IEclipseContext context) {
-		// TBD IEclipseContext might have a delayed runAndTrack. In this case
-		// the object might be returned before the actual injection took place.
-		ObjectProviderContext provider = ObjectProviderContext.getObjectProvider(context);
-		provider.init(object);
+		IObjectProvider provider = ObjectProviderContext.getObjectProvider(context);
+		injector.inject(object, provider);
 		return object;
 	}
 
@@ -112,8 +115,8 @@ final public class ContextInjectionFactory {
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context)
 			throws InvocationTargetException, CoreException {
-		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
-		return objectProvider.getInjector().invoke(object, methodName);
+		IObjectProvider provider = ObjectProviderContext.getObjectProvider(context);
+		return injector.invoke(object, methodName, provider);
 	}
 
 	/**
@@ -133,8 +136,8 @@ final public class ContextInjectionFactory {
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context,
 			Object defaultValue) throws InvocationTargetException {
-		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
-		return objectProvider.getInjector().invoke(object, methodName, defaultValue);
+		IObjectProvider provider = ObjectProviderContext.getObjectProvider(context);
+		return injector.invoke(object, methodName, defaultValue, provider);
 	}
 
 	/**
@@ -166,10 +169,7 @@ final public class ContextInjectionFactory {
 	 */
 	static public Object make(Class clazz, final IEclipseContext context)
 			throws InvocationTargetException, InstantiationException {
-		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
-		Object result = objectProvider.getInjector().make(clazz);
-		if (result != null)
-			inject(result, context);
-		return result;
+		IObjectProvider provider = ObjectProviderContext.getObjectProvider(context);
+		return injector.make(clazz, provider);
 	}
 }

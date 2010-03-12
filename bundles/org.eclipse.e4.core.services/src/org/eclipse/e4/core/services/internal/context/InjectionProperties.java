@@ -10,38 +10,27 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.injector.IObjectDescriptor;
-
-// TBD separate InjectionProperties into 2 classes: what we need for the key
-// and the extra info for injection.
-public class InjectionProperties implements IObjectDescriptor {
+public class InjectionProperties {
 
 	private boolean inject;
 	private boolean optional;
 
 	private String propertyToInject;
-	private Object provider; // <= shouldn't this be IObjectProvider?
+	private Object provider; // <= shouldn't this be Provider<T>?
 	private Class qualifier;
-	private Class elementClass;
 	private String handlesEvent;
 	private boolean eventHeadless;
 	private boolean groupUpdates = false;
 
-	public InjectionProperties(boolean inject, String propertyToInject, boolean optional,
-			Class elementClass) {
+	public InjectionProperties(boolean inject, String propertyToInject, boolean optional) {
 		super();
 		this.inject = inject;
 		this.propertyToInject = propertyToInject;
 		this.optional = optional;
-		this.elementClass = elementClass;
 	}
 
 	public String getPropertyName() {
 		return propertyToInject;
-	}
-
-	public void setPropertyName(String propertyToInject) {
-		this.propertyToInject = propertyToInject;
 	}
 
 	public boolean isOptional() {
@@ -62,14 +51,6 @@ public class InjectionProperties implements IObjectDescriptor {
 
 	public Object getProvider() {
 		return provider;
-	}
-
-	public void setElementClass(Class elementClass) {
-		this.elementClass = elementClass;
-	}
-
-	public Class getElementClass() {
-		return elementClass;
 	}
 
 	public void setQualifier(Class qualifier) {
@@ -103,4 +84,5 @@ public class InjectionProperties implements IObjectDescriptor {
 	public boolean groupUpdates() {
 		return groupUpdates;
 	}
+
 }

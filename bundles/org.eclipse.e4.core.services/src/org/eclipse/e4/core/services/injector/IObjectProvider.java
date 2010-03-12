@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,9 @@ public interface IObjectProvider {
 
 	public Object get(IObjectDescriptor key);
 
-	public void setInjector(Injector injector);
+	// TBD arguments: do they make sense? May be just pass an Object?
+	public IObjectDescriptor makeDescriptor(String description, Class clazz);
 
-	public Injector getInjector();
-
-	public String getKey(IObjectDescriptor key);
-
+	// TBD replace this with events specific to injection, not context
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 }

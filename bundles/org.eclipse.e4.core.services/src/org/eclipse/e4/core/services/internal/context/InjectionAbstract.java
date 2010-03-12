@@ -12,6 +12,7 @@ package org.eclipse.e4.core.services.internal.context;
 
 import java.lang.ref.WeakReference;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 
@@ -32,7 +33,7 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 			boolean batchProcess) {
 		userObjectRef = new WeakReference(userObject);
 		// plug-in class that gets replaced in Java 1.5+
-		annotationSupport = new AnnotationsSupport(primarySupplier);
+		annotationSupport = new AnnotationsSupport(); // TBD this should be a static util class
 		this.primarySupplier = primarySupplier;
 		this.batchProcess = batchProcess;
 	}
@@ -59,18 +60,18 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 		return (changed.equals(primarySupplier));
 	}
 
-	protected Object getValue(InjectionProperties properties, Class parameterType,
-			boolean ignoreMissing, boolean injectWithNulls) {
+	protected Object getValue(IObjectDescriptor objectDescriptor, InjectionProperties properties,
+			Class parameterType, boolean ignoreMissing, boolean injectWithNulls) {
 		// 1) if we have a provider, use it
 		Object provider = properties.getProvider();
 		if (provider != null)
 			return provider;
 
 		// 2) if we have the key in the context
-		if (primarySupplier.containsKey(properties)) {
+		if (primarySupplier.containsKey(objectDescriptor)) {
 			if (injectWithNulls)
 				return null;
-			Object value = primarySupplier.get(properties);
+			Object value = primarySupplier.get(objectDescriptor);
 			if (value == null)
 				return value;
 			if (parameterType.isAssignableFrom(value.getClass()))
@@ -82,7 +83,7 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 			return null;
 
 		if (!optional) {
-			String msg = "Unable to find value for \"" + primarySupplier.getKey(properties) + "\"";
+			String msg = "Unable to find value for \"" + objectDescriptor.getKey() + "\"";
 			throw new IllegalArgumentException(msg);
 		}
 		return NOT_A_VALUE;

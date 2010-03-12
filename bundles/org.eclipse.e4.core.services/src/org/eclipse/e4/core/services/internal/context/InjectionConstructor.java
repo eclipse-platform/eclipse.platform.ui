@@ -13,6 +13,7 @@ package org.eclipse.e4.core.services.internal.context;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 /**
@@ -53,11 +54,15 @@ public class InjectionConstructor extends InjectionAbstract {
 
 	private Object[] processParams() {
 		Class[] parameterTypes = constructor.getParameterTypes();
-		InjectionProperties[] properties = annotationSupport.getInjectParamsProperties(constructor);
+		InjectionProperties[] properties = annotationSupport.getInjectParamsProperties(constructor,
+				primarySupplier);
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
 			try {
-				actualParams[i] = getValue(properties[i], parameterTypes[i], false, false);
+				IObjectDescriptor objectDescriptor = primarySupplier.makeDescriptor(properties[i]
+						.getPropertyName(), parameterTypes[i]);
+				actualParams[i] = getValue(objectDescriptor, properties[i], parameterTypes[i],
+						false, false);
 			} catch (IllegalArgumentException e) {
 				String msg = "Unable to find matching arguments for " + constructor.getName();
 				logError(msg, e);
