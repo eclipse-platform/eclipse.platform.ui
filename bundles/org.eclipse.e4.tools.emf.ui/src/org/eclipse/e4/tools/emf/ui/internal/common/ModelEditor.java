@@ -24,11 +24,15 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
@@ -46,6 +50,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEdi
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VKeyBindingEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
@@ -186,7 +191,7 @@ public class ModelEditor {
 
 	private void registerVirtualEditors() {
 		virtualEditors = new AbstractComponentEditor[] {
-				null, // V-Menu
+				new VMenuEditor(modelProvider.getEditingDomain(),this), // V-Menu
 				null, // V-Part
 				new VHandlerEditor(modelProvider.getEditingDomain(),this),
 				new VKeyBindingEditor(modelProvider.getEditingDomain(), this),
@@ -222,6 +227,10 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.PERSPECTIVE, new PerspectiveEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.PLACEHOLDER, new PlaceholderEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), this));
+		registerEditor( MApplicationPackage.Literals.MENU_ITEM, new MenuItemEditor(modelProvider.getEditingDomain(), this));
+		registerEditor( MApplicationPackage.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this));
+		registerEditor( MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

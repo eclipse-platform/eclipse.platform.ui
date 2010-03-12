@@ -20,7 +20,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -31,7 +31,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,13 +42,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VWindowEditor extends AbstractComponentEditor {
+public class VMenuEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
 	private TableViewer viewer;
 
-	public VWindowEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public VMenuEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
 	}
@@ -61,7 +60,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Windows";
+		return "Menus";
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Windows Bla Bla Bla Bla Bla";
+		return "Menus Bla Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -89,64 +88,21 @@ public class VWindowEditor extends AbstractComponentEditor {
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
-
+		
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Windows");
+		l.setText("Menus");
 		l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		viewer = new TableViewer(parent);
 		ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
-
+		
+		IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
+		viewer.setLabelProvider(new ObservableColumnLabelProvider<MMenu>(valProp.observeDetail(cp.getKnownElements())));
+		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
-		viewer.getTable().setHeaderVisible(true);
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Name");
-			column.getColumn().setWidth(180);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.WINDOW__X);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("X");
-			column.getColumn().setWidth(80);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.WINDOW__Y);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Y");
-			column.getColumn().setWidth(80);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.WINDOW__WIDTH);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Width");
-			column.getColumn().setWidth(100);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.WINDOW__HEIGHT);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Height");
-			column.getColumn().setWidth(100);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -174,8 +130,8 @@ public class VWindowEditor extends AbstractComponentEditor {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MWindow handler = MApplicationFactory.eINSTANCE.createWindow();
-				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
+				MMenu handler = MApplicationFactory.eINSTANCE.createMenu();
+				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART__MENUS, handler);
 
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
@@ -193,21 +149,20 @@ public class VWindowEditor extends AbstractComponentEditor {
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
 					List<?> windows = ((IStructuredSelection) viewer.getSelection()).toList();
-					Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, windows);
+					Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART__MENUS, windows);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 					}
 				}
 			}
 		});
-
+		
 		return parent;
 	}
-
+	
 	@Override
 	public IObservableList getChildList(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
