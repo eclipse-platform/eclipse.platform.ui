@@ -198,11 +198,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		applyAll(deltas);
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(1, ((MPerspectiveStack) window.getChildren().get(0))
-				.getChildren().size());
 
-		perspective = ((MPerspectiveStack) window.getChildren().get(0))
-				.getChildren().get(0);
+		stack = (MPerspectiveStack) window.getChildren().get(0);
+		assertEquals(1, stack.getChildren().size());
+
+		perspective = stack.getChildren().get(0);
 		assertEquals("newEditor", perspective.getLabel());
 	}
 
