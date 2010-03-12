@@ -52,8 +52,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  *
@@ -333,6 +335,11 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 		appContext.set(IEclipseContext.class.getName(), appContext);
+		appContext.set(IShellProvider.class.getName(), new IShellProvider() {
+			public Shell getShell() {
+				return null;
+			}
+		});
 
 		return appContext;
 	}
