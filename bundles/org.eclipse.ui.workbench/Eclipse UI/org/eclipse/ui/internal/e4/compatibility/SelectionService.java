@@ -249,7 +249,6 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 		ESelectionService selectionService = (ESelectionService) part.getContext().get(
 				ESelectionService.class.getName());
 		selectionService.setSelection(e.getSelection());
-		page.processEventLoop();
 	}
 
 }
