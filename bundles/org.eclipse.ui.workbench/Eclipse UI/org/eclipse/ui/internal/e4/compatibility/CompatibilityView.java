@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -59,11 +58,6 @@ public class CompatibilityView extends CompatibilityPart {
 	@Override
 	public WorkbenchPartReference getReference() {
 		return reference;
-	}
-
-	@Override
-	protected IStatusLineManager getStatusLineManager() {
-		return getView().getViewSite().getActionBars().getStatusLineManager();
 	}
 
 	/*

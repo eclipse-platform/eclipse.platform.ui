@@ -17,13 +17,12 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.swt.SWT;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -35,6 +34,8 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.util.Util;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public abstract class CompatibilityPart {
 
@@ -52,17 +53,19 @@ public abstract class CompatibilityPart {
 
 	MPart part;
 
-	CompatibilityPart(MPart part) {
-		this.part = part;
-	}
+	@Inject
+	private IEventBroker eventBroker;
 
-	public abstract WorkbenchPartReference getReference();
-
-	protected abstract IStatusLineManager getStatusLineManager();
-
-	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
-		parent.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
+	/**
+	 * This handler will be notified when the contribution object has been unset
+	 * from the part.
+	 */
+	private EventHandler objectUnsetHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			// check that we're looking at our own part and that the object is
+			// being unset
+			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
+					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
@@ -78,8 +81,16 @@ public abstract class CompatibilityPart {
 					site.dispose();
 				}
 			}
-		});
+		}
+	};
 
+	CompatibilityPart(MPart part) {
+		this.part = part;
+	}
+
+	public abstract WorkbenchPartReference getReference();
+
+	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		try {
 			legacyPart.createPartControl(parent);
 		} catch (RuntimeException e) {
@@ -106,6 +117,9 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() throws PartInitException {
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
+				UIEvents.Contribution.OBJECT), objectUnsetHandler);
+
 		WorkbenchPartReference reference = getReference();
 		// ask our reference to instantiate the part through the registry
 		wrapped = reference.createPart();
@@ -134,6 +148,11 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
+	}
+
+	@PreDestroy
+	void destroy() {
+		eventBroker.unsubscribe(objectUnsetHandler);
 	}
 
 	void doSave(@Optional IProgressMonitor monitor) {
