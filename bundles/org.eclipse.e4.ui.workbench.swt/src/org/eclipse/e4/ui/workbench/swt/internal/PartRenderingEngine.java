@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.StatusReporter;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
@@ -558,9 +559,24 @@ public class PartRenderingEngine implements IPresentationEngine {
 					} catch (ThreadDeath th) {
 						throw th;
 					} catch (Exception ex) {
-						ex.printStackTrace();
+						handle(ex, appContext);
 					} catch (Error err) {
-						err.printStackTrace();
+						handle(err, appContext);
+					}
+				}
+			}
+
+			private void handle(Throwable ex, final IEclipseContext appContext) {
+				StatusReporter statusReporter = (StatusReporter) appContext
+						.get(StatusReporter.class.getName());
+				if (statusReporter != null) {
+					statusReporter.show(StatusReporter.ERROR, "Internal Error",
+							ex);
+				} else {
+					Logger logger = (Logger) appContext.get(Logger.class
+							.getName());
+					if (logger != null) {
+						logger.error(ex);
 					}
 				}
 			}
