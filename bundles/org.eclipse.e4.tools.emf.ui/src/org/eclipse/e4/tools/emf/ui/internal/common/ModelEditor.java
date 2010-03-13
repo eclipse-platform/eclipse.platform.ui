@@ -10,14 +10,23 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -54,6 +63,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
@@ -84,6 +95,7 @@ public class ModelEditor {
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
+	private List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
 
 //	private List<AbstractComponentEditor> editors = new ArrayList<AbstractComponentEditor>();
 
@@ -178,11 +190,41 @@ public class ModelEditor {
 		parent.setLayout(l);
 		ShadowComposite editingArea = new ShadowComposite(parent,SWT.NONE);
 		editingArea.setLayout(new FillLayout());
-		TreeViewer viewer = new TreeViewer(editingArea,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
+		final TreeViewer viewer = new TreeViewer(editingArea,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		viewer.setLabelProvider(new ComponentLabelProvider(this));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
 		viewer.setContentProvider(contentProvider);
+		
+		final WritableSet clearedSet = new WritableSet();
+		
+		contentProvider.getKnownElements().addSetChangeListener(new ISetChangeListener() {
+			
+			public void handleSetChange(SetChangeEvent event) {
+				for( Object o : event.diff.getAdditions() ) {
+					if( o instanceof EObject ) {
+						clearedSet.add(o);	
+					}
+				}
+				
+				for( Object o : event.diff.getRemovals() ) {
+					if( o instanceof EObject ) {
+						clearedSet.remove(o);	
+					}
+				}
+			}
+		});
+		
+		for( FeaturePath p : labelFeaturePaths ) {
+			IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
+			map.addMapChangeListener(new IMapChangeListener() {
+				
+				public void handleMapChange(MapChangeEvent event) {
+					viewer.update(event.diff.getChangedKeys().toArray(), null);
+				}
+			});
+		}
+		
 		viewer.setInput(modelProvider.getRoot());
 		viewer.expandAll();
 
@@ -235,6 +277,34 @@ public class ModelEditor {
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
 		editorMap.put(eClass, editor);
+		
+		for( FeaturePath p : editor.getLabelProperties() ) {
+			boolean found = false;
+			for( FeaturePath tmp : labelFeaturePaths ) {
+				if( equalsPaths(p, tmp) ) {
+					found = true;
+					break;
+				}
+			}
+			
+			if( ! found ) {
+				labelFeaturePaths.add(p);
+			}
+		}
+	}
+	
+	private boolean equalsPaths(FeaturePath p1, FeaturePath p2) {
+		if( p1.getFeaturePath().length == p2.getFeaturePath().length ) {
+			for( int i = 0; i < p1.getFeaturePath().length; i++ ) {
+				if( ! p1.getFeaturePath()[i].equals(p2.getFeaturePath()[i]) ) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		return false;
 	}
 
 	public AbstractComponentEditor getEditor(EClass eClass) {

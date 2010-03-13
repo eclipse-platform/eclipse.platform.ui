@@ -18,7 +18,10 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -95,5 +98,9 @@ public abstract class AbstractComponentEditor {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {};
 	}
 }

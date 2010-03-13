@@ -42,10 +42,9 @@ public class HandlerEditor extends AbstractComponentEditor {
 		super(editingDomain);
 	}
 
-
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Handler.gif"));
 			} catch (MalformedURLException e) {
@@ -68,16 +67,16 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context);
+			composite = createForm(parent, context);
 		}
 		getMaster().setValue(object);
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context) {
-		parent = new Composite(parent,SWT.NONE);
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
@@ -89,9 +88,9 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
@@ -102,9 +101,9 @@ public class HandlerEditor extends AbstractComponentEditor {
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEnabled(false);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
@@ -117,9 +116,9 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find ...");
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
@@ -139,11 +138,15 @@ public class HandlerEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MHandler handler = (MHandler) element;
-		if( handler.getCommand() != null && handler.getCommand().getCommandName() != null && handler.getCommand().getCommandName().trim().length() > 0 ) {
+		if (handler.getCommand() != null && handler.getCommand().getCommandName() != null && handler.getCommand().getCommandName().trim().length() > 0) {
 			return handler.getCommand().getCommandName();
 		}
 
 		return null;
 	}
 
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] { FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.COMMAND__COMMAND_NAME) };
+	}
 }

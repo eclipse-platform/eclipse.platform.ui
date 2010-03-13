@@ -21,6 +21,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MDirectMenuItem;
@@ -174,6 +175,24 @@ public class MenuEditor extends AbstractComponentEditor {
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Add Separator ...");
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MMenuItem handler = MApplicationFactory.eINSTANCE.createMenuItem();
+					handler.setType(ItemType.SEPARATOR);
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
+
+					if (cmd.canExecute()) {
+						getEditingDomain().getCommandStack().execute(cmd);
+						editor.setSelection(handler);
+					}
+				}
+			});
+			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Add MenuItem ...");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));

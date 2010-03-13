@@ -19,6 +19,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -207,6 +208,13 @@ public class CommandEditor extends AbstractComponentEditor {
 		}
 
 		return null;
+	}
+	
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.COMMAND__COMMAND_NAME)	
+		};
 	}
 
 }

@@ -68,7 +68,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/KeyBinding.gif"));
 			} catch (MalformedURLException e) {
@@ -92,16 +92,16 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context);
+			composite = createForm(parent, context);
 		}
 		getMaster().setValue(object);
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context) {
-		parent = new Composite(parent,SWT.NONE);
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
@@ -113,9 +113,9 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
@@ -125,9 +125,9 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
@@ -138,9 +138,9 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEnabled(false);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.KEY_BINDING__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.KEY_BINDING__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
@@ -165,12 +165,12 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				((MParameter)element).setTag((String) value);
+				((MParameter) element).setTag((String) value);
 			}
 
 			@Override
 			protected Object getValue(Object element) {
-				String val = ((MParameter)element).getTag();
+				String val = ((MParameter) element).getTag();
 				return val == null ? "" : val;
 			}
 
@@ -193,12 +193,12 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				((MParameter)element).setValue((String) value);
+				((MParameter) element).setValue((String) value);
 			}
 
 			@Override
 			protected Object getValue(Object element) {
-				String val = ((MParameter)element).getValue();
+				String val = ((MParameter) element).getValue();
 				return val == null ? "" : val;
 			}
 
@@ -216,28 +216,23 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(tableviewer) {
 			@Override
 			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-				boolean singleSelect = ((IStructuredSelection)tableviewer.getSelection()).size() == 1;
-				boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
+				boolean singleSelect = ((IStructuredSelection) tableviewer.getSelection()).size() == 1;
+				boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent) event.sourceEvent).button == 1;
 
-				return singleSelect && (isLeftDoubleMouseSelect
-						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-						|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+				return singleSelect && (isLeftDoubleMouseSelect || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
 			}
 		};
 		TableViewerEditor.create(tableviewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
-		ViewerSupport.bind(tableviewer, prop.observeDetail(getMaster()), new IValueProperty[] {
-			EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG),
-			EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE)
-		});
+		ViewerSupport.bind(tableviewer, prop.observeDetail(getMaster()), new IValueProperty[] { EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE) });
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 		GridLayout gl = new GridLayout();
-		gl.marginLeft=0;
-		gl.marginRight=0;
-		gl.marginWidth=0;
-		gl.marginHeight=0;
+		gl.marginLeft = 0;
+		gl.marginRight = 0;
+		gl.marginWidth = 0;
+		gl.marginHeight = 0;
 		buttonComp.setLayout(gl);
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -260,7 +255,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 				MKeyBinding item = (MKeyBinding) getMaster().getValue();
 				MParameter param = MApplicationFactory.eINSTANCE.createParameter();
 				Command cmd = AddCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.KEY_BINDING__PARAMETERS, param);
-				if( cmd.canExecute() ) {
+				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
 				}
 				tableviewer.editElement(param, 0);
@@ -273,10 +268,10 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
-				if( !s.isEmpty() ) {
+				if (!s.isEmpty()) {
 					MKeyBinding item = (MKeyBinding) getMaster().getValue();
 					Command cmd = RemoveCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.KEY_BINDING__PARAMETERS, s.toList());
-					if( cmd.canExecute() ) {
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 					}
 				}
@@ -300,10 +295,14 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MKeySequence seq = (MKeySequence) element;
-		if( seq.getKeySequence() != null && seq.getKeySequence().trim().length() > 0 ) {
+		if (seq.getKeySequence() != null && seq.getKeySequence().trim().length() > 0) {
 			return seq.getKeySequence();
 		}
 		return null;
 	}
 
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] { FeaturePath.fromList(MApplicationPackage.Literals.KEY_SEQUENCE__KEY_SEQUENCE) };
+	}
 }
