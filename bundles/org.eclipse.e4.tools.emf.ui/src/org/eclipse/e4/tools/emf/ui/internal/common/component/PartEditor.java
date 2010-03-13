@@ -145,6 +145,7 @@ public class PartEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find ...");			
 		}
 
@@ -158,6 +159,7 @@ public class PartEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
 
 			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find ...");			
 		}
 		

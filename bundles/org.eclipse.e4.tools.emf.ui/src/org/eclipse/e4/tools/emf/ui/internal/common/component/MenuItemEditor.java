@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -121,6 +122,45 @@ public class MenuItemEditor  extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
 		}
 		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Label");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));			
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Tooltip");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));			
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Icon URI");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setText("Find ...");			
+		}
+
+		
 		createFormSubTypeForm(parent, context, master);
 		
 		return parent;
@@ -147,7 +187,7 @@ public class MenuItemEditor  extends AbstractComponentEditor {
 			{
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Type");
-				column.getColumn().setWidth(100);
+				column.getColumn().setWidth(300);
 				column.setLabelProvider(new ComponentLabelProvider(editor));
 			}
 			
@@ -160,14 +200,6 @@ public class MenuItemEditor  extends AbstractComponentEditor {
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
 			
-			{
-				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText("Label");
-				column.getColumn().setWidth(100);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
-			}
 			
 			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(master));
@@ -268,6 +300,10 @@ public class MenuItemEditor  extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
+		MUILabel label = (MUILabel) element;
+		if( label.getLabel() != null && label.getLabel().trim().length() > 0 ) {
+			return label.getLabel();
+		}
 		return null;
 	}
 }

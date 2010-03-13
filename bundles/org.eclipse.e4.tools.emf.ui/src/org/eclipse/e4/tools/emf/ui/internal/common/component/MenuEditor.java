@@ -139,7 +139,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			{
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Type");
-				column.getColumn().setWidth(100);
+				column.getColumn().setWidth(300);
 				column.setLabelProvider(new ComponentLabelProvider(editor));
 			}
 			
@@ -148,15 +148,6 @@ public class MenuEditor extends AbstractComponentEditor {
 
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("ItemType");
-				column.getColumn().setWidth(100);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
-			}
-			
-			{
-				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText("Label");
 				column.getColumn().setWidth(100);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
