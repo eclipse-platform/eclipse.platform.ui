@@ -156,7 +156,6 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

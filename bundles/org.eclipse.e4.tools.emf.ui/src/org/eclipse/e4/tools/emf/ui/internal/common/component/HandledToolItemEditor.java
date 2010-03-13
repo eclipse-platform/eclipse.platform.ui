@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandledItem;
@@ -22,14 +22,16 @@ import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
@@ -102,63 +104,82 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		gd.heightHint = 120;
 		tableviewer.getTable().setHeaderVisible(true);
 		tableviewer.getControl().setLayoutData(gd);
-		IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS);
 
-		TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Tag");
-		column.getColumn().setWidth(200);
-		column.setEditingSupport(new EditingSupport(tableviewer) {
-			private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
+		ObservableListContentProvider cp = new ObservableListContentProvider();
+		tableviewer.setContentProvider(cp);
+		
+		{
+			IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG);
+			
+			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Tag");
+			column.getColumn().setWidth(200);
+			column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
+			column.setEditingSupport(new EditingSupport(tableviewer) {
+				private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
 
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MParameter)element).setTag((String) value);
-			}
+				@Override
+				protected void setValue(Object element, Object value) {
+					Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PARAMETER__TAG, value);
+					if( cmd.canExecute() ) {
+						getEditingDomain().getCommandStack().execute(cmd);
+					}
+				}
 
-			@Override
-			protected Object getValue(Object element) {
-				String val = ((MParameter)element).getTag();
-				return val == null ? "" : val;
-			}
+				@Override
+				protected Object getValue(Object element) {
+					String val = ((MParameter)element).getTag();
+					return val == null ? "" : val;
+				}
 
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return cellEditor;
-			}
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return cellEditor;
+				}
 
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		});
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			});
+		}
 
-		column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Value");
-		column.getColumn().setWidth(200);
-		column.setEditingSupport(new EditingSupport(tableviewer) {
-			private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
+		{
+			IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE);
+			
+			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Value");
+			column.getColumn().setWidth(200);
+			column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
+			column.setEditingSupport(new EditingSupport(tableviewer) {
+				private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
 
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MParameter)element).setValue((String) value);
-			}
+				@Override
+				protected void setValue(Object element, Object value) {
+					Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PARAMETER__VALUE, value);
+					if( cmd.canExecute() ) {
+						getEditingDomain().getCommandStack().execute(cmd);
+					}
+				}
 
-			@Override
-			protected Object getValue(Object element) {
-				String val = ((MParameter)element).getValue();
-				return val == null ? "" : val;
-			}
+				@Override
+				protected Object getValue(Object element) {
+					String val = ((MParameter)element).getValue();
+					return val == null ? "" : val;
+				}
 
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return cellEditor;
-			}
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return cellEditor;
+				}
 
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		});
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			});
+		}
+
 
 		ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(tableviewer) {
 			@Override
@@ -173,11 +194,9 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		};
 		TableViewerEditor.create(tableviewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
-		ViewerSupport.bind(tableviewer, prop.observeDetail(master), new IValueProperty[] {
-			EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG),
-			EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE)
-		});
-
+		IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS);
+		tableviewer.setInput(prop.observeDetail(getMaster()));
+		
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
 		GridLayout gl = new GridLayout();

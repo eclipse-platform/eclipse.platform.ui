@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -138,6 +139,13 @@ public class WindowTrimEditor extends AbstractComponentEditor {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.TRIM_CONTAINER__SIDE)	
+		};
 	}
 
 }

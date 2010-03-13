@@ -14,21 +14,40 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MCommandParameter;
+import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TableViewerEditor;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -131,33 +150,145 @@ public class CommandEditor extends AbstractComponentEditor {
 			l.setText("Parameters");
 			l.setLayoutData(new GridData(GridData.BEGINNING,GridData.BEGINNING,false,false));
 
-			TableViewer viewer = new TableViewer(parent,SWT.FULL_SELECTION|SWT.MULTI|SWT.BORDER);
+			final TableViewer viewer = new TableViewer(parent,SWT.FULL_SELECTION|SWT.MULTI|SWT.BORDER);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
 			viewer.getTable().setHeaderVisible(true);
 
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 120;
 			viewer.getControl().setLayoutData(gd);
 
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Name");
-			column.getColumn().setWidth(200);
+			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__NAME);
+				
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Name");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(viewer) {
+					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.COMMAND_PARAMETER__NAME, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MCommandParameter obj = (MCommandParameter) element;
+						return obj.getName() != null ? obj.getName() : "";
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
+			}
 
-			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Type-Id");
-			column.getColumn().setWidth(200);
+			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__TYPE_ID);
+				
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Type-Id");
+				column.getColumn().setWidth(200);				
+				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(viewer) {
+					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.COMMAND_PARAMETER__TYPE_ID, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MCommandParameter obj = (MCommandParameter) element;
+						return obj.getTypeId() != null ? obj.getTypeId() : "";
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
+			}
 
-			column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Optional");
-			column.getColumn().setWidth(200);
+			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__OPTIONAL);
+				
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Optional");
+				column.getColumn().setWidth(200);				
+				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())) {
+					@Override
+					public String getText(MCommandParameter element) {
+						return element.isOptional() ? "yes" : "no";
+					}
+				});
+				column.setEditingSupport(new EditingSupport(viewer) {
+					private ComboBoxCellEditor editor = new ComboBoxCellEditor(viewer.getTable(), new String[] { "yes", "no" });
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						int idx = ((Number)value).intValue();
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.COMMAND_PARAMETER__OPTIONAL, idx == 0);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MCommandParameter obj = (MCommandParameter) element;
+						return obj.isOptional() ? 0 : 1;
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
+			}
 
-			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.COMMAND__PARAMETERS);
-			IValueProperty[] props = {
-					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__NAME),
-					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__TYPE_ID),
-					EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.COMMAND_PARAMETER__OPTIONAL)
+			ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(viewer) {
+				@Override
+				protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+					boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
+					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
+
+					return singleSelect && (isLeftDoubleMouseSelect
+							|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+							|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+				}
 			};
+			TableViewerEditor.create(viewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
-			ViewerSupport.bind(viewer, mProp.observeDetail(getMaster()), props);
+			
+			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.COMMAND__PARAMETERS);
+			viewer.setInput(mProp.observeDetail(getMaster()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
@@ -182,6 +313,18 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.setText("Add ...");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MCommandParameter param = MApplicationFactory.eINSTANCE.createCommandParameter();
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.COMMAND__PARAMETERS, param);
+					
+					if( cmd.canExecute() ) {
+						getEditingDomain().getCommandStack().execute(cmd);
+						viewer.editElement(param, 0);
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Remove");

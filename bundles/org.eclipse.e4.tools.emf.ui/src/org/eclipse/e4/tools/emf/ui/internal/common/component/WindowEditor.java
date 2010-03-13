@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -51,7 +52,6 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	public WindowEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -248,5 +248,12 @@ public class WindowEditor extends AbstractComponentEditor {
 			return window.getLabel();
 		}
 		return null;
+	}
+	
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.UI_LABEL__LABEL)	
+		};
 	}
 }

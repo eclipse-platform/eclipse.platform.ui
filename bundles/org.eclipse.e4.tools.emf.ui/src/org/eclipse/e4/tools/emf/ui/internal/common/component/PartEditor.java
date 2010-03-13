@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -330,4 +331,10 @@ public class PartEditor extends AbstractComponentEditor {
 		return o.getLabel();
 	}
 
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.UI_LABEL__LABEL)	
+		};
+	}
 }
