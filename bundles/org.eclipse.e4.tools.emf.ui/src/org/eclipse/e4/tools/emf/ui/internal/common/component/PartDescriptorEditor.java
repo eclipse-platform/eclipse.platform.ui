@@ -28,6 +28,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -167,6 +168,44 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
+			l.setText("Closeable");
+
+			Button checkbox = new Button(parent, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+			
+			IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PART__CLOSEABLE);
+			IWidgetValueProperty uiProp = WidgetProperties.selection();
+			
+			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Multiple");
+
+			Button checkbox = new Button(parent, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+			
+			IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PART_DESCRIPTOR__ALLOW_MULTIPLE);
+			IWidgetValueProperty uiProp = WidgetProperties.selection();
+			
+			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Category");
+			
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL,GridData.BEGINNING, true, false, 2, 1));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PART_DESCRIPTOR__CATEGORY).observeDetail(master));
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
 			l.setText("Persited State");
 			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
@@ -225,8 +264,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}
-
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
