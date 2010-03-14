@@ -227,6 +227,11 @@ public class ToolItemItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MApplicationFactory.eINSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
 
 		newChildDescriptors.add

@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class ModelComponentItemProvider
-	extends ApplicationElementItemProvider
+	extends PartDescriptorContainerItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -68,11 +68,57 @@ public class ModelComponentItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addIdPropertyDescriptor(object);
+			addTagsPropertyDescriptor(object);
 			addPositionInParentPropertyDescriptor(object);
 			addParentIDPropertyDescriptor(object);
 			addProcessorPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ApplicationElement_id_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_id_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.APPLICATION_ELEMENT__ID,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Tags feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTagsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -153,7 +199,6 @@ public class ModelComponentItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__HANDLERS);
@@ -211,12 +256,13 @@ public class ModelComponentItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MModelComponent.class)) {
+			case MApplicationPackage.MODEL_COMPONENT__ID:
+			case MApplicationPackage.MODEL_COMPONENT__TAGS:
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__DESCRIPTORS:
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
@@ -236,11 +282,6 @@ public class ModelComponentItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -286,6 +327,11 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
+				 MApplicationFactory.eINSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter

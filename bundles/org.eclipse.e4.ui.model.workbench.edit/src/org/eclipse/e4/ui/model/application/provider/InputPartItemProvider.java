@@ -14,14 +14,11 @@ package org.eclipse.e4.ui.model.application.provider;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.MInputPart;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -34,13 +31,13 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MDirectToolItem} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MInputPart} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class DirectToolItemItemProvider
-	extends ToolItemItemProvider
+public class InputPartItemProvider
+	extends PartItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -53,7 +50,7 @@ public class DirectToolItemItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DirectToolItemItemProvider(AdapterFactory adapterFactory) {
+	public InputPartItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -68,27 +65,25 @@ public class DirectToolItemItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addURIPropertyDescriptor(object);
-			addObjectPropertyDescriptor(object);
-			addPersistedStatePropertyDescriptor(object);
+			addInputURIPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the URI feature.
+	 * This adds a property descriptor for the Input URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addURIPropertyDescriptor(Object object) {
+	protected void addInputURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Contribution_URI_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_URI_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__URI,
+				 getString("_UI_Input_inputURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Input_inputURI_feature", "_UI_Input_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.INPUT__INPUT_URI,
 				 true,
 				 false,
 				 false,
@@ -98,58 +93,14 @@ public class DirectToolItemItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Object feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addObjectPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Contribution_object_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_object_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__OBJECT,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Persisted State feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPersistedStatePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__PERSISTED_STATE,
-				 true,
-				 false,
-				 false,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This returns DirectToolItem.gif.
+	 * This returns InputPart.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/DirectToolItem")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/InputPart")); //$NON-NLS-1$
 	}
 
 	/**
@@ -160,10 +111,10 @@ public class DirectToolItemItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MDirectToolItem)object).getLabel();
+		String label = ((MInputPart)object).getId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_DirectToolItem_type") : //$NON-NLS-1$
-			getString("_UI_DirectToolItem_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_InputPart_type") : //$NON-NLS-1$
+			getString("_UI_InputPart_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -177,10 +128,8 @@ public class DirectToolItemItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MDirectToolItem.class)) {
-			case MApplicationPackage.DIRECT_TOOL_ITEM__URI:
-			case MApplicationPackage.DIRECT_TOOL_ITEM__OBJECT:
-			case MApplicationPackage.DIRECT_TOOL_ITEM__PERSISTED_STATE:
+		switch (notification.getFeatureID(MInputPart.class)) {
+			case MApplicationPackage.INPUT_PART__INPUT_URI:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

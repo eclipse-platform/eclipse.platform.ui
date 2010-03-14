@@ -82,6 +82,7 @@ public class PartItemProvider
 			addDirtyPropertyDescriptor(object);
 			addMenusPropertyDescriptor(object);
 			addToolbarPropertyDescriptor(object);
+			addCloseablePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -395,6 +396,28 @@ public class PartItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Closeable feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addCloseablePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Part_closeable_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Part_closeable_feature", "_UI_Part_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.PART__CLOSEABLE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -477,6 +500,7 @@ public class PartItemProvider
 			case MApplicationPackage.PART__ICON_URI:
 			case MApplicationPackage.PART__TOOLTIP:
 			case MApplicationPackage.PART__DIRTY:
+			case MApplicationPackage.PART__CLOSEABLE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.PART__PROPERTIES:

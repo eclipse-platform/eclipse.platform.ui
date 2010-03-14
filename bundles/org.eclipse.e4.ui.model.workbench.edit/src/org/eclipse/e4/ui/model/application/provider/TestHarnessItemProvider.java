@@ -245,7 +245,7 @@ public class TestHarnessItemProvider
 				 true,
 				 false,
 				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
 				 null,
 				 null));
 	}
@@ -792,6 +792,11 @@ public class TestHarnessItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.eINSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MApplicationFactory.eINSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter

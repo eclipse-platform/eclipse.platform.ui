@@ -310,6 +310,29 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MInputPart} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected InputPartItemProvider inputPartItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MInputPart}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createInputPartAdapter() {
+		if (inputPartItemProvider == null) {
+			inputPartItemProvider = new InputPartItemProvider(this);
+		}
+
+		return inputPartItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MPartDescriptor} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -878,6 +901,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (toolBarItemProvider != null) toolBarItemProvider.dispose();
 		if (applicationItemProvider != null) applicationItemProvider.dispose();
 		if (partItemProvider != null) partItemProvider.dispose();
+		if (inputPartItemProvider != null) inputPartItemProvider.dispose();
 		if (partDescriptorItemProvider != null) partDescriptorItemProvider.dispose();
 		if (partDescriptorContainerItemProvider != null) partDescriptorContainerItemProvider.dispose();
 		if (partStackItemProvider != null) partStackItemProvider.dispose();

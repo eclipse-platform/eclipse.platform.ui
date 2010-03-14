@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class PerspectiveItemProvider
-	extends UILabelItemProvider
+	extends ElementContainerItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -68,15 +68,9 @@ public class PerspectiveItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
-			addWidgetPropertyDescriptor(object);
-			addRendererPropertyDescriptor(object);
-			addToBeRenderedPropertyDescriptor(object);
-			addOnTopPropertyDescriptor(object);
-			addVisiblePropertyDescriptor(object);
-			addContainerDataPropertyDescriptor(object);
-			addSelectedElementPropertyDescriptor(object);
+			addLabelPropertyDescriptor(object);
+			addIconURIPropertyDescriptor(object);
+			addTooltipPropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
 		}
@@ -84,19 +78,19 @@ public class PerspectiveItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Id feature.
+	 * This adds a property descriptor for the Label feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addIdPropertyDescriptor(Object object) {
+	protected void addLabelPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_id_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_id_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__ID,
+				 getString("_UI_UILabel_label_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_label_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.UI_LABEL__LABEL,
 				 true,
 				 false,
 				 false,
@@ -106,19 +100,19 @@ public class PerspectiveItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Tags feature.
+	 * This adds a property descriptor for the Icon URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addTagsPropertyDescriptor(Object object) {
+	protected void addIconURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
+				 getString("_UI_UILabel_iconURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_iconURI_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.UI_LABEL__ICON_URI,
 				 true,
 				 false,
 				 false,
@@ -128,155 +122,23 @@ public class PerspectiveItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Widget feature.
+	 * This adds a property descriptor for the Tooltip feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addWidgetPropertyDescriptor(Object object) {
+	protected void addTooltipPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_UIElement_widget_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_widget_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__WIDGET,
+				 getString("_UI_UILabel_tooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_tooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.UI_LABEL__TOOLTIP,
 				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Renderer feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addRendererPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_renderer_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_renderer_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__RENDERER,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the To Be Rendered feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addToBeRenderedPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_toBeRendered_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_toBeRendered_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__TO_BE_RENDERED,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the On Top feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addOnTopPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_onTop_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_onTop_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__ON_TOP,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Visible feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addVisiblePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_visible_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_visible_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__VISIBLE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Container Data feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addContainerDataPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_containerData_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_containerData_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.UI_ELEMENT__CONTAINER_DATA,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Selected Element feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addSelectedElementPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
-				 true,
-				 false,
-				 true,
-				 null,
 				 null,
 				 null));
 	}
@@ -337,7 +199,6 @@ public class PerspectiveItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 		}
 		return childrenFeatures;
@@ -393,19 +254,13 @@ public class PerspectiveItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MPerspective.class)) {
-			case MApplicationPackage.PERSPECTIVE__ID:
-			case MApplicationPackage.PERSPECTIVE__TAGS:
-			case MApplicationPackage.PERSPECTIVE__WIDGET:
-			case MApplicationPackage.PERSPECTIVE__RENDERER:
-			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
-			case MApplicationPackage.PERSPECTIVE__ON_TOP:
-			case MApplicationPackage.PERSPECTIVE__VISIBLE:
-			case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA:
+			case MApplicationPackage.PERSPECTIVE__LABEL:
+			case MApplicationPackage.PERSPECTIVE__ICON_URI:
+			case MApplicationPackage.PERSPECTIVE__TOOLTIP:
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 			case MApplicationPackage.PERSPECTIVE__VARIABLES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 			case MApplicationPackage.PERSPECTIVE__PROPERTIES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -423,111 +278,6 @@ public class PerspectiveItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createMenu()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createDirectMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createDirectToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createToolBar()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createApplication()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartStack()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartSashContainer()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createWindow()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPlaceholder()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPerspective()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPerspectiveStack()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createTestHarness()));
 
 		newChildDescriptors.add
 			(createChildParameter
