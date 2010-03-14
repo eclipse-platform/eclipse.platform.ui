@@ -18,6 +18,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
@@ -27,10 +28,12 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -136,11 +139,55 @@ public class VCommandEditor extends AbstractComponentEditor {
 			b.setText("Up");
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MApplication container = (MApplication) getMaster().getValue();
+							int idx = container.getCommands().indexOf(obj) - 1;
+							if( idx >= 0 ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Down");
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MApplication container = (MApplication) getMaster().getValue();
+							int idx = container.getCommands().indexOf(obj) + 1;
+							if( idx < container.getCommands().size() ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Add ...");
