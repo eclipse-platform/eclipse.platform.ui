@@ -690,14 +690,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	/**
 	 * 
-	 */
-	public void resetContributionMemory() {
-		contributionMemory.clear();
-		contributionMemoryFirstClass.clear();
-	}
-	
-	/**
-	 * 
 	 * 
 	 * @param firstClassSource
 	 * @param source

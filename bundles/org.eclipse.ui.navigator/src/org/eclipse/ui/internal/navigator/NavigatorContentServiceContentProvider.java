@@ -123,7 +123,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	private static final boolean ELEMENTS = true;
 
 	private Object[] internalGetChildren(Object aParentElement, Object aParentElementOrPath, Set enabledExtensions, boolean elements) {
-		contentService.resetContributionMemory();
 		if (enabledExtensions.size() == 0) {
 			return NO_CHILDREN;
 		}
