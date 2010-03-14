@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.e4.tools.emf.editor3x.E4WorkbenchModelEditor"
+            default="true"
+            extensions="e4xml"
+            icon="icons/full/obj16/Application.gif"
+            id="org.eclipse.e4.tools.emf.editor3x.e4wbm"
+            name="E4 Workbenchmodel Editor">
+      </editor>
+   </extension>
+
+</plugin>
