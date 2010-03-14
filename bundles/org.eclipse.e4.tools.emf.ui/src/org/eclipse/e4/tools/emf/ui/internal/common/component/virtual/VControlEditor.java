@@ -20,19 +20,21 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -113,7 +115,7 @@ public class VControlEditor extends AbstractComponentEditor {
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
-			GridLayout gl = new GridLayout();
+			GridLayout gl = new GridLayout(2,false);
 			gl.marginLeft=0;
 			gl.marginRight=0;
 			gl.marginWidth=0;
@@ -123,92 +125,62 @@ public class VControlEditor extends AbstractComponentEditor {
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Up");
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Down");
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			
+			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
+			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			childrenDropDown.setContentProvider(new ArrayContentProvider());
+			childrenDropDown.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					EClass eclass = (EClass) element;
+					return eclass.getName();
+				}
+			});
+			childrenDropDown.setInput(new EClass[] {
+					MApplicationPackage.Literals.PERSPECTIVE_STACK,
+					MApplicationPackage.Literals.PART_SASH_CONTAINER,
+					MApplicationPackage.Literals.PART_STACK,
+					MApplicationPackage.Literals.PART
+			});
+			childrenDropDown.setSelection(new StructuredSelection(MApplicationPackage.Literals.PERSPECTIVE_STACK));
+			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add Sash");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MPartSashContainer handler = MApplicationFactory.eINSTANCE.createPartSashContainer();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
+					if( ! childrenDropDown.getSelection().isEmpty() ) {
+						EClass eClass = (EClass) ((IStructuredSelection)childrenDropDown.getSelection()).getFirstElement();
+						EObject eObject = MApplicationFactory.eINSTANCE.create(eClass);
+						
+						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+						
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+							editor.setSelection(eObject);
+						}
 					}
 				}
 			});
 			
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add PartStack");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPartStack handler = MApplicationFactory.eINSTANCE.createPartStack();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
-			
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add PerspectiveStack");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPerspectiveStack handler = MApplicationFactory.eINSTANCE.createPerspectiveStack();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
-			
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add Part");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPart handler = MApplicationFactory.eINSTANCE.createPart();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
-					}
-				}
-			});
-
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Remove");
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> controls = ((IStructuredSelection)viewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, controls);
+						List<?> elements = ((IStructuredSelection)viewer.getSelection()).toList();
+						
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

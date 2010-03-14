@@ -258,7 +258,7 @@ public class ModelEditor {
 		registerEditor( MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.COMMAND,new CommandEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
-		registerEditor( MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain()));
+		registerEditor( MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));
 		registerEditor( MApplicationPackage.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor(modelProvider.getEditingDomain()));
 		registerEditor( MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain()));
