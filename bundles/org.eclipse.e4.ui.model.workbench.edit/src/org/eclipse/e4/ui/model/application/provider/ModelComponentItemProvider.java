@@ -199,9 +199,10 @@ public class ModelComponentItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
+			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
+			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
-			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__HANDLERS);
 		}
 		return childrenFeatures;
 	}
@@ -234,11 +235,11 @@ public class ModelComponentItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MModelComponent)object).getId();
+		String label = ((MModelComponent)object).getId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ModelComponent_type") : //$NON-NLS-1$
 			getString("_UI_ModelComponent_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -263,9 +264,10 @@ public class ModelComponentItemProvider
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -282,6 +284,16 @@ public class ModelComponentItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS,
+				 MApplicationFactory.eINSTANCE.createHandler()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
+				 MApplicationFactory.eINSTANCE.createKeyBinding()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -402,11 +414,6 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS,
 				 MApplicationFactory.eINSTANCE.createTestHarness()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__HANDLERS,
-				 MApplicationFactory.eINSTANCE.createHandler()));
 	}
 
 	/**

@@ -3838,13 +3838,31 @@ public interface MApplicationPackage extends EPackage {
 	int MODEL_COMPONENT__TAGS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__HANDLERS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__BINDINGS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__POSITION_IN_PARENT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 2;
+	int MODEL_COMPONENT__POSITION_IN_PARENT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent ID</b></em>' attribute.
@@ -3853,7 +3871,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__PARENT_ID = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 3;
+	int MODEL_COMPONENT__PARENT_ID = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3862,7 +3880,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__CHILDREN = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
+	int MODEL_COMPONENT__CHILDREN = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
@@ -3871,16 +3889,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__COMMANDS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODEL_COMPONENT__HANDLERS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
+	int MODEL_COMPONENT__COMMANDS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Processor</b></em>' attribute.
@@ -3889,7 +3898,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__PROCESSOR = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
+	int MODEL_COMPONENT__PROCESSOR = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Model Component</em>' class.
@@ -3898,7 +3907,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
+	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>VCommands V</em>' class.
@@ -6536,17 +6545,6 @@ public interface MApplicationPackage extends EPackage {
 	EReference getModelComponent_Commands();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getHandlers <em>Handlers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getHandlers()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	EReference getModelComponent_Handlers();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -7747,14 +7745,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MODEL_COMPONENT__COMMANDS = eINSTANCE.getModelComponent_Commands();
-
-		/**
-		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MODEL_COMPONENT__HANDLERS = eINSTANCE.getModelComponent_Handlers();
 
 		/**
 		 * The meta object literal for the '<em><b>Processor</b></em>' attribute feature.

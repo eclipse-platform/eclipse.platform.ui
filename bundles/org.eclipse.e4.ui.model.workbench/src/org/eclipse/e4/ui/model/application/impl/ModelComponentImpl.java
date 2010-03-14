@@ -14,8 +14,11 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
@@ -42,11 +45,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getTags <em>Tags</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getPositionInParent <em>Position In Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getParentID <em>Parent ID</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getCommands <em>Commands</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getProcessor <em>Processor</em>}</li>
  * </ul>
  * </p>
@@ -83,6 +87,26 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * @ordered
 	 */
 	protected EList<String> tags;
+
+	/**
+	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHandlers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MHandler> handlers;
+
+	/**
+	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBindings()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MKeyBinding> bindings;
 
 	/**
 	 * The default value of the '{@link #getPositionInParent() <em>Position In Parent</em>}' attribute.
@@ -143,16 +167,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * @ordered
 	 */
 	protected EList<MCommand> commands;
-
-	/**
-	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getHandlers()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MHandler> handlers;
 
 	/**
 	 * The default value of the '{@link #getProcessor() <em>Processor</em>}' attribute.
@@ -309,6 +323,18 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MKeyBinding> getBindings() {
+		if (bindings == null) {
+			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.MODEL_COMPONENT__BINDINGS);
+		}
+		return bindings;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getProcessor() {
 		return processor;
 	}
@@ -333,12 +359,14 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -355,6 +383,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return getId();
 			case MApplicationPackage.MODEL_COMPONENT__TAGS:
 				return getTags();
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+				return getHandlers();
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return getBindings();
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return getPositionInParent();
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
@@ -363,8 +395,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return getChildren();
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				return getCommands();
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-				return getHandlers();
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				return getProcessor();
 		}
@@ -387,6 +417,14 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				getTags().clear();
 				getTags().addAll((Collection<? extends String>)newValue);
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+				getHandlers().clear();
+				getHandlers().addAll((Collection<? extends MHandler>)newValue);
+				return;
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				getBindings().clear();
+				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+				return;
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent((String)newValue);
 				return;
@@ -400,10 +438,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
-				return;
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-				getHandlers().clear();
-				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				setProcessor((String)newValue);
@@ -426,6 +460,12 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case MApplicationPackage.MODEL_COMPONENT__TAGS:
 				getTags().clear();
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+				getHandlers().clear();
+				return;
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				getBindings().clear();
+				return;
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
 				return;
@@ -437,9 +477,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				getCommands().clear();
-				return;
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-				getHandlers().clear();
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				setProcessor(PROCESSOR_EDEFAULT);
@@ -460,6 +497,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.MODEL_COMPONENT__TAGS:
 				return tags != null && !tags.isEmpty();
+			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+				return handlers != null && !handlers.isEmpty();
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return bindings != null && !bindings.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
@@ -468,8 +509,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				return commands != null && !commands.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				return PROCESSOR_EDEFAULT == null ? processor != null : !PROCESSOR_EDEFAULT.equals(processor);
 		}
@@ -490,6 +529,18 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				default: return -1;
 			}
 		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.MODEL_COMPONENT__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindingContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.MODEL_COMPONENT__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -504,6 +555,18 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.MODEL_COMPONENT__ID;
 				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.MODEL_COMPONENT__TAGS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.MODEL_COMPONENT__HANDLERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindingContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.MODEL_COMPONENT__BINDINGS;
 				default: return -1;
 			}
 		}

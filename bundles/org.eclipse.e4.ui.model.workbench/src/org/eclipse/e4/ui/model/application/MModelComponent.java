@@ -24,7 +24,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getParentID <em>Parent ID</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getCommands <em>Commands</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}</li>
  * </ul>
  * </p>
@@ -33,7 +32,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement {
+public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement, MHandlerContainer, MBindingContainer {
 	/**
 	 * Returns the value of the '<em><b>Position In Parent</b></em>' attribute.
 	 * The default value is <code>""</code>.
@@ -118,22 +117,6 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * @generated
 	 */
 	EList<MCommand> getCommands();
-
-	/**
-	 * Returns the value of the '<em><b>Handlers</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MHandler}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Handlers</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Handlers</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Handlers()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<MHandler> getHandlers();
 
 	/**
 	 * Returns the value of the '<em><b>Processor</b></em>' attribute.

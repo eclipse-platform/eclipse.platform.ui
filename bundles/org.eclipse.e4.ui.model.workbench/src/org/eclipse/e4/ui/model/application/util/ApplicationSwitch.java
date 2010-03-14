@@ -397,6 +397,8 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseModelComponent(modelComponent);
 				if (result == null) result = casePartDescriptorContainer(modelComponent);
 				if (result == null) result = caseApplicationElement(modelComponent);
+				if (result == null) result = caseHandlerContainer(modelComponent);
+				if (result == null) result = caseBindingContainer(modelComponent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

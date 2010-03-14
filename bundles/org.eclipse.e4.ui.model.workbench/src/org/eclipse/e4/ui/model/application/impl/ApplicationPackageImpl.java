@@ -1255,17 +1255,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelComponent_Handlers() {
-		return (EReference)modelComponentEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getModelComponent_Processor() {
-		return (EAttribute)modelComponentEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)modelComponentEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1831,7 +1822,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PARENT_ID);
 		createEReference(modelComponentEClass, MODEL_COMPONENT__CHILDREN);
 		createEReference(modelComponentEClass, MODEL_COMPONENT__COMMANDS);
-		createEReference(modelComponentEClass, MODEL_COMPONENT__HANDLERS);
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PROCESSOR);
 
 		v______________Commands_______________VEClass = createEClass(VCOMMANDS_V);
@@ -2028,6 +2018,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		modelComponentEClass.getESuperTypes().add(this.getPartDescriptorContainer());
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
+		modelComponentEClass.getESuperTypes().add(this.getHandlerContainer());
+		modelComponentEClass.getESuperTypes().add(this.getBindingContainer());
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
 		commandParameterEClass.getESuperTypes().add(this.getApplicationElement());
 		handlerEClass.getESuperTypes().add(this.getContribution());
@@ -2207,7 +2199,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getModelComponent_ParentID(), ecorePackage.getEString(), "parentID", null, 1, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelComponent_Children(), this.getUIElement(), null, "children", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelComponent_Commands(), this.getCommand(), null, "commands", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getModelComponent_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getModelComponent_Processor(), ecorePackage.getEString(), "processor", null, 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v______________Commands_______________VEClass, MV______________Commands_______________V.class, "V______________Commands_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
