@@ -294,6 +294,8 @@ public class MenuEditor extends AbstractComponentEditor {
 				}
 			});
 		}
+		
+		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
 	}

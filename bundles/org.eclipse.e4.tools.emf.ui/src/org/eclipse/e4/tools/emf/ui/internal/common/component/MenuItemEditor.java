@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -45,6 +46,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -209,6 +211,23 @@ public class MenuItemEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
 		}
 
+		if (this.getClass() != MenuItemEditor.class) {
+			// ------------------------------------------------------------
+			{
+				Label l = new Label(parent, SWT.NONE);
+				l.setText("Type");
+
+				ComboViewer viewer = new ComboViewer(parent);
+				viewer.setContentProvider(new ArrayContentProvider());
+				viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
+				GridData gd = new GridData();
+				gd.horizontalSpan = 2;
+				viewer.getControl().setLayoutData(gd);
+				IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.ITEM__TYPE).observeDetail(master);
+				context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
+			}
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -249,6 +268,8 @@ public class MenuItemEditor extends AbstractComponentEditor {
 
 		createFormSubTypeForm(parent, context, master);
 
+		ControlFactory.createTagsWidget(parent, this);
+		
 		return parent;
 	}
 

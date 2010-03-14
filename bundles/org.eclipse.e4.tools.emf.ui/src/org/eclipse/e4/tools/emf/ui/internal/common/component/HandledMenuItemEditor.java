@@ -58,14 +58,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class HandledMenuItemEditor extends MenuItemEditor {
 	private Image image;
-	
+
 	public HandledMenuItemEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/HandledMenuItem.gif"));
 			} catch (MalformedURLException e) {
@@ -86,182 +86,182 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	public String getDescription(Object element) {
 		return "HandledMenuItem bla bla bla";
 	}
-	
+
 	@Override
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText("Command");
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Command");
 
-		Text t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		t.setEnabled(false);
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLED_ITEM__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(master));
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			t.setEnabled(false);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLED_ITEM__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(master));
 
-		Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-		b.setText("Find ...");
-		b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Find ...");
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		}
 
 		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
-		l.setText("Parameters");
-		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
-
-		final TableViewer tableviewer = new TableViewer(parent);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 120;
-		tableviewer.getTable().setHeaderVisible(true);
-		tableviewer.getControl().setLayoutData(gd);
-		
-		ObservableListContentProvider cp = new ObservableListContentProvider();
-		tableviewer.setContentProvider(cp);
-
 		{
-			IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG);
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Parameters");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Tag");
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
-			column.setEditingSupport(new EditingSupport(tableviewer) {
-				private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
+			final TableViewer tableviewer = new TableViewer(parent);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 120;
+			tableviewer.getTable().setHeaderVisible(true);
+			tableviewer.getControl().setLayoutData(gd);
 
-				@Override
-				protected void setValue(Object element, Object value) {
-					Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.PARAMETER__TAG, value);
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			tableviewer.setContentProvider(cp);
+
+			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__TAG);
+
+				TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+				column.getColumn().setText("Tag");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(tableviewer) {
+					private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
+
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.PARAMETER__TAG, value);
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
 					}
-				}
 
-				@Override
-				protected Object getValue(Object element) {
-					String val = ((MParameter)element).getTag();
-					return val == null ? "" : val;
-				}
-
-				@Override
-				protected CellEditor getCellEditor(Object element) {
-					return cellEditor;
-				}
-
-				@Override
-				protected boolean canEdit(Object element) {
-					return true;
-				}
-			});
-		}
-
-		{
-			IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE);
-			
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Value");
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
-			column.setEditingSupport(new EditingSupport(tableviewer) {
-				private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
-
-				@Override
-				protected void setValue(Object element, Object value) {
-					Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.PARAMETER__VALUE, value);
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
+					@Override
+					protected Object getValue(Object element) {
+						String val = ((MParameter) element).getTag();
+						return val == null ? "" : val;
 					}
-				}
 
-				@Override
-				protected Object getValue(Object element) {
-					String val = ((MParameter)element).getValue();
-					return val == null ? "" : val;
-				}
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return cellEditor;
+					}
 
-				@Override
-				protected CellEditor getCellEditor(Object element) {
-					return cellEditor;
-				}
-
-				@Override
-				protected boolean canEdit(Object element) {
-					return true;
-				}
-			});
-		}
-
-
-		ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(tableviewer) {
-			@Override
-			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-				boolean singleSelect = ((IStructuredSelection)tableviewer.getSelection()).size() == 1;
-				boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
-
-				return singleSelect && (isLeftDoubleMouseSelect
-						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-						|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
 			}
-		};
-		TableViewerEditor.create(tableviewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
-		IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS);
-		tableviewer.setInput(prop.observeDetail(master));
-		
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
-		GridLayout gl = new GridLayout();
-		gl.marginLeft=0;
-		gl.marginRight=0;
-		gl.marginWidth=0;
-		gl.marginHeight=0;
-		buttonComp.setLayout(gl);
+			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PARAMETER__VALUE);
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Up");
-		b.setImage(getImage(b.getDisplay(), ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+				TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+				column.getColumn().setText("Value");
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MParameter>(prop.observeDetail(cp.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(tableviewer) {
+					private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Down");
-		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.PARAMETER__VALUE, value);
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Add ...");
-		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				MHandledItem item = (MHandledItem) master.getValue();
-				MParameter param = MApplicationFactory.eINSTANCE.createParameter();
-				Command cmd = AddCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, param);
-				if( cmd.canExecute() ) {
-					getEditingDomain().getCommandStack().execute(cmd);
-					tableviewer.editElement(param, 0);
-				}
+					@Override
+					protected Object getValue(Object element) {
+						String val = ((MParameter) element).getValue();
+						return val == null ? "" : val;
+					}
+
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return cellEditor;
+					}
+
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
 			}
-		});
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Remove");
-		b.addSelectionListener(new SelectionAdapter() {
+			ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(tableviewer) {
+				@Override
+				protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+					boolean singleSelect = ((IStructuredSelection) tableviewer.getSelection()).size() == 1;
+					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent) event.sourceEvent).button == 1;
 
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
-				if( !s.isEmpty() ) {
+					return singleSelect && (isLeftDoubleMouseSelect || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+				}
+			};
+			TableViewerEditor.create(tableviewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
+
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS);
+			tableviewer.setInput(prop.observeDetail(master));
+
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Add ...");
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
 					MHandledItem item = (MHandledItem) master.getValue();
-					Command cmd = RemoveCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, s.toList());
-					if( cmd.canExecute() ) {
+					MParameter param = MApplicationFactory.eINSTANCE.createParameter();
+					Command cmd = AddCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, param);
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
+						tableviewer.editElement(param, 0);
 					}
 				}
-			}
+			});
 
-		});
-		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.addSelectionListener(new SelectionAdapter() {
 
+				public void widgetSelected(SelectionEvent e) {
+					IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
+					if (!s.isEmpty()) {
+						MHandledItem item = (MHandledItem) master.getValue();
+						Command cmd = RemoveCommand.create(getEditingDomain(), item, MApplicationPackage.Literals.HANDLED_ITEM__PARAMETERS, s.toList());
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+
+			});
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
 	}
 }
