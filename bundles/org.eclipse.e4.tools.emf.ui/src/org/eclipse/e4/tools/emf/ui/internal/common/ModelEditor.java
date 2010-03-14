@@ -93,6 +93,7 @@ public class ModelEditor {
 	public static final int VIRTUAL_WINDOW_CONTROLS = 6;
 	public static final int VIRTUAL_WINDOW_TRIMS = 7;
 	public static final int VIRTUAL_PART_DESCRIPTORS = 8;
+	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 9;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
@@ -237,7 +238,7 @@ public class ModelEditor {
 				null, // V-Part
 				new VHandlerEditor(modelProvider.getEditingDomain(), this), 
 				new VKeyBindingEditor(modelProvider.getEditingDomain(), this), 
-				new VCommandEditor(modelProvider.getEditingDomain(), this), 
+				new VCommandEditor(modelProvider.getEditingDomain(), this, MApplicationPackage.Literals.APPLICATION__COMMANDS), 
 				new VWindowEditor(modelProvider.getEditingDomain(), this), 
 				new VControlEditor(modelProvider.getEditingDomain(), this), 
 				new VWindowTrimEditor(modelProvider.getEditingDomain(), this),

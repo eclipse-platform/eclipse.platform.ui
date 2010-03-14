@@ -50,6 +50,8 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 
 	private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list( MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list( MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
+	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 	
 	public ModelComponentEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -201,6 +203,24 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 			}
 
 		});
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
 		return list;
 	}
 

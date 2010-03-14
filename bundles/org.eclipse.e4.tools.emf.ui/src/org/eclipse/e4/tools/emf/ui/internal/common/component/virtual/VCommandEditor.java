@@ -27,6 +27,7 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -52,10 +53,13 @@ public class VCommandEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
 	private TableViewer viewer;
+	
+	private EStructuralFeature commandsFeature;
 
-	public VCommandEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public VCommandEditor(EditingDomain editingDomain, ModelEditor editor, EStructuralFeature commandsFeature) {
 		super(editingDomain);
 		this.editor = editor;
+		this.commandsFeature = commandsFeature;
 	}
 
 	@Override
@@ -149,7 +153,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 							MApplication container = (MApplication) getMaster().getValue();
 							int idx = container.getCommands().indexOf(obj) - 1;
 							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -176,7 +180,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 							MApplication container = (MApplication) getMaster().getValue();
 							int idx = container.getCommands().indexOf(obj) + 1;
 							if( idx < container.getCommands().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -197,7 +201,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, command);
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -215,7 +219,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if( ! viewer.getSelection().isEmpty() ) {
 						List<?> commands = ((IStructuredSelection)viewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.APPLICATION__COMMANDS, commands);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, commands);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
