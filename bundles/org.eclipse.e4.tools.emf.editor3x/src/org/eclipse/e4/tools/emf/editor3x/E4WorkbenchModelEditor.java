@@ -21,7 +21,6 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
@@ -32,14 +31,30 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 
+@SuppressWarnings("restriction")
 public class E4WorkbenchModelEditor extends EditorPart {
 	private XMIModelResource resource;
 	private ApplicationModelEditor editor;
-	
+	private UndoAction undoAction;
+	private RedoAction redoAction;
+
 	private static final String CSS_URI = "platform:/plugin/org.eclipse.e4.tools.emf.editor3x/css/default.css";
-	
+
+	private ModelListener listener = new ModelListener() {
+
+		public void dirtyChanged() {
+			firePropertyChange(PROP_DIRTY);
+		}
+
+		public void commandStackChanged() {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		editor.save();
@@ -47,14 +62,14 @@ public class E4WorkbenchModelEditor extends EditorPart {
 
 	@Override
 	public void doSaveAs() {
-		
+
 	}
-	
+
 	private void setupCss(Display display) {
 		CSSEngine engine = (CSSEngine) display
 				.getData("org.eclipse.e4.ui.css.core.engine");
-		
-		if( engine == null ) {
+
+		if (engine == null) {
 			engine = new CSSSWTEngineImpl(display, true);
 			engine.setErrorHandler(new CSSErrorHandler() {
 				public void error(Exception e) {
@@ -62,7 +77,7 @@ public class E4WorkbenchModelEditor extends EditorPart {
 				}
 			});
 			display.setData("org.eclipse.e4.ui.css.core.engine", engine);
-			
+
 			try {
 				URL url = FileLocator.resolve(new URL(CSS_URI.toString()));
 				display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
@@ -85,16 +100,11 @@ public class E4WorkbenchModelEditor extends EditorPart {
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
-		
+
 		URI resourceURI = EditUIUtil.getURI(input);
-		if( resourceURI != null ) {
+		if (resourceURI != null) {
 			resource = new XMIModelResource(resourceURI);
-			resource.addModelListener(new ModelListener() {
-				
-				public void dirtyChanged() {
-					firePropertyChange(PROP_DIRTY);
-				}
-			});
+			resource.addModelListener(listener);
 		}
 	}
 
@@ -113,20 +123,46 @@ public class E4WorkbenchModelEditor extends EditorPart {
 		setupCss(parent.getDisplay());
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		
+
 		FillLayout layout = new FillLayout();
-		layout.marginWidth=10;
-		layout.marginHeight=10;
+		layout.marginWidth = 10;
+		layout.marginHeight = 10;
 		comp.setLayout(layout);
-		
+
 		editor = new ApplicationModelEditor(comp, resource);
-		
+
 		try {
 			parent.setRedraw(false);
 			parent.reskin(SWT.ALL);
 		} finally {
 			parent.setRedraw(true);
 		}
+
+		makeActions();
+	}
+
+	private void makeActions() {
+		undoAction = new UndoAction(resource);
+		redoAction = new RedoAction(resource);
+
+		getEditorSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.UNDO.getId(), undoAction);
+		getEditorSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.REDO.getId(), redoAction);
+	}
+
+	@Override
+	public void dispose() {
+		if (undoAction != null)
+			undoAction.dispose();
+
+		if (redoAction != null)
+			redoAction.dispose();
+
+		if (listener != null && resource != null)
+			resource.removeModelListener(listener);
+
+		super.dispose();
 	}
 
 	@Override

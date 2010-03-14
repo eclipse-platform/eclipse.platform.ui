@@ -310,6 +310,11 @@ public class ModelEditor {
 
 		return Status.CANCEL_STATUS;
 	}
+	
+	public void setFocus() {
+		viewer.getControl().setFocus();
+	}
+
 
 	private static class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 

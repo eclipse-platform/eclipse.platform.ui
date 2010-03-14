@@ -32,12 +32,14 @@ import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 
+@SuppressWarnings("restriction")
 public class XMIModelResource implements IModelResource {
 	private EditingDomain editingDomain;
 	private Resource resource;
 	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
 	private boolean dirty;
 
+	
 	public XMIModelResource(URI uri) {
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
 				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
@@ -48,6 +50,7 @@ public class XMIModelResource implements IModelResource {
 			public void commandStackChanged(EventObject event) {
 				dirty = true;
 				fireDirtyChanged();
+				fireCommandStackChanged();
 			}
 		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory,
@@ -81,12 +84,18 @@ public class XMIModelResource implements IModelResource {
 	}
 	
 	public boolean isDirty() {
-		return dirty;
+		return dirty && getEditingDomain().getCommandStack().canUndo();
 	}
 	
 	private void fireDirtyChanged() {
 		for( ModelListener listener : listeners ) {
 			listener.dirtyChanged();
+		}
+	}
+	
+	private void fireCommandStackChanged() {
+		for( ModelListener listener : listeners ) {
+			listener.commandStackChanged();
 		}
 	}
 	
@@ -97,6 +106,7 @@ public class XMIModelResource implements IModelResource {
 			editingDomain.getCommandStack().flush();
 			dirty = false;
 			fireDirtyChanged();
+			fireCommandStackChanged();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.e4.ui.model.application.MInputPart;
 import org.eclipse.swt.widgets.Composite;
 
+@SuppressWarnings("restriction")
 public class XMIFileEditor {
 	private ApplicationModelEditor editor;
 	
@@ -30,6 +31,10 @@ public class XMIFileEditor {
 			
 			public void dirtyChanged() {
 				part.setDirty(resource.isDirty());
+			}
+
+			public void commandStackChanged() {
+				
 			}
 		});
 		editor = new ApplicationModelEditor(composite, resource);

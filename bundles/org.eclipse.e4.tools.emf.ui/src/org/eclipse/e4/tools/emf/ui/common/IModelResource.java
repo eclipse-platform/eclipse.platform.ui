@@ -26,5 +26,6 @@ public interface IModelResource {
 	
 	public interface ModelListener {
 		public void dirtyChanged();
+		public void commandStackChanged();
 	}
 }

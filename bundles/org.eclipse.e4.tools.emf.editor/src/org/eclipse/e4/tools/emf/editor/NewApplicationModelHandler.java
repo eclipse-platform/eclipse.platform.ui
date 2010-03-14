@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+@SuppressWarnings("restriction")
 public class NewApplicationModelHandler {
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, MApplication application, EModelService modelService) {
 		FileDialog dialog = new FileDialog(shell,SWT.SAVE);
