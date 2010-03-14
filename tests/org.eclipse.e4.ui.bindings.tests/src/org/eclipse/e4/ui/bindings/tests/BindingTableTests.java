@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
@@ -169,7 +170,8 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testContextSet() throws Exception {
-		BindingTableManager manager = new BindingTableManager();
+		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> window = new ArrayList<Context>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
 		Context dawContext = contextManager.getContext(ID_DIALOG_AND_WINDOW);
@@ -188,7 +190,8 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testContextSetSibling() throws Exception {
-		BindingTableManager manager = new BindingTableManager();
+		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> all = new ArrayList<Context>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
@@ -199,7 +202,9 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testSingleParentChainPerfectMatch() throws Exception {
-		BindingTableManager manager = new BindingTableManager();
+		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, workbenchContext);
+
 		manager.addTable(loadTable(ID_DIALOG_AND_WINDOW));
 		manager.addTable(loadTable(ID_WINDOW));
 		manager.addTable(loadTable(ID_TEXT));
@@ -233,7 +238,7 @@ public class BindingTableTests extends TestCase {
 		assertEquals(about, match);
 	}
 
-	public void testSiblingsPerfectMatch() {
+	public void testSiblingsPerfectMatch() throws Exception {
 		BindingTableManager manager = createManager();
 
 		Binding correctIndent = getTestBinding(CORR_INDENT_ID);
@@ -252,7 +257,7 @@ public class BindingTableTests extends TestCase {
 		assertEquals(indentLine, match);
 	}
 
-	public void testOneSiblingAtATimePerfectMatch() {
+	public void testOneSiblingAtATimePerfectMatch() throws Exception {
 		BindingTableManager manager = createManager();
 
 		Binding correctIndent = getTestBinding(CORR_INDENT_ID);
@@ -332,7 +337,8 @@ public class BindingTableTests extends TestCase {
 		ContextSet javaSet = createJavaSet(manager);
 		Binding pasteCtrl5 = manager.getPerfectMatch(javaSet, KeySequence
 				.getInstance("CTRL+5 V"));
-		assertEquals(paste.getParameterizedCommand(), pasteCtrl5.getParameterizedCommand());
+		assertEquals(paste.getParameterizedCommand(), pasteCtrl5
+				.getParameterizedCommand());
 
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5");
 		KeySequence ctrl8 = KeySequence.getInstance("CTRL+8");
@@ -381,8 +387,10 @@ public class BindingTableTests extends TestCase {
 		}
 	}
 
-	private BindingTableManager createManager() {
-		BindingTableManager manager = new BindingTableManager();
+	private BindingTableManager createManager() throws Exception {
+		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, workbenchContext);
+
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			manager.addTable(loadTable(CONTEXTS[i]));
 		}

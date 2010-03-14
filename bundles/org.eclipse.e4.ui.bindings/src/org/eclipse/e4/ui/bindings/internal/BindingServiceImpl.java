@@ -134,9 +134,8 @@ public class BindingServiceImpl implements EBindingService {
 	 */
 	public Binding createBinding(TriggerSequence sequence, ParameterizedCommand command,
 			String schemeId, String contextId) {
-		return new KeyBinding((KeySequence) sequence, command,
-				"org.eclipse.ui.defaultAcceleratorConfiguration", "org.eclipse.ui.context.window", //$NON-NLS-1$ //$NON-NLS-2$
-				null, null, null, Binding.SYSTEM);
+		return new KeyBinding((KeySequence) sequence, command, schemeId, contextId, null, null,
+				null, Binding.SYSTEM);
 	}
 
 	private Binding createDefaultBinding(TriggerSequence sequence, ParameterizedCommand command) {

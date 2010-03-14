@@ -14,12 +14,12 @@ package org.eclipse.e4.ui.bindings.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
+import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
@@ -27,22 +27,28 @@ import org.eclipse.jface.bindings.TriggerSequence;
  * manage tables of bindings that can be used to look up commands from keys.
  */
 public class BindingTableManager {
-	Map<String, BindingTable> bindingTables = new HashMap<String, BindingTable>();
+	@Inject
+	private IEclipseContext eclipseContext;
 
 	public void addTable(BindingTable table) {
 		String contextId = table.getId();
-		if (bindingTables.containsKey(contextId)) {
-			throw new IllegalArgumentException("Already contains table " + contextId); //$NON-NLS-1$
+		if (eclipseContext.containsKey(contextId)) {
+			return; // it's already there
+			//			throw new IllegalArgumentException("Already contains table " + contextId); //$NON-NLS-1$
 		}
-		bindingTables.put(contextId, table);
+		eclipseContext.set(contextId, table);
 	}
 
 	public void removeTable(BindingTable table) {
 		String contextId = table.getId();
-		if (!bindingTables.containsKey(contextId)) {
+		if (!eclipseContext.containsKey(contextId)) {
 			throw new IllegalArgumentException("Does not contains table " + contextId); //$NON-NLS-1$
 		}
-		bindingTables.remove(contextId);
+		eclipseContext.remove(contextId);
+	}
+
+	public BindingTable getTable(String id) {
+		return (BindingTable) eclipseContext.get(id);
 	}
 
 	public ContextSet createContextSet(List<Context> contexts) {
@@ -55,7 +61,7 @@ public class BindingTableManager {
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious() && result == null) {
 			Context c = it.previous();
-			BindingTable table = bindingTables.get(c.getId());
+			BindingTable table = getTable(c.getId());
 			if (table != null) {
 				result = table.getPerfectMatch(triggerSequence);
 			}
@@ -80,7 +86,7 @@ public class BindingTableManager {
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious()) {
 			Context c = it.previous();
-			BindingTable table = bindingTables.get(c.getId());
+			BindingTable table = getTable(c.getId());
 			if (table != null) {
 				Collection<Binding> sequences = table.getSequencesFor(parameterizedCommand);
 				if (sequences != null) {
@@ -97,7 +103,7 @@ public class BindingTableManager {
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious()) {
 			Context c = it.previous();
-			BindingTable table = bindingTables.get(c.getId());
+			BindingTable table = getTable(c.getId());
 			if (table != null) {
 				if (table.isPartialMatch(sequence)) {
 					return true;
@@ -113,7 +119,7 @@ public class BindingTableManager {
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious()) {
 			Context c = it.previous();
-			BindingTable table = bindingTables.get(c.getId());
+			BindingTable table = getTable(c.getId());
 			if (table != null) {
 				Collection<Binding> partialMatches = table.getPartialMatches(sequence);
 				if (partialMatches != null) {
