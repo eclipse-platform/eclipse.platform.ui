@@ -251,7 +251,7 @@ public class ModelEditor {
 
 	private void registerDefaultEditors() {
 		registerEditor(MApplicationPackage.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain()));
+		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain(),this));
 		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain()));

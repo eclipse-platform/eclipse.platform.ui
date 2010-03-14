@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -99,24 +100,6 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 
 		l = new Label(parent, SWT.NONE);
-		l.setText("Tags");
-
-		t = new Text(parent, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		t.setLayoutData(gd);
-
-		l = new Label(parent, SWT.NONE);
-		ListViewer viewer = new ListViewer(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.heightHint = 130;
-		viewer.getList().setLayoutData(gd);
-
-
-		// ------------------------------------------------------------
-
-		l = new Label(parent, SWT.NONE);
 		l.setText("Parent-Id");
 
 		t = new Text(parent, SWT.BORDER);
@@ -147,6 +130,23 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
 		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.MODEL_COMPONENT__PROCESSOR).observeDetail(getMaster()));
+		
+		// ------------------------------------------------------------
+
+		l = new Label(parent, SWT.NONE);
+		l.setText("Tags");
+
+		t = new Text(parent, SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		t.setLayoutData(gd);
+
+		l = new Label(parent, SWT.NONE);
+		ListViewer viewer = new ListViewer(parent);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		gd.heightHint = 130;
+		viewer.getList().setLayoutData(gd);
 
 		return parent;
 	}
@@ -207,7 +207,16 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MModelComponent o = (MModelComponent) element;
-		return "parentId: " + o.getParentID();
+		if( o.getParentID() != null ) {
+			return "parentId: " + o.getParentID();
+		}
+		return null;
 	}
 
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.MODEL_COMPONENT__PARENT_ID)	
+		};
+	}
 }

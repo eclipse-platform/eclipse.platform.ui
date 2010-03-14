@@ -43,8 +43,6 @@ public class NewApplicationModelHandler {
 				resource.setURI(URI.createFileURI(file));
 				resource.save(null);
 				
-				System.err.println("Saved");
-				
 				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
 				
 				MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
