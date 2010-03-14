@@ -39,6 +39,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -363,6 +364,8 @@ public final class NavigatorContentDescriptor implements
 	 * 
 	 */
 	public ITreeContentProvider createContentProvider() throws CoreException {
+		if (Policy.DEBUG_EXTENSION_SETUP)
+			System.out.println("createContentProvider: " + this); //$NON-NLS-1$
 		return (ITreeContentProvider) configElement
 				.createExecutableExtension(ATT_CONTENT_PROVIDER);
 	}
@@ -378,6 +381,8 @@ public final class NavigatorContentDescriptor implements
 	 *             created for any reason
 	 */
 	public ILabelProvider createLabelProvider() throws CoreException {
+		if (Policy.DEBUG_EXTENSION_SETUP)
+			System.out.println("createLabelProvider: " + this); //$NON-NLS-1$
 		return (ILabelProvider) configElement
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
