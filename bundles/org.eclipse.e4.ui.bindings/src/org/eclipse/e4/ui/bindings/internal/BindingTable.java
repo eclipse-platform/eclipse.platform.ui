@@ -30,21 +30,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
  * manage tables of bindings that can be used to look up commands from keys.
  */
 public class BindingTable {
-	static HashMap<Binding, String[]> prefixCache = new HashMap<Binding, String[]>();
-
-	static String[] getPrefixes(Binding b) {
-		String[] prefixes = prefixCache.get(b);
-		if (prefixes == null) {
-			TriggerSequence[] prefs = b.getTriggerSequence().getPrefixes();
-			prefixes = new String[prefs.length - 1];
-			prefixCache.put(b, prefixes);
-			for (int i = 1; i < prefs.length; i++) {
-				prefixes[i - 1] = prefs[i].toString();
-			}
-		}
-		return prefixes;
-	}
-
 	public static final Comparator<Binding> BEST_SEQUENCE = new Comparator<Binding>() {
 		public int compare(Binding o1, Binding o2) {
 			/*
