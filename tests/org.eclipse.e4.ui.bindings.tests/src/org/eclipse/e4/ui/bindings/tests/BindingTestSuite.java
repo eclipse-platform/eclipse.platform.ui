@@ -11,5 +11,6 @@ public class BindingTestSuite extends TestSuite {
 	public BindingTestSuite() {
 		addTestSuite(BindingLookupTest.class);
 		addTestSuite(KeyDispatcherTest.class);
+		addTestSuite(BindingTableTests.class);
 	}
 }
