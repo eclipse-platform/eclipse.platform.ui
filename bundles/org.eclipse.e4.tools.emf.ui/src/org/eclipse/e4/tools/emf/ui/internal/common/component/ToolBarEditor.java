@@ -12,31 +12,80 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.ui.model.application.ItemType;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MToolItem;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.IEMFListProperty;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class ToolBarEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
+	private ModelEditor editor;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
-	public ToolBarEditor(EditingDomain editingDomain) {
+	private class Struct {
+		private final String label;
+		private final EClass eClass;
+		private final boolean separator;
+
+		public Struct(String label, EClass eClass, boolean separator) {
+			this.label = label;
+			this.eClass = eClass;
+			this.separator = separator;
+		}
+	}
+
+	
+	public ToolBarEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
-		// TODO Auto-generated constructor stub
+		this.editor = editor;
 	}
 
 	@Override
@@ -72,9 +121,181 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
+		parent.setLayout(new GridLayout(3, false));
+
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("ToolbarItems");
+			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+			final TableViewer viewer = new TableViewer(parent);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
+
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 300;
+			viewer.getControl().setLayoutData(gd);
+			viewer.getTable().setHeaderVisible(true);
+
+			{
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("Type");
+				column.getColumn().setWidth(300);
+				column.setLabelProvider(new ComponentLabelProvider(editor));
+			}
+
+			{
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.ITEM__TYPE);
+
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText("ItemType");
+				column.getColumn().setWidth(100);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
+			}
+
+			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+			viewer.setInput(prop.observeDetail(master));
+
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
+							int idx = container.getChildren().indexOf(obj) - 1;
+							if (idx >= 0) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
+							int idx = container.getChildren().indexOf(obj) + 1;
+							if (idx < container.getChildren().size()) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
+			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			childrenDropDown.setContentProvider(new ArrayContentProvider());
+			childrenDropDown.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					Struct struct = (Struct) element;
+					return struct.label;
+				}
+			});
+
+			Struct defaultStruct = new Struct("Handled ToolItem", MApplicationPackage.Literals.HANDLED_TOOL_ITEM, false);
+			childrenDropDown.setInput(new Struct[] { defaultStruct, new Struct("Direct ToolItem", MApplicationPackage.Literals.DIRECT_TOOL_ITEM, false), new Struct("Separator", MApplicationPackage.Literals.TOOL_ITEM, true) });
+			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!childrenDropDown.getSelection().isEmpty()) {
+						Struct struct = (Struct) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+						EClass eClass = struct.eClass;
+						MToolItem eObject = (MToolItem) MApplicationFactory.eINSTANCE.create(eClass);
+
+						if (struct.separator) {
+							eObject.setType(ItemType.SEPARATOR);
+						}
+
+						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+							if (!struct.separator) {
+								editor.setSelection(eObject);
+							}
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> keybinding = ((IStructuredSelection) viewer.getSelection()).toList();
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, keybinding);
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
+		}
+
 		return parent;
 	}
 

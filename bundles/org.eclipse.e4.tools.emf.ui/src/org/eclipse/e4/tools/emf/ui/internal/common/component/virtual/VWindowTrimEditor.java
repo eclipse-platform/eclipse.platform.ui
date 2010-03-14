@@ -110,18 +110,8 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 			gl.marginWidth=0;
 			gl.marginHeight=0;
 			buttonComp.setLayout(gl);
-
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Up");
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Down");
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Add Trim");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
@@ -155,7 +145,6 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-
 
 		return parent;
 	}
