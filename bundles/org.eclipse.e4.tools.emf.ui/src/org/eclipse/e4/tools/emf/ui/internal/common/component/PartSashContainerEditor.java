@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -38,6 +39,7 @@ import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -235,11 +237,55 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			b.setText("Up");
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
+							int idx = container.getChildren().indexOf(obj) - 1;
+							if( idx >= 0 ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Down");
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
+							int idx = container.getChildren().indexOf(obj) + 1;
+							if( idx < container.getChildren().size() ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
 			
 			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
 			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
