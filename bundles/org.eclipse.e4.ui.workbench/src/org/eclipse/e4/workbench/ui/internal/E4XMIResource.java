@@ -84,17 +84,23 @@ public class E4XMIResource extends XMIResourceImpl {
 			return id;
 		}
 
-		MApplicationElement element = (MApplicationElement) eObject;
-		id = element.getId();
-		if (id != null && id.length() != 0) {
+		if (eObject instanceof MApplicationElement) {
+			MApplicationElement element = (MApplicationElement) eObject;
+			id = element.getId();
+			if (id != null && id.length() != 0) {
+				id = getUniqueId();
+				setID(eObject, id);
+				return id;
+			}
+
+			id = getUniqueId();
+			element.setId(id);
+			setID(eObject, id);
+		} else {
 			id = getUniqueId();
 			setID(eObject, id);
-			return id;
 		}
 
-		id = getUniqueId();
-		element.setId(id);
-		setID(eObject, id);
 		return id;
 	}
 }
