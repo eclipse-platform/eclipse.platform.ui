@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.filesystem;
 
 import java.io.File;
+import java.util.Enumeration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.*;
@@ -58,6 +59,12 @@ public class Activator implements BundleActivator {
 
 	public Activator() {
 		instance = this;
+	}
+
+	public static Enumeration findEntries(String path, String filePattern, boolean recurse) {
+		if (instance != null && instance.context != null)
+			return instance.context.getBundle().findEntries(path, filePattern, recurse);
+		return null;
 	}
 
 	public void start(BundleContext aContext) throws Exception {

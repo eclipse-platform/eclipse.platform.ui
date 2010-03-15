@@ -21,7 +21,7 @@ public class Messages extends NLS {
 	public static String copying;
 	public static String couldnotDelete;
 	public static String couldnotDeleteReadOnly;
-	public static String couldNotNativeLibrary;
+	public static String couldNotLoadLibrary;
 	public static String couldNotMove;
 	public static String couldNotRead;
 	public static String couldNotWrite;

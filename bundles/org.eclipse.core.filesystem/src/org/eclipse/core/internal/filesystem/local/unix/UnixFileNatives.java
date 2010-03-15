@@ -11,10 +11,14 @@
 package org.eclipse.core.internal.filesystem.local.unix;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.*;
 import org.eclipse.core.internal.filesystem.local.Convert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 
 public abstract class UnixFileNatives {
 
@@ -33,11 +37,24 @@ public abstract class UnixFileNatives {
 			_usingNatives = true;
 			_libattr = libattr();
 		} catch (UnsatisfiedLinkError e) {
-			// Nothing to do
+			if (isLibraryPresent())
+				logMissingNativeLibrary(e);
 		} finally {
 			usingNatives = _usingNatives;
 			libattr = _libattr;
 		}
+	}
+
+	private static boolean isLibraryPresent() {
+		String libName = System.mapLibraryName(LIBRARY_NAME);
+		Enumeration entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
+		return entries != null && entries.hasMoreElements();
+	}
+
+	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
+		String libName = System.mapLibraryName(LIBRARY_NAME);
+		String message = NLS.bind(Messages.couldNotLoadLibrary, libName);
+		Policy.log(IStatus.INFO, message, e);
 	}
 
 	public static int getSupportedAttributes() {

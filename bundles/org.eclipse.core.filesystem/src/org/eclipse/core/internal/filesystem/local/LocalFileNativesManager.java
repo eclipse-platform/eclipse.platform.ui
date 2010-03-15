@@ -12,25 +12,13 @@ package org.eclipse.core.internal.filesystem.local;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
-import org.eclipse.core.internal.filesystem.Messages;
-import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.internal.filesystem.local.unix.UnixFileNatives;
-import org.eclipse.core.runtime.IStatus;
 
 /**
  * Dispatches methods backed by native code to the appropriate platform specific 
  * implementation depending on a library provided by a fragment.
  */
 public class LocalFileNativesManager {
-
-	static {
-		if (!(UnixFileNatives.isUsingNatives() || LocalFileNatives.isUsingNatives()))
-			logMissingNativeLibrary();
-	}
-
-	private static void logMissingNativeLibrary() {
-		Policy.log(IStatus.INFO, Messages.couldNotNativeLibrary, new Exception(Messages.couldNotNativeLibrary));
-	}
 
 	public static int getSupportedAttributes() {
 		if (UnixFileNatives.isUsingNatives())

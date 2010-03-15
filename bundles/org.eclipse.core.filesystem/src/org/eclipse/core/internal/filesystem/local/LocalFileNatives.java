@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
+import java.util.Enumeration;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 
 abstract class LocalFileNatives {
 	private static boolean hasNatives = false;
@@ -29,8 +33,21 @@ abstract class LocalFileNatives {
 			hasNatives = true;
 			isUnicode = internalIsUnicode();
 		} catch (UnsatisfiedLinkError e) {
-			// Nothing to do
+			if (isLibraryPresent())
+				logMissingNativeLibrary(e);
 		}
+	}
+
+	private static boolean isLibraryPresent() {
+		String libName = System.mapLibraryName(LIBRARY_NAME);
+		Enumeration entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
+		return entries != null && entries.hasMoreElements();
+	}
+
+	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
+		String libName = System.mapLibraryName(LIBRARY_NAME);
+		String message = NLS.bind(Messages.couldNotLoadLibrary, libName);
+		Policy.log(IStatus.INFO, message, e);
 	}
 
 	/**
