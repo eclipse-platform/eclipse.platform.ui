@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,13 +134,12 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		fViewer.setInput(TeamUI.getSynchronizeManager());
 		fViewer.addSelectionChangedListener(this);
 		
-		final SynchronizeWizardDescription selected= getDefaultSelection();
-		if (selected != null) {
-		    fViewer.setSelection(new StructuredSelection(selected)); 
-		} else {
-		    final Object object= fViewer.getElementAt(0);
-		    if (object != null)
-		        fViewer.setSelection(new StructuredSelection(object));
+		Object toSelect= getDefaultSelection();
+		if (toSelect == null) {
+		    toSelect= fViewer.getElementAt(0);
+		}
+		if (toSelect != null) {
+		    fViewer.setSelection(new StructuredSelection(toSelect), true); 
 		}
 		fViewer.getTable().setFocus();
 		Dialog.applyDialogFont(parent2);
