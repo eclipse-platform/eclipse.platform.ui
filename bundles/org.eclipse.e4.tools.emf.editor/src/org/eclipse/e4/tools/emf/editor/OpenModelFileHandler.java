@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class OpenModelFileHandler {
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, MApplication application, EModelService modelService, EPartService partService) {
-		
+		System.err.println("Execute!");
 		FileDialog dialog = new FileDialog(shell);
 		String file = dialog.open();
 		if( file != null ) {
@@ -35,18 +35,23 @@ public class OpenModelFileHandler {
 			String filePath = "file://" + file;
 			Collection<MInputPart> parts = partService.getInputParts(filePath);
 			if( parts.size() == 0 ) {
-				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
+				MPartStack stack = (MPartStack) modelService.find("org.eclipse.e4.tools.emf.editor.mainwindow.editorstack", application);
 				
-				MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
-				part.setLabel(name);
-				part.setTooltip(file);
-				part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
-				part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
-				part.setInputURI(filePath);
-				
-				part.setCloseable(true);
-				stack.getChildren().add(part);
-				stack.setSelectedElement(part);				
+				try {
+					MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
+					part.setLabel(name);
+					part.setTooltip(file);
+					part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
+					part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
+					part.setInputURI(filePath);
+					
+					part.setCloseable(true);
+					stack.getChildren().add(part);
+					stack.setSelectedElement(part);
+					System.err.println("Done");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				partService.showPart(parts.iterator().next(), PartState.ACTIVATE);
 			}

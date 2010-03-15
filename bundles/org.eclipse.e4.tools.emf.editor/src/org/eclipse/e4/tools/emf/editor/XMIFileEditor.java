@@ -26,6 +26,7 @@ public class XMIFileEditor {
 	
 	@Inject
 	public XMIFileEditor(Composite composite, final MInputPart part) {
+		System.err.println("Instance created");
 		final XMIModelResource resource = new XMIModelResource(part.getInputURI());
 		resource.addModelListener(new ModelListener() {
 			
