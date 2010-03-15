@@ -756,8 +756,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
 			if (workbenchPart == reference.getPart(false)) {
-				it.remove();
 				partService.hidePart(part);
+				it.remove();
 				return true;
 			}
 		}
@@ -765,8 +765,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
 			IEditorReference reference = it.next();
 			if (workbenchPart == reference.getPart(false)) {
-				it.remove();
 				partService.hidePart(part);
+				it.remove();
 				return true;
 			}
 		}
