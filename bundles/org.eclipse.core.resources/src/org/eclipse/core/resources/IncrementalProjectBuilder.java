@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
+ * Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -363,7 +364,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <strong>Notes:</strong>
 	 * <ul>
 	 * <li>
-	 * The builder rule must be "contained" in the workspace root rule.
+	 * If the builder rule is non-<code>null</code> it must be "contained" in the workspace root rule.
 	 * I.e. {@link ISchedulingRule#contains(ISchedulingRule)} must return 
 	 * <code>true</code> when invoked on the workspace root with the builder rule.
 	 * </li>
@@ -380,7 +381,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return a scheduling rule which is contained in the workspace root rule
+	 * @return a scheduling rule which is contained in the workspace root rule or <code>null</code>
 	 * 
 	 * @since 3.5
 	 */
