@@ -876,6 +876,19 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
+	 * Returns the remembered data (the NavigatorContentDescriptor) associated with
+	 * an object in the viewer. This can be used to test an object's presence in the viewer.
+	 * @param element
+	 * @return the object stored as data in the viewer
+	 */
+	public Object getViewerElementData(Object element) {
+		if (structuredViewerManager != null) {
+			return structuredViewerManager.getData(element);
+		}
+		return null;
+	}
+	
+	/**
 	 * 
 	 * @param aDescriptorKey
 	 *            A descriptor
