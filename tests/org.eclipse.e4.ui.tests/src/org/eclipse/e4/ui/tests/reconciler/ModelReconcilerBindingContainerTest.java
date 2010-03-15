@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
@@ -27,6 +28,10 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
@@ -35,21 +40,22 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
 		keyBinding.setKeySequence(keySequence);
-		application.getBindings().add(keyBinding);
+		bindingTable.getBindings().add(keyBinding);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
+		bindingTable = application.getBindingTables().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(0, application.getBindings().size());
+		assertEquals(0, bindingTable.getBindings().size());
 
 		applyAll(deltas);
 
-		assertEquals(1, application.getBindings().size());
+		assertEquals(1, bindingTable.getBindings().size());
 
-		keyBinding = application.getBindings().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
 		assertNull(keyBinding.getCommand());
 		assertEquals(keySequence, keyBinding.getKeySequence());
 		assertEquals(0, keyBinding.getParameters().size());
@@ -71,34 +77,39 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
 		keyBinding.setKeySequence(keySequence);
-		application.getBindings().add(keyBinding);
+		bindingTable.getBindings().add(keyBinding);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.getBindings().remove(0);
+		bindingTable.getBindings().remove(0);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
+		bindingTable = application.getBindingTables().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(1, application.getBindings().size());
+		assertEquals(1, bindingTable.getBindings().size());
 
-		keyBinding = application.getBindings().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
 		assertNull(keyBinding.getCommand());
 		assertEquals(keySequence, keyBinding.getKeySequence());
 		assertEquals(0, keyBinding.getParameters().size());
 
 		applyAll(deltas);
 
-		assertEquals(0, application.getBindings().size());
+		assertEquals(0, bindingTable.getBindings().size());
 	}
 
 	public void testBindingContainer_Remove_KeyBinding_Null() throws Exception {
@@ -118,6 +129,10 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
@@ -130,22 +145,23 @@ public abstract class ModelReconcilerBindingContainerTest extends
 				.createKeyBinding();
 		keyBinding.setKeySequence(keySequence);
 		keyBinding.setCommand(command);
-		application.getBindings().add(keyBinding);
+		bindingTable.getBindings().add(keyBinding);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
+		bindingTable = application.getBindingTables().get(0);
 		command = application.getCommands().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(0, application.getBindings().size());
+		assertEquals(0, bindingTable.getBindings().size());
 
 		applyAll(deltas);
 
-		assertEquals(1, application.getBindings().size());
+		assertEquals(1, bindingTable.getBindings().size());
 
-		keyBinding = application.getBindings().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
 		assertEquals(command, keyBinding.getCommand());
 		assertEquals(keySequence, keyBinding.getKeySequence());
 	}
@@ -169,6 +185,10 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
@@ -176,32 +196,33 @@ public abstract class ModelReconcilerBindingContainerTest extends
 				.createKeyBinding();
 		keyBinding.setKeySequence(keySequence);
 		keyBinding.setCommand(command);
-		application.getBindings().add(keyBinding);
+		bindingTable.getBindings().add(keyBinding);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.getBindings().remove(keyBinding);
+		bindingTable.getBindings().remove(keyBinding);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
+		bindingTable = application.getBindingTables().get(0);
 		command = application.getCommands().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(1, application.getBindings().size());
+		assertEquals(1, bindingTable.getBindings().size());
 
-		keyBinding = application.getBindings().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
 		assertEquals(command, keyBinding.getCommand());
 		assertEquals(keySequence, keyBinding.getKeySequence());
 		assertEquals(0, keyBinding.getParameters().size());
 
 		applyAll(deltas);
 
-		assertEquals(0, application.getBindings().size());
+		assertEquals(0, bindingTable.getBindings().size());
 	}
 
 	public void testBindingContainer_Remove_BoundKeyBinding_Null()

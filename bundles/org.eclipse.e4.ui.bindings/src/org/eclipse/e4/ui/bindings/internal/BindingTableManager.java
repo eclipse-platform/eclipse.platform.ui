@@ -51,13 +51,13 @@ public class BindingTableManager {
 		return (BindingTable) eclipseContext.get(id);
 	}
 
-	public ContextSet createContextSet(List<Context> contexts) {
+	public ContextSet createContextSet(Collection<Context> contexts) {
 		return new ContextSet(contexts);
 	}
 
-	public Binding getPerfectMatch(ContextSet windowSet, TriggerSequence triggerSequence) {
+	public Binding getPerfectMatch(ContextSet contextSet, TriggerSequence triggerSequence) {
 		Binding result = null;
-		List<Context> contexts = windowSet.getContexts();
+		List<Context> contexts = contextSet.getContexts();
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious() && result == null) {
 			Context c = it.previous();

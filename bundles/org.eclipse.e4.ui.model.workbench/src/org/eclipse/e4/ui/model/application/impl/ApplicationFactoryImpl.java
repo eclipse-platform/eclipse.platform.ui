@@ -84,6 +84,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
 			case MApplicationPackage.MODEL_COMPONENTS: return (EObject)createModelComponents();
 			case MApplicationPackage.MODEL_COMPONENT: return (EObject)createModelComponent();
+			case MApplicationPackage.BINDING_CONTEXT: return (EObject)createBindingContext();
+			case MApplicationPackage.BINDING_TABLE: return (EObject)createBindingTable();
 			case MApplicationPackage.COMMAND: return (EObject)createCommand();
 			case MApplicationPackage.COMMAND_PARAMETER: return (EObject)createCommandParameter();
 			case MApplicationPackage.HANDLER: return (EObject)createHandler();
@@ -304,6 +306,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MModelComponent createModelComponent() {
 		ModelComponentImpl modelComponent = new ModelComponentImpl();
 		return modelComponent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MBindingContext createBindingContext() {
+		BindingContextImpl bindingContext = new BindingContextImpl();
+		return bindingContext;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MBindingTable createBindingTable() {
+		BindingTableImpl bindingTable = new BindingTableImpl();
+		return bindingTable;
 	}
 
 	/**

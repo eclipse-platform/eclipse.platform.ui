@@ -80,6 +80,7 @@ public class PartItemProvider
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
 			addDirtyPropertyDescriptor(object);
+			addBindingContextsPropertyDescriptor(object);
 			addMenusPropertyDescriptor(object);
 			addToolbarPropertyDescriptor(object);
 			addCloseablePropertyDescriptor(object);
@@ -352,6 +353,28 @@ public class PartItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Binding Contexts feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBindingContextsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This adds a property descriptor for the Menus feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -431,7 +454,6 @@ public class PartItemProvider
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.PART__MENUS);
 			childrenFeatures.add(MApplicationPackage.Literals.PART__TOOLBAR);
 		}
@@ -500,12 +522,12 @@ public class PartItemProvider
 			case MApplicationPackage.PART__ICON_URI:
 			case MApplicationPackage.PART__TOOLTIP:
 			case MApplicationPackage.PART__DIRTY:
+			case MApplicationPackage.PART__BINDING_CONTEXTS:
 			case MApplicationPackage.PART__CLOSEABLE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.PART__PROPERTIES:
 			case MApplicationPackage.PART__HANDLERS:
-			case MApplicationPackage.PART__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -532,11 +554,6 @@ public class PartItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS,
 				 MApplicationFactory.eINSTANCE.createHandler()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
-				 MApplicationFactory.eINSTANCE.createKeyBinding()));
 
 		newChildDescriptors.add
 			(createChildParameter

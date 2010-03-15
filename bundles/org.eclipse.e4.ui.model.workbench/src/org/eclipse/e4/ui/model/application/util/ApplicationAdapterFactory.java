@@ -221,6 +221,18 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createBindingContainerAdapter();
 			}
 			@Override
+			public Adapter caseBindings(MBindings object) {
+				return createBindingsAdapter();
+			}
+			@Override
+			public Adapter caseBindingContext(MBindingContext object) {
+				return createBindingContextAdapter();
+			}
+			@Override
+			public Adapter caseBindingTable(MBindingTable object) {
+				return createBindingTableAdapter();
+			}
+			@Override
 			public Adapter caseCommand(MCommand object) {
 				return createCommandAdapter();
 			}
@@ -803,6 +815,48 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createBindingContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MBindings
+	 * @generated
+	 */
+	public Adapter createBindingsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MBindingContext <em>Binding Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContext
+	 * @generated
+	 */
+	public Adapter createBindingContextAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MBindingTable <em>Binding Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MBindingTable
+	 * @generated
+	 */
+	public Adapter createBindingTableAdapter() {
 		return null;
 	}
 

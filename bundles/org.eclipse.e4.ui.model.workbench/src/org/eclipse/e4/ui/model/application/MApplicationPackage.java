@@ -422,7 +422,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
 	 * @generated
 	 */
-	int COMMAND = 36;
+	int COMMAND = 39;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
@@ -432,7 +432,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
 	 * @generated
 	 */
-	int COMMAND_PARAMETER = 37;
+	int COMMAND_PARAMETER = 40;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
@@ -442,7 +442,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
 	 * @generated
 	 */
-	int HANDLER = 38;
+	int HANDLER = 41;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
@@ -452,7 +452,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
 	 * @generated
 	 */
-	int HANDLER_CONTAINER = 39;
+	int HANDLER_CONTAINER = 42;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -462,7 +462,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 40;
+	int HANDLED_ITEM = 43;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
@@ -472,7 +472,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
 	 * @generated
 	 */
-	int HANDLED_MENU_ITEM = 41;
+	int HANDLED_MENU_ITEM = 44;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
@@ -482,7 +482,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
 	 * @generated
 	 */
-	int HANDLED_TOOL_ITEM = 42;
+	int HANDLED_TOOL_ITEM = 45;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
@@ -492,7 +492,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
 	 * @generated
 	 */
-	int KEY_SEQUENCE = 44;
+	int KEY_SEQUENCE = 47;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
@@ -502,7 +502,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
 	 * @generated
 	 */
-	int KEY_BINDING = 43;
+	int KEY_BINDING = 46;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -512,7 +512,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
 	 * @generated
 	 */
-	int PARAMETER = 45;
+	int PARAMETER = 48;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}' class.
@@ -522,7 +522,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Trim_______________V()
 	 * @generated
 	 */
-	int VTRIM_V = 46;
+	int VTRIM_V = 49;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
@@ -532,7 +532,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 	 * @generated
 	 */
-	int TRIM_CONTAINER = 47;
+	int TRIM_CONTAINER = 50;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
@@ -542,7 +542,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
 	 * @generated
 	 */
-	int WINDOW_TRIM = 48;
+	int WINDOW_TRIM = 51;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}' class.
@@ -552,7 +552,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________SharedElements_______________V()
 	 * @generated
 	 */
-	int VSHARED_ELEMENTS_V = 49;
+	int VSHARED_ELEMENTS_V = 52;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PlaceholderImpl <em>Placeholder</em>}' class.
@@ -562,7 +562,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPlaceholder()
 	 * @generated
 	 */
-	int PLACEHOLDER = 50;
+	int PLACEHOLDER = 53;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -572,7 +572,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 51;
+	int PERSPECTIVE = 54;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -582,7 +582,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 52;
+	int PERSPECTIVE_STACK = 55;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
@@ -592,7 +592,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 53;
+	int VTESTING_V = 56;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl <em>Test Harness</em>}' class.
@@ -602,7 +602,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 54;
+	int TEST_HARNESS = 57;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl <em>String To String Map</em>}' class.
@@ -2487,13 +2487,22 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION__HANDLERS = ELEMENT_CONTAINER_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__BINDINGS = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+	int APPLICATION__BINDING_TABLES = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__ROOT_CONTEXT = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Descriptors</b></em>' containment reference list.
@@ -2502,7 +2511,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__DESCRIPTORS = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+	int APPLICATION__DESCRIPTORS = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__BINDING_CONTEXTS = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
@@ -2511,7 +2529,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__COMMANDS = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+	int APPLICATION__COMMANDS = ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -2520,7 +2538,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+	int APPLICATION_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2784,22 +2802,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 14;
-
-	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__DIRTY = CONTRIBUTION_FEATURE_COUNT + 15;
+	int PART__DIRTY = CONTRIBUTION_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__BINDING_CONTEXTS = CONTRIBUTION_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -3019,15 +3037,6 @@ public interface MApplicationPackage extends EPackage {
 	int INPUT_PART__HANDLERS = PART__HANDLERS;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INPUT_PART__BINDINGS = PART__BINDINGS;
-
-	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3035,6 +3044,15 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int INPUT_PART__DIRTY = PART__DIRTY;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_PART__BINDING_CONTEXTS = PART__BINDING_CONTEXTS;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -3253,15 +3271,6 @@ public interface MApplicationPackage extends EPackage {
 	int PART_DESCRIPTOR__HANDLERS = PART__HANDLERS;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_DESCRIPTOR__BINDINGS = PART__BINDINGS;
-
-	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3269,6 +3278,15 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int PART_DESCRIPTOR__DIRTY = PART__DIRTY;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_DESCRIPTOR__BINDING_CONTEXTS = PART__BINDING_CONTEXTS;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -3730,13 +3748,13 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW__HANDLERS = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__BINDINGS = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+	int WINDOW__BINDING_CONTEXTS = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
@@ -3847,13 +3865,22 @@ public interface MApplicationPackage extends EPackage {
 	int MODEL_COMPONENT__HANDLERS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__BINDINGS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 3;
+	int MODEL_COMPONENT__BINDING_TABLES = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__ROOT_CONTEXT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
@@ -3862,7 +3889,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__POSITION_IN_PARENT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
+	int MODEL_COMPONENT__POSITION_IN_PARENT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Parent ID</b></em>' attribute.
@@ -3871,7 +3898,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__PARENT_ID = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
+	int MODEL_COMPONENT__PARENT_ID = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3880,7 +3907,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__CHILDREN = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
+	int MODEL_COMPONENT__CHILDREN = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
@@ -3889,7 +3916,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__COMMANDS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
+	int MODEL_COMPONENT__COMMANDS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Processor</b></em>' attribute.
@@ -3898,7 +3925,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT__PROCESSOR = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
+	int MODEL_COMPONENT__PROCESSOR = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>Model Component</em>' class.
@@ -3907,7 +3934,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
+	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>VCommands V</em>' class.
@@ -3919,13 +3946,22 @@ public interface MApplicationPackage extends EPackage {
 	int VCOMMANDS_V_FEATURE_COUNT = 0;
 
 	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BINDING_CONTAINER__BINDINGS = 0;
+	int BINDING_CONTAINER__BINDING_TABLES = 0;
+
+	/**
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTAINER__ROOT_CONTEXT = 1;
 
 	/**
 	 * The number of structural features of the '<em>Binding Container</em>' class.
@@ -3934,7 +3970,154 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BINDING_CONTAINER_FEATURE_COUNT = 1;
+	int BINDING_CONTAINER_FEATURE_COUNT = 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindings <em>Bindings</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MBindings
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindings()
+	 * @generated
+	 */
+	int BINDINGS = 36;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDINGS__BINDING_CONTEXTS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Bindings</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDINGS_FEATURE_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.BindingContextImpl <em>Binding Context</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.BindingContextImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContext()
+	 * @generated
+	 */
+	int BINDING_CONTEXT = 37;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT__TAGS = APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT__DESCRIPTION = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Binding Context</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTEXT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.BindingTableImpl <em>Binding Table</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.BindingTableImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingTable()
+	 * @generated
+	 */
+	int BINDING_TABLE = 38;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_TABLE__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_TABLE__TAGS = APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Binding Context Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_TABLE__BINDING_CONTEXT_ID = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_TABLE__BINDINGS = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Binding Table</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_TABLE_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5708,7 +5891,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItemType()
 	 * @generated
 	 */
-	int ITEM_TYPE = 55;
+	int ITEM_TYPE = 58;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
@@ -5718,7 +5901,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
 	 * @generated
 	 */
-	int SIDE_VALUE = 56;
+	int SIDE_VALUE = 59;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -5728,7 +5911,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 57;
+	int IECLIPSE_CONTEXT = 60;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -5738,7 +5921,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 58;
+	int PARAMETERIZED_COMMAND = 61;
 
 
 	/**
@@ -6576,15 +6759,122 @@ public interface MApplicationPackage extends EPackage {
 	EClass getBindingContainer();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getBindings <em>Bindings</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getBindingTables <em>Binding Tables</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getBindings()
+	 * @return the meta object for the containment reference list '<em>Binding Tables</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getBindingTables()
 	 * @see #getBindingContainer()
 	 * @generated
 	 */
-	EReference getBindingContainer_Bindings();
+	EReference getBindingContainer_BindingTables();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getRootContext <em>Root Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Root Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getRootContext()
+	 * @see #getBindingContainer()
+	 * @generated
+	 */
+	EReference getBindingContainer_RootContext();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Bindings</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindings
+	 * @generated
+	 */
+	EClass getBindings();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MBindings#getBindingContexts <em>Binding Contexts</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Binding Contexts</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindings#getBindingContexts()
+	 * @see #getBindings()
+	 * @generated
+	 */
+	EAttribute getBindings_BindingContexts();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindingContext <em>Binding Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Binding Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContext
+	 * @generated
+	 */
+	EClass getBindingContext();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MBindingContext#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContext#getName()
+	 * @see #getBindingContext()
+	 * @generated
+	 */
+	EAttribute getBindingContext_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MBindingContext#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContext#getDescription()
+	 * @see #getBindingContext()
+	 * @generated
+	 */
+	EAttribute getBindingContext_Description();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContext#getChildren <em>Children</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Children</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContext#getChildren()
+	 * @see #getBindingContext()
+	 * @generated
+	 */
+	EReference getBindingContext_Children();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindingTable <em>Binding Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Binding Table</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingTable
+	 * @generated
+	 */
+	EClass getBindingTable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MBindingTable#getBindingContextId <em>Binding Context Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Binding Context Id</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingTable#getBindingContextId()
+	 * @see #getBindingTable()
+	 * @generated
+	 */
+	EAttribute getBindingTable_BindingContextId();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingTable#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingTable#getBindings()
+	 * @see #getBindingTable()
+	 * @generated
+	 */
+	EReference getBindingTable_Bindings();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MCommand <em>Command</em>}'.
@@ -7775,12 +8065,98 @@ public interface MApplicationPackage extends EPackage {
 		EClass BINDING_CONTAINER = eINSTANCE.getBindingContainer();
 
 		/**
+		 * The meta object literal for the '<em><b>Binding Tables</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference BINDING_CONTAINER__BINDING_TABLES = eINSTANCE.getBindingContainer_BindingTables();
+
+		/**
+		 * The meta object literal for the '<em><b>Root Context</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference BINDING_CONTAINER__ROOT_CONTEXT = eINSTANCE.getBindingContainer_RootContext();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MBindings <em>Bindings</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MBindings
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindings()
+		 * @generated
+		 */
+		EClass BINDINGS = eINSTANCE.getBindings();
+
+		/**
+		 * The meta object literal for the '<em><b>Binding Contexts</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BINDINGS__BINDING_CONTEXTS = eINSTANCE.getBindings_BindingContexts();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.BindingContextImpl <em>Binding Context</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.BindingContextImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContext()
+		 * @generated
+		 */
+		EClass BINDING_CONTEXT = eINSTANCE.getBindingContext();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BINDING_CONTEXT__NAME = eINSTANCE.getBindingContext_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BINDING_CONTEXT__DESCRIPTION = eINSTANCE.getBindingContext_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference BINDING_CONTEXT__CHILDREN = eINSTANCE.getBindingContext_Children();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.BindingTableImpl <em>Binding Table</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.BindingTableImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingTable()
+		 * @generated
+		 */
+		EClass BINDING_TABLE = eINSTANCE.getBindingTable();
+
+		/**
+		 * The meta object literal for the '<em><b>Binding Context Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BINDING_TABLE__BINDING_CONTEXT_ID = eINSTANCE.getBindingTable_BindingContextId();
+
+		/**
 		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference BINDING_CONTAINER__BINDINGS = eINSTANCE.getBindingContainer_Bindings();
+		EReference BINDING_TABLE__BINDINGS = eINSTANCE.getBindingTable_Bindings();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.

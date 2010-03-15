@@ -494,6 +494,52 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MBindingContext} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected BindingContextItemProvider bindingContextItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MBindingContext}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createBindingContextAdapter() {
+		if (bindingContextItemProvider == null) {
+			bindingContextItemProvider = new BindingContextItemProvider(this);
+		}
+
+		return bindingContextItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MBindingTable} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected BindingTableItemProvider bindingTableItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MBindingTable}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createBindingTableAdapter() {
+		if (bindingTableItemProvider == null) {
+			bindingTableItemProvider = new BindingTableItemProvider(this);
+		}
+
+		return bindingTableItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MCommand} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -909,6 +955,8 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (windowItemProvider != null) windowItemProvider.dispose();
 		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
 		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
+		if (bindingContextItemProvider != null) bindingContextItemProvider.dispose();
+		if (bindingTableItemProvider != null) bindingTableItemProvider.dispose();
 		if (commandItemProvider != null) commandItemProvider.dispose();
 		if (commandParameterItemProvider != null) commandParameterItemProvider.dispose();
 		if (handlerItemProvider != null) handlerItemProvider.dispose();

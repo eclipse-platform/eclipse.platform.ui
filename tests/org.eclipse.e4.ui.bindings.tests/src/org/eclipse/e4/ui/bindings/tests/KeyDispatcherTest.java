@@ -1,16 +1,27 @@
 package org.eclipse.e4.ui.bindings.tests;
 
+import java.lang.reflect.InvocationTargetException;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.internal.BindingTable;
+import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
+import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
+import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -21,6 +32,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class KeyDispatcherTest extends TestCase {
+	private static final String ID_DIALOG = "org.eclipse.ui.contexts.dialog";
+	private static final String ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow";
+	private static final String ID_WINDOW = "org.eclipse.ui.contexts.window";
+
+	final static String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
+			ID_DIALOG, "Dialog", ID_DIALOG_AND_WINDOW, ID_WINDOW, "Window",
+			ID_DIALOG_AND_WINDOW, };
+
 	private static final String TEST_CAT1 = "test.cat1";
 	private static final String TEST_ID1 = "test.id1";
 	private static final String TEST_ID2 = "test.id2";
@@ -62,13 +81,22 @@ public class KeyDispatcherTest extends TestCase {
 		EBindingService bs = (EBindingService) workbenchContext
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = bs.createSequence("CTRL+A");
-		bs.activateBinding(seq, cmd);
+		Binding db = createDefaultBinding(bs, seq, cmd);
+		bs.activateBinding(db);
 
 		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
 		twoStrokeHandler = new CallHandler();
 		hs.activateHandler(TEST_ID2, twoStrokeHandler);
 		TriggerSequence twoKeys = bs.createSequence("CTRL+5 CTRL+A");
-		bs.activateBinding(twoKeys, cmd2);
+		db = createDefaultBinding(bs, twoKeys, cmd2);
+		bs.activateBinding(db);
+	}
+
+	private Binding createDefaultBinding(EBindingService bs,
+			TriggerSequence sequence, ParameterizedCommand command) {
+		return bs.createBinding(sequence, command,
+				"org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
+				ID_WINDOW);
 	}
 
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
@@ -82,7 +110,45 @@ public class KeyDispatcherTest extends TestCase {
 		display = new Display();
 		workbenchContext = createWorkbenchContext(Activator.getDefault()
 				.getGlobalContext());
+		defineContexts(workbenchContext);
+		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);
+	}
+
+	private void defineContexts(IEclipseContext context) {
+		ContextManager contextManager = new ContextManager();
+		context.set(ContextManager.class.getName(), contextManager);
+		ContextSet.setComparator(new ContextSet.CComp(contextManager));
+		for (int i = 0; i < CONTEXTS.length; i += 3) {
+			Context c = contextManager.getContext(CONTEXTS[i]);
+			c.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
+		}
+
+		EContextService cs = (EContextService) context
+				.get(EContextService.class.getName());
+		cs.activateContext(ID_DIALOG_AND_WINDOW);
+		cs.activateContext(ID_WINDOW);
+		context.set(IServiceConstants.ACTIVE_CONTEXTS,
+				new ActiveContextsFunction());
+	}
+
+	private void defineBindingTables(IEclipseContext context) {
+		try {
+			BindingTableManager btm = (BindingTableManager) ContextInjectionFactory
+					.make(BindingTableManager.class, context);
+			context.set(BindingTableManager.class.getName(), btm);
+			ContextManager cm = (ContextManager) context
+					.get(ContextManager.class.getName());
+			btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
+			btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
+			btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

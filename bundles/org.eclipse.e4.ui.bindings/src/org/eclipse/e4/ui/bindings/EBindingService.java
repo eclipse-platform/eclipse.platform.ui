@@ -9,11 +9,7 @@ public interface EBindingService {
 	Binding createBinding(TriggerSequence sequence, ParameterizedCommand command, String schemeId,
 			String contextId);
 
-	Binding activateBinding(TriggerSequence sequence, ParameterizedCommand command);
-
 	void activateBinding(Binding binding);
-
-	Binding deactivateBinding(TriggerSequence sequence, ParameterizedCommand command);
 
 	void deactivateBinding(Binding binding);
 

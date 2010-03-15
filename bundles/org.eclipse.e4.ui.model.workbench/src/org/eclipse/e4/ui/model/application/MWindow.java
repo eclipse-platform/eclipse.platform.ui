@@ -31,7 +31,7 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MWindow extends MElementContainer<MPSCElement>, MUILabel, MContext, MHandlerContainer, MBindingContainer, MPSCElement {
+public interface MWindow extends MElementContainer<MPSCElement>, MUILabel, MContext, MHandlerContainer, MPSCElement, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

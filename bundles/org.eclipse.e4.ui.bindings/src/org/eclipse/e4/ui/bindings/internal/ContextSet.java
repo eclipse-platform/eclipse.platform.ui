@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 
 public class ContextSet {
+	public static ContextSet EMPTY = new ContextSet(Collections.EMPTY_LIST);
+
 	public static class CComp implements Comparator<Context> {
 		private ContextManager manager;
 
@@ -68,7 +71,7 @@ public class ContextSet {
 
 	private List<Context> contexts;
 
-	public ContextSet(List<Context> c) {
+	public ContextSet(Collection<Context> c) {
 		contexts = new ArrayList<Context>(c);
 		Collections.sort(contexts, CONTEXT_COMP);
 	}

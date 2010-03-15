@@ -183,6 +183,24 @@ public interface MApplicationFactory extends EFactory {
 	MModelComponent createModelComponent();
 
 	/**
+	 * Returns a new object of class '<em>Binding Context</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Binding Context</em>'.
+	 * @generated
+	 */
+	MBindingContext createBindingContext();
+
+	/**
+	 * Returns a new object of class '<em>Binding Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Binding Table</em>'.
+	 * @generated
+	 */
+	MBindingTable createBindingTable();
+
+	/**
 	 * Returns a new object of class '<em>Command</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

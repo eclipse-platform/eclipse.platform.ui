@@ -37,14 +37,21 @@
   <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" id="_SeXUGe8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
   <handlers xmi:id="_SeXUGu8EEd6FC9cDb6iV7g" id="_SeXUGu8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="contacts.darkTheme"/>
   <handlers xmi:id="_SeXUG-8EEd6FC9cDb6iV7g" id="_SeXUG-8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler" command="contacts.brightTheme"/>
-  <bindings xmi:id="_SeXUHO8EEd6FC9cDb6iV7g" keySequence="CTRL+D" id="_SeXUHO8EEd6FC9cDb6iV7g" command="contacts.darkTheme"/>
-  <bindings xmi:id="_SeXUHe8EEd6FC9cDb6iV7g" keySequence="CTRL+L" id="_SeXUHe8EEd6FC9cDb6iV7g" command="contacts.brightTheme"/>
-  <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" id="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
-  <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" id="_SeXUH-8EEd6FC9cDb6iV7g" command="contacts.delete"/>
-  <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" id="_SeXUIO8EEd6FC9cDb6iV7g" command="contacts.exit"/>
+  <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" id="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+    <bindings xmi:id="_SeXUHO8EEd6FC9cDb6iV7g" keySequence="CTRL+D" id="_SeXUHO8EEd6FC9cDb6iV7g" command="contacts.darkTheme"/>
+    <bindings xmi:id="_SeXUHe8EEd6FC9cDb6iV7g" keySequence="CTRL+L" id="_SeXUHe8EEd6FC9cDb6iV7g" command="contacts.brightTheme"/>
+    <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" id="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
+    <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" id="_SeXUH-8EEd6FC9cDb6iV7g" command="contacts.delete"/>
+    <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" id="_SeXUIO8EEd6FC9cDb6iV7g" command="contacts.exit"/>
+  </bindingTables>
   <commands xmi:id="contacts.exit" id="contacts.exit" commandName="Exit" description=""/>
   <commands xmi:id="contacts.darkTheme" id="contacts.darkTheme" commandName="Dark Theme"/>
   <commands xmi:id="contacts.brightTheme" id="contacts.brightTheme" commandName="Bright Theme" description=""/>
   <commands xmi:id="contacts.save" id="contacts.save" commandName="Save" description=""/>
   <commands xmi:id="contacts.delete" id="contacts.delete" commandName="Delete" description=""/>
+  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
 </application:Application>

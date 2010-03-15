@@ -16,6 +16,9 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindingContext;
+import org.eclipse.e4.ui.model.application.MBindingTable;
+import org.eclipse.e4.ui.model.application.MBindings;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MHandler;
@@ -53,8 +56,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindingTables <em>Binding Tables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  * </ul>
  * </p>
@@ -113,14 +118,24 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * The cached value of the '{@link #getBindingTables() <em>Binding Tables</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getBindings()
+	 * @see #getBindingTables()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MKeyBinding> bindings;
+	protected EList<MBindingTable> bindingTables;
+
+	/**
+	 * The cached value of the '{@link #getRootContext() <em>Root Context</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRootContext()
+	 * @generated
+	 * @ordered
+	 */
+	protected MBindingContext rootContext;
 
 	/**
 	 * The cached value of the '{@link #getDescriptors() <em>Descriptors</em>}' containment reference list.
@@ -131,6 +146,16 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MPartDescriptor> descriptors;
+
+	/**
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBindingContexts()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -223,11 +248,54 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MKeyBinding> getBindings() {
-		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.APPLICATION__BINDINGS);
+	public EList<MBindingTable> getBindingTables() {
+		if (bindingTables == null) {
+			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, MApplicationPackage.APPLICATION__BINDING_TABLES);
 		}
-		return bindings;
+		return bindingTables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MBindingContext getRootContext() {
+		return rootContext;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetRootContext(MBindingContext newRootContext, NotificationChain msgs) {
+		MBindingContext oldRootContext = rootContext;
+		rootContext = newRootContext;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ROOT_CONTEXT, oldRootContext, newRootContext);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setRootContext(MBindingContext newRootContext) {
+		if (newRootContext != rootContext) {
+			NotificationChain msgs = null;
+			if (rootContext != null)
+				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.APPLICATION__ROOT_CONTEXT, null, msgs);
+			if (newRootContext != null)
+				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.APPLICATION__ROOT_CONTEXT, null, msgs);
+			msgs = basicSetRootContext(newRootContext, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ROOT_CONTEXT, newRootContext, newRootContext));
 	}
 
 	/**
@@ -240,6 +308,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, MApplicationPackage.APPLICATION__DESCRIPTORS);
 		}
 		return descriptors;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<String> getBindingContexts() {
+		if (bindingContexts == null) {
+			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__BINDING_CONTEXTS);
+		}
+		return bindingContexts;
 	}
 
 	/**
@@ -266,8 +346,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__BINDINGS:
-				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+				return basicSetRootContext(null, msgs);
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__COMMANDS:
@@ -293,10 +375,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				else return getProperties().map();
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.APPLICATION__BINDINGS:
-				return getBindings();
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+				return getBindingTables();
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+				return getRootContext();
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 				return getDescriptors();
+			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+				return getBindingContexts();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return getCommands();
 		}
@@ -326,13 +412,20 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__BINDINGS:
-				getBindings().clear();
-				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+				getBindingTables().clear();
+				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
+				return;
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+				setRootContext((MBindingContext)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
 				getDescriptors().addAll((Collection<? extends MPartDescriptor>)newValue);
+				return;
+			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+				getBindingContexts().clear();
+				getBindingContexts().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
@@ -362,11 +455,17 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.APPLICATION__BINDINGS:
-				getBindings().clear();
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+				getBindingTables().clear();
+				return;
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+				setRootContext((MBindingContext)null);
 				return;
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
+				return;
+			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+				getBindingContexts().clear();
 				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
@@ -391,10 +490,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.APPLICATION__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.APPLICATION__BINDINGS:
-				return bindings != null && !bindings.isEmpty();
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+				return bindingTables != null && !bindingTables.isEmpty();
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+				return rootContext != null;
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 				return descriptors != null && !descriptors.isEmpty();
+			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+				return bindingContexts != null && !bindingContexts.isEmpty();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 		}
@@ -424,13 +527,20 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		}
 		if (baseClass == MBindingContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
+				case MApplicationPackage.APPLICATION__BINDING_TABLES: return MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES;
+				case MApplicationPackage.APPLICATION__ROOT_CONTEXT: return MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.APPLICATION__DESCRIPTORS: return MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.APPLICATION__BINDING_CONTEXTS: return MApplicationPackage.BINDINGS__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -460,13 +570,20 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		}
 		if (baseClass == MBindingContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.APPLICATION__BINDINGS;
+				case MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES: return MApplicationPackage.APPLICATION__BINDING_TABLES;
+				case MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT: return MApplicationPackage.APPLICATION__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS: return MApplicationPackage.APPLICATION__DESCRIPTORS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.BINDINGS__BINDING_CONTEXTS: return MApplicationPackage.APPLICATION__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -487,6 +604,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
+		result.append(", bindingContexts: "); //$NON-NLS-1$
+		result.append(bindingContexts);
 		result.append(')');
 		return result.toString();
 	}

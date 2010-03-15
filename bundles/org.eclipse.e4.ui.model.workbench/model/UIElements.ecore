@@ -146,10 +146,11 @@
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
     <eGenericSuperTypes eClassifier="#//PartDescriptorContainer"/>
+    <eGenericSuperTypes eClassifier="#//Bindings"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
       eSuperTypes="#//UIElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UILabel #//HandlerContainer #//BindingContainer #//Dirtyable">
+  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UILabel #//HandlerContainer #//Dirtyable #//Bindings">
     <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
         eType="#//Menu" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"
@@ -191,8 +192,8 @@
     <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
-    <eGenericSuperTypes eClassifier="#//BindingContainer"/>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
+    <eGenericSuperTypes eClassifier="#//Bindings"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelComponents">
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
@@ -212,6 +213,24 @@
   <eClassifiers xsi:type="ecore:EClass" name="V______________Commands_______________V"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="BindingContainer" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bindingTables" upperBound="-1"
+        eType="#//BindingTable" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rootContext" eType="#//BindingContext"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bindings" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingContexts" ordered="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BindingContext" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//BindingContext" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BindingTable" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingContextId" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
         eType="#//KeyBinding" containment="true"/>
   </eClassifiers>

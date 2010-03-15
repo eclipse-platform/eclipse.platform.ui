@@ -70,6 +70,7 @@ public class ApplicationItemProvider
 
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
+			addBindingContextsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -119,6 +120,28 @@ public class ApplicationItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Binding Contexts feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBindingContextsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -132,7 +155,8 @@ public class ApplicationItemProvider
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
+			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 			childrenFeatures.add(MApplicationPackage.Literals.APPLICATION__COMMANDS);
 		}
@@ -191,11 +215,13 @@ public class ApplicationItemProvider
 		switch (notification.getFeatureID(MApplication.class)) {
 			case MApplicationPackage.APPLICATION__CONTEXT:
 			case MApplicationPackage.APPLICATION__VARIABLES:
+			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.APPLICATION__PROPERTIES:
 			case MApplicationPackage.APPLICATION__HANDLERS:
-			case MApplicationPackage.APPLICATION__BINDINGS:
+			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
 			case MApplicationPackage.APPLICATION__DESCRIPTORS:
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -227,8 +253,13 @@ public class ApplicationItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
-				 MApplicationFactory.eINSTANCE.createKeyBinding()));
+				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES,
+				 MApplicationFactory.eINSTANCE.createBindingTable()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT,
+				 MApplicationFactory.eINSTANCE.createBindingContext()));
 
 		newChildDescriptors.add
 			(createChildParameter

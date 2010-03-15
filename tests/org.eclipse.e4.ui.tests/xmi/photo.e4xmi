@@ -38,10 +38,17 @@
   <handlers xmi:id="_AXeqWe8IEd6FC9cDb6iV7g" id="_AXeqWe8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="e4photo.createAlbum"/>
   <handlers xmi:id="_AXeqWu8IEd6FC9cDb6iV7g" id="_AXeqWu8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="e4photo.switchPersepective"/>
   <handlers xmi:id="_AXeqW-8IEd6FC9cDb6iV7g" id="_AXeqW-8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="e4photo.imageDialog"/>
-  <bindings xmi:id="_AXeqXO8IEd6FC9cDb6iV7g" keySequence="CTRL+X" id="_AXeqXO8IEd6FC9cDb6iV7g" command="e4photo.exit"/>
-  <bindings xmi:id="_AXeqXe8IEd6FC9cDb6iV7g" keySequence="CTRL+N" id="_AXeqXe8IEd6FC9cDb6iV7g" command="e4photo.createAlbum"/>
+  <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" id="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+    <bindings xmi:id="_AXeqXO8IEd6FC9cDb6iV7g" keySequence="CTRL+Q" id="_AXeqXO8IEd6FC9cDb6iV7g" command="e4photo.exit"/>
+    <bindings xmi:id="_AXeqXe8IEd6FC9cDb6iV7g" keySequence="CTRL+N" id="_AXeqXe8IEd6FC9cDb6iV7g" command="e4photo.createAlbum"/>
+  </bindingTables>
   <commands xmi:id="e4photo.exit" id="e4photo.exit" commandName="Exit" description=""/>
   <commands xmi:id="e4photo.createAlbum" id="e4photo.createAlbum" commandName="Create Album"/>
   <commands xmi:id="e4photo.switchPersepective" id="e4photo.switchPersepective" commandName="Switch Perspective" description=""/>
   <commands xmi:id="e4photo.imageDialog" id="e4photo.imageDialog" commandName="Image Dialog" description=""/>
+  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
 </application:Application>

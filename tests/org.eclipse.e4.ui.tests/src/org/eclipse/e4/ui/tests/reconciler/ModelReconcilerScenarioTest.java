@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -792,35 +793,6 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(partD, stack2.getChildren().get(2));
 	}
 
-	public void testBindingContainer_NewWithBindings() {
-		MApplication application = createApplication();
-
-		saveModel();
-
-		ModelReconciler reconciler = createModelReconciler();
-		reconciler.recordChanges(application);
-
-		MWindow window = createWindow(application);
-
-		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
-				.createKeyBinding();
-		window.getBindings().add(keyBinding);
-
-		Object state = reconciler.serialize();
-
-		application = createApplication();
-
-		Collection<ModelDelta> deltas = constructDeltas(application, state);
-
-		assertEquals(0, application.getChildren().size());
-		assertEquals(0, application.getBindings().size());
-
-		applyAll(deltas);
-
-		window = application.getChildren().get(0);
-		assertEquals(1, window.getBindings().size());
-	}
-
 	public void testElementContainer_ActiveChild_New() {
 		MApplication application = createApplication();
 		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
@@ -1328,56 +1300,61 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 			String originalWindowKeyBindingSequence,
 			String userWindowKeyBindingSequence) {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
+
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		MBindingTable bindingTable2 = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+		application.getBindingTables().add(bindingTable2);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
-		MKeyBinding applicationKeyBinding = MApplicationFactory.eINSTANCE
+		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
-		applicationKeyBinding.setCommand(command);
-		applicationKeyBinding
-				.setKeySequence(originalApplicationKeyBindingSequence);
+		keyBinding.setCommand(command);
+		keyBinding.setKeySequence(originalApplicationKeyBindingSequence);
 
-		MKeyBinding windowKeyBinding = MApplicationFactory.eINSTANCE
+		MKeyBinding keyBinding2 = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
-		windowKeyBinding.setCommand(command);
-		windowKeyBinding.setKeySequence(originalWindowKeyBindingSequence);
+		keyBinding2.setCommand(command);
+		keyBinding2.setKeySequence(originalWindowKeyBindingSequence);
 
-		application.getBindings().add(applicationKeyBinding);
-		window.getBindings().add(windowKeyBinding);
+		bindingTable.getBindings().add(keyBinding);
+		bindingTable2.getBindings().add(keyBinding2);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		applicationKeyBinding.setKeySequence(userApplicationKeyBindingSequence);
-		windowKeyBinding.setKeySequence(userWindowKeyBindingSequence);
+		keyBinding.setKeySequence(userApplicationKeyBindingSequence);
+		keyBinding2.setKeySequence(userWindowKeyBindingSequence);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
+		bindingTable = application.getBindingTables().get(0);
+		bindingTable2 = application.getBindingTables().get(1);
 
 		command = application.getCommands().get(0);
 
-		applicationKeyBinding = application.getBindings().get(0);
-		windowKeyBinding = window.getBindings().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
+		keyBinding2 = bindingTable2.getBindings().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(originalApplicationKeyBindingSequence,
-				applicationKeyBinding.getKeySequence());
-		assertEquals(originalWindowKeyBindingSequence, windowKeyBinding
+		assertEquals(originalApplicationKeyBindingSequence, keyBinding
+				.getKeySequence());
+		assertEquals(originalWindowKeyBindingSequence, keyBinding2
 				.getKeySequence());
 
 		applyAll(deltas);
 
-		assertEquals(userApplicationKeyBindingSequence, applicationKeyBinding
+		assertEquals(userApplicationKeyBindingSequence, keyBinding
 				.getKeySequence());
-		assertEquals(userWindowKeyBindingSequence, windowKeyBinding
-				.getKeySequence());
+		assertEquals(userWindowKeyBindingSequence, keyBinding2.getKeySequence());
 	}
 
 	public void testApplication_Commands_MultiLevelKeyBindings_NullNull_NullNull() {

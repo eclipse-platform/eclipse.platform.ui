@@ -15,6 +15,8 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindingContext;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
@@ -46,7 +48,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindingTables <em>Binding Tables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getPositionInParent <em>Position In Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getParentID <em>Parent ID</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getChildren <em>Children</em>}</li>
@@ -99,14 +102,24 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * The cached value of the '{@link #getBindingTables() <em>Binding Tables</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getBindings()
+	 * @see #getBindingTables()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MKeyBinding> bindings;
+	protected EList<MBindingTable> bindingTables;
+
+	/**
+	 * The cached value of the '{@link #getRootContext() <em>Root Context</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRootContext()
+	 * @generated
+	 * @ordered
+	 */
+	protected MBindingContext rootContext;
 
 	/**
 	 * The default value of the '{@link #getPositionInParent() <em>Position In Parent</em>}' attribute.
@@ -323,11 +336,54 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MKeyBinding> getBindings() {
-		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.MODEL_COMPONENT__BINDINGS);
+	public EList<MBindingTable> getBindingTables() {
+		if (bindingTables == null) {
+			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES);
 		}
-		return bindings;
+		return bindingTables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MBindingContext getRootContext() {
+		return rootContext;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetRootContext(MBindingContext newRootContext, NotificationChain msgs) {
+		MBindingContext oldRootContext = rootContext;
+		rootContext = newRootContext;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, oldRootContext, newRootContext);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setRootContext(MBindingContext newRootContext) {
+		if (newRootContext != rootContext) {
+			NotificationChain msgs = null;
+			if (rootContext != null)
+				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
+			if (newRootContext != null)
+				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
+			msgs = basicSetRootContext(newRootContext, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, newRootContext, newRootContext));
 	}
 
 	/**
@@ -361,8 +417,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		switch (featureID) {
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
-				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+				return basicSetRootContext(null, msgs);
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
@@ -385,8 +443,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return getTags();
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
-				return getBindings();
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+				return getBindingTables();
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+				return getRootContext();
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return getPositionInParent();
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
@@ -421,9 +481,12 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
-				getBindings().clear();
-				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+				getBindingTables().clear();
+				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
+				return;
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+				setRootContext((MBindingContext)newValue);
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent((String)newValue);
@@ -463,8 +526,11 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
-				getBindings().clear();
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+				getBindingTables().clear();
+				return;
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+				setRootContext((MBindingContext)null);
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
@@ -499,8 +565,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return tags != null && !tags.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
-				return bindings != null && !bindings.isEmpty();
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+				return bindingTables != null && !bindingTables.isEmpty();
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+				return rootContext != null;
 			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
@@ -537,7 +605,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		}
 		if (baseClass == MBindingContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MODEL_COMPONENT__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
+				case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES: return MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES;
+				case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT: return MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
@@ -566,7 +635,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		}
 		if (baseClass == MBindingContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.MODEL_COMPONENT__BINDINGS;
+				case MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES: return MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES;
+				case MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT: return MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}

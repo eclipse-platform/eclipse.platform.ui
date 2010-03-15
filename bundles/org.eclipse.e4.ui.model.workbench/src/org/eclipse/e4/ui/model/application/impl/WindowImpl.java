@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MBindings;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MHandler;
@@ -56,7 +57,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getMainMenu <em>Main Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getX <em>X</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getY <em>Y</em>}</li>
@@ -179,14 +180,14 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getBindings()
+	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MKeyBinding> bindings;
+	protected EList<String> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getMainMenu() <em>Main Menu</em>}' containment reference.
@@ -422,11 +423,11 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MKeyBinding> getBindings() {
-		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.WINDOW__BINDINGS);
+	public EList<String> getBindingContexts() {
+		if (bindingContexts == null) {
+			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.WINDOW__BINDING_CONTEXTS);
 		}
-		return bindings;
+		return bindingContexts;
 	}
 
 	/**
@@ -568,8 +569,6 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.WINDOW__BINDINGS:
-				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return basicSetMainMenu(null, msgs);
 		}
@@ -599,8 +598,8 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				else return getProperties().map();
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.WINDOW__BINDINGS:
-				return getBindings();
+			case MApplicationPackage.WINDOW__BINDING_CONTEXTS:
+				return getBindingContexts();
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return getMainMenu();
 			case MApplicationPackage.WINDOW__X:
@@ -647,9 +646,9 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.WINDOW__BINDINGS:
-				getBindings().clear();
-				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+			case MApplicationPackage.WINDOW__BINDING_CONTEXTS:
+				getBindingContexts().clear();
+				getBindingContexts().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)newValue);
@@ -699,8 +698,8 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 			case MApplicationPackage.WINDOW__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.WINDOW__BINDINGS:
-				getBindings().clear();
+			case MApplicationPackage.WINDOW__BINDING_CONTEXTS:
+				getBindingContexts().clear();
 				return;
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)null);
@@ -743,8 +742,8 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				return properties != null && !properties.isEmpty();
 			case MApplicationPackage.WINDOW__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.WINDOW__BINDINGS:
-				return bindings != null && !bindings.isEmpty();
+			case MApplicationPackage.WINDOW__BINDING_CONTEXTS:
+				return bindingContexts != null && !bindingContexts.isEmpty();
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return mainMenu != null;
 			case MApplicationPackage.WINDOW__X:
@@ -788,14 +787,14 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MPSCElement.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.WINDOW__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MPSCElement.class) {
+		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
+				case MApplicationPackage.WINDOW__BINDING_CONTEXTS: return MApplicationPackage.BINDINGS__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -831,14 +830,14 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MPSCElement.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.WINDOW__BINDINGS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MPSCElement.class) {
+		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
+				case MApplicationPackage.BINDINGS__BINDING_CONTEXTS: return MApplicationPackage.WINDOW__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -865,6 +864,8 @@ public class WindowImpl extends ElementContainerImpl<MPSCElement> implements MWi
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
+		result.append(", bindingContexts: "); //$NON-NLS-1$
+		result.append(bindingContexts);
 		result.append(", x: "); //$NON-NLS-1$
 		result.append(x);
 		result.append(", y: "); //$NON-NLS-1$

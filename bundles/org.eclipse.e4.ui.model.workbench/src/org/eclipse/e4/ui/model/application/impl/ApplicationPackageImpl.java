@@ -21,6 +21,9 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindingContext;
+import org.eclipse.e4.ui.model.application.MBindingTable;
+import org.eclipse.e4.ui.model.application.MBindings;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.ui.model.application.MContext;
@@ -336,6 +339,27 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass bindingContainerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass bindingsEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass bindingContextEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass bindingTableEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1282,8 +1306,98 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getBindingContainer_Bindings() {
+	public EReference getBindingContainer_BindingTables() {
 		return (EReference)bindingContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getBindingContainer_RootContext() {
+		return (EReference)bindingContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getBindings() {
+		return bindingsEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getBindings_BindingContexts() {
+		return (EAttribute)bindingsEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getBindingContext() {
+		return bindingContextEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getBindingContext_Name() {
+		return (EAttribute)bindingContextEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getBindingContext_Description() {
+		return (EAttribute)bindingContextEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getBindingContext_Children() {
+		return (EReference)bindingContextEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getBindingTable() {
+		return bindingTableEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getBindingTable_BindingContextId() {
+		return (EAttribute)bindingTableEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getBindingTable_Bindings() {
+		return (EReference)bindingTableEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1827,7 +1941,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		v______________Commands_______________VEClass = createEClass(VCOMMANDS_V);
 
 		bindingContainerEClass = createEClass(BINDING_CONTAINER);
-		createEReference(bindingContainerEClass, BINDING_CONTAINER__BINDINGS);
+		createEReference(bindingContainerEClass, BINDING_CONTAINER__BINDING_TABLES);
+		createEReference(bindingContainerEClass, BINDING_CONTAINER__ROOT_CONTEXT);
+
+		bindingsEClass = createEClass(BINDINGS);
+		createEAttribute(bindingsEClass, BINDINGS__BINDING_CONTEXTS);
+
+		bindingContextEClass = createEClass(BINDING_CONTEXT);
+		createEAttribute(bindingContextEClass, BINDING_CONTEXT__NAME);
+		createEAttribute(bindingContextEClass, BINDING_CONTEXT__DESCRIPTION);
+		createEReference(bindingContextEClass, BINDING_CONTEXT__CHILDREN);
+
+		bindingTableEClass = createEClass(BINDING_TABLE);
+		createEAttribute(bindingTableEClass, BINDING_TABLE__BINDING_CONTEXT_ID);
+		createEReference(bindingTableEClass, BINDING_TABLE__BINDINGS);
 
 		commandEClass = createEClass(COMMAND);
 		createEAttribute(commandEClass, COMMAND__COMMAND_NAME);
@@ -1979,14 +2106,16 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPartDescriptorContainer());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getBindings());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		pscElementEClass.getESuperTypes().add(this.getUIElement());
 		partEClass.getESuperTypes().add(this.getContribution());
 		partEClass.getESuperTypes().add(this.getContext());
 		partEClass.getESuperTypes().add(this.getPSCElement());
 		partEClass.getESuperTypes().add(this.getUILabel());
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
-		partEClass.getESuperTypes().add(this.getBindingContainer());
 		partEClass.getESuperTypes().add(this.getDirtyable());
+		partEClass.getESuperTypes().add(this.getBindings());
 		inputPartEClass.getESuperTypes().add(this.getPart());
 		inputPartEClass.getESuperTypes().add(this.getInput());
 		partDescriptorEClass.getESuperTypes().add(this.getPart());
@@ -2012,14 +2141,16 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandlerContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getBindingContainer());
-		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
+		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getBindings());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		modelComponentEClass.getESuperTypes().add(this.getPartDescriptorContainer());
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(this.getHandlerContainer());
 		modelComponentEClass.getESuperTypes().add(this.getBindingContainer());
+		bindingContextEClass.getESuperTypes().add(this.getApplicationElement());
+		bindingTableEClass.getESuperTypes().add(this.getApplicationElement());
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
 		commandParameterEClass.getESuperTypes().add(this.getApplicationElement());
 		handlerEClass.getESuperTypes().add(this.getContribution());
@@ -2204,7 +2335,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(v______________Commands_______________VEClass, MV______________Commands_______________V.class, "V______________Commands_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(bindingContainerEClass, MBindingContainer.class, "BindingContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getBindingContainer_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MBindingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingContainer_BindingTables(), this.getBindingTable(), null, "bindingTables", null, 0, -1, MBindingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, 1, MBindingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(bindingsEClass, MBindings.class, "Bindings", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getBindings_BindingContexts(), ecorePackage.getEString(), "bindingContexts", null, 0, -1, MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(bindingContextEClass, MBindingContext.class, "BindingContext", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getBindingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getBindingContext_Description(), ecorePackage.getEString(), "description", null, 0, 1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingContext_Children(), this.getBindingContext(), null, "children", null, 0, -1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(bindingTableEClass, MBindingTable.class, "BindingTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getBindingTable_BindingContextId(), ecorePackage.getEString(), "bindingContextId", null, 1, 1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingTable_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(commandEClass, MCommand.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

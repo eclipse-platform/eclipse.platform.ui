@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingContainer, MPartDescriptorContainer {
+public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingContainer, MPartDescriptorContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MCommand}.

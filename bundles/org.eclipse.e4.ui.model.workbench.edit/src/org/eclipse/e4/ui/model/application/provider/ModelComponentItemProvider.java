@@ -200,7 +200,8 @@ public class ModelComponentItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
+			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
 		}
@@ -265,7 +266,8 @@ public class ModelComponentItemProvider
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -292,8 +294,13 @@ public class ModelComponentItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
-				 MApplicationFactory.eINSTANCE.createKeyBinding()));
+				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES,
+				 MApplicationFactory.eINSTANCE.createBindingTable()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT,
+				 MApplicationFactory.eINSTANCE.createBindingContext()));
 
 		newChildDescriptors.add
 			(createChildParameter

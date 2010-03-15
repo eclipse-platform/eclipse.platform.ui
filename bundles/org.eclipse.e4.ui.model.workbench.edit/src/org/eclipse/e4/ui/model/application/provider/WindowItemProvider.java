@@ -73,6 +73,7 @@ public class WindowItemProvider
 			addTooltipPropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
+			addBindingContextsPropertyDescriptor(object);
 			addXPropertyDescriptor(object);
 			addYPropertyDescriptor(object);
 			addWidthPropertyDescriptor(object);
@@ -192,6 +193,28 @@ public class WindowItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Binding Contexts feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBindingContextsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This adds a property descriptor for the X feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -293,7 +316,6 @@ public class WindowItemProvider
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 			childrenFeatures.add(MApplicationPackage.Literals.WINDOW__MAIN_MENU);
 		}
 		return childrenFeatures;
@@ -354,6 +376,7 @@ public class WindowItemProvider
 			case MApplicationPackage.WINDOW__TOOLTIP:
 			case MApplicationPackage.WINDOW__CONTEXT:
 			case MApplicationPackage.WINDOW__VARIABLES:
+			case MApplicationPackage.WINDOW__BINDING_CONTEXTS:
 			case MApplicationPackage.WINDOW__X:
 			case MApplicationPackage.WINDOW__Y:
 			case MApplicationPackage.WINDOW__WIDTH:
@@ -362,7 +385,6 @@ public class WindowItemProvider
 				return;
 			case MApplicationPackage.WINDOW__PROPERTIES:
 			case MApplicationPackage.WINDOW__HANDLERS:
-			case MApplicationPackage.WINDOW__BINDINGS:
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -390,11 +412,6 @@ public class WindowItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS,
 				 MApplicationFactory.eINSTANCE.createHandler()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS,
-				 MApplicationFactory.eINSTANCE.createKeyBinding()));
 
 		newChildDescriptors.add
 			(createChildParameter

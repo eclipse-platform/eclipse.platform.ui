@@ -13,104 +13,26 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Set;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyBinding;
-import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 
 /**
  *
  */
 public class BindingServiceImpl implements EBindingService {
-	static HashMap<Binding, String[]> prefixCache = new HashMap<Binding, String[]>();
-
-	static String[] getPrefixes(Binding b) {
-		String[] prefixes = prefixCache.get(b);
-		if (prefixes == null) {
-			TriggerSequence[] prefs = b.getTriggerSequence().getPrefixes();
-			prefixes = new String[prefs.length - 1];
-			prefixCache.put(b, prefixes);
-			for (int i = 1; i < prefs.length; i++) {
-				prefixes[i - 1] = B_SEQ + prefs[i];
-			}
-		}
-		return prefixes;
-	}
-
-	static String getBindingId(Binding b) {
-		return B_ID + b.getTriggerSequence().format();
-	}
-
-	static String getCommandId(Binding b) {
-		return P_ID + b.getParameterizedCommand().serialize();
-	}
-
-	static final Comparator<Binding> BEST_SEQUENCE = new Comparator<Binding>() {
-		public int compare(Binding o1, Binding o2) {
-			/*
-			 * Check to see which has the least number of triggers in the trigger sequence.
-			 */
-			final Trigger[] bestTriggers = o1.getTriggerSequence().getTriggers();
-			final Trigger[] currentTriggers = o2.getTriggerSequence().getTriggers();
-			int compareTo = bestTriggers.length - currentTriggers.length;
-			if (compareTo != 0) {
-				return compareTo;
-			}
-
-			/*
-			 * Compare the number of keys pressed in each trigger sequence. Some types of keys count
-			 * less than others (i.e., some types of modifiers keys are less likely to be chosen).
-			 */
-			compareTo = countStrokes(bestTriggers) - countStrokes(currentTriggers);
-			if (compareTo != 0) {
-				return compareTo;
-			}
-
-			// If this is still a tie, then just chose the shortest text.
-			return o1.getTriggerSequence().format().length()
-					- o2.getTriggerSequence().format().length();
-		}
-
-		private final int countStrokes(final Trigger[] triggers) {
-			int strokeCount = triggers.length;
-			for (int i = 0; i < triggers.length; i++) {
-				final Trigger trigger = triggers[i];
-				if (trigger instanceof KeyStroke) {
-					final KeyStroke keyStroke = (KeyStroke) trigger;
-					final int modifierKeys = keyStroke.getModifierKeys();
-					final IKeyLookup lookup = KeyLookupFactory.getDefault();
-					if ((modifierKeys & lookup.getAlt()) != 0) {
-						strokeCount += 8;
-					}
-					if ((modifierKeys & lookup.getCtrl()) != 0) {
-						strokeCount += 2;
-					}
-					if ((modifierKeys & lookup.getShift()) != 0) {
-						strokeCount += 4;
-					}
-					if ((modifierKeys & lookup.getCommand()) != 0) {
-						strokeCount += 2;
-					}
-				} else {
-					strokeCount += 99;
-				}
-			}
-
-			return strokeCount;
-		}
-	};
+	static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
 
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
 	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
@@ -123,7 +45,16 @@ public class BindingServiceImpl implements EBindingService {
 	static final String B_SEQ = "bindSeq::"; //$NON-NLS-1$
 	static final String P_ID = "parmCmd::"; //$NON-NLS-1$
 
+	@Inject
 	private IEclipseContext context;
+
+	@Inject
+	private BindingTableManager manager;
+
+	@Inject
+	private ContextManager contextManager;
+
+	private ContextSet contextSet = ContextSet.EMPTY;
 
 	/*
 	 * (non-Javadoc)
@@ -138,24 +69,6 @@ public class BindingServiceImpl implements EBindingService {
 				null, Binding.SYSTEM);
 	}
 
-	private Binding createDefaultBinding(TriggerSequence sequence, ParameterizedCommand command) {
-		return createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
-				"org.eclipse.ui.context.window"); //$NON-NLS-1$
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#activateBinding(org.eclipse.e4.ui.bindings.
-	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand)
-	 */
-	public Binding activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
-		Binding binding = createDefaultBinding(sequence, command);
-
-		activateBinding(binding);
-		return binding;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -164,50 +77,12 @@ public class BindingServiceImpl implements EBindingService {
 	 * )
 	 */
 	public void activateBinding(Binding binding) {
-		context.set(getBindingId(binding), binding);
-		// add mapping from command to keys
-		addLocalArray(getCommandId(binding), binding);
-
-		// deal with partial bindings
-		String[] prefixes = getPrefixes(binding);
-		for (int i = 0; i < prefixes.length; i++) {
-			addLocalArray(prefixes[i], binding);
+		String contextId = binding.getContextId();
+		BindingTable table = manager.getTable(contextId);
+		if (table == null) {
+			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
 		}
-	}
-
-	private void addLocalArray(String id, Binding binding) {
-		ArrayList<Binding> bindings = new ArrayList<Binding>(3);
-		ArrayList<Binding> tmp = (ArrayList<Binding>) context.getLocal(id);
-		if (tmp != null) {
-			bindings.addAll(tmp);
-		}
-		bindings.add(binding);
-		Collections.sort(bindings, BEST_SEQUENCE);
-		context.set(id, bindings);
-	}
-
-	private void removeLocalArray(String id, Binding binding) {
-		ArrayList<Binding> tmp = (ArrayList<Binding>) context.getLocal(id);
-		if (tmp.size() < 2) {
-			context.remove(id);
-		} else {
-			tmp.remove(binding);
-			context.set(id, new ArrayList<Binding>(tmp));
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#deactivateBinding(org.eclipse.e4.ui.bindings.
-	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand)
-	 */
-	public Binding deactivateBinding(TriggerSequence sequence, ParameterizedCommand command) {
-		Binding binding = createDefaultBinding(sequence, command);
-		Binding oldBinding = (Binding) context.get(getBindingId(binding));
-		deactivateBinding(binding);
-
-		return oldBinding;
+		table.addBinding(binding);
 	}
 
 	/*
@@ -218,16 +93,12 @@ public class BindingServiceImpl implements EBindingService {
 	 * )
 	 */
 	public void deactivateBinding(Binding binding) {
-		context.remove(getBindingId(binding));
-
-		// remove the command to trigger bindings
-		removeLocalArray(getCommandId(binding), binding);
-
-		// deal with removing the partial binding
-		String[] prefixes = getPrefixes(binding);
-		for (int i = 0; i < prefixes.length; i++) {
-			removeLocalArray(prefixes[i], binding);
+		String contextId = binding.getContextId();
+		BindingTable table = manager.getTable(contextId);
+		if (table == null) {
+			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
 		}
+		table.removeBinding(binding);
 	}
 
 	/*
@@ -261,7 +132,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public Binding getPerfectMatch(TriggerSequence trigger) {
-		return (Binding) context.get(BINDING_LOOKUP, lookupBinding(trigger.format()));
+		return manager.getPerfectMatch(contextSet, trigger);
 	}
 
 	/*
@@ -271,7 +142,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public boolean isPartialMatch(TriggerSequence keySequence) {
-		return context.get(BINDING_PREFIX_LOOKUP, lookupSequence(keySequence.format())) != null;
+		return manager.isPartialMatch(contextSet, keySequence);
 	}
 
 	/*
@@ -281,13 +152,8 @@ public class BindingServiceImpl implements EBindingService {
 	 * ParameterizedCommand)
 	 */
 	public TriggerSequence getBestSequenceFor(ParameterizedCommand command) {
-		String cmdString = command.serialize();
-		ArrayList<Binding> tmp = (ArrayList<Binding>) context.get(CMD_LOOKUP,
-				lookupCommand(cmdString));
-		if (tmp != null && !tmp.isEmpty()) {
-			return tmp.get(0).getTriggerSequence();
-		}
-		return null;
+		Binding binding = manager.getBestSequenceFor(contextSet, command);
+		return binding == null ? null : binding.getTriggerSequence();
 	}
 
 	/*
@@ -297,8 +163,12 @@ public class BindingServiceImpl implements EBindingService {
 	 * ParameterizedCommand)
 	 */
 	public Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command) {
-		String cmdString = command.serialize();
-		return (Collection<TriggerSequence>) context.get(CMD_SEQ_LOOKUP, lookupCommand(cmdString));
+		Collection<Binding> bindings = manager.getSequencesFor(contextSet, command);
+		ArrayList<TriggerSequence> sequences = new ArrayList<TriggerSequence>(bindings.size());
+		for (Binding binding : bindings) {
+			sequences.add(binding.getTriggerSequence());
+		}
+		return sequences;
 	}
 
 	/*
@@ -318,16 +188,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public Collection<Binding> getPartialMatches(TriggerSequence sequence) {
-		return (Collection<Binding>) context.get(LOOKUP_PARTIAL_MATCH, lookupSequence(sequence
-				.format()));
-	}
-
-	/**
-	 * @param c
-	 */
-	@Inject
-	public void setContext(IEclipseContext c) {
-		context = c;
+		return manager.getPartialMatches(contextSet, sequence);
 	}
 
 	/**
@@ -337,15 +198,16 @@ public class BindingServiceImpl implements EBindingService {
 		return context;
 	}
 
-	private Object[] lookupBinding(String bindingId) {
-		return new Object[] { B_ID + bindingId };
-	}
-
-	private Object[] lookupCommand(String cmdString) {
-		return new Object[] { P_ID + cmdString };
-	}
-
-	private Object[] lookupSequence(String sequence) {
-		return new Object[] { B_SEQ + sequence };
+	@Inject
+	public void setContextIds(@Named(ACTIVE_CONTEXTS) @Optional Set<String> set) {
+		if (set == null || set.isEmpty() || contextManager == null) {
+			contextSet = ContextSet.EMPTY;
+			return;
+		}
+		ArrayList<Context> contexts = new ArrayList<Context>();
+		for (String id : set) {
+			contexts.add(contextManager.getContext(id));
+		}
+		contextSet = manager.createContextSet(contexts);
 	}
 }

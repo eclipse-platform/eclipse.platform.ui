@@ -203,10 +203,22 @@ public abstract class ModelReconciler {
 			.getTrimContainer_Side().getName();
 
 	/**
-	 * Attribute defined by MBindingContainers (value is <code>bindings</code>).
+	 * Attribute defined by MBindingContainers (value is <code>rootContext</code>).
 	 */
-	public static final String BINDINGCONTAINER_BINDINGS_ATTNAME = MApplicationPackage.eINSTANCE
-			.getBindingContainer_Bindings().getName();
+	public static final String BINDINGCONTAINER_ROOTCONTEXT_ATTNAME = MApplicationPackage.eINSTANCE
+			.getBindingContainer_RootContext().getName();
+
+	/**
+	 * Attribute defined by MBindingContainers (value is <code>bindingTables</code>).
+	 */
+	public static final String BINDINGCONTAINER_BINDINGTABLES_ATTNAME = MApplicationPackage.eINSTANCE
+			.getBindingContainer_BindingTables().getName();
+
+	/**
+	 * Attribute defined by MBindingTables (value is <code>bindings</code>).
+	 */
+	public static final String BINDINGTABLES_BINDINGS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getBindingTable_Bindings().getName();
 
 	/**
 	 * Attribute defined by MHandlers (value is <code>command</code>).

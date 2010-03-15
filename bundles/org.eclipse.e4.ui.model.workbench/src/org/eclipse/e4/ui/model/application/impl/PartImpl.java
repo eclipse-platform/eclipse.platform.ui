@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MBindings;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
@@ -69,8 +70,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isDirty <em>Dirty</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isCloseable <em>Closeable</em>}</li>
@@ -311,16 +312,6 @@ public class PartImpl extends ContributionImpl implements MPart {
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBindings()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MKeyBinding> bindings;
-
-	/**
 	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -339,6 +330,16 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected boolean dirty = DIRTY_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBindingContexts()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' containment reference list.
@@ -692,18 +693,6 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MKeyBinding> getBindings() {
-		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.PART__BINDINGS);
-		}
-		return bindings;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -718,6 +707,18 @@ public class PartImpl extends ContributionImpl implements MPart {
 		dirty = newDirty;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__DIRTY, oldDirty, dirty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<String> getBindingContexts() {
+		if (bindingContexts == null) {
+			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.PART__BINDING_CONTEXTS);
+		}
+		return bindingContexts;
 	}
 
 	/**
@@ -827,8 +828,6 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.PART__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.PART__BINDINGS:
-				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.PART__MENUS:
 				return ((InternalEList<?>)getMenus()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.PART__TOOLBAR:
@@ -888,10 +887,10 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getTooltip();
 			case MApplicationPackage.PART__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.PART__BINDINGS:
-				return getBindings();
 			case MApplicationPackage.PART__DIRTY:
 				return isDirty();
+			case MApplicationPackage.PART__BINDING_CONTEXTS:
+				return getBindingContexts();
 			case MApplicationPackage.PART__MENUS:
 				return getMenus();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -955,12 +954,12 @@ public class PartImpl extends ContributionImpl implements MPart {
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.PART__BINDINGS:
-				getBindings().clear();
-				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
-				return;
 			case MApplicationPackage.PART__DIRTY:
 				setDirty((Boolean)newValue);
+				return;
+			case MApplicationPackage.PART__BINDING_CONTEXTS:
+				getBindingContexts().clear();
+				getBindingContexts().addAll((Collection<? extends String>)newValue);
 				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
@@ -1026,11 +1025,11 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.PART__BINDINGS:
-				getBindings().clear();
-				return;
 			case MApplicationPackage.PART__DIRTY:
 				setDirty(DIRTY_EDEFAULT);
+				return;
+			case MApplicationPackage.PART__BINDING_CONTEXTS:
+				getBindingContexts().clear();
 				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
@@ -1081,10 +1080,10 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 			case MApplicationPackage.PART__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.PART__BINDINGS:
-				return bindings != null && !bindings.isEmpty();
 			case MApplicationPackage.PART__DIRTY:
 				return dirty != DIRTY_EDEFAULT;
+			case MApplicationPackage.PART__BINDING_CONTEXTS:
+				return bindingContexts != null && !bindingContexts.isEmpty();
 			case MApplicationPackage.PART__MENUS:
 				return menus != null && !menus.isEmpty();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -1141,15 +1140,15 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.PART__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
-				default: return -1;
-			}
-		}
 		if (baseClass == MDirtyable.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PART__DIRTY: return MApplicationPackage.DIRTYABLE__DIRTY;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.PART__BINDING_CONTEXTS: return MApplicationPackage.BINDINGS__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -1202,15 +1201,15 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.PART__BINDINGS;
-				default: return -1;
-			}
-		}
 		if (baseClass == MDirtyable.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.DIRTYABLE__DIRTY: return MApplicationPackage.PART__DIRTY;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.BINDINGS__BINDING_CONTEXTS: return MApplicationPackage.PART__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -1251,6 +1250,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		result.append(tooltip);
 		result.append(", dirty: "); //$NON-NLS-1$
 		result.append(dirty);
+		result.append(", bindingContexts: "); //$NON-NLS-1$
+		result.append(bindingContexts);
 		result.append(", closeable: "); //$NON-NLS-1$
 		result.append(closeable);
 		result.append(')');

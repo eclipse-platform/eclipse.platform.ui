@@ -283,6 +283,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseHandlerContainer(application);
 				if (result == null) result = caseBindingContainer(application);
 				if (result == null) result = casePartDescriptorContainer(application);
+				if (result == null) result = caseBindings(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -304,8 +305,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(part);
 				if (result == null) result = caseUILabel(part);
 				if (result == null) result = caseHandlerContainer(part);
-				if (result == null) result = caseBindingContainer(part);
 				if (result == null) result = caseDirtyable(part);
+				if (result == null) result = caseBindings(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -321,8 +322,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(inputPart);
 				if (result == null) result = caseUILabel(inputPart);
 				if (result == null) result = caseHandlerContainer(inputPart);
-				if (result == null) result = caseBindingContainer(inputPart);
 				if (result == null) result = caseDirtyable(inputPart);
+				if (result == null) result = caseBindings(inputPart);
 				if (result == null) result = caseUIElement(inputPart);
 				if (result == null) result = caseApplicationElement(inputPart);
 				if (result == null) result = defaultCase(theEObject);
@@ -337,8 +338,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(partDescriptor);
 				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
-				if (result == null) result = caseBindingContainer(partDescriptor);
 				if (result == null) result = caseDirtyable(partDescriptor);
+				if (result == null) result = caseBindings(partDescriptor);
 				if (result == null) result = caseUIElement(partDescriptor);
 				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
@@ -379,8 +380,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUILabel(window);
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
-				if (result == null) result = caseBindingContainer(window);
 				if (result == null) result = casePSCElement(window);
+				if (result == null) result = caseBindings(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
 				if (result == null) result = defaultCase(theEObject);
@@ -411,6 +412,26 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.BINDING_CONTAINER: {
 				MBindingContainer bindingContainer = (MBindingContainer)theEObject;
 				T1 result = caseBindingContainer(bindingContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.BINDINGS: {
+				MBindings bindings = (MBindings)theEObject;
+				T1 result = caseBindings(bindings);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.BINDING_CONTEXT: {
+				MBindingContext bindingContext = (MBindingContext)theEObject;
+				T1 result = caseBindingContext(bindingContext);
+				if (result == null) result = caseApplicationElement(bindingContext);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.BINDING_TABLE: {
+				MBindingTable bindingTable = (MBindingTable)theEObject;
+				T1 result = caseBindingTable(bindingTable);
+				if (result == null) result = caseApplicationElement(bindingTable);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1111,6 +1132,51 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseBindingContainer(MBindingContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Bindings</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseBindings(MBindings object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Binding Context</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Binding Context</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseBindingContext(MBindingContext object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Binding Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Binding Table</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseBindingTable(MBindingTable object) {
 		return null;
 	}
 

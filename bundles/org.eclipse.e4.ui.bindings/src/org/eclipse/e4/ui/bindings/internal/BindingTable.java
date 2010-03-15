@@ -134,6 +134,23 @@ public class BindingTable {
 		}
 	}
 
+	public void removeBinding(Binding binding) {
+		if (!getId().equals(binding.getContextId())) {
+			throw new IllegalArgumentException("Binding context " + binding.getContextId() //$NON-NLS-1$
+					+ " does not match " + getId()); //$NON-NLS-1$
+		}
+
+		bindings.remove(binding);
+		bindingsByTrigger.remove(binding.getTriggerSequence());
+		ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
+		sequences.remove(binding);
+		TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
+		for (int i = 1; i < prefs.length; i++) {
+			ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
+			bindings.remove(binding);
+		}
+	}
+
 	public Binding getPerfectMatch(TriggerSequence trigger) {
 		return bindingsByTrigger.get(trigger);
 	}
@@ -158,4 +175,5 @@ public class BindingTable {
 	public boolean isPartialMatch(TriggerSequence seq) {
 		return bindingsByPrefix.get(seq) != null;
 	}
+
 }

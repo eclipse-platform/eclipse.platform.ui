@@ -11,14 +11,10 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
@@ -29,19 +25,17 @@ import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindings;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
@@ -49,7 +43,6 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.bindings.TriggerSequence;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -112,6 +105,7 @@ public class E4Workbench implements IWorkbench {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 
 		E4CommandProcessor.processCommands(appElement.getContext(), appElement.getCommands());
+		E4CommandProcessor.processBindings(appElement.getContext(), appElement);
 
 		// Do a top level processHierarchy for the application?
 		processHierarchy(appElement);
@@ -237,31 +231,15 @@ public class E4Workbench implements IWorkbench {
 				}
 			}
 		}
-		if (me instanceof MBindingContainer) {
+		if (me instanceof MBindings) {
 			MContext contextModel = (MContext) me;
-			MBindingContainer container = (MBindingContainer) me;
+			MBindings container = (MBindings) me;
+			EList<String> bindingContexts = container.getBindingContexts();
 			IEclipseContext context = contextModel.getContext();
-			if (context != null) {
-				ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
-				EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
-				EList<MKeyBinding> bindings = container.getBindings();
-				for (MKeyBinding binding : bindings) {
-					Map<String, Object> parameters = null;
-					EList<MParameter> modelParms = binding.getParameters();
-					if (modelParms != null && !modelParms.isEmpty()) {
-						parameters = new HashMap<String, Object>();
-						for (MParameter mParm : modelParms) {
-							parameters.put(mParm.getTag(), mParm.getValue());
-						}
-					}
-					ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(),
-							parameters);
-					TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
-					if (cmd == null || sequence == null) {
-						System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
-					} else {
-						bs.activateBinding(sequence, cmd);
-					}
+			if (context != null && !bindingContexts.isEmpty()) {
+				EContextService cs = (EContextService) context.get(EContextService.class.getName());
+				for (String id : bindingContexts) {
+					cs.activateContext(id);
 				}
 			}
 		}

@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -176,8 +177,12 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getCommand_Description();
 		} else if (featureName.equals(KEYSEQUENCE_KEYSEQUENCE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getKeySequence_KeySequence();
-		} else if (featureName.equals(BINDINGCONTAINER_BINDINGS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getBindingContainer_Bindings();
+		} else if (featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getBindingContainer_BindingTables();
+		} else if (featureName.equals(BINDINGCONTAINER_ROOTCONTEXT_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getBindingContainer_RootContext();
+		} else if (featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getBindingTable_Bindings();
 		} else if (featureName.equals(HANDLER_COMMAND_ATTNAME)
 				|| featureName.equals(KEYBINDING_COMMAND_ATTNAME)
 				|| featureName.equals(HANDLEDITEM_COMMAND_ATTNAME)) {
@@ -287,7 +292,15 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		if (object instanceof MBindingContainer) {
-			for (MKeyBinding keyBinding : ((MBindingContainer) object).getBindings()) {
+			for (MBindingTable bindingTable : ((MBindingContainer) object).getBindingTables()) {
+				if (constructDeltas(deltas, references, (EObject) bindingTable, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MBindingTable) {
+			for (MKeyBinding keyBinding : ((MBindingTable) object).getBindings()) {
 				if (constructDeltas(deltas, references, (EObject) keyBinding, element, id)) {
 					return true;
 				}
@@ -972,6 +985,37 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		}
 
+		if (reference instanceof MBindingTable) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean bindingTablesChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME)) {
+							List<?> commands = (List<?>) change.getValue();
+							for (Object command : commands) {
+								if (command == reference) {
+									return key;
+								}
+							}
+
+							bindingTablesChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			if (!bindingTablesChanged) {
+				return reference.eContainer();
+			}
+		}
+
 		if (reference instanceof MHandler) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
@@ -1010,9 +1054,9 @@ public class XMLModelReconciler extends ModelReconciler {
 
 			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 				EObject key = entry.getKey();
-				if (key instanceof MBindingContainer) {
+				if (key instanceof MBindingTable) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(BINDINGCONTAINER_BINDINGS_ATTNAME)) {
+						if (change.getFeatureName().equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
 							List<?> commands = (List<?>) change.getValue();
 							for (Object command : commands) {
 								if (command == reference) {
@@ -1485,7 +1529,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		// an ElementContainer has multiple children
 		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
 		// a BindingContainer has multiple bindings
-				featureName.equals(BINDINGCONTAINER_BINDINGS_ATTNAME) ||
+				featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME) ||
 				// a Part has multiple menus
 				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands

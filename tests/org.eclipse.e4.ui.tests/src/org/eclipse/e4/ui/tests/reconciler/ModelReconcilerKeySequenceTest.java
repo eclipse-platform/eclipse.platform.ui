@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -25,10 +26,14 @@ public abstract class ModelReconcilerKeySequenceTest extends
 	private void testKeySequence_KeySequence(String before, String after) {
 		MApplication application = createApplication();
 
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
 		keyBinding.setKeySequence(before);
-		application.getBindings().add(keyBinding);
+		bindingTable.getBindings().add(keyBinding);
 
 		saveModel();
 
@@ -40,7 +45,8 @@ public abstract class ModelReconcilerKeySequenceTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		keyBinding = application.getBindings().get(0);
+		bindingTable = application.getBindingTables().get(0);
+		keyBinding = bindingTable.getBindings().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
