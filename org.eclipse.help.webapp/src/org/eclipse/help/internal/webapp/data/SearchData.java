@@ -351,8 +351,7 @@ public class SearchData extends ActivitiesData {
 					.getProgressMonitor(getLocale());
 			if (pm.isDone()) {
 				this.indexCompletion = 100;
-				AbstractHelpScope filter = RequestScope.getScope(request, response, true);
-				SearchResults results = createHitCollector(filter);
+				SearchResults results = createHitCollector();
 				BaseHelpSystem.getSearchManager().search(createSearchQuery(),
 						results, pm);
 				hits = results.getSearchHits();
@@ -390,8 +389,9 @@ public class SearchData extends ActivitiesData {
 				getLocale());
 	}
 
-	private SearchResults createHitCollector(AbstractHelpScope filter) {
+	private SearchResults createHitCollector() {
 		WorkingSet[] workingSets;
+		boolean isSearchSelectedAndChildren = false;
 		if (request.getParameterValues("scopedSearch") != null) { //$NON-NLS-1$
 			// scopes are books (advanced search)
 			workingSets = createTempWorkingSets();
@@ -401,12 +401,14 @@ public class SearchData extends ActivitiesData {
 				workingSets = createQuickSearchWorkingSetOnSelectedTopic();
 			} else{  // scopes is a toc or topic and its children
 				workingSets = createQuickSearchWorkingSet();
+				isSearchSelectedAndChildren = true;
 			}
 		} else {
 			// scopes are working set names
 			workingSets = getWorkingSets();
 		}
 
+		AbstractHelpScope filter = RequestScope.getScope(request, response, !isSearchSelectedAndChildren);
 		int maxHits = 500;
 		String maxHitsStr = request.getParameter("maxHits"); //$NON-NLS-1$
 		if (maxHitsStr != null) {
