@@ -135,7 +135,9 @@ public class RequestScope {
 				scopeString += scope[s];
 			}
 			saveScope(scopeString, response);
-		} 
+		}  else {
+			saveScope("", response); //$NON-NLS-1$
+		}
 	}
 	
 	public static void saveScope(String scope, HttpServletResponse response) {
