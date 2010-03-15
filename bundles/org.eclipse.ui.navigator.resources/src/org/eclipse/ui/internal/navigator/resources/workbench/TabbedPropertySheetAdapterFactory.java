@@ -32,10 +32,7 @@ public class TabbedPropertySheetAdapterFactory
      *      java.lang.Class)
      */
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-
-        if (adaptableObject instanceof CommonNavigator) {
-        	if (!((CommonNavigator)adaptableObject).getViewSite().getId().equals(ProjectExplorer.VIEW_ID))
-        		return null;
+        if (adaptableObject instanceof ProjectExplorer) {
         	if (IPropertySheetPage.class == adapterType)
                 return new TabbedPropertySheetPage(
                     new TabbedPropertySheetProjectExplorerContributor(
