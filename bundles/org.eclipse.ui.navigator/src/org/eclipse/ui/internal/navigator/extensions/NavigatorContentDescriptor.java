@@ -397,13 +397,8 @@ public final class NavigatorContentDescriptor implements
 			return true;
 		if (initialActivation == null)
 			return false;
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(new Object());
-			return (initialActivation.evaluate(context) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-		return false;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(new Object());
+		return NavigatorPlugin.safeEvaluate(initialActivation, context) == EvaluationResult.TRUE;
 	}
 
 	/**
@@ -420,13 +415,8 @@ public final class NavigatorContentDescriptor implements
 			return false;
 		}
 
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
-			return (enablement.evaluate(context) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-		return false;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
+		return NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.TRUE;
 	}
 
 	/**
@@ -452,15 +442,11 @@ public final class NavigatorContentDescriptor implements
 			return arePossibleChildren((IStructuredSelection) anElement);
 		}
 
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
-			if (possibleChildren != null) {
-				return (possibleChildren.evaluate(context) == EvaluationResult.TRUE);
-			} else if (enablement != null) {
-				return (enablement.evaluate(context) == EvaluationResult.TRUE);
-			}
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
+		if (possibleChildren != null) {
+			return NavigatorPlugin.safeEvaluate(possibleChildren, context) == EvaluationResult.TRUE;
+		} else if (enablement != null) {
+			return NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.TRUE;
 		}
 		return false;
 	}

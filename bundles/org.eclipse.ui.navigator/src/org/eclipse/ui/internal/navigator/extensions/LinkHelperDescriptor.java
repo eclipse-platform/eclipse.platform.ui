@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -112,18 +110,11 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 	 *         the editor input.
 	 */
 	public boolean isEnabledFor(IEditorInput anInput) {
-
 		if (editorInputEnablement == null || anInput == null) {
 			return false;
 		}
-
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(anInput);
-			return (editorInputEnablement.evaluate(context) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-		}
-		return false;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anInput);
+		return NavigatorPlugin.safeEvaluate(editorInputEnablement, context) == EvaluationResult.TRUE;
 	}
 
 	/**
@@ -136,16 +127,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 		if (selectionEnablement == null) {
 			return false;
 		}
-
 		IEvaluationContext context = NavigatorPlugin.getEvalContext(anObject);
-		try {
-			if (selectionEnablement.evaluate(context) != EvaluationResult.TRUE) {
-				return false;
-			}
-		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-			return false;
-		}
-		return true;
+		return NavigatorPlugin.safeEvaluate(selectionEnablement, context) == EvaluationResult.TRUE;
 	}
 }

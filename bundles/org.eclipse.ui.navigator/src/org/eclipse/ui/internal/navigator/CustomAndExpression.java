@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,9 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * Create an AND-type core expression from an IConfigurationElement of arbitrary
@@ -44,30 +44,36 @@ public class CustomAndExpression extends Expression {
 	public CustomAndExpression(IConfigurationElement element) {
 		Assert.isNotNull(element);
 
-		IConfigurationElement[] children = element.getChildren();
-
-		if (children.length > 0) {
-			fExpressions = new ArrayList();
-		}
-		for (int i = 0; i < children.length; i++) {
-			try {
-				fExpressions.add(ElementHandler.getDefault().create(
-						ExpressionConverter.getDefault(), children[i]));
-			} catch (CoreException ce) {
-				NavigatorPlugin.log(IStatus.ERROR, 0, ce.getMessage(), ce);
+		final IConfigurationElement[] children = element.getChildren();
+		if (children.length == 0)
+			return;
+		SafeRunner.run(new ISafeRunnable() {
+			public void handleException(Throwable exception) {
 			}
-		}
+
+			public void run() throws Exception {
+				fExpressions = new ArrayList();
+				for (int i = 0; i < children.length; i++) {
+					fExpressions.add(ElementHandler.getDefault().create(
+							ExpressionConverter.getDefault(), children[i]));
+				}
+			}
+		});
+
 	}
 
-	public EvaluationResult evaluate(IEvaluationContext scope)
-			throws CoreException {
+	public EvaluationResult evaluate(IEvaluationContext scope) {
 		if (fExpressions == null) {
 			return EvaluationResult.TRUE;
 		}
+		NavigatorPlugin.Evaluator evaluator = new NavigatorPlugin.Evaluator();
 		EvaluationResult result = EvaluationResult.TRUE;
 		for (Iterator iter = fExpressions.iterator(); iter.hasNext();) {
 			Expression expression = (Expression) iter.next();
-			result = result.and(expression.evaluate(scope));
+			evaluator.expression = expression;
+			evaluator.scope = scope;
+			SafeRunner.run(evaluator);
+			result = result.and(evaluator.result);
 			// keep iterating even if we have a not loaded found. It can be
 			// that we find a false which will result in a better result.
 			if (result == EvaluationResult.FALSE) {

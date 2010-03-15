@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,15 @@ package org.eclipse.ui.internal.navigator;
 import java.util.Collections;
 
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -210,6 +214,39 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		IEvaluationContext c = new EvaluationContext(getApplicationContext(), selection);
 		c.setAllowPluginActivation(true);
 		return c;
+	}
+	
+	
+	/**
+	 * Helper class to evaluate an expression.
+	 */
+	public static class Evaluator implements ISafeRunnable {
+		EvaluationResult result;
+		Expression expression;
+		IEvaluationContext scope;
+
+		public void handleException(Throwable exception) {
+			result = EvaluationResult.FALSE;
+		}
+
+		public void run() throws Exception {
+			result = expression.evaluate(scope);
+		}
+	}
+
+	/**
+	 * Safely evaluation an expression, logging appropriately on error
+	 * 
+	 * @param expression
+	 * @param scope
+	 * @return the EvaluationResult
+	 */
+	public static EvaluationResult safeEvaluate(Expression expression, IEvaluationContext scope) {
+		Evaluator evaluator = new Evaluator();
+		evaluator.expression = expression;
+		evaluator.scope = scope;
+		SafeRunner.run(evaluator);
+		return evaluator.result;
 	}
 	
 	/**

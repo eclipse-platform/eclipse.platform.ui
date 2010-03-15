@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,12 +115,7 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		while (elements.hasNext()) {
 			context = new EvaluationContext(parentContext, elements.next());
 			context.setAllowPluginActivation(true);
-			try {
-				if (enablement.evaluate(context) == EvaluationResult.FALSE) {
-					return false;
-				}
-			} catch (CoreException e) {
-				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+			if (NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.FALSE) {
 				return false;
 			}
 		}
@@ -135,18 +130,12 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 	 * @return True if and only if the extension is enabled for the element.
 	 */
 	public boolean isEnabledFor(Object anElement) {
-
 		if (enablement == null) {
 			return false;
 		}
 
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
-			return (enablement.evaluate(context) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-		}
-		return false;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
+		return (NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.TRUE);
 	}
 
 	void init() throws WorkbenchException { 

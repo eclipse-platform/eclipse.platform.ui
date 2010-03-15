@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,9 +128,7 @@ public class CommonActionProviderDescriptor implements
 	}
 
 	private void init() {
-
 		try {
-
 			definedId = configurationElement.getAttribute(ATT_ID);
 
 			// if there was no id attribute, use the default id.
@@ -227,28 +225,17 @@ public class CommonActionProviderDescriptor implements
 		if(aStructuredSelection.isEmpty()) {
 			IEvaluationContext context = null; 
 			context = NavigatorPlugin.getEmptyEvalContext();
-			try { 
-				if (enablement.evaluate(context) != EvaluationResult.TRUE) {
-					return false;
-				}
-			} catch (CoreException e) {
-				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+			if (NavigatorPlugin.safeEvaluate(enablement, context) != EvaluationResult.TRUE) {
 				return false;
-			} 
+			}
 		} else {
-
 			IEvaluationContext context = null;
 			IEvaluationContext parentContext = NavigatorPlugin.getApplicationContext();
 			Iterator elements = aStructuredSelection.iterator();
 			while (elements.hasNext()) {
 				context = new EvaluationContext(parentContext, elements.next());
 				context.setAllowPluginActivation(true);
-				try { 
-					if (enablement.evaluate(context) != EvaluationResult.TRUE) {
-						return false;
-					}
-				} catch (CoreException e) {
-					NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+				if (NavigatorPlugin.safeEvaluate(enablement, context) != EvaluationResult.TRUE) {
 					return false;
 				}
 			}
@@ -268,13 +255,8 @@ public class CommonActionProviderDescriptor implements
 			return false;
 		}
 
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
-			return (enablement.evaluate(context) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-		}
-		return false;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
+		return NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.TRUE;
 	}
 
 	/**

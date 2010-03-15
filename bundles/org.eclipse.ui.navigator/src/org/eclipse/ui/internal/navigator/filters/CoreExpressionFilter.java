@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.navigator.filters;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -46,13 +45,8 @@ public class CoreExpressionFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-		try {
-			IEvaluationContext context = NavigatorPlugin.getEvalContext(element);
-			return (filterExpression.evaluate(context) != EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-		return true;
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(element);
+		return NavigatorPlugin.safeEvaluate(filterExpression, context) != EvaluationResult.TRUE;
 	}
 
 }

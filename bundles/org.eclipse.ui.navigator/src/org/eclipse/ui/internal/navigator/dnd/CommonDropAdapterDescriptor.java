@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,13 +85,8 @@ public final class CommonDropAdapterDescriptor implements
 	 */
 	public boolean isDropElementSupported(Object anElement) {
 		if (dropExpr != null && anElement != null) {
-			try {
-				IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
-				return dropExpr
-						.evaluate(context) == EvaluationResult.TRUE;
-			} catch (CoreException e) {
-				NavigatorPlugin.logError(0, e.getMessage(), e);
-			}
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
+			return NavigatorPlugin.safeEvaluate(dropExpr, context) == EvaluationResult.TRUE;
 		}
 		return false;
 	}
