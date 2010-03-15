@@ -13,7 +13,6 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -41,8 +40,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -301,15 +300,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 						e.doit = true;
 						e.detail = SWT.TRAVERSE_NONE;
 						Control control = newContainer.getParent();
-						do {
-							if (control.traverse(detail))
-								return;
-							if (control.getListeners(SWT.Traverse).length != 0)
-								return;
-							if (control instanceof Shell)
-								return;
-							control = control.getParent();
-						} while (control != null);
+						control.traverse(detail, new Event());
 				}
 			}
 		});

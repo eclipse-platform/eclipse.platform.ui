@@ -11,13 +11,11 @@
 package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.Method;
-
 import org.eclipse.core.commands.ExecutionEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * This handler is an adaptation of the widget method handler that implements
@@ -37,14 +35,7 @@ public class TraversePageHandler extends WidgetMethodHandler {
 		Control focusControl = Display.getCurrent().getFocusControl();
 		if (focusControl != null) {
 			int traversal= "next".equals(methodName) ? SWT.TRAVERSE_PAGE_NEXT : SWT.TRAVERSE_PAGE_PREVIOUS; //$NON-NLS-1$
-			Control control = focusControl;
-			do {
-				if (control.traverse (traversal))
-					return null;
-				if (control instanceof Shell)
-					return null;
-				control = control.getParent();
-			} while (control != null);
+			focusControl.traverse(traversal, new Event());
 		}
 
 		return null;
