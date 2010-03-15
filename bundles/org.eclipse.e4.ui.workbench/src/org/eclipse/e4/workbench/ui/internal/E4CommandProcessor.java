@@ -69,16 +69,11 @@ public class E4CommandProcessor {
 
 	public static void processBindings(IEclipseContext context, MBindingContainer bindingContainer) {
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize binding tables from model", null); //$NON-NLS-1$
-		MBindingContext root = bindingContainer.getRootContext();
-		if (root == null) {
-			return;
-		}
-		ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
-		defineContexts(null, root, manager);
 		BindingTableManager bindingTables;
 		try {
 			bindingTables = (BindingTableManager) ContextInjectionFactory.make(
 					BindingTableManager.class, context);
+			context.set(BindingTableManager.class.getName(), bindingTables);
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,7 +83,12 @@ public class E4CommandProcessor {
 			e.printStackTrace();
 			return;
 		}
-		context.set(BindingTableManager.class.getName(), bindingTables);
+		MBindingContext root = bindingContainer.getRootContext();
+		if (root == null) {
+			return;
+		}
+		ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
+		defineContexts(null, root, manager);
 		for (MBindingTable bt : bindingContainer.getBindingTables()) {
 			Context c = manager.getContext(bt.getBindingContextId());
 			defineBindingTable(context, c, bindingTables, bt);
