@@ -96,7 +96,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 					try {
 						trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor, (NavigatorContentDescriptor) descriptor);
 						extension = contentService.getExtension(overridingDescriptor);
-						((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
+						if (extension.internalGetContentProvider().isPipelined()) {
+							((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
+						}
 						trackedSet.setContributor(null, null);
 						pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
 					} catch (Throwable e) {
