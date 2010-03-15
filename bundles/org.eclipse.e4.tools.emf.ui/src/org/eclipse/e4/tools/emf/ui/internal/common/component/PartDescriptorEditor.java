@@ -55,7 +55,6 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 	private IListProperty PART__MENUS = EMFProperties.list(MApplicationPackage.Literals.PART__MENUS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
 
 	public PartDescriptorEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -343,15 +342,6 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
 
 			@Override
 			protected boolean accepted(Object o) {

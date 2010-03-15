@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="__i2BcSuZEd-8CvvcO22KcQ" id="__i2BcSuZEd-8CvvcO22KcQ">
-  <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="__i8IECuZEd-8CvvcO22KcQ" width="800" height="600">
-    <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="modeleditorstack">
+  <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.windows.mainwindow" label="E4 Model Editor" width="800" height="600">
+    <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.editorstack">
       <tags>newtablook</tags>
     </children>
-    <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="__i_ycCuZEd-8CvvcO22KcQ">
-      <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="__jAZgCuZEd-8CvvcO22KcQ">
-        <children xsi:type="application:HandledToolItem" xmi:id="__jBnoCuZEd-8CvvcO22KcQ" id="__jBnoCuZEd-8CvvcO22KcQ" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="__jFSACuZEd-8CvvcO22KcQ"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_4DGF0CuuEd-8CvvcO22KcQ" id="_4DGF0CuuEd-8CvvcO22KcQ" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/disk.png" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
+    <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top">
+      <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top.toolbars.main">
+        <children xsi:type="application:HandledToolItem" xmi:id="__jBnoCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top.toolbars.main.items.openxmi" label="" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/folder_page.png" tooltip="Open XMI File" command="__jFSACuZEd-8CvvcO22KcQ"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_4DGF0CuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top.toolbars.main.items.savexmi" iconURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/disk.png" tooltip="Save XMI" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
       </children>
     </children>
     <mainMenu xmi:id="__jCOsCuZEd-8CvvcO22KcQ" id="__jCOsCuZEd-8CvvcO22KcQ">
@@ -21,14 +21,12 @@
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="__jED4CuZEd-8CvvcO22KcQ" id="__jED4CuZEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="__jFSACuZEd-8CvvcO22KcQ"/>
-  <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="_xOkeACuuEd-8CvvcO22KcQ" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
-  <handlers xmi:id="_wgmB8C1UEd-7-u-s9onsPg" id="_wgmB8C1UEd-7-u-s9onsPg" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_yPmhcC1UEd-7-u-s9onsPg"/>
-  <handlers xmi:id="_KustkC1VEd-7-u-s9onsPg" id="_KustkC1VEd-7-u-s9onsPg" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_HHdhIC1VEd-7-u-s9onsPg"/>
-  <bindings xmi:id="__jEq8CuZEd-8CvvcO22KcQ" keySequence="M1+O" id="__jEq8CuZEd-8CvvcO22KcQ" command="__jFSACuZEd-8CvvcO22KcQ"/>
-  <bindings xmi:id="_kQp6UC1UEd-7-u-s9onsPg" keySequence="M1+S" id="_kQp6UC1UEd-7-u-s9onsPg" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
-  <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="e4editor.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
-  <commands xmi:id="_sSBrgCuuEd-8CvvcO22KcQ" id="_sSBrgCuuEd-8CvvcO22KcQ" commandName="e4editor.savexmi"/>
-  <commands xmi:id="_yPmhcC1UEd-7-u-s9onsPg" id="_yPmhcC1UEd-7-u-s9onsPg" commandName="e4editor.newappmodel"/>
-  <commands xmi:id="_HHdhIC1VEd-7-u-s9onsPg" id="_HHdhIC1VEd-7-u-s9onsPg" commandName="e4editor.newcontribmodel"/>
+  <handlers xmi:id="__jED4CuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.handlers.openxmi" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="__jFSACuZEd-8CvvcO22KcQ"/>
+  <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.handlers.savexmi" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
+  <handlers xmi:id="_wgmB8C1UEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newappmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_yPmhcC1UEd-7-u-s9onsPg"/>
+  <handlers xmi:id="_KustkC1VEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newcontribmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_HHdhIC1VEd-7-u-s9onsPg"/>
+  <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.commands.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
+  <commands xmi:id="_sSBrgCuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.commands.savexmi" commandName="e4editor.savexmi"/>
+  <commands xmi:id="_yPmhcC1UEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.commands.newappmodel" commandName="e4editor.newappmodel"/>
+  <commands xmi:id="_HHdhIC1VEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.commands.newcontribmodel" commandName="e4editor.newcontribmodel"/>
 </application:Application>

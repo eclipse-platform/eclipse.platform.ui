@@ -47,7 +47,7 @@ public class WindowEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 	public WindowEditor(EditingDomain editingDomain) {
@@ -211,14 +211,14 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
+//		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
+//
+//			@Override
+//			protected boolean accepted(Object o) {
+//				return true;
+//			}
+//
+//		});
 		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOW_TRIMS, ELEMENT_CONTAINER__CHILDREN, element, "Trims") {
 

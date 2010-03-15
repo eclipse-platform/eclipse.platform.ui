@@ -20,7 +20,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.emf.common.command.Command;
@@ -156,10 +156,10 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
 						if( s.size() == 1 ) {
 							Object obj = s.getFirstElement();
-							MBindingContainer container = (MBindingContainer) getMaster().getValue();
+							MBindingTable container = (MBindingTable) getMaster().getValue();
 							int idx = container.getBindings().indexOf(obj) - 1;
 							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_TABLE__BINDINGS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -183,10 +183,10 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
 						if( s.size() == 1 ) {
 							Object obj = s.getFirstElement();
-							MBindingContainer container = (MBindingContainer) getMaster().getValue();
+							MBindingTable container = (MBindingTable) getMaster().getValue();
 							int idx = container.getBindings().indexOf(obj) + 1;
 							if( idx < container.getBindings().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_TABLE__BINDINGS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -207,7 +207,7 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MKeyBinding handler = MApplicationFactory.eINSTANCE.createKeyBinding();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, handler);
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_TABLE__BINDINGS, handler);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -225,7 +225,7 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if( ! viewer.getSelection().isEmpty() ) {
 						List<?> keybinding = ((IStructuredSelection)viewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS, keybinding);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_TABLE__BINDINGS, keybinding);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

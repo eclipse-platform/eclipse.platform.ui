@@ -51,7 +51,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	private IListProperty MODEL_COMPONENT__CHILDREN = EMFProperties.list( MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list( MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDINGS);
+	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
 	
 	public ModelComponentEditor(EditingDomain editingDomain) {
 		super(editingDomain);

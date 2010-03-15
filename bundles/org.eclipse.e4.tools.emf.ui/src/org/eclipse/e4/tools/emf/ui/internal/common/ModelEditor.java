@@ -54,6 +54,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
@@ -94,6 +95,7 @@ public class ModelEditor {
 	public static final int VIRTUAL_WINDOW_TRIMS = 7;
 	public static final int VIRTUAL_PART_DESCRIPTORS = 8;
 	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 9;
+	public static final int VIRTUAL_BINDING_TABLE = 10;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
@@ -242,7 +244,9 @@ public class ModelEditor {
 				new VWindowEditor(modelProvider.getEditingDomain(), this), 
 				new VControlEditor(modelProvider.getEditingDomain(), this), 
 				new VWindowTrimEditor(modelProvider.getEditingDomain(), this),
-				new VPartDescriptor(modelProvider.getEditingDomain(), this)
+				new VPartDescriptor(modelProvider.getEditingDomain(), this),
+				null,
+				new VBindingTableEditor(modelProvider.getEditingDomain(), this)
 		};
 	}
 
