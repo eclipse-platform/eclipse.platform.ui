@@ -37,6 +37,7 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		// TODO: get selection, available when launched from toolbar or main
 		// menu
 		super((IStorage) null, (IResource) null, new CompareConfiguration());
+		setNeedsProgressMonitor(true);
 	}
 
 	public boolean performFinish() {
@@ -142,7 +143,7 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 						TeamUIMessages.PatchInaccessibleProjectsPage_openingProjects,
 						null);
 				for (int i = 0; i < projects.length; i++) {
-					IProject project = (IProject) projects[i];
+					IProject project = projects[i];
 					try {
 						project.open(new SubProgressMonitor(monitor, 1));
 					} catch (CoreException e) {
