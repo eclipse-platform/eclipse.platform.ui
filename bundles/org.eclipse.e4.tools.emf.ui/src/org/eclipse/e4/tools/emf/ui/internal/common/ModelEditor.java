@@ -32,6 +32,7 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
@@ -58,7 +59,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTab
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VKeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
@@ -88,14 +88,13 @@ public class ModelEditor {
 	public static final int VIRTUAL_MENU = 0;
 	public static final int VIRTUAL_PART = 1;
 	public static final int VIRTUAL_HANDLER = 2;
-	public static final int VIRTUAL_BINDING = 3;
+	public static final int VIRTUAL_BINDING_TABLE = 3;
 	public static final int VIRTUAL_COMMAND = 4;
 	public static final int VIRTUAL_WINDOWS = 5;
 	public static final int VIRTUAL_WINDOW_CONTROLS = 6;
 	public static final int VIRTUAL_WINDOW_TRIMS = 7;
 	public static final int VIRTUAL_PART_DESCRIPTORS = 8;
 	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 9;
-	public static final int VIRTUAL_BINDING_TABLE = 10;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
@@ -239,14 +238,13 @@ public class ModelEditor {
 		virtualEditors = new AbstractComponentEditor[] { new VMenuEditor(modelProvider.getEditingDomain(), this), // V-Menu
 				null, // V-Part
 				new VHandlerEditor(modelProvider.getEditingDomain(), this), 
-				new VKeyBindingEditor(modelProvider.getEditingDomain(), this), 
+				new VBindingTableEditor(modelProvider.getEditingDomain(), this), 
 				new VCommandEditor(modelProvider.getEditingDomain(), this, MApplicationPackage.Literals.APPLICATION__COMMANDS), 
 				new VWindowEditor(modelProvider.getEditingDomain(), this), 
 				new VControlEditor(modelProvider.getEditingDomain(), this), 
 				new VWindowTrimEditor(modelProvider.getEditingDomain(), this),
 				new VPartDescriptor(modelProvider.getEditingDomain(), this),
-				null,
-				new VBindingTableEditor(modelProvider.getEditingDomain(), this)
+				null
 		};
 	}
 
@@ -278,6 +276,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.MENU_ITEM, new MenuItemEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MApplicationPackage.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

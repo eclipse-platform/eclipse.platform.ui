@@ -8,16 +8,17 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
+package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingTable;
@@ -25,7 +26,9 @@ import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -48,59 +51,65 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VKeyBindingEditor extends AbstractComponentEditor {
+public class BindingTableEditor extends AbstractComponentEditor {
+
 	private Composite composite;
+	private Image image;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
-	private TableViewer viewer;
+	
+	private IListProperty BINDING_TABLE__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_TABLE__BINDINGS);
 
-	public VKeyBindingEditor(EditingDomain editingDomain, ModelEditor editor) {
+
+	public BindingTableEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		return null;
+		if (image == null) {
+			try {
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/BindingTable.gif"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return image;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "KeyBindings";
-	}
-
-	@Override
-	public String getDetailLabel(Object element) {
-		return null;
+		return "BindingTable";
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "KeyBindings Bla Bla Bla Bla Bla";
+		return "BindingTable bla bla bla";
 	}
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			composite = createForm(parent, context);
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
-		viewer.setInput(o.getList());
-		getMaster().setValue(o.getOriginalParent());
+		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
-
+		
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Keybindings");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-			viewer = new TableViewer(parent);
+			final TableViewer viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
 
@@ -135,6 +144,9 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				column.getColumn().setWidth(170);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
+			
+			IEMFListProperty prop = EMFProperties.list(MApplicationPackage.Literals.BINDING_TABLE__BINDINGS);
+			viewer.setInput(prop.observeDetail(getMaster()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -207,6 +219,7 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MKeyBinding handler = MApplicationFactory.eINSTANCE.createKeyBinding();
+					System.err.println(getMaster().getValue());
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_TABLE__BINDINGS, handler);
 
 					if (cmd.canExecute()) {
@@ -233,14 +246,30 @@ public class VKeyBindingEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-
+		
+		
 		return parent;
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+		return BINDING_TABLE__BINDINGS.observe(element);
 	}
 
+	@Override
+	public String getDetailLabel(Object element) {
+		MBindingTable cmd = (MBindingTable) element;
+		if (cmd.getBindingContextId() != null && cmd.getBindingContextId().trim().length() > 0) {
+			return cmd.getBindingContextId();
+		}
+
+		return null;
+	}
+	
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] {
+			FeaturePath.fromList(MApplicationPackage.Literals.BINDING_TABLE__BINDING_CONTEXT_ID)	
+		};
+	}
 }
