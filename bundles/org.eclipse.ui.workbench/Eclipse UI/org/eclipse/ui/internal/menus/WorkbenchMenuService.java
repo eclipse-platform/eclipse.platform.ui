@@ -191,18 +191,21 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		public void addFactoryContribution(AbstractContributionFactory factory, ContributionRoot ciList) {
 			// Remove any existing cache info for this factory
 			removeFactoryContribution(factory);
-			
 			// save the new info
 			factoryToItems.put(factory, ciList);
 		}
 		
-		public void removeFactoryContribution(AbstractContributionFactory factory) {			
+		public void removeFactoryContribution(AbstractContributionFactory factory) {
 			ContributionRoot items =(ContributionRoot)factoryToItems.remove(factory);
 			if (items != null) {
 				WorkbenchMenuService.this.releaseContributions(items);
 			}
 		}
 		
+		public ContributionRoot getContributions(AbstractContributionFactory factory) {
+			return (ContributionRoot) factoryToItems.get(factory);
+		}
+
 		/**
 		 * Delegates back to the workbench to remove -all- the contributions
 		 * associated with this contribution manager
@@ -460,7 +463,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuCacheEntry)
+	 * @see
+	 * org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.
+	 * ui.menus.AbstractContributionFactory)
 	 */
 	public void addContributionFactory(AbstractContributionFactory factory) {
 		if (factory == null || factory.getLocation() == null)
@@ -582,6 +587,17 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				if (ciList.getItems().size() > 0) {
 					// Cache the items for future cleanup
 					ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(mgr);
+					ContributionRoot contributions = mpr.getContributions(cache);
+					if (contributions != null) {
+						// Existing contributions in the mgr will be released.
+						// Adjust the insertionIndex
+						for (Iterator i = contributions.getItems().iterator(); i.hasNext();) {
+							IContributionItem item = (IContributionItem) i.next();
+							if (item.equals(mgr.find(item.getId())))
+								insertionIndex--;
+						}
+					}
+
 					mpr.addFactoryContribution(cache, ciList);
 					
 					for (Iterator ciIter = ciList.getItems().iterator(); ciIter

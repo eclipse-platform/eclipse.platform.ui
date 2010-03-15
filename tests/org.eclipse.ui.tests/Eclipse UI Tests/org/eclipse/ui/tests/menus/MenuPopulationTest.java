@@ -13,6 +13,9 @@ package org.eclipse.ui.tests.menus;
 
 import java.lang.reflect.Field;
 
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -21,12 +24,17 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -34,6 +42,7 @@ import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * @since 3.3
@@ -63,8 +72,109 @@ public class MenuPopulationTest extends MenuTestCase {
 	public MenuPopulationTest(String testName) {
 		super(testName);
 	}
+	
+	public void testMenuServicePopupContribution() throws Exception {
+
+		PopupMenuExtender popupMenuExtender = null;
+		try {
+
+			window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
+			
+			processEventsUntil(new Condition() {
+
+				public boolean compute() {
+					return window.getActivePage().getActivePart() != null;
+				}
+				
+			}, 10000);
+			
+			
+			IWorkbenchPart problemsView = window.getActivePage().getActivePart();
+			assertNotNull(problemsView);
+
+			final boolean[] errorLogged = addLogger();
+
+			MenuManager manager = new MenuManager();
+			manager.setRemoveAllWhenShown(true);
+			Menu contextMenu = manager.createContextMenu(problemsView.getSite().getShell());
+
+			popupMenuExtender = new PopupMenuExtender(IPageLayout.ID_PROBLEM_VIEW, manager, problemsView.getSite().getSelectionProvider(), problemsView, false);
+			popupMenuExtender.addMenuId(MarkerSupportRegistry.MARKERS_ID);
+			
+			contextMenu.notifyListeners(SWT.Show, new Event());
+			contextMenu.notifyListeners(SWT.Hide, new Event());
+
+			contextMenu.notifyListeners(SWT.Show, new Event());
+			contextMenu.notifyListeners(SWT.Hide, new Event());
+
+			assertFalse(errorLogged[0]);
+			
+		}finally {
+			if(popupMenuExtender != null)
+				popupMenuExtender.dispose();
+		}
+	}
 
 	
+	public void testMenuServiceContribution() {
+		IMenuService ms = (IMenuService) PlatformUI.getWorkbench().getService(IMenuService.class);
+		AbstractContributionFactory factory = new AbstractContributionFactory("menu:org.eclipse.ui.main.menu?after=file", "205747") {
+			public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
+				MenuManager manager = new MenuManager("&LoFile", "lofile");
+				CommandContributionItem cci = new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, "my.about",
+						IWorkbenchCommandConstants.HELP_ABOUT, CommandContributionItem.STYLE_PUSH));
+				manager.add(cci);
+				additions.addContributionItem(manager, null);
+			}
+		};
+		
+		final boolean[] errorLogged = addLogger();
+		
+		assertContributions(false);
+		ms.addContributionFactory(factory);
+		assertFalse(errorLogged[0]);
+		
+		assertContributions(true);
+		ms.removeContributionFactory(factory);
+		assertContributions(false);
+		
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean[] addLogger() {
+		final boolean []errorLogged = new boolean[] {false};
+		Platform.addLogListener(new ILogListener() {
+			
+			public void logging(IStatus status, String plugin) {
+				if("org.eclipse.ui.workbench".equals(status.getPlugin()) 
+						&& status.getSeverity() == IStatus.ERROR
+						&& status.getException() instanceof IndexOutOfBoundsException) {
+					errorLogged[0] = true;
+				}
+			}
+		});
+		return errorLogged;
+	}
+
+
+	private void assertContributions(boolean added) {
+		
+		MenuManager menuManager = ((WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getMenuManager();
+		IContributionItem[] items = menuManager.getItems();
+		boolean found = false;
+		for (int i = 0; i < items.length; i++) {
+			if(items[i] instanceof MenuManager) {
+				MenuManager aManager = (MenuManager) items[i];
+				if(aManager.getId().equals("lofile")) {
+					found = true;
+					break;
+				}
+			}
+		}
+		assertEquals(found, added);
+	}
 
 	
 	public void testViewPopulation() throws Exception {
