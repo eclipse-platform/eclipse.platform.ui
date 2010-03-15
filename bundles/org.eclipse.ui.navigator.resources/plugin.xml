@@ -90,7 +90,6 @@
             id="org.eclipse.ui.navigator.resourceContent">         
          <enablement>
 		         <or>         
-		            <adapt type="org.eclipse.core.resources.IProject" /> 
 		            <instanceof 
 		                  	value="org.eclipse.core.resources.IResource" /> 
 		         </or>
