@@ -11,25 +11,28 @@
  *******************************************************************************/
 package org.eclipse.core.resources.filtermatchers;
 
+import org.eclipse.core.filesystem.provider.FileInfo;
+
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileInfoFilter;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A factory for instantiating {@link IFileInfoFilter} instances
- * of a particular type.
+ * The abstract base class for all file info matchers. Instances
+ * of this class are provided using the <tt>org.eclipse.core.resources.filterMatchers</tt>
+ * extension point.
  * 
  * @since 3.6
  */
 public abstract class AbstractFileInfoMatcher {
 
 	/**
-	 * Return if this filter matches with the fileInfo provided.
+	 * Tests the given {@link FileInfo}
 	 * 
-	 * @param fileInfo the object to test
-	 * @return <code>true</code> if this filter matches the given file info,
+	 * @param parent the parent container
+	 * @param fileInfo the {@link FileInfo} object to test
+	 * @return <code>true</code> if the given {@link FileInfo} matches,
 	 * and <code>false</code> otherwise.
 	 * @throws CoreException the implementor should throw a CoreException if, 
 	 * 		in the case that the parent or fileInfo doesn't exist in the workspace
@@ -37,5 +40,8 @@ public abstract class AbstractFileInfoMatcher {
 	 */
 	public abstract boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException;
 
+	/**
+	 * Sets initialization data for this matcher.
+	 */
 	public abstract void initialize(IProject project, Object arguments);
 }
