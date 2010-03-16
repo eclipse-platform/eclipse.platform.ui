@@ -207,7 +207,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					@Override
 					protected Object getValue(Object element) {
 						MBindingContext ctx = (MBindingContext) element; 
-						return ctx.getName() != null ? ctx.getDescription() : "";
+						return ctx.getDescription() != null ? ctx.getDescription() : "";
 					}
 					
 					@Override
@@ -243,7 +243,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					@Override
 					protected Object getValue(Object element) {
 						MBindingContext ctx = (MBindingContext) element; 
-						return ctx.getName() != null ? ctx.getId() : "";
+						return ctx.getId() != null ? ctx.getId() : "";
 					}
 					
 					@Override
