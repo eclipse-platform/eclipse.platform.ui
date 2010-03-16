@@ -141,12 +141,13 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			name = varName.substring(0, index);
 		else
 			name = varName;
-		for (int i = 0; i < variableProviders.length; i++) {
-//			if (variableProviders[i].getName().equals(name))
-//				return variableProviders[i].getValue(varName, resource);
-			
-			if (name.startsWith(variableProviders[i].getName()))
-				return variableProviders[i].getValue(varName, resource);
+ 		for (int i = 0; i < variableProviders.length; i++) {
+ 			if (variableProviders[i].getName().equals(name))
+ 				return variableProviders[i].getValue(varName, resource);
+		}
+ 		for (int i = 0; i < variableProviders.length; i++) {
+ 			if (name.startsWith(variableProviders[i].getName()))
+ 				return variableProviders[i].getValue(varName, resource);
 		}
 		return null;
 	}

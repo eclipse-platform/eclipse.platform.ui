@@ -1398,4 +1398,15 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	private String toOS(String path) {
 		return path.replace('/', File.separatorChar);
 	}
+
+	/**
+	 * Regression for Bug 305676 - Selecting PARENT_LOC as the relative path variable in the ImportTypeDialog causes an error
+	 */
+	public void testPrefixVariablesAreNotConfused() {
+		URI uri = nonExistingFileInExistingFolder.getPathVariableManager().getURIValue("PARENT");
+		assertEquals("1.0", uri, null);
+		uri = nonExistingFileInExistingFolder.getPathVariableManager().getURIValue("PARENT_LOC");
+		assertNotNull("1.1", uri);
+	}
+
 }
