@@ -753,23 +753,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
-			IViewReference reference = it.next();
-			if (workbenchPart == reference.getPart(false)) {
-				partService.hidePart(part);
-				it.remove();
-				return true;
+		IWorkbenchPartReference reference = null;
+
+		for (IViewReference viewRef : viewReferences) {
+			if (workbenchPart == viewRef.getPart(false)) {
+				reference = viewRef;
+				break;
 			}
 		}
 
-		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
-			IEditorReference reference = it.next();
-			if (workbenchPart == reference.getPart(false)) {
-				partService.hidePart(part);
-				it.remove();
-				return true;
+		if (reference != null) {
+			partService.hidePart(part);
+			viewReferences.remove(reference);
+			return true;
+		}
+
+		for (IEditorReference viewRef : editorReferences) {
+			if (workbenchPart == viewRef.getPart(false)) {
+				reference = viewRef;
+				break;
 			}
 		}
+
+		if (reference != null) {
+			partService.hidePart(part);
+			editorReferences.remove(reference);
+			return true;
+		}
+
 		return false;
 	}
 
