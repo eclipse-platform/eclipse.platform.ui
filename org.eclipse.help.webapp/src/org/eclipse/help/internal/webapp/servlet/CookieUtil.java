@@ -53,6 +53,7 @@ public class CookieUtil {
 			HttpServletResponse response) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setMaxAge(COOKIE_LIFE);
+		cookie.setPath("/"); //$NON-NLS-1$
 		response.addCookie(cookie);
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out

@@ -32,6 +32,7 @@ import org.eclipse.help.internal.base.scope.IntersectionScope;
 import org.eclipse.help.internal.base.scope.ScopeRegistry;
 import org.eclipse.help.internal.base.scope.UniversalScope;
 import org.eclipse.help.internal.base.scope.WorkingSetScope;
+import org.eclipse.help.internal.webapp.servlet.CookieUtil;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -142,9 +143,8 @@ public class RequestScope {
 	
 	public static void saveScope(String scope, HttpServletResponse response) {
 		if (HelpSystem.isShared()) {
-			if (response != null) {			
-				Cookie scopeCookie = new Cookie(SCOPE_COOKIE_NAME, scope); 
-				response.addCookie(scopeCookie);
+			if (response != null) {	
+				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, scope, response);
 			}
 		} else {
 			InstanceScope instanceScope = new InstanceScope();
