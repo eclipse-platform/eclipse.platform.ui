@@ -189,6 +189,31 @@ public class EclipseContextTest extends TestCase {
 		assertEquals("bam", value[0]);
 	}
 
+	/**
+	 * Tests registering a single run and track instance multiple times with the same context.
+	 */
+	public void testRegisterRunAndTrackTwice() {
+		final Object[] value = new Object[1];
+		IRunAndTrack runnable = new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
+				runCounter++;
+				value[0] = context.get("foo");
+				return true;
+			}
+		};
+		context.runAndTrack(runnable, null);
+		assertEquals(1, runCounter);
+		context.runAndTrack(runnable, null);
+		assertEquals(2, runCounter);
+		assertEquals(null, value[0]);
+		context.set("foo", "bar");
+		assertEquals(3, runCounter);
+		assertEquals("bar", value[0]);
+		context.remove("foo");
+		assertEquals(4, runCounter);
+
+	}
+
 	public void testRunAndTrackMultipleValues() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
