@@ -11,6 +11,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import junit.framework.TestCase;
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IContextFunction;
@@ -149,6 +150,37 @@ public class EclipseContextTest extends TestCase {
 		parent.set("x", new Integer(10));
 		assertEquals(13, ((Integer) parent.get("sum")).intValue());
 		assertEquals(11, ((Integer) child.get("sum")).intValue());
+	}
+
+	/**
+	 * Tests that listeners receive appropriate {@link ContextChangeEvent} instances that reflect
+	 * the change in the context.
+	 */
+	public void testContextEvents() {
+		final Object[] value = new Object[1];
+		final int[] eventType = new int[] { 0 };
+		IRunAndTrack runnable = new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
+				runCounter++;
+				eventType[0] = event.getEventType();
+				value[0] = context.get("foo");
+				return true;
+			}
+		};
+		context.runAndTrack(runnable, null);
+		assertEquals(1, runCounter);
+		assertEquals(ContextChangeEvent.INITIAL, eventType[0]);
+		context.set("foo", "bar");
+		assertEquals(2, runCounter);
+		assertEquals(ContextChangeEvent.ADDED, eventType[0]);
+		assertEquals("bar", value[0]);
+		context.remove("foo");
+		assertEquals(ContextChangeEvent.REMOVED, eventType[0]);
+		assertEquals(3, runCounter);
+		((IDisposable) context).dispose();
+		assertEquals(4, runCounter);
+		assertEquals(ContextChangeEvent.DISPOSE, eventType[0]);
+
 	}
 
 	public void testRunAndTrack() {
