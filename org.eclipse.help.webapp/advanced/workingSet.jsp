@@ -494,7 +494,7 @@ function enableOK() {
 		    <td>
 		       <div id="booksContainer">
 		       <% for (int i=0; i<data.getTocCount(); i++){
-	                 if(!tocData.isEnabled(i)){
+	                 if(!data.isTocEnabled(i)){
 		             // do not show
 		                 continue;
 	                  }
@@ -517,6 +517,10 @@ function enableOK() {
                          <%
 	                         for (int topic=0; topic<data.getTopicCount(i); topic++)
 	                         {
+	                            if(!data.isTopicEnabled(i, topic)){
+		                           // do not show
+		                           continue;
+	                            }
 		                        String topicLabel = data.getTopicLabel(i, topic);
 		                        String topicChecked = (state == WorkingSetData.STATE_CHECKED) || 
 							                          (state == WorkingSetData.STATE_GRAYED && data.getTopicState(i,topic) == WorkingSetData.STATE_CHECKED) 

@@ -20,6 +20,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.help.IToc;
+import org.eclipse.help.base.AbstractHelpScope;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.base.util.CriteriaUtilities;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
@@ -41,6 +44,7 @@ public class WorkingSetData extends RequestData {
 
 	private AdaptableToc[] tocs;
 	private boolean isEditMode;
+	private AbstractHelpScope filter;
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -49,6 +53,7 @@ public class WorkingSetData extends RequestData {
 		AdaptableTocsArray adaptableTocs = wsmgr.getRoot();
 		tocs = (AdaptableToc[]) adaptableTocs.getChildren();
 		isEditMode = "edit".equals(getOperation()); //$NON-NLS-1$
+		filter = RequestScope.getScope(request, response, true);
 	}
 
 	public boolean isEditMode() {
@@ -104,6 +109,18 @@ public class WorkingSetData extends RequestData {
 		if (!allTheSame)
 			return STATE_GRAYED;
 		return STATE_UNCHECKED;
+	}
+
+	public boolean isTocEnabled(int tocIndex) {
+		AdaptableToc adaptableToc = tocs[tocIndex];
+		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
+		return ScopeUtils.showInTree(toc, filter);
+	}
+	
+	public boolean isTopicEnabled(int tocIndex, int topicIndex) {
+		AdaptableToc adaptableToc = tocs[tocIndex];
+		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
+		return ScopeUtils.showInTree(toc.getTopics()[topicIndex], filter);
 	}
 
 	/**
