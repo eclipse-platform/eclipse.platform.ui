@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -20,19 +22,27 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -57,7 +67,6 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	public ApplicationEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -114,11 +123,41 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Bindings");
+			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			
-			final ListViewer viewer = new ListViewer(parent);
+			final Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			t.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
+						handleAddText(t);
+					}
+				}
+			});
+			
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Add");
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					handleAddText(t);
+				}
+			});
+			
+			new Label(parent, SWT.NONE);
+			
+			final TableViewer viewer = new TableViewer(parent);
+			viewer.setLabelProvider(new LabelProvider());
+			viewer.setContentProvider(new ObservableListContentProvider());
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 200;
 			viewer.getControl().setLayoutData(gd);
+			
+			IEMFListProperty prop = EMFProperties.list(MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS);
+			viewer.setInput(prop.observeDetail(getMaster()));
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
@@ -129,7 +168,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			gl.marginHeight=0;
 			buttonComp.setLayout(gl);
 
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Up");
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
@@ -182,9 +221,46 @@ public class ApplicationEditor extends AbstractComponentEditor {
 					}
 				}
 			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						MApplication el = (MApplication) getMaster().getValue();
+						List<?> ids = ((IStructuredSelection)viewer.getSelection()).toList();
+						Command cmd = RemoveCommand.create(getEditingDomain(), el, MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS, ids);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+							if( el.getBindingContexts().size() > 0 ) {
+								viewer.setSelection(new StructuredSelection(el.getBindingContexts().get(0)));
+							}
+						}
+					}
+				}
+			});
 		}
 
 		return parent;
+	}
+	
+	private void handleAddText( Text tagText) {
+		if (tagText.getText().trim().length() > 0) {
+			String[] tags = tagText.getText().split(";");
+			for( int i = 0; i < tags.length;i++ ) {
+				tags[i] = tags[i].trim();
+			}
+
+			MApplicationElement appEl = (MApplicationElement) getMaster().getValue();
+			Command cmd = AddCommand.create(getEditingDomain(), appEl, MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS, Arrays.asList(tags));
+			if (cmd.canExecute()) {
+				getEditingDomain().getCommandStack().execute(cmd);
+			}
+			tagText.setText("");
+		}
 	}
 
 	@Override
