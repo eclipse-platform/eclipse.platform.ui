@@ -1,0 +1,7 @@
+org.eclipse.e4.ui.workbench.swt/debug = false
+org.eclipse.e4.ui.workbench.swt/trace/commands = false
+org.eclipse.e4.ui.workbench.swt/trace/menus = false
+org.eclipse.e4.ui.workbench.swt/trace/eclipse.context = false
+org.eclipse.e4.ui.workbench.swt/trace/eclipse.context.verbose = false
+org.eclipse.e4.ui.workbench.swt/trace/workbench = false
+org.eclipse.e4.ui.workbench.swt/trace/renderer = false
