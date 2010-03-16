@@ -63,6 +63,7 @@ public class CookieUtil {
 
 	public static void deleteCookie(String name, HttpServletResponse response) {
 		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
+		cookie.setPath("/"); //$NON-NLS-1$
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
