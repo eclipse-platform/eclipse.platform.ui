@@ -113,20 +113,20 @@ abstract class Computation {
 		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
 			if (c.listeners.contains(this)) { // nested
-				for (Iterator exitsting = c.listeners.iterator(); exitsting.hasNext();) {
-					Computation existingComputation = (Computation) exitsting.next();
+				for (Iterator existing = c.listeners.iterator(); existing.hasNext();) {
+					Computation existingComputation = (Computation) existing.next();
 					if (!equals(existingComputation))
 						continue;
 					for (Iterator newDependencies = dependencies.keySet().iterator(); newDependencies
 							.hasNext();) {
-						IEclipseContext newDepenecyContext = (IEclipseContext) newDependencies
+						IEclipseContext newDependencyContext = (IEclipseContext) newDependencies
 								.next();
-						if (existingComputation.dependencies.containsKey(newDepenecyContext))
-							((Set) existingComputation.dependencies.get(newDepenecyContext))
-									.addAll((Set) dependencies.get(newDepenecyContext));
+						if (existingComputation.dependencies.containsKey(newDependencyContext))
+							((Set) existingComputation.dependencies.get(newDependencyContext))
+									.addAll((Set) dependencies.get(newDependencyContext));
 						else
-							existingComputation.dependencies.put(newDepenecyContext, dependencies
-									.get(newDepenecyContext));
+							existingComputation.dependencies.put(newDependencyContext, dependencies
+									.get(newDependencyContext));
 					}
 					break;
 				}
