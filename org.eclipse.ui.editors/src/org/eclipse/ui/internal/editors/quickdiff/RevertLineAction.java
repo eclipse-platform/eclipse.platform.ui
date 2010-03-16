@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,12 +24,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @since 3.1
  */
 public class RevertLineAction extends QuickDiffRestoreAction {
-	/** Resource key prefix. */
-	private static final String PREFIX= "RevertLineAction."; //$NON-NLS-1$
-	/** Resource key for added lines - they will be deleted. */
-	private static final String DELETE_KEY= PREFIX + "delete.label"; //$NON-NLS-1$
-	/** Resource key for changed lines - they will be reverted. */
-	private static final String REVERT_KEY= PREFIX + "label"; //$NON-NLS-1$
 
 	/** The line to be restored. Set in <code>update()</code>. */
 	private int fLine;
@@ -41,7 +35,7 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
 	public RevertLineAction(ITextEditor editor, boolean isRulerAction) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
+		super(QuickDiffMessages.getResourceBundle(), "RevertLineAction.", editor, isRulerAction); //$NON-NLS-1$
 	}
 
 	/*
@@ -62,9 +56,9 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 			return false;
 
 		if (info.getChangeType() == ILineDiffInfo.ADDED)
-			setText(QuickDiffMessages.getString(DELETE_KEY));
+			setText(QuickDiffMessages.getString("RevertLineAction.delete.label")); //$NON-NLS-1$
 		else
-			setText(QuickDiffMessages.getString(REVERT_KEY));
+			setText(QuickDiffMessages.getString("RevertLineAction.label")); //$NON-NLS-1$
 		return true;
 	}
 
