@@ -19,14 +19,30 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class ApplicationEditor extends AbstractComponentEditor {
 
@@ -79,7 +95,94 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
-		parent = new Composite(parent,SWT.NONE);
+		parent = new Composite(parent, SWT.NONE);
+		parent.setLayout(new GridLayout(3, false));
+
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+		
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Bindings");
+			
+			final ListViewer viewer = new ListViewer(parent);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 200;
+			viewer.getControl().setLayoutData(gd);
+			
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft=0;
+			gl.marginRight=0;
+			gl.marginWidth=0;
+			gl.marginHeight=0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MApplication container = (MApplication) getMaster().getValue();
+							int idx = container.getCommands().indexOf(obj) - 1;
+							if( idx >= 0 ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( ! viewer.getSelection().isEmpty() ) {
+						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+						if( s.size() == 1 ) {
+							Object obj = s.getFirstElement();
+							MApplication container = (MApplication) getMaster().getValue();
+							int idx = container.getCommands().indexOf(obj) + 1;
+							if( idx < container.getCommands().size() ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
+								
+								if( cmd.canExecute() ) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+							
+						}
+					}
+				}
+			});
+		}
 
 		return parent;
 	}
