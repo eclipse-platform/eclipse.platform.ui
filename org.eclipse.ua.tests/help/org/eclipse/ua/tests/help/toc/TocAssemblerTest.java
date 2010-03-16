@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocAssembler;
@@ -75,6 +76,19 @@ public class TocAssemblerTest extends TestCase {
 		List contributions = new ArrayList(Arrays.asList(new Object[] { linkTo1, linkTo2, linkTo3 }));
 		contributions = assembler.assemble(contributions);
 		assertEquals(3, contributions.size());
+	}
+	
+	public void testHrefMap() throws Exception {
+		TocFileParser parser = new TocFileParser();
+		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
+		TocContribution c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/c.xml", true, "en", null, null));
+		TocAssembler assembler = new TocAssembler();
+		List contributions = new ArrayList(Arrays.asList(new Object[] { b, c }));
+		contributions = assembler.assemble(contributions);
+		IToc toc =((TocContribution)contributions.get(0)).getToc();
+		assertNotNull(toc.getTopic("/org.eclipse.ua.tests/B_topic3.html"));
+		assertNotNull(toc.getTopic("/org.eclipse.ua.tests/C_topic.html"));
+		assertNull(toc.getTopic("/org.eclipse.ua.tests/D_topic.html"));
 	}
 
 	private String serialize(TocContribution contribution) throws Exception {
