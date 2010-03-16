@@ -129,7 +129,6 @@ public abstract class CompatibilityPart {
 		// reference.hookPropertyListeners();
 
 		createPartControl(wrapped, composite);
-		delegateSetFocus();
 
 		part.setLabel(computeLabel());
 		part.setTooltip(wrapped.getTitleToolTip());
