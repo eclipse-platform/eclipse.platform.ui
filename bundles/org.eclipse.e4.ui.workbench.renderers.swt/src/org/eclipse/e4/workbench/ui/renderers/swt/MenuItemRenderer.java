@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +24,7 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -119,6 +118,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 
 		MenuItem newItem = new MenuItem((Menu) parent, flags, addIndex);
 		setItemText(itemModel, newItem);
+		newItem.setImage(getImage(itemModel));
 		newItem.setEnabled(itemModel.isEnabled());
 
 		return newItem;
