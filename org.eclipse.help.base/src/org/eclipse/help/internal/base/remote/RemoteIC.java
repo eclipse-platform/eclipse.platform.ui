@@ -24,8 +24,19 @@ public class RemoteIC {
 	
 	private String port;
 	
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
 	
-    public RemoteIC(boolean enabled, String name, String host, String path, String protocol, String port){
+	public RemoteIC(boolean enabled, String name, String host, String path, String port){
+		
+    	this.enabled = enabled;
+	    this.name    = name;
+	    this.host    = host;
+	    this.path    = path;
+	    this.port    = port;
+	    this.port    = PROTOCOL_HTTP;
+	}
+
+	public RemoteIC(boolean enabled, String name, String host, String path, String protocol, String port){
 		
     	this.enabled = enabled;
 	    this.name    = name;
