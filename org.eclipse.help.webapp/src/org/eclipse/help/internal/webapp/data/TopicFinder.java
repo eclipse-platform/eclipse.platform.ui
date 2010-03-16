@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.UAContentFilter;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.base.AbstractHelpScope;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 
 /**
  * Class for finding a topic in a set of TOCs based on its href.  Some of this code was
@@ -32,9 +31,11 @@ public class TopicFinder {
 	private int selectedToc;
 	private IToc[] tocs;
 	private String numericPath = null;
+	private AbstractHelpScope scope;
 	
-	public TopicFinder(String topicHref, IToc[] tocs) {
+	public TopicFinder(String topicHref, IToc[] tocs, AbstractHelpScope scope) {
 		this.tocs = tocs;
+		this.scope = scope;
 		if (topicHref != null && topicHref.length() > 0) {
 			int index = -1;
 			do {
@@ -144,7 +145,7 @@ public class TopicFinder {
 	private void appendFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
 		int indexInFilteredList = 0;
 		for (int i = 0; i < indexInUnfilteredList; i++) {
-			if (EnabledTopicUtils.isEnabled(unfiltered[i])) {
+			if (ScopeUtils.showInTree(unfiltered[i], scope)) {
 				indexInFilteredList++;
 			}
 		}
@@ -280,15 +281,12 @@ public class TopicFinder {
 	 * @return true if TOC should be visible
 	 */
 	private boolean isEnabled(IToc toc) {
-		boolean tocEnabled = HelpBasePlugin.getActivitySupport().isEnabled(
-				toc.getHref())
-				&& !UAContentFilter.isFiltered(toc, HelpEvaluationContext
-						.getContext());
+		boolean tocEnabled = ScopeUtils.showInTree(toc, scope);
 		if (!tocEnabled)
 			return false;
 		ITopic[] topics = toc.getTopics();
 		for (int i = 0; i < topics.length; i++) {
-			if (EnabledTopicUtils.isEnabled(topics[i])) {
+			if (ScopeUtils.showInTree(topics[i], scope)) {
 				return true;
 			}
 		}

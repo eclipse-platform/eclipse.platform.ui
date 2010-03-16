@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -56,6 +58,9 @@ public class TocData extends ActivitiesData {
 	
 	// images directory
 	private String imagesDirectory;
+	
+	// Scope
+	private AbstractHelpScope scope;
 	/**
 	 * Constructs the xml data for the contents page.
 	 * 
@@ -70,6 +75,7 @@ public class TocData extends ActivitiesData {
 		this.tocParameter = request.getParameter("toc"); //$NON-NLS-1$
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		this.expandPathParam = request.getParameter("expandPath"); //$NON-NLS-1$
+		this.scope = RequestScope.getScope(request, response, false);
 		
 		
 		if (tocParameter != null && tocParameter.length() == 0)
@@ -182,7 +188,7 @@ public class TocData extends ActivitiesData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isEnabled(int toc) {
-		return EnabledTopicUtils.isEnabled(tocs[toc]);
+		return ScopeUtils.showInTree(tocs[toc], scope);
 	}
 	/**
 	 * Check if given TOC is visible
@@ -213,7 +219,7 @@ public class TocData extends ActivitiesData {
 			}
 		} else {
 			// try obtaining the TOC from the topic
-			TopicFinder finder = new TopicFinder(topicHref, tocs);
+			TopicFinder finder = new TopicFinder(topicHref, tocs, scope);
 			topicPath = finder.getTopicPath();
 			selectedToc = finder.getSelectedToc();
 			numericPath = finder.getNumericPath();
@@ -226,7 +232,7 @@ public class TocData extends ActivitiesData {
 			// path[0] is the index of enabled TOCS, convert to an index into all TOCS
 			int enabled = path[0] + 1;
 			for (int i = 0;  enabled > 0 && i < tocs.length; i++) {
-				if (EnabledTopicUtils.isEnabled(tocs[i])) {
+				if (ScopeUtils.showInTree(tocs[i], scope)) {
 					enabled--;
 					if (enabled == 0) {
 						selectedToc = i;
@@ -234,24 +240,24 @@ public class TocData extends ActivitiesData {
 				}
 			}
 			if (selectedToc != -1) {
-		        topicPath = decodePath(path, tocs[selectedToc]);
+		        topicPath = decodePath(path, tocs[selectedToc], scope);
 			}
 		} else {
 			selectedToc = -1;
 		}
 	}
 
-	public static ITopic[] decodePath(int[] path, IToc toc) {
+	public static ITopic[] decodePath(int[] path, IToc toc, AbstractHelpScope scope) {
 		ITopic[] topicPath = new ITopic[path.length - 1];
 		try {
 			if (path.length > 1) {
 				ITopic[] topics = toc.getTopics();
-				ITopic[] enabledTopics = EnabledTopicUtils.getEnabled(topics);
+				ITopic[] enabledTopics = ScopeUtils.inScopeTopics(topics, scope);
 				topicPath[0] = enabledTopics[path[1]];
 			}
 			for (int i = 1; i < topicPath.length; i++) {
 				ITopic[] topics = topicPath[i-1].getSubtopics();
-				ITopic[] enabledTopics = EnabledTopicUtils.getEnabled(topics);
+				ITopic[] enabledTopics = ScopeUtils.inScopeTopics(topics, scope);
 				topicPath[i] = enabledTopics[path[i+1]];
 			}
 		} catch (RuntimeException e) {
