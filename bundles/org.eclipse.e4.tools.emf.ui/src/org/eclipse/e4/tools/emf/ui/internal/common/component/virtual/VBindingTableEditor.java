@@ -46,12 +46,20 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.TreeViewerEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -148,7 +156,34 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 				TreeViewerColumn column = new TreeViewerColumn(contextsViewer, SWT.NONE);
 				column.getColumn().setText("Name");
 				column.getColumn().setWidth(200);				
-				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));				
+				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(contextsViewer) {
+					private TextCellEditor editor = new TextCellEditor(contextsViewer.getTree());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.BINDING_CONTEXT__NAME, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MBindingContext ctx = (MBindingContext) element; 
+						return ctx.getName() != null ? ctx.getName() : "";
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
 			}
 			
 			{
@@ -158,6 +193,33 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 				column.getColumn().setText("Description");
 				column.getColumn().setWidth(200);				
 				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));				
+				column.setEditingSupport(new EditingSupport(contextsViewer) {
+					private TextCellEditor editor = new TextCellEditor(contextsViewer.getTree());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.BINDING_CONTEXT__DESCRIPTION, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MBindingContext ctx = (MBindingContext) element; 
+						return ctx.getName() != null ? ctx.getDescription() : "";
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
 			}
 			
 			{
@@ -167,7 +229,48 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 				column.getColumn().setText("Id");
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));				
+				column.setEditingSupport(new EditingSupport(contextsViewer) {
+					private TextCellEditor editor = new TextCellEditor(contextsViewer.getTree());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MBindingContext ctx = (MBindingContext) element; 
+						return ctx.getName() != null ? ctx.getId() : "";
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
 			}
+			
+			ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(contextsViewer) {
+				@Override
+				protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+					boolean singleSelect = ((IStructuredSelection)contextsViewer.getSelection()).size() == 1;
+					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
+
+					return singleSelect && (isLeftDoubleMouseSelect
+							|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+							|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+				}
+			};
+			TreeViewerEditor.create(contextsViewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
+
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
