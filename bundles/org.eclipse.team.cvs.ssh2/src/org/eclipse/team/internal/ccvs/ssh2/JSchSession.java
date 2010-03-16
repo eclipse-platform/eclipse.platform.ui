@@ -103,7 +103,9 @@ class JSchSession {
 	}
 
     private static Session createSession(IJSchService service, IJSchLocation location, String password, IProgressMonitor monitor) throws JSchException {
-        Session session = service.createSession(location, null);
+    	if (password != null)
+    		location.setPassword(password);
+    	Session session = service.createSession(location, null);
         session.setTimeout(getCVSTimeoutInMillis());
         if (password != null)
 			session.setPassword(password);
