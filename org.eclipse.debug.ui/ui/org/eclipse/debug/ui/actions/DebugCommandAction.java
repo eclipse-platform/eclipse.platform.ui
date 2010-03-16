@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,6 +176,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @param part workbench part
      */
     public void init(IWorkbenchPart part) {
+    	fInitialized = false;
         fPart = part;
         fWindow = part.getSite().getWorkbenchWindow();
         fUpdateService = DebugCommandService.getService(fWindow);
@@ -191,10 +192,12 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     }
     
     /**
-     * Initializes the context action
+     * Initializes this action for a workbench window.
+     * 
      * @param window the window
      */
     public void init(IWorkbenchWindow window) {
+    	fInitialized = false;
         fWindow = window;
         fUpdateService = DebugCommandService.getService(fWindow);
         IDebugContextService contextService = getDebugContextService();
