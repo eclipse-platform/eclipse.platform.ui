@@ -35,6 +35,8 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -50,6 +52,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class BindingTableEditor extends AbstractComponentEditor {
 
@@ -103,6 +106,32 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	private Composite createForm(Composite parent, EMFDataBindingContext context) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
+		
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(getMaster()));
+		}
+		
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Context Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.BINDING_TABLE__BINDING_CONTEXT_ID).observeDetail(getMaster()));
+
+			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setText("Find ...");			
+		}
 		
 		{
 			Label l = new Label(parent, SWT.NONE);
