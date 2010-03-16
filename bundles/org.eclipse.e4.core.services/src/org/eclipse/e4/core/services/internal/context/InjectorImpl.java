@@ -269,7 +269,9 @@ public class InjectorImpl implements IInjector {
 			try {
 				return injectMethod.invoke(false, false);
 			} catch (InjectionException e) {
-				// TBD?
+				// TBD? abort or continue?
+				logExternalError("Exception occured in the injectd method " + method.getName(),
+						userObject, e);
 			}
 		}
 		Class superClass = currentClass.getSuperclass();
