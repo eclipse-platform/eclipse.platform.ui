@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.dnd.DND;
@@ -27,9 +30,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -43,8 +49,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.navigator.NavigatorDragAdapter;
 
 import org.eclipse.search.internal.ui.Messages;
@@ -290,6 +298,33 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		if (IShowInTargetList.class.equals(adapter)) {
 			return SHOW_IN_TARGET_LIST;
 		}
+
+		if (adapter == IShowInSource.class) {
+			ISelectionProvider selectionProvider= getSite().getSelectionProvider();
+			if (selectionProvider == null)
+				return null;
+
+			ISelection selection= selectionProvider.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection= ((StructuredSelection)selection);
+				final Set newSelection= new HashSet(structuredSelection.size());
+				Iterator iter= structuredSelection.iterator();
+				while (iter.hasNext()) {
+					Object element= iter.next();
+					if (element instanceof LineElement)
+						element= ((LineElement)element).getParent();
+					newSelection.add(element);
+				}
+
+				return new IShowInSource() {
+					public ShowInContext getShowInContext() {
+						return new ShowInContext(null, new StructuredSelection(new ArrayList(newSelection)));
+					}
+				};
+			}
+			return null;
+		}
+
 		return null;
 	}
 
