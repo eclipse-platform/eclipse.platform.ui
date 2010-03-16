@@ -12,8 +12,8 @@ package org.eclipse.e4.core.services.internal.context;
 
 import java.lang.ref.WeakReference;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.ObjectDescriptor;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 
 abstract public class InjectionAbstract implements IRunAndTrackObject {
@@ -60,7 +60,7 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 		return (changed.equals(primarySupplier));
 	}
 
-	protected Object getValue(IObjectDescriptor objectDescriptor, InjectionProperties properties,
+	protected Object getValue(ObjectDescriptor objectDescriptor, InjectionProperties properties,
 			Class parameterType, boolean ignoreMissing, boolean injectWithNulls) {
 		// 1) if we have a provider, use it
 		Object provider = properties.getProvider();
@@ -83,7 +83,7 @@ abstract public class InjectionAbstract implements IRunAndTrackObject {
 			return null;
 
 		if (!optional) {
-			String msg = "Unable to find value for \"" + objectDescriptor.getKey() + "\"";
+			String msg = "Unable to find value for \"" + objectDescriptor.toString() + "\"";
 			throw new IllegalArgumentException(msg);
 		}
 		return NOT_A_VALUE;

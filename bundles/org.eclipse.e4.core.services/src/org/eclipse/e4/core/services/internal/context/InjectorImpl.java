@@ -27,6 +27,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.injector.IInjector;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.ObjectDescriptor;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -153,8 +154,8 @@ public class InjectorImpl implements IInjector {
 
 			if (properties.getHandlesEvent() != null) {
 				// XXX this is wrong, but it will be removed anyway
-				IEventBroker eventBroker = (IEventBroker) objectProvider
-						.get(new ContextObjectDescriptor(null, IEventBroker.class));
+				ObjectDescriptor desc = ObjectDescriptor.make(IEventBroker.class);
+				IEventBroker eventBroker = (IEventBroker) objectProvider.get(desc);
 				eventBroker.subscribe(properties.getHandlesEvent(), null, new EventHandler() {
 					public void handleEvent(Event event) {
 						Object data = event.getProperty(IEventBroker.DATA);

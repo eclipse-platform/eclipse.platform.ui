@@ -18,12 +18,9 @@ import org.eclipse.e4.core.services.context.IRunAndTrack;
  */
 public interface IObjectProvider {
 
-	public boolean containsKey(IObjectDescriptor key);
+	public boolean containsKey(ObjectDescriptor key);
 
-	public Object get(IObjectDescriptor key);
-
-	// TBD arguments: do they make sense? May be just pass an Object?
-	public IObjectDescriptor makeDescriptor(String description, Class clazz);
+	public Object get(ObjectDescriptor key);
 
 	// TBD replace this with events specific to injection, not context
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args);

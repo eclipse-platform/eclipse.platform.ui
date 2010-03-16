@@ -12,8 +12,8 @@ package org.eclipse.e4.core.services.internal.context;
 
 import java.lang.reflect.Field;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.ObjectDescriptor;
 
 /**
  * Collection of static methods that deal with reflection-based injection at a low level.
@@ -44,8 +44,8 @@ public class InjectionField extends InjectionAbstract {
 
 		InjectionProperties properties = annotationSupport.getInjectProperties(field,
 				primarySupplier);
-		IObjectDescriptor objectDescriptor = primarySupplier.makeDescriptor(properties
-				.getPropertyName(), field.getType());
+		ObjectDescriptor objectDescriptor = ObjectDescriptor.make(field.getType(), properties
+				.getPropertyName());
 		Object value;
 		try {
 			value = getValue(objectDescriptor, properties, field.getType(), ignoreMissing,

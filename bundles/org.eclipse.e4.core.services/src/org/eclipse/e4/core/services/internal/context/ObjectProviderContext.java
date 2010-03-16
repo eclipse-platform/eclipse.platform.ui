@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Named;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
-import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.ObjectDescriptor;
 
 public class ObjectProviderContext implements IObjectProvider {
 
@@ -25,8 +26,8 @@ public class ObjectProviderContext implements IObjectProvider {
 		this.context = context;
 	}
 
-	public boolean containsKey(IObjectDescriptor properties) {
-		String key = properties.getKey();
+	public boolean containsKey(ObjectDescriptor properties) {
+		String key = getKey(properties);
 		if (key == null)
 			return false;
 		if (ECLIPSE_CONTEXT_NAME.equals(key))
@@ -34,13 +35,22 @@ public class ObjectProviderContext implements IObjectProvider {
 		return context.containsKey(key);
 	}
 
-	public Object get(IObjectDescriptor properties) {
-		String key = properties.getKey();
+	public Object get(ObjectDescriptor properties) {
+		String key = getKey(properties);
 		if (key == null)
 			return null;
 		if (ECLIPSE_CONTEXT_NAME.equals(key))
 			return context;
 		return context.get(key);
+	}
+
+	private String getKey(ObjectDescriptor descriptor) {
+		if (descriptor.hasQualifier(Named.class.getName()))
+			return descriptor.getQualifierValue(Named.class.getName());
+		Class elementClass = descriptor.getElementClass();
+		if (elementClass != null)
+			return elementClass.getName();
+		return null;
 	}
 
 	public String toString() {
@@ -78,7 +88,4 @@ public class ObjectProviderContext implements IObjectProvider {
 		return context.hashCode();
 	}
 
-	public IObjectDescriptor makeDescriptor(String description, Class clazz) {
-		return new ContextObjectDescriptor(description, clazz);
-	}
 }

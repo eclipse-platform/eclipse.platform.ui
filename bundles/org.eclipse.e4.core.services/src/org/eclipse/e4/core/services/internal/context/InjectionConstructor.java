@@ -13,8 +13,8 @@ package org.eclipse.e4.core.services.internal.context;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.injector.ObjectDescriptor;
 
 /**
  * Collection of static methods that deal with reflection-based injection at a low level.
@@ -59,8 +59,8 @@ public class InjectionConstructor extends InjectionAbstract {
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
 			try {
-				IObjectDescriptor objectDescriptor = primarySupplier.makeDescriptor(properties[i]
-						.getPropertyName(), parameterTypes[i]);
+				ObjectDescriptor objectDescriptor = ObjectDescriptor.make(parameterTypes[i],
+						properties[i].getPropertyName());
 				actualParams[i] = getValue(objectDescriptor, properties[i], parameterTypes[i],
 						false, false);
 			} catch (IllegalArgumentException e) {
