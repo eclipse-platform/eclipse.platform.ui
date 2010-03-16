@@ -1503,7 +1503,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (page == null) {
 			MWindow window = (MWindow) context.get(MWindow.class.getName());
 			Workbench workbench = (Workbench) PlatformUI.getWorkbench();
-			workbench.openWorkbenchWindow(null, null, window);
+			workbench.openWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
+					.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
+					window);
 			page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
 		}
 		return page;

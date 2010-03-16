@@ -1854,6 +1854,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
 			if (mperspective.getId().equals(perspective.getId())) {
+				// instantiate the perspective
+				IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
+				// use a new perspective since we're only interested in
+				// shortcuts here, see bug 305918
+				modelLayout = new ModeledPageLayout(application, modelService, window,
+						MApplicationFactory.eINSTANCE.createPerspective(), perspective, this);
+				factory.createInitialLayout(modelLayout);
+
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
