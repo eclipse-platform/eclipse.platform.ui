@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -357,12 +357,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			boolean hasProgressMonitor= fProgressMonitorPart != null;
 
 			// Deactivate shell
-			savedState= saveUIState(hasProgressMonitor && cancelable);
+			savedState= saveUIState(false);
 			if (focusControl != null)
 				savedState.put("focus", focusControl); //$NON-NLS-1$
 
 			if (hasProgressMonitor) {
-				fProgressMonitorPart.attachToCancelComponent(cancelButton);
+				if (cancelable)
+					fProgressMonitorPart.attachToCancelComponent(cancelButton);
 				fStatusContainer.showPage(fProgressMonitorPart);
 			}
 			// Update the status container since we are blocking the event loop right now.
@@ -642,7 +643,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		GridLayout pmlayout= new GridLayout();
 		pmlayout.numColumns= 1;
 		pmlayout.marginHeight= 0;
-		fProgressMonitorPart= new ProgressMonitorPart(fStatusContainer, pmlayout);
+		fProgressMonitorPart= new ProgressMonitorPart(fStatusContainer, pmlayout, true);
 	}
 
 	private void createMessageBox() {
