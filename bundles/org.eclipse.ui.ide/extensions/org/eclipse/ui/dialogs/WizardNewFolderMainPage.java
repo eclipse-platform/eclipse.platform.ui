@@ -717,7 +717,11 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		if (linkTargetPath != null)
 			return false;
 		IPath containerPath = resourceGroup.getContainerFullPath();
+		if (containerPath == null)
+			return false;
 		String resourceName = resourceGroup.getResource();
+		if (resourceName == null)
+			return false;
 		if (resourceName.length() > 0) {
 			IPath newFolderPath = containerPath.append(resourceName);
 			IFolder newFolderHandle = createFolderHandle(newFolderPath);
