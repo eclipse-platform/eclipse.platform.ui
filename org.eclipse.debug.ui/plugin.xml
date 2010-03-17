@@ -1290,6 +1290,14 @@
             targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.debug.ui.breakpointview.popupMenu">
          <action
+               label="%Copy.label"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               definitionId="org.eclipse.ui.edit.copy"
+               helpContextId="copy_breakpoints_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsActionDelegate"
+               menubarPath="breakpointGroup"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.copy"/>
+         <action
                label="%SelectAll.label"
                helpContextId="select_all_breakpoints_action_context"
                definitionId="org.eclipse.ui.edit.selectAll"

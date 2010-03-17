@@ -25,7 +25,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
 import org.eclipse.debug.internal.ui.actions.breakpoints.OpenBreakpointMarkerAction;
@@ -199,7 +198,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		menu.add(getAction(ACTION_GOTO_MARKER));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction(ActionFactory.COPY.getCommandId()));
 		menu.add(getAction(ActionFactory.PASTE.getCommandId()));
 		IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
 		if (action != null && action.isEnabled()) {
@@ -231,8 +229,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		        
 		PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
 		configure(paste, ActionFactory.PASTE.getCommandId(), ActionFactory.PASTE.getCommandId(), ISharedImages.IMG_TOOL_PASTE);
-		SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
-		configure(copy, ActionFactory.COPY.getCommandId(), ActionFactory.COPY.getCommandId(), ISharedImages.IMG_TOOL_COPY);
 		        
 		SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
 		setAction(ACTION_REMOVE_FROM_GROUP, remove);

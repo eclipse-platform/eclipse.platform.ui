@@ -16,9 +16,9 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.
@@ -62,8 +62,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * Implementation of method defined on <code>IAction</code>.
      */
     public void run() {
-		if (getBreakpointsView().canPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection())) {
-			getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
+		if (getBreakpointsView().canPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection())) {
+			getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection());
 		}
     }
 
