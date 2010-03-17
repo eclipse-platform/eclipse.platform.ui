@@ -357,18 +357,25 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		return null;
 	}
 
+	private MWindow getTopLevelModelWindow() {
+		MElementContainer<?> parent = model.getParent();
+		MElementContainer<?> previousParent = parent;
+		// we can't simply stop at an MWindow because the part may be in a detached window
+		while (!(parent instanceof MApplication)) {
+			previousParent = parent;
+			parent = parent.getParent();
+		}
+
+		return (MWindow) previousParent;
+	}
+
 	/**
 	 * Returns the workbench window containing this part.
 	 * 
 	 * @return the workbench window containing this part
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
-		MElementContainer<?> parent = model.getParent();
-		while (!(parent instanceof MWindow)) {
-			parent = parent.getParent();
-		}
-
-		MWindow window = (MWindow) parent;
+		MWindow window = getTopLevelModelWindow();
 		MApplication application = (MApplication) window.getContext().get(
 				MApplication.class.getName());
 		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
