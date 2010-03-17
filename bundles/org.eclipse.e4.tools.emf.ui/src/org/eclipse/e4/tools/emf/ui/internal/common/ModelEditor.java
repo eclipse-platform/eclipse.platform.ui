@@ -259,7 +259,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(),modelProvider));
-		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain()));
+		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider));
 		registerEditor(MApplicationPackage.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));

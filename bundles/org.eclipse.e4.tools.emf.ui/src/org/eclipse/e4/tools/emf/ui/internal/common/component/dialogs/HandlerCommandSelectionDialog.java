@@ -13,37 +13,37 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
-public class KeyBindingCommandSelectionDialog extends AbstractCommandSelectionDialog {
-	private MKeyBinding binding;
-
-	public KeyBindingCommandSelectionDialog(Shell parentShell, MKeyBinding binding, IModelResource resource) {
+public class HandlerCommandSelectionDialog extends AbstractCommandSelectionDialog {
+	private MHandler handler;
+	
+	public HandlerCommandSelectionDialog(Shell parentShell, MHandler handler, IModelResource resource) {
 		super(parentShell, resource);
-		this.binding = binding;
+		this.handler = handler;
 	}
-
+	
 	@Override
 	protected String getShellTitle() {
-		return  "Keybinding Command";
+		return  "Handler Command";
 	}
 	
 	@Override
 	protected String getDialogTitle() {
-		return "Keybinding-Command";
+		return "Handler-Command";
 	}
 	
 	@Override
 	protected String getDialogMessage() {
-		return "Connect the keybinding to a command";
+		return "Connect the handler to a command";
 	}
-	
+
 	@Override
 	protected Command createStoreCommand( EditingDomain editingDomain, MCommand command) {
-		return SetCommand.create(editingDomain, binding, MApplicationPackage.Literals.KEY_BINDING__COMMAND, command);
+		return SetCommand.create(editingDomain, handler, MApplicationPackage.Literals.HANDLER__COMMAND, command);
 	}
 }

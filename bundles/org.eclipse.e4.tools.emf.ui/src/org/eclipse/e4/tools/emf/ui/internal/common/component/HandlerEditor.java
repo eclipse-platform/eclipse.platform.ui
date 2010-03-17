@@ -14,7 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandlerCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -24,6 +26,8 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,9 +41,11 @@ public class HandlerEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
+	private IModelResource resource;
 
-	public HandlerEditor(EditingDomain editingDomain) {
+	public HandlerEditor(EditingDomain editingDomain, IModelResource resource) {
 		super(editingDomain);
+		this.resource = resource;
 	}
 
 	@Override
@@ -103,10 +109,17 @@ public class HandlerEditor extends AbstractComponentEditor {
 			t.setEnabled(false);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(MApplicationPackage.Literals.HANDLER__COMMAND, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID)).observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					HandlerCommandSelectionDialog dialog = new HandlerCommandSelectionDialog(b.getShell(), (MHandler) getMaster().getValue(), resource);
+					dialog.open();
+				}
+			});
 		}
 
 		// ------------------------------------------------------------
