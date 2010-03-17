@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Editor3x
 Bundle-SymbolicName: org.eclipse.e4.tools.emf.editor3x;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.9.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.emf.common;bundle-version="2.6.0",
  org.eclipse.emf.edit.ui;bundle-version="2.6.0",
  org.eclipse.core.databinding.observable;bundle-version="1.3.0",
- org.eclipse.e4.tools.emf.ui;bundle-version="1.0.0",
+ org.eclipse.e4.tools.emf.ui;bundle-version="0.9.0",
  org.eclipse.e4.ui.workbench;bundle-version="0.9.1",
  org.eclipse.e4.ui.css.core;bundle-version="0.9.0",
  org.eclipse.e4.ui.css.swt;bundle-version="0.9.1",
