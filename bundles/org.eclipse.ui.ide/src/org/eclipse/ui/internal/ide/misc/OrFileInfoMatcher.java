@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ public class OrFileInfoMatcher extends CompoundFileInfoMatcher {
 	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
 	 */
 	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
-		if (filterTypes.length > 0) {
-			for (int i = 0; i < filterTypes.length; i++) {
-				if (filterTypes[i].matches(parent, fileInfo))
+		if (matchers.length > 0) {
+			for (int i = 0; i < matchers.length; i++) {
+				if (matchers[i].matches(parent, fileInfo))
 					return true;
 			}
 			return false;
