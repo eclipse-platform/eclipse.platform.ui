@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -1071,21 +1072,30 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
 				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
-				activeWindow);
+				activeWindow, false);
 	}
 
 	IWorkbenchWindow createWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
-			MWindow window) {
+			MWindow window, boolean newWindow) {
 		IEclipseContext windowContext = window.getContext();
 		if (windowContext == null) {
 			windowContext = E4Workbench.initializeContext(
 					e4Context, window);
 			E4Workbench.processHierarchy(window);
 		}
-		IWorkbenchWindow result = (IWorkbenchWindow) windowContext.get(IWorkbenchWindow.class
+		WorkbenchWindow result = (WorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
 		if (result == null) {
 			result = new WorkbenchWindow(input, descriptor);
+
+			if (newWindow) {
+				Point size = result.getWindowConfigurer().getInitialSize();
+				window.setWidth(size.x);
+				window.setHeight(size.y);
+				application.getChildren().add(window);
+				application.setSelectedElement(window);
+			}
+
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
 		}
@@ -1505,7 +1515,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			Workbench workbench = (Workbench) PlatformUI.getWorkbench();
 			workbench.openWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
 					.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
-					window);
+					window, false);
 			page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
 		}
 		return page;
@@ -2002,15 +2012,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		return openWorkbenchWindow(input, descriptor, window);
+		return openWorkbenchWindow(input, descriptor, window, true);
 	}
 
 	public WorkbenchWindow openWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
-			MWindow window) {
-		WorkbenchWindow result = (WorkbenchWindow) createWorkbenchWindow(input, descriptor, window);
+			MWindow window, boolean newWindow) {
+		WorkbenchWindow result = (WorkbenchWindow) createWorkbenchWindow(input, descriptor, window,
+				newWindow);
 		fireWindowOpened(result);
 		return result;
 	}
