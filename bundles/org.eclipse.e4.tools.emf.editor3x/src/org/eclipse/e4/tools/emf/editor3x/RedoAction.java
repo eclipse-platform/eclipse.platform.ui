@@ -13,60 +13,50 @@ package org.eclipse.e4.tools.emf.editor3x;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.jface.action.Action;
 
+public class RedoAction extends Action {
+	private final IModelResource resource;
+	private final IModelResource.ModelListener listener;
 
-public class RedoAction extends Action
-{
-  private final IModelResource resource;
-  private final IModelResource.ModelListener listener;
+	public RedoAction(IModelResource resource) {
+		this.resource = resource;
+		this.listener = new IModelResource.ModelListener() {
 
-  public RedoAction(IModelResource resource)
-  {
-    this.resource = resource;
-    this.listener = new IModelResource.ModelListener()
-      {
+			public void commandStackChanged() {
+				update();
+			}
 
-        public void commandStackChanged()
-        {
-          update();
-        }
+			public void dirtyChanged() {
 
-		public void dirtyChanged() {
-			
+			}
+
+		};
+		resource.addModelListener(listener);
+		update();
+	}
+
+	@Override
+	public void run() {
+		if (resource.getEditingDomain().getCommandStack().canRedo()) {
+			resource.getEditingDomain().getCommandStack().redo();
 		}
-		
-      };
-    resource.addModelListener(listener);
-    update();
-  }
+	}
 
-  @Override
-  public void run()
-  {
-    if (resource.getEditingDomain().getCommandStack().canRedo())
-    {
-    	resource.getEditingDomain().getCommandStack().redo();
-    }
-  }
+	private void update() {
+		if (resource.getEditingDomain().getCommandStack().canRedo()) {
+			setText("Redo "
+					+ resource.getEditingDomain().getCommandStack()
+							.getRedoCommand().getLabel());
+			setEnabled(true);
+		} else {
+			setText("Redo");
+			setEnabled(false);
+		}
+	}
 
-  private void update()
-  {
-    if (resource.getEditingDomain().getCommandStack().canRedo())
-    {
-      setText("Redo " + resource.getEditingDomain().getCommandStack().getRedoCommand().getLabel());
-      setEnabled(true);
-    }
-    else
-    {
-      setText("Redo");
-      setEnabled(false);
-    }
-  }
-
-  /**
-   * Clean up
-   */
-  public void dispose()
-  {
-    resource.removeModelListener(listener);
-  }
+	/**
+	 * Clean up
+	 */
+	public void dispose() {
+		resource.removeModelListener(listener);
+	}
 }

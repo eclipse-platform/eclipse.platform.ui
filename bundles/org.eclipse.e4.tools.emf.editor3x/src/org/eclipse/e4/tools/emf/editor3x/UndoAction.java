@@ -13,57 +13,48 @@ package org.eclipse.e4.tools.emf.editor3x;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.jface.action.Action;
 
-public class UndoAction extends Action
-{
-  private final IModelResource resource;
-  private final IModelResource.ModelListener listener;
+public class UndoAction extends Action {
+	private final IModelResource resource;
+	private final IModelResource.ModelListener listener;
 
-  public UndoAction(IModelResource resource)
-  {
-    this.resource = resource;
-    this.listener = new IModelResource.ModelListener()
-      {
+	public UndoAction(IModelResource resource) {
+		this.resource = resource;
+		this.listener = new IModelResource.ModelListener() {
 
-        public void commandStackChanged()
-        {
-          update();
-        }
-        
-        public void dirtyChanged() {
-        }
-      };
-    resource.addModelListener(listener);
-    update();
-  }
+			public void commandStackChanged() {
+				update();
+			}
 
-  @Override
-  public void run()
-  {
-    if (resource.getEditingDomain().getCommandStack().canUndo())
-    {
-    	resource.getEditingDomain().getCommandStack().undo();
-    }
-  }
+			public void dirtyChanged() {
+			}
+		};
+		resource.addModelListener(listener);
+		update();
+	}
 
-  private void update()
-  {
-    if (resource.getEditingDomain().getCommandStack().canUndo())
-    {
-      setText("Undo " + resource.getEditingDomain().getCommandStack().getUndoCommand().getLabel());
-      setEnabled(true);
-    }
-    else
-    {
-      setText("Undo");
-      setEnabled(false);
-    }
-  }
+	@Override
+	public void run() {
+		if (resource.getEditingDomain().getCommandStack().canUndo()) {
+			resource.getEditingDomain().getCommandStack().undo();
+		}
+	}
 
-  /**
-   * Clean up
-   */
-  public void dispose()
-  {
-    resource.removeModelListener(listener);
-  }
+	private void update() {
+		if (resource.getEditingDomain().getCommandStack().canUndo()) {
+			setText("Undo "
+					+ resource.getEditingDomain().getCommandStack()
+							.getUndoCommand().getLabel());
+			setEnabled(true);
+		} else {
+			setText("Undo");
+			setEnabled(false);
+		}
+	}
+
+	/**
+	 * Clean up
+	 */
+	public void dispose() {
+		resource.removeModelListener(listener);
+	}
 }

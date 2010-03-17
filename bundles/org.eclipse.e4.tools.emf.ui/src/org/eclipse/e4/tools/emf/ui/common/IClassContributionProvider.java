@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+
 public interface IClassContributionProvider {
 	public class ContributionData {
 		public final String bundleName;
@@ -28,7 +30,12 @@ public interface IClassContributionProvider {
 	}
 	
 	public class Filter {
-		private String namePattern;
+		public IProject project;
+		public final String namePattern;
+		
+		public Filter(String namePattern) {
+			this.namePattern = namePattern;
+		}
 	}
 	
 	public List<ContributionData> findContribution(Filter filter);
