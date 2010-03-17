@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 	public void run() {
 		final VirtualModel model = fViewer.buildVirtualModel(null, null);
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(fViewer.getControl().getShell());
+		ProgressMonitorDialog dialog = new TimeTriggeredProgressMonitorDialog(fViewer.getControl().getShell(), 500);
 		final IProgressMonitor monitor = dialog.getProgressMonitor();
 		dialog.setCancelable(true);
 				 
