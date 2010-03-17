@@ -11,9 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources.filtermatchers;
 
-import org.eclipse.core.filesystem.provider.FileInfo;
-
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -42,6 +41,9 @@ public abstract class AbstractFileInfoMatcher {
 
 	/**
 	 * Sets initialization data for this matcher.
+	 * @param project
+	 * @param arguments
+	 * @throws CoreException if initialization failed
 	 */
-	public abstract void initialize(IProject project, Object arguments);
+	public abstract void initialize(IProject project, Object arguments) throws CoreException;
 }

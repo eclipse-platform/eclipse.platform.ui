@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources.filtermatchers;
 
-import org.eclipse.core.resources.*;
-
 import org.eclipse.core.internal.resources.FilterDescriptor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Resource Filter Type allowing serializing sub filters as the arguments
@@ -21,15 +21,12 @@ import org.eclipse.core.internal.resources.FilterDescriptor;
  */
 public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 
-	protected AbstractFileInfoMatcher[] filterTypes;
+	protected AbstractFileInfoMatcher[] matchers;
 
-	protected AbstractFileInfoMatcher instantiate(IProject project,
-			FileInfoMatcherDescription filter) {
-		IFilterMatcherDescriptor desc = project.getWorkspace().getFilterMatcherDescriptor(
-				filter.getId());
+	private AbstractFileInfoMatcher instantiate(IProject project, FileInfoMatcherDescription filter) throws CoreException {
+		IFilterMatcherDescriptor desc = project.getWorkspace().getFilterMatcherDescriptor(filter.getId());
 		if (desc != null) {
-			AbstractFileInfoMatcher matcher = ((FilterDescriptor) desc)
-					.createFilter();
+			AbstractFileInfoMatcher matcher = ((FilterDescriptor) desc).createFilter();
 			matcher.initialize(project, filter.getArguments());
 			return matcher;
 		}
@@ -43,11 +40,10 @@ public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 	 * org.eclipse.core.resources.AbstractFileInfoMatcher#initialize(org.eclipse
 	 * .core.resources.IProject, java.lang.Object)
 	 */
-	public final void initialize(IProject project, Object arguments) {
+	public final void initialize(IProject project, Object arguments) throws CoreException {
 		FileInfoMatcherDescription[] filters = (FileInfoMatcherDescription[]) arguments;
-		filterTypes = new AbstractFileInfoMatcher[filters != null ? filters.length
-				: 0];
-		for (int i = 0; i < filterTypes.length; i++)
-			filterTypes[i] = instantiate(project, filters[i]);
+		matchers = new AbstractFileInfoMatcher[filters != null ? filters.length : 0];
+		for (int i = 0; i < matchers.length; i++)
+			matchers[i] = instantiate(project, filters[i]);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 		return false;
 	}
 
-	public void initialize(IProject project, Object arguments) {
+	public void initialize(IProject project, Object arguments) throws CoreException {
 		if (arguments != null) {
 			try {
 				pattern = Pattern.compile((String) arguments);
