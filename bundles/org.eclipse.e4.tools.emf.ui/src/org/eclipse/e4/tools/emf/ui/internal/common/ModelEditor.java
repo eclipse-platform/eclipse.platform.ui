@@ -259,8 +259,8 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain(),this));
 		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain()));
+		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain(),project));
+		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain(),project));
 		registerEditor(MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(),modelProvider));
 		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider,project));
 		registerEditor(MApplicationPackage.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain()));
@@ -269,7 +269,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain()));
+		registerEditor(MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain(),project));
 		registerEditor(MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain()));
@@ -278,7 +278,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.MENU_ITEM, new MenuItemEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MApplicationPackage.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
 	}
 
