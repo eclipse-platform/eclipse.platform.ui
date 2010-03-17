@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,11 @@ import java.util.Vector;
 import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -91,30 +94,37 @@ public class RemoteICViewer {
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		gridData.heightHint =  table.getItemHeight();
+		gridData.horizontalSpan = 1;
 		table.setLayoutData(gridData);
-		table.setFont(parent.getFont());
-		table.setLinesVisible(true);
+		
+		TableLayout tableLayout = new TableLayout();
+		table.setLayout(tableLayout);
 		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		table.setFont(parent.getFont());
 
+		ColumnLayoutData[] fTableColumnLayouts= {
+		        new ColumnWeightData(85),
+		        new ColumnWeightData(165),
+		        new ColumnWeightData(60)
+		};  
+		
 		TableColumn column;
 		
-		// 2nd column with IC name
-		column =new TableColumn(table, SWT.LEFT);
-		column.setText(NAME_COLUMN);
-		column.setWidth(85);
-
-		// 3rd column with IC name
-		column = new TableColumn(table, SWT.LEFT);
-		column.setText(LOCATION_COLUMN); 
-		column.setWidth(165);
-		
-
-		//4th column with IC Status enabled/disabled	
-		column = new TableColumn(table, SWT.CENTER);
-		column.setText(STATUS_COLUMN); 
-		column.setWidth(60);
-
-
+		tableLayout.addColumnData(fTableColumnLayouts[0]);
+	    column = new TableColumn(table, SWT.NONE, 0);
+	    column.setResizable(fTableColumnLayouts[0].resizable);
+	    column.setText(NAME_COLUMN);
+	    
+	    tableLayout.addColumnData(fTableColumnLayouts[1]);
+	    column = new TableColumn(table, SWT.NONE, 1);
+	    column.setResizable(fTableColumnLayouts[1].resizable);
+	    column.setText(LOCATION_COLUMN); 
+	    
+	    tableLayout.addColumnData(fTableColumnLayouts[2]);
+	    column = new TableColumn(table, SWT.NONE, 2);
+	    column.setResizable(fTableColumnLayouts[2].resizable);
+	    column.setText(STATUS_COLUMN); 
 	}
 
 	/**
