@@ -519,11 +519,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						viewId));
 			}
 
-			partService.showPart(part, convert(mode));
-
 			if (secondaryId != null) {
 				part.getTags().add(secondaryId);
 			}
+
+			partService.showPart(part, convert(mode));
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
