@@ -47,15 +47,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 					cell.setText(label);
 				} else {
 					StyledString styledString = new StyledString(label, null);
-					Styler styler = new Styler() {
-
-						@Override
-						public void applyStyles(TextStyle textStyle) {
-							textStyle.foreground = cell.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
-						}
-					};
-
-			        styledString.append(" - " + detailText, styler);
+					styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER);
 					cell.setText(styledString.getString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 				}

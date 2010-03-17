@@ -29,12 +29,10 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -127,13 +125,6 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 	protected abstract Command createStoreCommand( EditingDomain editingDomain, MCommand command);
 	
 	private class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
-		private Styler styler = new Styler() {
-
-			@Override
-			public void applyStyles(TextStyle textStyle) {
-				textStyle.foreground = getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY);
-			}
-		};
 		
 		public void update(final ViewerCell cell) {
 			MCommand cmd = (MCommand) cell.getElement();
@@ -143,10 +134,10 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 				styledString.append(cmd.getCommandName());
 			}
 			if( cmd.getDescription() != null ) {
-				styledString.append(" - " + cmd.getDescription(),styler);
+				styledString.append(" - " + cmd.getDescription(),StyledString.DECORATIONS_STYLER);
 			}
 			if( cmd.getId() != null ) {
-				styledString.append(" - " + cmd.getId(),styler);
+				styledString.append(" - " + cmd.getId(),StyledString.DECORATIONS_STYLER);
 			}
 			cell.setText(styledString.getString());
 			cell.setStyleRanges(styledString.getStyleRanges());

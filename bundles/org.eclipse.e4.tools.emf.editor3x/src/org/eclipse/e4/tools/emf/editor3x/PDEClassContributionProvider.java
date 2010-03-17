@@ -10,8 +10,17 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -28,7 +37,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	}
 	
 	@SuppressWarnings("restriction")
-	public void findContribution(Filter filter,  final ContributionResultHandler handler) {
+	public void findContribution(final Filter filter,  final ContributionResultHandler handler) {
 		System.err.println("Searching for: " + filter.namePattern);
 		
 		IJavaSearchScope scope = PDEJavaHelper.getSearchScope(filter.project);
@@ -69,10 +78,40 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 				String pName = new String(packageName);
 				String label = cName + " - " + pName; //$NON-NLS-1$
 				String content = pName + "." + cName; //$NON-NLS-1$
-				System.err.println("Found: " + label + " => " + pName);
 				
-				ContributionData data = new ContributionData(null, content, "Java", null);
-				handler.result(data);
+//				System.err.println("Found: " + label + " => " + pName + " => " + path);
+				
+				IResource resource = filter.project.getWorkspace().getRoot().findMember(path);
+				
+				if( resource != null ) {
+					IProject project = resource.getProject();
+					IFile f = project.getFile("/META-INF/MANIFEST.MF");
+					
+					if( f != null && f.exists() ) {
+						try {
+							InputStream s = f.getContents();
+							BufferedReader r = new BufferedReader(new InputStreamReader(s));
+							String line;
+							while( (line = r.readLine()) != null ) {
+								if( line.startsWith("Bundle-SymbolicName:") ) {
+									int start = line.indexOf(':');
+									int end = line.indexOf(';');
+									ContributionData data = new ContributionData(line.substring(start+1,end), content, "Java", null);
+									handler.result(data);
+									break;
+								}
+							}
+								
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				
 				
 				//Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
 				//addProposalToCollection(c, startOffset, length, label, content, image);

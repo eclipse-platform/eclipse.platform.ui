@@ -19,11 +19,18 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -38,15 +45,25 @@ import org.osgi.framework.ServiceReference;
 
 public class ContributionClassDialog extends TitleAreaDialog {
 	private IProject project;
+	private Image javaClassImage;
 	
 	public ContributionClassDialog(Shell parentShell, IProject project) {
 		super(parentShell);
-		this.project = project;
+		this.project = project;		
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
+		
+		getShell().addDisposeListener(new DisposeListener() {
+			
+			public void widgetDisposed(DisposeEvent e) {
+				javaClassImage.dispose();
+			}
+		});
+		
+		javaClassImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.gif"));
 		
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -64,12 +81,30 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ObservableListContentProvider());
-		viewer.setLabelProvider(new LabelProvider() {
+		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
-			public String getText(Object element) {
-				return ((ContributionData)element).className;
+			public void update(ViewerCell cell) {
+				ContributionData data = (ContributionData) cell.getElement();
+				StyledString styledString = new StyledString(data.className, null);
+				
+				if( data.bundleName != null ) {
+					styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER);
+				}
+				
+				if( data.sourceType != null ) {
+					styledString.append(" - ", StyledString.DECORATIONS_STYLER);
+					styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER);
+				}
+				
+				if( data.iconPath == null ) {
+					cell.setImage(javaClassImage);
+				}
+				
+				cell.setText(styledString.getString());
+				cell.setStyleRanges(styledString.getStyleRanges());
 			}
 		});
+		
 		
 		final WritableList list = new WritableList();
 		viewer.setInput(list);
