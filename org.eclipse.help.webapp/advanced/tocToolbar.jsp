@@ -30,13 +30,6 @@
 	<jsp:param name="script" value="navActions.js"/>
 	<jsp:param name="view" value="toc"/>
 
-	<jsp:param name="name"     value="filter"/>
-	<jsp:param name="tooltip"  value='filter'/>
-	<jsp:param name="image"    value="filter.gif"/>
-	<jsp:param name="action"   value="filter"/>
-	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value="<%=(RequestScope.getFilterButtonState())%>"/>
-
 	<jsp:param name="name"     value="print_toc"/>
 	<jsp:param name="tooltip"  value='PrintMulti'/>
 	<jsp:param name="image"    value="print_toc.gif"/>
