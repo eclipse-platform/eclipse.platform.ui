@@ -17,20 +17,26 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,10 +52,15 @@ import org.osgi.framework.ServiceReference;
 public class ContributionClassDialog extends TitleAreaDialog {
 	private IProject project;
 	private Image javaClassImage;
+	private MContribution contribution;
+	private EditingDomain editingDomain;
+	private TableViewer viewer;
 	
-	public ContributionClassDialog(Shell parentShell, IProject project) {
+	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MContribution contribution) {
 		super(parentShell);
-		this.project = project;		
+		this.project = project;	
+		this.contribution = contribution;
+		this.editingDomain = editingDomain;
 	}
 
 	@Override
@@ -77,7 +88,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		
 		l = new Label(container,SWT.NONE);
 		
-		TableViewer viewer = new TableViewer(container);
+		viewer = new TableViewer(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ObservableListContentProvider());
@@ -104,6 +115,12 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				cell.setStyleRanges(styledString.getStyleRanges());
 			}
 		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			
+			public void doubleClick(DoubleClickEvent event) {
+				okPressed();
+			}
+		});
 		
 		
 		final WritableList list = new WritableList();
@@ -126,6 +143,20 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		});
 				
 		return comp;
+	}
+	
+	@Override
+	protected void okPressed() {
+		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+		if( ! s.isEmpty() ) {
+			ContributionData cd = (ContributionData) s.getFirstElement();
+			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className;
+			Command cmd = SetCommand.create(editingDomain, contribution, MApplicationPackage.Literals.CONTRIBUTION__URI, uri);
+			if( cmd.canExecute() ) {
+				editingDomain.getCommandStack().execute(cmd);
+				super.okPressed();
+			}
+		}
 	}
 	
 	private ClassContributionCollector getCollector() {

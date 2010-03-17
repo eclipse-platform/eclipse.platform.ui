@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandlerCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -142,7 +143,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MContribution) getMaster().getValue());
 					dialog.open();
 				}
 			});

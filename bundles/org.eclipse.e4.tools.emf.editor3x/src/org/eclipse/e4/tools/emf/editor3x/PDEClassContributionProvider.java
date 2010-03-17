@@ -14,8 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -96,7 +94,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 								if( line.startsWith("Bundle-SymbolicName:") ) {
 									int start = line.indexOf(':');
 									int end = line.indexOf(';');
-									ContributionData data = new ContributionData(line.substring(start+1,end), content, "Java", null);
+									ContributionData data = new ContributionData(line.substring(start+1,end).trim(), content, "Java", null);
 									handler.result(data);
 									break;
 								}
