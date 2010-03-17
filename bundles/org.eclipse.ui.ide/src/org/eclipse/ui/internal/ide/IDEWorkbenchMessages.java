@@ -74,6 +74,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceFilterPage_filesColumn;
 	public static String ResourceFilterPage_foldersColumn;
 	public static String ResourceFilterPage_editFilterDialogTitle;
+	public static String ResourceFilterPage_invalidFilterArgument;
 	public static String ResourceFilterPage_description;
 	public static String ResourceFilterPage_addSubFilterActionLabel;
 	//

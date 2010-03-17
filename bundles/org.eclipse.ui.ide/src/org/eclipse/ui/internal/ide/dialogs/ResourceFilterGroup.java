@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.core.internal.resources.FilterDescriptor;
 import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFilterMatcherDescriptor;
@@ -27,6 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -90,6 +92,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
@@ -625,7 +628,7 @@ public class ResourceFilterGroup {
 				if (filter.getChildrenLimit() > 0) {
 					FilterCopy newFilter = new FilterCopy();
 					newFilter.setParent(filter);
-					FilterEditDialog dialog = new FilterEditDialog(shell,
+					FilterEditDialog dialog = new FilterEditDialog(resource, shell,
 							newFilter);
 					if (dialog.open() == Window.OK) {
 						filter.addChild(newFilter);
@@ -886,7 +889,7 @@ public class ResourceFilterGroup {
 
 	private void handleAdd() {
 		FilterCopy newFilter = new FilterCopy();
-		FilterEditDialog dialog = new FilterEditDialog(shell, newFilter);
+		FilterEditDialog dialog = new FilterEditDialog(resource, shell, newFilter);
 		if (dialog.open() == Window.OK) {
 			filters.add(newFilter);
 			filterView.refresh();
@@ -900,7 +903,7 @@ public class ResourceFilterGroup {
 					.getFirstElement();
 			FilterCopy copy = new FilterCopy(filter);
 			copy.setParent(filter.getParent());
-			FilterEditDialog dialog = new FilterEditDialog(shell, copy);
+			FilterEditDialog dialog = new FilterEditDialog(resource, shell, copy);
 			if (dialog.open() == Window.OK) {
 				if (copy.hasChanged()) {
 					filter.copy(copy);
@@ -1662,6 +1665,7 @@ class FilterEditDialog extends TrayDialog {
 	protected Label argumentsLabel;
 	protected Label description;
 	protected FilterTypeUtil util;
+	protected IResource resource;
 
 	private static final String REGEX_FILTER_ID = "org.eclipse.core.resources.regexFilter"; //$NON-NLS-1$
 	
@@ -1677,8 +1681,9 @@ class FilterEditDialog extends TrayDialog {
 	 * @param parentShell
 	 * @param filter
 	 */
-	public FilterEditDialog(Shell parentShell, FilterCopy filter) {
+	public FilterEditDialog(IResource resource, Shell parentShell, FilterCopy filter) {
 		super(parentShell);
+		this.resource = resource;
 		this.filter = filter;
 		util = new FilterTypeUtil();
 	}
@@ -2064,6 +2069,25 @@ class FilterEditDialog extends TrayDialog {
 	}
 
 	protected void okPressed() {
+		// see if the initialize causes an exception
+		if (filter.hasStringArguments()) {
+			IFilterMatcherDescriptor desc = resource.getWorkspace().getFilterMatcherDescriptor(filter.getId());
+			if (desc != null) {
+				AbstractFileInfoMatcher matcher = ((FilterDescriptor) desc).createFilter();
+				try {
+					matcher.initialize(resource.getProject(), filter.getArguments());
+				} catch (CoreException e) {
+					IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+					if (window != null) {
+						ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages.ResourceFilterPage_editFilterDialogTitle,
+								e.getMessage(), e.getStatus());
+					}
+					return;
+				}
+			}
+		}
+
 		super.okPressed();
 	}
 }
