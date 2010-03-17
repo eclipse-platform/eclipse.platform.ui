@@ -18,7 +18,7 @@ import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Helper class for executing a performance test. Takes care of starting, stopping,
- * and commiting performance timers.
+ * and committing performance timers.
  */
 public abstract class PerformanceTestRunner {
 
