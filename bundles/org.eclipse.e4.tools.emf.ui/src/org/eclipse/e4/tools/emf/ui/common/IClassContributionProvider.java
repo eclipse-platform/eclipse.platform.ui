@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
-import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 
 public interface IClassContributionProvider {
@@ -30,13 +28,18 @@ public interface IClassContributionProvider {
 	}
 	
 	public class Filter {
-		public IProject project;
+		public final IProject project;
 		public final String namePattern;
 		
-		public Filter(String namePattern) {
+		public Filter(IProject project, String namePattern) {
+			this.project = project;
 			this.namePattern = namePattern;
 		}
 	}
 	
-	public List<ContributionData> findContribution(Filter filter);
+	public interface ContributionResultHandler {
+		public void result(ContributionData data);
+	}
+	
+	public void findContribution(Filter filter, ContributionResultHandler handler);
 }

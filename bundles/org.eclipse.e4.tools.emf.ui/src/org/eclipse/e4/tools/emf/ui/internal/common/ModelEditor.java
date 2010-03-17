@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -105,10 +106,12 @@ public class ModelEditor {
 
 	private TreeViewer viewer;
 	private IModelResource modelProvider;
+	private IProject project;
 
 	@Inject
-	public ModelEditor(Composite composite, IModelResource modelProvider) {
+	public ModelEditor(Composite composite, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
+		this.project = project;
 		registerDefaultEditors();
 		registerVirtualEditors();
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
@@ -259,7 +262,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(),modelProvider));
-		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider));
+		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider,project));
 		registerEditor(MApplicationPackage.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
 		registerEditor(MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));

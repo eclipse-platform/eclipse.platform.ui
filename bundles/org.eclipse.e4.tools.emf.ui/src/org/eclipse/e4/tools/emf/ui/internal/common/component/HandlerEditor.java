@@ -14,8 +14,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandlerCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandler;
@@ -42,10 +44,12 @@ public class HandlerEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private IModelResource resource;
+	private IProject project;
 
-	public HandlerEditor(EditingDomain editingDomain, IModelResource resource) {
+	public HandlerEditor(EditingDomain editingDomain, IModelResource resource, IProject project) {
 		super(editingDomain);
 		this.resource = resource;
+		this.project = project;
 	}
 
 	@Override
@@ -131,10 +135,17 @@ public class HandlerEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find ...");
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project);
+					dialog.open();
+				}
+			});
 		}
 
 		ControlFactory.createTagsWidget(parent, this);

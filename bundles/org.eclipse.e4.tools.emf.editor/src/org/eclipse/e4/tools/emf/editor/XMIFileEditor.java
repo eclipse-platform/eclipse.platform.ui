@@ -38,7 +38,7 @@ public class XMIFileEditor {
 				
 			}
 		});
-		editor = new ApplicationModelEditor(composite, resource);
+		editor = new ApplicationModelEditor(composite, resource, null);
 	}
 	
 	public void doSave(@Optional IProgressMonitor monitor) {
