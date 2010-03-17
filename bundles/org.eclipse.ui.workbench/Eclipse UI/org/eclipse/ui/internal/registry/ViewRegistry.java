@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
@@ -41,7 +42,9 @@ public class ViewRegistry implements IViewRegistry {
 	@PostConstruct
 	void postConstruct() {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, null));
+			if (!descriptor.getURI().equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+				descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, null));
+			}
 		}
 
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
