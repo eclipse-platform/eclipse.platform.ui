@@ -11,14 +11,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.CoreException;
-
 import java.util.regex.*;
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
+import org.eclipse.core.runtime.*;
 
 /**
  * A Filter provider for Java Regular expression supported by 
@@ -45,7 +42,7 @@ public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 			try {
 				pattern = Pattern.compile((String) arguments);
 			} catch (PatternSyntaxException e) {
-				Policy.log(e);
+				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, Platform.PLUGIN_ERROR, e.getMessage(), e));
 			}
 		}
 	}

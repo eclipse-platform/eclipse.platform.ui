@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.Policy;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -43,7 +45,12 @@ public class Filter {
 				String message = NLS.bind(Messages.filters_missingFilterType, getId());
 				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, Platform.PLUGIN_ERROR, message, new Error()));
 			}
-			provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
+			try {
+				provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
+			} catch (CoreException e) {
+				Policy.log(e.getStatus());
+				provider = null;
+			}
 		}
 		if (provider != null)
 			return provider.matches(parent, fileInfo);
