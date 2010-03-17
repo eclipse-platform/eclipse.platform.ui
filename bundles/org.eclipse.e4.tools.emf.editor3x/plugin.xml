@@ -6,7 +6,7 @@
       <editor
             class="org.eclipse.e4.tools.emf.editor3x.E4WorkbenchModelEditor"
             default="true"
-            extensions="e4xml"
+            extensions="e4xmi"
             icon="icons/full/obj16/application_view_tile.png"
             id="org.eclipse.e4.tools.emf.editor3x.e4wbm"
             name="E4 Workbenchmodel Editor">
