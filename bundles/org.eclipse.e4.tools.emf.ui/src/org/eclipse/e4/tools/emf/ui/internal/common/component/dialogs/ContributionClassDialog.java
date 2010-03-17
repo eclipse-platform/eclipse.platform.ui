@@ -89,14 +89,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				collector.findContributions(filter, currentResultHandler);
 			}
 		});
-		
-//		collector.findContributions(new Filter(project, "at.bestsolution.e4.handlers.*"), new ContributionResultHandler() {
-//			
-//			public void result(ContributionData data) {
-//				System.err.println(data.className);
-//			}
-//		});
-		
+				
 		return comp;
 	}
 	
