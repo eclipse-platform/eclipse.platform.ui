@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,7 @@ import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.eclipse.osgi.service.localization.LocaleProvider;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -89,7 +88,7 @@ public class MultiLanguageTest extends TestCase {
 		// remove test bundles
 		bundleFragment.uninstall();
 		bundle.uninstall();
-		getBundleAdmin().refreshPackages(new Bundle[] {bundle});
+		refreshPackages(new Bundle[] {bundle});
 
 		// restore system environment
 		if (oldMultiLangValue == null)
@@ -102,6 +101,37 @@ public class MultiLanguageTest extends TestCase {
 			bundleTracker = null;
 		}
 		super.tearDown();
+	}
+
+	private void refreshPackages(Bundle[] refresh) {
+		BundleContext context = RuntimeTestsPlugin.getContext();
+
+		final boolean[] flag = new boolean[] {false};
+		FrameworkListener listener = new FrameworkListener() {
+			public void frameworkEvent(FrameworkEvent event) {
+				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)
+					synchronized (flag) {
+						flag[0] = true;
+						flag.notifyAll();
+					}
+			}
+		};
+		context.addFrameworkListener(listener);
+
+		try {
+			getBundleAdmin().refreshPackages(refresh);
+			synchronized (flag) {
+				while (!flag[0]) {
+					try {
+						flag.wait(5000);
+					} catch (InterruptedException e) {
+						// do nothing
+					}
+				}
+			}
+		} finally {
+			context.removeFrameworkListener(listener);
+		}
 	}
 
 	/**
