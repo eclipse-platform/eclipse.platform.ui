@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.jface.util.Util;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
@@ -677,8 +676,24 @@ public class SearchPattern {
 	 *            string to be trimmed
 	 * @return trimmed pattern
 	 */
-	private String trimWildcardCharacters(String pattern) {
-		return Util.replaceAll(pattern, "\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$		}
+	private static String trimWildcardCharacters(String pattern) {
+		// 1.3-compatible replacement for:
+		// return Util.replaceAll(pattern, "\\*+", "\\*");
+		int i = pattern.indexOf("**"); //$NON-NLS-1$
+		if (i == -1)
+			return pattern;
+
+		StringBuffer buf = new StringBuffer(pattern.length());
+		int prevAsterisk = 0;
+		do {
+			if (prevAsterisk == 0 || prevAsterisk != i) {
+				buf.append(pattern.substring(prevAsterisk, i + 1));
+			}
+			prevAsterisk = i + 1;
+			i = pattern.indexOf('*', prevAsterisk);
+		} while (i != -1);
+		buf.append(pattern.substring(prevAsterisk));
+		return buf.toString();
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -458,16 +458,18 @@ public final class Util {
 
 		return defaultString;
 	}
-	
-	/**
-	 * Foundation replacement for String.replaceAll(*).
-	 * 
-	 * @param src the starting string.
-	 * @param find the string to find.
-	 * @param replacement the string to replace.
-	 * @return The new string.
-	 * @since 3.4
-	 */
+
+    /**
+     * Foundation replacement for <code>String#replaceAll(String,
+     * String)</code>, but <strong>without support for regular expressions</strong>.
+     * 
+     * @param src the original string
+     * @param find the string to find
+     * @param replacement the replacement string
+     * @return the new string, with all occurrences of <code>find</code>
+     *         replaced by <code>replacement</code> (not using reqular expressions)
+     * @since 3.4
+     */
 	public static final String replaceAll(String src, String find, String replacement) {
 		final int len = src.length();
 		final int findLen = find.length();

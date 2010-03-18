@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -836,12 +835,19 @@ public final class Util {
 	}
 	
 	/**
-	 * Foundation replacement for String.replaceAll(*).
+	 * Foundation replacement for <code>String#replaceAll(String,
+	 * String)</code>, but <strong>without support for regular
+	 * expressions</strong>.
 	 * 
-	 * @param src the starting string.
-	 * @param find the string to find.
-	 * @param replacement the string to replace.
-	 * @return The new string.
+	 * @param src
+	 *            the original string
+	 * @param find
+	 *            the string to find
+	 * @param replacement
+	 *            the replacement string
+	 * @return the new string, with all occurrences of <code>find</code>
+	 *         replaced by <code>replacement</code> (not using regular
+	 *         expressions)
 	 * @since 3.3
 	 */
 	public static String replaceAll(String src, String find, String replacement) {
