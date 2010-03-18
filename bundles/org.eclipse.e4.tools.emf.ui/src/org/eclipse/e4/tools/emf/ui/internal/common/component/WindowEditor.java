@@ -15,8 +15,11 @@ import java.net.URL;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
@@ -48,6 +51,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(MApplicationPackage.Literals.WINDOW__MAIN_MENU);
 
 	public WindowEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -200,7 +204,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		WritableList list = new WritableList();
+		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
 
 			@Override
@@ -210,15 +214,6 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-//		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING, BINDING_CONTAINER__BINDINGS, element, "Bindings") {
-//
-//			@Override
-//			protected boolean accepted(Object o) {
-//				return true;
-//			}
-//
-//		});
-		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_WINDOW_TRIMS, ELEMENT_CONTAINER__CHILDREN, element, "Trims") {
 
 			@Override
@@ -235,6 +230,24 @@ public class WindowEditor extends AbstractComponentEditor {
 				return !(o instanceof MWindowTrim);
 			}
 
+		});
+		
+		MWindow window = (MWindow) element;
+		if( window.getMainMenu() != null ) {
+			list.add(0,window.getMainMenu());
+		}
+		
+		WINDOW__MAIN_MENU.observe(element).addValueChangeListener(new IValueChangeListener() {
+			
+			public void handleValueChange(ValueChangeEvent event) {
+				if( event.diff.getOldValue() != null ) {
+					list.remove(event.diff.getOldValue());
+				}
+				
+				if( event.diff.getNewValue() != null ) {
+					list.add(0,event.diff.getNewValue());
+				}
+			}
 		});
 
 		return list;
