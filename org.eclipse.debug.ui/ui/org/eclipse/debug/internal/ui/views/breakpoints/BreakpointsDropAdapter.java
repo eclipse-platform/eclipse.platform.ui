@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -24,7 +25,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * BreakpointsDropAdapter
@@ -54,12 +54,12 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     public boolean performDrop(Object data) {
     	// This is temporary
     	if (getViewer() instanceof BreakpointsViewer) {
-    		return ((BreakpointsViewer)getViewer()).performDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection());
+    		return ((BreakpointsViewer)getViewer()).performDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());
     	} else if (fView != null) {
-    		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+    		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
     		if (fPath != null && selection instanceof ITreeSelection) {
         		if (selection instanceof ITreeSelection) {
-        			return fView.performDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getInstance().getSelection());
+        			return fView.performDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getTransfer().getSelection());
         		}
     		}
     	}
@@ -91,12 +91,12 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     public boolean validateDrop(Object target, int operation, TransferData transferType) {
     	// This is temporary
     	if (getViewer() instanceof BreakpointsViewer) {
-    		return ((BreakpointsViewer)getViewer()).canDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection());
+    		return ((BreakpointsViewer)getViewer()).canDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());
     	} else {
-       		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+       		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
     		if (fPath != null && selection instanceof ITreeSelection) {
         		if (selection instanceof ITreeSelection) {
-        			return fView.canDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getInstance().getSelection());
+        			return fView.canDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getTransfer().getSelection());
         		}
     		}
     	}

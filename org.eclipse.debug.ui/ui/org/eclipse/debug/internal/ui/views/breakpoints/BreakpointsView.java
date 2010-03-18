@@ -54,6 +54,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -72,9 +73,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * This class implements the breakpoints view.
@@ -198,7 +197,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		menu.add(getAction(ACTION_GOTO_MARKER));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction(ActionFactory.PASTE.getCommandId()));
+		menu.add(getAction(PASTE_ACTION));
 		IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
 		if (action != null && action.isEnabled()) {
 			menu.add(action);
@@ -228,7 +227,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		fClipboard = new Clipboard(getSite().getShell().getDisplay());
 		        
 		PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
-		configure(paste, ActionFactory.PASTE.getCommandId(), ActionFactory.PASTE.getCommandId(), ISharedImages.IMG_TOOL_PASTE);
+		configure(paste, PASTE_ACTION, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
 		        
 		SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
 		setAction(ACTION_REMOVE_FROM_GROUP, remove);
@@ -395,9 +394,9 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	protected void initDragAndDrop(TreeModelViewer viewer) {
         int ops = DND.DROP_MOVE | DND.DROP_COPY;
         // drop
-        viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer, this));
+        viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new BreakpointsDropAdapter(viewer, this));
         // Drag
-        viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer, this));
+        viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new BreakpointsDragAdapter(viewer, this));
     }
  
 	/*

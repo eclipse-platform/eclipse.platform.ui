@@ -329,9 +329,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	
 	/**
-	 * Key for "Select All" action.
+	 * Key for "Copy" action.
 	 */
 	protected static final String VARIABLES_COPY_ACTION = COPY_ACTION + ".Variables"; //$NON-NLS-1$	
+	
+	/**
+	 * Key for "Paste" action.
+	 */
+	protected static final String VARIABLES_PASTE_ACTION = PASTE_ACTION + ".Variables"; //$NON-NLS-1$	
 	
     /**
      * Visits deltas to determine if details should be displayed
@@ -650,6 +655,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				fSelectionProvider.setActiveProvider(variablesViewer);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
+				setAction(PASTE_ACTION, getAction(VARIABLES_PASTE_ACTION));
 				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
@@ -659,6 +665,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				setAction(SELECT_ALL_ACTION, null);
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
+				setAction(PASTE_ACTION, null);
+				getViewSite().getActionBars().clearGlobalActionHandlers();
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -851,6 +859,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void createContextMenu(Control menuControl) {
 		super.createContextMenu(menuControl);
 		setAction(VARIABLES_COPY_ACTION, getAction(COPY_ACTION));
+		setAction(VARIABLES_PASTE_ACTION, getAction(PASTE_ACTION));
 	}
 
 	/**
