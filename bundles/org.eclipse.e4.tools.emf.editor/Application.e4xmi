@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="__i2BcSuZEd-8CvvcO22KcQ" id="__i2BcSuZEd-8CvvcO22KcQ">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="__i2BcSuZEd-8CvvcO22KcQ" id="org.eclipse.e4.ide.application">
   <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.windows.mainwindow" label="E4 Model Editor" width="800" height="600">
     <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.editorstack">
       <tags>newtablook</tags>
