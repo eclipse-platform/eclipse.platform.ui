@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -76,8 +76,6 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -234,6 +232,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         	operationSupport.dispose();
         	operationSupport = null;
         }
+		DragCursors.dispose();
 
         DEBUG = false;
          
