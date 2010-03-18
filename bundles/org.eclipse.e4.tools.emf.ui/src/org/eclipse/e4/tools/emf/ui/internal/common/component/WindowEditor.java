@@ -197,6 +197,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		}
 
+		ControlFactory.createBindingsWidget(parent, this);
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;

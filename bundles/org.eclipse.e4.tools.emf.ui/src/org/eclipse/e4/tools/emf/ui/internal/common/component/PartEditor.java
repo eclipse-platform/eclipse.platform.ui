@@ -192,7 +192,44 @@ public class PartEditor extends AbstractComponentEditor {
 			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
 		}
 
-		
+		// ------------------------------------------------------------
+		ControlFactory.createBindingsWidget(parent, this);
+
+//		// ------------------------------------------------------------
+//		{
+//			Label l = new Label(parent, SWT.NONE);
+//			l.setText("Variables");
+//			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+//
+//			ListViewer viewer = new ListViewer(parent);
+//			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+//			gd.horizontalSpan=2;
+//			gd.heightHint = 80;
+//			viewer.getList().setLayoutData(gd);
+//		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Properties");
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+
+			TableViewer tableviewer = new TableViewer(parent);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
+			gd.heightHint = 80;
+			tableviewer.getTable().setHeaderVisible(true);
+			tableviewer.getControl().setLayoutData(gd);
+
+			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Key");
+			column.getColumn().setWidth(200);
+
+			column = new TableViewerColumn(tableviewer, SWT.NONE);
+			column.getColumn().setText("Value");
+			column.getColumn().setWidth(200);
+		}
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -255,68 +292,7 @@ public class PartEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}
 
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Variables");
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
-
-			ListViewer viewer = new ListViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
-			gd.heightHint = 80;
-			viewer.getList().setLayoutData(gd);
-		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Properties");
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
-
-			TableViewer tableviewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
-			gd.heightHint = 80;
-			tableviewer.getTable().setHeaderVisible(true);
-			tableviewer.getControl().setLayoutData(gd);
-
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Key");
-			column.getColumn().setWidth(200);
-
-			column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Value");
-			column.getColumn().setWidth(200);
-		}
-
-
 		ControlFactory.createTagsWidget(parent, this);
-
-//		// ------------------------------------------------------------
-//
-//		l = new Label(parent, SWT.NONE);
-//		l.setText("");
-//
-//		Composite booleanContainer = new Composite(parent,SWT.NONE);
-//		gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalSpan=2;
-//		booleanContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
-//		booleanContainer.setLayoutData(gd);
-//		booleanContainer.setLayout(new GridLayout(4,false));
-//
-//		Button checkbox = new Button(booleanContainer, SWT.CHECK);
-//		checkbox.setText("to render");
-//
-//		checkbox = new Button(booleanContainer, SWT.CHECK);
-//		checkbox.setText("on Top");
-//
-//		checkbox = new Button(booleanContainer, SWT.CHECK);
-//		checkbox.setText("visible");
-//
-//		checkbox = new Button(booleanContainer, SWT.CHECK);
-//		checkbox.setText("closeable");
 
 		return parent;
 	}

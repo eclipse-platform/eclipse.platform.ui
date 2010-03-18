@@ -78,7 +78,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -148,8 +152,24 @@ public class ModelEditor {
 		textLabel.setData("org.eclipse.e4.ui.css.CssClassName", "sectionHeader");
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		final Composite contentContainer = new Composite(editingArea, SWT.NONE);
-		contentContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final ScrolledComposite scrolling = new ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
+		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		scrolling.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
+		
+		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
+		contentContainer.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
+		scrolling.setExpandHorizontal(true);
+		scrolling.setExpandVertical(true);
+		scrolling.setContent(contentContainer);
+		
+		scrolling.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				Rectangle r = scrolling.getClientArea();
+				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
+			}
+		});
+		
+		scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
 		final StackLayout layout = new StackLayout();
 		contentContainer.setLayout(layout);
 
@@ -181,6 +201,9 @@ public class ModelEditor {
 							contentContainer.layout(true);
 						}
 					}
+					
+					Rectangle r = scrolling.getClientArea();
+					scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
 				}
 			}
 		});
@@ -191,7 +214,7 @@ public class ModelEditor {
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		parent.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
 		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		FillLayout l = new FillLayout();
