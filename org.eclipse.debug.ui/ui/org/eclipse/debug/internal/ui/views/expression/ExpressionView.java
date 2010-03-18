@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,14 +44,11 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  
 /**
  * Displays expressions and their values with a detail
@@ -164,7 +161,7 @@ public class ExpressionView extends VariablesView {
     protected void createActions() {
     	super.createActions();
     	fPasteAction = new PasteWatchExpressionsAction(this);
-    	configure(fPasteAction, IWorkbenchActionDefinitionIds.PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
+    	configure(fPasteAction, IWorkbenchCommandConstants.EDIT_PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
     }
     
     /**
@@ -202,27 +199,6 @@ public class ExpressionView extends VariablesView {
     		return true;
     	}
     	return false;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createTreeViewer(org.eclipse.swt.widgets.Composite)
-     */
-    protected TreeModelViewer createTreeViewer(Composite parent) {
-        TreeModelViewer viewer = super.createTreeViewer(parent);
-        viewer.getTree().addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e) {
-				if (fPasteAction != null) {
-                    getViewSite().getActionBars().setGlobalActionHandler(PASTE_ACTION, null);
-                }
-			}
-			
-			public void focusGained(FocusEvent e) {
-				 if (fPasteAction != null) {
-	                    getViewSite().getActionBars().setGlobalActionHandler(PASTE_ACTION, fPasteAction);
-                }
-			}
-		});       
-        return viewer;
     }
        
     /**

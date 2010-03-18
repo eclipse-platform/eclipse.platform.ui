@@ -73,6 +73,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
@@ -227,7 +228,11 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		fClipboard = new Clipboard(getSite().getShell().getDisplay());
 		        
 		PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
-		configure(paste, PASTE_ACTION, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
+		setAction(PASTE_ACTION, paste);
+		paste.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
+        getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PASTE.getId(), paste);
+        getViewer().addSelectionChangedListener(paste);
+        paste.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		        
 		SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
 		setAction(ACTION_REMOVE_FROM_GROUP, remove);
@@ -369,24 +374,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 			}
 		}
 	}
-	
-	/**
-     * Configures the action to override the global action, registers
-     * the action for selection change notification, and registers
-     * the action with this view.
-     * 
-     * @param action selection action
-     * @param defId action definition id
-     * @param globalId global action id
-     * @param imgId image identifier
-     */
-    private void configure(SelectionListenerAction action, String defId, String globalId, String imgId) {
-        setAction(defId, action);
-        action.setActionDefinitionId(defId);
-        getViewSite().getActionBars().setGlobalActionHandler(globalId, action);
-        getViewer().addSelectionChangedListener(action);
-        action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
-    }
 	
     /**
      * Initializes drag and drop for the breakpoints viewer
