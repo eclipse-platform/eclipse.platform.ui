@@ -11,9 +11,11 @@
     </children>
     <children xsi:type="application:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" id="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
       <children xsi:type="application:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" id="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
+       <tags>newtablook</tags>
         <children xsi:type="application:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" id="_SeXUDO8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="List of Contacts"/>
       </children>
       <children xsi:type="application:PartStack" xmi:id="_SeXUDe8EEd6FC9cDb6iV7g" id="_SeXUDe8EEd6FC9cDb6iV7g" containerData="70">
+        <tags>newtablook</tags>
         <children xsi:type="application:Part" xmi:id="DetailsView" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="Contact Details"/>
       </children>
     </children>
