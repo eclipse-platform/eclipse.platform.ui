@@ -41,17 +41,24 @@ public class SearchResults implements ISearchHitCollector {
 	private CriteriaHelpScope criteriaScope;
 	protected SearchHit[] searchHits = new SearchHit[0];
 	private QueryTooComplexException searchException = null;
+	private boolean isQuickSearch;
+
+	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale) {
+		this(workingSets, maxHits, locale, false);
+	}
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param workingSets
 	 *            working sets or null if no filtering
 	 */
-	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale) {
+	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale, boolean isQuickSearch) {
 		this.maxHits = maxHits;
 		this.locale = locale;
 		this.scopes = getScopes(workingSets);
 		this.criteriaScope = new CriteriaHelpScope(getCriteriaScopes(workingSets));
+		this.isQuickSearch = isQuickSearch;
 	}
 	
 	public void setFilter(AbstractHelpScope filter) {
@@ -148,15 +155,17 @@ public class SearchResults implements ISearchHitCollector {
 			}	
 		
 			// add root toc's extradir topics to search scope
-			IToc tocRoot = getTocForScope(scope, locale);
-			if (tocRoot != null) {
-				IToc toc = HelpPlugin.getTocManager().getOwningToc(href);
-				if (toc != null) {
-					String owningTocHref = toc.getHref();
-					if (owningTocHref == tocRoot.getHref()) {
-						if (filter == null || filter.inScope(inScopeTopic)) {
-							if(!enabled || (enabled && criteriaScope.inScope(inScopeTopic))){
-								return scope;
+			if (!isQuickSearch) {
+				IToc tocRoot = getTocForScope(scope, locale);
+				if (tocRoot != null) {
+					IToc toc = HelpPlugin.getTocManager().getOwningToc(href);
+					if (toc != null) {
+						String owningTocHref = toc.getHref();
+						if (owningTocHref == tocRoot.getHref()) {
+							if (filter == null || filter.inScope(inScopeTopic)) {
+								if(!enabled || (enabled && criteriaScope.inScope(inScopeTopic))){
+									return scope;
+								}
 							}
 						}
 					}

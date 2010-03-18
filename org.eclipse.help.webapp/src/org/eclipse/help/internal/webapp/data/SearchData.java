@@ -132,6 +132,10 @@ public class SearchData extends ActivitiesData {
 		return (request.getParameter("workingSet") != null); //$NON-NLS-1$
 	}
 	
+	protected boolean isQuickSearch() {
+		return request.getParameterValues("quickSearch") != null; //$NON-NLS-1$
+	}
+	
 	public boolean isSelectedTopicQuickSearchRequest() {
 		String quickSearchType = request.getParameter("quickSearchType"); //$NON-NLS-1$
 		return (null != quickSearchType && "QuickSearchTopic".equalsIgnoreCase(quickSearchType)); //$NON-NLS-1$
@@ -395,7 +399,7 @@ public class SearchData extends ActivitiesData {
 		if (request.getParameterValues("scopedSearch") != null) { //$NON-NLS-1$
 			// scopes are books (advanced search)
 			workingSets = createTempWorkingSets();
-		} else if (request.getParameterValues("quickSearch") != null) { //$NON-NLS-1$
+		} else if (isQuickSearch()) { 
 			// scopes is just the selected toc or topic
 			if(isSelectedTopicQuickSearchRequest()){
 				workingSets = createQuickSearchWorkingSetOnSelectedTopic();
@@ -420,7 +424,7 @@ public class SearchData extends ActivitiesData {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		return new SearchResultFilter(workingSets, maxHits, getLocale(), filter);
+		return new SearchResultFilter(workingSets, maxHits, getLocale(), filter, isQuickSearch());
 	}
 
 	/**
@@ -539,8 +543,9 @@ public class SearchData extends ActivitiesData {
 	 * that implement ISearchEngineResult2 and canOpen() returns true.
 	 */
 	private static class SearchResultFilter extends SearchResults {
-		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale, AbstractHelpScope filter) {
-			super(workingSets, maxHits, locale);
+		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale, 
+				AbstractHelpScope filter, boolean isQuickSearch) {
+			super(workingSets, maxHits, locale, isQuickSearch);
 			setFilter(filter);
 		}
 		public void addHits(List hits, String highlightTerms) {
