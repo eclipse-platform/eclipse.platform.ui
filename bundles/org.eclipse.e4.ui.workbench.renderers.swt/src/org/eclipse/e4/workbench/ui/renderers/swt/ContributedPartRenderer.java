@@ -48,37 +48,8 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 				parentContext, part);
 		E4Workbench.processHierarchy(part);
 
-		for (String variables : part.getVariables()) {
-			int delimiterIndex = variables.indexOf("::"); //$NON-NLS-1$
-			if (delimiterIndex == -1) {
-				continue;
-			}
-
-			String key = variables.substring(0, delimiterIndex);
-			String value = variables.substring(delimiterIndex + 2);
-
-			if (!value.startsWith("platform:/")) { //$NON-NLS-1$
-				localContext.set(key, value);
-			}
-		}
-
 		IContributionFactory contributionFactory = (IContributionFactory) localContext
 				.get(IContributionFactory.class.getName());
-
-		for (String variables : part.getVariables()) {
-			int delimiterIndex = variables.indexOf("::"); //$NON-NLS-1$
-			if (delimiterIndex == -1) {
-				continue;
-			}
-
-			String key = variables.substring(0, delimiterIndex);
-			String value = variables.substring(delimiterIndex + 2);
-
-			if (value.startsWith("platform:/")) { //$NON-NLS-1$
-				Object result = contributionFactory.create(value, localContext);
-				localContext.set(key, result);
-			}
-		}
 
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);

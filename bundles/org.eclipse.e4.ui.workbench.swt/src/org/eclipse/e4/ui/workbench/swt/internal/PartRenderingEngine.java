@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map.Entry;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
@@ -285,6 +286,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// been defined in the model
 				for (String variable : ctxt.getVariables()) {
 					lclContext.declareModifiable(variable);
+				}
+
+				for (Entry<String, String> property : ctxt.getProperties()) {
+					lclContext.set(property.getKey(), property.getValue());
 				}
 
 				E4Workbench.processHierarchy(element);
