@@ -37,7 +37,6 @@ import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -195,6 +194,7 @@ public class PartEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		ControlFactory.createBindingsWidget(parent, this);
 
+//TODO Does the user need to edit this?
 //		// ------------------------------------------------------------
 //		{
 //			Label l = new Label(parent, SWT.NONE);
@@ -208,27 +208,27 @@ public class PartEditor extends AbstractComponentEditor {
 //			viewer.getList().setLayoutData(gd);
 //		}
 
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Properties");
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
-
-			TableViewer tableviewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
-			gd.heightHint = 80;
-			tableviewer.getTable().setHeaderVisible(true);
-			tableviewer.getControl().setLayoutData(gd);
-
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Key");
-			column.getColumn().setWidth(200);
-
-			column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText("Value");
-			column.getColumn().setWidth(200);
-		}
+//		// ------------------------------------------------------------
+//		{
+//			Label l = new Label(parent, SWT.NONE);
+//			l.setText("Properties");
+//			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+//
+//			TableViewer tableviewer = new TableViewer(parent);
+//			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+//			gd.horizontalSpan=2;
+//			gd.heightHint = 80;
+//			tableviewer.getTable().setHeaderVisible(true);
+//			tableviewer.getControl().setLayoutData(gd);
+//
+//			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
+//			column.getColumn().setText("Key");
+//			column.getColumn().setWidth(200);
+//
+//			column = new TableViewerColumn(tableviewer, SWT.NONE);
+//			column.getColumn().setText("Value");
+//			column.getColumn().setWidth(200);
+//		}
 
 		// ------------------------------------------------------------
 		{
