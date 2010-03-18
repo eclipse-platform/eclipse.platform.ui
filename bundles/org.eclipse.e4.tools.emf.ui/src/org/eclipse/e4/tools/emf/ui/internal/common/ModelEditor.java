@@ -192,6 +192,8 @@ public class ModelEditor {
 	private TreeViewer createTreeViewerArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		
 		FillLayout l = new FillLayout();
 		l.marginWidth = 5;
 		parent.setLayout(l);

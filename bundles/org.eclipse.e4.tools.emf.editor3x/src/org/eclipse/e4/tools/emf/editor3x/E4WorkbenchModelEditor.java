@@ -125,6 +125,7 @@ public class E4WorkbenchModelEditor extends EditorPart {
 		setupCss(parent.getDisplay());
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
 		FillLayout layout = new FillLayout();
 		layout.marginWidth = 10;
