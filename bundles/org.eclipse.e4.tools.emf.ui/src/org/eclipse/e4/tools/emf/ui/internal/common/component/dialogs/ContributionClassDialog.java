@@ -67,6 +67,10 @@ public class ContributionClassDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		
+		getShell().setText("Find Contribution Class");
+		setTitle("Find Contribution Class");
+		setMessage("Enter the name of the contributing class");
+		
 		getShell().addDisposeListener(new DisposeListener() {
 			
 			public void widgetDisposed(DisposeEvent e) {
