@@ -1288,6 +1288,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getModelComponent_Bindings() {
+		return (EReference)modelComponentEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getV______________Commands_______________V() {
 		return v______________Commands_______________VEClass;
 	}
@@ -1937,6 +1946,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEReference(modelComponentEClass, MODEL_COMPONENT__CHILDREN);
 		createEReference(modelComponentEClass, MODEL_COMPONENT__COMMANDS);
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PROCESSOR);
+		createEReference(modelComponentEClass, MODEL_COMPONENT__BINDINGS);
 
 		v______________Commands_______________VEClass = createEClass(VCOMMANDS_V);
 
@@ -2331,6 +2341,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEReference(getModelComponent_Children(), this.getUIElement(), null, "children", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelComponent_Commands(), this.getCommand(), null, "commands", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getModelComponent_Processor(), ecorePackage.getEString(), "processor", null, 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getModelComponent_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v______________Commands_______________VEClass, MV______________Commands_______________V.class, "V______________Commands_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

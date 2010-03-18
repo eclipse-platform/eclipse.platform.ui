@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponent#getBindings <em>Bindings</em>}</li>
  * </ul>
  * </p>
  *
@@ -143,5 +144,21 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * @generated
 	 */
 	void setProcessor(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Bindings</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MKeyBinding}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Bindings</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Bindings</em>' containment reference list.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Bindings()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<MKeyBinding> getBindings();
 
 } // MModelComponent

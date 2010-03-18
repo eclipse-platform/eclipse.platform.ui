@@ -204,6 +204,7 @@ public class ModelComponentItemProvider
 			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
 			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
+			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__BINDINGS);
 		}
 		return childrenFeatures;
 	}
@@ -270,6 +271,7 @@ public class ModelComponentItemProvider
 			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
 			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -421,6 +423,11 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS,
 				 MApplicationFactory.eINSTANCE.createTestHarness()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MApplicationPackage.Literals.MODEL_COMPONENT__BINDINGS,
+				 MApplicationFactory.eINSTANCE.createKeyBinding()));
 	}
 
 	/**

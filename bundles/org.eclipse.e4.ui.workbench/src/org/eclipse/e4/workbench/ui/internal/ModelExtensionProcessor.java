@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
-import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.workbench.modeling.IModelExtension;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -60,13 +58,13 @@ public class ModelExtensionProcessor {
 		this.e4Window = e4Window;
 	}
 
-	private MElementContainer<MUIElement> findDefaultParent(String parentID) {
+	private Object findDefaultParent(String parentID) {
 		MApplicationElement defaultElement = null;
 		// Try the specified ID
 		if (parentID != null) {
 			defaultElement = findElementById(e4Window, parentID);
 			if (defaultElement != null)
-				return (MElementContainer<MUIElement>) defaultElement;
+				return defaultElement;
 		}
 
 		// // Try first preferred ID

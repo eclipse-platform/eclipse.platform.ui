@@ -55,6 +55,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getProcessor <em>Processor</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindings <em>Bindings</em>}</li>
  * </ul>
  * </p>
  *
@@ -200,6 +201,16 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * @ordered
 	 */
 	protected String processor = PROCESSOR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBindings()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MKeyBinding> bindings;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -412,6 +423,18 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MKeyBinding> getBindings() {
+		if (bindings == null) {
+			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.MODEL_COMPONENT__BINDINGS);
+		}
+		return bindings;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -425,6 +448,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -457,6 +482,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return getCommands();
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				return getProcessor();
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return getBindings();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -505,6 +532,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				setProcessor((String)newValue);
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				getBindings().clear();
+				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -547,6 +578,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				setProcessor(PROCESSOR_EDEFAULT);
 				return;
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				getBindings().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -579,6 +613,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return commands != null && !commands.isEmpty();
 			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
 				return PROCESSOR_EDEFAULT == null ? processor != null : !PROCESSOR_EDEFAULT.equals(processor);
+			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+				return bindings != null && !bindings.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -3928,13 +3928,22 @@ public interface MApplicationPackage extends EPackage {
 	int MODEL_COMPONENT__PROCESSOR = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__BINDINGS = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
+
+	/**
 	 * The number of structural features of the '<em>Model Component</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
+	int MODEL_COMPONENT_FEATURE_COUNT = PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of structural features of the '<em>VCommands V</em>' class.
@@ -6739,6 +6748,17 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getModelComponent_Processor();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getBindings()
+	 * @see #getModelComponent()
+	 * @generated
+	 */
+	EReference getModelComponent_Bindings();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -8043,6 +8063,14 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MODEL_COMPONENT__PROCESSOR = eINSTANCE.getModelComponent_Processor();
+
+		/**
+		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL_COMPONENT__BINDINGS = eINSTANCE.getModelComponent_Bindings();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
