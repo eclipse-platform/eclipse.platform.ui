@@ -1,3 +1,8 @@
+CTabFolder {
+    tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.workbench.ui.renderers.swt.CTabRendering');
+    
+}
+
 Shell {
 	background-color: #ffffff;
 }
