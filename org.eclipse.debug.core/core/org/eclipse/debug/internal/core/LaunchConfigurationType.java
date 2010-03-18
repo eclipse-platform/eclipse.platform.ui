@@ -457,7 +457,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		if (container == null) {
 			// not allowed to nest in sub directory when local
 			if (path.segmentCount() > 1) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), "Local configuration cannot be nested in a directory."));
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationType_2));
 			}
 		}
 		// validate the name (last segment)

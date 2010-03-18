@@ -55,6 +55,8 @@ public class DebugCoreMessages extends NLS {
 
 	public static String LaunchConfigurationType_1;
 
+	public static String LaunchConfigurationType_2;
+
 	public static String LaunchConfigurationType_7;
 
 	public static String LaunchConfigurationWorkingCopy_0;
