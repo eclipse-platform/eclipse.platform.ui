@@ -177,6 +177,8 @@ public class PartEditor extends AbstractComponentEditor {
 			});
 		}
 		
+		createSubformElements(parent, context, master);
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -295,6 +297,10 @@ public class PartEditor extends AbstractComponentEditor {
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
+	}
+	
+	protected void createSubformElements(Composite parent, EMFDataBindingContext context, IObservableValue master) {
+		
 	}
 
 	@Override

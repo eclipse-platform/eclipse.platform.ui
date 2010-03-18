@@ -3,7 +3,6 @@
   <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.windows.mainwindow" label="E4 Model Editor" width="800" height="600">
     <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.editorstack">
       <tags>newtablook</tags>
-      <children xsi:type="application:Part" xmi:id="_3EYE8TJrEd-9PvyudvwUPA" id="_3EYE8TJrEd-9PvyudvwUPA"/>
     </children>
     <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top">
       <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top.toolbars.main">

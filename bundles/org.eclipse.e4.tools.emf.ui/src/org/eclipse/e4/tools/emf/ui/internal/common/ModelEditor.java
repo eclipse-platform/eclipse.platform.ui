@@ -36,6 +36,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.InputPartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
@@ -308,6 +309,7 @@ public class ModelEditor {
 		registerEditor(MApplicationPackage.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MApplicationPackage.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MApplicationPackage.Literals.INPUT_PART, new InputPartEditor(modelProvider.getEditingDomain(), project));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
