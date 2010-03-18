@@ -85,7 +85,7 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
      * 
      * @param expression expression to retrieve text for
      * @param context presentation context specifying how to display the text
-     * 
+     * @exception CoreException in an error occurs
      * @since 3.6
      */
     protected String getExpressionName(IExpression expression, IPresentationContext context) throws CoreException {
@@ -98,9 +98,11 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
     /**
      * Returns the watch expression's text to show in the view's name column.
      * 
+     * @param expression the expression
+     * @param context associated presentation context
      * @since 3.6
      */
-    private String getWatchExpressionName(IWatchExpression expression, IPresentationContext context) throws CoreException {
+    private String getWatchExpressionName(IWatchExpression expression, IPresentationContext context) {
         StringBuffer result= new StringBuffer();
         
         String snippet = expression.getExpressionText().trim();
