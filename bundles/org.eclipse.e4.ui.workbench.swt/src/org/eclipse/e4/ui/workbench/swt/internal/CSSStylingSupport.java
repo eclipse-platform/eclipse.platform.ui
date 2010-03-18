@@ -56,6 +56,8 @@ public class CSSStylingSupport {
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
 			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
 
+			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
+
 			InputStream stream = url.openStream();
 			engine.parseStyleSheet(stream);
 			stream.close();

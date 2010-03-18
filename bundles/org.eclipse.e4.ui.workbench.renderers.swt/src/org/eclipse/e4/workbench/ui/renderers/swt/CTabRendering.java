@@ -1,5 +1,8 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -35,8 +38,6 @@ public class CTabRendering extends CTabFolderRenderer {
 	static final int ITEM_LEFT_MARGIN = 4;
 	static final int ITEM_RIGHT_MARGIN = 4;
 	static final int INTERNAL_SPACING = 4;
-
-	static final int CORNER_SIZE = 24;
 
 	static final String E4_SHADOW_IMAGE = "org.eclipse.e4.renderer.shadow_image"; //$NON-NLS-1$
 
@@ -766,6 +767,11 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	Image shadowImage;
 
+	int cornerSize = 14;
+
+	boolean shadowEnabled = true;
+
+	@Inject
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
 	}
@@ -778,12 +784,13 @@ public class CTabRendering extends CTabFolderRenderer {
 		int borderBottom = INNER_KEYLINE + OUTER_KEYLINE;
 		int marginWidth = parent.marginWidth;
 		int marginHeight = parent.marginHeight;
+		int sideDropWidth = shadowEnabled ? SIDE_DROP_WIDTH : 0;
 		switch (part) {
 		case PART_BODY:
-			x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE
-					- SIDE_DROP_WIDTH - (CORNER_SIZE / 2);
+			x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE - sideDropWidth
+					- (cornerSize / 2);
 			width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2
-					* marginWidth + 2 * SIDE_DROP_WIDTH + CORNER_SIZE;
+					* marginWidth + 2 * sideDropWidth + cornerSize;
 			int tabHeight = parent.getTabHeight() + 1; // TODO: Figure out what
 														// to do about the +1
 			// TODO: Fix
@@ -796,22 +803,21 @@ public class CTabRendering extends CTabFolderRenderer {
 				// - borderTop: y - marginHeight - highlight_header - tabHeight
 				// - borderTop;
 
-				y = y - marginHeight - tabHeight - borderTop
-						- (CORNER_SIZE / 4);
+				y = y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
 				height = height + borderBottom + borderTop + 2 * marginHeight
-						+ tabHeight + CORNER_SIZE / 2 + CORNER_SIZE / 4
-						+ BOTTOM_DROP_WIDTH;
+						+ tabHeight + cornerSize / 2 + cornerSize / 4
+						+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 			}
 			break;
 		case PART_HEADER:
-			x = x - (INNER_KEYLINE + OUTER_KEYLINE) - SIDE_DROP_WIDTH;
-			width = width + 2
-					* (INNER_KEYLINE + OUTER_KEYLINE + SIDE_DROP_WIDTH);
+			x = x - (INNER_KEYLINE + OUTER_KEYLINE) - sideDropWidth;
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
 			break;
 		case PART_BORDER:
-			x = x - INNER_KEYLINE - OUTER_KEYLINE - SIDE_DROP_WIDTH;
-			width = width + 2
-					* (INNER_KEYLINE + OUTER_KEYLINE + SIDE_DROP_WIDTH);
+			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth
+					- (cornerSize / 4);
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth)
+					+ cornerSize / 2;
 			y = y - borderTop;
 			height = height + borderTop + borderBottom;
 			break;
@@ -829,8 +835,6 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	protected void dispose() {
 		super.dispose();
-		if (shadowImage != null)
-			shadowImage.dispose();
 	}
 
 	protected void draw(int part, int state, Rectangle bounds, GC gc) {
@@ -865,14 +869,14 @@ public class CTabRendering extends CTabFolderRenderer {
 
 		int[] points = new int[1024];
 		int index = 0;
-		int radius = CORNER_SIZE / 2;
+		int radius = cornerSize / 2;
 		int marginWidth = parent.marginWidth;
 		int marginHeight = parent.marginHeight;
-		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * SIDE_DROP_WIDTH + 2
-				* marginWidth;
+		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2
+				* (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
 		int width = bounds.width - delta;
 		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
-				* marginHeight - BOTTOM_DROP_WIDTH;
+				* marginHeight - (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
 
@@ -948,14 +952,14 @@ public class CTabRendering extends CTabFolderRenderer {
 	void drawTabBody(GC gc, Rectangle bounds, int state) {
 		int[] points = new int[1024];
 		int index = 0;
-		int radius = CORNER_SIZE / 2;
+		int radius = cornerSize / 2;
 		int marginWidth = parent.marginWidth;
 		int marginHeight = parent.marginHeight;
-		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * SIDE_DROP_WIDTH + 2
-				* marginWidth;
+		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2
+				* (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
 		int width = bounds.width - delta;
 		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
-				* marginHeight - BOTTOM_DROP_WIDTH;
+				* marginHeight - (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
@@ -1004,7 +1008,8 @@ public class CTabRendering extends CTabFolderRenderer {
 				bounds.height, mappedBounds.x, mappedBounds.y);
 
 		// Shadow
-		drawShadow(display, bounds, gc);
+		if (shadowEnabled)
+			drawShadow(display, bounds, gc);
 
 		gc.setClipping(clipping);
 		clipping.dispose();
@@ -1017,9 +1022,9 @@ public class CTabRendering extends CTabFolderRenderer {
 
 		int[] points = new int[1024];
 		int index = 0;
-		int radius = CORNER_SIZE / 2;
-		int circX = bounds.x + radius; // + delta/2
-		int circY = bounds.y - 6 + radius;
+		int radius = cornerSize / 2;
+		int circX = bounds.x + radius;
+		int circY = bounds.y - 1 + radius;
 
 		int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
 		System.arraycopy(ltt, 0, points, index, ltt.length);
@@ -1209,5 +1214,19 @@ public class CTabRendering extends CTabFolderRenderer {
 				}
 			});
 		}
+	}
+
+	@Inject
+	@Optional
+	public void setCornerRadius(@Named("radius") Integer radius) {
+		cornerSize = radius.intValue();
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setShadowVisible(@Named("shadowVisible") Boolean visible) {
+		this.shadowEnabled = visible.booleanValue();
+		parent.redraw();
 	}
 }

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -205,10 +204,6 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleModifier = 0; // SWT.CLOSE
 		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER
 				| styleModifier);
-		// temporary HACK for bug 303982
-		if (element.getTags().contains("newtablook")) { //$NON-NLS-1$
-			ctf.setRenderer(new CTabRendering(ctf));
-		}
 		bindWidget(element, ctf);
 
 		// TBD: need to handle this

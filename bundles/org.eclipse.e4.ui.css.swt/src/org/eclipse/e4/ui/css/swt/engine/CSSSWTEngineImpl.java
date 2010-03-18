@@ -27,16 +27,19 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyPaddingSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCornerRadiusSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabMarginOffsetHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabRendererSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedTabsSWTHandler;
@@ -155,6 +158,21 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("unselected-tabs-color", CSSPropertyUnselectedTabsSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedTabsSWTHandler.class,
 				CSSPropertyUnselectedTabsSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property tab renderer
+		super.registerCSSProperty("tab-renderer", CSSPropertyTabRendererSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabRendererSWTHandler.class,
+				CSSPropertyTabRendererSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property corner radius
+		super.registerCSSProperty("corner-radius", CSSPropertyCornerRadiusSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyCornerRadiusSWTHandler.class,
+				CSSPropertyCornerRadiusSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property corner radius
+		super.registerCSSProperty("shadow-visible", CSSPropertyShadowVisibleSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyShadowVisibleSWTHandler.class,
+				CSSPropertyShadowVisibleSWTHandler.INSTANCE);
 		
 		//ETabFolder properties
 		
