@@ -666,7 +666,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
 				setAction(PASTE_ACTION, null);
-				getViewSite().getActionBars().clearGlobalActionHandlers();
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
