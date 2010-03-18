@@ -246,7 +246,7 @@ function rescope() {
 		}
 		if (viewsFrame.index && viewsFrame.index.indexViewFrame) {
 		    var indexView = viewsFrame.index.indexViewFrame;
-		    indexView.location.replace("indexView.jsp");
+		    indexView.loadCurrentPage();
 		}
 		doSearch(null, true);
 	}
