@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.osgi.util.NLS;
@@ -205,6 +206,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		editorSite = new EditorSite(getModel(), part, descriptor
 				.getConfigurationElement());
+		ContextInjectionFactory.inject(editorSite, getModel().getContext());
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());

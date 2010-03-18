@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -146,6 +147,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private IEclipseContext e4Context;
 
+	private IWorkbenchWindow workbenchWindow;
+	private MWindow window;
+
 	/**
 	 * Build the part site.
 	 * 
@@ -161,6 +165,13 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		this.part = part;
 		this.element = element;
 
+		MElementContainer<?> parent = model.getParent();
+		while (!(parent instanceof MWindow)) {
+			parent = parent.getParent();
+		}
+
+		setWindow((MWindow) parent);
+
 		e4Context = model.getContext();
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) e4Context
 				.get(IServiceLocatorCreator.class.getName());
@@ -173,6 +184,23 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				});
 		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
+	}
+
+	@Inject
+	void setWindow(MWindow window) {
+		this.window = window;
+		
+		if (window != null) {
+			MWindow topWindow = getTopLevelModelWindow();
+			MApplication application = (MApplication) topWindow.getContext().get(
+					MApplication.class.getName());
+			Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
+
+			workbenchWindow = workbench.createWorkbenchWindow(workbench.getDefaultPageInput(),
+					workbench.getPerspectiveRegistry().findPerspectiveWithId(
+							workbench.getPerspectiveRegistry().getDefaultPerspective()), topWindow,
+					false);
+		}
 	}
 
 	/**
@@ -358,8 +386,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	}
 
 	private MWindow getTopLevelModelWindow() {
-		MElementContainer<?> parent = model.getParent();
-		MElementContainer<?> previousParent = parent;
+		MElementContainer<?> parent = window.getParent();
+		MElementContainer<?> previousParent = window;
 		// we can't simply stop at an MWindow because the part may be in a detached window
 		while (!(parent instanceof MApplication)) {
 			previousParent = parent;
@@ -375,14 +403,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return the workbench window containing this part
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
-		MWindow window = getTopLevelModelWindow();
-		MApplication application = (MApplication) window.getContext().get(
-				MApplication.class.getName());
-		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
-
-		return workbench.createWorkbenchWindow(workbench.getDefaultPageInput(), workbench
-				.getPerspectiveRegistry().findPerspectiveWithId(
-						workbench.getPerspectiveRegistry().getDefaultPerspective()), window, false);
+		return workbenchWindow;
 	}
 
 	/**
