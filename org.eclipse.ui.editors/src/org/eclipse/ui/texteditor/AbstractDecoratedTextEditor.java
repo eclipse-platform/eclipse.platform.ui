@@ -531,22 +531,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		buttonComposite.setForeground(fgColor);
 
 		encodingSupport.createStatusEncodingChangeControl(buttonComposite, status);
-//
-//		Button button= new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
-//		button.setText(action.getText());
-//		button.addSelectionListener(new SelectionAdapter() {
-//			/*
-//			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-//			 */
-//			public void widgetSelected(SelectionEvent e) {
-//				action.run();
-//			}
-//		});
-//
-//		Label filler= new Label(buttonComposite, SWT.NONE);
-//		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		filler.setBackground(bgColor);
-//
+
 		return composite;
 	}
 
@@ -1309,7 +1294,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Shows a focused hover at the specified offset.
-	 * Does nothing if <code>hover</code> is <code>null</code> or cannot be shown. 
+	 * Does nothing if <code>hover</code> is <code>null</code> or cannot be shown.
 	 * 
 	 * @param hover the hover to be shown, can be <code>null</code>
 	 * @param sourceViewer the source viewer
