@@ -262,6 +262,16 @@ function toggleAutosynch() {
     setAutosynchEnabled(!isAutosynchEnabled());  
 }
 
+function repaint() {
+    var selected = getSelectedTopic();
+    var href = "tocView.jsp";
+    if (selected) {
+        href += '?topic=';
+        href += selected;
+    } 
+    location.replace(href);
+}
+
 function onShow() { 
     if ( isAutosynchEnabled() && pendingSynchTopic !== null ) {
         selectTopic(pendingSynchTopic, true);

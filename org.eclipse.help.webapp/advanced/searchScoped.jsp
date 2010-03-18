@@ -242,7 +242,7 @@ function rescope() {
 		var viewsFrame = parent.parent.HelpFrame.NavFrame.ViewsFrame;
 		if (viewsFrame.toc && viewsFrame.toc.tocViewFrame) {
 		    var tocView = viewsFrame.toc.tocViewFrame;
-		    tocView.location.replace("tocView.jsp");
+		    tocView.repaint();
 		}
 		if (viewsFrame.index && viewsFrame.index.indexViewFrame) {
 		    var indexView = viewsFrame.index.indexViewFrame;
