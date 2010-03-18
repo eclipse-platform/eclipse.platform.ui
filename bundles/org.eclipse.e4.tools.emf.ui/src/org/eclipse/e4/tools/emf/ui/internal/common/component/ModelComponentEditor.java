@@ -52,6 +52,8 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list( MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
+	private IListProperty MODEL_COMPONENT__COMMANDS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
+	private IListProperty MODEL_COMPONENT__BINDINGS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENT__BINDINGS);
 	
 	public ModelComponentEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -179,6 +181,44 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		WritableList list = new WritableList();
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, "BindingTables") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MODEL_COMP_BINDINGS, MODEL_COMPONENT__BINDINGS, element, "KeyBindings") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+		
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MODEL_COMP_COMMANDS, MODEL_COMPONENT__COMMANDS, element, "Commands") {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MENU, MODEL_COMPONENT__CHILDREN, element, "Menus") {
 
 			@Override
@@ -203,24 +243,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 			}
 
 		});
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, "BindingTables") {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
+		
 		return list;
 	}
 

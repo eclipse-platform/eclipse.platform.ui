@@ -3,6 +3,7 @@
   <children xsi:type="application:Window" xmi:id="__i8IECuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.windows.mainwindow" label="E4 Model Editor" width="800" height="600">
     <children xsi:type="application:PartStack" xmi:id="__i99QCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.editorstack">
       <tags>newtablook</tags>
+      <children xsi:type="application:Part" xmi:id="_3EYE8TJrEd-9PvyudvwUPA" id="_3EYE8TJrEd-9PvyudvwUPA"/>
     </children>
     <children xsi:type="application:WindowTrim" xmi:id="__i_ycCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top">
       <children xsi:type="application:ToolBar" xmi:id="__jAZgCuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.mainwindow.trims.top.toolbars.main">
@@ -25,16 +26,16 @@
   <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.handlers.savexmi" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
   <handlers xmi:id="_wgmB8C1UEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newappmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_yPmhcC1UEd-7-u-s9onsPg"/>
   <handlers xmi:id="_KustkC1VEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newcontribmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_HHdhIC1VEd-7-u-s9onsPg"/>
+  <bindingTables xmi:id="_m3RtIDBbEd-JEPCyo7TeHQ" id="_m3RtIDBbEd-JEPCyo7TeHQ" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+    <bindings xmi:id="_HFjLcDBcEd-5Aa2iOaoSpQ" keySequence="M1+S" id="_HFjLcDBcEd-5Aa2iOaoSpQ" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
+  </bindingTables>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" id="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <bindingTables xmi:id="_m3RtIDBbEd-JEPCyo7TeHQ" id="_m3RtIDBbEd-JEPCyo7TeHQ" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
-    <bindings xmi:id="_HFjLcDBcEd-5Aa2iOaoSpQ" keySequence="M1+S" id="_HFjLcDBcEd-5Aa2iOaoSpQ" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
-  </bindingTables>
+  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
   <commands xmi:id="__jFSACuZEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.commands.openxmi" commandName="e4editor.openxmi" description="Open an XMI File"/>
   <commands xmi:id="_sSBrgCuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.commands.savexmi" commandName="e4editor.savexmi"/>
   <commands xmi:id="_yPmhcC1UEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.commands.newappmodel" commandName="e4editor.newappmodel"/>
   <commands xmi:id="_HHdhIC1VEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.commands.newcontribmodel" commandName="e4editor.newcontribmodel"/>
-  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
 </application:Application>

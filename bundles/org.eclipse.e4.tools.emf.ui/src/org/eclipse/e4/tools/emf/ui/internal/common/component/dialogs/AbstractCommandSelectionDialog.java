@@ -10,11 +10,16 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MModelComponent;
+import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -87,8 +92,12 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 			MApplication app = (MApplication) resource.getRoot().get(0);
 			viewer.setInput(app.getCommands());
 		} else {
-			MModelComponent comp = (MModelComponent)resource.getRoot().get(0);
-			viewer.setInput(comp.getCommands());	
+			MModelComponents components = (MModelComponents)resource.getRoot().get(0);
+			List<MCommand> commands = new ArrayList<MCommand>();
+			for( MModelComponent comp : components.getComponents() ) {
+				commands.addAll(comp.getCommands());
+			}
+			viewer.setInput(commands);	
 		}
 		
 

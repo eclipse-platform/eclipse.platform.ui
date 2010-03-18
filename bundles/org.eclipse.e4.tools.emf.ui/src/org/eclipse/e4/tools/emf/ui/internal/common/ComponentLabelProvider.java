@@ -15,10 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.StyledString.Styler;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.TextStyle;
 
 public class ComponentLabelProvider extends StyledCellLabelProvider {
 	private Image modelComponentsImage;
