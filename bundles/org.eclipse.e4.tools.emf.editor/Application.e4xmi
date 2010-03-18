@@ -25,7 +25,7 @@
   <handlers xmi:id="_xOkeACuuEd-8CvvcO22KcQ" id="org.eclipse.e4.tools.emf.editor.handlers.savexmi" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
   <handlers xmi:id="_wgmB8C1UEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newappmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_yPmhcC1UEd-7-u-s9onsPg"/>
   <handlers xmi:id="_KustkC1VEd-7-u-s9onsPg" id="org.eclipse.e4.tools.emf.editor.handlers.newcontribmodel" URI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_HHdhIC1VEd-7-u-s9onsPg"/>
-  <bindingTables xmi:id="_m3RtIDBbEd-JEPCyo7TeHQ" id="_m3RtIDBbEd-JEPCyo7TeHQ" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+  <bindingTables xmi:id="org.eclipse.ui.bindingtables.dialogAndWindow" id="org.eclipse.ui.bindingtables.dialogAndWindow" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_HFjLcDBcEd-5Aa2iOaoSpQ" keySequence="M1+S" id="_HFjLcDBcEd-5Aa2iOaoSpQ" command="_sSBrgCuuEd-8CvvcO22KcQ"/>
   </bindingTables>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
