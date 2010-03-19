@@ -475,8 +475,10 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private SaveablesProvider createSaveablesProvider(NavigatorContentDescriptor descriptor) {
 		NavigatorContentExtension extension = contentService
 				.getExtension(descriptor, true);
+		// Use getContentProvider to get the client objects, this is important
+		// for the adaptation below. See bug 306545
 		ITreeContentProvider contentProvider = extension
-				.internalGetContentProvider();
+				.getContentProvider();
         
         return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
 	}
