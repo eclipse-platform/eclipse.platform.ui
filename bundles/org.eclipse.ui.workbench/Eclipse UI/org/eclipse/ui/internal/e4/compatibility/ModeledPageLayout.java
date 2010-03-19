@@ -230,7 +230,12 @@ public class ModeledPageLayout implements IPageLayout {
 			if (descriptor.getId().equals(id)) {
 				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
 				part.setToBeRendered(visible);
-				page.createViewReferenceForPart(part, id);
+				// there should only be view references for views that are
+				// visible to the end user, that is, the tab items are being
+				// drawn
+				if (visible) {
+					page.createViewReferenceForPart(part, id);
+				}
 				return part;
 			}
 		}
