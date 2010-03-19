@@ -16,29 +16,32 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.core.LaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
@@ -62,27 +65,29 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
  
 /**
  * The dialog used to edit and launch launch configurations.
@@ -138,7 +143,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED = 2;
 	/**
-	 * Constant specifying that this dialog should be opened with the value specified via 
+	 * Constant specifying that this dialog should be opened with the value specified via
 	 * <code>setInitialSelection()</code> selected.
 	 */
 	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION = 3;
@@ -153,7 +158,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private static final String DELIMITER = ", "; //$NON-NLS-1$
 	/**
-	 * Specifies how this dialog behaves when opened.  Value is one of the 
+	 * Specifies how this dialog behaves when opened.  Value is one of the
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
 	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
@@ -188,7 +193,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private SashForm fSashForm;
 	private LaunchConfigurationView fLaunchConfigurationView;
 	private LaunchConfigurationTabGroupViewer fTabViewer;
-	private Button fProgressMonitorCancelButton;	
 	private ProgressMonitorPart fProgressMonitorPart;
 	private LaunchGroupExtension fGroup;
 	private Image fBannerImage;
@@ -206,7 +210,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
-	 */	
+	 */
 	private long fActiveRunningOperations = 0;
 
 	/**
@@ -262,9 +266,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		topLayout.marginWidth = 5;
 		topComp.setLayout(topLayout);
 		
-		// Set the things that TitleAreaDialog takes care of 
-		setTitle(LaunchConfigurationsMessages.LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8); 
-		setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2); 
+		// Set the things that TitleAreaDialog takes care of
+		setTitle(LaunchConfigurationsMessages.LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8);
+		setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2);
 		setModeLabelState();
 		
 		// Create the SashForm that contains the selection area on the left,
@@ -301,10 +305,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ID_LAUNCH_BUTTON) {
 			handleLaunchPressed();
-		} 
+		}
 		else if (buttonId == ID_CLOSE_BUTTON) {
 			handleClosePressed();
-		} 
+		}
 		else {
 			super.buttonPressed(buttonId);
 		}
@@ -316,7 +320,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return if we can discard the current config or not
 	 */
-	protected int shouldSaveCurrentConfig() {				
+	protected int shouldSaveCurrentConfig() {
 		if (fTabViewer.isDirty()) {
 			if (fTabViewer.canSave()) {
 				return showSaveChangesDialog();
@@ -362,7 +366,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		super.create();
 		if (fTabViewer.getInput() == null) {
 			fTabViewer.inputChanged(null);
-		}	
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -391,11 +395,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		monitorComposite.setLayout(layout);
 		monitorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout pmLayout = new GridLayout();
-		fProgressMonitorPart = new ProgressMonitorPart(monitorComposite, pmLayout);
+		fProgressMonitorPart= new ProgressMonitorPart(monitorComposite, pmLayout, true);
 		fProgressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProgressMonitorPart.setFont(font);
-		fProgressMonitorCancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_3, true);
-		fProgressMonitorCancelButton.setFont(font);
 		monitorComposite.setVisible(false);
 
 		/*
@@ -422,7 +424,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void createButtonsForButtonBar(Composite parent) {
 		Button button = createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
         button.setEnabled(false);
-		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  
+		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);
 	}
 	
 	/* (non-Javadoc)
@@ -454,7 +456,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * that are applicable to the launch configuration.
 	 * 
 	 * @return the composite used for launch configuration editing
-	 */ 
+	 */
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
 		return (Composite)fTabViewer.getControl();
@@ -483,7 +485,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * delete and duplicate existing configurations.
 	 * 
 	 * @return the composite used for launch configuration selection area
-	 */ 
+	 */
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
         Composite comp = new Composite(parent, SWT.FLAT);
         GridLayout gridLayout = new GridLayout(1, false);
@@ -556,7 +558,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		});
 		return comp;
-	}	
+	}
 
 	/**
 	 * Create the filters to be initially applied to the viewer.
@@ -583,14 +585,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			filters.add(fWorkingSetsFilter);
 		}
 		return (ViewerFilter[]) filters.toArray(new ViewerFilter[filters.size()]);
-	} 
+	}
 	
 	/**
 	 * Set the initial selection in the tree.
 	 */
 	public void doInitialTreeSelection() {
 		fLaunchConfigurationView.getViewer().setSelection(fInitialSelection);
-	}	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
@@ -603,7 +605,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Generates and returns a unique name using the specified name as a prefix in the event 
+	 * Generates and returns a unique name using the specified name as a prefix in the event
 	 * the specified name already exists or is contained in the set of reserved names.
 	 * @param name the name to use as a prefix for generating a new name
 	 * @param reservednames a listing of names that should be considered as 'taken' and cannot be generated
@@ -631,10 +633,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected Image getBannerImage() {
 		if (fBannerImage == null) {
-			ImageDescriptor descriptor = getLaunchGroup().getBannerImageDescriptor(); 
+			ImageDescriptor descriptor = getLaunchGroup().getBannerImageDescriptor();
 			if (descriptor != null) {
 				fBannerImage = descriptor.createImage();
-			} 		
+			}
 		}
 		return fBannerImage;
 	}
@@ -692,7 +694,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
 		if (section == null) {
 			section = settings.addNewSection(getDialogSettingsSectionName());
-		} 
+		}
 		return section;
 	}
 
@@ -703,7 +705,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION"; //$NON-NLS-1$
-	}	
+	}
 		
 	/**
 	 * Gets the current display
@@ -714,7 +716,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Shell shell = getShell();
 		if (shell != null) {
 			return shell.getDisplay();
-		} 
+		}
 		return DebugUIPlugin.getStandardDisplay();
 	}
   	
@@ -777,7 +779,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	 */
  	public String getMode() {
  		return getLaunchGroup().getMode();
- 	} 	
+ 	}
  	
 	/**
 	 * Gets the new menu action
@@ -824,7 +826,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			 title = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_configurations, new String[] {DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel())});
 		}
 		if (title == null) {
-			title = LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configurations_18; 
+			title = LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configurations_18;
 		}
 		return title;
 	}
@@ -847,7 +849,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	public ILaunchConfigurationTab[] getTabs() {
  		if (getTabGroup() == null) {
  			return null;
- 		} 
+ 		}
  		return getTabGroup().getTabs();
  	}
 
@@ -962,26 +964,26 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @param status the status to be handled
 	 */
-	public void handleStatus(IStatus status) {		
+	public void handleStatus(IStatus status) {
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 		if (handler != null) {
 			try {
 				handler.handleStatus(status, this);
 				return;
-			} 
-			catch (CoreException e) {status = e.getStatus();} 
+			}
+			catch (CoreException e) {status = e.getStatus();}
 		}
 		// if no handler, or handler failed, display error/warning dialog
 		String title = null;
 		switch (status.getSeverity()) {
 			case IStatus.ERROR:
-				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Error_1; 
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Error_1;
 				break;
 			case IStatus.WARNING:
-				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Warning_2; 
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Warning_2;
 				break;
 			default:
-				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Information_3; 
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Information_3;
 				break;
 		}
 		ErrorDialog.openError(getShell(), title, null, status);
@@ -1111,14 +1113,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.window.Window#open()
 	 * @return the int status of opening the dialog
 	 */
-	public int open() {		
+	public int open() {
 		int mode = getOpenMode();
-		setCurrentlyVisibleLaunchConfigurationDialog(this);	
+		setCurrentlyVisibleLaunchConfigurationDialog(this);
 		if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED) {
 			ILaunchConfiguration lastLaunchedConfig = getLastLaunchedWorkbenchConfiguration();
 			if (lastLaunchedConfig != null) {
 				setInitialSelection(new StructuredSelection(lastLaunchedConfig));
-			}			
+			}
 		}
 		return super.open();
 	}
@@ -1136,7 +1138,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				value = IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 			ArrayList list = new ArrayList();
-			String[] persisted = value.split(DELIMITER); 
+			String[] persisted = value.split(DELIMITER);
 			for(int i = 0; i < persisted.length; i++) {
 				list.add(persisted[i]);
 			}
@@ -1182,8 +1184,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					else if(obj instanceof ILaunchConfiguration) {
 						try {
 							toexpand.add(((ILaunchConfiguration) obj).getType());
-						} 
-						catch (CoreException e) {DebugUIPlugin.log(e);}					
+						}
+						catch (CoreException e) {DebugUIPlugin.log(e);}
 					}
 				}
 				for(int i = 0; i < nodes.length; i++) {
@@ -1247,14 +1249,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (fLastControl != null && fLastControl.getShell() != getShell()) {
 				fLastControl = null;
 			}
-			fProgressMonitorCancelButton.setEnabled(cancelable);
 			// Attach the progress monitor part to the cancel button
-			fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
+			fProgressMonitorPart.attachToCancelComponent(null);
 			fProgressMonitorPart.getParent().setVisible(true);
-			fProgressMonitorCancelButton.setFocus();
 			fActiveRunningOperations++;
 			
-		//do work here collecting enabled states, otherwise to get these states we would need to 
+		//do work here collecting enabled states, otherwise to get these states we would need to
 		//perform the validation of the dialog again, which is expensive and would cause flashing of widgets.
 			Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
 			boolean[] prev = new boolean[children.length+2];
@@ -1266,19 +1266,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			try {
 				updateRunnnableControls(false, prev);
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
-			} 
+			}
 			finally {
 				fActiveRunningOperations--;
 				updateRunnnableControls(true, prev);
 				if (getShell() != null) {
 					fProgressMonitorPart.getParent().setVisible(false);
-					fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
+					fProgressMonitorPart.removeFromCancelComponent(null);
 					if (fLastControl != null) {
 						fLastControl.setFocus();
 					}
 				}
 			}
-		} 
+		}
 		else {
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
@@ -1317,7 +1317,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Sets the initial selection for the dialog when opened in 
+	 * Sets the initial selection for the dialog when opened in
 	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
 	 */
 	public void setInitialSelection(IStructuredSelection selection) {
@@ -1346,7 +1346,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Returns if the dialog is supposed to be setting the default values for 
+	 * Returns if the dialog is supposed to be setting the default values for
 	 * the initial configuration when it opens
 	 * 
 	 * @return <code>true</code> if the defaults should be set on open, <code>false</code> otherwise
@@ -1370,7 +1370,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void setModeLabelState() {
 		setTitleImage(getBannerImage());
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
@@ -1416,22 +1416,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Create and return a dialog that asks the user whether they want to discard
 	 * unsaved changes.
-	 *   
+	 * 
 	 * @return the return code based on the button selected.
 	 * The value will be one of <code>YES_ID</code> or <code>NO_ID</code> from
 	 * <code>IDialogConstants</code>.
 	 */
 	private int showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{fTabViewer.getWorkingCopy().getName()})); 
+		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{fTabViewer.getWorkingCopy().getName()}));
 		buffer.append(fTabViewer.getErrorMesssage());
-		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37); 
-		MessageDialog dialog = new MessageDialog(getShell(), 
-												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Discard_changes__38, 
+		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37);
+		MessageDialog dialog = new MessageDialog(getShell(),
+												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Discard_changes__38,
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, 
-															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32,
+															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},
 												 1);
 		int val = IDialogConstants.NO_ID;
 		if (dialog.open() == 0) {
@@ -1452,29 +1452,29 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Create and return a dialog that asks the user whether they want to save
-	 * unsaved changes.  
+	 * unsaved changes.
 	 * 
 	 * @return the return code based on the button selected.
 	 * The value will be one of <code>YES_ID</code>, <code>NO_ID</code>, or <code>CANCEL_ID</code>, from
 	 * <code>IDialogConstants</code>.
 	 */
 	private int showSaveChangesDialog() {
-		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{fTabViewer.getWorkingCopy().getName()}); 
-		MessageDialog dialog = new MessageDialog(getShell(), 
-												 LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_save_changes, 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{fTabViewer.getWorkingCopy().getName()});
+		MessageDialog dialog = new MessageDialog(getShell(),
+												 LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_save_changes,
 												 null,
 												 message,
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, 
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32,
 															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33,
-															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},  
+															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},
 												 0);
 		int ret = dialog.open();
 		int val = IDialogConstants.CANCEL_ID;
 		if (ret == 0 || ret == 1) {
 			if (ret == 0) {
 				val = IDialogConstants.YES_ID;
-			} 
+			}
 			else {
 				val = IDialogConstants.NO_ID;
 			}
@@ -1514,7 +1514,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void updateMessage() {
 		setErrorMessage(fTabViewer.getErrorMesssage());
-		setMessage(fTabViewer.getMessage());	
+		setMessage(fTabViewer.getMessage());
 	}
 	
 	/**
