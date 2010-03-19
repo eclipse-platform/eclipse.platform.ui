@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_DETAIL_PANE_UNDER= "IMG_DLCL_DETAIL_PANE_UNDER"; //$NON-NLS-1$
     public static final String IMG_DLCL_DETAIL_PANE_RIGHT= "IMG_DLCL_DETAIL_PANE_RIGHT"; //$NON-NLS-1$
     public static final String IMG_DLCL_DETAIL_PANE_HIDE= "IMG_DLCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
+    public static final String IMG_DLCL_DETAIL_PANE_AUTO= "IMG_DLCL_DETAIL_PANE_AUTO"; //$NON-NLS-1$
     public static final String IMG_DLCL_COLLAPSE_ALL = "IMG_DLCL_COLLAPSE_ALL"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE = "IMG_DLCL_TERMINATE"; //$NON-NLS-1$
     public static final String IMG_DLCL_REMOVE_ALL = "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
@@ -89,6 +90,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_DETAIL_PANE_UNDER= "IMG_ELCL_DETAIL_PANE_UNDER"; //$NON-NLS-1$
     public static final String IMG_ELCL_DETAIL_PANE_RIGHT= "IMG_ELCL_DETAIL_PANE_RIGHT"; //$NON-NLS-1$
     public static final String IMG_ELCL_DETAIL_PANE_HIDE= "IMG_ELCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
+    public static final String IMG_ELCL_DETAIL_PANE_AUTO= "IMG_ELCL_DETAIL_PANE_AUTO"; //$NON-NLS-1$
     public static final String IMG_ELCL_COLLAPSE_ALL = "IMG_ELCL_COLLAPSE_ALL"; //$NON-NLS-1$
     public static final String IMG_ELCL_TERMINATE = "IMG_ELCL_TERMINATE"; //$NON-NLS-1$
     public static final String IMG_SRC_LOOKUP_MENU_ELCL = "IMG_SRC_LOOKUP_MENU_ENABLED"; //$NON-NLS-1$

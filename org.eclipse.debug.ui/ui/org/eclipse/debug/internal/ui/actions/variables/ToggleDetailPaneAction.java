@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ToggleDetailPaneAction extends Action {
 		if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) {
 			setText(ActionMessages.ToggleDetailPaneAction_1);  
 			setToolTipText(ActionMessages.ToggleDetailPaneAction_2);  
-			setDescription(ActionMessages.ToggleDetailPaneAction_3);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_2);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_UNDER));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_UNDER));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_UNDER));
@@ -51,15 +51,23 @@ public class ToggleDetailPaneAction extends Action {
 		} else if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT) {
 			setText(ActionMessages.ToggleDetailPaneAction_4);  
 			setToolTipText(ActionMessages.ToggleDetailPaneAction_5);  
-			setDescription(ActionMessages.ToggleDetailPaneAction_6);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_5);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_RIGHT));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_RIGHT));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_RIGHT));
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION);
+		} else if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO) {
+			setText(ActionMessages.ToggleDetailPaneAction_0);
+			setToolTipText(ActionMessages.ToggleDetailPaneAction_3);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_3);  
+			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_AUTO));
+			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_AUTO));
+			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_AUTO));
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION);
 		} else {
 			setText(hiddenLabel);
 			setToolTipText(ActionMessages.ToggleDetailPaneAction_8);  
-			setDescription(ActionMessages.ToggleDetailPaneAction_9);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_8);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_HIDE));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_HIDE));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_HIDE));

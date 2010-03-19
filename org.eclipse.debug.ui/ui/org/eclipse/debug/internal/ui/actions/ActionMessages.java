@@ -128,14 +128,14 @@ public class ActionMessages extends NLS {
     public static String TerminateAndRemoveAction_0;
     public static String TerminateAndRemoveAction_3;
     
-    public static String ToggleDetailPaneAction_1;
+    public static String ToggleDetailPaneAction_0;
+
+	public static String ToggleDetailPaneAction_1;
     public static String ToggleDetailPaneAction_2;
-    public static String ToggleDetailPaneAction_3;
+	public static String ToggleDetailPaneAction_3;
     public static String ToggleDetailPaneAction_4;
     public static String ToggleDetailPaneAction_5;
-    public static String ToggleDetailPaneAction_6;
     public static String ToggleDetailPaneAction_8;
-    public static String ToggleDetailPaneAction_9;
     public static String ToggleBreakpointAction_0;
     public static String ToggleBreakpointAction_1;
     public static String ToggleBreakpointAction_2;

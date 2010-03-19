@@ -92,8 +92,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -237,6 +240,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Separator used when detail pane background colors of tree/detail pane are different.
 	 */
 	private Label fSepearator;
+	
+	/**
+	 * Parent of the viewer, used to detect re-sizing for automatic layout
+	 */
+	private Composite fParent;
 	
 	/**
 	 * The detail pane that displays detailed information about the current selection
@@ -477,7 +485,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(Composite)
 	 */
 	public Viewer createViewer(Composite parent) {
-		
+		addResizeListener(parent);
+		fParent = parent;
 		fTriggerDetailsJob.setSystem(true);
 		
 		// create the sash form that will contain the tree viewer & text viewer
@@ -711,6 +720,34 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return IDebugHelpContextIds.VARIABLE_VIEW;		
 	}
 	
+	private void addResizeListener(Composite parent) {
+		parent.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+			}
+			public void controlResized(ControlEvent e) {
+				if (IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO.equals(fCurrentDetailPaneOrientation)) {
+					setDetailPaneOrientation(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Returns vertical or horizontal based on view size.
+	 *  
+	 * @return vertical or horizontal
+	 */
+	int computeOrientation() {
+		Point size= fParent.getSize();
+		if (size.x != 0 && size.y != 0) {
+			if (size.x > size.y)
+				return SWT.HORIZONTAL;
+			else
+				return SWT.VERTICAL;
+		}
+		return SWT.HORIZONTAL;
+	}	
+	
 	/**
 	 * Set the orientation of the details pane so that is one of:
 	 * - underneath the main tree view
@@ -718,13 +755,19 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * - not visible
 	 */
 	public void setDetailPaneOrientation(String orientation) {
-		if (orientation.equals(fCurrentDetailPaneOrientation)) {
+		if (!IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO.equals(orientation) && orientation.equals(fCurrentDetailPaneOrientation)) {
 			return;
 		}
 		if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN)) {
 			hideDetailPane();
 		} else {
-			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
+			int vertOrHoriz = -1;
+			if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO)) {
+				vertOrHoriz = computeOrientation();
+			} else {
+				vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
+				
+			}
 			buildDetailPane(vertOrHoriz);
 		}
 		fCurrentDetailPaneOrientation  = orientation;
@@ -870,16 +913,18 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager viewMenu = actionBars.getMenuManager();
 		
-		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
+		fToggleDetailPaneActions = new ToggleDetailPaneAction[4];
 		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH, null);
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
-		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
+		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO, null);
+		fToggleDetailPaneActions[3] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
 		viewMenu.add(new Separator());
 		final MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
 		layoutSubMenu.setRemoveAllWhenShown(true);
 		layoutSubMenu.add(fToggleDetailPaneActions[0]);
 		layoutSubMenu.add(fToggleDetailPaneActions[1]);
 		layoutSubMenu.add(fToggleDetailPaneActions[2]);
+		layoutSubMenu.add(fToggleDetailPaneActions[3]);
 		viewMenu.add(layoutSubMenu);
 		viewMenu.add(new Separator());
 		
@@ -891,6 +936,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				layoutSubMenu.add(fToggleDetailPaneActions[0]);
 				layoutSubMenu.add(fToggleDetailPaneActions[1]);
 				layoutSubMenu.add(fToggleDetailPaneActions[2]);
+				layoutSubMenu.add(fToggleDetailPaneActions[3]);
 				IAction action = getAction("ToggleColmns"); //$NON-NLS-1$
 				((IUpdate)action).update();
 				if (action.isEnabled()) {
@@ -1105,7 +1151,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @return whether the detail pane is visible to the user
 	 */
 	protected boolean isDetailPaneVisible() {
-		return !fToggleDetailPaneActions[2].isChecked();
+		return !fToggleDetailPaneActions[3].isChecked();
 	}
 	
 	/* (non-Javadoc)
