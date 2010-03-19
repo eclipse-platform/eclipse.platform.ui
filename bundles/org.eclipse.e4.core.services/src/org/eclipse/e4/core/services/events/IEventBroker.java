@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public interface IEventBroker {
 	/**
 	 * The name of the default event attribute used to pass data.
 	 */
-	public String DATA = "org.eclipse.e4.data";
+	public String DATA = "org.eclipse.e4.data"; //$NON-NLS-1$
 
 	/**
 	 * Publish event synchronously (the method does not return until the event is processed).
@@ -101,8 +101,7 @@ public interface IEventBroker {
 			boolean headless);
 
 	/**
-	 * Unsubscribe handler previously registered using
-	 * {@link #subscribe(String, String, EventHandler)}.
+	 * Unsubscribe handler previously registered using {@link #subscribe(String, EventHandler)}.
 	 * 
 	 * @param eventHandler
 	 *            previously registered event handler
