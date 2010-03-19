@@ -171,6 +171,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	protected MApplication theApp;
 
+	@Inject
+	@Optional
+	protected IEventBroker eventBroker;
+
+	@Inject
+	protected Logger logger;
+
 	public PartRenderingEngine() {
 		super();
 	}
@@ -186,7 +193,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 *            the context for the part factories
 	 */
 	@PostConstruct
-	private void initialize(IEclipseContext context) {
+	void initialize(IEclipseContext context) {
 		this.appContext = context;
 
 		IExtensionRegistry registry = (IExtensionRegistry) context
@@ -194,7 +201,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		IConfigurationElement[] factories = registry
 				.getConfigurationElementsFor("org.eclipse.e4.workbench.rendererfactory"); //$NON-NLS-1$
 		for (int i = 0; i < factories.length; i++) {
-			String id = factories[i].getAttribute("id");
+			String id = factories[i].getAttribute("id"); //$NON-NLS-1$
 			if (!curFactoryId.equals(id))
 				continue;
 
@@ -216,18 +223,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 		context.set(IPresentationEngine.class.getName(), this);
 
 		// Hook up the widget life-cycle subscriber
-		IEventBroker eventBroker = (IEventBroker) context
-				.get(IEventBroker.class.getName());
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childrenHandler);
+		if (eventBroker != null) {
+			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+					UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+			eventBroker.subscribe(UIEvents.buildTopic(
+					UIEvents.ElementContainer.TOPIC,
+					UIEvents.ElementContainer.CHILDREN), childrenHandler);
+		}
 	}
-
-	@Inject
-	@Optional
-	protected IEventBroker eventBroker;
 
 	@PreDestroy
 	private void contextDisposed() {
@@ -470,45 +473,41 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public Object run(final MApplicationElement uiRoot,
-			final IEclipseContext appContext) {
+			final IEclipseContext runContext) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				String cssURI = (String) appContext
+				String cssURI = (String) runContext
 						.get(E4Workbench.CSS_URI_ARG);
 				if (cssURI != null) {
-					String cssResourcesURI = (String) appContext
+					String cssResourcesURI = (String) runContext
 							.get(E4Workbench.CSS_RESOURCE_URI_ARG);
 					CSSStylingSupport.initializeStyling(display, cssURI,
-							cssResourcesURI, appContext);
+							cssResourcesURI, runContext);
 				} else {
-					initializeNullStyling(appContext);
+					initializeNullStyling(runContext);
 				}
 
 				// Register an SWT resource handler
-				appContext.set(IResourceUtiltities.class.getName(),
+				runContext.set(IResourceUtiltities.class.getName(),
 						new ResourceUtility(Activator.getDefault()
 								.getBundleAdmin()));
 
 				// set up the keybinding manager
 				try {
 					KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
-							.make(KeyBindingDispatcher.class, appContext);
-					appContext.set(KeyBindingDispatcher.class.getName(),
+							.make(KeyBindingDispatcher.class, runContext);
+					runContext.set(KeyBindingDispatcher.class.getName(),
 							dispatcher);
 					org.eclipse.swt.widgets.Listener listener = dispatcher
 							.getKeyDownFilter();
 					display.addFilter(SWT.KeyDown, listener);
 					display.addFilter(SWT.Traverse, listener);
 				} catch (InvocationTargetException e) {
-					Logger logger = (Logger) appContext.get(Logger.class
-							.getName());
 					if (logger != null) {
 						logger.error(e);
 					}
 				} catch (InstantiationException e) {
-					Logger logger = (Logger) appContext.get(Logger.class
-							.getName());
 					if (logger != null) {
 						logger.error(e);
 					}
@@ -541,11 +540,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 					}
 				}
 
-				TestableObject testableObject = (TestableObject) appContext
+				TestableObject testableObject = (TestableObject) runContext
 						.get(TestableObject.class.getName());
 				if (testableObject instanceof E4Testable) {
 					((E4Testable) testableObject).init(display,
-							(IWorkbench) appContext.get(IWorkbench.class
+							(IWorkbench) runContext.get(IWorkbench.class
 									.getName()));
 				}
 				// Spin the event loop until someone disposes the display
@@ -553,7 +552,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						&& !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
-							appContext.processWaiting();
+							runContext.processWaiting();
 							if (spinOnce)
 								return;
 							display.sleep();
@@ -561,9 +560,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					} catch (ThreadDeath th) {
 						throw th;
 					} catch (Exception ex) {
-						handle(ex, appContext);
+						handle(ex, runContext);
 					} catch (Error err) {
-						handle(err, appContext);
+						handle(err, runContext);
 					}
 				}
 			}
@@ -575,8 +574,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 					statusReporter.show(StatusReporter.ERROR, "Internal Error",
 							ex);
 				} else {
-					Logger logger = (Logger) appContext.get(Logger.class
-							.getName());
 					if (logger != null) {
 						logger.error(ex);
 					}
