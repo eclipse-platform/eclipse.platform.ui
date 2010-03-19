@@ -172,6 +172,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	protected MApplication theApp;
 
 	public PartRenderingEngine() {
+		super();
 	}
 
 	public PartRenderingEngine(String curFactoryId) {
@@ -181,14 +182,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	/**
 	 * Initialize a part renderer from the extension point.
 	 * 
-	 * @param registry
-	 *            the registry for the EP
-	 * @param r
-	 *            the created renderer
 	 * @param context
 	 *            the context for the part factories
-	 * @param f
-	 *            the IContributionFactory already provided to <code>r</code>
 	 */
 	@PostConstruct
 	private void initialize(IEclipseContext context) {
