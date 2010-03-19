@@ -32,6 +32,8 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 			ViewDescriptor descriptor) {
 		super(windowContext, page, part);
 		this.descriptor = descriptor;
+
+		setImageDescriptor(descriptor.getImageDescriptor());
 	}
 
 	public String getPartName() {

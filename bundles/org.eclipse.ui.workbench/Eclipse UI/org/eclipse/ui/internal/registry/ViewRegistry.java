@@ -43,7 +43,8 @@ public class ViewRegistry implements IViewRegistry {
 	void postConstruct() {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (!descriptor.getURI().equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-				descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, null));
+				descriptors.put(descriptor.getId(), new ViewDescriptor(application, descriptor,
+						null));
 			}
 		}
 
@@ -83,7 +84,8 @@ public class ViewRegistry implements IViewRegistry {
 				}
 
 				application.getDescriptors().add(descriptor);
-				descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, element));
+				descriptors.put(descriptor.getId(), new ViewDescriptor(application, descriptor,
+						element));
 			}
 		}
 	}

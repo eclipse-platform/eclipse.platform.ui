@@ -15,7 +15,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
+import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
@@ -24,11 +28,15 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
+	private MApplication application;
 	private MPartDescriptor descriptor;
 	private IConfigurationElement element;
 	private String[] categoryPath;
+	private ImageDescriptor imageDescriptor;
 
-	public ViewDescriptor(MPartDescriptor descriptor, IConfigurationElement element) {
+	public ViewDescriptor(MApplication application, MPartDescriptor descriptor,
+			IConfigurationElement element) {
+		this.application = application;
 		this.descriptor = descriptor;
 		this.element = element;
 
@@ -84,8 +92,13 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
-		return null;
+		if (imageDescriptor == null) {
+			ISWTResourceUtiltities utility = (ISWTResourceUtiltities) application.getContext().get(
+					IResourceUtiltities.class.getName());
+			imageDescriptor = utility
+					.imageDescriptorFromURI(URI.createURI(descriptor.getIconURI()));
+		}
+		return imageDescriptor;
 	}
 
 	/*
