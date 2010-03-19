@@ -88,22 +88,6 @@ public interface IProgressConstants {
     public static final QualifiedName ACTION_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "action"); //$NON-NLS-1$
 
-	/**
-	 * This property is used to associate a <code>ParameterizedCommand</code>
-	 * with a Job. If the Job is shown in the UI, the command might be
-	 * represented as a button or hyper link to allow the user to trigger a job
-	 * specific action, like showing the Job's results.
-	 * <p>
-	 * Note: Only one of <code>ACTION_PROPERTY</code> or
-	 * <code>COMMAND_PROPERTY</code> should be used
-	 * </p>
-	 * 
-	 * @see org.eclipse.core.commands.ParameterizedCommand
-	 * @since 3.6
-	 **/
-	public static final QualifiedName COMMAND_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "command"); //$NON-NLS-1$
-
     /**
      * This property is used to associate an <code>ImageDescriptor</code> with a Job.
      * If the Job is shown in the UI, this descriptor is used to create an icon that
