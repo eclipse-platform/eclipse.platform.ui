@@ -137,16 +137,11 @@
             commandId="org.eclipse.ui.file.properties"
             sequence="M3+CR"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            commandId="org.eclipse.ui.file.properties"
-            platform="cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+I"/>
-      <key
-            commandId="org.eclipse.ui.file.properties"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+I"/>
+      <sequenceModifier
+            find="M3+CR"
+            platforms="cocoa, carbon"
+            replace="M1+I">
+      </sequenceModifier>
       <key
             commandId="org.eclipse.ui.file.refresh"
             sequence="F5"
@@ -166,12 +161,11 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+Y"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            commandId="org.eclipse.ui.edit.redo"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            sequence="M1+M2+Z"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" 
-            platform="carbon"/>
+      <sequenceModifier
+            find="M1+Y"
+            platforms="cocoa, carbon"
+            replace="M1+M2+Z">
+      </sequenceModifier>
       <key
             commandId="org.eclipse.ui.edit.cut"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
@@ -208,22 +202,27 @@
             commandId="org.eclipse.ui.navigate.previous"
             sequence="M1+,"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <sequenceModifier
+            find="M1+,"
+            platforms="cocoa, carbon"
+            replace="M1+M2+.">
+      </sequenceModifier>
       <key
             commandId="org.eclipse.ui.navigate.backwardHistory"
             sequence="M3+ARROW_LEFT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            platform="carbon"
-            sequence="M3+ARROW_LEFT"
-            commandId=""
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <sequenceModifier
+            find="M3+ARROW_LEFT"
+            platforms="cocoa, carbon"
+            replace="COMMAND+[">
+      </sequenceModifier>
       <key
             platform="carbon"
             commandId="org.eclipse.ui.navigate.backwardHistory"
-            sequence="COMMAND+["
+            sequence="COMMAND+ALT+ARROW_LEFT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            platform="carbon"
+            platform="cocoa"
             commandId="org.eclipse.ui.navigate.backwardHistory"
             sequence="COMMAND+ALT+ARROW_LEFT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -231,18 +230,18 @@
             commandId="org.eclipse.ui.navigate.forwardHistory"
             sequence="M3+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            platform="carbon"
-            sequence="M3+ARROW_RIGHT"
-            commandId=""
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <sequenceModifier
+            find="M3+ARROW_RIGHT"
+            platforms="cocoa, carbon"
+            replace="COMMAND+]">
+      </sequenceModifier>
       <key
             platform="carbon"
             commandId="org.eclipse.ui.navigate.forwardHistory"
-            sequence="COMMAND+]"
+            sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            platform="carbon"
+            platform="cocoa"
             commandId="org.eclipse.ui.navigate.forwardHistory"
             sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -262,11 +261,11 @@
             platform="carbon"
             sequence="M3+-"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            commandId="org.eclipse.ui.window.showSystemMenu"
-            platform="carbon"
-            sequence="M1+M2+F10"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <sequenceModifier
+            find="M3+-"
+            platforms="cocoa, carbon"
+            replace="M1+M2+F10">
+      </sequenceModifier>
       <key
             commandId="org.eclipse.ui.window.showViewMenu"
             sequence="M1+F10"
@@ -281,11 +280,11 @@
             platform="carbon"
             sequence="F12"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            commandId="org.eclipse.ui.window.activateEditor"
-            platform="carbon"
-            sequence="M1+F12"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <sequenceModifier
+            find="F12"
+            platforms="cocoa, carbon"
+            replace="M1+F12">
+      </sequenceModifier>
       <key
             commandId="org.eclipse.ui.window.maximizePart"
             sequence="M1+M"
@@ -319,7 +318,15 @@
             sequence="M1+F4"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="cocoa"
+            sequence="M1+F4"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
+            sequence="M1+M2+F4"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="cocoa"
             sequence="M1+M2+F4"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
@@ -327,9 +334,8 @@
             sequence="M1+,"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            commandId="org.eclipse.ui.navigate.previous"
-            platform="carbon"
-            sequence="M1+M2+."
+            platform="cocoa"
+            sequence="M1+,"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.edit.cut"
@@ -338,6 +344,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+DEL"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="cocoa"
             commandId=""
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+DEL"
@@ -354,6 +366,12 @@
             sequence="M1+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="cocoa"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.edit.paste"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+INSERT"
@@ -364,7 +382,12 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-
+      <key
+            platform="cocoa"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
