@@ -247,6 +247,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private Composite fParent;
 	
 	/**
+	 * Whether the detail pane has been built yet.
+	 */
+	private boolean fPaneBuilt = false;
+	
+	/**
 	 * The detail pane that displays detailed information about the current selection
 	 * @since 3.3
 	 */
@@ -758,20 +763,23 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (!IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO.equals(orientation) && orientation.equals(fCurrentDetailPaneOrientation)) {
 			return;
 		}
+		fCurrentDetailPaneOrientation  = orientation;
+		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
 		if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN)) {
 			hideDetailPane();
 		} else {
 			int vertOrHoriz = -1;
 			if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO)) {
 				vertOrHoriz = computeOrientation();
+				if (fPaneBuilt && fSashForm.getOrientation() == vertOrHoriz) {
+					return;
+				}
 			} else {
 				vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
 				
 			}
 			buildDetailPane(vertOrHoriz);
 		}
-		fCurrentDetailPaneOrientation  = orientation;
-		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
 	}
 	
 	private void buildDetailPane(int orientation) {
@@ -800,6 +808,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		} finally {
 			fDetailsAnchor.layout(true);
 			fDetailsAnchor.setRedraw(true);
+			fPaneBuilt = true;
 		}
 	}
 	
