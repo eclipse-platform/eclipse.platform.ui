@@ -8,14 +8,15 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222, 264307, 265561
+ *     Ovidio Mallo - bug 306633
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -54,9 +55,9 @@ public class PojoListProperty extends SimpleListProperty {
 
 	private List asList(Object propertyValue) {
 		if (propertyValue == null)
-			return new ArrayList();
+			return Collections.EMPTY_LIST;
 		if (propertyDescriptor.getPropertyType().isArray())
-			return new ArrayList(Arrays.asList((Object[]) propertyValue));
+			return Arrays.asList((Object[]) propertyValue);
 		return (List) propertyValue;
 	}
 
