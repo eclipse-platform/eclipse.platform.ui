@@ -57,9 +57,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -87,6 +87,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     //A boolean to indicate if the user has typed anything
     private boolean entryChanged = false;
+    
+    private FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
 
     // dialog store id constants
     private final static String STORE_SOURCE_NAMES_ID = "WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
@@ -354,6 +356,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         setSourceName(sourceNameField.getText());
         //Update enablements when this is selected
         updateWidgetEnablements();
+        fileSystemStructureProvider.clearVisitedDirs();
+        
     }
 
     /**
@@ -482,7 +486,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
                     return element.getFiles(
-                            FileSystemStructureProvider.INSTANCE).getChildren(
+                    		fileSystemStructureProvider).getChildren(
                             element);
                 }
                 return new Object[0];
@@ -503,7 +507,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		}
 
         return selectFiles(sourceDirectory,
-                FileSystemStructureProvider.INSTANCE);
+        		fileSystemStructureProvider);
     }
 
     /**
@@ -516,7 +520,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
                     return element.getFolders(
-                            FileSystemStructureProvider.INSTANCE).getChildren(
+                    		fileSystemStructureProvider).getChildren(
                             element);
                 }
                 return new Object[0];
@@ -648,7 +652,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      */
     protected boolean importResources(List fileSystemObjects) {
         ImportOperation operation = new ImportOperation(getContainerFullPath(),
-                getSourceDirectory(), FileSystemStructureProvider.INSTANCE,
+                getSourceDirectory(), fileSystemStructureProvider,
                 this, fileSystemObjects);
 
         operation.setContext(getShell());
