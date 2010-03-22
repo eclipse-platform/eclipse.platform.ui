@@ -75,6 +75,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				}
 			}
 		}
+
+		setImageDescriptor(descriptor.getImageDescriptor());
 	}
 
 	public EditorDescriptor getDescriptor() {
