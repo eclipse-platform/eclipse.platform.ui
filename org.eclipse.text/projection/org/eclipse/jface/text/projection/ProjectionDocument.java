@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer <anton.leherbauer@windriver.com> - [projection] "Backspace" key deleting something else - http://bugs.eclipse.org/301023
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
 
@@ -404,8 +405,6 @@ public class ProjectionDocument extends AbstractDocument {
 
 			if (fragment.getOffset() == offsetInMaster) {
 				fragment.setOffset(offsetInMaster + lengthInMaster);
-				fragment.setLength(fragment.getLength() - lengthInMaster);
-			} else if (fragment.getOffset() + fragment.getLength() == offsetInMaster + lengthInMaster) {
 				fragment.setLength(fragment.getLength() - lengthInMaster);
 			} else {
 				// split fragment into three fragments, let position updater remove it
@@ -807,7 +806,7 @@ public class ProjectionDocument extends AbstractDocument {
 		Position[] segments= getSegments();
 		for (int i= 0; i < segments.length; i++) {
 			Segment segment= (Segment) segments[i];
-			if (segment.isDeleted() || segment.getLength() == 0) {
+			if (segment.isDeleted() || (segment.getLength() == 0 && i < segments.length - 1)) {
 				try {
 					removePosition(fSegmentsCategory, segment);
 					fMasterDocument.removePosition(fFragmentsCategory, segment.fragment);

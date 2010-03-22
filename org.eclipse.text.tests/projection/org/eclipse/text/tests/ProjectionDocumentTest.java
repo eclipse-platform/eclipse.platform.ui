@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer <anton.leherbauer@windriver.com> - [projection] "Backspace" key deleting something else - http://bugs.eclipse.org/301023
  *******************************************************************************/
 package org.eclipse.text.tests;
 
@@ -203,7 +204,7 @@ public class ProjectionDocumentTest extends TestCase {
 
 		Position previous= null;
 		for (int i= 0; i < segmentation.length; i++) {
-			assertFalse(segmentation.length > 1 && segmentation[i].getLength() == 0);
+			assertFalse(segmentation.length > 1 && (segmentation[i].getLength() == 0 && i < segmentation.length - 1));
 			if (previous != null)
 				assertTrue(previous.getOffset() + previous.getLength() == segmentation[i].getOffset());
 			previous= segmentation[i];
@@ -224,9 +225,9 @@ public class ProjectionDocumentTest extends TestCase {
 			Fragment fragment= (Fragment) fragmention[i];
 			assertTrue(fragment == segment.fragment);
 			assertTrue(segment == fragment.segment);
-			assertFalse(segmentation.length > 1 && fragment.getLength() == 0);
+			assertFalse(segmentation.length > 1 && (fragment.getLength() == 0 && i < segmentation.length - 1));
 			assertTrue(fragment.length == segment.length);
-			if (previous != null)
+			if (previous != null && i < segmentation.length - 1)
 				assertFalse(previous.getOffset() + previous.getLength() == fragment.getOffset());
 			previous= fragment;
 		}
@@ -992,6 +993,29 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	public void test17_7() {
+		// test corner case manipulation of the segments of the slave document
+		// insert at the end of last segment of the slave document - bug 301023
+
+		createIdenticalProjection();
+		String originalSlaveContent = "";
+		try {
+			fSlaveDocument.removeMasterDocumentRange(80, 100);
+			originalSlaveContent = fSlaveDocument.get();
+			fSlaveDocument.replace(80, 0, "~");
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		StringBuffer buffer= new StringBuffer(originalSlaveContent);
+		buffer.insert(80, "~");
+		assertSlaveContents(buffer.toString());
+
+		buffer= new StringBuffer(getOriginalMasterContents());
+		buffer.insert(180, "~");
+		assertMasterContents(buffer.toString());
+	}
+
 	public void test18_1() {
 		// test manipulations overlapping multiple segments of the slave document
 		// delete range overlapping two neighboring segments
@@ -1505,6 +1529,29 @@ public class ProjectionDocumentTest extends TestCase {
 
 		StringBuffer buffer= new StringBuffer(getOriginalMasterContents());
 		buffer.delete(50, 90);
+		assertSlaveContents(buffer.toString());
+	}
+
+	public void test21_a() {
+		// test removing a range from the slave document using identical projection
+		// the removed range includes the end of the master document - see bug 301023
+
+		createIdenticalProjection();
+
+		try {
+			fSlaveDocument.removeMasterDocumentRange(80, 100);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		Position[] expected= {
+			new Position(0, 80),
+			new Position(180, 0)
+		};
+		assertFragmentation(expected);
+
+		StringBuffer buffer= new StringBuffer(getOriginalMasterContents());
+		buffer.delete(80, 180);
 		assertSlaveContents(buffer.toString());
 	}
 
