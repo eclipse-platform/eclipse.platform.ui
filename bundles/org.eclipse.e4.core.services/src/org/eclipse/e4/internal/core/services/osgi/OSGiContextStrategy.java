@@ -117,8 +117,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	}
 
 	public Object lookup(String name, IEclipseContext originatingContext) {
-		// services must be fully qualified type names
-		if (name == null || name.indexOf('.') == -1)
+		if (name == null)
 			return null;
 		ServiceData data = getServiceData(name);
 		if (data == null) {
@@ -126,6 +125,9 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 			ServiceReference ref = getContextFunction(name);
 			if (ref != null)
 				return bundleContext.getService(ref);
+			// services must be fully qualified type names
+			if (name.indexOf('.') == -1)
+				return null;
 			// create a tracker to retrieve the service with the given name
 			data = new ServiceData(name);
 			try {
@@ -178,10 +180,10 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		// must set to null rather than removing so injection continues to work
 		ServiceData data = getServiceData(name);
 		// may have been cleaned up concurrently
-		if (data == null)
-			return;
-		for (Iterator<IEclipseContext> it = data.users.keySet().iterator(); it.hasNext();)
-			it.next().set(name, null);
+		if (data != null) {
+			for (Iterator<IEclipseContext> it = data.users.keySet().iterator(); it.hasNext();)
+				it.next().set(name, null);
+		}
 		bundleContext.ungetService(reference);
 	}
 
