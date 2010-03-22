@@ -72,6 +72,7 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IShowEditorInput;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -138,7 +139,48 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private void updateActivations(MPart part) {
 		activationList.remove(part);
-		activationList.add(part);
+		activationList.add(0, part);
+		updateActivePartSources(part);
+		updateActiveEditorSources(part);
+	}
+
+	private void updateActivePartSources(MPart part) {
+		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
+		if (workbenchPart == null) {
+			window.getContext().set(ISources.ACTIVE_PART_NAME, null);
+			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
+		} else {
+			window.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
+			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getId());
+		}
+
+	}
+
+	private IWorkbenchPart getWorkbenchPart(MPart part) {
+		if (part != null) {
+			Object clientObject = part.getObject();
+			if (clientObject instanceof CompatibilityPart) {
+				return ((CompatibilityPart) clientObject).getPart();
+			}
+		}
+		return null;
+	}
+
+	private void updateActiveEditorSources(MPart part) {
+		IEditorPart editor = getEditor(part);
+		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
+		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
+				editor == null ? null : editor.getEditorInput());
+	}
+
+	private IEditorPart getEditor(MPart part) {
+		if (part != null) {
+			Object clientObject = part.getObject();
+			if (clientObject instanceof CompatibilityEditor) {
+				return ((CompatibilityEditor) clientObject).getEditor();
+			}
+		}
+		return getActiveEditor();
 	}
 
 	private void updateBroughtToTop(MPart part) {
@@ -151,7 +193,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 			activationList.remove(part);
 			if (newIndex >= 0 && newIndex < activationList.size() - 1) {
-				activationList.add(newIndex + 1, part);
+				activationList.add(newIndex, part);
 			} else {
 				activationList.add(part);
 			}
@@ -159,7 +201,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	private int lastIndexOfContainer(MElementContainer<?> parent) {
-		for (int i = activationList.size() - 1; i >= 0; i--) {
+		for (int i = 0; i < activationList.size(); i++) {
 			MPart mPart = activationList.get(i);
 			if (mPart.getParent() == parent) {
 				return i;
@@ -2494,6 +2536,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		for (Object listener : partListener2List.getListeners()) {
 			((IPartListener2) listener).partClosed(partReference);
 		}
+
+		updateActivePartSources(null);
+		updateActiveEditorSources(null);
 	}
 
 	private void firePartBroughtToTop(MPart part) {
