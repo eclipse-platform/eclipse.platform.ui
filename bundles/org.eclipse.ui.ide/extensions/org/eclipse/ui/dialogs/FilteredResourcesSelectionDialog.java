@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) Bug 86973 Allow path pattern matching
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -38,18 +40,21 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -59,6 +64,7 @@ import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -97,7 +103,13 @@ public class FilteredResourcesSelectionDialog extends
 
 	private String title;
 
+	private ResourceFilter filter;
+
+	/** The base outer-container which will be used to search for resources */ 
 	private IContainer container;
+
+	/** The Container to use for relative search */
+	private IContainer searchContainer;
 
 	private int typeMask;
 
@@ -111,7 +123,7 @@ public class FilteredResourcesSelectionDialog extends
 	 * @param multi
 	 *            the multi selection flag
 	 * @param container
-	 *            the container
+	 *            the container to select resources from e.g. Workspace Root
 	 * @param typesMask
 	 *            the types mask
 	 */
@@ -124,6 +136,39 @@ public class FilteredResourcesSelectionDialog extends
 		setTitle(IDEWorkbenchMessages.OpenResourceDialog_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
+
+		/*
+		 * Allow location of paths relative to a searchContainer, which is
+		 * initialized from the active editor or the selected element.
+		 */
+		IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (ww != null) {
+			IWorkbenchPage activePage = ww.getActivePage();
+			if (activePage != null) {
+				IResource resource = null;
+				IEditorPart activeEditor = activePage.getActiveEditor();
+				if (activeEditor != null && activeEditor == activePage.getActivePart()) {
+					IEditorInput editorInput = activeEditor.getEditorInput();
+					resource = ResourceUtil.getResource(editorInput);
+				} else {
+					ISelection selection = ww.getSelectionService().getSelection();
+					if (selection instanceof IStructuredSelection) {
+						IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+						if (structuredSelection.size() == 1) {
+							resource = ResourceUtil.getResource(structuredSelection.getFirstElement());
+						}
+					}
+				}
+				if (resource != null) {
+					if (!(resource instanceof IContainer)) {
+						resource = resource.getParent();
+					}
+					searchContainer = (IContainer) resource;
+				}
+			}
+		}
+		if (searchContainer == null)
+			searchContainer = container;
 
 		this.container = container;
 		this.typeMask = typesMask;
@@ -377,7 +422,8 @@ public class FilteredResourcesSelectionDialog extends
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
 	protected ItemsFilter createFilter() {
-		return new ResourceFilter(container, isDerived, typeMask);
+		filter = new ResourceFilter(container, searchContainer, isDerived, typeMask);
+		return filter;
 	}
 
 	/* (non-Javadoc)
@@ -407,21 +453,69 @@ public class FilteredResourcesSelectionDialog extends
 				IResource resource2 = (IResource) o2;
 				String s1 = resource1.getName();
 				String s2 = resource2.getName();
+				// Compare their names
 				int comparability = collator.compare(s1, s2);
-				if (comparability == 0) {
-					IPath p1 = resource1.getFullPath();
-					IPath p2 = resource2.getFullPath();
-					int c1 = p1.segmentCount();
-					int c2 = p2.segmentCount();
-					for (int i= 0; i < c1 && i < c2; i++) {
-						comparability = collator.compare(p1.segment(i), p2.segment(i));
-						if (comparability != 0)
-							return comparability;
+				if (comparability != 0)
+					return comparability;
+
+				// Search for resource relative paths
+				if (filter != null) {
+					// Sort resource relative first
+					boolean matchesRelativeFilter1 = filter.matchesResourceRelativeFilter(resource1);
+					boolean matchesRelativeFilter2 = filter.matchesResourceRelativeFilter(resource2);
+					if (matchesRelativeFilter1 && !matchesRelativeFilter2) {
+						return -1;
+					} else if (matchesRelativeFilter2 && !matchesRelativeFilter1) {
+						return 1;
 					}
-					comparability = c2 - c1;
+					
+					// Return paths 'closer' to the searchContainer first
+					IContainer c1 = resource1 instanceof IContainer ? (IContainer) resource1 : resource1.getParent();
+					IContainer c2 = resource2 instanceof IContainer ? (IContainer) resource2 : resource2.getParent();
+					comparability = pathDistance(c1) - pathDistance(c2);
+					if (comparability != 0)
+						return comparability;
 				}
 
+				// Finally compare full path segments
+				IPath p1 = resource1.getFullPath();
+				IPath p2 = resource2.getFullPath();
+				// Don't compare file names again, so subtract 1
+				int c1 = p1.segmentCount() - 1;
+				int c2 = p2.segmentCount() - 1;
+				for (int i= 0; i < c1 && i < c2; i++) {
+					comparability = collator.compare(p1.segment(i), p2.segment(i));
+					if (comparability != 0)
+						return comparability;
+				}
+				comparability = c1 - c2;
+
 				return comparability;
+			}
+
+			/**
+			 * Return the distance of the item from the root of the relative search container.
+			 * Distances can be compared (smaller numbers are better).
+			 * 
+			 * Distance is how many directories you would have to traverse, changing one directory
+			 * at a time, to get from item to the search container
+			 * 
+			 * @param item IContainer parent of the resource being examined
+			 * @return the distance of the passed in IResource from the search container
+			 * @since 3.6
+			 */
+			private int pathDistance(IContainer item) {
+				// Container search path: e.g. /a/b/c
+				IPath containerPath = searchContainer.getFullPath();
+				// /a/b/c/d/e     ==> distance 2
+				// /a/b           ==> distance 1
+				// /a/b/e/f       ==> distance 3
+				// /g/h           ==> distance 5
+				IPath itemPath = item.getFullPath();
+				int matching = containerPath.matchingFirstSegments(itemPath);
+				if (matching == 0)
+					return Integer.MAX_VALUE / 2;
+				return (itemPath.segmentCount() - matching) + (containerPath.segmentCount() - matching);
 			}
 		};
 	}
@@ -752,6 +846,11 @@ public class FilteredResourcesSelectionDialog extends
 
 		private IContainer filterContainer;
 
+		/**
+		 * Search pattern for resource relative lookups.
+		 */
+		private SearchPattern resourceRelativePattern = new SearchPattern();
+
 		private int filterTypeMask;
 
 		/**
@@ -772,12 +871,34 @@ public class FilteredResourcesSelectionDialog extends
 
 		/**
 		 * Creates new ResourceFilter instance
+		 * 
+		 * @param container
+		 * @param searchContainer 
+		 *            IContainer to use for performing relative search
+		 * @param showDerived
+		 *            flag which determine showing derived elements
+		 * @param typeMask
+		 * @since 3.6
+		 */
+		private ResourceFilter(IContainer container, IContainer searchContainer, boolean showDerived, int typeMask) {
+			this(container, showDerived, typeMask);
+
+			String stringPattern = getPattern();
+
+			IPath containerPath= searchContainer.getFullPath();
+			if (stringPattern.length() > 0) {
+				if (stringPattern.charAt(0) != IPath.SEPARATOR) {
+					stringPattern = containerPath.toString() + IPath.SEPARATOR + stringPattern;
+				}
+				resourceRelativePattern.setPattern(stringPattern);
+			}
+		}
+
+		/**
+		 * Creates new ResourceFilter instance
 		 */
 		public ResourceFilter() {
-			super();
-			this.filterContainer = container;
-			this.showDerived = isDerived;
-			this.filterTypeMask = typeMask;
+			this(container, searchContainer, isDerived, typeMask);
 		}
 
 		/**
@@ -810,7 +931,25 @@ public class FilteredResourcesSelectionDialog extends
 			if ((!this.showDerived && resource.isDerived())
 					|| ((this.filterTypeMask & resource.getType()) == 0))
 				return false;
-			return matches(resource.getName());
+
+			if (matches(resource.getName()) || 
+					// Allow matching of full path
+					matches(resource.getFullPath().toString()) ||
+					// Allow matching of path relative to current selection
+					matchesResourceRelativeFilter(resource))
+				return true;
+			
+			return false;			
+		}
+
+		/**
+		 * Return true if the passed in item matches the resource relative filter
+		 * @param item
+		 * @return boolean indicating match
+		 * @since 3.6
+		 */
+		private boolean matchesResourceRelativeFilter(IResource item) {
+			return resourceRelativePattern.matches(item.getFullPath().toString());
 		}
 
 		/*
@@ -821,9 +960,15 @@ public class FilteredResourcesSelectionDialog extends
 		public boolean isSubFilter(ItemsFilter filter) {
 			if (!super.isSubFilter(filter))
 				return false;
-			if (filter instanceof ResourceFilter)
-				if (this.showDerived == ((ResourceFilter) filter).showDerived)
-					return true;
+			if (filter instanceof ResourceFilter) {
+				ResourceFilter resourceFilter = (ResourceFilter) filter;
+				if (this.showDerived == resourceFilter.showDerived) {
+					// super.isSubFilter checks whether this pattern is more general than 'filter' pattern.
+					// Also check the resource relative filter (for relative paths ../../ etc.).
+					IPath otherPath = new Path(resourceFilter.resourceRelativePattern.getPattern());
+					return otherPath.segmentCount() >= new Path(resourceRelativePattern.getPattern()).segmentCount();
+				}
+			}
 			return false;
 		}
 
