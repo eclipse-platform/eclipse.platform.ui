@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -37,26 +37,21 @@ public class CycleViewHandler extends CycleBaseHandler {
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#addItems(org.eclipse.swt.widgets.Table, org.eclipse.ui.internal.WorkbenchPage)
 	 */
 	protected void addItems(Table table, WorkbenchPage page) {
-		// TODO Auto-generated method stub
 		IWorkbenchPartReference refs[] = page.getViewReferences();
-		boolean includeEditor = true;
 
 		for (int i = refs.length - 1; i >= 0; i--) {
-			if (refs[i] instanceof IEditorReference) {
-				if (includeEditor) {
-					IEditorReference activeEditor = (IEditorReference) refs[i];
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(WorkbenchMessages.CyclePartAction_editor);
-					item.setImage(activeEditor.getTitleImage());
-					item.setData(activeEditor);
-					includeEditor = false;
-				}
-			} else {
-				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(refs[i].getTitle());
-				item.setImage(refs[i].getTitleImage());
-				item.setData(refs[i]);
-			}
+			TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(refs[i].getTitle());
+			item.setImage(refs[i].getTitleImage());
+			item.setData(refs[i]);
+		}
+
+		IEditorPart activeEditor = page.getActiveEditor();
+		if (activeEditor != null) {
+			TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(WorkbenchMessages.CyclePartAction_editor);
+			item.setImage(activeEditor.getTitleImage());
+			item.setData(activeEditor);
 		}
 	}
 
