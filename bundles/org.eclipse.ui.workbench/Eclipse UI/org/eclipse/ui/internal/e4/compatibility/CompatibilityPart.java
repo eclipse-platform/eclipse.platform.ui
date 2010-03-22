@@ -147,6 +147,9 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
+
+		// notify the workbench we've been opened
+		((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
 	}
 
 	@PreDestroy

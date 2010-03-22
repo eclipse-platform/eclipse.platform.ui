@@ -728,6 +728,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				partsToClose.add(refPart);
             }
         }
+
+		boolean confirm = true;
 		SaveablesList modelManager = null;
 		Object postCloseInfo = null;
 		if (partsToClose.size() > 0) {
@@ -738,6 +740,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (postCloseInfo == null) {
 				return false;
 			}
+			confirm = false;
         }
 
 		// Fire pre-removal changes
@@ -758,7 +761,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// Close all editors.
 			for (IEditorReference editorRef : editorRefs) {
 				MPart model = ((EditorReference) editorRef).getModel();
-				if (!(hidePart(model, save))) {
+				if (!(hidePart(model, save, confirm))) {
 					return false;
 				}
 			}
@@ -774,7 +777,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
     
 
-	private boolean hidePart(MPart part, boolean save) {
+	private boolean hidePart(MPart part, boolean save, boolean confirm) {
 		if (!partService.getParts().contains(part)) {
 			return false;
 		}
@@ -789,7 +792,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (save) {
 			if (workbenchPart instanceof ISaveablePart) {
 				ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-				if (!saveSaveable(saveablePart, true, true)) {
+				if (!saveSaveable(saveablePart, confirm, true)) {
 					return false;
 				}
 			}
@@ -829,7 +832,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void hidePart(String id) {
 		MPart part = partService.findPart(id);
 		if (part != null) {
-			hidePart(part, true);
+			hidePart(part, true, true);
 		}
 	}
     
@@ -910,7 +913,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		openedPerspectives.clear();
 
 		for (MPart part : partService.getParts()) {
-			hidePart(part, false);
+			hidePart(part, false, true);
 		}
 
 		if (closePage) {
@@ -2522,6 +2525,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partDeactivated(partReference);
 			}
+		}
+	}
+
+	public void firePartOpened(CompatibilityPart compatibilityPart) {
+		IWorkbenchPart part = compatibilityPart.getPart();
+		IWorkbenchPartReference partReference = compatibilityPart.getReference();
+
+		SaveablesList saveablesList = (SaveablesList) getWorkbenchWindow().getService(
+				ISaveablesLifecycleListener.class);
+		saveablesList.postOpen(part);
+
+		for (Object listener : partListenerList.getListeners()) {
+			((IPartListener) listener).partOpened(part);
+		}
+
+		for (Object listener : partListener2List.getListeners()) {
+			((IPartListener2) listener).partOpened(partReference);
 		}
 	}
 
