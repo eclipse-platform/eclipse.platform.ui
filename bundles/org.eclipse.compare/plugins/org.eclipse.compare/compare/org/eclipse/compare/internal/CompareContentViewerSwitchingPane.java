@@ -51,6 +51,8 @@ public class CompareContentViewerSwitchingPane extends
 	private ViewerDescriptor fSelectedViewerDescriptor;
 
 	private ToolBar toolBar;
+	
+	private boolean menuShowing;
 
 	public CompareContentViewerSwitchingPane(Splitter parent, int style,
 			CompareEditorInput cei) {
@@ -139,6 +141,10 @@ public class CompareContentViewerSwitchingPane extends
 	}
 
 	private void showMenu() {
+		if (menuShowing)
+			return;
+		menuShowing= true;
+		
 		ViewerDescriptor[] vd = CompareUIPlugin.getDefault()
 				.findContentViewerDescriptor(getViewer(), getInput(),
 						getCompareConfiguration());
@@ -182,6 +188,7 @@ public class CompareContentViewerSwitchingPane extends
 		// 3. dispose on close
 		menu.addMenuListener(new MenuAdapter() {
 			public void menuHidden(MenuEvent e) {
+				menuShowing= false;
 				e.display.asyncExec(new Runnable() {
 					public void run() {
 						menu.dispose();
