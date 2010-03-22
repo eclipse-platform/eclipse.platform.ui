@@ -1643,7 +1643,7 @@ public class FilteredResourceTest extends ResourceTest {
 	}
 
 	/* Regression test for Bug 304276 */
-	public void testInvalidCharactersInRegExFilter() {
+	public void _testInvalidCharactersInRegExFilter() {
 		RegexFileInfoMatcher matcher = new RegexFileInfoMatcher();
 		try {
 			matcher.initialize(existingProject, "*:*");
