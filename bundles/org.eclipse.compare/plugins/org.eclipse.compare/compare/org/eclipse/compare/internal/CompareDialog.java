@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,21 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -169,13 +175,8 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		Control c= fCompareEditorInput.createContents(parent);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		IPreferenceStore store= fCompareEditorInput.getCompareConfiguration().getPreferenceStore();
-		if (store != null) {
-			if (store.getBoolean(ComparePreferencePage.SHOW_MORE_INFO)) {
-				statusLabel = new Label(parent, SWT.NONE);
-				statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			}
-		}
+		statusLabel = new Label(parent, SWT.NONE);
+		statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Shell shell= c.getShell();
 		shell.setText(fCompareEditorInput.getTitle());

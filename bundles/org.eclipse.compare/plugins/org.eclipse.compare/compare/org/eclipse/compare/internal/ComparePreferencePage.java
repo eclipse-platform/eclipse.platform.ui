@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts"; //$NON-NLS-1$
 	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
 	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
-	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
@@ -115,7 +114,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SYNCHRONIZE_SCROLLING),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_PSEUDO_CONFLICTS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ADDED_LINES_REGEX),
@@ -137,7 +135,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(SYNCHRONIZE_SCROLLING, true);
 		store.setDefault(SHOW_PSEUDO_CONFLICTS, false);
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
-		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
 		store.setDefault(PREF_SAVE_ALL_EDITORS, false);
 		store.setDefault(ADDED_LINES_REGEX, ""); //$NON-NLS-1$
@@ -266,7 +263,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 				
 		addCheckBox(composite, "ComparePreferencePage.structureCompare.label", OPEN_STRUCTURE_COMPARE, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.structureOutline.label", USE_OUTLINE_VIEW, 0);	//$NON-NLS-1$
-		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
 		
 		// a spacer

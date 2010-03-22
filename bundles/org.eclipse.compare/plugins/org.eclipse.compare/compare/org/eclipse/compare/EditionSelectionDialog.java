@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,53 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.internal.CompareContainer;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ResizableDialog;
+import org.eclipse.compare.internal.StructureCreatorDescriptor;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
@@ -831,13 +862,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
 		
-		IPreferenceStore store= getCompareConfiguration().getPreferenceStore();
-		if (store != null) {
-			if (store.getBoolean(ComparePreferencePage.SHOW_MORE_INFO)) {
-				statusLabel = new Label(parent, SWT.NONE);
-				statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			}
-		}
+		statusLabel = new Label(parent, SWT.NONE);
+		statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		applyDialogFont(parent);				
 		return parent;

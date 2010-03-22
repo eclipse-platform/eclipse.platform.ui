@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -380,7 +380,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	private CompareHandlerService fHandlerService;
 	
 	private boolean fSynchronizedScrolling= true;
-	private boolean fShowMoreInfo= false;
 	
 	private MergeSourceViewer fFocusPart;
 	
@@ -1479,7 +1478,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			
 			fLeftIsLocal= Utilities.getBoolean(getCompareConfiguration(), "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
-			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
@@ -3420,9 +3418,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 
 	private void updateStatus(Diff diff) {
 		
-		if (! fShowMoreInfo)
-			return;
-					
 		String diffDescription;
 		
 		if (diff == null) {
@@ -3455,10 +3450,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		getCompareConfiguration().getContainer().setStatusMessage(s);
 	}
 
-	private void clearStatus() {
-		getCompareConfiguration().getContainer().setStatusMessage(null);
-	}
-	
 	private String getDiffType(Diff diff) {
 		String s= ""; 	//$NON-NLS-1$
 		switch(diff.getKind()) {
@@ -3727,16 +3718,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 			setSyncScrolling(b);
 		
-		} else if (key.equals(ComparePreferencePage.SHOW_MORE_INFO)) {
-			
-			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
-			if (b != fShowMoreInfo) {
-				fShowMoreInfo= b;
-				if (fShowMoreInfo)
-					updateStatus(fCurrentDiff);
-				else
-					clearStatus();
-			}
 		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
 			if (!fIsUsingSystemBackground) {
 				setBackgroundColor(createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
