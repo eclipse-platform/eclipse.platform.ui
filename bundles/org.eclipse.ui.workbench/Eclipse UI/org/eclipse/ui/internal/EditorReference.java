@@ -76,7 +76,21 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			}
 		}
 
-		setImageDescriptor(descriptor.getImageDescriptor());
+		if (descriptor == null) {
+			try {
+				XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
+						.getPersistedState().get(MEMENTO_KEY)));
+				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
+						.getEditorRegistry();
+				this.descriptor = (EditorDescriptor) registry.findEditor(createReadRoot
+						.getString(IWorkbenchConstants.TAG_ID));
+				setImageDescriptor(this.descriptor.getImageDescriptor());
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin.log(e);
+			}
+		} else {
+			setImageDescriptor(this.descriptor.getImageDescriptor());
+		}
 	}
 
 	public EditorDescriptor getDescriptor() {
@@ -180,14 +194,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
-			if (descriptor == null) {
-				XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
-						.getPersistedState().get(MEMENTO_KEY)));
-				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
-						.getEditorRegistry();
-				descriptor = (EditorDescriptor) registry.findEditor(createReadRoot
-						.getString(IWorkbenchConstants.TAG_ID));
-			}
 			return descriptor.createEditor();
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
