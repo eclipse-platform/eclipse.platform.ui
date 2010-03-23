@@ -121,18 +121,11 @@ abstract class Computation {
 				// if the existing computation is equal but not identical, we need to update
 				if (this == existingComputation)
 					continue;
-				for (Iterator<IEclipseContext> newDependencies = dependencies.keySet().iterator(); newDependencies
-						.hasNext();) {
-					IEclipseContext newDependencyContext = newDependencies.next();
-					Set<String> existingComputationDependencies = existingComputation.dependencies
-							.get(newDependencyContext);
-					if (existingComputationDependencies != null)
-						existingComputationDependencies.addAll(dependencies
-								.get(newDependencyContext));
-					else
-						existingComputation.dependencies.put(newDependencyContext, dependencies
-								.get(newDependencyContext));
-				}
+				Set<String> existingDependencies = existingComputation.dependencies.get(c);
+				if (existingDependencies != null)
+					existingDependencies.addAll(dependencies.get(c));
+				else
+					existingComputation.dependencies.put(c, dependencies.get(c));
 			} else
 				c.listeners.put(this, this);
 		}
