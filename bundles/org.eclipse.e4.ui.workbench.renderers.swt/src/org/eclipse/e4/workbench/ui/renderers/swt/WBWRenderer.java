@@ -267,12 +267,13 @@ public class WBWRenderer extends SWTPartRenderer {
 		final Widget newWidget;
 
 		if (!(element instanceof MWindow)
-				|| (parent != null && !(parent instanceof Shell)))
+				|| (parent != null && !(parent instanceof Control)))
 			return null;
 
 		MWindow wbwModel = (MWindow) element;
 
-		Shell parentShell = (Shell) parent;
+		Shell parentShell = parent == null ? null : ((Control) parent)
+				.getShell();
 
 		IEclipseContext parentContext = getContextForParent(element);
 		final Shell wbwShell;

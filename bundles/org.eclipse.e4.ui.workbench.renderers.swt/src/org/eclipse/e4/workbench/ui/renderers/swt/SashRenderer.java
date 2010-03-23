@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -50,17 +49,11 @@ public class SashRenderer extends SWTPartRenderer {
 			if (weightsChanged(sf)) {
 				// Cache the new values
 				weightsMap.put(sf, sf.getWeights());
-				if (sashUpdateJob == null) {
-					sashUpdateJob = new SashUpdateJob();
-					sashUpdateJob.sashesToUpdate.add(sf);
-					sf.getDisplay().asyncExec(sashUpdateJob);
-				} else {
-					if (!sashUpdateJob.sashesToUpdate.contains(sf))
-						sashUpdateJob.sashesToUpdate.add(sf);
-				}
+				addSashToUpdate(sf);
 			}
 		}
 
+		// determine if the weights in the SashForm have actually changed
 		private boolean weightsChanged(SashForm sf) {
 			int[] oldW = (int[]) weightsMap.get(sf);
 			int[] newW = sf.getWeights();
@@ -74,6 +67,41 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private class SashUpdateJob implements Runnable {
+		public List<SashForm> sashesToUpdate = new ArrayList<SashForm>();
+
+		public void run() {
+			clearSashUpdate();
+			while (!sashesToUpdate.isEmpty()) {
+				SashForm sf = sashesToUpdate.remove(0);
+				if (sf.isDisposed())
+					continue;
+
+				// prevent recursive updating
+				ignoreWeightUpdates = true;
+				synchModelToSash(sf);
+				ignoreWeightUpdates = false;
+			}
+		}
+	}
+
+	private void addSashToUpdate(SashForm sf) {
+		MElementContainer<MUIElement> psc = (MElementContainer<MUIElement>) sf
+				.getData(OWNING_ME);
+		if (modelUpdateJob != null
+				&& modelUpdateJob.sashModelsToUpdate.contains(psc)) {
+			return;
+		}
+		if (sashUpdateJob == null) {
+			sashUpdateJob = new SashUpdateJob();
+			sashUpdateJob.sashesToUpdate.add(sf);
+			sf.getDisplay().asyncExec(sashUpdateJob);
+		} else {
+			if (!sashUpdateJob.sashesToUpdate.contains(sf))
+				sashUpdateJob.sashesToUpdate.add(sf);
+		}
+	}
+
 	private class ModelUpdateJob implements Runnable {
 		public List<MElementContainer<MUIElement>> sashModelsToUpdate = new ArrayList<MElementContainer<MUIElement>>();
 
@@ -82,7 +110,6 @@ public class SashRenderer extends SWTPartRenderer {
 			while (!sashModelsToUpdate.isEmpty()) {
 				MElementContainer<MUIElement> psc = sashModelsToUpdate
 						.remove(0);
-				//System.out.println("Model Update Job"); //$NON-NLS-1$
 
 				// prevent recursive updating
 				ignoreWeightUpdates = true;
@@ -92,20 +119,18 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 	}
 
-	private class SashUpdateJob implements Runnable {
-		public List<SashForm> sashesToUpdate = new ArrayList<SashForm>();
+	private void addModelToUpdate(MElementContainer<MUIElement> pscModel) {
+		Control sf = (Control) pscModel.getWidget();
+		if (sf == null || sf.isDisposed())
+			return;
 
-		public void run() {
-			clearSashUpdate();
-			while (!sashesToUpdate.isEmpty()) {
-				SashForm sf = sashesToUpdate.remove(0);
-				//System.out.println("Sash Update Job"); //$NON-NLS-1$
-
-				// prevent recursive updating
-				ignoreWeightUpdates = true;
-				synchModelToSash(sf);
-				ignoreWeightUpdates = false;
-			}
+		if (modelUpdateJob == null) {
+			modelUpdateJob = new ModelUpdateJob();
+			modelUpdateJob.sashModelsToUpdate.add(pscModel);
+			sf.getDisplay().asyncExec(modelUpdateJob);
+		} else {
+			if (!modelUpdateJob.sashModelsToUpdate.contains(pscModel))
+				modelUpdateJob.sashModelsToUpdate.add(pscModel);
 		}
 	}
 
@@ -176,18 +201,9 @@ public class SashRenderer extends SWTPartRenderer {
 					return;
 
 				MElementContainer<MUIElement> pscModel = (MElementContainer<MUIElement>) parent;
-				SashForm sf = (SashForm) pscModel.getWidget();
 				if (UIEvents.UIElement.CONTAINERDATA.equals(event
 						.getProperty(UIEvents.EventTags.ATTNAME))) {
-					if (modelUpdateJob == null) {
-						modelUpdateJob = new ModelUpdateJob();
-						modelUpdateJob.sashModelsToUpdate.add(pscModel);
-						sf.getDisplay().asyncExec(modelUpdateJob);
-					} else {
-						if (!modelUpdateJob.sashModelsToUpdate
-								.contains(pscModel))
-							modelUpdateJob.sashModelsToUpdate.add(pscModel);
-					}
+					addModelToUpdate(pscModel);
 				}
 			}
 		};
@@ -242,7 +258,7 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 
 		// Ensure the Z-order of the contained controls matches the model order
-		MElementContainer<MUIElement> psc = parentElement;
+		final MElementContainer<MUIElement> psc = parentElement;
 		for (MUIElement part : psc.getChildren()) {
 			Control partCtrl = (Control) part.getWidget();
 			if (partCtrl != null) {
@@ -259,7 +275,8 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		});
 
-		synchSashToModel(psc);
+		// synch this sash after the dust settles
+		addModelToUpdate(psc);
 	}
 
 	/*
@@ -277,7 +294,8 @@ public class SashRenderer extends SWTPartRenderer {
 
 		((Control) child.getWidget()).removeControlListener(resizeListener);
 
-		synchSashToModel(parentElement);
+		// synch this sash after the dust settles
+		addModelToUpdate(parentElement);
 	}
 
 	public void postProcess(MUIElement element) {
@@ -338,13 +356,13 @@ public class SashRenderer extends SWTPartRenderer {
 			return null;
 
 		MPartSashContainer psc = (MPartSashContainer) me;
-		MUIElement[] modelElements = new MUIElement[sf.getWeights().length];
-		int index = 0;
+		List<MUIElement> modelElements = new ArrayList<MUIElement>();
 		for (MUIElement element : psc.getChildren()) {
 			if (element.getWidget() != null)
-				modelElements[index++] = element;
+				modelElements.add(element);
 		}
-		return modelElements;
+
+		return modelElements.toArray(new MUIElement[modelElements.size()]);
 	}
 
 	/**
@@ -365,7 +383,8 @@ public class SashRenderer extends SWTPartRenderer {
 		// Put the new weights in the map first
 		weightsMap.put(sf, newWeights);
 		sf.layout();
-		sf.setWeights(newWeights);
+		if (newWeights.length > 0)
+			sf.setWeights(newWeights);
 	}
 
 	/**

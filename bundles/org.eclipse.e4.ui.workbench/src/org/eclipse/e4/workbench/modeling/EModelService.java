@@ -14,6 +14,7 @@ package org.eclipse.e4.workbench.modeling;
 import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
@@ -21,6 +22,12 @@ import org.eclipse.e4.ui.model.application.MUIElement;
  * @since 1.0
  */
 public interface EModelService {
+	// Insertion constants
+	public static final int ABOVE = 0;
+	public static final int BELOW = 1;
+	public static final int LEFT_OF = 2;
+	public static final int RIGHT_OF = 3;
+
 	/**
 	 * Return a list of any elements that match the given search criteria. The search is recursive
 	 * and includes the specified search root. Any of the search parameters may be specified as
@@ -141,4 +148,27 @@ public interface EModelService {
 	 *            The placeholder to swap it with
 	 */
 	public void swap(MPlaceholder placeholder);
+
+	/**
+	 * Inserts the given element into the UI Model by either creating a new sash or augmenting an
+	 * existing sash if the orientation permits.
+	 * 
+	 * @param toInsert
+	 *            The element to insert
+	 * @param relTo
+	 *            The element that the new one is to be relative to
+	 * @param where
+	 *            An SWT constant indicating where the inserted element should be placed
+	 * @param ratio
+	 *            The percentage of the area to be occupied by the inserted element
+	 */
+	public void insert(MPSCElement toInsert, MPSCElement relTo, int where, int ratio);
+
+	/**
+	 * Created a separate (detached) window containing the given element.
+	 * 
+	 * @param element
+	 *            The element to detach
+	 */
+	public void detach(MPSCElement element);
 }

@@ -20,6 +20,7 @@ public class StartupTestSuite extends TestSuite {
 		TestSuite suite = new StartupTestSuite();
 
 		suite.addTestSuite(EModelServiceFindTest.class);
+		suite.addTestSuite(EModelServiceInsertTest.class);
 		suite.addTestSuite(EPartServiceTest.class);
 		suite.addTestSuite(ESelectionServiceTest.class);
 

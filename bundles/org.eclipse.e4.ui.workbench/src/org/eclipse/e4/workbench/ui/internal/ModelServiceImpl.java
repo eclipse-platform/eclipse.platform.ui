@@ -19,12 +19,19 @@ import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MGenericTile;
+import org.eclipse.e4.ui.model.application.MPSCElement;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.EList;
 
+/**
+ *
+ */
 /**
  *
  */
@@ -282,5 +289,133 @@ public class ModelServiceImpl implements EModelService {
 			MUIElement curSel = container.getSelectedElement();
 			showElementRecursive(curSel, becomingVisible);
 		}
+	}
+
+	private void combine(MPSCElement toInsert, MPSCElement relTo, MPartSashContainer newSash,
+			boolean newFirst, int ratio) {
+		MElementContainer<MUIElement> curParent = relTo.getParent();
+		int index = curParent.getChildren().indexOf(relTo);
+		curParent.getChildren().remove(relTo);
+		if (newFirst) {
+			newSash.getChildren().add(toInsert);
+			newSash.getChildren().add(relTo);
+		} else {
+			newSash.getChildren().add(relTo);
+			newSash.getChildren().add(toInsert);
+		}
+
+		// Set up the container data before adding the new sash to the model
+		toInsert.setContainerData(Integer.toString(ratio));
+		relTo.setContainerData(Integer.toString(100 - ratio));
+
+		// add the new sash at the same location
+		curParent.getChildren().add(index, newSash);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#insert(org.eclipse.e4.ui.model.application
+	 * .MPSCElement, org.eclipse.e4.ui.model.application.MPSCElement, int, int)
+	 */
+	public void insert(MPSCElement toInsert, MPSCElement relTo, int where, int ratio) {
+		if (toInsert == null || relTo == null)
+			return;
+
+		// Ensure the ratio is sane
+		if (ratio == 0)
+			ratio = 10;
+		if (ratio > 100)
+			ratio = 90;
+
+		// determine insertion order
+		boolean newFirst = where == ABOVE || where == LEFT_OF;
+
+		// The only thing we can add sashes to is an MPartSashContainer or an MWindow so
+		// find the correct place to start the insertion
+		MUIElement insertRoot = relTo.getParent();
+		while (insertRoot != null && !(insertRoot instanceof MWindow)
+				&& !(insertRoot instanceof MPartSashContainer)) {
+			relTo = (MPSCElement) insertRoot;
+			insertRoot = insertRoot.getParent();
+		}
+
+		if (insertRoot instanceof MWindow) {
+			// OK, we're certainly going to need a new sash
+			MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE.createPartSashContainer();
+			newSash.setHorizontal(where == LEFT_OF || where == RIGHT_OF);
+			combine(toInsert, relTo, newSash, newFirst, ratio);
+		} else if (insertRoot instanceof MGenericTile<?>) {
+			MGenericTile<MUIElement> curTile = (MGenericTile<MUIElement>) insertRoot;
+
+			// do we need a new sash or can we extend the existing one?
+			if (curTile.isHorizontal() && (where == ABOVE || where == BELOW)) {
+				MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE
+						.createPartSashContainer();
+				newSash.setHorizontal(false);
+				newSash.setContainerData(relTo.getContainerData());
+				combine(toInsert, relTo, newSash, newFirst, ratio);
+			} else if (!curTile.isHorizontal() && (where == LEFT_OF || where == RIGHT_OF)) {
+				MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE
+						.createPartSashContainer();
+				newSash.setHorizontal(true);
+				newSash.setContainerData(relTo.getContainerData());
+				combine(toInsert, relTo, newSash, newFirst, ratio);
+			} else {
+				// We just need to add to the existing sash
+				int relToIndex = relTo.getParent().getChildren().indexOf(relTo);
+				if (newFirst) {
+					curTile.getChildren().add(relToIndex, toInsert);
+				} else {
+					curTile.getChildren().add(relToIndex + 1, toInsert);
+				}
+
+				// Adjust the sash weights by taking the ratio
+				int relToWeight = 100;
+				if (relTo.getContainerData() != null) {
+					try {
+						relToWeight = Integer.parseInt(relTo.getContainerData());
+					} catch (NumberFormatException e) {
+					}
+				}
+				int toInsertWeight = (int) ((ratio / 100.0) * relToWeight + 0.5);
+				relToWeight = relToWeight - toInsertWeight;
+				relTo.setContainerData(Integer.toString(relToWeight));
+				toInsert.setContainerData(Integer.toString(toInsertWeight));
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#detach(org.eclipse.e4.ui.model.application
+	 * .MPSCElement)
+	 */
+	public void detach(MPSCElement element) {
+		// Determine the correct parent for the new window
+		MUIElement curParent = element.getParent();
+		while (curParent != null && !(curParent instanceof MPerspective)
+				&& !(curParent instanceof MWindow))
+			curParent = curParent.getParent();
+
+		if (curParent == null)
+			return; // log??
+
+		MWindow newWindow = MApplicationFactory.eINSTANCE.createWindow();
+
+		// HACK! should either be args or should be computed from the control being detached
+		newWindow.setX(100);
+		newWindow.setY(100);
+		newWindow.setWidth(400);
+		newWindow.setHeight(250);
+
+		element.getParent().getChildren().remove(element);
+		newWindow.getChildren().add(element);
+
+		MElementContainer<MUIElement> windowParent = (MElementContainer<MUIElement>) curParent;
+		windowParent.getChildren().add(newWindow);
 	}
 }
