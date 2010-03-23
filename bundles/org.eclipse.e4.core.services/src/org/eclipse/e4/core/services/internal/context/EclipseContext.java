@@ -130,7 +130,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			return null;
 		}
 
-		final protected void doHandleInvalid(ContextChangeEvent event, List scheduledList) {
+		final protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduledList) {
 			int eventType = event.getEventType();
 			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
 				// process right away
@@ -138,8 +138,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			} else {
 				// schedule processing
 				Scheduled toBeScheduled = new Scheduled(this, event);
-				for (Iterator i = scheduledList.iterator(); i.hasNext();) {
-					Scheduled scheduled = (Scheduled) i.next();
+				for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
+					Scheduled scheduled = i.next();
 					if (scheduled.equals(toBeScheduled)) // eliminate duplicates
 						return;
 				}
@@ -163,7 +163,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 					return true;
 				}
 			}
-			Computation oldComputation = (Computation) currentComputation.get();
+			Computation oldComputation = currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
 			try {
@@ -190,7 +190,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	static private class Scheduled {
+	static class Scheduled {
 
 		public IRunAndTrack runnable;
 		public ContextChangeEvent event;
@@ -216,15 +216,17 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				return false;
 			return runnable.equals(other.runnable);
 		}
-	};
-
-	static class DebugSnap {
-		List listeners = new ArrayList();
-		Map localValueComputations = Collections.synchronizedMap(new HashMap());
-		Map localValues = Collections.synchronizedMap(new HashMap());
 	}
 
-	static ThreadLocal currentComputation = new ThreadLocal();
+	static class DebugSnap {
+		List<Computation> listeners = new ArrayList<Computation>();
+		Map<LookupKey, ValueComputation> localValueComputations = Collections
+				.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
+		Map<String, Object> localValues = Collections
+				.synchronizedMap(new HashMap<String, Object>());
+	}
+
+	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
 
 	// TODO replace with variable on bundle-specific class
 	public static boolean DEBUG = false;
@@ -235,22 +237,24 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final List listeners = new ArrayList();
+	final List<Computation> listeners = Collections.synchronizedList(new ArrayList<Computation>());
 
-	final Map localValueComputations = Collections.synchronizedMap(new HashMap());
-	final Map localValues = Collections.synchronizedMap(new HashMap());
+	final Map<LookupKey, ValueComputation> localValueComputations = Collections
+			.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
+	final Map<String, Object> localValues = Collections
+			.synchronizedMap(new HashMap<String, Object>());
 
 	private final IEclipseContextStrategy strategy;
 
-	private ArrayList modifiable;
+	private ArrayList<String> modifiable;
 
-	private ArrayList waiting; // list of Computations; null for all non-root entries
+	private ArrayList<Computation> waiting; // list of Computations; null for all non-root entries
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
 		set(IContextConstants.PARENT, parent);
 		if (parent == null)
-			waiting = new ArrayList();
+			waiting = new ArrayList<Computation>();
 	}
 
 	public boolean containsKey(String name) {
@@ -277,9 +281,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public void debugSnap() {
 		snapshot = new DebugSnap();
-		snapshot.listeners = new ArrayList(listeners);
-		snapshot.localValueComputations = new HashMap(localValueComputations);
-		snapshot.localValues = new HashMap(localValues);
+		snapshot.listeners = new ArrayList<Computation>(listeners);
+		snapshot.localValueComputations = new HashMap<LookupKey, ValueComputation>(
+				localValueComputations);
+		snapshot.localValues = new HashMap<String, Object>(localValues);
 	}
 
 	/**
@@ -288,26 +293,27 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void debugDiff() {
 		if (snapshot == null)
 			return;
-		List listenerDiff = new ArrayList(listeners);
+		List<Computation> listenerDiff = new ArrayList<Computation>(listeners);
 		listenerDiff.removeAll(snapshot.listeners);
-		listenerDiff = new ArrayList(listenerDiff);// shrink the set
-		System.out.println("Listener diff: ");
-		for (Iterator it = listenerDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next());
+		listenerDiff = new ArrayList<Computation>(listenerDiff);// shrink the set
+		System.out.println("Listener diff: "); //$NON-NLS-1$
+		for (Iterator<Computation> it = listenerDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next()); //$NON-NLS-1$
 		}
 
-		Set computationDiff = new HashSet(localValueComputations.values());
+		Set<ValueComputation> computationDiff = new HashSet<ValueComputation>(
+				localValueComputations.values());
 		computationDiff.removeAll(snapshot.localValueComputations.values());
-		System.out.println("localValueComputations diff:");
-		for (Iterator it = computationDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next());
+		System.out.println("localValueComputations diff:"); //$NON-NLS-1$
+		for (Iterator<ValueComputation> it = computationDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next()); //$NON-NLS-1$
 		}
 
-		Set valuesDiff = new HashSet(localValues.values());
+		Set<Object> valuesDiff = new HashSet<Object>(localValues.values());
 		valuesDiff.removeAll(snapshot.localValues.values());
-		System.out.println("localValues diff:");
-		for (Iterator it = valuesDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next());
+		System.out.println("localValues diff:"); //$NON-NLS-1$
+		for (Iterator<Object> it = valuesDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next()); //$NON-NLS-1$
 		}
 	}
 
@@ -317,17 +323,17 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * @see org.eclipse.e4.core.services.context.IEclipseContext#dispose()
 	 */
 	public void dispose() {
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.DISPOSE, null, null, null);
 		// reverse order of listeners
 		for (int i = ls.length - 1; i >= 0; i--) {
-			List scheduled = new ArrayList();
+			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			ls[i].handleInvalid(event, scheduled);
 			processScheduled(scheduled);
 		}
 
-		// TBD used by OSGI Context startegy - is this needed? Looks like @PreDestroy
+		// TBD used by OSGI Context strategy - is this needed? Looks like @PreDestroy
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
 	}
@@ -348,13 +354,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			boolean local) {
 		trackAccess(name);
 		if (DEBUG_VERBOSE) {
-			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):"
-					+ originatingContext + " for " + toString());
+			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					+ originatingContext + " for " + toString()); //$NON-NLS-1$
 		}
 		LookupKey lookupKey = new LookupKey(name, arguments);
 		if (this == originatingContext) {
-			ValueComputation valueComputation = (ValueComputation) localValueComputations
-					.get(lookupKey);
+			ValueComputation valueComputation = localValueComputations.get(lookupKey);
 			if (valueComputation != null) {
 				return valueComputation.get(arguments);
 			}
@@ -380,7 +385,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				result = valueComputation.get(arguments);
 			}
 			if (DEBUG_VERBOSE) {
-				System.out.println("IEC.get(" + name + "): " + result);
+				System.out.println("IEC.get(" + name + "): " + result); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return result;
 		}
@@ -396,11 +401,11 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return null;
 	}
 
-	protected void invalidate(String name, int eventType, Object oldValue, List scheduled) {
+	protected void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
 				name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
@@ -416,7 +421,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void remove(String name) {
 		if (isSetLocally(name)) {
 			Object oldValue = localValues.remove(name);
-			List scheduled = new ArrayList();
+			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			invalidate(name, ContextChangeEvent.REMOVED, oldValue, scheduled);
 			processScheduled(scheduled);
 		}
@@ -431,8 +436,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	private void removeLocalValueComputations(String name) {
 		synchronized (localValueComputations) {
 			// remove all keys with a matching name
-			for (Iterator it = localValueComputations.keySet().iterator(); it.hasNext();) {
-				LookupKey key = (LookupKey) it.next();
+			for (Iterator<LookupKey> it = localValueComputations.keySet().iterator(); it.hasNext();) {
+				LookupKey key = it.next();
 				if (key.name.equals(name)) {
 					Object removed = localValueComputations.get(key);
 					if (removed instanceof ValueComputation) {
@@ -451,10 +456,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		computation.notify(event);
 	}
 
-	protected void processScheduled(List scheduledList) {
+	protected void processScheduled(List<Scheduled> scheduledList) {
 		boolean useScheduler = (strategy != null && strategy instanceof ISchedulerStrategy);
-		for (Iterator i = scheduledList.iterator(); i.hasNext();) {
-			Scheduled scheduled = (Scheduled) i.next();
+		for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
+			Scheduled scheduled = i.next();
 			if (useScheduler)
 				((ISchedulerStrategy) strategy).schedule(scheduled.runnable, scheduled.event);
 			else
@@ -465,7 +470,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void set(String name, Object value) {
 		if (IContextConstants.PARENT.equals(name)) {
 			// TBD make setting parent a separate operation
-			List scheduled = new ArrayList();
+			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			handleReparent((EclipseContext) value, scheduled);
 			localValues.put(IContextConstants.PARENT, value);
 			processScheduled(scheduled);
@@ -475,33 +480,33 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
 			if (DEBUG_VERBOSE) {
-				System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
+				System.out.println("IEC.set(" + name + ',' + value + "):" + oldValue + " for " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						+ toString());
 			}
-			List scheduled = new ArrayList();
+			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 			processScheduled(scheduled);
 		}
 	}
 
 	public void modify(String name, Object value) {
-		List scheduled = new ArrayList();
+		List<Scheduled> scheduled = new ArrayList<Scheduled>();
 		if (!internalModify(name, value, scheduled))
 			set(name, value);
 		processScheduled(scheduled);
 	}
 
-	public boolean internalModify(String name, Object value, List scheduled) {
+	public boolean internalModify(String name, Object value, List<Scheduled> scheduled) {
 		boolean containsKey = localValues.containsKey(name);
 		if (containsKey) {
 			if (!checkModifiable(name)) {
-				String tmp = "Variable " + name + " is not modifiable in the context " + toString();
+				String tmp = "Variable " + name + " is not modifiable in the context " + toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				throw new IllegalArgumentException(tmp);
 			}
 			Object oldValue = localValues.put(name, value);
 			if (value != oldValue) {
 				if (DEBUG_VERBOSE)
-					System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
+					System.out.println("IEC.set(" + name + ',' + value + "):" + oldValue + " for " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							+ toString());
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 			}
@@ -528,7 +533,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	private void trackAccess(String name) {
-		Computation computation = (Computation) currentComputation.get();
+		Computation computation = currentComputation.get();
 		if (computation != null) {
 			computation.addDependency(this, name);
 		}
@@ -538,7 +543,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (name == null)
 			return;
 		if (modifiable == null)
-			modifiable = new ArrayList(3);
+			modifiable = new ArrayList<String>(3);
 		modifiable.add(name);
 		if (localValues.containsKey(name))
 			return;
@@ -548,8 +553,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	private boolean checkModifiable(String name) {
 		if (modifiable == null)
 			return false;
-		for (Iterator i = modifiable.iterator(); i.hasNext();) {
-			String candidate = (String) i.next();
+		for (Iterator<String> i = modifiable.iterator(); i.hasNext();) {
+			String candidate = i.next();
 			if (candidate.equals(name))
 				return true;
 		}
@@ -562,8 +567,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		synchronized (listeners) {
 			ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 					ContextChangeEvent.UNINJECTED, null, null, null);
-			for (Iterator i = listeners.iterator(); i.hasNext();) {
-				Computation computation = (Computation) i.next();
+			for (Iterator<Computation> i = listeners.iterator(); i.hasNext();) {
+				Computation computation = i.next();
 				if (computation instanceof TrackableComputationExt) {
 					if (object == ((TrackableComputationExt) computation).getObject()) {
 						((IRunAndTrack) computation).notify(event);
@@ -574,22 +579,22 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	private void handleReparent(EclipseContext newParent, List scheduled) {
+	private void handleReparent(EclipseContext newParent, List<Scheduled> scheduled) {
 		// TBD should we lock waiting list while doing reparent?
 		// Add "boolean inReparent" on the root context and process right away?
 		processWaiting();
 		// 1) everybody who depends on me: I need to collect combined list of names injected
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
-		Set usedNames = new HashSet();
+		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
+		Set<String> usedNames = new HashSet<String>();
 		for (int i = 0; i < ls.length; i++) {
-			Set listenerNames = ls[i].dependsOnNames(this);
+			Set<String> listenerNames = ls[i].dependsOnNames(this);
 			if (listenerNames == null)
 				continue; // should not happen?
 			usedNames.addAll(listenerNames); // also removes duplicates
 		}
 		// 2) for each used name:
-		for (Iterator i = usedNames.iterator(); i.hasNext();) {
-			String name = (String) i.next();
+		for (Iterator<String> i = usedNames.iterator(); i.hasNext();) {
+			String name = i.next();
 			if (localValues.containsKey(name))
 				continue; // it is a local value
 			Object oldValue = get(name);
@@ -610,7 +615,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (waiting == null)
 			return;
 		// create update notifications
-		Computation[] ls = (Computation[]) waiting.toArray(new Computation[waiting.size()]);
+		Computation[] ls = waiting.toArray(new Computation[waiting.size()]);
 		waiting.clear();
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.UPDATE, null, null, null);
@@ -628,7 +633,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			return;
 		}
 		if (waiting == null)
-			waiting = new ArrayList();
+			waiting = new ArrayList<Computation>();
 		waiting.add(cp);
 	}
 

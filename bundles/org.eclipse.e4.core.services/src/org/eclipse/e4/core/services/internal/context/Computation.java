@@ -19,14 +19,15 @@ import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.internal.context.EclipseContext.Scheduled;
 
 abstract class Computation {
-	Map dependencies = new HashMap();
+	Map<IEclipseContext, Set<String>> dependencies = new HashMap<IEclipseContext, Set<String>>();
 
 	void addDependency(IEclipseContext context, String name) {
-		Set properties = (Set) dependencies.get(context);
+		Set<String> properties = dependencies.get(context);
 		if (properties == null) {
-			properties = new HashSet(4);
+			properties = new HashSet<String>(4);
 			dependencies.put(context, properties);
 		}
 		properties.add(name);
@@ -38,9 +39,11 @@ abstract class Computation {
 	}
 
 	protected void doClear() {
+		// nothing to do in default computation
 	}
 
-	protected void doHandleInvalid(ContextChangeEvent event, List scheduled) {
+	protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
+		// nothing to do in default computation
 	}
 
 	/**
@@ -48,12 +51,12 @@ abstract class Computation {
 	 */
 	public abstract boolean equals(Object arg0);
 
-	final void handleInvalid(ContextChangeEvent event, List scheduled) {
+	final void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		IObjectProvider provider = event.getContext();
 		IEclipseContext context = ((ObjectProviderContext) provider).getContext();
 
 		String name = event.getName();
-		Set names = (Set) dependencies.get(context);
+		Set<String> names = dependencies.get(context);
 		if (name == null && event.getEventType() == ContextChangeEvent.DISPOSE) {
 			clear(context, null);
 			doHandleInvalid(event, scheduled);
@@ -63,7 +66,7 @@ abstract class Computation {
 		}
 	}
 
-	final void handleUninjected(ContextChangeEvent event, List scheduled) {
+	final void handleUninjected(ContextChangeEvent event, List<Scheduled> scheduled) {
 		doHandleInvalid(event, scheduled);
 	}
 
@@ -72,23 +75,24 @@ abstract class Computation {
 	 */
 	public abstract int hashCode();
 
-	private String mapToString(Map map) {
+	private String mapToString(Map<IEclipseContext, Set<String>> map) {
 		StringBuffer result = new StringBuffer('{');
-		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
+		for (Iterator<Map.Entry<IEclipseContext, Set<String>>> it = map.entrySet().iterator(); it
+				.hasNext();) {
+			Map.Entry<IEclipseContext, Set<String>> entry = it.next();
 			result.append(entry.getKey());
-			result.append("->(");
-			Set set = (Set) entry.getValue();
-			for (Iterator it2 = set.iterator(); it2.hasNext();) {
-				String name = (String) it2.next();
+			result.append("->("); //$NON-NLS-1$
+			Set<String> set = entry.getValue();
+			for (Iterator<String> it2 = set.iterator(); it2.hasNext();) {
+				String name = it2.next();
 				result.append(name);
 				if (it2.hasNext()) {
-					result.append(",");
+					result.append(',');
 				}
 			}
-			result.append(")");
+			result.append(')');
 			if (it.hasNext()) {
-				result.append(",");
+				result.append(',');
 			}
 		}
 		return result.toString();
@@ -98,7 +102,7 @@ abstract class Computation {
 	 * Remove this computation from all contexts that are tracking it
 	 */
 	protected void removeAll(EclipseContext originatingContext) {
-		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
+		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			((EclipseContext) it.next()).listeners.remove(this);
 		}
 		dependencies.clear();
@@ -110,20 +114,19 @@ abstract class Computation {
 		if (EclipseContext.DEBUG)
 			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
 					+ mapToString(dependencies));
-		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
+		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
 			if (c.listeners.contains(this)) { // nested
-				for (Iterator existing = c.listeners.iterator(); existing.hasNext();) {
-					Computation existingComputation = (Computation) existing.next();
+				for (Iterator<Computation> existing = c.listeners.iterator(); existing.hasNext();) {
+					Computation existingComputation = existing.next();
 					if (!equals(existingComputation))
 						continue;
-					for (Iterator newDependencies = dependencies.keySet().iterator(); newDependencies
-							.hasNext();) {
-						IEclipseContext newDependencyContext = (IEclipseContext) newDependencies
-								.next();
+					for (Iterator<IEclipseContext> newDependencies = dependencies.keySet()
+							.iterator(); newDependencies.hasNext();) {
+						IEclipseContext newDependencyContext = newDependencies.next();
 						if (existingComputation.dependencies.containsKey(newDependencyContext))
-							((Set) existingComputation.dependencies.get(newDependencyContext))
-									.addAll((Set) dependencies.get(newDependencyContext));
+							existingComputation.dependencies.get(newDependencyContext).addAll(
+									dependencies.get(newDependencyContext));
 						else
 							existingComputation.dependencies.put(newDependencyContext, dependencies
 									.get(newDependencyContext));
@@ -146,10 +149,10 @@ abstract class Computation {
 			dependencies.remove(context);
 			return;
 		}
-		Set properties = (Set) dependencies.get(context);
+		Set<String> properties = dependencies.get(context);
 		if (properties != null) {
 			if (EclipseContext.DEBUG)
-				System.out.println(toString() + " no longer listening to " + context + "," + name); //$NON-NLS-1$
+				System.out.println(toString() + " no longer listening to " + context + ',' + name); //$NON-NLS-1$
 			// Bug 304859 - causes reordering of listeners
 			// ((EclipseContext) context).listeners.remove(this); // XXX
 			// IEclipseContext
@@ -160,8 +163,8 @@ abstract class Computation {
 		}
 	}
 
-	public Set dependsOnNames(IEclipseContext context) {
-		return (Set) dependencies.get(context);
+	public Set<String> dependsOnNames(IEclipseContext context) {
+		return dependencies.get(context);
 	}
 
 }

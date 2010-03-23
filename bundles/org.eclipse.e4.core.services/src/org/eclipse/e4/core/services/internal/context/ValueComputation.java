@@ -15,6 +15,7 @@ import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.injector.IObjectProvider;
+import org.eclipse.e4.core.services.internal.context.EclipseContext.Scheduled;
 
 public class ValueComputation extends Computation {
 	Object cachedValue;
@@ -90,7 +91,7 @@ public class ValueComputation extends Computation {
 		private final String cycleMessage;
 
 		CycleException(String cycleMessage) {
-			super("cycle while computing value");
+			super("Cycle while computing value"); //$NON-NLS-1$
 			this.cycleMessage = cycleMessage;
 		}
 
@@ -99,7 +100,7 @@ public class ValueComputation extends Computation {
 		}
 
 		public String toString() {
-			return "\n" + cycleMessage + "\n";
+			return "\n" + cycleMessage + '\n'; //$NON-NLS-1$
 		}
 	}
 
@@ -108,7 +109,7 @@ public class ValueComputation extends Computation {
 		cachedValue = null;
 	}
 
-	final protected void doHandleInvalid(ContextChangeEvent event, List scheduled) {
+	final protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		int eventType = event.getEventType();
 		// if the originating context is being disposed, remove this value computation completely
 		if (eventType == ContextChangeEvent.DISPOSE) {
@@ -131,15 +132,14 @@ public class ValueComputation extends Computation {
 		if (this.computing) {
 			throw new CycleException(this.toString());
 		}
-		Computation oldComputation = (Computation) EclipseContext.currentComputation.get(); // XXX
-		// IEclipseContext
-		EclipseContext.currentComputation.set(this); // XXX IEclipseContext
+		Computation oldComputation = EclipseContext.currentComputation.get();
+		EclipseContext.currentComputation.set(this);
 		computing = true;
 		try {
 			cachedValue = function.compute(originatingContext, arguments);
 			valid = true;
 		} catch (CycleException ex) {
-			throw new CycleException(ex.getCycleMessage() + "\n" + this.toString());
+			throw new CycleException(ex.getCycleMessage() + '\n' + this.toString());
 		} finally {
 			computing = false;
 			EclipseContext.currentComputation.set(oldComputation); // XXX
@@ -151,7 +151,7 @@ public class ValueComputation extends Computation {
 
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		result.append("ValueComputation(");
+		result.append("ValueComputation("); //$NON-NLS-1$
 		result.append(context);
 		result.append('/');
 		result.append(originatingContext);
