@@ -119,7 +119,8 @@ abstract class Computation {
 			if (c.listeners.contains(this)) { // nested
 				for (Iterator<Computation> existing = c.listeners.iterator(); existing.hasNext();) {
 					Computation existingComputation = existing.next();
-					if (!equals(existingComputation))
+					// if the existing computation is equal but not identical, we need to update
+					if (!equals(existingComputation) || this == existingComputation)
 						continue;
 					for (Iterator<IEclipseContext> newDependencies = dependencies.keySet()
 							.iterator(); newDependencies.hasNext();) {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.util.List;
+import java.util.Set;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
@@ -24,7 +24,7 @@ public final class TestHelper {
 		// don't allow instantiation
 	}
 
-	public static List<Computation> getListeners(IEclipseContext context) {
+	public static Set<Computation> getListeners(IEclipseContext context) {
 		return ((EclipseContext) context).listeners;
 	}
 }

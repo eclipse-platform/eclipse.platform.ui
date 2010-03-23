@@ -219,7 +219,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	static class DebugSnap {
-		List<Computation> listeners = new ArrayList<Computation>();
+		Set<Computation> listeners = new HashSet<Computation>();
 		Map<LookupKey, ValueComputation> localValueComputations = Collections
 				.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
 		Map<String, Object> localValues = Collections
@@ -237,7 +237,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final List<Computation> listeners = Collections.synchronizedList(new ArrayList<Computation>());
+	final Set<Computation> listeners = Collections.synchronizedSet(new HashSet<Computation>());
 
 	final Map<LookupKey, ValueComputation> localValueComputations = Collections
 			.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
@@ -281,7 +281,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public void debugSnap() {
 		snapshot = new DebugSnap();
-		snapshot.listeners = new ArrayList<Computation>(listeners);
+		snapshot.listeners = new HashSet<Computation>(listeners);
 		snapshot.localValueComputations = new HashMap<LookupKey, ValueComputation>(
 				localValueComputations);
 		snapshot.localValues = new HashMap<String, Object>(localValues);
@@ -293,9 +293,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void debugDiff() {
 		if (snapshot == null)
 			return;
-		List<Computation> listenerDiff = new ArrayList<Computation>(listeners);
+		Set<Computation> listenerDiff = new HashSet<Computation>(listeners);
 		listenerDiff.removeAll(snapshot.listeners);
-		listenerDiff = new ArrayList<Computation>(listenerDiff);// shrink the set
+		listenerDiff = new HashSet<Computation>(listenerDiff);// shrink the set
 		System.out.println("Listener diff: "); //$NON-NLS-1$
 		for (Iterator<Computation> it = listenerDiff.iterator(); it.hasNext();) {
 			System.out.println("\t" + it.next()); //$NON-NLS-1$
@@ -357,8 +357,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					+ originatingContext + " for " + toString()); //$NON-NLS-1$
 		}
-		LookupKey lookupKey = new LookupKey(name, arguments);
+		LookupKey lookupKey = null;
 		if (this == originatingContext) {
+			lookupKey = new LookupKey(name, arguments);
 			ValueComputation valueComputation = localValueComputations.get(lookupKey);
 			if (valueComputation != null) {
 				return valueComputation.get(arguments);
@@ -378,6 +379,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 						name, ((IContextFunction) result));
 				if (EclipseContext.DEBUG)
 					System.out.println("created " + valueComputation); //$NON-NLS-1$
+				if (lookupKey == null)
+					lookupKey = new LookupKey(name, arguments);
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				// value computation depends on parent if function is defined in a parent
 				if (this != originatingContext)
