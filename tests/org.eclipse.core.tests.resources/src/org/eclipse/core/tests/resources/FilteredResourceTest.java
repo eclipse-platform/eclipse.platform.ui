@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -1647,12 +1646,8 @@ public class FilteredResourceTest extends ResourceTest {
 		RegexFileInfoMatcher matcher = new RegexFileInfoMatcher();
 		try {
 			matcher.initialize(existingProject, "*:*");
-			FileInfo info = new FileInfo(existingFileInExistingProject.getName());
-			info.setDirectory(false);
-			boolean result = matcher.matches(existingFileInExistingProject.getParent(), info);
-			assertEquals("1.0", result, false);
-		} catch (Throwable t) {
-			fail("1.1", t);
+			fail("1.0");
+		} catch (CoreException e) {
 		}
 	}
 }
