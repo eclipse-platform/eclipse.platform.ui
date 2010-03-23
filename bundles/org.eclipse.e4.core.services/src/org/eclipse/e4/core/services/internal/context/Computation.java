@@ -124,9 +124,11 @@ abstract class Computation {
 				for (Iterator<IEclipseContext> newDependencies = dependencies.keySet().iterator(); newDependencies
 						.hasNext();) {
 					IEclipseContext newDependencyContext = newDependencies.next();
-					if (existingComputation.dependencies.containsKey(newDependencyContext))
-						existingComputation.dependencies.get(newDependencyContext).addAll(
-								dependencies.get(newDependencyContext));
+					Set<String> existingComputationDependencies = existingComputation.dependencies
+							.get(newDependencyContext);
+					if (existingComputationDependencies != null)
+						existingComputationDependencies.addAll(dependencies
+								.get(newDependencyContext));
 					else
 						existingComputation.dependencies.put(newDependencyContext, dependencies
 								.get(newDependencyContext));
