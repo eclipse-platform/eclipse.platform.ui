@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -237,7 +238,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final Set<Computation> listeners = Collections.synchronizedSet(new HashSet<Computation>());
+	final Set<Computation> listeners = Collections
+			.synchronizedSet(new LinkedHashSet<Computation>());
 
 	final Map<LookupKey, ValueComputation> localValueComputations = Collections
 			.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
