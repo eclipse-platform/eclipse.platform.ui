@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.search.internal.ui;
 
 import java.util.Collections;
 import java.util.Iterator;
+
+import org.eclipse.osgi.util.TextProcessor;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -115,6 +117,7 @@ public class CopyToClipboardAction extends Action {
 	}
 
 	private void copyToClipboard(String text, Shell shell) {
+		text= TextProcessor.deprocess(text);
 		Clipboard clipboard= new Clipboard(shell.getDisplay());
 		try {
 			copyToClipboard(clipboard, text, shell);
