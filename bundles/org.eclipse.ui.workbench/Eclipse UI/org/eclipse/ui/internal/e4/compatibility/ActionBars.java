@@ -15,14 +15,11 @@ import java.util.HashMap;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class ActionBars extends SubActionBars {
@@ -72,17 +69,6 @@ public class ActionBars extends SubActionBars {
 		return menuManager;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionBars#getStatusLineManager()
-	 */
-	public IStatusLineManager getStatusLineManager() {
-		WorkbenchWindow window = (WorkbenchWindow) part.getContext().get(
-				IWorkbenchWindow.class.getName());
-		return window.getStatusLineManager();
-	}
 
 	/*
 	 * (non-Javadoc)

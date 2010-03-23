@@ -124,6 +124,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		public void partDeactivated(MPart part) {
 			firePartDeactivated(part);
+
+			Object client = part.getObject();
+			if (client instanceof CompatibilityPart) {
+				PartSite site = (PartSite) ((CompatibilityPart) client).getPart().getSite();
+				site.deactivateActionBars(site instanceof ViewSite);
+			}
+
+			((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
 		}
 
 		public void partHidden(MPart part) {
@@ -142,6 +150,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		activationList.add(0, part);
 		updateActivePartSources(part);
 		updateActiveEditorSources(part);
+
+		Object client = part.getObject();
+		if (client instanceof CompatibilityPart) {
+			PartSite site = (PartSite) ((CompatibilityPart) client).getPart().getSite();
+			site.activateActionBars(true);
+		}
+
+		((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
 	}
 
 	private void updateActivePartSources(MPart part) {
