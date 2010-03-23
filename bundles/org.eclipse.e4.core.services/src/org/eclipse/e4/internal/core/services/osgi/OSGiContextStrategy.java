@@ -27,6 +27,8 @@ import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
@@ -57,7 +59,72 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		}
 	}
 
-	private final BundleContext bundleContext;
+	/**
+	 * Maintains a cache of registered context functions, indexed by context function key.
+	 */
+	class ContextFunctionCache implements ServiceListener {
+		final Map<String, ServiceReference> functionKeys = Collections
+				.synchronizedMap(new HashMap<String, ServiceReference>());
+
+		public ContextFunctionCache() {
+			try {
+				String filter = "(" + Constants.OBJECTCLASS + '=' + IContextFunction.SERVICE_NAME //$NON-NLS-1$
+						+ ')';
+				bundleContext.addServiceListener(this, filter);
+				// process all services already registered
+				ServiceReference[] existing = bundleContext.getServiceReferences(
+						IContextFunction.SERVICE_NAME, null);
+				for (int i = 0; i < existing.length; i++)
+					add(existing[i]);
+			} catch (InvalidSyntaxException e) {
+				// should never happen
+				throw new RuntimeException(e);
+			}
+
+		}
+
+		/**
+		 * Process an added service reference to a context function.
+		 */
+		private void add(ServiceReference ref) {
+			String key = (String) ref.getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
+			if (key != null)
+				functionKeys.put(key, ref);
+		}
+
+		public ServiceReference lookup(String key) {
+			return functionKeys.get(key);
+		}
+
+		public void dispose() {
+			bundleContext.removeServiceListener(this);
+			functionKeys.clear();
+		}
+
+		/**
+		 * Process a removed service reference from a context function.
+		 */
+		private void remove(ServiceReference ref) {
+			String key = (String) ref.getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
+			if (key != null)
+				functionKeys.remove(key);
+		}
+
+		public void serviceChanged(ServiceEvent event) {
+			switch (event.getType()) {
+			case ServiceEvent.REGISTERED:
+				add(event.getServiceReference());
+				break;
+			case ServiceEvent.UNREGISTERING:
+				remove(event.getServiceReference());
+				break;
+			}
+		}
+	}
+
+	final BundleContext bundleContext;
+
+	private ContextFunctionCache functionCache;
 	/**
 	 * Map of String (service name) -> ServiceData
 	 */
@@ -67,6 +134,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	public OSGiContextStrategy(BundleContext bc) {
 		super();
 		this.bundleContext = bc;
+		functionCache = new ContextFunctionCache();
 	}
 
 	public Object addingService(ServiceReference reference) {
@@ -98,6 +166,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 				it.next().tracker.close();
 			services.clear();
 		}
+		functionCache.dispose();
 	}
 
 	/**
@@ -153,16 +222,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	 * <code>null</code> if there is no matching service.
 	 */
 	private ServiceReference getContextFunction(String name) {
-		try {
-			ServiceReference[] refs = bundleContext.getServiceReferences(
-					IContextFunction.SERVICE_NAME, "(" + IContextFunction.SERVICE_CONTEXT_KEY + '=' //$NON-NLS-1$
-							+ name + ')');
-			if (refs != null && refs.length > 0)
-				return refs[0];
-		} catch (InvalidSyntaxException e) {
-			// the name is not a valid service name, so just carry on
-		}
-		return null;
+		return functionCache.lookup(name);
 	}
 
 	public void modifiedService(ServiceReference reference, Object service) {
