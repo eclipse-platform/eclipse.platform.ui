@@ -890,8 +890,8 @@ public class FilteredResourcesSelectionDialog extends
 				if (stringPattern.charAt(0) != IPath.SEPARATOR) {
 					stringPattern = containerPath.toString() + IPath.SEPARATOR + stringPattern;
 				}
-				resourceRelativePattern.setPattern(stringPattern);
 			}
+			resourceRelativePattern.setPattern(stringPattern);
 		}
 
 		/**
