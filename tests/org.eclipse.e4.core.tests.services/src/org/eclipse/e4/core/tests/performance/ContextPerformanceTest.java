@@ -16,8 +16,10 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.tests.services.TestActivator;
@@ -81,6 +83,50 @@ public class ContextPerformanceTest extends TestCase {
 				context.get("somefunction");
 			}
 		}.run(this, 10, 5000000);
+	}
+
+	public void testSetContextFunction() {
+		context.set("somefunction", new ContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return context.get("something");
+			}
+		});
+		new PerformanceTestRunner() {
+			int i = 0;
+
+			protected void test() {
+				context.set("something", "value-" + i++);
+			}
+		}.run(this, 10, 500000);
+	}
+
+	/**
+	 * Tests setting a value in a context that a RAT is listening to. This test mimics what occurs
+	 * when handlers change in e4. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=305038
+	 */
+	public void testSetValueRunAndTrack() {
+		context.set("somefunction", new ContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				// make sure this function has a large number of dependencies
+				for (int i = 0; i < 1000; i++) {
+					context.get("NonExistentValue-" + i);
+				}
+				return context.get("something");
+			}
+		});
+		context.runAndTrack(new IRunAndTrack() {
+			public boolean notify(ContextChangeEvent event) {
+				context.get("somefunction");
+				return true;
+			}
+		}, null);
+		new PerformanceTestRunner() {
+			int i = 0;
+
+			protected void test() {
+				context.set("something", "value-" + i++);
+			}
+		}.run(this, 10, 100);
 	}
 
 }
