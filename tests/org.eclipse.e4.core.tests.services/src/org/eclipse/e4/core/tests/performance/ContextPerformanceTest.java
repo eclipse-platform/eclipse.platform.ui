@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.tests.services.TestActivator;
 import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
@@ -66,7 +67,20 @@ public class ContextPerformanceTest extends TestCase {
 			protected void test() {
 				context.get("something");
 			}
-		}.run(this, 10, 10000);
+		}.run(this, 10, 50000);
+	}
+
+	public void testLookupContextFunction() {
+		context.set("somefunction", new ContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return "result";
+			}
+		});
+		new PerformanceTestRunner() {
+			protected void test() {
+				context.get("somefunction");
+			}
+		}.run(this, 10, 5000000);
 	}
 
 }
