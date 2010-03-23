@@ -47,6 +47,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	private EventHandler childHandler;
 	private EventHandler activeChildHandler;
 
+	private boolean createContributions = true;
+
 	private static IEclipseContext getParentContext(MUIElement element) {
 		MElementContainer<MUIElement> parent = element.getParent();
 		IEclipseContext context = null;
@@ -118,6 +120,10 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				UIEvents.ElementContainer.SELECTEDELEMENT), activeChildHandler);
 	}
 
+	public void setCreateContributions(boolean createContributions) {
+		this.createContributions = createContributions;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -148,7 +154,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 			mcontext.setContext(createdContext);
 
-			if (element instanceof MContribution) {
+			if (element instanceof MContribution && createContributions) {
 				MContribution contribution = (MContribution) element;
 				String uri = contribution.getURI();
 				if (uri != null) {

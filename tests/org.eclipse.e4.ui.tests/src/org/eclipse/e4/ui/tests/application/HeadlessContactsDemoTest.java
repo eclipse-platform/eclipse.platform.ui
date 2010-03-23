@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.application;
 
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 
 public class HeadlessContactsDemoTest extends HeadlessApplicationTest {
 
@@ -28,6 +29,14 @@ public class HeadlessContactsDemoTest extends HeadlessApplicationTest {
 	@Override
 	protected MPart getSecondPart() {
 		return (MPart) findElement("ContactsView");
+	}
+
+	protected IPresentationEngine createPresentationEngine(
+			String renderingEngineURI) throws Exception {
+		HeadlessContextPresentationEngine engine = (HeadlessContextPresentationEngine) super
+				.createPresentationEngine(renderingEngineURI);
+		engine.setCreateContributions(false);
+		return engine;
 	}
 
 }
