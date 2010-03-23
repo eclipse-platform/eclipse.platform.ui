@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.core.tests.performance;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -33,6 +35,17 @@ import org.eclipse.osgi.service.debug.DebugOptions;
 public class ContextPerformanceTest extends TestCase {
 
 	IEclipseContext parentContext, context;
+
+	public static Test suite() {
+		return new TestSuite(ContextPerformanceTest.class);
+		// TestSuite suite = new TestSuite();
+		// suite.addTest(new ContextPerformanceTest("testSetValueRunAndTrack"));
+		// return suite;
+	}
+
+	public ContextPerformanceTest(String name) {
+		super(name);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -126,7 +139,7 @@ public class ContextPerformanceTest extends TestCase {
 			protected void test() {
 				context.set("something", "value-" + i++);
 			}
-		}.run(this, 10, 100);
+		}.run(this, 10, 300);
 	}
 
 }
