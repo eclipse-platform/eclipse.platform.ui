@@ -116,19 +116,20 @@ public class RequestScope {
 	public static void setScopeFromRequest(HttpServletRequest request, HttpServletResponse response) {
 		// See if there is a scope parameter, if so save as cookie or preference
 		String[] scope = request.getParameterValues(SCOPE_PARAMETER_NAME); 
-		String scopeString = null;
+		String scopeString = ""; //$NON-NLS-1$
 		// save scope (in session cookie) for later use in a user session
 		// If there are multiple values separate them with a '/'
 		if (scope != null) {
-			scopeString = scope[0];			
-			for (int s = 1; s < scope.length; s++) {
-				scopeString += '/';
-				scopeString += scope[s];
+			for (int s = 0; s < scope.length; s++) {
+				if (ScopeRegistry.getInstance().getScope(scope[s]) != null) {
+					if (scopeString.length() > 0) {
+					     scopeString += '/';
+					}
+					scopeString += scope[s];
+				}
 			}
-			saveScope(scopeString, response);
-		}  else {
-			saveScope("", response); //$NON-NLS-1$
 		}
+		saveScope(scopeString, response);
 	}
 	
 	public static void saveScope(String scope, HttpServletResponse response) {
