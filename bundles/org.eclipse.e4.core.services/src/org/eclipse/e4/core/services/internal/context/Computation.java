@@ -116,26 +116,23 @@ abstract class Computation {
 					+ mapToString(dependencies));
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
-			if (c.listeners.contains(this)) { // nested
-				for (Iterator<Computation> existing = c.listeners.iterator(); existing.hasNext();) {
-					Computation existingComputation = existing.next();
-					// if the existing computation is equal but not identical, we need to update
-					if (!equals(existingComputation) || this == existingComputation)
-						continue;
-					for (Iterator<IEclipseContext> newDependencies = dependencies.keySet()
-							.iterator(); newDependencies.hasNext();) {
-						IEclipseContext newDependencyContext = newDependencies.next();
-						if (existingComputation.dependencies.containsKey(newDependencyContext))
-							existingComputation.dependencies.get(newDependencyContext).addAll(
-									dependencies.get(newDependencyContext));
-						else
-							existingComputation.dependencies.put(newDependencyContext, dependencies
-									.get(newDependencyContext));
-					}
-					break;
+			Computation existingComputation = c.listeners.get(this);
+			if (existingComputation != null) {
+				// if the existing computation is equal but not identical, we need to update
+				if (this == existingComputation)
+					continue;
+				for (Iterator<IEclipseContext> newDependencies = dependencies.keySet().iterator(); newDependencies
+						.hasNext();) {
+					IEclipseContext newDependencyContext = newDependencies.next();
+					if (existingComputation.dependencies.containsKey(newDependencyContext))
+						existingComputation.dependencies.get(newDependencyContext).addAll(
+								dependencies.get(newDependencyContext));
+					else
+						existingComputation.dependencies.put(newDependencyContext, dependencies
+								.get(newDependencyContext));
 				}
 			} else
-				c.listeners.add(this);
+				c.listeners.put(this, this);
 		}
 		// Bug 304859
 		if (!dependencies.containsKey(originatingContext))

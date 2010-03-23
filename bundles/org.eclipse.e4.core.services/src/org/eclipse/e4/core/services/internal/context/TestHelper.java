@@ -25,6 +25,6 @@ public final class TestHelper {
 	}
 
 	public static Set<Computation> getListeners(IEclipseContext context) {
-		return ((EclipseContext) context).listeners;
+		return ((EclipseContext) context).listeners.keySet();
 	}
 }

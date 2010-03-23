@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -238,8 +238,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final Set<Computation> listeners = Collections
-			.synchronizedSet(new LinkedHashSet<Computation>());
+	final Map<Computation, Computation> listeners = Collections
+			.synchronizedMap(new LinkedHashMap<Computation, Computation>());
 
 	final Map<LookupKey, ValueComputation> localValueComputations = Collections
 			.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
@@ -283,7 +283,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public void debugSnap() {
 		snapshot = new DebugSnap();
-		snapshot.listeners = new HashSet<Computation>(listeners);
+		snapshot.listeners = new HashSet<Computation>(listeners.keySet());
 		snapshot.localValueComputations = new HashMap<LookupKey, ValueComputation>(
 				localValueComputations);
 		snapshot.localValues = new HashMap<String, Object>(localValues);
@@ -295,7 +295,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void debugDiff() {
 		if (snapshot == null)
 			return;
-		Set<Computation> listenerDiff = new HashSet<Computation>(listeners);
+		Set<Computation> listenerDiff = new HashSet<Computation>(listeners.keySet());
 		listenerDiff.removeAll(snapshot.listeners);
 		listenerDiff = new HashSet<Computation>(listenerDiff);// shrink the set
 		System.out.println("Listener diff: "); //$NON-NLS-1$
@@ -325,7 +325,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * @see org.eclipse.e4.core.services.context.IEclipseContext#dispose()
 	 */
 	public void dispose() {
-		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 				ContextChangeEvent.DISPOSE, null, null, null);
 		// reverse order of listeners
@@ -410,7 +410,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
-		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
 				name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
@@ -572,7 +572,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		synchronized (listeners) {
 			ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
 					ContextChangeEvent.UNINJECTED, null, null, null);
-			for (Iterator<Computation> i = listeners.iterator(); i.hasNext();) {
+			for (Iterator<Computation> i = listeners.keySet().iterator(); i.hasNext();) {
 				Computation computation = i.next();
 				if (computation instanceof TrackableComputationExt) {
 					if (object == ((TrackableComputationExt) computation).getObject()) {
@@ -589,7 +589,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		// Add "boolean inReparent" on the root context and process right away?
 		processWaiting();
 		// 1) everybody who depends on me: I need to collect combined list of names injected
-		Computation[] ls = listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		Set<String> usedNames = new HashSet<String>();
 		for (int i = 0; i < ls.length; i++) {
 			Set<String> listenerNames = ls[i].dependsOnNames(this);
