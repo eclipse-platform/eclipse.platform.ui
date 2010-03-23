@@ -138,13 +138,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				notify(event);
 			} else {
 				// schedule processing
-				Scheduled toBeScheduled = new Scheduled(this, event);
-				for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
-					Scheduled scheduled = i.next();
-					if (scheduled.equals(toBeScheduled)) // eliminate duplicates
-						return;
-				}
-				scheduledList.add(toBeScheduled);
+				scheduledList.add(new Scheduled(this, event));
 			}
 		}
 
@@ -463,8 +457,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	protected void processScheduled(List<Scheduled> scheduledList) {
 		boolean useScheduler = (strategy != null && strategy instanceof ISchedulerStrategy);
+		HashSet<Scheduled> sent = new HashSet<Scheduled>(scheduledList.size());
 		for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
 			Scheduled scheduled = i.next();
+			// don't send the same event twice
+			if (!sent.add(scheduled))
+				continue;
 			if (useScheduler)
 				((ISchedulerStrategy) strategy).schedule(scheduled.runnable, scheduled.event);
 			else
