@@ -745,7 +745,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	int computeOrientation() {
 		Point size= fParent.getSize();
 		if (size.x != 0 && size.y != 0) {
-			if (size.x > size.y)
+			if ((size.x / 3)> size.y)
 				return SWT.HORIZONTAL;
 			else
 				return SWT.VERTICAL;
