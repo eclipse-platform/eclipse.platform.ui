@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Markus Alexander Kuppe, Versant GmbH - bug 215797
  *     Sascha Zak - bug 282874
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.io.IOException;
@@ -77,6 +76,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -1446,6 +1446,14 @@ public class Perspective {
 				showViewShortcuts.add(id);
 			}
 
+			// Load "show in parts"
+			actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_PART);
+			showInPartIds = new ArrayList(actions.length);
+			for (int x = 0; x < actions.length; x++) {
+				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+				showInPartIds.add(id);
+			}
+
 			// Load "show in times".
 			actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_TIME);
 			for (int x = 0; x < actions.length; x++) {
@@ -1461,9 +1469,6 @@ public class Perspective {
 					}
 				}
 			}
-
-			// Load "show in parts" from registry, not memento
-			showInPartIds = getShowInIdsFromRegistry();
 
 			// Load "new wizard actions".
 			actions = memento
@@ -1637,18 +1642,6 @@ public class Perspective {
     }
 
     /**
-     * Returns the Show In... part ids read from the registry.  
-     */
-    protected ArrayList getShowInIdsFromRegistry() {
-        PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-        reader
-                .setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_SHOW_IN_PART });
-        PageLayout layout = new PageLayout();
-        reader.extendLayout(null, descriptor.getOriginalId(), layout);
-        return layout.getShowInPartIds();
-    }
-
-    /**
      * Save the layout.
      */
     public void saveDesc() {
@@ -1752,6 +1745,14 @@ public class Perspective {
                     .createChild(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
             child.putString(IWorkbenchConstants.TAG_ID, str);
         }
+
+		// Save "showInParts"
+		itr = showInPartIds.iterator();
+		while (itr.hasNext()) {
+			String str = (String) itr.next();
+			IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_IN_PART);
+			child.putString(IWorkbenchConstants.TAG_ID, str);
+		}
 
         // Save "show in times"
         itr = showInTimes.keySet().iterator();
