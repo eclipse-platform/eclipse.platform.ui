@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,18 +211,20 @@ public class ConsoleManager implements IConsoleManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#addConsoles(org.eclipse.ui.console.IConsole[])
 	 */
-	public synchronized void addConsoles(IConsole[] consoles) {
+	public void addConsoles(IConsole[] consoles) {
 		List added = new ArrayList(consoles.length);
-		for (int i = 0; i < consoles.length; i++) {
-		    IConsole console = consoles[i];
-		    if(console instanceof TextConsole) {
-		        TextConsole ioconsole = (TextConsole)console;
-		        createPatternMatchListeners(ioconsole);
-		    }
-			if (!fConsoles.contains(console)) {
-				fConsoles.add(console);
-				added.add(console);
-			}
+		synchronized (fConsoles) {
+			for (int i = 0; i < consoles.length; i++) {
+			    IConsole console = consoles[i];
+			    if(console instanceof TextConsole) {
+			        TextConsole ioconsole = (TextConsole)console;
+			        createPatternMatchListeners(ioconsole);
+			    }
+				if (!fConsoles.contains(console)) {
+					fConsoles.add(console);
+					added.add(console);
+				}
+			}			
 		}
 		if (!added.isEmpty()) {
 			fireUpdate((IConsole[])added.toArray(new IConsole[added.size()]), ADDED);
@@ -232,12 +234,14 @@ public class ConsoleManager implements IConsoleManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#removeConsoles(org.eclipse.ui.console.IConsole[])
 	 */
-	public synchronized void removeConsoles(IConsole[] consoles) {
+	public void removeConsoles(IConsole[] consoles) {
 		List removed = new ArrayList(consoles.length);
-		for (int i = 0; i < consoles.length; i++) {
-			IConsole console = consoles[i];
-			if (fConsoles.remove(console)) {
-				removed.add(console);
+		synchronized (fConsoles) {
+			for (int i = 0; i < consoles.length; i++) {
+				IConsole console = consoles[i];
+				if (fConsoles.remove(console)) {
+					removed.add(console);
+				}
 			}
 		}
 		if (!removed.isEmpty()) {
@@ -248,8 +252,10 @@ public class ConsoleManager implements IConsoleManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#getConsoles()
 	 */
-	public synchronized IConsole[] getConsoles() {
-		return (IConsole[])fConsoles.toArray(new IConsole[fConsoles.size()]);
+	public IConsole[] getConsoles() {
+		synchronized (fConsoles) {
+			return (IConsole[])fConsoles.toArray(new IConsole[fConsoles.size()]);	
+		}
 	}
 
 	/**
