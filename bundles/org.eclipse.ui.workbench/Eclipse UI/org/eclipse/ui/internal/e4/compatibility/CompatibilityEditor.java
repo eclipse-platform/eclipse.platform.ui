@@ -91,7 +91,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 	void preDestroy() {
 		IWorkbenchPartReference reference = getReference();
 		WorkbenchPage page = (WorkbenchPage) wrapped.getSite().getPage();
-		for (Iterator<IEditorReference> it = page.getInternalEditorReferences().iterator(); it
+		for (Iterator<EditorReference> it = page.getInternalEditorReferences().iterator(); it
 				.hasNext();) {
 			IEditorReference ref = it.next();
 			if (ref == reference) {

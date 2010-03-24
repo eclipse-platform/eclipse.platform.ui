@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
@@ -227,7 +228,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
-	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
+	private List<EditorReference> editorReferences = new ArrayList<EditorReference>();
 
 	private List<IPerspectiveDescriptor> openedPerspectives = new ArrayList<IPerspectiveDescriptor>();
 	private List<IPerspectiveDescriptor> sortedPerspectives = new ArrayList<IPerspectiveDescriptor>();
@@ -454,7 +455,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
+		for (Iterator<EditorReference> it = editorReferences.iterator(); it.hasNext();) {
 			IEditorReference reference = it.next();
 			if (part == reference.getPart(false)) {
 				return ((WorkbenchPartReference) reference).getModel();
@@ -486,7 +487,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 
-	public List<IEditorReference> getInternalEditorReferences() {
+	public List<EditorReference> getInternalEditorReferences() {
 		return editorReferences;
 	}
 
@@ -1285,19 +1286,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		switch (matchFlags) {
 		case MATCH_INPUT:
 			List<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
-			for (IEditorReference editorRef : editorReferences) {
-				IEditorPart editor = editorRef.getEditor(false);
-				if (editor == null) {
-					try {
-						if (input.equals(editorRef.getEditorInput())) {
-							editorRefs.add(editorRef);
-						}
-					} catch (PartInitException e) {
-						WorkbenchPlugin.log(e);
-					}
-				} else if (editor.getEditorInput().equals(input)) {
-					editorRefs.add(editorRef);
-				}
+			for (EditorReference editorRef : editorReferences) {
+				checkEditor(input, editorRefs, editorRef);
 			}
 			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
 		case MATCH_ID:
@@ -1312,25 +1302,36 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0
 					&& (matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
 				editorRefs = new ArrayList<IEditorReference>();
-				for (IEditorReference editorRef : editorReferences) {
+				for (EditorReference editorRef : editorReferences) {
 					if (editorRef.getId().equals(editorId)) {
-						IEditorPart editor = editorRef.getEditor(false);
-						if (editor == null) {
-							try {
-								if (input.equals(editorRef.getEditorInput())) {
-									editorRefs.add(editorRef);
-								}
-							} catch (PartInitException e) {
-								WorkbenchPlugin.log(e);
-							}
-						} else if (editor.getEditorInput().equals(input)) {
-							editorRefs.add(editorRef);
-						}
+						checkEditor(input, editorRefs, editorRef);
 					}
 				}
 				return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
 			}
 			return new IEditorReference[0];
+		}
+	}
+
+	private void checkEditor(IEditorInput input, List<IEditorReference> editorRefs,
+			EditorReference editorRef) {
+		IEditorMatchingStrategy strategy = editorRef.getDescriptor().getEditorMatchingStrategy();
+		if (strategy != null && strategy.matches(editorRef, input)) {
+			editorRefs.add(editorRef);
+			return;
+		}
+
+		IEditorPart editor = editorRef.getEditor(false);
+		if (editor == null) {
+			try {
+				if (input.equals(editorRef.getEditorInput())) {
+					editorRefs.add(editorRef);
+				}
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log(e);
+			}
+		} else if (editor.getEditorInput().equals(input)) {
+			editorRefs.add(editorRef);
 		}
 	}
 
