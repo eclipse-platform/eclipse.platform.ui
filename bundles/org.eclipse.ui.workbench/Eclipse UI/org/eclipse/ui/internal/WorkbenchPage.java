@@ -154,8 +154,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
-			PartSite site = (PartSite) ((CompatibilityPart) client).getPart().getSite();
+			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			PartSite site = (PartSite) workbenchPart.getSite();
 			site.activateActionBars(true);
+
+			IActionBars actionBars = site.getActionBars();
+			if (actionBars instanceof EditorActionBars) {
+				((EditorActionBars) actionBars).partChanged(workbenchPart);
+			}
 		}
 
 		((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
