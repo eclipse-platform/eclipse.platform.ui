@@ -1393,10 +1393,12 @@ public class InternalTreeModelViewer extends TreeViewer
     	Tree tree = getTree();
 		final TreeColumn[] columns = tree.getColumns();
 		String[] visibleColumnIds = getVisibleColumns();
+		// remove all listeners before disposing - see bug 223233
     	for (int i = 0; i < columns.length; i++) {
-    		TreeColumn treeColumn = columns[i];
-    		treeColumn.removeControlListener(fListener);
-			treeColumn.dispose();
+    		columns[i].removeControlListener(fListener);
+    	}
+    	for (int i = 0; i < columns.length; i++) {
+			columns[i].dispose();
 		}
     	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
     	if (presentation != null) {	    	
