@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +24,13 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -56,44 +56,61 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	Logger logger;
 	@Inject
 	IEventBroker eventBroker;
-	private EventHandler itemUpdater;
+
+	private EventHandler itemUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MToolItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
+				return;
+
+			MToolItem itemModel = (MToolItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			ToolItem toolItem = (ToolItem) itemModel.getWidget();
+
+			// No widget == nothing to update
+			if (toolItem == null)
+				return;
+
+			String attName = (String) event
+					.getProperty(UIEvents.EventTags.ATTNAME);
+			if (UIEvents.UILabel.LABEL.equals(attName)) {
+				setItemText(itemModel, toolItem);
+			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+				toolItem.setImage(getImage(itemModel));
+			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
+				toolItem.setToolTipText(itemModel.getTooltip());
+				toolItem.setImage(getImage(itemModel));
+			}
+		}
+	};
+
+	private EventHandler selectionUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MToolItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
+				return;
+
+			MToolItem itemModel = (MToolItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			ToolItem toolItem = (ToolItem) itemModel.getWidget();
+			if (toolItem != null) {
+				toolItem.setSelection(itemModel.isSelected());
+			}
+		}
+	};
 
 	@PostConstruct
 	public void init() {
-		itemUpdater = new EventHandler() {
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MToolItem
-				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
-					return;
-
-				MToolItem itemModel = (MToolItem) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				ToolItem toolItem = (ToolItem) itemModel.getWidget();
-
-				// No widget == nothing to update
-				if (toolItem == null)
-					return;
-
-				String attName = (String) event
-						.getProperty(UIEvents.EventTags.ATTNAME);
-				if (UIEvents.UILabel.LABEL.equals(attName)) {
-					setItemText(itemModel, toolItem);
-				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
-					toolItem.setImage(getImage(itemModel));
-				} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
-					toolItem.setToolTipText(itemModel.getTooltip());
-					toolItem.setImage(getImage(itemModel));
-				}
-			}
-		};
-
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
+				UIEvents.Item.SELECTED), selectionUpdater);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
+		eventBroker.unsubscribe(selectionUpdater);
 	}
 
 	private ParameterizedCommand generateParameterizedCommand(
@@ -206,6 +223,25 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
+		// If the item is a CHECK or RADIO update the model's state to match
+		if (me instanceof MItem) {
+			final MItem item = (MItem) me;
+			if (item.getType() == ItemType.CHECK
+					|| item.getType() == ItemType.RADIO) {
+				ToolItem ti = (ToolItem) me.getWidget();
+				ti.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
+						item.setSelected(((ToolItem) e.widget).getSelection());
+					}
+
+					public void widgetDefaultSelected(SelectionEvent e) {
+						item.setSelected(((ToolItem) e.widget).getSelection());
+					}
+				});
+			}
+		}
+
+		// 'Execute' the operation if possible
 		if (me instanceof MContribution
 				&& ((MContribution) me).getURI() != null) {
 			final MContribution contrib = (MContribution) me;

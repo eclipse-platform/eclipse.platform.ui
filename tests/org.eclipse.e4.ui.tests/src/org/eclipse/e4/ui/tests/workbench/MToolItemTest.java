@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MToolBar;
@@ -25,7 +26,9 @@ import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -206,5 +209,65 @@ public class MToolItemTest extends TestCase {
 
 	public void testMToolItem_Tooltip_StringStringChanged() {
 		testMToolItem_Tooltip("toolTip", "toolTip", "toolTip2", "toolTip2");
+	}
+
+	public void testMToolItem_RadioItems() {
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		MToolItem toolItem1 = MApplicationFactory.eINSTANCE.createToolItem();
+		MToolItem toolItem2 = MApplicationFactory.eINSTANCE.createToolItem();
+
+		toolItem1.setType(ItemType.RADIO);
+		toolItem2.setType(ItemType.RADIO);
+
+		window.getChildren().add(windowTrim);
+		toolBar.getChildren().add(toolItem1);
+		toolBar.getChildren().add(toolItem2);
+		windowTrim.getChildren().add(toolBar);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget1 = toolItem1.getWidget();
+		assertNotNull(widget1);
+		assertTrue(widget1 instanceof ToolItem);
+
+		Object widget2 = toolItem2.getWidget();
+		assertNotNull(widget2);
+		assertTrue(widget2 instanceof ToolItem);
+
+		ToolItem toolItemWidget1 = (ToolItem) widget1;
+		ToolItem toolItemWidget2 = (ToolItem) widget2;
+
+		// test that 'clicking' on the item updates the model
+		toolItemWidget1.setSelection(false);
+		toolItemWidget2.setSelection(true);
+		toolItemWidget1.notifyListeners(SWT.Selection, new Event());
+		toolItemWidget2.notifyListeners(SWT.Selection, new Event());
+
+		assertFalse(toolItem1.isSelected());
+		assertTrue(toolItem2.isSelected());
+
+		toolItemWidget2.setSelection(false);
+		toolItemWidget1.setSelection(true);
+		toolItemWidget2.notifyListeners(SWT.Selection, new Event());
+		toolItemWidget1.notifyListeners(SWT.Selection, new Event());
+
+		assertTrue(toolItem1.isSelected());
+		assertFalse(toolItem2.isSelected());
+
+		// Check that model changes are reflected in the items
+		toolItem1.setSelected(false);
+		assertFalse(toolItemWidget1.getSelection());
+		toolItem2.setSelected(true);
+		assertTrue(toolItemWidget2.getSelection());
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -54,41 +55,57 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	Logger logger;
 	@Inject
 	IEventBroker eventBroker;
-	private EventHandler itemUpdater;
+	private EventHandler itemUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MMenuItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+				return;
+
+			MMenuItem itemModel = (MMenuItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			MenuItem menuItem = (MenuItem) itemModel.getWidget();
+
+			// No widget == nothing to update
+			if (menuItem == null)
+				return;
+
+			String attName = (String) event
+					.getProperty(UIEvents.EventTags.ATTNAME);
+			if (UIEvents.UILabel.LABEL.equals(attName)) {
+				setItemText(itemModel, menuItem);
+			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+				menuItem.setImage(getImage(itemModel));
+			}
+		}
+	};
+
+	private EventHandler selectionUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MToolItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+				return;
+
+			MMenuItem itemModel = (MMenuItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			MenuItem menuItem = (MenuItem) itemModel.getWidget();
+			if (menuItem != null) {
+				menuItem.setSelection(itemModel.isSelected());
+			}
+		}
+	};
 
 	@PostConstruct
 	public void init() {
-		itemUpdater = new EventHandler() {
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
-					return;
-
-				MMenuItem itemModel = (MMenuItem) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				MenuItem menuItem = (MenuItem) itemModel.getWidget();
-
-				// No widget == nothing to update
-				if (menuItem == null)
-					return;
-
-				String attName = (String) event
-						.getProperty(UIEvents.EventTags.ATTNAME);
-				if (UIEvents.UILabel.LABEL.equals(attName)) {
-					setItemText(itemModel, menuItem);
-				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
-					menuItem.setImage(getImage(itemModel));
-				}
-			}
-		};
-
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
+				UIEvents.Item.SELECTED), selectionUpdater);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
+		eventBroker.unsubscribe(selectionUpdater);
 	}
 
 	public Object createWidget(final MUIElement element, Object parent) {
@@ -178,6 +195,25 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
+		// If the item is a CHECK or RADIO update the model's state to match
+		if (me instanceof MItem) {
+			final MItem item = (MItem) me;
+			if (item.getType() == ItemType.CHECK
+					|| item.getType() == ItemType.RADIO) {
+				MenuItem ti = (MenuItem) me.getWidget();
+				ti.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
+						item.setSelected(((MenuItem) e.widget).getSelection());
+					}
+
+					public void widgetDefaultSelected(SelectionEvent e) {
+						item.setSelected(((MenuItem) e.widget).getSelection());
+					}
+				});
+			}
+		}
+
+		// 'Execute' the operation if possible
 		if (me instanceof MContribution
 				&& ((MContribution) me).getURI() != null) {
 			final MContribution contrib = (MContribution) me;
