@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -56,6 +57,7 @@ import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -117,7 +119,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
@@ -1005,15 +1006,42 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/*
 	 * (non-Javadoc) Method declared on IRunnableContext.
 	 */
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+	public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		IProgressService service = (IProgressService) model.getContext().get(
-				IProgressService.class.getName());
-		service.run(fork, cancelable, runnable);
+		final StatusLineManager manager = getStatusLineManager();
+		if (manager == null) {
+			runnable.run(new NullProgressMonitor());
+		} else {
+			boolean wasCancelEnabled = manager.isCancelEnabled();
+			try {
+				manager.setCancelEnabled(cancelable);
+
+				final InvocationTargetException[] ite = new InvocationTargetException[1];
+				final InterruptedException[] ie = new InterruptedException[1];
+
+				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+					public void run() {
+						try {
+							ModalContext.run(runnable, fork, manager.getProgressMonitor(),
+									getShell().getDisplay());
+						} catch (InvocationTargetException e) {
+							ite[0] = e;
+						} catch (InterruptedException e) {
+							ie[0] = e;
+						}
+					}
+				});
+
+				if (ite[0] != null) {
+					throw ite[0];
+				} else if (ie[0] != null) {
+					throw ie[0];
+				}
+			} finally {
+				manager.setCancelEnabled(wasCancelEnabled);
+			}
+		}
 	}
-
-
-	
 
 	/**
 	 * Sets the active page within the window.
