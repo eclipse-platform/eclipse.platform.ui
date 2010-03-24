@@ -400,10 +400,23 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return null;
 	}
 
-	protected void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
+	/**
+	 * The given name has been modified or removed in this context. Invalidate all local value
+	 * computations and listeners that depend on this name.
+	 */
+	private void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
+		handleInvalid(name, eventType, oldValue, scheduled);
+	}
+
+	/**
+	 * The value of the given name has changed in this context. This either means the value has been
+	 * changed directly, or the value is a function that has been invalidated (one of the function's
+	 * dependencies has changed).
+	 */
+	void handleInvalid(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
 				name, oldValue);

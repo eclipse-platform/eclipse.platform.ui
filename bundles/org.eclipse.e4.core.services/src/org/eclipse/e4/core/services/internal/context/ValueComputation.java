@@ -120,7 +120,7 @@ public class ValueComputation extends Computation {
 				return;
 			}
 		}
-		this.originatingContext.invalidate(this.name,
+		this.originatingContext.handleInvalid(this.name,
 				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
 				event.getOldValue(), scheduled);
 	}
