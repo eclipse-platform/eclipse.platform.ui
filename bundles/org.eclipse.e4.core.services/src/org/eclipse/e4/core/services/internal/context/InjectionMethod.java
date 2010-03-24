@@ -46,6 +46,8 @@ public class InjectionMethod extends InjectionAbstract {
 			logError(method, e);
 			return false;
 		}
+		if (eventType == ContextChangeEvent.DISPOSE && primarySupplier.equals(changed))
+			return false;
 		return true;
 	}
 

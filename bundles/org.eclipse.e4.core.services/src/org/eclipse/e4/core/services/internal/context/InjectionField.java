@@ -56,6 +56,8 @@ public class InjectionField extends InjectionAbstract {
 			return true; // keep trying?
 		}
 		setField(value);
+		if (eventType == ContextChangeEvent.DISPOSE && primarySupplier.equals(changed))
+			return false;
 		return true;
 	}
 
