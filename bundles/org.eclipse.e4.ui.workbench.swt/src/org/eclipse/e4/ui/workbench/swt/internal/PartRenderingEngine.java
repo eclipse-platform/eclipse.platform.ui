@@ -51,6 +51,8 @@ import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.equinox.app.IApplication;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -195,6 +197,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	@PostConstruct
 	void initialize(IEclipseContext context) {
 		this.appContext = context;
+
+		// initialize the correct key-binding display formatter
+		KeyFormatterFactory.setDefault(SWTKeySupport
+				.getKeyFormatterForPlatform());
 
 		IExtensionRegistry registry = (IExtensionRegistry) context
 				.get(IExtensionRegistry.class.getName());
