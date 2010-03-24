@@ -82,7 +82,7 @@ public class ContextPerformanceTest extends TestCase {
 			protected void test() {
 				context.get("something");
 			}
-		}.run(this, 10, 50000);
+		}.run(this, 10, 600000);
 	}
 
 	public void testLookupContextFunction() {
@@ -110,7 +110,7 @@ public class ContextPerformanceTest extends TestCase {
 			protected void test() {
 				context.set("something", "value-" + i++);
 			}
-		}.run(this, 10, 500000);
+		}.run(this, 10, 600000);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class ContextPerformanceTest extends TestCase {
 			protected void test() {
 				context.set("something", "value-" + i++);
 			}
-		}.run(this, 10, 300);
+		}.run(this, 10, 400);
 	}
 
 }
