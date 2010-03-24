@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.part;
 
 /**
- * This interface must be provided by Show In targets (parts listed
- * in the Show In prompter).
- * The part can either directly implement this interface, or provide it
- * via <code>IAdaptable.getAdapter(IShowInTarget.class)</code>.
+ * This interface must be provided by Show In targets (views listed in the 'Show In'
+ * menu).
+ * <p>
+ * The view can either directly implement this interface, or provide it via
+ * <code>IAdaptable.getAdapter(IShowInTarget.class)</code>.
+ * </p>
  * 
  * @see org.eclipse.ui.IPageLayout#addShowInPart
  * 

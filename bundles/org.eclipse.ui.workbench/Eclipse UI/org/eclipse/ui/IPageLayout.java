@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,15 +275,18 @@ public interface IPageLayout {
     public void addPlaceholder(String viewId, int relationship, float ratio,
             String refId);
 
-    /**
-     * Adds an item to the Show In prompter.
-     * The id must name a view contributed to the workbench's view extension point 
-     * (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param id the view id
-     * 
-     * @since 2.1
-     */
+	/**
+	 * Adds an item to the 'Show In' menu.
+	 * <p>
+	 * The id must name a view contributed to the workbench's view extension
+	 * point (named <code>"org.eclipse.ui.views"</code>).
+	 * </p>
+	 * 
+	 * @param id
+	 *            the view id
+	 * 
+	 * @since 2.1
+	 */
     public void addShowInPart(String id);
 
     /**
