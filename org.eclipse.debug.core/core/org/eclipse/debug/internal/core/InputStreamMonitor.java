@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import java.util.Vector;
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
- * Writes to the input stream of a system process, 
+ * Writes to the input stream of a system process,
  * queueing output if the stream is blocked.
  * 
  * The input stream monitor writes to system in via
@@ -47,17 +47,32 @@ public class InputStreamMonitor {
 	 * Whether the underlying output stream has been closed
 	 */
 	private boolean fClosed = false;
+
+	/**
+	 * The encoding of the input stream.
+	 */
+	private String fEncoding;
 	
 	/**
-	 * Creates an input stream monitor which writes
-	 * to system in via the given output stream.
+	 * Creates an input stream monitor which writes to system in via the given output stream.
 	 * 
 	 * @param stream output stream
 	 */
 	public InputStreamMonitor(OutputStream stream) {
+		this(stream, null);
+	}	
+
+	/**
+	 * Creates an input stream monitor which writes to system in via the given output stream.
+	 * 
+	 * @param stream output stream
+	 * @param encoding stream encoding or <code>null</code> for system default
+	 */
+	public InputStreamMonitor(OutputStream stream, String encoding) {
 		fStream= stream;
 		fQueue= new Vector();
 		fLock= new Object();
+		fEncoding= encoding;
 	}
 	
 	/**
@@ -83,8 +98,8 @@ public class InputStreamMonitor {
 				public void run() {
 					write();
 				}
-			}, DebugCoreMessages.InputStreamMonitor_label); 
-            fThread.setDaemon(true);
+			}, DebugCoreMessages.InputStreamMonitor_label);
+			fThread.setDaemon(true);
 			fThread.start();
 		}
 	}
@@ -97,7 +112,7 @@ public class InputStreamMonitor {
 		if (fThread != null) {
 			Thread thread= fThread;
 			fThread= null;
-			thread.interrupt(); 
+			thread.interrupt();
 		}
 	}
 	
@@ -125,7 +140,10 @@ public class InputStreamMonitor {
 			String text = (String)fQueue.firstElement();
 			fQueue.removeElementAt(0);
 			try {
-				fStream.write(text.getBytes());
+				if (fEncoding != null)
+					fStream.write(text.getBytes(fEncoding));
+				else
+					fStream.write(text.getBytes());
 				fStream.flush();
 			} catch (IOException e) {
 				DebugPlugin.log(e);

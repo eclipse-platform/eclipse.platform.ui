@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 
 /**
- * Standard implementation of a streams proxy for s 
- * StreamsProxy
+ * Standard implementation of a streams proxy for IStreamsProxy.
  */
 
 public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
@@ -54,7 +53,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 		}
 		fOutputMonitor= new OutputStreamMonitor(process.getInputStream(), encoding);
 		fErrorMonitor= new OutputStreamMonitor(process.getErrorStream(), encoding);
-		fInputMonitor= new InputStreamMonitor(process.getOutputStream());
+		fInputMonitor= new InputStreamMonitor(process.getOutputStream(), encoding);
 		fOutputMonitor.startMonitoring();
 		fErrorMonitor.startMonitoring();
 		fInputMonitor.startMonitoring();
@@ -96,7 +95,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * communications between it and the
 	 * underlying streams immediately.
 	 * Data remaining in the streams is lost.
-	 */	
+	 */
 	public void kill() {
 	    synchronized (this) {
 	        fClosed= true;
