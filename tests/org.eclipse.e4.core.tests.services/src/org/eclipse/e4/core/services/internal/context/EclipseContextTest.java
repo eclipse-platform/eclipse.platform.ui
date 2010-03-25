@@ -128,6 +128,17 @@ public class EclipseContextTest extends TestCase {
 	}
 
 	/**
+	 * Tests that a context no longer looks up values from its parent when disposed.
+	 */
+	public void testDisposeRemovesParentReference() {
+		assertNull(context.get("foo"));
+		parentContext.set("foo", "bar");
+		assertEquals("bar", context.get("foo"));
+		((IDisposable) context).dispose();
+		assertNull(context.get("foo"));
+	}
+
+	/**
 	 * Tests handling of a context function defined in the parent that uses values defined in the
 	 * child
 	 */
