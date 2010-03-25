@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -79,10 +80,11 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 										MessageDialog.QUESTION,
 										new String[] {ActionMessages.RemoveBreakpointAction_5, ActionMessages.RemoveBreakpointAction_6},
 										0);
-								if(dialog.open() == 0) {
-									deleteAll = dialog.deleteAllBreakpoints();
-									deleteContainer = dialog.deleteWorkingset();
+								if (dialog.open() == Window.CANCEL) {
+									return;
 								}
+								deleteAll = dialog.deleteAllBreakpoints();
+								deleteContainer = dialog.deleteWorkingset();
 							}
 							if(deleteContainer) {
 								groupsToDelete.add(set);
