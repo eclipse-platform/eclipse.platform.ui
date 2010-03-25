@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.launching.IAntLaunchConstants;
@@ -25,6 +24,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
@@ -96,57 +96,22 @@ public class AntJRETab extends JavaJRETab {
 		boolean isDefaultJRE = fJREBlock.isDefaultJRE();
         fWorkingDirectoryBlock.setEnabled(!isDefaultJRE);
 		fVMArgumentsBlock.setEnabled(!isDefaultJRE);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 		if (isDefaultJRE) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 		} else {
 			super.performApply(configuration);
-			
-			if (useDefaultSeparateJRE(configuration)) {
-				configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, true);
-			} else {
-				configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
-			}
-			
+			IVMInstall vm = fJREBlock.getJRE();
+			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, (vm == null ? false : vm.equals(getDefaultVMInstall(configuration))));
 			applySeparateVMAttributes(configuration);
 			fVMArgumentsBlock.performApply(configuration);
 			fWorkingDirectoryBlock.performApply(configuration);
 		}
 		setLaunchConfigurationWorkingCopy(configuration);
-	}
-	
-	private boolean useDefaultSeparateJRE(ILaunchConfigurationWorkingCopy configuration) {
-		boolean deflt= false;
-		String vmInstallType= null;
-        String jreContainerPath= null;
-		try {
-			vmInstallType= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-            jreContainerPath= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
-		} catch (CoreException e) {
-		}
-		if (vmInstallType != null) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		}
-        if (jreContainerPath != null) {
-            configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
-        }
-		IVMInstall defaultVMInstall= getDefaultVMInstall(configuration);
-		if (defaultVMInstall != null) {
-			IVMInstall vm= fJREBlock.getJRE();
-			deflt= defaultVMInstall.equals(vm);
-		}
-		
-		if (vmInstallType != null) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstallType);
-		}
-        if (jreContainerPath != null) {
-            configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, jreContainerPath);
-        }
-		return deflt;
 	}
 	
 	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
@@ -189,35 +154,10 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			 boolean isDefaultVMInstall= configuration.getAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
-			 if (isDefaultVMInstall) {
-			 	ILaunchConfigurationWorkingCopy copy = null;
-			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
-			 		copy= (ILaunchConfigurationWorkingCopy) configuration;
-			 	} else {
-			 		copy= configuration.getWorkingCopy();
-			 	}
-			 	
-			 	//null out the vm type and jre container path to get the default vm install from JavaRuntime
-			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
-			 	IVMInstall defaultVMInstall= getDefaultVMInstall(copy);
-			 	if (defaultVMInstall != null) {
-			 		//update if required
-			 		setDefaultVMInstallAttributes(defaultVMInstall, copy);
-			 	}
-				if (copy.isDirty() && !copy.isReadOnly()) {
-					configuration= copy.doSave();
-				}
-			 }
-        } catch (CoreException ce) {
-        	AntUIPlugin.log(ce);
-        }
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
-		boolean separateVM= !fJREBlock.isDefaultJRE();
+		boolean separateVM = !fJREBlock.isDefaultJRE();
 		fWorkingDirectoryBlock.setEnabled(separateVM);
 		fVMArgumentsBlock.setEnabled(separateVM);
 	}
@@ -276,33 +216,36 @@ public class AntJRETab extends JavaJRETab {
 		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
 		if (defaultVMInstall != null) {
 			config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, true);
-			setDefaultVMInstallAttributes(defaultVMInstall, config);
+			//setDefaultVMInstallAttributes(defaultVMInstall, config);
 			applySeparateVMAttributes(config);
 		}
 		
 	}
 
+	/**
+	 * Returns the default {@link IVMInstall} for the given {@link ILaunchConfiguration}, which resolves
+	 * to the {@link IVMInstall} for the backing {@link IJavaProject} as specified by the project
+	 * attribute in the configuration. If there is no project attribute the workspace default
+	 * {@link IVMInstall} is returned.
+	 * 
+	 * @param config
+	 * @return the default {@link IVMInstall} for the given {@link ILaunchConfiguration}
+	 */
 	private IVMInstall getDefaultVMInstall(ILaunchConfiguration config) {
-		IVMInstall defaultVMInstall;
 		try {
-			defaultVMInstall = JavaRuntime.computeVMInstall(config);
+			IJavaProject project = JavaRuntime.getJavaProject(config);
+			if(project != null) {
+				return JavaRuntime.getVMInstall(project);
+			}
+			return JavaRuntime.getDefaultVMInstall();
 		} catch (CoreException e) {
 			//core exception thrown for non-Java project
-			defaultVMInstall= JavaRuntime.getDefaultVMInstall();
+			return JavaRuntime.getDefaultVMInstall();
 		}
-		return defaultVMInstall;
 	}
 
-	private void setDefaultVMInstallAttributes(IVMInstall defaultVMInstall, ILaunchConfigurationWorkingCopy config) {
-		String vmName = defaultVMInstall.getName();
-		String vmTypeID = defaultVMInstall.getVMInstallType().getId();
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
-	}
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
 }
