@@ -8,10 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.e4.workbench.ui.internal;
-
-import org.eclipse.e4.core.services.events.IEventBroker;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +23,7 @@ import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -173,6 +171,8 @@ public class SelectionServiceImpl implements ESelectionService {
 				private boolean initial = true;
 
 				public boolean notify(ContextChangeEvent event) {
+					if (event.getEventType() == ContextChangeEvent.DISPOSE)
+						return false;
 					Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
