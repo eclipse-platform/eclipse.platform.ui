@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -645,13 +645,37 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			boolean valid= fNameText == null || fNameText.getText().trim().length() != 0;
 			if (!valid) {
 				status = new StatusInfo();
-				if (!fSuppressError) {
+				if (!fSuppressError)
 					status.setError(TemplatesMessages.EditTemplateDialog_error_noname);
-				}
+			} else if (!isValidPattern(fPatternEditor.getDocument().get())) {
+				status = new StatusInfo();
+				if (!fSuppressError)
+					status.setError(TemplatesMessages.EditTemplateDialog_error_invalidPattern);
 	 		} else {
 	 			status= fValidationStatus;
 	 		}
 			updateStatus(status);
+		}
+
+		/**
+		 * Validates the pattern.
+		 * <p>
+		 * The default implementation rejects invalid XML characters.
+		 * </p>
+		 * <p>
+		 * XXX: Make protected in 3.7
+		 * 
+		 * @param pattern the pattern to verify
+		 * @return <code>true</code> if the pattern is valid
+		 * @since 3.6
+		 */
+		private boolean isValidPattern(String pattern) {
+			for (int i= 0; i < pattern.length(); i++) {
+				char ch= pattern.charAt(i);
+				if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32))
+					return false;
+			}
+			return true;
 		}
 
 		/*
