@@ -67,7 +67,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
@@ -416,39 +415,25 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 			TreePath path = ((ITreeSelection) selection).getPaths()[0];
 			TreeItem item = (TreeItem) ((TreeModelViewer) getViewer()).findItem(path);
 			Object toselect = null;
+			TreeItem[] siblings = null;
 			if (item != null) {
 				TreeItem parent = item.getParentItem();
 				if (parent != null) {
-					int idx = 0;
-					if (parent.getItemCount() == 1) {
-						toselect = parent.getData();
-					}
-					idx = parent.indexOf(item);
-					if (idx == 0) {
-						if (parent.getItemCount() > 1) {
-							toselect = parent.getItem(1).getData();
-						} else {
-							toselect = parent.getItem(0).getData();
-						}
-					}
-					if (idx > 0) {
-						toselect = parent.getItem(idx - 1).getData();
-					}
+					siblings = parent.getItems();
 				} else {
-					Tree tree = item.getParent();
-					TreeItem[] items = tree.getItems();
-					if (items.length > 1) {
-						for (int i = 0; i < items.length; i++) {
-							if (item.equals(items[i])) {
-								if (i + 1 >= items.length) {
-									toselect = items[i - 1].getData();
-									break;
-								} else {
-									toselect = items[i + 1].getData();
-									break;
-								}
-
+					siblings = item.getParent().getItems();
+				}
+				if (siblings.length > 1) {
+					for (int i = 0; i < siblings.length; i++) {
+						if (item.equals(siblings[i])) {
+							if (i + 1 >= siblings.length) {
+								toselect = siblings[i - 1].getData();
+								break;
+							} else {
+								toselect = siblings[i + 1].getData();
+								break;
 							}
+
 						}
 					}
 				}
