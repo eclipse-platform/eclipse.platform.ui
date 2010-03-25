@@ -46,7 +46,8 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 
 		ServiceTracker tracker;
 		// the contexts using this service (IEclipseContext -> null)
-		final Map<IEclipseContext, Object> users = new WeakHashMap<IEclipseContext, Object>();
+		final Map<IEclipseContext, Object> users = Collections
+				.synchronizedMap(new WeakHashMap<IEclipseContext, Object>());
 
 		ServiceData(String name) {
 			this.name = name;
@@ -56,6 +57,10 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 			users.put(originatingContext, null);
 			// track this context so we can cleanup when the context is disposed
 			originatingContext.runAndTrack(OSGiContextStrategy.this, null);
+		}
+
+		public IEclipseContext[] getUsingContexts() {
+			return users.keySet().toArray(new IEclipseContext[users.size()]);
 		}
 	}
 
@@ -147,8 +152,8 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		// may have been cleaned up concurrently
 		if (data == null)
 			return null;
-		for (Iterator<IEclipseContext> it = data.users.keySet().iterator(); it.hasNext();)
-			it.next().set(name, newValue);
+		for (IEclipseContext user : data.getUsingContexts())
+			user.set(name, newValue);
 		return newValue;
 	}
 
@@ -231,8 +236,8 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		// may have been cleaned up concurrently
 		if (data == null)
 			return;
-		for (Iterator<IEclipseContext> it = data.users.keySet().iterator(); it.hasNext();)
-			it.next().set(name, service);
+		for (IEclipseContext user : data.getUsingContexts())
+			user.set(name, service);
 	}
 
 	public void removedService(ServiceReference reference, Object service) {
@@ -241,8 +246,8 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		ServiceData data = getServiceData(name);
 		// may have been cleaned up concurrently
 		if (data != null) {
-			for (Iterator<IEclipseContext> it = data.users.keySet().iterator(); it.hasNext();)
-				it.next().set(name, null);
+			for (IEclipseContext user : data.getUsingContexts())
+				user.set(name, null);
 		}
 		bundleContext.ungetService(reference);
 	}
