@@ -332,6 +332,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		// TBD used by OSGI Context strategy - is this needed? Looks like @PreDestroy
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
+		listeners.clear();
+		localValueComputations.clear();
+		localValues.clear();
 	}
 
 	public Object get(String name) {
