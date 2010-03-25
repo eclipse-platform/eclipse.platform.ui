@@ -43,8 +43,8 @@ public class TestCriteriaProvider extends TestCase {
 	    ICriteria[] allCriteria = CriteriaProviderRegistry.getInstance().getAllCriteria(copy);
 	    assertTrue(containsCriterion(allCriteria, "version", "2.0"));
 	    assertTrue(containsCriterion(allCriteria, "version", "1.0"));
-	    assertTrue(containsCriterion(allCriteria, "startsWithT", "true"));
-	    assertFalse(containsCriterion(allCriteria, "startsWithT", "false"));    
+	    assertTrue(containsCriterion(allCriteria, "containsLetter", "c"));
+	    assertFalse(containsCriterion(allCriteria, "containsLetter", "k"));    
 	}
 	
 	public void testUserTocWithCriteria() throws Exception {
@@ -66,22 +66,22 @@ public class TestCriteriaProvider extends TestCase {
 	    ICriteria[] allCriteria = CriteriaProviderRegistry.getInstance().getAllCriteria(copy);
 	    assertTrue(containsCriterion(allCriteria, "version", "2.0"));
 	    assertTrue(containsCriterion(allCriteria, "version", "1.0"));
-	    assertTrue(containsCriterion(allCriteria, "startsWithT", "true"));
-	    assertFalse(containsCriterion(allCriteria, "startsWithT", "false"));    
+	    assertTrue(containsCriterion(allCriteria, "containsLetter", "c"));
+	    assertFalse(containsCriterion(allCriteria, "containsLetter", "k"));    
 	}
 
 	public void testCriteriaScope() throws Exception {
 		UserTopic2 topic = new UserTopic2("Topic", null, true);
 		UserCriteria criterion1 = new UserCriteria("version", "1.0", true);
 		topic.addCriterion(criterion1);
-		CriterionResource resourceTrue = new CriterionResource("startswitht");
-		resourceTrue.addCriterionValue("true");
-		CriteriaHelpScope scopeTrue = new CriteriaHelpScope(new CriterionResource[] { resourceTrue });
-		assertTrue(scopeTrue.inScope(topic));
-		CriterionResource resourceFalse = new CriterionResource("startswitht");
-		resourceFalse.addCriterionValue("false");
-		CriteriaHelpScope scopeFalse = new CriteriaHelpScope(new CriterionResource[] { resourceFalse });
-		assertFalse(scopeFalse.inScope(topic));
+		CriterionResource resourceC = new CriterionResource("containsletter");
+		resourceC.addCriterionValue("c");
+		CriteriaHelpScope scopeC = new CriteriaHelpScope(new CriterionResource[] { resourceC });
+		assertTrue(scopeC.inScope(topic));
+		CriterionResource resourceK = new CriterionResource("containsletter");
+		resourceK.addCriterionValue("k");
+		CriteriaHelpScope scopeK = new CriteriaHelpScope(new CriterionResource[] { resourceK });
+		assertFalse(scopeK.inScope(topic));
 	}
 	
 
