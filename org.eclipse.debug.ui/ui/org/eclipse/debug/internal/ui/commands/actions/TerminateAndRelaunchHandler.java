@@ -8,18 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.internal.ui.commands.actions.DebugActionHandler;
+import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+
 
 /**
- * Handler for terminate and remove. See bug 290219.
- *
- * @since 3.6
+ * Default handler for terminate and re-launch. See bug 300810.
  */
-public class TerminateAndRemoveHandler extends DebugActionHandler {
-	
-	public TerminateAndRemoveHandler() {
-		super(LaunchView.TERMINATE_AND_REMOVE);
+public class TerminateAndRelaunchHandler extends DebugActionHandler {
+
+	public TerminateAndRelaunchHandler() {
+		super(LaunchView.TERMINATE_AND_RELAUNCH);
 	}
+	
+
 }

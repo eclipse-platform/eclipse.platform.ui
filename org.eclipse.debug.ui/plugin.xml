@@ -1643,6 +1643,9 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.terminateAndRelaunch.description"
             id="org.eclipse.debug.ui.commands.TerminateAndRelaunch">
+         <defaultHandler
+               class="org.eclipse.debug.internal.ui.commands.actions.TerminateAndRelaunchHandler">
+         </defaultHandler>
       </command>
       <command
             name="%ActionDefinition.restart.name"

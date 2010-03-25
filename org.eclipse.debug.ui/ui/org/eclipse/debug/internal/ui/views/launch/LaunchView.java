@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.runtime.IAdaptable;
@@ -143,11 +146,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 
     private static final String STEP_INTO = "step_into"; //$NON-NLS-1$
 
-    private static final String TERMINATE_AND_REMOVE = "terminate_and_remove"; //$NON-NLS-1$
+    public static final String TERMINATE_AND_REMOVE = "terminate_and_remove"; //$NON-NLS-1$
     
     private static final String TERMINATE_ALL = "terminate_all"; //$NON-NLS-1$
 
-    private static final String TERMINATE_AND_RELAUNCH = "terminate_relaunch"; //$NON-NLS-1$
+    public static final String TERMINATE_AND_RELAUNCH = "terminate_relaunch"; //$NON-NLS-1$
     
     private static final String TOGGLE_STEP_FILTERS = "toggle_step_filters"; //$NON-NLS-1$
 
@@ -219,10 +222,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     private boolean fBreadcrumbDropDownAutoExpand = false;
     
     /**
-     * Terminate and remove handler
+     * Action handlers. Maps action identifiers to IHandler's.
+     * 
      * @since 3.6
      */
-    IHandler2 fTARHandler = null;
+    private Map fHandlers = new HashMap();
     
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in 
@@ -505,17 +509,37 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         addCapabilityAction(new StepOverCommandAction(), STEP_OVER);
         addCapabilityAction(new StepIntoCommandAction(), STEP_INTO);
         addCapabilityAction(new DropToFrameCommandAction(), DROP_TO_FRAME);
-        TerminateAndRemoveAction tar = new TerminateAndRemoveAction();
-        addCapabilityAction(tar, TERMINATE_AND_REMOVE);
-        // also create a handler for this action
-        fTARHandler = new ActionHandler(tar);
-        addCapabilityAction(new TerminateAndRelaunchAction(), TERMINATE_AND_RELAUNCH);
+        DebugCommandAction action = new TerminateAndRemoveAction();
+        addCapabilityAction(action, TERMINATE_AND_REMOVE);
+        setHandler(TERMINATE_AND_REMOVE, new ActionHandler(action));
+        action = new TerminateAndRelaunchAction();
+        addCapabilityAction(action, TERMINATE_AND_RELAUNCH);
+        setHandler(TERMINATE_AND_RELAUNCH, new ActionHandler(action));
         addCapabilityAction(new RestartCommandAction(), RESTART);
         addCapabilityAction(new TerminateAllAction(), TERMINATE_ALL);
         addCapabilityAction(new ToggleStepFiltersAction(), TOGGLE_STEP_FILTERS);
 	}
 	
-
+	/**
+	 * Sets the handler associated with the given action identifier.
+	 * 
+	 * @param id action identifier
+	 * @param handler handler
+	 */
+	private void setHandler(String id, IHandler2 handler) {
+		fHandlers.put(id, handler);
+	}
+	
+	/**
+	 * Returns the handler associated with the given action identifier or <code>null</code>.
+	 * 
+	 * @param id action identifier
+	 * @return handler or <code>null</code>
+	 */
+	public IHandler2 getHandler(String id) {
+		return (IHandler2) fHandlers.get(id);
+	}
+	
 	/**
 	 * Initializes the action and associates it with the given id.
 	 * 
@@ -928,7 +952,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 		window.removePerspectiveListener(this);
 		window.removePageListener(this);
-		
+		Iterator iterator = fHandlers.values().iterator();
+		while (iterator.hasNext()) {
+			IHandler2 hander = (IHandler2) iterator.next();
+			hander.dispose();
+		}
+		fHandlers.clear();
 		super.dispose();
 	}
 		
