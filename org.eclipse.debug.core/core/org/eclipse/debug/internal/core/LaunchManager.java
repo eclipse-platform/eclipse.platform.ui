@@ -10,6 +10,7 @@
  *     Sebastian Davids - bug 50567 Eclipse native environment support on Win98
  *     Pawel Piech - Bug 82001: When shutting down the IDE, the debugger should first
  *     attempt to disconnect debug targets before terminating them
+ *     Alena Laskavaia - Bug 259281
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -801,6 +802,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				String line = reader.readLine();
 				String key = null;
 				String value = null;
+				String newLine =  System.getProperty("line.separator"); //$NON-NLS-1$
 				while (line != null) {
 					int func = line.indexOf("=()"); //$NON-NLS-1$
 					if(func > 0) {
@@ -810,7 +812,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						while(line != null && !line.equals("}")) { //$NON-NLS-1$
 							line = reader.readLine();
 							if(line != null) {
-								value += line;
+								value += newLine + line;
 							}
 						}
 						line = reader.readLine();
@@ -822,16 +824,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 							value = line.substring(separator + 1);
 							line = reader.readLine();
 							if(line != null) {
-								//this line has a '=' read ahead to check next line for '=', might be broken on more than one line
-								separator = line.indexOf('=');
-								while(separator < 0) {
-									value += line.trim();
+								// this line has a '=' read ahead to check next line for '=', might be broken on more than one line
+								// also if line starts with non-identifier - it is remainder of previous variable
+								while (line.indexOf('=') < 0 || (line.length()>0 && !Character.isJavaIdentifierStart(line.charAt(0)))) {
+									value += newLine + line;
 									line = reader.readLine();
 									if(line == null) {
 										//if next line read is the end of the file quit the loop
 										break;
 									}
-									separator = line.indexOf('=');
 								}
 							}
 						}
