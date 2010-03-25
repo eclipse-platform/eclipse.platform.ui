@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mike Morearty - Bug 271411
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.expressions;
 
@@ -18,6 +19,11 @@ import org.eclipse.debug.internal.ui.actions.StatusInfo;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -41,6 +47,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.actions.TextViewerAction;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Dialog for edit watch expression.
  */
@@ -54,6 +62,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	// widgets
 	private SourceViewer fSnippetViewer;
 	private Button fCheckBox;
+	private Label fTip;
 
 	public WatchExpressionDialog(Shell parent, IWatchExpression watchExpression, boolean editDialog) {
 		super(parent);
@@ -150,9 +159,29 @@ public class WatchExpressionDialog extends StatusDialog {
 		fCheckBox.setSelection(fWatchExpression.isEnabled());
 		fCheckBox.setFont(font);
 
+		String tipText = MessageFormat.format(ActionMessages.WatchExpressionDialog_5,
+				new String[] { getCtrlReturnText() });
+		fTip= new Label(container, SWT.LEFT);
+		fTip.setText(tipText);
+		fTip.setFont(font);
+
 		applyDialogFont(container);
 		fSnippetViewer.getControl().setFocus();
 		return container;
+	}
+
+	/**
+	 * Returns a string representation of the "Ctrl+Return" key sequence.
+	 * 
+	 * @return a string representation of the "Ctrl+Return" key sequence.
+	 */
+	private String getCtrlReturnText() {
+		IKeyLookup keyLookup = KeyLookupFactory.getDefault();
+		int ctrlKey = keyLookup.getCtrl();
+		int returnKey = keyLookup.formalKeyLookup(IKeyLookup.RETURN_NAME);
+		KeyStroke ctrlReturnKeyStroke = KeyStroke.getInstance(ctrlKey, returnKey);
+		KeySequence ctrltReturnKeySequence = KeySequence.getInstance(ctrlReturnKeyStroke);
+		return SWTKeySupport.getKeyFormatterForPlatform().format(ctrltReturnKeySequence);
 	}
 
 	/**
