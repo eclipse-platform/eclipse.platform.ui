@@ -2652,10 +2652,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @param b
 	 * @param object
 	 */
-	public void openEditorFromDescriptor(IEditorInput fileEditorInput,
+	public IEditorPart openEditorFromDescriptor(IEditorInput fileEditorInput,
 			IEditorDescriptor editorDescriptor, final boolean activate, final IMemento editorState)
 			throws PartInitException {
-		openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT, editorState);
+		return openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT,
+				editorState);
 	}
 
 }
