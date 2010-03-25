@@ -95,10 +95,10 @@ public class CompatibilityView extends CompatibilityPart {
 			}
 		}
 
+		Control partCtrl = (Control) part.getWidget();
+		partCtrl.setData("legacyTBM", tbm); //$NON-NLS-1$
 		// Construct the toolbar (if necessary)
 		if (tbm.getItems().length > 0) {
-			Control partCtrl = (Control) part.getWidget();
-			partCtrl.setData("legacyTBM", tbm); //$NON-NLS-1$
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar == null) {
 				toolbar = MApplicationFactory.eINSTANCE.createToolBar();
