@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,16 +91,20 @@ public abstract class CompoundContributionItem extends ContributionItem {
     protected abstract IContributionItem[] getContributionItems();
     
     private IContributionItem[] getContributionItemsToFill() {
-        if (oldItems != null) {
+		disposeOldItems();
+		oldItems = getContributionItems();
+		return oldItems;
+	}
+
+	private void disposeOldItems() {
+		if (oldItems != null) {
             for (int i = 0; i < oldItems.length; i++) {
                 IContributionItem oldItem = oldItems[i];
                 oldItem.dispose();
             }
             oldItems = null;
         }
-        oldItems = getContributionItems();
-        return oldItems;
-    }
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#isDirty()
@@ -116,6 +120,15 @@ public abstract class CompoundContributionItem extends ContributionItem {
         return true;
     }
     
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
+	 */
+	public void dispose() {
+		disposeOldItems();
+		super.dispose();
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface.action.IContributionManager)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,28 +16,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 
-import com.ibm.icu.text.Collator;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -50,6 +42,8 @@ import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A menu for opening files in the workbench.
@@ -71,8 +65,6 @@ public class OpenWithMenu extends ContributionItem {
 
     private IEditorRegistry registry = PlatformUI.getWorkbench()
             .getEditorRegistry();
-
-    private static Hashtable imageCache = new Hashtable(11);
 
     /**
      * The id of this action.
@@ -133,12 +125,7 @@ public class OpenWithMenu extends ContributionItem {
         if (imageDesc == null) {
             return null;
         }
-        Image image = (Image) imageCache.get(imageDesc);
-        if (image == null) {
-            image = imageDesc.createImage();
-            imageCache.put(imageDesc, image);
-        }
-        return image;
+        return IDEWorkbenchPlugin.getDefault().getResourceManager().createImage(imageDesc);
     }
 
     /**
