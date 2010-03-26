@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,19 +278,19 @@ public class TemplateReaderWriter {
 
 				if (template != null) {
 					Attr name= document.createAttribute(NAME_ATTRIBUTE);
-					name.setValue(template.getName());
+					name.setValue(validateXML(template.getName()));
 					attributes.setNamedItem(name);
 				}
 
 				if (template != null) {
 					Attr description= document.createAttribute(DESCRIPTION_ATTRIBUTE);
-					description.setValue(template.getDescription());
+					description.setValue(validateXML(template.getDescription()));
 					attributes.setNamedItem(description);
 				}
 
 				if (template != null) {
 					Attr context= document.createAttribute(CONTEXT_ATTRIBUTE);
-					context.setValue(template.getContextTypeId());
+					context.setValue(validateXML(template.getContextTypeId()));
 					attributes.setNamedItem(context);
 				}
 
@@ -309,7 +309,7 @@ public class TemplateReaderWriter {
 				}
 
 				if (template != null) {
-					Text pattern= document.createTextNode(template.getPattern());
+					Text pattern= document.createTextNode(validateXML(template.getPattern()));
 					node.appendChild(pattern);
 				}
 			}
@@ -329,6 +329,23 @@ public class TemplateReaderWriter {
 				throw (IOException) e.getException();
 			Assert.isTrue(false);
 		}
+	}
+
+	/**
+	 * Validates whether the given string only contains valid XML characters.
+	 * 
+	 * @param string the string to validate
+	 * @return the input string
+	 * @throws IOException when the first invalid character is detected
+	 * @since 3.6
+	 */
+	private static String validateXML(String string) throws IOException {
+		for (int i= 0; i < string.length(); i++) {
+			char ch= string.charAt(i);
+			if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32))
+				throw new IOException("Character reference \"&#" + Integer.toString(ch) + "\" is an invalid XML character."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return string;
 	}
 
 	private boolean getBooleanValue(NamedNodeMap attributes, String attribute, boolean defaultValue) throws SAXException {
