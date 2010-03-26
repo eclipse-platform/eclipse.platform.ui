@@ -27,8 +27,6 @@ final class TemplatesMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String TemplatePreferencePage_error_import;
-	public static String TemplatePreferencePage_error_export;
 	public static String TemplatePreferencePage_error_read_title;
 	public static String TemplatePreferencePage_error_write_title;
 	public static String TemplatePreferencePage_message;
@@ -38,6 +36,7 @@ final class TemplatesMessages extends NLS {
 	public static String TemplatePreferencePage_import;
 	public static String TemplatePreferencePage_export;
 	public static String TemplatePreferencePage_remove;
+
 	public static String TemplatePreferencePage_editor;
 	public static String TemplatePreferencePage_revert;
 	public static String TemplatePreferencePage_restore;

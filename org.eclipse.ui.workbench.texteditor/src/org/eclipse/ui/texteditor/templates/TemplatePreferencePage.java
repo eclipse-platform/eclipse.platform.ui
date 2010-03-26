@@ -59,6 +59,9 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.expressions.Expression;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -1311,9 +1314,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		} catch (FileNotFoundException e) {
-			openReadErrorDialog();
+			openReadErrorDialog(e);
 		} catch (IOException e) {
-			openReadErrorDialog();
+			openReadErrorDialog(e);
 		}
 	}
 
@@ -1361,7 +1364,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				TemplateReaderWriter writer= new TemplateReaderWriter();
 				writer.save(templates, output);
 			} catch (IOException e) {
-				openWriteErrorDialog();
+				openWriteErrorDialog(e);
 			} finally {
 				if (output != null) {
 					try {
@@ -1451,7 +1454,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		try {
 			fTemplateStore.save();
 		} catch (IOException e) {
-			openWriteErrorDialog();
+			openWriteErrorDialog(e);
 		}
 
 		return super.performOk();
@@ -1473,7 +1476,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		try {
 			fTemplateStore.load();
 		} catch (IOException e) {
-			openReadErrorDialog();
+			openReadErrorDialog(e);
 			return false;
 		}
 		return super.performCancel();
@@ -1482,7 +1485,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/*
 	 * @since 3.2
 	 */
-	private void openReadErrorDialog() {
+	private void openReadErrorDialog(IOException ex) {
+		IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Failed to read templates.", ex); //$NON-NLS-1$
+		TextEditorPlugin.getDefault().getLog().log(status);
 		String title= TemplatesMessages.TemplatePreferencePage_error_read_title;
 		String message= TemplatesMessages.TemplatePreferencePage_error_read_message;
 		MessageDialog.openError(getShell(), title, message);
@@ -1491,7 +1496,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/*
 	 * @since 3.2
 	 */
-	private void openWriteErrorDialog() {
+	private void openWriteErrorDialog(IOException ex) {
+		IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Failed to write templates.", ex); //$NON-NLS-1$
+		TextEditorPlugin.getDefault().getLog().log(status);
 		String title= TemplatesMessages.TemplatePreferencePage_error_write_title;
 		String message= TemplatesMessages.TemplatePreferencePage_error_write_message;
 		MessageDialog.openError(getShell(), title, message);
