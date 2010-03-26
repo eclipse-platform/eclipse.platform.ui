@@ -50,6 +50,7 @@ public class E4Workbench implements IWorkbench {
 	public static final String CSS_URI_ARG = "applicationCSS"; //$NON-NLS-1$
 	public static final String CSS_RESOURCE_URI_ARG = "applicationCSSResources"; //$NON-NLS-1$
 	public static final String PRESENTATION_URI_ARG = "presentationURI"; //$NON-NLS-1$
+	public static final String LIFE_CYCLE_URI_ARG = "lifeCycleURI"; //$NON-NLS-1$
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;

@@ -103,7 +103,24 @@ public class E4Application implements IApplication {
 	public E4Workbench createE4Workbench(IApplicationContext applicationContext) {
 		args = (String[]) applicationContext.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
+
 		IEclipseContext appContext = createDefaultContext();
+
+		// Install the life-cycle manager for this session if there's one
+		// defined
+		String lifeCycleURI = getArgValue(E4Workbench.LIFE_CYCLE_URI_ARG,
+				applicationContext);
+		Object lcManager = null;
+		if (lifeCycleURI != null) {
+			IContributionFactory factory = (IContributionFactory) appContext
+					.get(IContributionFactory.class.getName());
+			lcManager = factory.create(lifeCycleURI, appContext);
+			if (lcManager != null) {
+				// Let the manager manipulate the appContext if desired
+				factory.call(lcManager, null, "postContextCreate", appContext,
+						null);
+			}
+		}
 
 		// Create the app model and its context
 		MApplication appModel = loadApplicationModel(applicationContext,
@@ -121,6 +138,14 @@ public class E4Application implements IApplication {
 
 		// Set the app's context after adding itself
 		appContext.set(MApplication.class.getName(), appModel);
+
+		// let the life cycle manager add to the model
+		if (lcManager != null) {
+			IContributionFactory factory = (IContributionFactory) appContext
+					.get(IContributionFactory.class.getName());
+			factory.call(lcManager, null, "processAdditions", appContext, null);
+			factory.call(lcManager, null, "processRemovals", appContext, null);
+		}
 
 		// Parse out parameters from both the command line and/or the product
 		// definition (if any) and put them in the context
