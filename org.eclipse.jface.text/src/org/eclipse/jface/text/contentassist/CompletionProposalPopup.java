@@ -71,6 +71,7 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -83,7 +84,6 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
 
 
 /**
@@ -635,6 +635,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (fAdditionalInfoController != null) {
 					// reset the cached resize constraints
 					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+					fAdditionalInfoController.hideInformationControl();
+					fAdditionalInfoController.handleTableSelectionChanged();
 				}
 
 				fSize= fProposalShell.getSize();
