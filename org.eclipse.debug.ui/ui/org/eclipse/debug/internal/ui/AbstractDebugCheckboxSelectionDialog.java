@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
+		gd.widthHint = 250;
 		table.setLayoutData(gd);
 		return new CheckboxTableViewer(table);
 	}
