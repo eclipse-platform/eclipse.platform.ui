@@ -81,8 +81,9 @@ public class RequestScope {
 				}
 			}
 		}
-		// Add filter by search scope
-		if (!isSearchFilter) {
+		// Add filter by search scope if not called from Help View
+		boolean isHelpViewTopic = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
+		if (!isSearchFilter  && !isHelpViewTopic) { 
 			// Try for a working set
 			try {
 				WebappWorkingSetManager manager = new WebappWorkingSetManager(req,
