@@ -497,6 +497,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return editorReferences;
 	}
 
+	public EditorReference getEditorReference(MPart part) {
+		for (EditorReference ref : editorReferences) {
+			if (ref.getModel() == part) {
+				return ref;
+			}
+		}
+		return null;
+	}
+
 	public ViewReference getViewReference(MPart part) {
 		for (IViewReference ref : viewReferences) {
 			if (((ViewReference) ref).getModel() == part) {
@@ -508,6 +517,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	public void addViewReference(IViewReference viewReference) {
 		viewReferences.add(viewReference);
+	}
+
+	public void addEditorReference(EditorReference editorReference) {
+		editorReferences.add(editorReference);
 	}
 
 	MPartDescriptor findDescriptor(String id) {

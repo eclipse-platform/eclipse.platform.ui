@@ -1538,6 +1538,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 				ref = createViewReference(part, page);
 			}
 			context.set(ViewReference.class.getName(), ref);
+		} else if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(uri)) {
+			WorkbenchPage page = getWorkbenchPage(part);
+			EditorReference ref = page.getEditorReference(part);
+			if (ref == null) {
+				ref = createEditorReference(part, page);
+			}
+			context.set(EditorReference.class.getName(), ref);
 		}
 	}
 
@@ -1547,6 +1554,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 		ViewReference ref = new ViewReference(window.getModel().getContext(), page, part,
 				(ViewDescriptor) desc);
 		page.addViewReference(ref);
+		return ref;
+	}
+
+	private EditorReference createEditorReference(MPart part, WorkbenchPage page) {
+		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+		EditorReference ref = new EditorReference(window.getModel().getContext(), page, part, null,
+				null);
+		page.addEditorReference(ref);
 		return ref;
 	}
 
@@ -1563,7 +1578,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 			WorkbenchPage page = getWorkbenchPage(part);
 			ViewReference ref = page.getViewReference(part);
 			if (ref == null) {
-				ref = createViewReference(part, page);
+				createViewReference(part, page);
+			}
+		} else if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(uri)) {
+			WorkbenchPage page = getWorkbenchPage(part);
+			EditorReference ref = page.getEditorReference(part);
+			if (ref == null) {
+				createEditorReference(part, page);
 			}
 		}
 	}
