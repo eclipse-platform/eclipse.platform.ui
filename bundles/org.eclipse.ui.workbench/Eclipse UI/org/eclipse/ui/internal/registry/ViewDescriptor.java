@@ -22,7 +22,9 @@ import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -93,10 +95,18 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (imageDescriptor == null) {
-			ISWTResourceUtiltities utility = (ISWTResourceUtiltities) application.getContext().get(
-					IResourceUtiltities.class.getName());
-			imageDescriptor = utility
-					.imageDescriptorFromURI(URI.createURI(descriptor.getIconURI()));
+			String iconURI = descriptor.getIconURI();
+			if (iconURI == null) {
+				// If the icon attribute was omitted, use the default one
+				IWorkbench workbench = (IWorkbench) application.getContext().get(
+						IWorkbench.class.getName());
+				imageDescriptor = workbench.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_DEF_VIEW);
+			} else {
+				ISWTResourceUtiltities utility = (ISWTResourceUtiltities) application.getContext()
+						.get(IResourceUtiltities.class.getName());
+				imageDescriptor = utility.imageDescriptorFromURI(URI.createURI(iconURI));
+			}
 		}
 		return imageDescriptor;
 	}
