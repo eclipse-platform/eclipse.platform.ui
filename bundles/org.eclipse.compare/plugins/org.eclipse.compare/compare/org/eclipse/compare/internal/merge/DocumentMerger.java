@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.core.LCS;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.runtime.*;
@@ -447,7 +448,12 @@ public class DocumentMerger {
 		} catch (InterruptedException ex) {
 			// 
 		}
-		
+
+		if (isCapped(sa, sl, sr))
+			fInput.getCompareConfiguration().setProperty(
+					CompareContentViewerSwitchingPane.OPTIMIZED_ALGORITHM_USED,
+					new Boolean(true));
+
 		ArrayList newAllDiffs = new ArrayList();
 		for (int i= 0; i < e.length; i++) {
 			RangeDifference es= e[i];
@@ -518,6 +524,18 @@ public class DocumentMerger {
 			}
 		}
 		fAllDiffs = newAllDiffs;
+	}
+
+	private boolean isCapped(DocLineComparator ancestor,
+			DocLineComparator left, DocLineComparator right) {
+		int aLength = ancestor == null? 0 : ancestor.getRangeCount();
+		int lLength = left.getRangeCount();
+		int rLength = right.getRangeCount();
+		if (aLength * lLength > LCS.TOO_LONG
+				|| aLength * rLength > LCS.TOO_LONG
+				|| lLength * lLength > LCS.TOO_LONG)
+			return true;
+		return false;
 	}
 
 	public Diff findDiff(char type, int pos) throws CoreException {

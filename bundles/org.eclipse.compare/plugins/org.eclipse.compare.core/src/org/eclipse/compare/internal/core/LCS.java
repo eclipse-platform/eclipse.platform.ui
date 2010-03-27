@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.SubMonitor;
 
 /* Used to determine the change set responsible for each line */
 public abstract class LCS {
-	private static final double TOO_LONG = 10000000.0; // the value of N*M when
+	public static final double TOO_LONG = 10000000.0; // the value of N*M when
 														// to start binding the
 														// run time
 

@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -46,12 +48,16 @@ import org.eclipse.ui.PlatformUI;
 public class CompareContentViewerSwitchingPane extends
 		CompareViewerSwitchingPane {
 
+	private static final String OPTIMIZED_WARNING_IMAGE_NAME = "obj16/warning_st_obj.gif"; //$NON-NLS-1$
+	public static final String OPTIMIZED_ALGORITHM_USED = "OPTIMIZED_ALGORITHM_USED"; //$NON-NLS-1$
+
 	private CompareEditorInput fCompareEditorInput;
 
 	private ViewerDescriptor fSelectedViewerDescriptor;
 
 	private ToolBar toolBar;
-	
+	private CLabel clOptimized;
+
 	private boolean menuShowing;
 
 	public CompareContentViewerSwitchingPane(Splitter parent, int style,
@@ -122,6 +128,23 @@ public class CompareContentViewerSwitchingPane extends
 				showMenu();
 			}
 		});
+
+		clOptimized = new CLabel(composite, SWT.NONE);
+		clOptimized
+				.setText(CompareMessages.CompareContentViewerSwitchingPane_optimized);
+		clOptimized
+				.setToolTipText(CompareMessages.CompareContentViewerSwitchingPane_optimizedTooltip);
+		clOptimized.setImage(CompareUIPlugin.getImageDescriptor(
+				OPTIMIZED_WARNING_IMAGE_NAME).createImage());
+		clOptimized.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Image img = clOptimized.getImage();
+				if ((img != null) && (!img.isDisposed())) {
+					img.dispose();
+				}
+			}
+		});
+
 		return composite;
 	}
 	
@@ -138,6 +161,9 @@ public class CompareContentViewerSwitchingPane extends
 				.findContentViewerDescriptor(getViewer(), getInput(),
 						getCompareConfiguration());
 		toolBar.setVisible(vd != null && vd.length > 1);
+		CompareConfiguration cc = getCompareConfiguration();
+		Boolean isOptimized = (Boolean) cc.getProperty(OPTIMIZED_ALGORITHM_USED);
+		clOptimized.setVisible(isOptimized != null && isOptimized.booleanValue());
 	}
 
 	private void showMenu() {
@@ -254,4 +280,9 @@ public class CompareContentViewerSwitchingPane extends
 			}
 		}
 	}
+
+	public void dispose () {
+		
+	}
+
 }
