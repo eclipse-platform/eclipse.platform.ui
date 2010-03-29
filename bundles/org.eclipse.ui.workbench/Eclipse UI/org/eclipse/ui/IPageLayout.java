@@ -281,9 +281,16 @@ public interface IPageLayout {
 	 * The id must name a view contributed to the workbench's view extension
 	 * point (named <code>"org.eclipse.ui.views"</code>).
 	 * </p>
+	 * <strong>NOTE:</strong> This method should not be used because it only
+	 * works the first time a perspective is created. On restart this
+	 * information gets lost. Instead add your items using the
+	 * 'org.eclipse.ui.perspectiveExtensions' extension point.
 	 * 
 	 * @param id
 	 *            the view id
+	 * @deprecated As of 3.6, replaced by the corresponding perspective
+	 *             extension in the 'org.eclipse.ui.perspectiveExtensions'
+	 *             extension point
 	 * 
 	 * @since 2.1
 	 */
