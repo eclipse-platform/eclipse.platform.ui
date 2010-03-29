@@ -1170,10 +1170,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		List<IWorkbenchWindow> windows = new ArrayList<IWorkbenchWindow>();
 		for (MWindow window : application.getChildren()) {
 			IEclipseContext context = window.getContext();
-			IWorkbenchWindow wwindow = (IWorkbenchWindow) context.get(IWorkbenchWindow.class
-					.getName());
-			if (wwindow != null) {
-				windows.add(wwindow);
+			if (context != null) {
+				IWorkbenchWindow wwindow = (IWorkbenchWindow) context.get(IWorkbenchWindow.class
+						.getName());
+				if (wwindow != null) {
+					windows.add(wwindow);
+				}
 			}
 		}
 		return windows.toArray(new IWorkbenchWindow[windows.size()]);
