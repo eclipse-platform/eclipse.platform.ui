@@ -146,9 +146,9 @@ public class PatchInaccessibleProjectsPage extends WizardPage {
 	}
 
 	public IWizardPage getNextPage() {
-		Object input = checkList.getInput();
 		// Skipping the patch parsed page in case this one is displayed
-		if (input instanceof IProject[] && ((IProject[]) input).length > 0)
+		Control control = getControl();
+		if (control != null && control.isVisible())
 			return null;
 		return super.getNextPage();
 	}
