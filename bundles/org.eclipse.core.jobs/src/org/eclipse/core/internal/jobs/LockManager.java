@@ -73,7 +73,7 @@ public class LockManager {
 	/* 
 	 * Stores thread - stack pairs where every entry in the stack is an array 
 	 * of locks that were suspended while the thread was acquiring more locks
-	 * (a stack is needed because when a thread tries to re-aquire suspended locks,
+	 * (a stack is needed because when a thread tries to re-acquire suspended locks,
 	 * it can cause deadlock, and some locks it owns can be suspended again)
 	 */
 	private HashMap suspendedLocks = new HashMap();
