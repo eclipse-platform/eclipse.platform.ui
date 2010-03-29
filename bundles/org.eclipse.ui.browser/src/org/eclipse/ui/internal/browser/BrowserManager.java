@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,8 +96,8 @@ public class BrowserManager extends Observable {
 			browsers = new ArrayList();
 			
 			try {
-				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes());
-				Reader reader = new InputStreamReader(in);
+				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes("utf-8")); //$NON-NLS-1$
+				Reader reader = new InputStreamReader(in, "utf-8"); //$NON-NLS-1$
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				
 				IMemento system = memento.getChild("system"); //$NON-NLS-1$
