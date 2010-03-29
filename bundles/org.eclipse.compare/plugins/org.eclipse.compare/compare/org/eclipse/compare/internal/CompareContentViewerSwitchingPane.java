@@ -281,8 +281,4 @@ public class CompareContentViewerSwitchingPane extends
 		}
 	}
 
-	public void dispose () {
-		
-	}
-
 }
