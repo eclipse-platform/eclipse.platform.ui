@@ -19,7 +19,6 @@ LIB_NAME = gnomeproxy.so
 LIB_NAME_FULL = libgnomeproxy-1.0.0.so
 
 OS_TYPE = linux
-JAVA_HOME = 
 JDK_INCLUDE = -I${JAVA_HOME}/include -I${JAVA_HOME}/include/${OS_TYPE}
 INCLUDE = -I/usr/include/gconf/2/ -I/usr/include/orbit-2.0/ -I/usr/include/glib-2.0/ -I/usr/lib/glib-2.0/include/
 COMPILER_FLAGS = -O0 -fPIC -g3 -Wall -c -fmessage-length=0 -m32
