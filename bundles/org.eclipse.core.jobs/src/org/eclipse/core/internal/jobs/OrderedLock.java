@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,8 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		if (DEBUG)
 			System.out.println("[" + Thread.currentThread() + //$NON-NLS-1$
 					(success ? "] Operation started... " : "] Operation timed out... ") + this); //$NON-NLS-1$ //$NON-NLS-2$ //}
+		if (!success && Thread.interrupted())
+			throw new InterruptedException();
 		return success;
 	}
 
@@ -142,10 +144,10 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	}
 
 	/**
-	 * Attempts to acquire this lock.  Callers will block  until this lock comes available to 
+	 * Attempts to acquire this lock.  Callers will block until this lock comes available to 
 	 * them, or until the specified delay has elapsed.
 	 */
-	private boolean doAcquire(Semaphore semaphore, long delay) throws InterruptedException {
+	private boolean doAcquire(Semaphore semaphore, long delay) {
 		boolean success = false;
 		//notify hook to service pending syncExecs before falling asleep
 		if (manager.aboutToWait(this.currentOperationThread)) {
@@ -163,20 +165,22 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		semaphore = createSemaphore();
 		if (semaphore == null)
 			return true;
-		manager.addLockWaitThread(Thread.currentThread(), this);
+		final Thread currentThread = Thread.currentThread();
+		manager.addLockWaitThread(currentThread, this);
 		try {
 			success = semaphore.acquire(delay);
 		} catch (InterruptedException e) {
 			if (DEBUG)
-				System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
-			throw e;
+				System.out.println("[" + currentThread + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
+			//remember the interrupt to throw it later
+			currentThread.interrupt();
 		}
 		if (success) {
 			depth++;
 			updateCurrentOperation();
 		} else {
 			removeFromQueue(semaphore);
-			manager.removeLockWaitThread(Thread.currentThread(), this);
+			manager.removeLockWaitThread(currentThread, this);
 		}
 		return success;
 	}
