@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(JobTest.class);
 		suite.addTestSuite(DeadlockDetectionTest.class);
 		suite.addTestSuite(Bug_129551.class);
+		suite.addTestSuite(Bug_211799.class);
+		suite.addTestSuite(Bug_307282.class);
 		suite.addTestSuite(MultiRuleTest.class);
 		return suite;
 	}
