@@ -1,5 +1,5 @@
 #**********************************************************************
-# Copyright (c) 2008 Oakland Software Incorporated and others.
+# Copyright (c) 2008, 2010 Oakland Software Incorporated and others.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -19,6 +19,9 @@ GNOMEPROXY.O = gnomeproxy.o
 LIB_NAME = gnomeproxy.so
 LIB_NAME_FULL = libgnomeproxy-1.0.0.so
 
+OS_TYPE = 
+JAVA_HOME = 
+JDK_INCLUDE = -I${JAVA_HOME}/include -I${JAVA_HOME}/include/${OS_TYPE}
 INCLUDE = `pkg-config --cflags gconf-2.0`
 COMPILER_FLAGS= -O0 -fPIC -g3 -Wall -c -fmessage-length=0 -m64
 
@@ -30,7 +33,7 @@ all: link
 compile:
 	@echo "Building file: $(GNOMEPROXY.O)"
 	@echo "Invoking: GCC C Compiler"
-	gcc $(INCLUDE) $(COMPILER_FLAGS) -o $(GNOMEPROXY.O) $(GNOMEPROXY.C)
+	gcc $(INCLUDE) $(JDK_INCLUDE) $(COMPILER_FLAGS) -o $(GNOMEPROXY.O) $(GNOMEPROXY.C)
 	@echo "Finished building: $(GNOMEPROXY.O)"
 	@echo " "
 
