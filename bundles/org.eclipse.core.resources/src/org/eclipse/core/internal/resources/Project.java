@@ -523,7 +523,8 @@ public class Project extends Container implements IProject {
 					try {
 						IStatus result;
 						workspace.prepareOperation(buildRule, innerMonitor);
-						workspace.beginOperation(true);
+						//don't open the tree eagerly because it will be wasted if no build occurs
+						workspace.beginOperation(false);
 						result = workspace.getBuildManager().build(Project.this, trigger, builderName, args, Policy.subMonitorFor(innerMonitor, Policy.opWork));
 						if (!result.isOK())
 							throw new ResourceException(result);
@@ -531,7 +532,8 @@ public class Project extends Container implements IProject {
 						workspace.endOperation(buildRule, false, innerMonitor);
 						try {
 							workspace.prepareOperation(rule, innerMonitor);
-							workspace.beginOperation(true);
+							//don't open the tree eagerly because it will be wasted if no change occurs
+							workspace.beginOperation(false);
 							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
 							//building may close the tree, so open it
 							if (workspace.getElementTree().isImmutable())
