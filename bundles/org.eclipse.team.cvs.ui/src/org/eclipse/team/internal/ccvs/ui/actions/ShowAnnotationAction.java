@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 	    final ICVSResource resource= getSingleSelectedCVSResource();
-	    if (resource == null) 
+	    if (resource == null)
 	        return;
 		execute(resource);
 	}
@@ -46,7 +46,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 	/**
 	 * Fetch the revision number of a CVS resource and perform a ShowAnnotationOperation
 	 * in the background.
-	 *  
+	 * 
 	 * @param cvsResource The CVS resource (must not be null)
 	 * 
 	 * @throws InvocationTargetException
@@ -79,7 +79,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
         
         try {
             byte[] syncBytes = ((ICVSFile)cvsResource).getSyncBytes();
-                if (syncBytes == null) 
+                if (syncBytes == null)
                     return false;
             return ResourceSyncInfo.isBinary(syncBytes);
         } catch (CVSException e) {
@@ -150,8 +150,8 @@ public class ShowAnnotationAction extends WorkspaceAction {
         final ResourceSyncInfo info;
         try {
             info= cvsResource.getSyncInfo();
-            if (info == null) 
-                throw new CVSException(NLS.bind(CVSUIMessages.ShowAnnotationAction_noSyncInfo, new String[] { cvsResource.getName() })); 
+            if (info == null)
+                throw new CVSException(NLS.bind(CVSUIMessages.ShowAnnotationAction_noSyncInfo, new String[] { cvsResource.getName() }));
         } catch (CVSException e) {
             throw new InvocationTargetException(e);
         }
@@ -185,6 +185,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 			IWorkbenchPart part, ISelection selection) {
 		// If the action is run from within an editor, try and find the
 		// file for the given editor.
+		setActivePart(null, part);
 		if (part != null && part instanceof IEditorPart) {
 			IEditorInput input = ((IEditorPart) part).getEditorInput();
 			IFile file = ResourceUtil.getFile(input);
