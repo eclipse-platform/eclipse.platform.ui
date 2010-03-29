@@ -216,10 +216,9 @@ public interface IJobManager {
 	/**
 	 * Waits until all jobs of the given family are finished.  This method will block the 
 	 * calling thread until all such jobs have finished executing, or until this thread is
-	 * interrupted.   If there are no jobs in 
-	 * the family that are currently waiting, running, or sleeping, this method returns 
-	 * immediately.  Feedback on how the join is progressing is provided to a  progress 
-	 * monitor.
+	 * interrupted.   If there are no jobs in the family that are currently waiting, running, 
+	 * or sleeping, this method returns immediately.  Feedback on how the join is 
+	 * progressing is provided to a  progress monitor.
 	 * <p>
 	 * If this method is called while the job manager is suspended, only jobs
 	 * that are currently running will be joined; Once there are no jobs
