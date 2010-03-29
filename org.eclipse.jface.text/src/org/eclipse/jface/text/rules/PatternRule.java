@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *     Christopher Lenz (cmlenz@gmx.de) - support for line continuation
  *******************************************************************************/
-
 package org.eclipse.jface.text.rules;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
-
-
-
 
 
 /**
@@ -225,10 +221,10 @@ public class PatternRule implements IPredicateRule {
 
 		char[][] originalDelimiters= scanner.getLegalLineDelimiters();
 		int count= originalDelimiters.length;
-		if (fLineDelimiters == null || originalDelimiters.length != count) {
+		if (fLineDelimiters == null || fLineDelimiters.length != count) {
 			fSortedLineDelimiters= new char[count][];
 		} else {
-			while (count > 0 && fLineDelimiters[count-1] == originalDelimiters[count-1])
+			while (count > 0 && Arrays.equals(fLineDelimiters[count - 1], originalDelimiters[count - 1]))
 				count--;
 		}
 		if (count != 0) {
