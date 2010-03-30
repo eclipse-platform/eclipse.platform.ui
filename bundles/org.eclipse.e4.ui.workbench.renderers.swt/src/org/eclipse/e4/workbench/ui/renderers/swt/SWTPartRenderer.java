@@ -21,6 +21,7 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -59,14 +60,28 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void bindWidget(MUIElement me, Object widget) {
+		// Create a bi-directional link between the widget and the model
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
+
+		// Remember which renderer created this widget
 		me.setRenderer(this);
 
+		// Set up the CSS Styling parameters; id & class
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
+
+		// Put all the tags into the class string
+		EObject eObj = (EObject) me;
+		String cssClassStr = 'M' + eObj.eClass().getName();
+		for (String tag : me.getTags())
+			cssClassStr += ' ' + tag;
+		engine.setClassname(widget, cssClassStr);
+
+		// Set the id
 		engine.setId(widget, me.getId()); // also triggers style()
 
+		// Ensure that disposed widgets are unbound form the model
 		Widget swtWidget = (Widget) widget;
 		swtWidget.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
