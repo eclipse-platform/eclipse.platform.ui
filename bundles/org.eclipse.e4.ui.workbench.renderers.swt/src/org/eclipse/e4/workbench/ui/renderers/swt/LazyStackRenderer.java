@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericStack;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -128,34 +125,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	 *            The child to show the affordance for
 	 */
 	protected void createTab(MElementContainer<MUIElement> me, MUIElement part) {
-	}
-
-	@Override
-	public void hookControllerLogic(final MUIElement me) {
-		super.hookControllerLogic(me);
-
-		if (!(me instanceof MPartStack))
-			return;
-
-		final MPartStack sm = (MPartStack) me;
-
-		// Detect activation...picks up cases where the user clicks on the
-		// (already active) part
-		if (sm.getWidget() instanceof Control) {
-			Control ctrl = (Control) sm.getWidget();
-			ctrl.addListener(SWT.Activate,
-					new org.eclipse.swt.widgets.Listener() {
-						public void handleEvent(
-								org.eclipse.swt.widgets.Event event) {
-							CTabFolder ctf = (CTabFolder) event.widget;
-							MPartStack stack = (MPartStack) ctf
-									.getData(OWNING_ME);
-							MPart selPart = stack.getSelectedElement();
-							if (selPart != null)
-								activate(selPart);
-						}
-					});
-		}
 	}
 
 	protected void showTab(MUIElement element) {

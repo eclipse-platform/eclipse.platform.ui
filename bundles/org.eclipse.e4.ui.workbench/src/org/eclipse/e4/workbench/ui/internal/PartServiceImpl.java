@@ -298,7 +298,7 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
-		if (!isInContainer(part)) {
+		if (activePart == part || !isInContainer(part)) {
 			return;
 		}
 		IEclipseContext curContext = part.getContext();

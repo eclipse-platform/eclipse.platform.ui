@@ -76,6 +76,34 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private boolean ignoreTabSelChanges = false;
 
+	private class ActivationJob implements Runnable {
+		public MElementContainer<MUIElement> stackToActivate = null;
+
+		public void run() {
+			activationJob = null;
+			if (stackToActivate != null
+					&& stackToActivate.getSelectedElement() != null) {
+				activate((MPart) stackToActivate.getSelectedElement());
+			}
+		}
+	}
+
+	private ActivationJob activationJob = null;
+
+	synchronized private void activateStack(MElementContainer<MUIElement> stack) {
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
+		if (ctf == null || ctf.isDisposed())
+			return;
+
+		if (activationJob == null) {
+			activationJob = new ActivationJob();
+			activationJob.stackToActivate = stack;
+			ctf.getDisplay().asyncExec(activationJob);
+		} else {
+			activationJob.stackToActivate = stack;
+		}
+	}
+
 	public StackRenderer() {
 		super();
 	}
@@ -400,11 +428,8 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				MPart newPart = (MPart) e.item.getData(OWNING_ME);
-				if (stack.getSelectedElement() != newPart) {
-					activate(newPart);
-				}
-
-				showTab(newPart);
+				newPart.getParent().setSelectedElement(newPart);
+				activateStack(stack);
 			}
 		});
 
@@ -432,10 +457,9 @@ public class StackRenderer extends LazyStackRenderer {
 		ctf.addListener(SWT.Activate, new org.eclipse.swt.widgets.Listener() {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				CTabFolder ctf = (CTabFolder) event.widget;
-				MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
-				MPart part = stack.getSelectedElement();
-				if (part != null)
-					activate(part);
+				MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) ctf
+						.getData(OWNING_ME);
+				activateStack(stack);
 			}
 		});
 	}
