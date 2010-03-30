@@ -77,14 +77,18 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		//spin until the lock is successfully acquired
 		//NOTE: spinning here allows the UI thread to service pending syncExecs
 		//if the UI thread is waiting to acquire a lock.
+		boolean interrupted = false;
 		while (true) {
 			try {
 				if (acquire(Long.MAX_VALUE))
-					return;
+					break;
 			} catch (InterruptedException e) {
-				//ignore and loop
+				interrupted = true;
 			}
 		}
+		//preserve thread interrupt state
+		if (interrupted)
+			Thread.currentThread().interrupt();
 	}
 
 	/* (non-Javadoc)
