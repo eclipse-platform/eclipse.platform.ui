@@ -607,6 +607,53 @@ public class PartRenderingEngineTests extends TestCase {
 		}
 	}
 
+	public void testRemoveGuiBug307578() {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		// create a stack
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		// put two parts in it
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		partA.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		partB.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(partB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder folder = (CTabFolder) stack.getWidget();
+		// two parts, two items
+		assertEquals(2, folder.getItemCount());
+
+		// this part shouldn't have anything created yet because it's not the
+		// stack's selected element
+		assertNull(partB.getRenderer());
+		assertNull(partB.getObject());
+		assertNull(partB.getWidget());
+
+		// try to remove the tab
+		IPresentationEngine renderer = (IPresentationEngine) appContext
+				.get(IPresentationEngine.class.getName());
+		renderer.removeGui(partB);
+
+		// item removed, one item
+		assertEquals(1, folder.getItemCount());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);

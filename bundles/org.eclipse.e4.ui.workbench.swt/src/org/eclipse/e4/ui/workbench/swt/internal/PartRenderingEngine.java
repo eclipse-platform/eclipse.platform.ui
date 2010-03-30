@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -408,8 +407,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param element
 	 */
 	public void removeGui(MUIElement element) {
-		AbstractPartRenderer renderer = getRendererFor(element);
-		Assert.isNotNull(renderer);
 
 		MUIElement parent = element.getParent();
 		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
@@ -418,7 +415,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			parentRenderer.hideChild(element.getParent(), element);
 		}
 
-		renderer.disposeWidget(element);
+		AbstractPartRenderer renderer = getRendererFor(element);
+		if (renderer != null) {
+			renderer.disposeWidget(element);
+		}
 
 		// unset the client object
 		if (element instanceof MContribution) {
@@ -429,11 +429,19 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (element instanceof MContext) {
 			MContext ctxt = (MContext) element;
 			IEclipseContext lclContext = ctxt.getContext();
-			IEclipseContext parentContext = (IEclipseContext) lclContext
-					.get(IContextConstants.PARENT);
-			ctxt.setContext(null);
-			if (lclContext instanceof IDisposable) {
-				((IDisposable) lclContext).dispose();
+			if (lclContext != null) {
+				IEclipseContext parentContext = (IEclipseContext) lclContext
+						.get(IContextConstants.PARENT);
+				Object child = parentContext
+						.get(IContextConstants.ACTIVE_CHILD);
+				if (child == lclContext) {
+					parentContext.set(IContextConstants.ACTIVE_CHILD, null);
+				}
+
+				ctxt.setContext(null);
+				if (lclContext instanceof IDisposable) {
+					((IDisposable) lclContext).dispose();
+				}
 			}
 		}
 	}
