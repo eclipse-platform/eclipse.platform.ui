@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,34 @@ public class OrderedLockTest extends TestCase {
 		}
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
+	}
+
+	public void testLockAcquireInterrupt() throws InterruptedException {
+		final TestBarrier barrier = new TestBarrier();
+		LockManager manager = new LockManager();
+		final ILock lock = manager.newLock();
+		final boolean[] wasInterupted = new boolean[] {false};
+		Thread t = new Thread() {
+			public void run() {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
+				lock.acquire();
+				wasInterupted[0] = Thread.currentThread().isInterrupted();
+				lock.release();
+			}
+		};
+		//schedule and wait for thread to start
+		t.start();
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+		//acquire the lock and let the thread proceed
+		lock.acquire();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		//make sure thread is blocked
+		Thread.sleep(100);
+		t.interrupt();
+		lock.release();
+		t.join();
+		assertTrue("1.0", wasInterupted[0]);
 	}
 
 	/**
