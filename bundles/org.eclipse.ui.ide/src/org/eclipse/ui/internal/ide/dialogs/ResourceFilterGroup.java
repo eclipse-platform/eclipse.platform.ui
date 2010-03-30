@@ -1583,6 +1583,15 @@ class FilterCopy extends UIResourceFilterDescription {
 							children.add(child);
 						}
 				}
+				if (arguments instanceof FilterCopy[]) {
+					FilterCopy[] filters = (FilterCopy[]) arguments;
+					if (filters != null)
+						for (int i = 0; i < filters.length; i++) {
+							FilterCopy child = filters[i];
+							child.parent = this;
+							children.add(child);
+						}
+				}
 			}
 		}
 	}
