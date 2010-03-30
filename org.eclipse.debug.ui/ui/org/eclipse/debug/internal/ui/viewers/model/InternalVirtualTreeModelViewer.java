@@ -188,8 +188,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         fLabelProvider = new TreeModelLabelProvider(this);
         
         if ((style & SWT.POP_UP) != 0) {
-            getContentProvider().setModelDeltaMask(
-                ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS | ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
+            getContentProvider().setModelDeltaMask(~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
         }
     }
 

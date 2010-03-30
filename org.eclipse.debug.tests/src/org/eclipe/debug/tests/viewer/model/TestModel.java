@@ -227,7 +227,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void update(ILabelUpdate[] updates) {
         for (int i = 0; i < updates.length; i++) {
             TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setLabel(element.fID, 0);
+            updates[i].setLabel(element.getLabel(), 0);
             if (updates[i] instanceof ICheckUpdate && 
                 Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
             {

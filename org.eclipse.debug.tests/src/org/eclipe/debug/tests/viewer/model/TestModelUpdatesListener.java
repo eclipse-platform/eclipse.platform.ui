@@ -63,10 +63,14 @@ public class TestModelUpdatesListener
     private Set fLabelUpdatesCompleted = new HashSet();
     private Set fProxyModels = new HashSet();
     private Set fStateUpdates = new HashSet();
+    private boolean fViewerUpdatesStarted;
     private boolean fViewerUpdatesComplete;
+    private boolean fLabelUpdatesStarted;
     private boolean fLabelUpdatesComplete;
     private boolean fModelChangedComplete;
+    private boolean fStateSaveStarted;
     private boolean fStateSaveComplete;
+    private boolean fStateRestoreStarted;
     private boolean fStateRestoreComplete;
     private int fViewerUpdatesCounter;
     private int fLabelUpdatesCounter;
@@ -149,9 +153,13 @@ public class TestModelUpdatesListener
         fLabelUpdatesRunning.clear();
         fLabelUpdatesCompleted.clear();
         fProxyModels.clear();
+        fViewerUpdatesStarted = false;
         fViewerUpdatesComplete = false;
+        fLabelUpdatesStarted = false;
         fLabelUpdatesComplete = false;
+        fStateSaveStarted = false;
         fStateSaveComplete = false;
+        fStateRestoreStarted = false;
         fStateRestoreComplete = false;
         fTimeoutTime = System.currentTimeMillis() + fTimeoutInterval;
         resetModelChanged();
@@ -290,10 +298,13 @@ public class TestModelUpdatesListener
             if (!fLabelUpdatesComplete) return false;
         }
         if ( (flags & LABEL_UPDATES_STARTED) != 0) {
-            if (fLabelUpdatesRunning.isEmpty() && fLabelUpdatesCompleted.isEmpty()) return false;
+            if (!fLabelUpdatesStarted) return false;
         }
         if ( (flags & LABEL_UPDATES) != 0) {
             if (!fLabelUpdates.isEmpty()) return false;
+        }
+        if ( (flags & CONTENT_UPDATES_STARTED) != 0) {
+            if (!fViewerUpdatesStarted) return false;
         }
         if ( (flags & CONTENT_UPDATES_COMPLETE) != 0) {
             if (!fViewerUpdatesComplete) return false;
@@ -322,8 +333,14 @@ public class TestModelUpdatesListener
         if ( (flags & STATE_SAVE_COMPLETE) != 0) {
             if (!fStateSaveComplete) return false;
         }
+        if ( (flags & STATE_SAVE_STARTED) != 0) {
+            if (!fStateSaveStarted) return false;
+        }
         if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
             if (!fStateRestoreComplete) return false;
+        }
+        if ( (flags & STATE_RESTORE_STARTED) != 0) {
+            if (!fStateRestoreStarted) return false;
         }
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
             if (fProxyModels.size() != 0) return false;
@@ -397,13 +414,13 @@ public class TestModelUpdatesListener
     }
     
     public void viewerUpdatesBegin() {
-        
-    }
-    
-    public void viewerUpdatesComplete() {
         if (fFailOnMultipleModelUpdateSequences && fViewerUpdatesComplete) {
             fMultipleModelUpdateSequencesObserved = true;
         }
+        fViewerUpdatesStarted = true;
+    }
+    
+    public void viewerUpdatesComplete() {
         fViewerUpdatesComplete = true;
     }
 
@@ -426,12 +443,13 @@ public class TestModelUpdatesListener
     }
 
     public void labelUpdatesBegin() {
-    }
-
-    public void labelUpdatesComplete() {
         if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete) {
             fMultipleLabelUpdateSequencesObserved = true;
         }
+        fLabelUpdatesStarted = true;
+    }
+
+    public void labelUpdatesComplete() {
         fLabelUpdatesComplete = true;
     }
     
@@ -448,6 +466,7 @@ public class TestModelUpdatesListener
     }
     
     public void stateRestoreUpdatesBegin(Object input) {
+        fStateRestoreStarted = true;
     }
     
     public void stateRestoreUpdatesComplete(Object input) {
@@ -455,6 +474,7 @@ public class TestModelUpdatesListener
     }
     
     public void stateSaveUpdatesBegin(Object input) {
+        fStateSaveStarted = true;
     }
 
     public void stateSaveUpdatesComplete(Object input) {

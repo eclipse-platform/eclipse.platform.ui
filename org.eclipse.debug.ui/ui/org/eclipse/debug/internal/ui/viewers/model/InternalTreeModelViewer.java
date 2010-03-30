@@ -1013,7 +1013,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		// and select elements up when requested by the model  
 		if ((style & SWT.POP_UP) != 0) {
 		    ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
-		        ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS & ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
+		        ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
 		}
         if ((style & SWT.CHECK) != 0) {
             context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
