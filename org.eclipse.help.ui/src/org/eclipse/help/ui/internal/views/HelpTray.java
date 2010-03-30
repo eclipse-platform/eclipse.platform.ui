@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		gd.heightHint = 1;
 		separator.setLayoutData(gd);
 		helpPart = new ReusableHelpPart(PlatformUI.getWorkbench().getProgressService());
-		helpPart.init(null, tbm, null, null);
+		helpPart.init(null, tbm, null, null, null);
 		helpPart.setDefaultContextHelpText(Messages.HelpView_defaultText);
 		helpPart.createControl(container, toolkit);
 		gd = new GridData(GridData.FILL_BOTH);

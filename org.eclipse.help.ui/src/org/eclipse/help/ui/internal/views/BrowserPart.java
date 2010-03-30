@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String title;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
-			final IToolBarManager tbm) {
+			final IToolBarManager tbm, IMenuManager menuManager) {
 		browser = new Browser(parent, SWT.NULL);
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent event) {
@@ -190,6 +190,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			}
 		});
 		contributeToToolBar(tbm);
+		contributeToMenu(menuManager);
 	}
 
 	private String executeQuery(String domValue) {
@@ -248,31 +249,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		bookmarkAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		
-		if (FontUtils.canRescaleHelpView()) {
-			magnifyAction = new Action() {
-				public void run() {
-					doMagnify(SCALE_INCREMENT);
-				}
-			};
-			magnifyAction.setToolTipText(Messages.BrowserPart_magnifyTooltip);
-			magnifyAction.setImageDescriptor(HelpUIResources
-					.getImageDescriptor(IHelpUIConstants.IMAGE_MAGNIFY));
-			magnifyAction.setDisabledImageDescriptor(HelpUIResources
-					.getImageDescriptor(IHelpUIConstants.IMAGE_D_MAGNIFY));
-			
-			reduceAction = new Action() {
-				public void run() {
-					doMagnify(-SCALE_INCREMENT);
-				}
-			};
-			reduceAction.setToolTipText(Messages.BrowserPart_reduceTooltip);
-			reduceAction.setImageDescriptor(HelpUIResources
-					.getImageDescriptor(IHelpUIConstants.IMAGE_REDUCE));
-			reduceAction.setDisabledImageDescriptor(HelpUIResources
-					.getImageDescriptor(IHelpUIConstants.IMAGE_D_REDUCE));
-			fontScalePercentage = Platform.getPreferencesService().getInt(HelpBasePlugin.PLUGIN_ID, HELP_VIEW_SCALE, 100, null);			
-		} 
-		
 		highlightAction = new Action() {
 			public void run() {
 				InstanceScope instanceScope = new InstanceScope();
@@ -300,12 +276,49 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		tbm.insertBefore("back", printAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
 		tbm.insertBefore("back", highlightAction); //$NON-NLS-1$
-		if (magnifyAction != null) {
-		    tbm.insertBefore("back", magnifyAction); //$NON-NLS-1$
-		    tbm.insertBefore("back", reduceAction); //$NON-NLS-1$
-		}
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 		enableButtons();
+	}
+	
+	private void contributeToMenu(IMenuManager menuManager) {
+		if (FontUtils.canRescaleHelpView()) {
+			fontScalePercentage = Platform.getPreferencesService().getInt(HelpBasePlugin.PLUGIN_ID,
+					HELP_VIEW_SCALE, 100, null);
+			if (menuManager != null) {
+			    addMenuActions(menuManager); 
+			}
+		}
+	}
+
+	private void addMenuActions(IMenuManager menuManager) {
+		magnifyAction = new Action() {
+
+			public void run() {
+				doMagnify(SCALE_INCREMENT);
+			}
+		};
+		magnifyAction.setToolTipText(Messages.BrowserPart_magnifyTooltip);
+		magnifyAction.setText(Messages.BrowserPart_magnifyTooltip);
+		magnifyAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_MAGNIFY));
+		magnifyAction.setDisabledImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_D_MAGNIFY));
+
+		reduceAction = new Action() {
+
+			public void run() {
+				doMagnify(-SCALE_INCREMENT);
+			}
+		};
+		reduceAction.setToolTipText(Messages.BrowserPart_reduceTooltip);
+		reduceAction.setText(Messages.BrowserPart_reduceTooltip);
+		reduceAction
+				.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_REDUCE));
+		reduceAction.setDisabledImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_D_REDUCE));
+		menuManager.add(new Separator());
+		menuManager.add(reduceAction);
+		menuManager.add(magnifyAction);
 	}
 
 	/*

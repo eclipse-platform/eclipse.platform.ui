@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -181,6 +182,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	
 	private EngineDescriptorManager engineManager;
 
+	public IMenuManager menuManager;
+
 	private abstract class BusyRunAction extends Action {
 		public BusyRunAction(String name) {
 			super(name);
@@ -299,7 +302,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		private SubActionBars bars;
 
-		private IToolBarManager toolBarManager;
+		private IToolBarManager subToolBarManager;
+		
+		private IMenuManager subMenuManager;
 
 		protected ArrayList partRecs;
 
@@ -310,11 +315,21 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			this.text = text;
 			partRecs = new ArrayList();
 			if (ReusableHelpPart.this.actionBars != null) {
+				// Help View
 				bars = new SubActionBars(ReusableHelpPart.this.actionBars);
-				toolBarManager = bars.getToolBarManager();
-			} else
-				toolBarManager = new SubToolBarManager(
+				subToolBarManager = bars.getToolBarManager();
+				subMenuManager = bars.getMenuManager();
+			} else {
+				// Help Tray
+				subToolBarManager = new SubToolBarManager(
 						ReusableHelpPart.this.toolBarManager);
+				if (ReusableHelpPart.this.menuManager != null) {
+					subMenuManager = new SubMenuManager(
+						ReusableHelpPart.this.menuManager);
+				} else {
+			        subMenuManager = null; 
+			    }
+			}
 		}
 
 		public HelpPartPage(String id, String text, String iconId) {
@@ -326,10 +341,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			if (bars != null) {
 				bars.dispose();
 				bars = null;
-				toolBarManager = null;
+				subToolBarManager = null;
+				subMenuManager = null;
 			} else {			
 				try {
-					((SubToolBarManager) toolBarManager).disposeManager();
+					((SubToolBarManager) subToolBarManager).disposeManager();
+					if (subMenuManager != null) {
+					    ((SubMenuManager)subMenuManager).disposeManager();
+					}
 				} catch (RuntimeException e) {
 					// Bug 218079
 				}
@@ -354,7 +373,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 
 		public IToolBarManager getToolBarManager() {
-			return toolBarManager;
+			return subToolBarManager;
 		}
 
 		public String getId() {
@@ -494,7 +513,10 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					bars.deactivate();
 				bars.updateActionBars();
 			} else {
-				((SubToolBarManager) toolBarManager).setVisible(visible);
+				((SubToolBarManager) subToolBarManager).setVisible(visible);
+				if (subMenuManager != null) {
+				    ((SubMenuManager)subMenuManager).setVisible(visible);
+				}
 				ReusableHelpPart.this.toolBarManager.update(true);
 				getControl().getParent().layout();
 			}
@@ -511,7 +533,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		private void createRecPart(PartRec rec) throws SWTError {
 			if (rec.part == null) {
-				rec.part = createPart(rec.id, toolBarManager);
+				rec.part = createPart(rec.id, subToolBarManager, subMenuManager);
 			}
 		}
 
@@ -775,10 +797,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void init(IActionBars bars, IToolBarManager toolBarManager,
-			IStatusLineManager statusLineManager, IMemento memento) {
+			IStatusLineManager statusLineManager, IMenuManager menuManager, IMemento memento) {
 		this.memento = memento;
 		this.actionBars = bars;
 		this.toolBarManager = toolBarManager;
+		this.menuManager = menuManager;
 		this.statusLineManager = statusLineManager;
 		definePages();
 		makeActions();
@@ -1122,7 +1145,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		mform.setInput(new ContextHelpProviderInput(provider, context, control, part, isExplicitRequest));
 	}
 
-	private IHelpPart createPart(String id, IToolBarManager tbm) {
+	private IHelpPart createPart(String id, IToolBarManager tbm, IMenuManager menuManager) {
 		IHelpPart part = null;
 		Composite parent = mform.getForm().getBody();
 
@@ -1141,7 +1164,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			((RelatedTopicsPart) part)
 					.setDefaultText(getDefaultContextHelpText());
 		} else if (id.equals(HV_BROWSER)) {
-			part = new BrowserPart(parent, mform.getToolkit(), tbm);
+			part = new BrowserPart(parent, mform.getToolkit(), tbm, menuManager);
 		} else if (id.equals(HV_SEARCH_RESULT)) {
 			part = new DynamicHelpPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
