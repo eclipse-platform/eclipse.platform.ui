@@ -62,20 +62,23 @@ public class PartServiceImpl implements EPartService {
 
 	private EventHandler selectedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
-			Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			// no need to do anything if we have no listeners
+			if (!listeners.isEmpty()) {
+				Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
+				Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 
-			MPart oldSelectedPart = oldSelected instanceof MPart ? (MPart) oldSelected : null;
-			MPart selectedPart = selected instanceof MPart ? (MPart) selected : null;
+				MPart oldSelectedPart = oldSelected instanceof MPart ? (MPart) oldSelected : null;
+				MPart selectedPart = selected instanceof MPart ? (MPart) selected : null;
 
-			if (oldSelectedPart != null && isInContainer(oldSelectedPart)) {
-				firePartHidden(oldSelectedPart);
-			}
+				if (oldSelectedPart != null && isInContainer(oldSelectedPart)) {
+					firePartHidden(oldSelectedPart);
+				}
 
-			if (selectedPart != null && selectedPart.isToBeRendered()
-					&& isInContainer(selectedPart)) {
-				firePartVisible(selectedPart);
-				firePartBroughtToTop(selectedPart);
+				if (selectedPart != null && selectedPart.isToBeRendered()
+						&& isInContainer(selectedPart)) {
+					firePartVisible(selectedPart);
+					firePartBroughtToTop(selectedPart);
+				}
 			}
 		}
 	};
@@ -120,7 +123,8 @@ public class PartServiceImpl implements EPartService {
 			lastActivePart = activePart;
 			activePart = p;
 
-			if (constructed) {
+			// no need to do anything if we have no listeners
+			if (constructed && !listeners.isEmpty()) {
 				if (lastActivePart != null && lastActivePart != activePart) {
 					firePartDeactivated(lastActivePart);
 				}
