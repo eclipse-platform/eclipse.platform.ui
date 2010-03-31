@@ -49,6 +49,7 @@ public class AllTests extends TestCase {
 		suite.addTest(NatureTest.suite());
 		suite.addTest(NonLocalLinkedResourceTest.suite());
 		suite.addTest(ProjectOrderTest.suite());
+		suite.addTest(ProjectSnapshotTest.suite());
 		suite.addTest(ResourceAttributeTest.suite());
 		suite.addTest(ResourceURLTest.suite());
 		suite.addTest(TeamPrivateMemberTest.suite());
