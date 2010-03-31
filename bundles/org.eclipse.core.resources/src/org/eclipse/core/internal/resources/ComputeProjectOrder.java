@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -445,7 +445,7 @@ class ComputeProjectOrder {
 	}
 
 	/**
-	 * Sorts the given list of probject in a manner that honors the given
+	 * Sorts the given list of project in a manner that honors the given
 	 * project reference relationships. That is, if project A references project
 	 * B, then the resulting order will list B before A if possible. For graphs
 	 * that do not contain cycles, the result is the same as a conventional
