@@ -311,20 +311,22 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
 
-		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
-		setSyncSource(new SyncInfoSource());
-		refresh(getSubscriber(), modelProject);
-		
-		// Update the "file.mod" file
 		try {
-			update(modelProject, new String[] { "file.mod" });
-		} catch (CVSException e) {
-			fail("Update without models failed", e);
+			RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
+			setSyncSource(new SyncInfoSource());
+			refresh(getSubscriber(), modelProject);
+
+			// Update the "file.mod" file
+			try {
+				update(modelProject, new String[] { "file.mod" });
+			} catch (CVSException e) {
+				fail("Update without models failed", e);
+			}
+		} finally {
+			// Reset settings
+			RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
+			setSyncSource(new ModelParticipantSyncInfoSource());
 		}
-		
-		// Reset settings
-		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
-		setSyncSource(new ModelParticipantSyncInfoSource());
 	}
 	
 	public void testBug302163WithModel() throws CoreException {
@@ -345,20 +347,22 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		copyModelProject.getFile("file.mod").setContents(new ByteArrayInputStream(("\nf1.moe\nf2.moe").getBytes()), false, true, null);
 		commitProject(copyModelProject);
 		
-		RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
-		setSyncSource(new SyncInfoSource());
-		refresh(getSubscriber(), modelProject);
-		
-		// Update the "file.mod" file
 		try {
-			update(modelProject, new String[] { "file.mod" });
-		} catch (CVSException e) {
-			fail("Update without models failed", e);
+			RepositoryProviderOperation.consultModelsWhenBuildingScope = true;
+			setSyncSource(new SyncInfoSource());
+			refresh(getSubscriber(), modelProject);
+
+			// Update the "file.mod" file
+			try {
+				update(modelProject, new String[] { "file.mod" });
+			} catch (CVSException e) {
+				fail("Update without models failed", e);
+			}
+		} finally {
+			// Reset settings
+			RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
+			setSyncSource(new ModelParticipantSyncInfoSource());
 		}
-		
-		// Reset settings		
-		RepositoryProviderOperation.consultModelsWhenBuildingScope = false;
-		setSyncSource(new ModelParticipantSyncInfoSource());
 	}
 	
 	/*
