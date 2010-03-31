@@ -186,7 +186,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         }
     }
     
-	MPart getModel() {
+	public MPart getModel() {
 		return part;
 	}
 

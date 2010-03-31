@@ -233,7 +233,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return -1;
 	}
 
-	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
+	private List<ViewReference> viewReferences = new ArrayList<ViewReference>();
 	private List<EditorReference> editorReferences = new ArrayList<EditorReference>();
 
 	private List<IPerspectiveDescriptor> openedPerspectives = new ArrayList<IPerspectiveDescriptor>();
@@ -454,7 +454,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return null;
 		}
 
-		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
+		for (Iterator<ViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
 			if (part == reference.getPart(false)) {
 				return ((WorkbenchPartReference) reference).getModel();
@@ -515,7 +515,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	public void addViewReference(IViewReference viewReference) {
+	public void addViewReference(ViewReference viewReference) {
 		viewReferences.add(viewReference);
 	}
 
@@ -811,7 +811,37 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Return true on success.
 		return true;
     }
-    
+
+	/**
+	 * Hides the part from this page (window). If the part corresponds to a 3.x
+	 * part, its part reference will also be removed.
+	 * <p>
+	 * This method merely performs the hide invocations. Clients are recommended
+	 * to call {@link #hidePart(MPart, boolean, boolean)} instead.
+	 * </p>
+	 * 
+	 * @param part
+	 *            the part that should be hidden
+	 */
+	private void hidePart(MPart part) {
+		partService.hidePart(part);
+
+		for (Iterator<ViewReference> it = viewReferences.iterator(); it.hasNext();) {
+			ViewReference reference = it.next();
+			if (reference.getModel() == part) {
+				it.remove();
+				return;
+			}
+		}
+
+		for (Iterator<EditorReference> it = editorReferences.iterator(); it.hasNext();) {
+			EditorReference reference = it.next();
+			if (reference.getModel() == part) {
+				it.remove();
+				return;
+			}
+		}
+	}
 
 	private boolean hidePart(MPart part, boolean save, boolean confirm) {
 		if (!partService.getParts().contains(part)) {
@@ -820,7 +850,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		Object clientObject = part.getObject();
 		if (!(clientObject instanceof CompatibilityPart)) {
-			return false;
+			// either not a 3.x part or it's an e4 part, should still hide it
+			if (save) {
+				// save as necessary
+				if (partService.savePart(part, confirm)) {
+					hidePart(part);
+					return true;
+				}
+				return false;
+			}
+			hidePart(part);
+			return true;
 		}
 
 		CompatibilityPart compatibilityPart = (CompatibilityPart) clientObject;
