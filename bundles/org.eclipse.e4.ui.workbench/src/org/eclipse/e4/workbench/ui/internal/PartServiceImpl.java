@@ -456,7 +456,7 @@ public class PartServiceImpl implements EPartService {
 		return container;
 	}
 
-	private MPart showExistingPart(PartState partState, MPart providedPart, MPart localPart) {
+	private MPart showPart(PartState partState, MPart providedPart, MPart localPart) {
 		MPart part = addPart(providedPart, localPart);
 		switch (partState) {
 		case ACTIVATE:
@@ -482,27 +482,6 @@ public class PartServiceImpl implements EPartService {
 		return part;
 	}
 
-	private MPart showNewPart(MPart part, PartState partState) {
-		part = addPart(part, part);
-
-		MPart activePart = getActivePart();
-		if (activePart == null) {
-			activate(part);
-			return part;
-		}
-
-		switch (partState) {
-		case ACTIVATE:
-			activate(part);
-			return part;
-		case VISIBLE:
-			if (activePart.getParent() != part.getParent()) {
-				bringToTop(part);
-			}
-		}
-		return part;
-	}
-
 	public MPart showPart(String id, PartState partState) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(partState);
@@ -518,7 +497,7 @@ public class PartServiceImpl implements EPartService {
 			return null;
 		}
 
-		return showNewPart(part, partState);
+		return showPart(partState, part, part);
 	}
 
 	public MPart showPart(MPart part, PartState partState) {
@@ -527,9 +506,9 @@ public class PartServiceImpl implements EPartService {
 
 		MPart localPart = findPart(part.getId());
 		if (localPart != null) {
-			return showExistingPart(partState, part, localPart);
+			return showPart(partState, part, localPart);
 		}
-		return showNewPart(part, partState);
+		return showPart(partState, part, part);
 	}
 
 	public void hidePart(MPart part) {

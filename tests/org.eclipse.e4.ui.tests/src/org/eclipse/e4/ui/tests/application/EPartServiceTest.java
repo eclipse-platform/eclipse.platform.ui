@@ -4249,6 +4249,55 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partB, o);
 	}
 
+	private void testShowPart_Bug307747(PartState partState) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partId");
+		partDescriptor.setCategory("category");
+		application.getDescriptors().add(partDescriptor);
+
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		// create a stack
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.setId("category");
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		// setup the context
+		initialize(applicationContext, application);
+		// render the window
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partA);
+		MPart partB = partService.showPart("partId", partState);
+
+		// showPart should instantiate the part
+		assertNotNull("The part should have been rendered", partB.getContext());
+	}
+
+	public void testShowPart_Bug307747_CREATE() {
+		testShowPart_Bug307747(PartState.CREATE);
+	}
+
+	public void testShowPart_Bug307747_VISIBLE() {
+		testShowPart_Bug307747(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Bug307747_ACTIVATE() {
+		testShowPart_Bug307747(PartState.ACTIVATE);
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
