@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
@@ -30,10 +31,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.WorkbenchPage;
 
 public class SelectionService implements ISelectionChangedListener, ISelectionService {
+
+	@Inject
+	private IEclipseContext context;
 
 	private ESelectionService selectionService;
 
@@ -48,6 +53,9 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	private org.eclipse.e4.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.workbench.modeling.ISelectionListener() {
 		public void selectionChanged(MPart part, Object selection) {
+			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME,
+					createCompatibilitySelection(selection));
+			
 			Object client = part.getObject();
 			if (client instanceof CompatibilityPart) {
 				IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
@@ -55,6 +63,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			}
 		}
 	};
+
+	private static ISelection createCompatibilitySelection(Object selection) {
+		return selection instanceof ISelection ? (ISelection) selection : new StructuredSelection(
+				selection);
+	}
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
