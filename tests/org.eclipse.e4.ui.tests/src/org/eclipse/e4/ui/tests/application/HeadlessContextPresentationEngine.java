@@ -132,6 +132,10 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * .e4.ui.model.application.MUIElement, java.lang.Object)
 	 */
 	public Object createGui(MUIElement element, Object parent) {
+		if (!element.isToBeRendered()) {
+			return null;
+		}
+
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
 			if (mcontext.getContext() != null) {
