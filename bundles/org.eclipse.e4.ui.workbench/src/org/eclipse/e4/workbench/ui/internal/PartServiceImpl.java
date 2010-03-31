@@ -298,9 +298,10 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
-		if (!isInContainer(part)) {
+		if (part == activePart || !isInContainer(part)) {
 			return;
 		}
+
 		IEclipseContext curContext = part.getContext();
 		MContext pwc = getParentWithContext(part);
 		MUIElement curElement = part;
@@ -463,15 +464,14 @@ public class PartServiceImpl implements EPartService {
 			return part;
 		case VISIBLE:
 			MPart activePart = getActivePart();
-			if (activePart == part) {
+			if (activePart == null) {
+				bringToTop(part);
+			} else if (activePart.getParent() == part.getParent()) {
+				// same parent as the active part, just instantiate this part then
 				part.setToBeRendered(true);
+				engine.createGui(part);
 			} else {
-				if (activePart.getParent() == part.getParent()) {
-					part.setToBeRendered(true);
-					engine.createGui(part);
-				} else {
-					bringToTop(part);
-				}
+				bringToTop(part);
 			}
 			return part;
 		case CREATE:
