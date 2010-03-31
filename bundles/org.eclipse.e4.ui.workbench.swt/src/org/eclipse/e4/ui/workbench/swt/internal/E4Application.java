@@ -162,8 +162,8 @@ public class E4Application implements IApplication {
 				applicationContext);
 		if (presentationURI == null) {
 			presentationURI = PartRenderingEngine.engineURI;
-			appContext.set(E4Workbench.PRESENTATION_URI_ARG, presentationURI);
 		}
+		appContext.set(E4Workbench.PRESENTATION_URI_ARG, presentationURI);
 
 		// Instantiate the Workbench (which is responsible for
 		// 'running' the UI (if any)...
