@@ -585,7 +585,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Must be called after the project has been created, but before it is
 	 * opened. The options constant controls what kind of snapshot information
 	 * to load. Valid option values include:<ul>
-	 * <li>@link{IProject#SNAPSHOT_TREE} - load resource tree (refresh info)
+	 * <li>{@link IProject#SNAPSHOT_TREE} - load resource tree (refresh info)
 	 * </ul>
 	 * 
 	 * @param options kind of snapshot information to load
@@ -735,7 +735,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Writes a snapshot of project meta-data into the given location URI.
 	 * The options constant controls what kind of snapshot information to
 	 * write. Valid option values include:<ul>
-	 * <li>@link{IProject#SNAPSHOT_TREE} - save resource tree (refresh info)
+	 * <li>{@link IProject#SNAPSHOT_TREE} - save resource tree (refresh info)
 	 * </ul>
 	 * 
 	 * @param options kind of snapshot information to save
