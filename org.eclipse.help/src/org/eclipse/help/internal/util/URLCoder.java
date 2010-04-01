@@ -17,7 +17,7 @@ public class URLCoder {
 
 	public static String encode(String s) {
 		try {
-			return urlEncode(s.getBytes("UTF8"), false); //$NON-NLS-1$
+			return urlEncode(s.getBytes("UTF8"), true); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
@@ -25,7 +25,7 @@ public class URLCoder {
 	
 	public static String compactEncode(String s) {
 		try {
-			return urlEncode(s.getBytes("UTF8"), true); //$NON-NLS-1$
+			return urlEncode(s.getBytes("UTF8"), false); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
@@ -39,11 +39,11 @@ public class URLCoder {
 		}
 	}
 
-	private static String urlEncode(byte[] data, boolean encodeAlphanumeric) {
+	private static String urlEncode(byte[] data, boolean encodeAllCharacters) {
 		StringBuffer buf = new StringBuffer(data.length);
 		for (int i = 0; i < data.length; i++) {
 			byte nextByte = data[i];
-			if (encodeAlphanumeric && isAlphaNumeric(nextByte)) {
+			if (!encodeAllCharacters && isAlphaNumericSlashOrDot(nextByte)) {
 				buf.append((char)nextByte);
 			} else {
 				buf.append('%');
@@ -54,8 +54,9 @@ public class URLCoder {
 		return buf.toString();
 	}
 	
-	private static boolean isAlphaNumeric(byte b) {
-		return (b >= 0 && b <= 9) || (b >= 'a' && b < 'z') || ( b >= 'A' && b <= 'Z');
+	private static boolean isAlphaNumericSlashOrDot(byte b) {
+		return (b >= '0' && b <= '9') || (b >= 'a' && b < 'z') || ( b >= 'A' && b <= 'Z') 
+		   || b == '.' || b == '/';
 	}
 
 	private static byte[] urlDecode(String encodedURL) {
