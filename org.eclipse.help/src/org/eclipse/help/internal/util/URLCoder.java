@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,15 @@ public class URLCoder {
 
 	public static String encode(String s) {
 		try {
-			return urlEncode(s.getBytes("UTF8")); //$NON-NLS-1$
+			return urlEncode(s.getBytes("UTF8"), false); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException uee) {
+			return null;
+		}
+	}
+	
+	public static String compactEncode(String s) {
+		try {
+			return urlEncode(s.getBytes("UTF8"), true); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
@@ -31,14 +39,23 @@ public class URLCoder {
 		}
 	}
 
-	private static String urlEncode(byte[] data) {
+	private static String urlEncode(byte[] data, boolean encodeAlphanumeric) {
 		StringBuffer buf = new StringBuffer(data.length);
 		for (int i = 0; i < data.length; i++) {
-			buf.append('%');
-			buf.append(Character.forDigit((data[i] & 240) >>> 4, 16));
-			buf.append(Character.forDigit(data[i] & 15, 16));
+			byte nextByte = data[i];
+			if (encodeAlphanumeric && isAlphaNumeric(nextByte)) {
+				buf.append((char)nextByte);
+			} else {
+				buf.append('%');
+				buf.append(Character.forDigit((nextByte & 240) >>> 4, 16));
+				buf.append(Character.forDigit(nextByte & 15, 16));
+			}
 		}
 		return buf.toString();
+	}
+	
+	private static boolean isAlphaNumeric(byte b) {
+		return (b >= 0 && b <= 9) || (b >= 'a' && b < 'z') || ( b >= 'A' && b <= 'Z');
 	}
 
 	private static byte[] urlDecode(String encodedURL) {

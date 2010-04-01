@@ -236,13 +236,13 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	private void saveContents() throws IOException {
 		
 		StringBuffer data = new StringBuffer();
-		data.append(URLCoder.encode(currentWorkingSet /* , "UTF8" */
+		data.append(URLCoder.compactEncode(currentWorkingSet /* , "UTF8" */
 		));
 
 		for (Iterator i = workingSets.iterator(); i.hasNext();) {
 			data.append('|');
 			WorkingSet ws = (WorkingSet) i.next();
-			data.append(URLCoder.encode(ws.getName() /* , "UTF8" */
+			data.append(URLCoder.compactEncode(ws.getName() /* , "UTF8" */
 			));
 
 			AdaptableHelpResource[] resources = ws.getElements();
@@ -252,7 +252,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				IAdaptable parent = resources[j].getParent();
 				if (parent == getRoot()) {
 					// saving toc
-					data.append(URLCoder.encode(resources[j].getHref()
+					data.append(URLCoder.compactEncode(resources[j].getHref()
 					/* , "UTF8" */
 					));
 				} else {
@@ -261,7 +261,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					AdaptableHelpResource[] siblings = (toc).getChildren();
 					for (int t = 0; t < siblings.length; t++) {
 						if (siblings[t] == resources[j]) {
-							data.append(URLCoder.encode(toc.getHref()
+							data.append(URLCoder.compactEncode(toc.getHref()
 							/* , "UTF8" */
 							));
 							data.append('_');
@@ -280,12 +280,12 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	private void saveCriteria() throws IOException {
 		
 		StringBuffer data = new StringBuffer();
-		data.append(URLCoder.encode(currentWorkingSet));
+		data.append(URLCoder.compactEncode(currentWorkingSet));
 		//|scope1$platform#AIX,WINDOWS,$version#1.0,2.0,
 		for (Iterator i = workingSets.iterator(); i.hasNext();) {
 			data.append('|');
 			WorkingSet ws = (WorkingSet) i.next();
-			data.append(URLCoder.encode(ws.getName()));
+			data.append(URLCoder.compactEncode(ws.getName()));
 
 			CriterionResource[] criteria = ws.getCriteria();
 			for (int j = 0; j < criteria.length; ++ j){
@@ -294,11 +294,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				List criterionValues = criterion.getCriterionValues();
 				if(null != criterionValues && !criterionValues.isEmpty()){
 					data.append('$');
-					data.append(URLCoder.encode(criterionName));
+					data.append(URLCoder.compactEncode(criterionName));
 					data.append('#');
 					for (Iterator iter = criterionValues.iterator(); iter.hasNext();) {
 						String value = (String) iter.next();
-						data.append(URLCoder.encode(value));
+						data.append(URLCoder.compactEncode(value));
 						data.append(',');
 					}
 				}
