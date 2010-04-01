@@ -2753,7 +2753,12 @@ public class EPartServiceTest extends TestCase {
 				}
 			}
 			return true;
-		} else if (beforeDirty[0]) {
+		}
+		return isSuccessful(beforeDirty, throwException);
+	}
+
+	private boolean isSuccessful(boolean[] beforeDirty, boolean[] throwException) {
+		if (beforeDirty[0]) {
 			if (beforeDirty[1]) {
 				return !throwException[0] && !throwException[1];
 			}
@@ -2786,9 +2791,15 @@ public class EPartServiceTest extends TestCase {
 						beforeDirty[1] ? throwException[1] : false };
 			}
 			return beforeDirty;
-		} else if (beforeDirty[0]) {
+		}
+		return afterDirty(beforeDirty, throwException);
+	}
+
+	private boolean[] afterDirty(boolean[] beforeDirty, boolean[] throwException) {
+		if (beforeDirty[0]) {
 			if (beforeDirty[1]) {
-				return new boolean[] { throwException[0], throwException[1] };
+				return new boolean[] { throwException[0],
+						throwException[0] || throwException[1] };
 			}
 			return new boolean[] { throwException[0], false };
 		} else if (beforeDirty[1]) {
@@ -2814,7 +2825,14 @@ public class EPartServiceTest extends TestCase {
 			}
 			return new boolean[] { false, false };
 		}
-		return beforeDirty;
+		return saveCalled(beforeDirty, throwException);
+	}
+
+	private boolean[] saveCalled(boolean[] beforeDirty, boolean[] throwException) {
+		return new boolean[] {
+				beforeDirty[0],
+				beforeDirty[0] ? !throwException[0] && beforeDirty[1]
+						: beforeDirty[1] };
 	}
 
 	private void testSaveAll(Save[] returnValues, boolean confirm,
@@ -4121,7 +4139,7 @@ public class EPartServiceTest extends TestCase {
 		} else {
 			assertTrue(
 					"The part is not dirty, the save operation should have complete successfully",
-					partService.savePart(saveablePart, confirm));
+					partService.saveAll(confirm));
 		}
 
 		assertEquals(beforeDirty && throwException, saveablePart.isDirty());
@@ -4158,6 +4176,208 @@ public class EPartServiceTest extends TestCase {
 
 	public void testSaveAll_NoHandler_FFF() {
 		testSaveAll_NoHandler(false, false, false);
+	}
+
+	private void testSaveAll_NoHandlers(boolean confirm, boolean[] beforeDirty,
+			boolean[] afterDirty, boolean success, boolean[] saveCalled,
+			boolean[] throwException) {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		final MPart saveablePart = createSaveablePart(window, beforeDirty[0]);
+		final MPart saveablePart2 = createSaveablePart(window, beforeDirty[1]);
+
+		// setup the context
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		ClientEditor editor = (ClientEditor) saveablePart.getObject();
+		editor.setThrowException(throwException[0]);
+
+		ClientEditor editor2 = (ClientEditor) saveablePart2.getObject();
+		editor2.setThrowException(throwException[1]);
+
+		window.getContext().set(ISaveHandler.class.getName(), null);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertEquals(success, partService.saveAll(confirm));
+
+		assertEquals(afterDirty[0], saveablePart.isDirty());
+		assertEquals(saveCalled[0], editor.wasSaveCalled());
+
+		assertEquals(afterDirty[1], saveablePart2.isDirty());
+		assertEquals(saveCalled[1], editor2.wasSaveCalled());
+	}
+
+	private void testSaveAll_NoHandlers(boolean confirm, boolean[] beforeDirty,
+			boolean[] throwException) {
+		testSaveAll_NoHandlers(confirm, beforeDirty, afterDirty(beforeDirty,
+				throwException), isSuccessful(beforeDirty, throwException),
+				saveCalled(beforeDirty, throwException), throwException);
+	}
+
+	public void testSaveAll_NoHandlers_T_TT_TT() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, true },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_TT_TF() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, true },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_TT_FT() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, true },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_TT_FF() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, true },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_TF_TT() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, false },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_TF_TF() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, false },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_TF_FT() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, false },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_TF_FF() {
+		testSaveAll_NoHandlers(true, new boolean[] { true, false },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_FT_TT() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, true },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_FT_TF() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, true },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_FT_FT() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, true },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_FT_FF() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, true },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_FF_TT() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, false },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_FF_TF() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, false },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_T_FF_FT() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, false },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_T_FF_FF() {
+		testSaveAll_NoHandlers(true, new boolean[] { false, false },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_TT_TT() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, true },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_TT_TF() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, true },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_TT_FT() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, true },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_TT_FF() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, true },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_TF_TT() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, false },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_TF_TF() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, false },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_TF_FT() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, false },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_TF_FF() {
+		testSaveAll_NoHandlers(false, new boolean[] { true, false },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_FT_TT() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, true },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_FT_TF() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, true },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_FT_FT() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, true },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_FT_FF() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, true },
+				new boolean[] { false, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_FF_TT() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, false },
+				new boolean[] { true, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_FF_TF() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, false },
+				new boolean[] { true, false });
+	}
+
+	public void testSaveAll_NoHandlers_F_FF_FT() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, false },
+				new boolean[] { false, true });
+	}
+
+	public void testSaveAll_NoHandlers_F_FF_FF() {
+		testSaveAll_NoHandlers(false, new boolean[] { false, false },
+				new boolean[] { false, false });
 	}
 
 	public void testSwitchWindows() {

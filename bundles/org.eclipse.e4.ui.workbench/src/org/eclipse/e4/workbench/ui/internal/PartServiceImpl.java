@@ -598,7 +598,6 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 
-			boolean success = true;
 			for (int i = 0; i < decisions.length; i++) {
 				if (decisions[i] == Save.YES) {
 					if (!savePart(dirtyPartsList.get(i), false)) {
@@ -606,16 +605,15 @@ public class PartServiceImpl implements EPartService {
 					}
 				}
 			}
-			return success;
+			return true;
 		}
 
-		boolean success = true;
 		for (MPart dirtyPart : dirtyParts) {
 			if (!savePart(dirtyPart, false)) {
-				success = false;
+				return false;
 			}
 		}
-		return success;
+		return true;
 	}
 
 	private Collection<MInputPart> getInputParts() {
