@@ -1000,16 +1000,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
-		boolean success = true;
 		for (IWorkbenchWindow window : getWorkbenchWindows()) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				if (page.saveAllEditors(confirm)) {
-					success = false;
+				if (!page.saveAllEditors(confirm)) {
+					return false;
 				}
 			}
 		}
-		return success;
+		return true;
 	}
 
 	/*
