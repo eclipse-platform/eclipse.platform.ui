@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class RefreshLocalPerformanceTest extends ResourceTest {
 		return stopDate.getTime() - startDate.getTime();
 	}
 
-	// this test should not be in AllTests because it is noly a performance test
+	// this test should not be in AllTests because it is only a performance test
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RefreshLocalPerformanceTest.class.getName());
 		suite.addTest(new RefreshLocalPerformanceTest("testLocalRefreshPerformance"));
@@ -73,7 +73,7 @@ public class RefreshLocalPerformanceTest extends ResourceTest {
 	}
 
 	/**
-	 * Defines only a default mapping to a project and refreshs locally.
+	 * Defines only a default mapping to a project and refreshes locally.
 	 */
 	public void testLocalRefreshPerformance() throws Exception {
 		// test if the test can be done in this machine
