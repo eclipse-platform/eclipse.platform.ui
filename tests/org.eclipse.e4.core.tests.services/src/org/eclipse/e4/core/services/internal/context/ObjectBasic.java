@@ -49,7 +49,7 @@ public class ObjectBasic implements IDisposable {
 		this.c = c;
 	}
 
-	public void contextSet(IEclipseContext context) {
+	public void inject__contextSet(IEclipseContext context) {
 		this.context = context;
 		finalized = true;
 	}

@@ -151,8 +151,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				if ((eventType == ContextChangeEvent.ADDED)
 						|| (eventType == ContextChangeEvent.REMOVED)) {
 					cachedEvent = event;
-					EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event
-							.getContext()).getContext();
+					EclipseContext eventsContext = (EclipseContext) event.getContext();
 					eventsContext.addWaiting(this);
 					// eventsContext.getRoot().waiting.add(this);
 					return true;
@@ -171,8 +170,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			} finally {
 				currentComputation.set(oldComputation);
 			}
-			EclipseContext eventsContext = (EclipseContext) ((ObjectProviderContext) event
-					.getContext()).getContext();
+			EclipseContext eventsContext = (EclipseContext) event.getContext();
 			if (result)
 				startListening(eventsContext);
 			else
@@ -407,7 +405,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * The given name has been modified or removed in this context. Invalidate all local value
 	 * computations and listeners that depend on this name.
 	 */
-	private void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
+	public void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
@@ -583,18 +581,11 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void removeListenersTo(Object object) {
 		if (object == null)
 			return;
-		synchronized (listeners) {
-			ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
-					ContextChangeEvent.UNINJECTED, null, null, null);
-			for (Iterator<Computation> i = listeners.keySet().iterator(); i.hasNext();) {
-				Computation computation = i.next();
-				if (computation instanceof TrackableComputationExt) {
-					if (object == ((TrackableComputationExt) computation).getObject()) {
-						((IRunAndTrack) computation).notify(event);
-						i.remove();
-					}
-				}
-			}
+		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.UNINJECTED, new Object[] { object }, null, null);
+		for (Computation computation : ls) {
+			((IRunAndTrack) computation).notify(event);
 		}
 	}
 

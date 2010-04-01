@@ -13,7 +13,7 @@ package org.eclipse.e4.core.services.internal.annotations;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
+import java.lang.reflect.Type;
 import org.eclipse.e4.core.services.internal.context.InjectionProperties;
 
 /**
@@ -25,28 +25,28 @@ public class AnnotationsSupport {
 		// placeholder
 	}
 
-	public InjectionProperties getInjectProperties(Field field, IObjectProvider context) {
+	public InjectionProperties getInjectProperties(Field field) {
 		return new InjectionProperties(false, null, false);
 	}
 
-	public InjectionProperties getInjectProperties(Method method, IObjectProvider context) {
+	public InjectionProperties getInjectProperties(Method method) {
 		return new InjectionProperties(false, null, false);
 	}
 
-	public InjectionProperties getInjectProperties(Constructor constructor, IObjectProvider context) {
+	public InjectionProperties getInjectProperties(Constructor constructor) {
 		return new InjectionProperties(true, null, false);
 	}
 
-	public InjectionProperties[] getInjectParamsProperties(Constructor constructor,
-			IObjectProvider context) {
-		Class[] params = constructor.getParameterTypes();
+	public InjectionProperties[] getInjectParamsProperties(Constructor constructor) {
+		Type[] params = constructor.getGenericParameterTypes();
+
 		InjectionProperties[] result = new InjectionProperties[params.length];
 		for (int i = 0; i < result.length; i++)
 			result[i] = new InjectionProperties(false, null, false);
 		return result;
 	}
 
-	public InjectionProperties[] getInjectParamProperties(Method method, IObjectProvider context) {
+	public InjectionProperties[] getInjectParamProperties(Method method) {
 		Class[] params = method.getParameterTypes();
 		InjectionProperties[] result = new InjectionProperties[params.length];
 		for (int i = 0; i < result.length; i++)

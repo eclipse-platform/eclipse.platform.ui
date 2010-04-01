@@ -23,17 +23,32 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IInjector {
 
-	public boolean inject(Object object, IObjectProvider objectProvider);
+	final public static Object NOT_A_VALUE = new Object();
 
-	public Object make(Class clazz, IObjectProvider objectProvider)
-			throws InvocationTargetException, InstantiationException;
+	public boolean inject(Object object, AbstractObjectSupplier objectSupplier);
 
-	public Object invoke(Object object, String methodName, IObjectProvider objectProvider)
+	public boolean uninject(Object object, AbstractObjectSupplier objectSupplier);
+
+	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier)
 			throws InvocationTargetException, CoreException;
 
 	public Object invoke(Object object, String methodName, Object defaultValue,
-			IObjectProvider objectProvider) throws InvocationTargetException;
+			AbstractObjectSupplier objectSupplier) throws InvocationTargetException;
 
-	public boolean injectStatic(Class clazz, IObjectProvider objectProvider);
+	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier)
+			throws InvocationTargetException, InstantiationException;
+
+	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier)
+			throws InvocationTargetException, InstantiationException;
+
+	public boolean injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier);
+
+	public boolean update(IRequestor[] requestors, AbstractObjectSupplier objectSupplier);
+
+	public boolean disposed(AbstractObjectSupplier objectSupplier);
+
+	public IBinding addBinding(Class<?> clazz);
+
+	public IBinding addBinding(IBinding binding);
 
 }

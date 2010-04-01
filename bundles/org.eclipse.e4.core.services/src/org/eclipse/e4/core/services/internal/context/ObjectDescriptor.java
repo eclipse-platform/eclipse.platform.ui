@@ -8,45 +8,50 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.injector;
+package org.eclipse.e4.core.services.internal.context;
 
-import javax.inject.Named;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 
 /**
  * NOTE: This is a preliminary form; this API will change.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ObjectDescriptor {
+public class ObjectDescriptor implements IObjectDescriptor {
 
-	final private Class desiredClass;
+	final private Type desiredType;
 	final private String[] qualifiers;
 	final private String[] values;
 
-	static final private String named = Named.class.getName();
+	// TBD make "Optional" a qualifier?
+	final private boolean optional;
 
-	static public ObjectDescriptor make(Class clazz) {
-		return new ObjectDescriptor(clazz, null, null);
-	}
-
-	static public ObjectDescriptor make(String name) {
-		return new ObjectDescriptor(null, new String[] { named }, new String[] { name });
-	}
-
-	static public ObjectDescriptor make(Class clazz, String name) {
-		if (name == null)
-			return make(clazz);
-		return new ObjectDescriptor(clazz, new String[] { named }, new String[] { name });
-	}
-
-	public ObjectDescriptor(Class desiredClass, String[] qualifiers, String[] values) {
-		this.desiredClass = desiredClass;
+	public ObjectDescriptor(Type desiredType, String[] qualifiers, String[] values, boolean optional) {
+		this.desiredType = desiredType;
 		this.qualifiers = qualifiers;
 		this.values = values;
+		this.optional = optional;
 	}
 
-	public Class getElementClass() {
-		return desiredClass;
+	// TBD rename getDesiredClass()
+	public Class<?> getElementClass() {
+		if (desiredType instanceof Class<?>)
+			return (Class<?>) desiredType;
+		if (desiredType instanceof ParameterizedType)
+			return (Class<?>) ((ParameterizedType) desiredType).getRawType(); // XXX this is wrong;
+																				// might be
+																				// Param<T<T2>>
+		return null;
+	}
+
+	public Type getElementType() {
+		return desiredType;
+	}
+
+	public boolean isOptional() {
+		return optional;
 	}
 
 	public boolean hasQualifier(String qualifier) {
@@ -59,6 +64,10 @@ public class ObjectDescriptor {
 				return true;
 		}
 		return false;
+	}
+
+	public String[] getQualifiers() {
+		return qualifiers;
 	}
 
 	/**
@@ -81,8 +90,8 @@ public class ObjectDescriptor {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		if (desiredClass != null)
-			buffer.append(desiredClass.getName());
+		if (desiredType != null)
+			buffer.append(((Class<?>) desiredType).getName());
 		else
 			buffer.append("_descriptor_");
 		if (qualifiers != null) {

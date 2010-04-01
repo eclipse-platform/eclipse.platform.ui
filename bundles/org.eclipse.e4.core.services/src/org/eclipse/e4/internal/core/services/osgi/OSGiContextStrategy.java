@@ -22,8 +22,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
-import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -264,7 +262,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	 * we can do appropriate cleanup of our caches when the requesting context is disposed.
 	 */
 	public boolean notify(ContextChangeEvent event) {
-		IEclipseContext context = getContext(event);
+		IEclipseContext context = event.getContext();
 		if (context == null)
 			return false;
 		if (event.getEventType() != ContextChangeEvent.DISPOSE) {
@@ -284,12 +282,5 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 			}
 		}
 		return true;
-	}
-
-	private IEclipseContext getContext(ContextChangeEvent event) {
-		IObjectProvider provider = event.getContext();
-		if (provider instanceof ObjectProviderContext)
-			return ((ObjectProviderContext) provider).getContext();
-		return null;
 	}
 }

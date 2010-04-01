@@ -14,7 +14,6 @@ import java.util.List;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.context.EclipseContext.Scheduled;
 
 public class ValueComputation extends Computation {
@@ -113,14 +112,14 @@ public class ValueComputation extends Computation {
 		int eventType = event.getEventType();
 		// if the originating context is being disposed, remove this value computation completely
 		if (eventType == ContextChangeEvent.DISPOSE) {
-			IObjectProvider provider = event.getContext();
-			IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
+			IEclipseContext eventsContext = event.getContext();
 			if (originatingContext.equals(eventsContext)) {
 				removeAll(originatingContext);
 				return;
 			}
 		}
-		this.originatingContext.handleInvalid(this.name,
+		// this.originatingContext.handleInvalid(this.name,
+		((EclipseContext) this.originatingContext).invalidate(this.name,
 				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
 				event.getOldValue(), scheduled);
 	}

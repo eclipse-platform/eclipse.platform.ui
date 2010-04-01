@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context;
 
-import org.eclipse.e4.core.services.injector.IObjectProvider;
 
 /**
  * An event describing a change to an {@link IEclipseContext}. The following types of events are
@@ -67,7 +66,7 @@ public final class ContextChangeEvent {
 	public static final int UPDATE = 5;
 
 	private Object[] args;
-	private IObjectProvider context;
+	private IEclipseContext context;
 	private int eventType;
 	private String key;
 
@@ -81,7 +80,7 @@ public final class ContextChangeEvent {
 	 * @param args
 	 * @param name
 	 */
-	ContextChangeEvent(IObjectProvider context, int eventType, Object[] args, String name,
+	ContextChangeEvent(IEclipseContext context, int eventType, Object[] args, String name,
 			Object oldValue) {
 		this.context = context;
 		this.key = name;
@@ -105,7 +104,7 @@ public final class ContextChangeEvent {
 	 * 
 	 * @return the context where the change occurred
 	 */
-	public IObjectProvider getContext() {
+	public IEclipseContext getContext() {
 		return context;
 	}
 
@@ -135,8 +134,8 @@ public final class ContextChangeEvent {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		if ((eventType == DISPOSE) || (eventType == UNINJECTED))
-			result = prime * result + ((context == null) ? 0 : context.hashCode());
+		// if ((eventType == DISPOSE) || (eventType == UNINJECTED))
+		// result = prime * result + ((context == null) ? 0 : context.hashCode());
 		result = prime * result + eventType;
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
@@ -151,13 +150,13 @@ public final class ContextChangeEvent {
 			return false;
 		ContextChangeEvent other = (ContextChangeEvent) obj;
 
-		if ((eventType == DISPOSE) || (eventType == UNINJECTED)) {
-			if (context == null) {
-				if (other.context != null)
-					return false;
-			} else if (!context.equals(other.context))
-				return false;
-		}
+		// if ((eventType == DISPOSE) || (eventType == UNINJECTED)) {
+		// if (context == null) {
+		// if (other.context != null)
+		// return false;
+		// } else if (!context.equals(other.context))
+		// return false;
+		// }
 
 		if (eventType != other.eventType)
 			return false;

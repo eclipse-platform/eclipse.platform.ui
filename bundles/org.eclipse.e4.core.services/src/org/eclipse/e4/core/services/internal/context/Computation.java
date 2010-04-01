@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.context.EclipseContext.Scheduled;
 
 abstract class Computation {
@@ -52,8 +51,7 @@ abstract class Computation {
 	public abstract boolean equals(Object arg0);
 
 	final void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
-		IObjectProvider provider = event.getContext();
-		IEclipseContext context = ((ObjectProviderContext) provider).getContext();
+		IEclipseContext context = event.getContext();
 
 		String name = event.getName();
 		Set<String> names = dependencies.get(context);

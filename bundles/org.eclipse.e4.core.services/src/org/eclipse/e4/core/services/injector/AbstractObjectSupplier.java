@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.injector;
 
-import org.eclipse.e4.core.services.context.IRunAndTrack;
-
 /**
- * This interface describes an "object provider" - something that knows how to instantiate objects
- * corresponding to the key. NOTE: This is a preliminary form; this API will change.
+ * This interface describes an "object supplier" - something that knows how to instantiate objects
+ * corresponding to the descriptor. NOTE: This is a preliminary form; this API will change.
  */
-public interface IObjectProvider {
+abstract public class AbstractObjectSupplier {
 
-	public boolean containsKey(ObjectDescriptor key);
+	final protected IInjector injector;
 
-	public Object get(ObjectDescriptor key);
+	// TBD remove?
+	abstract public Object get(IObjectDescriptor descriptor, IRequestor requestor);
 
-	// TBD replace this with events specific to injection, not context
-	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
+	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor);
+
+	public AbstractObjectSupplier(IInjector injector) {
+		this.injector = injector;
+	}
 }
