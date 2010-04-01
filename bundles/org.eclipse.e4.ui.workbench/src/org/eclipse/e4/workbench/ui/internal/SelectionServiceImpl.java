@@ -13,8 +13,8 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.services.annotations.Optional;
@@ -78,16 +78,22 @@ public class SelectionServiceImpl implements ESelectionService {
 	void preDestroy() {
 		IEclipseContext rootContext = serviceRoot.getContext();
 		if (rootContext != context) {
-			ESelectionService selectionService = (ESelectionService) rootContext
-					.get(ESelectionService.class.getName());
-			for (ISelectionListener listener : genericListeners) {
-				selectionService.removeSelectionListener(listener);
+			if (!genericListeners.isEmpty()) {
+				ESelectionService selectionService = (ESelectionService) rootContext
+						.get(ESelectionService.class.getName());
+				for (ISelectionListener listener : genericListeners) {
+					selectionService.removeSelectionListener(listener);
+				}
 			}
 
-			for (Entry<String, Set<ISelectionListener>> entry : targetedListeners.entrySet()) {
-				String partId = entry.getKey();
-				for (ISelectionListener listener : entry.getValue()) {
-					selectionService.removeSelectionListener(partId, listener);
+			if (!targetedListeners.isEmpty()) {
+				ESelectionService selectionService = (ESelectionService) rootContext
+						.get(ESelectionService.class.getName());
+				for (Entry<String, Set<ISelectionListener>> entry : targetedListeners.entrySet()) {
+					String partId = entry.getKey();
+					for (ISelectionListener listener : entry.getValue()) {
+						selectionService.removeSelectionListener(partId, listener);
+					}
 				}
 			}
 		}
@@ -284,6 +290,8 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * org.eclipse.e4.ui.selection.ISelectionListener)
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
+		if (serviceRoot == null)
+			return;
 		IEclipseContext rootContext = serviceRoot.getContext();
 		if (rootContext != context) {
 			ESelectionService selectionService = (ESelectionService) rootContext

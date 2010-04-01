@@ -31,8 +31,6 @@ import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
-import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -117,6 +115,10 @@ public class PartServiceImpl implements EPartService {
 
 	private boolean constructed = false;
 
+	public PartServiceImpl() {
+		// placeholder
+	}
+
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		if (activePart != p) {
@@ -149,8 +151,7 @@ public class PartServiceImpl implements EPartService {
 			application.getContext().runAndTrack(new IRunAndTrack() {
 				public boolean notify(ContextChangeEvent event) {
 
-					IObjectProvider provider = event.getContext();
-					IEclipseContext eventsContext = ((ObjectProviderContext) provider).getContext();
+					IEclipseContext eventsContext = event.getContext();
 
 					IEclipseContext childContext = (IEclipseContext) eventsContext
 							.getLocal(IContextConstants.ACTIVE_CHILD);

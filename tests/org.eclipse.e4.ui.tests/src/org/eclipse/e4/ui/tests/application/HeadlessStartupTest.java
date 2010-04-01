@@ -30,8 +30,6 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
-import org.eclipse.e4.core.services.injector.IObjectProvider;
-import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -111,9 +109,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 				new ActivePartLookupFunction());
 		appContext.runAndTrack(new IRunAndTrack() {
 			public boolean notify(ContextChangeEvent event) {
-				IObjectProvider provider = event.getContext();
-				IEclipseContext eventsContext = ((ObjectProviderContext) provider)
-						.getContext();
+				IEclipseContext eventsContext = event.getContext();
 				Object o = eventsContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
 					eventsContext.set(IServiceConstants.ACTIVE_PART_ID,
