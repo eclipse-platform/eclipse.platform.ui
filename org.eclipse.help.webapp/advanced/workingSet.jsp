@@ -7,6 +7,8 @@
  
  Contributors:
      IBM Corporation - initial API and implementation
+     Sybase, Inc. - Workaround for enableOK slowdown, Bug 289161
+     
 --%>
 <%@ include file="header.jsp"%>
 
@@ -177,6 +179,10 @@ var altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("boo
 var altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
 var altCriterionClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("criterionClosed", request))%>";
 var altCriterionOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("criterionOpen", request))%>";
+var noTopicsSelected = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("NoTopicsSelected", request))%>";
+var noNameEntered = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("NoNameEntered", request))%>";
+        
+var alwaysEnableOK = true;  // See Bug 289161
 
 function onloadHandler() {
 <%if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
@@ -188,7 +194,7 @@ function onloadHandler() {
 	document.getElementById("workingSet").focus();
 	enableOK();
 <%-- event handlers that call enableOK() are not invoked properly on Japanese --%>
-	setInterval("enableOK()", 250);
+	//setInterval("enableOK()", 250);
 
 }
 
@@ -215,8 +221,15 @@ function doSubmit()
 	try
 	{
 		var workingSet = document.getElementById("workingSet").value;
-		if (!workingSet || workingSet == "")
-			return false;
+		if (!workingSet || workingSet.length == 0 || workingSet.charAt(0) == " ")  {
+         		alert(noNameEntered);
+ 			return false;
+        }
+        
+        if (!hasContentSelections()) {
+            alert(noTopicsSelected);
+            return false;
+        }
 	
 		var hrefs = getSelectedContentResources();
 		if (!hrefs || hrefs == "")
@@ -458,6 +471,10 @@ function hasContentSelections() {
 }
 
 function enableOK() {
+    if (alwaysEnableOK) {
+        document.getElementById("ok").disabled = false;
+        return;
+    }
 	var value = document.getElementById("workingSet").value;
 	if (!value || value.length == 0 || value.charAt(0) == " " || !hasContentSelections())
 		document.getElementById("ok").disabled = true;
