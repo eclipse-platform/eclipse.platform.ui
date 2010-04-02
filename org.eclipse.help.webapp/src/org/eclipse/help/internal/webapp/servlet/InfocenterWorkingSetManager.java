@@ -163,11 +163,21 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 			AdaptableHelpResource[] elements = new AdaptableHelpResource[nameAndHrefs.length - 1];
 			// for each href (working set resource)
+			String previousToc = ""; //$NON-NLS-1$
 			for (int e = 0; e < nameAndHrefs.length - 1; e++) {
 				int h = e + 1;
-				elements[e] = getAdaptableToc(URLCoder.decode(nameAndHrefs[h]));
+				String decodedName = URLCoder.decode(nameAndHrefs[h]);
+				elements[e] = getAdaptableToc(decodedName);
 				if (elements[e] == null) {
-					elements[e] = getAdaptableTopic(URLCoder.decode(nameAndHrefs[h]));
+					// Check for a suffix of type _nn_
+					// If there is only a suffix this means use the same toc as the previous entry
+					int suffixStart = decodedName.lastIndexOf('_', decodedName.length() - 2);
+					if (suffixStart > 0) {
+						previousToc = decodedName.substring(0, suffixStart);
+					} else if (suffixStart == 0) {
+					    decodedName = previousToc + decodedName;
+					}
+					elements[e] = getAdaptableTopic(decodedName);
 				}
 				if (elements[e] == null) {
 					// working set cannot be restored
@@ -246,27 +256,33 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			));
 
 			AdaptableHelpResource[] resources = ws.getElements();
+			AdaptableToc lastTopicParent = null;
 			for (int j = 0; j < resources.length; j++) {
-				data.append('&');
 
 				IAdaptable parent = resources[j].getParent();
 				if (parent == getRoot()) {
 					// saving toc
+					data.append('&');
 					data.append(URLCoder.compactEncode(resources[j].getHref()
 					/* , "UTF8" */
 					));
+					lastTopicParent = null;
 				} else {
 					// saving topic as tochref_topic#_
 					AdaptableToc toc = (AdaptableToc) parent;
 					AdaptableHelpResource[] siblings = (toc).getChildren();
 					for (int t = 0; t < siblings.length; t++) {
 						if (siblings[t] == resources[j]) {
-							data.append(URLCoder.compactEncode(toc.getHref()
-							/* , "UTF8" */
-							));
+							data.append('&');
+							if (!toc.equals(lastTopicParent)) {
+								data.append(URLCoder.compactEncode(toc.getHref()
+								/* , "UTF8" */
+								));
+							}
 							data.append('_');
 							data.append(t);
 							data.append('_');
+							lastTopicParent = toc;
 							break;
 						}
 					}

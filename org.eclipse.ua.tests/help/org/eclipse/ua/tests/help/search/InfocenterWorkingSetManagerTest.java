@@ -12,6 +12,10 @@
 package org.eclipse.ua.tests.help.search;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
 
 import junit.framework.TestCase;
 
@@ -60,7 +64,25 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertTrue(resources[0].equals(toc));
 	};
 
-	public void testIWSMWithTopics() throws IOException {
+	public void testIWSMWithOneTopic() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
+		WorkingSet wset = new WorkingSet("test2");
+		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
+		assertNotNull(topic1);
+		wset.setElements(new AdaptableHelpResource[] { topic1 });
+		mgr.addWorkingSet(wset);
+		WorkingSet[] readWsets = mgr.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		assertEquals(1, resources.length);
+		Set topics = new HashSet();
+		topics.add(topic1);
+        assertTrue(topics.contains(resources[0]));
+	};
+
+	public void testIWSMWithTwoTopics() throws IOException {
 		MockServletRequest req = new MockServletRequest();
 		MockServletResponse resp = new MockServletResponse();
 		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
@@ -75,17 +97,65 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		if (resources[0].equals(topic1)) {
-			assertEquals(topic3, resources[1]);
-			assertNotSame(topic3, resources[0]);
-		} else {
-			assertEquals(topic3, resources[0]);
-			assertEquals(topic1, resources[1]);
-			assertNotSame(topic3, resources[1]);
-		}
+		Set topics = new HashSet();
+		topics.add(topic1);
+		topics.add(topic3);
+        assertTrue(topics.contains(resources[0]));
+        assertTrue(topics.contains(resources[1]));
+	};
+	
+	public void testIWSMWithThreeTopics() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
+		WorkingSet wset = new WorkingSet("test2");
+		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
+		AdaptableTopic topic3 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_3_");
+		AdaptableTopic topic5 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_5_");
+		assertNotNull(topic1);
+		assertNotNull(topic3);
+		assertNotNull(topic5);
+		wset.setElements(new AdaptableHelpResource[] { topic1, topic3, topic5 });
+		mgr.addWorkingSet(wset);
+		
+		WorkingSet[] readWsets = mgr.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		assertEquals(3, resources.length);
+		Set topics = new HashSet();
+		topics.add(topic1);
+		topics.add(topic3);
+		topics.add(topic5);
+        assertTrue(topics.contains(resources[0]));
+        assertTrue(topics.contains(resources[1]));
+        assertTrue(topics.contains(resources[2]));
+	};
+	
+	public void testSaveRestoreIWSMWithOneTopic() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
+		WorkingSet wset = new WorkingSet("test2");
+		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
+		assertNotNull(topic1);
+		wset.setElements(new AdaptableHelpResource[] { topic1 });
+		mgr.addWorkingSet(wset);
+		
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
+		WorkingSet[] readWsets = mgr2.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		assertEquals(1, resources.length);
+		Set topics = new HashSet();
+		topics.add(topic1);
+        assertTrue(topics.contains(resources[0]));
 	};
 
-	public void testSaveRestoreIWSMWithTopics() throws IOException {
+	public void testSaveRestoreIWSMWithTwoTopics() throws IOException {
 		MockServletRequest req = new MockServletRequest();
 		MockServletResponse resp = new MockServletResponse();
 		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
@@ -96,7 +166,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertNotNull(topic3);
 		wset.setElements(new AdaptableHelpResource[] { topic1, topic3 });
 		mgr.addWorkingSet(wset);
-
+		
 		MockServletRequest req2 = new MockServletRequest();
 		MockServletResponse resp2 = new MockServletResponse();
 		req2.setCookies(resp.getCookies());
@@ -105,14 +175,42 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		if (resources[0].equals(topic1)) {
-			assertEquals(topic3, resources[1]);
-			assertNotSame(topic3, resources[0]);
-		} else {
-			assertEquals(topic3, resources[0]);
-			assertEquals(topic1, resources[1]);
-			assertNotSame(topic3, resources[1]);
-		}
+		Set topics = new HashSet();
+		topics.add(topic1);
+		topics.add(topic3);
+        assertTrue(topics.contains(resources[0]));
+        assertTrue(topics.contains(resources[1]));
+	};
+	
+	public void testSaveRestoreIWSMWithThreeTopics() throws IOException {
+		MockServletRequest req = new MockServletRequest();
+		MockServletResponse resp = new MockServletResponse();
+		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager(req, resp, "en");
+		WorkingSet wset = new WorkingSet("test2");
+		AdaptableTopic topic1 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
+		AdaptableTopic topic3 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_3_");
+		AdaptableTopic topic5 = mgr.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_5_");
+		assertNotNull(topic1);
+		assertNotNull(topic3);
+		assertNotNull(topic5);
+		wset.setElements(new AdaptableHelpResource[] { topic1, topic3, topic5 });
+		mgr.addWorkingSet(wset);
+		
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		req2.setCookies(resp.getCookies());
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
+		WorkingSet[] readWsets = mgr2.getWorkingSets();
+		assertEquals(1, readWsets.length);
+		AdaptableHelpResource[] resources = readWsets[0].getElements();
+		assertEquals(3, resources.length);
+		Set topics = new HashSet();
+		topics.add(topic1);
+		topics.add(topic3);
+		topics.add(topic5);
+        assertTrue(topics.contains(resources[0]));
+        assertTrue(topics.contains(resources[1]));
+        assertTrue(topics.contains(resources[2]));
 	};
 
 	public void testIWSMWithMultipleWsets() throws IOException {
@@ -138,6 +236,39 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
 	};
+	
+	/**
+	 * Verify that adding a second topic in the same toc only adds 4 more bytes to the cookie size
+	 * @throws IOException
+	 */
+	public void testCookieSizeOptimization() throws IOException {
+		MockServletRequest req1 = new MockServletRequest();
+		MockServletResponse resp1 = new MockServletResponse();
+		MockServletRequest req2 = new MockServletRequest();
+		MockServletResponse resp2 = new MockServletResponse();
+		InfocenterWorkingSetManager mgr1 = new InfocenterWorkingSetManager(req1, resp1, "en");
+		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
+		WorkingSet wset1 = new WorkingSet("test21");
+		WorkingSet wset2 = new WorkingSet("test22");
+		AdaptableTopic topic1 = mgr1.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_1_");
+		AdaptableTopic topic3 = mgr1.getAdaptableTopic("/org.eclipse.ua.tests/data/help/toc/root.xml_3_");
+		wset1.setElements(new AdaptableHelpResource[] { topic1 });
+		mgr1.addWorkingSet(wset1);
+		wset2.setElements(new AdaptableHelpResource[] { topic1, topic3 });
+		mgr2.addWorkingSet(wset2);
+
+		int length1 = cookieLength(resp1.getCookies());
+		int length2 = cookieLength(resp2.getCookies());
+        assertEquals(length1 + 4, length2);
+	};
+	
+	private int cookieLength(Cookie[] cookies) {
+		int total = 0;
+		for (int i = 0; i < cookies.length; i++) {
+			total += cookies[i].getValue().length();
+		}
+		return total;
+	}
 	
 	public void testSaveRestoreIWSMWithMultipleWsets() throws IOException {
 		MockServletRequest req = new MockServletRequest();
