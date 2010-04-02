@@ -106,7 +106,7 @@ public class UrlCoderTest extends TestCase {
 	}
 	
 	public void testCompactionSpecialCharacters() {
-		assertFalse(compactEncodingIsShorter(SPECIAL_CHARACTERS));
+		assertTrue(compactEncodingIsShorter(SPECIAL_CHARACTERS));
 	}	
 	
 	public void testCompactionAccented() {
