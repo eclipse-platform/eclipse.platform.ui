@@ -15,18 +15,16 @@ Import-Package: javax.inject,
 Require-Bundle: org.eclipse.equinox.common;bundle-version="3.4.0",
  org.eclipse.equinox.preferences;bundle-version="3.3.0",
  org.eclipse.core.jobs;bundle-version="3.5.0",
- org.eclipse.equinox.concurrent;bundle-version="1.0.0"
-Export-Package: org.eclipse.e4.core.services,
- org.eclipse.e4.core.services.context,
- org.eclipse.e4.core.services.context.spi,
- org.eclipse.e4.core.services.injector,
- org.eclipse.e4.core.services.work,
+ org.eclipse.equinox.concurrent;bundle-version="1.0.0",
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts
+Export-Package: org.eclipse.e4.core.internal.services;x-internal:=true,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.core.services.annotations,
  org.eclipse.e4.core.services.events,
- org.eclipse.e4.core.internal.services;x-internal:=true,
- org.eclipse.e4.internal.core.services.bundle;x-internal:=true,
- org.eclipse.e4.core.services.internal.annotations;x-internal:=true,
- org.eclipse.e4.core.services.internal.context;x-internal:=true,
- org.eclipse.e4.internal.core.services.osgi;x-internal:=true
+ org.eclipse.e4.core.services.internal.work;x-internal:=true,
+ org.eclipse.e4.core.services.work,
+ org.eclipse.e4.internal.core.services.bundle;x-internal:=true
 Bundle-Vendor: Eclipse.org
 Eclipse-ExtensibleAPI: true
 Bundle-ClassPath: injection_annotations.jar, .

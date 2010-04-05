@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * Tests for the basic context injection functionality
@@ -46,11 +47,13 @@ public class ContextInjectionTest extends TestCase {
 
 			public TestData value;
 
-			public void inject__contextSet(IEclipseContext context) {
+			@Inject
+			public void contextSet(IEclipseContext context) {
 				contextSetCalled++;
 			}
 
-			public void inject__InjectedMethod(TestData arg) {
+			@Inject
+			public void InjectedMethod(TestData arg) {
 				setMethodCalled++;
 				value = arg;
 			}
@@ -82,11 +85,13 @@ public class ContextInjectionTest extends TestCase {
 
 			public TestData value;
 
+			@Inject
 			public void contextSet() {
 				contextSetCalled++;
 			}
 
-			public void inject__InjectedMethod(TestData arg) {
+			@Inject
+			public void InjectedMethod(TestData arg) {
 				setMethodCalled++;
 				value = arg;
 			}
@@ -128,7 +133,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt, userObject.getInt());
 		// assertEquals(context, userObject.context);
 
@@ -168,7 +173,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt, userObject.getInt());
 		// assertEquals(context, userObject.context);
 

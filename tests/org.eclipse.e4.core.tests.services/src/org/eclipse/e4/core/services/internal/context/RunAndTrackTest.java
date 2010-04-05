@@ -11,17 +11,20 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IContextConstants;
+
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+
+import org.eclipse.e4.core.di.IDisposable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.IRunAndTrack;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.tests.services.TestActivator;
 
 /**

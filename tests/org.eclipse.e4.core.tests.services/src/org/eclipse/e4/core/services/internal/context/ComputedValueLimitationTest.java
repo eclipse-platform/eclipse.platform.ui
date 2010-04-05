@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * This is a demo of a scenario when computed values don't work. The basic idea here is that a
@@ -46,7 +47,8 @@ public class ComputedValueLimitationTest extends TestCase {
 
 		private String txt;
 
-		public void inject__Computed(String txt) {
+		@Inject
+		public void Computed(String txt) {
 			this.txt = txt;
 		}
 

@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * Test class to check injection mechanism into classes with inheritance
  */
 public class ObjectSubClass extends ObjectSuperClass {
-	/* package */Integer inject__Integer;
+	@Inject
+	/* package */Integer Integer;
 
 	private Object myObject;
 
@@ -32,22 +34,25 @@ public class ObjectSubClass extends ObjectSuperClass {
 		super();
 	}
 
-	public void inject__ObjectViaMethod(Float f) {
+	@Inject
+	public void ObjectViaMethod(Float f) {
 		myObject = f;
 		setObjectCalled++;
 	}
 
-	public void inject__OverriddenMethod(Float f) {
+	@Inject
+	public void OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
+	@Inject
 	public void contextSet(IEclipseContext context) {
 		super.contextSet(context);
 		setSubFinalized++;
 	}
 
 	public Integer getInteger() {
-		return inject__Integer;
+		return Integer;
 	}
 
 	public Object getObjectViaMethod() {

@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * Tests for injection handling of context dispose, and handling disposal of injected objects.
@@ -39,7 +40,10 @@ public class ContextInjectionDisposeTest extends TestCase {
 		class Injected implements IDisposable {
 
 			boolean disposeInvoked = false;
-			private String inject__Field;
+
+			@SuppressWarnings("unused")
+			@Inject
+			private String Field;
 
 			public void dispose() {
 				disposeInvoked = true;
@@ -56,14 +60,17 @@ public class ContextInjectionDisposeTest extends TestCase {
 	public void testDisposeContext() {
 		class Injected implements IDisposable {
 			boolean disposeInvoked = false;
-			Object inject__Field;
+
+			@Inject
+			Object Field;
 			String methodValue;
 
 			public void dispose() {
 				disposeInvoked = true;
 			}
 
-			public void inject__InjectedMethod(String arg) {
+			@Inject
+			public void InjectedMethod(String arg) {
 				methodValue = arg;
 			}
 		}
@@ -75,12 +82,12 @@ public class ContextInjectionDisposeTest extends TestCase {
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 
-		assertEquals(fieldValue, object.inject__Field);
+		assertEquals(fieldValue, object.Field);
 		assertEquals(methodValue, object.methodValue);
 
 		// disposing context should clear values
 		((IDisposable) context).dispose();
-		assertNull(object.inject__Field);
+		assertNull(object.Field);
 		assertNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
 	}
@@ -90,7 +97,8 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean disposeInvoked = false;
 			boolean destroyInvoked = false;
 
-			Integer inject__Field;
+			@Inject
+			Integer Field;
 			Object methodValue;
 
 			public void destroy() {
@@ -101,7 +109,8 @@ public class ContextInjectionDisposeTest extends TestCase {
 				disposeInvoked = true;
 			}
 
-			public void inject__InjectedMethod(String arg) {
+			@Inject
+			public void InjectedMethod(String arg) {
 				methodValue = arg;
 			}
 		}
@@ -113,14 +122,14 @@ public class ContextInjectionDisposeTest extends TestCase {
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 
-		assertEquals(fieldValue, object.inject__Field);
+		assertEquals(fieldValue, object.Field);
 		assertEquals(methodValue, object.methodValue);
 
 		// releasing should have the same effect on the single object as
 		// disposing the context does.
 		ContextInjectionFactory.uninject(object, context);
 
-		assertNull(object.inject__Field);
+		assertNull(object.Field);
 		assertNull(object.methodValue);
 		assertFalse(object.disposeInvoked);
 		assertFalse(object.destroyInvoked);

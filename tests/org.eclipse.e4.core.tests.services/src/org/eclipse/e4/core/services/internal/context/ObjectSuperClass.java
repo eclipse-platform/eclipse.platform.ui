@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * Test class to check injection mechanism into classes with inheritance
@@ -18,7 +19,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public class ObjectSuperClass {
 
 	protected IEclipseContext context;
-	private String inject__String;
+	@Inject
+	private String String;
 	private String myString;
 
 	public int postConstructSetStringCalled;
@@ -32,6 +34,7 @@ public class ObjectSuperClass {
 		// placeholder
 	}
 
+	@Inject
 	public void contextSet(IEclipseContext context) {
 		this.context = context;
 		setFinalizedCalled++;
@@ -46,18 +49,20 @@ public class ObjectSuperClass {
 	}
 
 	public String getString() {
-		return inject__String;
+		return String;
 	}
 
 	public String getStringViaMethod() {
 		return myString;
 	}
 
-	public void inject__OverriddenMethod(Float f) {
+	@Inject
+	public void OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
-	public void inject__StringViaMethod(String string) {
+	@Inject
+	public void StringViaMethod(String string) {
 		myString = string;
 		setStringCalled++;
 	}

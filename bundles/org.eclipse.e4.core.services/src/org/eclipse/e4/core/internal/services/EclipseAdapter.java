@@ -14,8 +14,8 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.Adapter;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 
 public class EclipseAdapter extends Adapter {
 

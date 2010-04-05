@@ -11,11 +11,13 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.lang.reflect.InvocationTargetException;
 import junit.framework.TestCase;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
 public class ContextInjectionFactoryTest extends TestCase {
 

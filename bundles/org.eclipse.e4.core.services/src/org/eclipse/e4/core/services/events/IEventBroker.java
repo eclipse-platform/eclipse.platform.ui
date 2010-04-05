@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.events;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.Dictionary;
 import java.util.Map;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.osgi.service.event.EventHandler;
 
 /**

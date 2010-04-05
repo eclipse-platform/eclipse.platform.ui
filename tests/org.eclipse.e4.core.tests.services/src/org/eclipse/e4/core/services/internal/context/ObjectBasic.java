@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * Test class to check injection mechanism
@@ -19,8 +20,10 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public class ObjectBasic implements IDisposable {
 
 	// Injected directly
-	public String inject__String;
-	private Integer inject__Integer;
+	@Inject
+	public String String;
+	@Inject
+	private Integer Integer;
 
 	// Injected indirectly
 	public Double d;
@@ -38,18 +41,21 @@ public class ObjectBasic implements IDisposable {
 		// placeholder
 	}
 
-	public void inject__ObjectViaMethod(Double d) {
+	@Inject
+	public void ObjectViaMethod(Double d) {
 		setMethodCalled++;
 		this.d = d;
 	}
 
-	public void inject__Arguments(Float f, Character c) {
+	@Inject
+	public void Arguments(Float f, Character c) {
 		setMethodCalled2++;
 		this.f = f;
 		this.c = c;
 	}
 
-	public void inject__contextSet(IEclipseContext context) {
+	@Inject
+	public void contextSet(IEclipseContext context) {
 		this.context = context;
 		finalized = true;
 	}
@@ -60,7 +66,7 @@ public class ObjectBasic implements IDisposable {
 	}
 
 	public Integer getInt() {
-		return inject__Integer;
+		return Integer;
 	}
 
 }

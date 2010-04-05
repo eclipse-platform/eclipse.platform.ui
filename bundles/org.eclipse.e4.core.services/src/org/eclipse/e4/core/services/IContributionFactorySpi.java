@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import org.osgi.framework.Bundle;
 
 

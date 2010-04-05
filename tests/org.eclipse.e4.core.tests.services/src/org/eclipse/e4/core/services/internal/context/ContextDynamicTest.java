@@ -13,10 +13,10 @@ package org.eclipse.e4.core.services.internal.context;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IContextFunction;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * Tests for the basic context functionality
@@ -69,7 +69,7 @@ public class ContextDynamicTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(1, userObject.setMethodCalled);
@@ -85,7 +85,7 @@ public class ContextDynamicTest extends TestCase {
 		context.set(Integer.class.getName(), testInt2);
 
 		// and check
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -99,7 +99,7 @@ public class ContextDynamicTest extends TestCase {
 		context.remove(Character.class.getName());
 
 		// and check
-		assertNull(userObject.inject__String);
+		assertNull(userObject.String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -132,7 +132,7 @@ public class ContextDynamicTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(1, userObject.setMethodCalled);
@@ -148,7 +148,7 @@ public class ContextDynamicTest extends TestCase {
 		context.set(Integer.class.getName(), testInt2);
 
 		// and check
-		assertEquals(testString, userObject.inject__String);
+		assertEquals(testString, userObject.String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -162,7 +162,7 @@ public class ContextDynamicTest extends TestCase {
 		parentContext.remove(Character.class.getName());
 
 		// and check
-		assertNull(userObject.inject__String);
+		assertNull(userObject.String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
