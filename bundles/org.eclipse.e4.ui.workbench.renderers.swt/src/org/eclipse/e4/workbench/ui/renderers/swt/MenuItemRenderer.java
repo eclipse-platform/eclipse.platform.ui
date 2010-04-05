@@ -216,6 +216,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		// 'Execute' the operation if possible
 		if (me instanceof MContribution
 				&& ((MContribution) me).getURI() != null) {
+			final MMenuItem item = (MMenuItem) me;
 			final MContribution contrib = (MContribution) me;
 			final IEclipseContext lclContext = getContext(me);
 			MenuItem mi = (MenuItem) me.getWidget();
@@ -228,8 +229,10 @@ public class MenuItemRenderer extends SWTPartRenderer {
 								lclContext));
 					}
 					try {
+						lclContext.set(MItem.class.getName(), item);
 						ContextInjectionFactory.invoke(contrib.getObject(),
 								"execute", lclContext); //$NON-NLS-1$
+						lclContext.remove(MItem.class.getName());
 					} catch (InvocationTargetException e1) {
 						if (logger != null)
 							logger.error(e1);
@@ -254,7 +257,9 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					if (cmd == null) {
 						cmd = generateParameterizedCommand(item, lclContext);
 					}
+					lclContext.set(MItem.class.getName(), item);
 					service.executeHandler(cmd);
+					lclContext.remove(MItem.class.getName());
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

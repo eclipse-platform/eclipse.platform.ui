@@ -244,6 +244,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		// 'Execute' the operation if possible
 		if (me instanceof MContribution
 				&& ((MContribution) me).getURI() != null) {
+			final MToolItem item = (MToolItem) me;
 			final MContribution contrib = (MContribution) me;
 			final IEclipseContext lclContext = getContext(me);
 			ToolItem ti = (ToolItem) me.getWidget();
@@ -256,8 +257,10 @@ public class ToolItemRenderer extends SWTPartRenderer {
 								lclContext));
 					}
 					try {
+						lclContext.set(MItem.class.getName(), item);
 						ContextInjectionFactory.invoke(contrib.getObject(),
 								"execute", lclContext); //$NON-NLS-1$
+						lclContext.remove(MItem.class.getName());
 					} catch (InvocationTargetException e1) {
 						if (logger != null)
 							logger.error(e1);
@@ -282,7 +285,9 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					if (cmd == null) {
 						cmd = generateParameterizedCommand(item, lclContext);
 					}
+					lclContext.set(MItem.class.getName(), item);
 					service.executeHandler(cmd);
+					lclContext.remove(MItem.class.getName());
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {
