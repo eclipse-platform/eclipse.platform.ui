@@ -1,7 +1,8 @@
 package org.eclipse.e4.core.commands;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
  */

@@ -11,12 +11,14 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.core.di.annotations.PreDestroy;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import java.util.Iterator;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.services.annotations.Optional;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;

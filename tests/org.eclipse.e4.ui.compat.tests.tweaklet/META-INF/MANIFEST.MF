@@ -9,6 +9,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.model.workbench;bundle-version="0.9.1",
  org.eclipse.e4.ui.workbench;bundle-version="0.9.1",
  org.eclipse.e4.core.services;bundle-version="0.9.1",
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di,
  org.eclipse.swt;bundle-version="3.6.0",
  org.eclipse.jface;bundle-version="3.6.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

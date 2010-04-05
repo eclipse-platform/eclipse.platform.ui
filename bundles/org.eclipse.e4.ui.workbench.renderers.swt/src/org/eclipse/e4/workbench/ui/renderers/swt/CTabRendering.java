@@ -1,8 +1,9 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;

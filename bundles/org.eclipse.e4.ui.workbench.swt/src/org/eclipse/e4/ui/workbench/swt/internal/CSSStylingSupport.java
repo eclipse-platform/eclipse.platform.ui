@@ -12,12 +12,13 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 //import java.io.InputStream;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;

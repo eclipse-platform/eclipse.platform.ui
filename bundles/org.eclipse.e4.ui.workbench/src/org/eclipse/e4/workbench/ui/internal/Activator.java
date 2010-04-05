@@ -10,8 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
+
 import org.eclipse.e4.core.services.ISchedulingExecutor;
-import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugTrace;

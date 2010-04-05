@@ -15,8 +15,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MDirtyable;

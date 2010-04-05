@@ -11,9 +11,10 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;

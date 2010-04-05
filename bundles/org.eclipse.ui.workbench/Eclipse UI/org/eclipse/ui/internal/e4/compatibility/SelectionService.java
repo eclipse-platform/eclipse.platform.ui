@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,8 +22,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.e4.core.services.annotations.Optional;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.ESelectionService;

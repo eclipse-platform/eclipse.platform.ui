@@ -1,12 +1,10 @@
 package org.eclipse.e4.ui.internal.services;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.util.HashSet;
 import java.util.Set;
-
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ActiveContextsFunction extends ContextFunction {

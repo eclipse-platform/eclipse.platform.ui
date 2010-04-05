@@ -11,13 +11,14 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.ui.internal.WorkbenchPlugin;

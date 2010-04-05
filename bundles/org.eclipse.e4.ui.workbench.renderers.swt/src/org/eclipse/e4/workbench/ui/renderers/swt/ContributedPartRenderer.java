@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;

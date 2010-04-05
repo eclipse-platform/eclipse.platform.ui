@@ -18,18 +18,17 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.annotations.Optional;
-import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
-import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.IRunAndTrack;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -570,11 +569,10 @@ public class PartServiceImpl implements EPartService {
 		} catch (InvocationTargetException e) {
 			logger.error(e.getCause());
 			return false;
-		} catch (CoreException e) {
-			IStatus status = e.getStatus();
-			Throwable throwable = status.getException();
+		} catch (InjectionException e) {
+			Throwable throwable = e.getCause();
 			if (throwable == null) {
-				logger.error(status.getMessage());
+				logger.error(e.getMessage());
 			} else {
 				logger.error(throwable);
 			}

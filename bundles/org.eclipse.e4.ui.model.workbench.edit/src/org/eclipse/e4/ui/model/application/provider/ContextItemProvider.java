@@ -14,7 +14,7 @@ package org.eclipse.e4.ui.model.application.provider;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;

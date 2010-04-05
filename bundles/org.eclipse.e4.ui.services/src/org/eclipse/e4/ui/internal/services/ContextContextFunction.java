@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.services;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 
 public class ContextContextFunction extends ContextFunction {
 

@@ -1,9 +1,10 @@
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.Collections;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.ui.ISources;
 
 public class LegacyEvalContext implements IEvaluationContext {

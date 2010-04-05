@@ -5916,7 +5916,7 @@ public interface MApplicationPackage extends EPackage {
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.core.services.context.IEclipseContext
+	 * @see org.eclipse.e4.core.contexts.IEclipseContext
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
@@ -7339,11 +7339,11 @@ public interface MApplicationPackage extends EPackage {
 	EEnum getSideValue();
 
 	/**
-	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
+	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>IEclipse Context</em>'.
-	 * @see org.eclipse.e4.core.services.context.IEclipseContext
+	 * @see org.eclipse.e4.core.contexts.IEclipseContext
 	 * @model instanceClass="org.eclipse.e4.core.services.context.IEclipseContext" serializeable="false"
 	 * @generated
 	 */
@@ -8570,7 +8570,7 @@ public interface MApplicationPackage extends EPackage {
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.core.services.context.IEclipseContext
+		 * @see org.eclipse.e4.core.contexts.IEclipseContext
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 		 * @generated
 		 */

@@ -3,6 +3,6 @@
    <implementation class="org.eclipse.e4.demo.e4photo.RealmFunction"/>
    <property name="service.context.key" type="String" value="org.eclipse.core.databinding.observable.Realm"/>
    <service>
-      <provide interface="org.eclipse.e4.core.services.context.IContextFunction"/>
+      <provide interface="org.eclipse.e4.core.contexts.IContextFunction"/>
    </service>
 </scr:component>

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;

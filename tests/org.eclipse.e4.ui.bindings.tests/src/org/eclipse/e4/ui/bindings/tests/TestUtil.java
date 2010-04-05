@@ -1,8 +1,8 @@
 package org.eclipse.e4.ui.bindings.tests;
 
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 public class TestUtil {
 	public static IEclipseContext createContext(IEclipseContext parent, String name) {

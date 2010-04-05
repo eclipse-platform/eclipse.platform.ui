@@ -11,8 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
 
 public abstract class Trackable implements IRunAndTrack {
 	public IEclipseContext trackingContext;

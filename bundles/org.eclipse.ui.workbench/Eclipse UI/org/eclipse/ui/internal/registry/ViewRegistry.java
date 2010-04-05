@@ -11,13 +11,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;

@@ -11,13 +11,14 @@
 
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.LinkedList;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;

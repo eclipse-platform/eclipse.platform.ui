@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +20,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.jface.bindings.Binding;

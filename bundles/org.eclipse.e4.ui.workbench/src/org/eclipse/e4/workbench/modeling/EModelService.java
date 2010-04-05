@@ -11,8 +11,9 @@
 
 package org.eclipse.e4.workbench.modeling;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.List;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPlaceholder;

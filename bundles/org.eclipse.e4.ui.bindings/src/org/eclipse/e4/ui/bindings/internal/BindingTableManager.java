@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +21,6 @@ import java.util.ListIterator;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 

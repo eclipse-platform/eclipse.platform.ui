@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.services;
 
+import org.eclipse.e4.core.contexts.IContextFunction;
+
 import java.util.Hashtable;
-import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.ui.services.EContextService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

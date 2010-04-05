@@ -11,14 +11,13 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
- * This class provides a context function that returns a default progress
- * monitor. This is generally used near the root of a context tree to provide a
- * reasonable default monitor for cases where more specific contexts have not
- * provided one.
+ * This class provides a context function that returns a default progress monitor. This is generally
+ * used near the root of a context tree to provide a reasonable default monitor for cases where more
+ * specific contexts have not provided one.
  */
 public class ProgressMonitorFunction extends ContextFunction {
 

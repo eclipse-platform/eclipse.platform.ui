@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.resource.ImageDescriptor;

@@ -11,13 +11,14 @@
 
 package org.eclipse.e4.ui.internal.services;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 

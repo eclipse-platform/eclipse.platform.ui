@@ -11,11 +11,13 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
 public class HandlerServiceCreationFunction extends ContextFunction {
 
