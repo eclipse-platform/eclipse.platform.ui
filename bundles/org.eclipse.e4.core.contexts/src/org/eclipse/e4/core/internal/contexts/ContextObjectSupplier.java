@@ -28,16 +28,14 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		final private String[] keys;
 		final private IInjector injector;
 		final private IRequestor requestor;
-		final private AbstractObjectSupplier supplier;
 		final private IEclipseContext context;
 
 		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys,
-				IInjector injector, IRequestor requestor, AbstractObjectSupplier supplier) {
+				IInjector injector, IRequestor requestor) {
 			this.result = result;
 			this.keys = keys;
 			this.injector = injector;
 			this.requestor = requestor;
-			this.supplier = supplier;
 			this.context = context;
 		}
 
@@ -53,14 +51,20 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 						result[i] = IInjector.NOT_A_VALUE; // TBD make sure this still creates
 															// dependency on the key
 				}
-			} else if (event.getEventType() == ContextChangeEvent.DISPOSE) {
-				injector.disposed(supplier);
+				return true;
+			}
+
+			IEclipseContext originatingContext = event.getContext();
+			ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
+			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
+				injector.disposed(originatingSupplier);
 				return false;
 			} else if (event.getEventType() == ContextChangeEvent.UNINJECTED) {
-				injector.uninject(event.getArguments()[0], supplier);
+				injector.uninject(event.getArguments()[0], originatingSupplier);
 				return false;
-			} else
-				injector.update(new IRequestor[] { requestor }, supplier);
+			} else {
+				injector.update(new IRequestor[] { requestor }, originatingSupplier);
+			}
 			return true;
 		}
 
@@ -150,7 +154,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 		if (requestor != null && requestor.shouldTrack()) { // only track if requested
 			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, injector,
-					requestor, this);
+					requestor);
 			context.runAndTrack(trackable, null);
 		} else {
 			for (int i = 0; i < descriptors.length; i++) {
