@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -39,6 +40,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
@@ -983,6 +985,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		else if(receiver instanceof IEditorPart) {
 			return isSharedConfig(((IEditorPart) receiver).getEditorInput());
+		}
+		else if (receiver instanceof IAdaptable) {
+			IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IFile.class);
+			if (file != null) {
+				return isSharedConfig(file);
+			}
 		}
 		return null;
 	}
