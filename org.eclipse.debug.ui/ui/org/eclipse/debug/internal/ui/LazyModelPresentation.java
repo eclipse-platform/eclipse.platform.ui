@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,8 +194,11 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
                     StringBuffer buf = new StringBuffer();
                     IValue value = ((IExpression)element).getValue();
                     if (value != null) {
-                        buf.append(value.getReferenceTypeName());
-                        buf.append(' ');
+                        String type = value.getReferenceTypeName();
+                        if (type != null && type.length() > 0) {
+                        	buf.append(type);
+                        	buf.append(' ');
+                        }
                     }
                     buf.append(getDefaultText(element));
                     return buf.toString(); 
