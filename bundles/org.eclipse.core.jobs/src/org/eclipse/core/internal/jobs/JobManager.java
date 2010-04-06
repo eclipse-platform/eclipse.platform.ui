@@ -1374,6 +1374,10 @@ public class JobManager implements IJobManager {
 			}
 		} else {
 			ThreadJob.joinRun(likeThreadJob, nonCanceling);
+			synchronized (lock) {
+				changeState(job, Job.RUNNING);
+				job.setThread(currentThread);
+			}
 		}
 		if (DEBUG_YIELDING) {
 			// extra assert: make sure no other conflicting jobs are running now
