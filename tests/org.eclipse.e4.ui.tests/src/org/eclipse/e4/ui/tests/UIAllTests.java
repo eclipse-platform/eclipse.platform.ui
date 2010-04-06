@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.tests.application.Bug299755Test;
+import org.eclipse.e4.ui.tests.application.Bug308220Test;
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
@@ -39,6 +40,7 @@ public class UIAllTests extends TestSuite {
 	public UIAllTests() {
 		addTest(StartupTestSuite.suite());
 		addTestSuite(Bug299755Test.class);
+		addTestSuite(Bug308220Test.class);
 		addTestSuite(PartRenderingEngineTests.class);
 		addTestSuite(MMenuItemTest.class);
 		addTestSuite(MPartTest.class);
