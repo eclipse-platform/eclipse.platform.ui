@@ -174,7 +174,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private void track(final MPart part) {
-		final IEclipseContext context = part.getContext();
+		IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
 			context.runAndTrack(new IRunAndTrack() {
 				private boolean initial = true;
@@ -182,7 +182,7 @@ public class SelectionServiceImpl implements ESelectionService {
 				public boolean notify(ContextChangeEvent event) {
 					if (event.getEventType() == ContextChangeEvent.DISPOSE)
 						return false;
-					Object selection = context.get(OUT_SELECTION);
+					Object selection = event.getContext().get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
 						if (selection == null) {
