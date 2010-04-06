@@ -1,9 +1,8 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.di.annotations.Optional;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -1143,6 +1142,9 @@ public class CTabRendering extends CTabFolderRenderer {
 		gc.drawImage(shadowImage, 0, 0, SIZE, SIZE, 0, 0, SIZE, 20);
 		int fillHeight = bounds.height - SIZE * 2;
 		int fillWidth = bounds.width + 5 - SIZE * 2;
+
+		if (fillHeight <= 0)
+			return;
 
 		int xFill = 0;
 		for (int i = SIZE; i < fillHeight; i += SIZE) {
