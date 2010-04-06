@@ -36,6 +36,18 @@
 		  <property
 				name="introDescription-samples"
 				value="%introDescription-samples"/>                
+		  <property
+				name="applicationXMI"
+				value="org.eclipse.e4.ide.application/LegacyIDE.e4xmi">
+		  </property>
+		  <property
+				name="applicationCSS"
+				value="platform:/plugin/org.eclipse.e4.ide.application/css/default.css">
+		  </property>
+		  <property
+				name="applicationCSSResources"
+          value="platform:/plugin/org.eclipse.e4.ide.application/images/">
+		  </property>
       </product> 
    </extension> 
    

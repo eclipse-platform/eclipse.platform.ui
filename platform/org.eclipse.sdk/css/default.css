@@ -1,0 +1,8 @@
+Shell {
+    background-color: #EEF2F7 #DEEBF3 100%;
+}
+
+CTabFolder {
+    unselected-tabs-color: #E0E9FF F47A00 #E7EEFD #FFFFFF 100% 100%;
+    tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.workbench.ui.renderers.swt.CTabRendering');
+}
