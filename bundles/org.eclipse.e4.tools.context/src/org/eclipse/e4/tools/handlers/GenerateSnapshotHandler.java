@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.e4.core.services.internal.context.EclipseContext;
+import org.eclipse.core.commands.*;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.ui.handlers.HandlerUtil;
 
