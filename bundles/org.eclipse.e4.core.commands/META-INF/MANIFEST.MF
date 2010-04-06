@@ -10,10 +10,9 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
  org.eclipse.core.commands,
  org.eclipse.core.commands.common,
- org.eclipse.e4.core.services,
- org.eclipse.e4.core.services.annotations,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di,
+ org.eclipse.e4.core.services,
  org.osgi.framework;version="1.5.0"
 Export-Package: org.eclipse.e4.core.commands,
  org.eclipse.e4.core.commands.internal
