@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
+
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
@@ -87,7 +88,6 @@ public class ContextTest extends TestCase {
 		assertEquals(0, windowService.getActiveContextIds().size());
 		assertEquals(0, cs.getActiveContextIds().size());
 
-		appContext.set(IContextConstants.ACTIVE_CHILD, null);
 		cs.activateContext(DIALOG_AND_WINDOW_ID);
 		assertEquals(1, cs.getActiveContextIds().size());
 		assertEquals(1, windowService.getActiveContextIds().size());

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" xmi:id="_UW9TZfr3Ed6gmo7caOxU9h">
-  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9fff" parentID="org.eclipse.e4.legacy.ide.application">
-    <descriptors xmi:id="_BESTZfr3Ed6gmo7caOxU0asdf" closeable="true" allowMultiple="true" id="org.eclipse.e4.ui.compatibility.editor" URI="platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" category="org.eclipse.e4.primaryDataStack"/>
-  </components>
-  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9fca"  parentID="org.eclipse.e4.legacy.ide.application"
-    processor="org.eclipse.ui.internal.e4.compatibility.DefaultPerspectiveProcessor"/>
-</application:ModelComponents>
