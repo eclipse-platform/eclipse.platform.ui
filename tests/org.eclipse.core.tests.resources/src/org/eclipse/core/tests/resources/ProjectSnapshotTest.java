@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests API for save/load refresh snapshots introduced in 3.6M6 (bug 301563):
@@ -140,9 +141,13 @@ public class ProjectSnapshotTest extends ResourceTest {
 		verifier.addExpectedChange(folder, IResourceDelta.REMOVED, 0);
 		verifier.addExpectedChange(subfolder, IResourceDelta.REMOVED, 0);
 		verifier.addExpectedChange(subfile, IResourceDelta.REMOVED, 0);
-		verifier.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
-		IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-		verifier.addExpectedChange(dotProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		String os = Platform.getOS();
+		// Windows platforms report a change to .project, so add the expected delta
+		if (os.equals(Platform.OS_WIN32)) {
+			verifier.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+			verifier.addExpectedChange(dotProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		}
 		// perform refresh to create resource delta against snapshot
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		verifier.verifyDelta(null);
