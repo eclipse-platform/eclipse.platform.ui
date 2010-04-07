@@ -46,6 +46,7 @@ import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -54,7 +55,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
-import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -1694,11 +1694,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	CoolBarManager2 cm2 = new CoolBarManager2();
 
-	public ICoolBarManager2 getCoolBarManager2() {
+	public CoolBarManager2 getCoolBarManager2() {
 		return cm2;
 	}
 
-	public ICoolBarManager getCoolBarManager() {
+	public CoolBarManager getCoolBarManager() {
 		return getCoolBarManager2();
 	}
 
