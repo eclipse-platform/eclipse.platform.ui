@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests API for save/load refresh snapshots introduced in 3.6M6 (bug 301563):
@@ -126,6 +125,14 @@ public class ProjectSnapshotTest extends ResourceTest {
 		project.close(null);
 		// delete the project and import refresh snapshot
 		project.delete(true, false, null);
+		// wait before recreating the .project file on disk, to ensure it will have
+		// a different time stamp and be reported as a modification. This is
+		// because some file systems only have a 1 second timestamp granularity.
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			fail("0.0");
+		}
 		project.create(null);
 		project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
 		project.open(IResource.NONE, null);
@@ -141,13 +148,9 @@ public class ProjectSnapshotTest extends ResourceTest {
 		verifier.addExpectedChange(folder, IResourceDelta.REMOVED, 0);
 		verifier.addExpectedChange(subfolder, IResourceDelta.REMOVED, 0);
 		verifier.addExpectedChange(subfile, IResourceDelta.REMOVED, 0);
-		String os = Platform.getOS();
-		// Windows platforms report a change to .project, so add the expected delta
-		if (os.equals(Platform.OS_WIN32)) {
-			verifier.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
-			IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-			verifier.addExpectedChange(dotProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
-		}
+		verifier.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+		IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		verifier.addExpectedChange(dotProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 		// perform refresh to create resource delta against snapshot
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		verifier.verifyDelta(null);
