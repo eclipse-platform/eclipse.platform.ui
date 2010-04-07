@@ -174,13 +174,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.e4.core.services.annotations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="org.eclipse.emf.databinding"
          download-size="0"
          install-size="0"
