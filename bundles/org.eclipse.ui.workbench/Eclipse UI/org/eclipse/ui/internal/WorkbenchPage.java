@@ -2632,6 +2632,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			((IPartListener2) listener).partClosed(partReference);
 		}
 
+		if (part instanceof IViewPart) {
+			viewReferences.remove(partReference);
+		} else {
+			editorReferences.remove(partReference);
+		}
+
 		updateActivePartSources(null);
 		updateActiveEditorSources(null);
 	}
