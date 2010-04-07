@@ -116,7 +116,7 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"
@@ -325,9 +325,15 @@
       nsPrefix="descriptor">
     <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/base"
         nsPrefix="base">
-      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ui/base/Part">
+      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//Contribution #//Context #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
+            eType="#//ui/menu/Menu" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
+            containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+            defaultValueLiteral="false"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
