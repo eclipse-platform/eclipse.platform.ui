@@ -18,14 +18,14 @@
     <eGenericSuperTypes eClassifier="#//ui/Context"/>
     <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/BindingContainer"/>
-    <eGenericSuperTypes eClassifier="#//descriptor/PartDescriptorContainer"/>
+    <eGenericSuperTypes eClassifier="#//descriptor/base/PartDescriptorContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelComponents">
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//ModelComponent" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/PartDescriptorContainer #//ui/extended/ApplicationElement #//commands/HandlerContainer #//commands/BindingContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/base/PartDescriptorContainer #//ui/extended/ApplicationElement #//commands/HandlerContainer #//commands/BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
@@ -315,13 +315,16 @@
   </eSubpackages>
   <eSubpackages name="descriptor" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor"
       nsPrefix="descriptor">
-    <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ui/base/Part">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
-          eType="#//descriptor/PartDescriptor" containment="true"/>
-    </eClassifiers>
+    <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/base"
+        nsPrefix="base">
+      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ui/base/Part">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
+            eType="#//descriptor/base/PartDescriptor" containment="true"/>
+      </eClassifiers>
+    </eSubpackages>
   </eSubpackages>
 </ecore:EPackage>
