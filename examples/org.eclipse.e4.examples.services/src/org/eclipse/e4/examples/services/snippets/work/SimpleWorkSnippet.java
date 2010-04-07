@@ -13,14 +13,15 @@ package org.eclipse.e4.examples.services.snippets.work;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.eclipse.e4.core.services.IStatusHandler;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.core.services.StatusReporter;
 import org.eclipse.e4.core.services.work.WorkContext;
 import org.eclipse.e4.core.services.work.WorkRunnable;
 import org.eclipse.e4.core.services.work.WorkScheduler;
 
 public class SimpleWorkSnippet {
 	@Inject
-	Provider<IStatusHandler> statusHandler;
+	Provider<StatusReporter> statusReporter;
 	@Inject
 	WorkScheduler scheduler;
 
@@ -45,7 +46,7 @@ public class SimpleWorkSnippet {
 					doFirstHalfFoo(workContext.newChild(50));
 					doSecondHalfFoo(workContext.newChild(50));
 				} catch (FooException e) {
-					statusHandler.get().handleError(e, "foo failure message", IStatusHandler.SHOW);
+					statusReporter.get().show(IStatus.ERROR, "foo failure message", e);
 				}
 				// no need to call done, the caller knows that we're done
 				return new Result();
