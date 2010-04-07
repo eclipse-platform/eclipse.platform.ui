@@ -15,7 +15,7 @@
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
       <eTypeArguments eClassifier="#//ui/base/Window"/>
     </eGenericSuperTypes>
-    <eGenericSuperTypes eClassifier="#//ui/Context"/>
+    <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/BindingContainer"/>
     <eGenericSuperTypes eClassifier="#//descriptor/base/PartDescriptorContainer"/>
@@ -49,6 +49,14 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tags" ordered="false" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="#//StringToStringMap" containment="true"/>
   </eClassifiers>
   <eSubpackages name="commands" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/commands"
       nsPrefix="commands">
@@ -152,14 +160,6 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
-          transient="true"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
-          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
-          eType="#//StringToStringMap" containment="true"/>
-    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
       <eTypeParameters name="T">
@@ -231,7 +231,7 @@
     </eSubpackages>
     <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/base"
         nsPrefix="base">
-      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//ui/Context #//ui/PSCElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
+      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//ui/PSCElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -263,7 +263,7 @@
           <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
-        <eGenericSuperTypes eClassifier="#//ui/Context"/>
+        <eGenericSuperTypes eClassifier="#//Context"/>
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
         <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
@@ -296,7 +296,7 @@
           <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
-        <eGenericSuperTypes eClassifier="#//ui/Context"/>
+        <eGenericSuperTypes eClassifier="#//Context"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
