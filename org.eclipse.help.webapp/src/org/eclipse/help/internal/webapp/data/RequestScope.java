@@ -13,8 +13,6 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +30,7 @@ import org.eclipse.help.internal.base.scope.IntersectionScope;
 import org.eclipse.help.internal.base.scope.ScopeRegistry;
 import org.eclipse.help.internal.base.scope.UniversalScope;
 import org.eclipse.help.internal.base.scope.WorkingSetScope;
+import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.servlet.CookieUtil;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.osgi.service.prefs.BackingStoreException;
@@ -72,13 +71,9 @@ public class RequestScope {
 		}
 		scopeString = getScopeString(req);
 		if (scopeString != null) {
-			StringTokenizer tokenizer = new StringTokenizer(scopeString, "/"); //$NON-NLS-1$
-			while (tokenizer.hasMoreTokens()) {
-			String nextScope = tokenizer.nextToken().trim();	
-				AbstractHelpScope scope = ScopeRegistry.getInstance().getScope(nextScope);
-				if (scope != null) {
-					scopes.add(scope);
-				}
+			AbstractHelpScope scope = ScopeRegistry.getInstance().parseScopePhrase(scopeString);
+			if (scope != null) {
+				scopes.add(scope);
 			}
 		}
 		// Add filter by search scope if not called from Help View
@@ -116,27 +111,26 @@ public class RequestScope {
 	
 	public static void setScopeFromRequest(HttpServletRequest request, HttpServletResponse response) {
 		// See if there is a scope parameter, if so save as cookie or preference
-		String[] scope = request.getParameterValues(SCOPE_PARAMETER_NAME); 
-		String scopeString = ""; //$NON-NLS-1$
-		// save scope (in session cookie) for later use in a user session
-		// If there are multiple values separate them with a '/'
-		if (scope != null) {
-			for (int s = 0; s < scope.length; s++) {
-				if (ScopeRegistry.getInstance().getScope(scope[s]) != null) {
-					if (scopeString.length() > 0) {
-					     scopeString += '/';
-					}
-					scopeString += scope[s];
-				}
+		String[] phrases = request.getParameterValues(SCOPE_PARAMETER_NAME); 
+		String scopeStr = ""; //$NON-NLS-1$
+		if (phrases!=null){
+//			AbstractHelpScope scope = ScopeRegistry.getInstance().parseScopePhrases(phrases);
+			for (int p=0;p<phrases.length;p++)
+			{
+				if (!(phrases[p].startsWith("(") && !phrases[p].startsWith("("))) //$NON-NLS-1$ //$NON-NLS-2$
+					phrases[p] = '('+phrases[p]+')';
+				scopeStr+=phrases[p];
+				if (p<phrases.length-1)
+					scopeStr+=ScopeRegistry.SCOPE_AND;
 			}
 		}
-		saveScope(scopeString, response);
+		saveScope(scopeStr, response);
 	}
 	
 	public static void saveScope(String scope, HttpServletResponse response) {
 		if (HelpSystem.isShared()) {
 			if (response != null) {	
-				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, scope, response);
+				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, URLCoder.compactEncode(scope), response);
 			}
 		} else {
 			InstanceScope instanceScope = new InstanceScope();
@@ -155,7 +149,7 @@ public class RequestScope {
 		if (cookies != null) {
 			for (int c = 0; c < cookies.length; c++) {
 				if (SCOPE_COOKIE_NAME.equals(cookies[c].getName())) { 
-					return cookies[c].getValue();
+					return URLCoder.decode(cookies[c].getValue());
 				}
 			}
 		}

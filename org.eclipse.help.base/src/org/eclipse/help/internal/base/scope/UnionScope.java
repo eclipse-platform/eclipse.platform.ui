@@ -20,52 +20,52 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 
 /**
- * A scope which represents the intersection of two or more other scopes
- * An element is in scope only if it is included in every scope passed to the constructor
+ * A scope which represents the union of two or more other scopes
+ * An element is in scope if it is included in any scope passed to the constructor
  */
 
-public class IntersectionScope extends AbstractHelpScope {
+public class UnionScope extends AbstractHelpScope {
 	
 	AbstractHelpScope[] scopes;
 	
-	public IntersectionScope(AbstractHelpScope[] scopes) {
+	public UnionScope(AbstractHelpScope[] scopes) {
 		this.scopes = scopes;
 	}
 
 	public boolean inScope(IToc toc) {
 		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (!scopes[scope].inScope(toc)) {
-				return false;
+			if (scopes[scope].inScope(toc)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public boolean inScope(ITopic topic) {
 		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (!scopes[scope].inScope(topic)) {
-				return false;
+			if (scopes[scope].inScope(topic)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public boolean inScope(IIndexEntry entry) {
 		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (!scopes[scope].inScope(entry)) {
-				return false;
+			if (scopes[scope].inScope(entry)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public boolean inScope(IIndexSee see) {
 		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (!scopes[scope].inScope(see)) {
-				return false;
+			if (scopes[scope].inScope(see)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public String getName(Locale locale) {
@@ -88,7 +88,7 @@ public class IntersectionScope extends AbstractHelpScope {
 		{
 			str+=scopes[s];
 			if (s<scopes.length-1)
-				str+=' '+ScopeRegistry.SCOPE_AND+' ';
+				str+=' '+ScopeRegistry.SCOPE_OR+' ';
 		}
 		return str+')';
 	}
