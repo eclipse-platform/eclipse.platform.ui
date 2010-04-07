@@ -180,6 +180,8 @@
         <eTypeArguments eTypeParameter="#//ui/GenericTile/T"/>
       </eGenericSuperTypes>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
+        eSuperTypes="#//ui/UIElement"/>
     <eSubpackages name="menu" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
         nsPrefix="menu">
       <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//ui/UIElement #//ui/UILabel">
@@ -217,9 +219,7 @@
     </eSubpackages>
     <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/base"
         nsPrefix="base">
-      <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
-          eSuperTypes="#//ui/UIElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/extended/Contribution #//ui/Context #//ui/base/PSCElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
+      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/extended/Contribution #//ui/Context #//ui/PSCElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -232,13 +232,13 @@
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
           <eTypeArguments eClassifier="#//ui/base/Part"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/PSCElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
         <eGenericSuperTypes eClassifier="#//ui/GenericTile">
-          <eTypeArguments eClassifier="#//ui/base/PSCElement"/>
+          <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/PSCElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Window">
         <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//ui/menu/Menu"
@@ -248,12 +248,12 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/base/PSCElement"/>
+          <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
         <eGenericSuperTypes eClassifier="#//ui/Context"/>
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
-        <eGenericSuperTypes eClassifier="#//ui/base/PSCElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
     </eSubpackages>
@@ -273,7 +273,7 @@
         <eGenericSuperTypes eClassifier="#//ui/extended/TrimContainer">
           <eTypeArguments eClassifier="#//ui/UIElement"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/PSCElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -293,14 +293,14 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Perspective">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/base/PSCElement"/>
+          <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
         <eGenericSuperTypes eClassifier="#//ui/Context"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/base/PSCElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
           <eTypeArguments eClassifier="#//ui/extended/Perspective"/>
         </eGenericSuperTypes>
