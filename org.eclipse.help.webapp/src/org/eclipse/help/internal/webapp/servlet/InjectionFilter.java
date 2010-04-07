@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.CssUtil;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;
@@ -43,7 +44,7 @@ public class InjectionFilter implements IFilter {
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
-		boolean isInfocenter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_WORKBENCH;
+		boolean isUnfiltered = ProductPreferences.useEnablementFilters();
 
 		boolean addNarrow = false;
 		boolean addDisabled = false;
@@ -69,7 +70,7 @@ public class InjectionFilter implements IFilter {
 			CssUtil.addCssFiles(TOPIC_CSS, cssIncludes);
 		}
 		
-		boolean enabled = isInfocenter || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
+		boolean enabled = isUnfiltered || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
 				pathInfo);
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			addNarrow = true;

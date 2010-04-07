@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.help.internal;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,10 +24,10 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -241,7 +242,7 @@ public class UAElement implements IUAElement {
 	}
 	
 	public boolean isEnabled(IEvaluationContext context) {
-		if (HelpSystem.isShared()) {
+		if (!ProductPreferences.useEnablementFilters()) {
 			return true;
 		}
 		if (src != null) {
@@ -261,6 +262,7 @@ public class UAElement implements IUAElement {
 		    try {
 				return enablementExpression.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
+				return false;
 			}
         }
 		return true;

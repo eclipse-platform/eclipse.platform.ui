@@ -30,6 +30,7 @@ import org.eclipse.help.internal.base.scope.IntersectionScope;
 import org.eclipse.help.internal.base.scope.ScopeRegistry;
 import org.eclipse.help.internal.base.scope.UniversalScope;
 import org.eclipse.help.internal.base.scope.WorkingSetScope;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.servlet.CookieUtil;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
@@ -66,8 +67,8 @@ public class RequestScope {
 		AbstractHelpScope[] scopeArray;
 		String scopeString;
 		List scopes = new ArrayList();
-		if (!HelpSystem.isShared()) {
-			scopes.add(new FilterScope()); // Workbench is always filtered
+		if (ProductPreferences.useEnablementFilters()) {
+			scopes.add(new FilterScope()); // Workbench is always filtered, infocenter may be
 		}
 		scopeString = getScopeString(req);
 		if (scopeString != null) {

@@ -44,6 +44,7 @@ public class HelpPlugin extends Plugin {
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_TOCS_KEY = "ignoredTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_INDEXES_KEY = "ignoredIndexes"; //$NON-NLS-1$
+	public final static String FILTER_INFOCENTER_KEY = "filterInfocenter"; //$NON-NLS-1$
 
 	private static HelpPlugin plugin;
 	private static Object tocManagerCreateLock = new Object();
