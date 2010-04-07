@@ -57,7 +57,7 @@
                   A class dynamically providing the value of the variable.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.PathVariableResolver:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.variableresolvers.PathVariableResolver:"/>
                </appInfo>
             </annotation>
          </attribute>
