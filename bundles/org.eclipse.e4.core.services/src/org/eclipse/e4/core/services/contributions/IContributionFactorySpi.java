@@ -8,19 +8,18 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.contributions;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import org.osgi.framework.Bundle;
 
-public interface IContributionFactory {
 
-	public Object call(Object object, String uriString, String methodName, IEclipseContext context,
-			Object defaultValue);
+public interface IContributionFactorySpi {
 
-	public Object create(String uriString, IEclipseContext context);
+	public Object create(Bundle bundle, String className,
+			IEclipseContext context);
 
-	public Bundle getBundle(String uriString);
-
+	public Object call(Object object, String methodName,
+			IEclipseContext context, Object defaultValue);
 }

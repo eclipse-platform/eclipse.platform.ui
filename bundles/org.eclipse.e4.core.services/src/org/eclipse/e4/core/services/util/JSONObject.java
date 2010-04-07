@@ -1,4 +1,4 @@
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.util;
 
 import java.math.BigDecimal;
 import java.text.CharacterIterator;

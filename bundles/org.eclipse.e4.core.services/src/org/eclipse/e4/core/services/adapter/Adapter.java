@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.adapter;
 
 /**
  * An adapter can adapt an object to the specified type, allowing clients to request domain-specific

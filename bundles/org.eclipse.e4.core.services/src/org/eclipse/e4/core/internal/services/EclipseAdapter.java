@@ -10,12 +10,13 @@
  ******************************************************************************/
 package org.eclipse.e4.core.internal.services;
 
+import org.eclipse.e4.core.services.adapter.Adapter;
+
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.Adapter;
 
 public class EclipseAdapter extends Adapter {
 

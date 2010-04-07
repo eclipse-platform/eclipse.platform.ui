@@ -8,7 +8,7 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.statusreporter;
 
 import org.eclipse.core.runtime.IStatus;
 

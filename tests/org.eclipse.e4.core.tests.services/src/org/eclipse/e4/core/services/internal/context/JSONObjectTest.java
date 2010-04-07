@@ -11,10 +11,11 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.util.JSONObject;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.JSONObject;
 
 /**
  * Test cases for {@link JSONObject}.

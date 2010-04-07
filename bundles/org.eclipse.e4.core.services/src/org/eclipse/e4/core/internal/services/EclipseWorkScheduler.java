@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.work;
+package org.eclipse.e4.core.internal.services;
 
 import org.eclipse.e4.core.services.work.AsyncFuture;
 import org.eclipse.e4.core.services.work.WorkRunnable;

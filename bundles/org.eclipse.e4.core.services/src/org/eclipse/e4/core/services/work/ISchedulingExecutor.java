@@ -8,7 +8,7 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.work;
 
 import org.eclipse.equinox.concurrent.future.*;
 import org.osgi.framework.BundleContext;

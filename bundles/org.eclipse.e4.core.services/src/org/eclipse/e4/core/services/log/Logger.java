@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services;
+package org.eclipse.e4.core.services.log;
 
 /**
  * Logging warnings, errors, information, as well as capturing debug and trace
