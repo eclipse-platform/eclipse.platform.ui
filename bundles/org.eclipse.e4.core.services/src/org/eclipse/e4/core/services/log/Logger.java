@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.log;
 
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+
 /**
- * Logging warnings, errors, information, as well as capturing debug and trace
- * information. Everything done through this interface is not meant for normal
- * end users. Strings are not expected to be translated.
+ * Logging warnings, errors, information, as well as capturing debug and trace information.
+ * Everything done through this interface is not meant for normal end users. Strings are not
+ * expected to be translated.
  * 
- * @see IStatusHandler
+ * @see StatusReporter
  */
 public abstract class Logger {
 	public abstract boolean isErrorEnabled();
@@ -139,11 +141,10 @@ public abstract class Logger {
 	private static final Object[] EMPTY_ARGS = new Object[0];
 
 	/*
-	 * Perform the string substitution on the given message with the specified
-	 * args. See the class comment for exact details.
+	 * Perform the string substitution on the given message with the specified args. See the class
+	 * comment for exact details.
 	 */
-	private static String internalBind(String message, Object[] args, String argZero,
-			String argOne) {
+	private static String internalBind(String message, Object[] args, String argZero, String argOne) {
 		if (message == null)
 			return "No message available."; //$NON-NLS-1$
 		if (args == null || args.length == 0)

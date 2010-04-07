@@ -11,12 +11,13 @@
 package org.eclipse.e4.core.services.statusreporter;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.core.services.log.Logger;
 
 /**
  * Handling warnings or errors, with the intent of making the end user aware of these. Strings are
  * expected to be translated.
  * 
- * @see ILogger
+ * @see Logger
  */
 public abstract class StatusReporter {
 
