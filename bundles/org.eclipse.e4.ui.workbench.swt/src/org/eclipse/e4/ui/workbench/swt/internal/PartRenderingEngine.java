@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
-
-import org.eclipse.e4.core.services.statusreporter.StatusReporter;
-
-import org.eclipse.e4.core.services.log.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 import javax.inject.Inject;
@@ -31,9 +25,9 @@ import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
-import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.internal.core.services.bundle.BundleContextStrategy;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -63,7 +57,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
-import org.osgi.framework.Bundle;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -271,19 +264,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (ctxt.getContext() == null) {
 				IEclipseContext parentContext = element.getParent() == null ? appContext
 						: getContext(element.getParent());
-				IEclipseContextStrategy strategy;
-				if (element instanceof MContribution) {
-					IContributionFactory contributionFactory = (IContributionFactory) parentContext
-							.get(IContributionFactory.class.getName());
-					MContribution contribution = (MContribution) element;
-					Bundle bundle = contributionFactory.getBundle(contribution
-							.getURI());
-					strategy = new BundleContextStrategy(bundle);
-				} else {
-					strategy = null;
-				}
 				IEclipseContext lclContext = EclipseContextFactory.create(
-						parentContext, strategy);
+						parentContext, null);
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
 				ctxt.setContext(lclContext);
