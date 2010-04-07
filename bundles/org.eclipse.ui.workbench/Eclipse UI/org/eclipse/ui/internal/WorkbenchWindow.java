@@ -1694,12 +1694,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	CoolBarManager2 cm2 = new CoolBarManager2();
 
-	public CoolBarManager2 getCoolBarManager2() {
+	public ICoolBarManager getCoolBarManager2() {
 		return cm2;
 	}
 
 	public CoolBarManager getCoolBarManager() {
-		return getCoolBarManager2();
+		return cm2;
 	}
 
 	MenuManager menuManager = new MenuManager();

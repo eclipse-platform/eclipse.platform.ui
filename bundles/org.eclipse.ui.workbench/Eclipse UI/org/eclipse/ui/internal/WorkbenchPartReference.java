@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -26,6 +25,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
@@ -48,6 +48,10 @@ import org.eclipse.ui.internal.util.Util;
  * 
  */
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference, ISizeProvider {
+
+	public abstract class PartPane {
+		public abstract Control getControl();
+	}
 
     /**
      * Internal property ID: Indicates that the underlying part was created
@@ -609,5 +613,21 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	public void invalidate() {
 		legacyPart = null;
+	}
+
+	public final PartPane getPane() {
+		return new PartPane() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.internal.WorkbenchPartReference.PartPane#getControl
+			 * ()
+			 */
+			@Override
+			public Control getControl() {
+				return part == null ? null : (Control) part.getWidget();
+			}
+		};
 	}
 }
