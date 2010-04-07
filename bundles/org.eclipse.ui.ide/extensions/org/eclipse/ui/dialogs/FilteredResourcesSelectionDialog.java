@@ -877,6 +877,17 @@ public class FilteredResourcesSelectionDialog extends
 		 */
 		private SearchPattern relativeContainerPattern;
 		
+		/**
+		 * Camel case pattern for the name part of the file name (without extension). Is <code>null</code> if there's no extension.
+		 * @since 3.6
+		 */
+		SearchPattern namePattern;
+		/**
+		 * Camel case pattern for the file extension. Is <code>null</code> if there's no extension.
+		 * @since 3.6
+		 */
+		SearchPattern extensionPattern;
+		
 		private int filterTypeMask;
 
 		/**
@@ -910,16 +921,16 @@ public class FilteredResourcesSelectionDialog extends
 			this(container, showDerived, typeMask);
 
 			String stringPattern = getPattern();
-			String containerPattern;
+			String filenamePattern;
 			
 			int sep = stringPattern.lastIndexOf(IPath.SEPARATOR);
 			if (sep != -1) {
-				String filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
+				filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
 				if ("*".equals(filenamePattern)) //$NON-NLS-1$
 					filenamePattern= "**"; //$NON-NLS-1$
 				patternMatcher.setPattern(filenamePattern);
 				if (sep > 0) {
-					containerPattern = stringPattern.substring(0, sep);
+					String containerPattern = stringPattern.substring(0, sep);
 					this.containerPattern= new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 					this.containerPattern.setPattern(containerPattern);
 					if (searchContainer != null) {
@@ -927,7 +938,18 @@ public class FilteredResourcesSelectionDialog extends
 						relativeContainerPattern.setPattern(searchContainer.getFullPath().append(containerPattern).toString());
 					}
 				}
+			} else {
+				filenamePattern= stringPattern;
 			}
+			
+			int lastPatternDot = filenamePattern.lastIndexOf('.');
+			if (lastPatternDot != -1) {
+				namePattern = new SearchPattern();
+				namePattern.setPattern(filenamePattern.substring(0, lastPatternDot));
+				extensionPattern = new SearchPattern();
+				extensionPattern.setPattern(filenamePattern.substring(lastPatternDot + 1));
+			}
+
 		}
 
 		/**
@@ -968,7 +990,8 @@ public class FilteredResourcesSelectionDialog extends
 					|| ((this.filterTypeMask & resource.getType()) == 0))
 				return false;
 
-			if (matches(resource.getName())) {
+			String name = resource.getName();
+			if (nameMatches(name)) {
 				if (containerPattern != null) {
 					// match full container path:
 					String containerPath = resource.getParent().getFullPath().toString();
@@ -983,6 +1006,19 @@ public class FilteredResourcesSelectionDialog extends
 			}
 			
 			return false;			
+		}
+
+		private boolean nameMatches(String name) {
+			if (namePattern != null) {
+				// fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212565
+				int lastDot = name.lastIndexOf('.');
+				if (lastDot != -1
+						&& namePattern.matches(name.substring(0, lastDot))
+						&& extensionPattern.matches(name.substring(lastDot + 1))) {
+					return true;
+				}
+			}
+			return matches(name);
 		}
 
 		/*
