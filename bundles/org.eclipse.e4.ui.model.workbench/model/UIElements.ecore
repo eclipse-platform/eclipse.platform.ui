@@ -259,6 +259,8 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="trims" upperBound="-1"
+            eType="#//ui/base/WindowTrim" containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/PSCElement"/>
         </eGenericSuperTypes>
@@ -268,9 +270,6 @@
         <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
-    </eSubpackages>
-    <eSubpackages name="extended" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/extended"
-        nsPrefix="extended">
       <eClassifiers xsi:type="ecore:EClass" name="TrimContainer" abstract="true">
         <eTypeParameters name="T">
           <eBounds eClassifier="#//ui/UIElement"/>
@@ -278,15 +277,17 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1"
             eType="#//ui/extended/SideValue"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eTypeParameter="#//ui/extended/TrimContainer/T"/>
+          <eTypeArguments eTypeParameter="#//ui/base/TrimContainer/T"/>
         </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
-        <eGenericSuperTypes eClassifier="#//ui/extended/TrimContainer">
+        <eGenericSuperTypes eClassifier="#//ui/base/TrimContainer">
           <eTypeArguments eClassifier="#//ui/UIElement"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/PSCElement"/>
       </eClassifiers>
+    </eSubpackages>
+    <eSubpackages name="extended" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/extended"
+        nsPrefix="extended">
       <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement"/>
