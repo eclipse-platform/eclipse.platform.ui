@@ -104,8 +104,6 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//commands/Parameter" containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//commands/HandledItem"/>
-    <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//commands/HandledItem"/>
     <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//commands/KeySequence #//ApplicationElement">
       <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
           eType="#//commands/Command"/>
@@ -228,6 +226,8 @@
           <eTypeArguments eClassifier="#//ui/menu/ToolItem"/>
         </eGenericSuperTypes>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//commands/HandledItem"/>
+      <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//commands/HandledItem"/>
     </eSubpackages>
     <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/base"
         nsPrefix="base">
