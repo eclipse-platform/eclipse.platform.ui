@@ -17,6 +17,8 @@ package org.eclipse.e4.core.di;
  */
 public interface IRequestor {
 
+	public IInjector getInjector();
+	public AbstractObjectSupplier getPrimarySupplier();
 	/**
 	 * The injected object that initiated this request
 	 */

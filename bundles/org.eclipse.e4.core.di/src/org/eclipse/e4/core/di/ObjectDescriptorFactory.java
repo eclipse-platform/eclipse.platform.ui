@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-
-import javax.inject.Named;
 
 import org.eclipse.e4.core.internal.di.ObjectDescriptor;
 
@@ -24,33 +23,11 @@ import org.eclipse.e4.core.internal.di.ObjectDescriptor;
  */
 final public class ObjectDescriptorFactory {
 
-	static final private String named = Named.class.getName();
-
 	private ObjectDescriptorFactory() {
 		// prevents instantiation
 	}
 
-	static public IObjectDescriptor make(Class<?> clazz, boolean optional) {
-		return new ObjectDescriptor(clazz, null, null, optional);
-	}
-
-	static public IObjectDescriptor make(Type type, boolean optional) {
-		return new ObjectDescriptor(type, null, null, optional);
-	}
-
-	static public IObjectDescriptor make(String name, boolean optional) {
-		return new ObjectDescriptor(null, new String[] { named }, new String[] { name }, optional);
-	}
-
-	static public IObjectDescriptor make(Class<?> clazz, String name, boolean optional) {
-		if (name == null)
-			return make(clazz, optional);
-		return new ObjectDescriptor(clazz, new String[] { named }, new String[] { name }, optional);
-	}
-
-	static public IObjectDescriptor make(Type type, String name, boolean optional) {
-		if (name == null)
-			return make(type, optional);
-		return new ObjectDescriptor(type, new String[] { named }, new String[] { name }, optional);
+	static public IObjectDescriptor make(Type type, Annotation[] annotations) {
+		return new ObjectDescriptor(type, annotations);
 	}
 }

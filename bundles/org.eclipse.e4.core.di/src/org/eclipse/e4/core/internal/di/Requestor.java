@@ -13,6 +13,8 @@ package org.eclipse.e4.core.internal.di;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 
@@ -25,6 +27,9 @@ abstract public class Requestor implements IRequestor {
 	final private boolean track;
 	final private boolean groupUpdates;
 	final private boolean isOptional;
+	
+	final private IInjector injector;
+	final private AbstractObjectSupplier primarySupplier;
 
 	protected Object[] actualArgs;
 
@@ -36,8 +41,10 @@ abstract public class Requestor implements IRequestor {
 
 	public abstract Object execute() throws InvocationTargetException, InstantiationException;
 
-	public Requestor(Object requestingObject, boolean track, boolean groupUpdates,
+	public Requestor(IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates,
 			boolean isOptional) {
+		this.injector = injector;
+		this.primarySupplier = primarySupplier;
 		if (requestingObject != null)
 			objectRef = new WeakReference<Object>(requestingObject);
 		else
@@ -45,6 +52,14 @@ abstract public class Requestor implements IRequestor {
 		this.track = track;
 		this.groupUpdates = groupUpdates;
 		this.isOptional = isOptional;
+	}
+	
+	public IInjector getInjector() {
+		return injector;
+	}
+	
+	public AbstractObjectSupplier getPrimarySupplier() {
+		return primarySupplier;
 	}
 
 	public Object getRequestingObject() {

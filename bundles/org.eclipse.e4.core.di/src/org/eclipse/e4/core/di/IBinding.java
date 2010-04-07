@@ -11,6 +11,7 @@
 package org.eclipse.e4.core.di;
 
 // TBD should this be an abstract base class?
+// TBD support for multiple qualifiers
 /**
  * Describes binding between object description and its implementation to be used by the dependency
  * injection.
@@ -19,6 +20,8 @@ package org.eclipse.e4.core.di;
 public interface IBinding {
 
 	public IBinding named(String name);
+	
+	// TBD add qualified(Qualifier qualifier);
 
 	public IBinding implementedBy(Class<?> clazz);
 

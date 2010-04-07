@@ -41,6 +41,10 @@ public class DIActivator implements BundleActivator {
 		bundleContext = null;
 	}
 
+	public BundleContext getBundleContext() {
+		return bundleContext;
+	}
+
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
 			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);

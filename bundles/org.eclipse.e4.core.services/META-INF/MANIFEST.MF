@@ -25,8 +25,7 @@ Export-Package: org.eclipse.e4.core.internal.services;x-internal:=true,
  org.eclipse.e4.core.services.log,
  org.eclipse.e4.core.services.statusreporter,
  org.eclipse.e4.core.services.util,
- org.eclipse.e4.core.services.work,
- org.eclipse.e4.internal.core.services.bundle;x-internal:=true
+ org.eclipse.e4.core.services.work
 Bundle-Vendor: Eclipse.org
 Eclipse-ExtensibleAPI: true
 Bundle-ClassPath: injection_annotations.jar, .

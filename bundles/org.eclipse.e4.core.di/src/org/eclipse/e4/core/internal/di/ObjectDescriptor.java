@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.IObjectDescriptor;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import org.eclipse.e4.core.di.IObjectDescriptor;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * NOTE: This is a preliminary form; this API will change.
@@ -23,17 +25,11 @@ import java.lang.reflect.Type;
 public class ObjectDescriptor implements IObjectDescriptor {
 
 	final private Type desiredType;
-	final private String[] qualifiers;
-	final private String[] values;
+	final private Annotation[] annotations;
 
-	// TBD make "Optional" a qualifier?
-	final private boolean optional;
-
-	public ObjectDescriptor(Type desiredType, String[] qualifiers, String[] values, boolean optional) {
+	public ObjectDescriptor(Type desiredType, Annotation[] annotations) {
 		this.desiredType = desiredType;
-		this.qualifiers = qualifiers;
-		this.values = values;
-		this.optional = optional;
+		this.annotations = annotations;
 	}
 
 	// TBD rename getDesiredClass()
@@ -52,23 +48,23 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	}
 
 	public boolean isOptional() {
-		return optional;
+		return hasQualifier(Optional.class);
 	}
 
-	public boolean hasQualifier(String qualifier) {
-		if (qualifier == null)
+	public boolean hasQualifier(Class<? extends Annotation> clazz) {
+		if (clazz == null)
 			return false;
-		if (qualifiers == null)
+		if (annotations == null)
 			return false;
-		for (int i = 0; i < qualifiers.length; i++) {
-			if (qualifier.equals(qualifiers[i]))
+		for(Annotation annotation : annotations) {
+			if (annotation.annotationType().equals(clazz))
 				return true;
 		}
 		return false;
 	}
 
-	public String[] getQualifiers() {
-		return qualifiers;
+	public Annotation[] getQualifiers() {
+		return annotations;
 	}
 
 	/**
@@ -77,35 +73,34 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	 * @param qualifier
 	 * @return
 	 */
-	public String getQualifierValue(String qualifier) {
-		if (qualifier == null)
+	public Object getQualifier(Class<? extends Annotation> clazz) {
+		if (clazz == null)
 			return null;
-		if (qualifiers == null)
+		if (annotations == null)
 			return null;
-		for (int i = 0; i < qualifiers.length; i++) {
-			if (qualifier.equals(qualifiers[i]))
-				return values[i];
+		for(Annotation annotation : annotations) {
+			if (annotation.annotationType().equals(clazz))
+				return annotation;
 		}
 		return null;
 	}
-
+	
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		if (desiredType != null)
-			buffer.append(((Class<?>) desiredType).getName());
-		else
-			buffer.append("_descriptor_");
-		if (qualifiers != null) {
-			buffer.append("{");
-			for (int i = 0; i < qualifiers.length; i++) {
-				if (i != 0)
-					buffer.append(", ");
-				buffer.append(qualifiers[i]);
-				buffer.append("=\"");
-				buffer.append(values[i]);
-				buffer.append("\"");
+			buffer.append(desiredType);
+		if (annotations != null) {
+			buffer.append('[');
+			boolean first = true;
+			for (Annotation annotation : annotations) {
+				if (first)
+					first = false;
+				else
+					buffer.append(',');
+				buffer.append(annotation.toString());
 			}
-			buffer.append("}");
+			buffer.append(']');
 		}
 		return buffer.toString();
 	}

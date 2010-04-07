@@ -17,14 +17,27 @@ package org.eclipse.e4.core.di;
  */
 abstract public class AbstractObjectSupplier {
 
-	final protected IInjector injector;
+	/**
+	 * The OSGi service name for an object provider service. This name can be used to obtain
+	 * instances of the service.
+	 * 
+	 * @see BundleContext#getServiceReference(String)
+	 */
+	public static final String SERVICE_NAME = AbstractObjectSupplier.class.getName();
 
-	// TBD remove?
+	/**
+	 * An OSGi service property used to indicate the context key this function should be registered
+	 * in.
+	 * 
+	 * @see BundleContext#getServiceReference(String)
+	 */
+	public static final String SERVICE_CONTEXT_KEY = "dependency.injection.annotation"; //$NON-NLS-1$
+
 	abstract public Object get(IObjectDescriptor descriptor, IRequestor requestor);
 
 	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor);
 
-	public AbstractObjectSupplier(IInjector injector) {
-		this.injector = injector;
+	public AbstractObjectSupplier() {
+		// placeholder
 	}
 }

@@ -12,6 +12,8 @@ package org.eclipse.e4.core.internal.di;
 
 
 
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 
@@ -23,9 +25,9 @@ public class ConstructorRequestor extends Requestor {
 
 	final private Constructor<?> constructor;
 
-	public ConstructorRequestor(Constructor<?> constructor) {
+	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, AbstractObjectSupplier primarySupplier) {
 		// TBD make an integer update types? 0 - static , 1 - normal, 2 - grouped?
-		super(null, false /* do not track */, false /* N/A: no updates */, false /* mandatory */);
+		super(injector, primarySupplier, null,  false /* do not track */, false /* N/A: no updates */, false /* mandatory */);
 		this.constructor = constructor;
 	}
 
@@ -40,8 +42,7 @@ public class ConstructorRequestor extends Requestor {
 		InjectionProperties[] properties = annotationSupport.getInjectParamsProperties(constructor);
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			descriptors[i] = ObjectDescriptorFactory.make(parameterTypes[i], properties[i]
-					.getPropertyName(), properties[i].isOptional());
+			descriptors[i] = ObjectDescriptorFactory.make(parameterTypes[i], properties[i].getQualifiers());
 		}
 		return descriptors;
 	}

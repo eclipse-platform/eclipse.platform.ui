@@ -12,6 +12,8 @@ package org.eclipse.e4.core.internal.di;
 
 
 
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 
@@ -23,9 +25,9 @@ public class MethodRequestor extends Requestor {
 
 	final private Method method;
 
-	public MethodRequestor(Method method, Object requestingObject, boolean track,
+	public MethodRequestor(Method method, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track,
 			boolean groupUpdates, boolean optional) {
-		super(requestingObject, track, groupUpdates, optional);
+		super(injector, primarySupplier, requestingObject, track, groupUpdates, optional);
 		this.method = method;
 	}
 
@@ -40,8 +42,7 @@ public class MethodRequestor extends Requestor {
 		InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			descriptors[i] = ObjectDescriptorFactory.make(parameterTypes[i], properties[i]
-					.getPropertyName(), properties[i].isOptional());
+			descriptors[i] = ObjectDescriptorFactory.make(parameterTypes[i], properties[i].getQualifiers());
 		}
 		return descriptors;
 	}

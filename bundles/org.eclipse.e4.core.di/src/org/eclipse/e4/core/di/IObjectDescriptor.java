@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
@@ -28,10 +29,10 @@ public interface IObjectDescriptor {
 
 	public boolean isOptional();
 
-	public boolean hasQualifier(String qualifier);
+	public boolean hasQualifier(Class<? extends Annotation> clazz);
 
-	public String[] getQualifiers();
+	public Annotation[] getQualifiers();
 
-	public String getQualifierValue(String qualifier);
-
+	public Object getQualifier(Class<? extends Annotation> clazz);
+	
 }

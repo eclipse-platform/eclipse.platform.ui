@@ -26,15 +26,12 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 		final private Object[] result;
 		final private String[] keys;
-		final private IInjector injector;
 		final private IRequestor requestor;
 		final private IEclipseContext context;
 
-		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys,
-				IInjector injector, IRequestor requestor) {
+		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, IRequestor requestor) {
 			this.result = result;
 			this.keys = keys;
-			this.injector = injector;
 			this.requestor = requestor;
 			this.context = context;
 		}
@@ -53,7 +50,8 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				}
 				return true;
 			}
-
+			
+			IInjector injector = requestor.getInjector();
 			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 				IEclipseContext originatingContext = event.getContext();
 				ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
@@ -65,8 +63,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				injector.uninject(event.getArguments()[0], originatingSupplier);
 				return false;
 			} else {
-				ContextObjectSupplier supplier = getObjectSupplier(context, injector);
-				injector.update(new IRequestor[] { requestor }, supplier);
+				injector.update(new IRequestor[] { requestor }, requestor.getPrimarySupplier());
 			}
 			return true;
 		}
@@ -76,7 +73,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((context == null) ? 0 : context.hashCode());
-			result = prime * result + ((injector == null) ? 0 : injector.hashCode());
 			result = prime * result + ((requestor == null) ? 0 : requestor.hashCode());
 			return result;
 		}
@@ -94,11 +90,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				if (other.context != null)
 					return false;
 			} else if (!context.equals(other.context))
-				return false;
-			if (injector == null) {
-				if (other.injector != null)
-					return false;
-			} else if (!injector.equals(other.injector))
 				return false;
 			if (requestor == null) {
 				if (other.requestor != null)
@@ -123,7 +114,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 	final private IEclipseContext context;
 
 	public ContextObjectSupplier(IEclipseContext context, IInjector injector) {
-		super(injector);
 		this.context = context;
 	}
 
@@ -156,8 +146,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		}
 
 		if (requestor != null && requestor.shouldTrack()) { // only track if requested
-			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, injector,
-					requestor);
+			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor);
 			context.runAndTrack(trackable, null);
 		} else {
 			for (int i = 0; i < descriptors.length; i++) {
@@ -173,8 +162,11 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	private String getKey(IObjectDescriptor descriptor) {
-		if (descriptor.hasQualifier(Named.class.getName()))
-			return descriptor.getQualifierValue(Named.class.getName());
+		if (descriptor.hasQualifier(Named.class)) {
+			Object namedAnnotation = descriptor.getQualifier(Named.class);
+			String key = ((Named) namedAnnotation).value();
+			return key;
+		}
 		Class<?> elementClass = descriptor.getElementClass();
 		if (elementClass != null)
 			return elementClass.getName();

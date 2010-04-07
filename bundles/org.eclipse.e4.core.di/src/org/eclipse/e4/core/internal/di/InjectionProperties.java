@@ -10,23 +10,25 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import java.lang.annotation.Annotation;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+
 public class InjectionProperties {
 
 	private boolean inject;
-	private boolean optional;
 
 	private String propertyToInject;
 	private Object provider; // <= shouldn't this be Provider<T>?
-	private Class qualifier;
+	private Annotation[] qualifiers;
 	private String handlesEvent;
 	private boolean eventHeadless;
 	private boolean groupUpdates = false;
 
-	public InjectionProperties(boolean inject, String propertyToInject, boolean optional) {
+	public InjectionProperties(boolean inject, String propertyToInject) {
 		super();
 		this.inject = inject;
 		this.propertyToInject = propertyToInject;
-		this.optional = optional;
 	}
 
 	public String getPropertyName() {
@@ -34,8 +36,21 @@ public class InjectionProperties {
 	}
 
 	public boolean isOptional() {
-		return optional;
+		return hasQualifier(Optional.class);
 	}
+	
+	private boolean hasQualifier(Class<? extends Annotation> clazz) {
+		if (clazz == null)
+			return false;
+		if (qualifiers == null)
+			return false;
+		for(Annotation annotation : qualifiers) {
+			if (annotation.annotationType().equals(clazz))
+				return true;
+		}
+		return false;
+	}
+	
 
 	public boolean shouldInject() {
 		return inject;
@@ -53,12 +68,12 @@ public class InjectionProperties {
 		return provider;
 	}
 
-	public void setQualifier(Class qualifier) {
-		this.qualifier = qualifier;
+	public void setQualifiers(Annotation[] qualifiers) {
+		this.qualifiers = qualifiers;
 	}
 
-	public Class getQualifier() {
-		return qualifier;
+	public Annotation[] getQualifiers() {
+		return qualifiers;
 	}
 
 	public void setHandlesEvent(String handlesEvent) {

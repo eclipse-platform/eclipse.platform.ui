@@ -15,6 +15,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,7 +26,6 @@ import org.eclipse.e4.core.di.annotations.GroupUpdates;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
-import org.eclipse.e4.core.internal.di.InjectionProperties;
 
 public class AnnotationsSupport {
 
@@ -81,32 +82,37 @@ public class AnnotationsSupport {
 		String qualifier = null;
 		String handlesEvent = null;
 		boolean eventHeadless = true;
-		Class<?> qualifierClass = null;
+		List<Annotation> qualifiers = new ArrayList<Annotation>();
+		Annotation qualifierClass = null;
 		boolean groupUpdates = false;
 		if (annotations != null) {
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof Inject)
 					inject = true;
-				else if (annotation instanceof Optional)
-					optional = true;
-				else if (annotation instanceof Named)
-					named = ((Named) annotation).value();
+//				else if (annotation instanceof Optional)
+//					optional = true;
+//				else if (annotation instanceof Named)
+//					named = ((Named) annotation).value();
 				else if (annotation instanceof GroupUpdates)
 					groupUpdates = true;
 				else if (annotation.annotationType().isAnnotationPresent(
 						Qualifier.class)) {
+					qualifiers.add(annotation);
+					qualifierClass = annotation;
 					Type type = annotation.annotationType();
 					if (type instanceof Class<?>) {
-						qualifierClass = (Class<?>) type;
-						qualifier = qualifierClass.getName();
+						qualifier = ((Class<?>)type).getName();
 					}
 				}
 			}
 		}
 		String injectName = (named != null) ? named : qualifier;
-		InjectionProperties result = new InjectionProperties(inject, injectName, optional);
-		if (qualifierClass != null)
-			result.setQualifier(qualifierClass);
+		InjectionProperties result = new InjectionProperties(inject, injectName);
+		if (!qualifiers.isEmpty()) {
+			Annotation[] qualifiersArray = new Annotation[qualifiers.size()];
+			qualifiers.toArray(qualifiersArray);
+			result.setQualifiers(qualifiersArray);
+		}
 		if (handlesEvent != null) {
 			result.setHandlesEvent(handlesEvent);
 			result.setEventHeadless(eventHeadless);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -40,6 +41,7 @@ import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.ObjectDescriptorFactory;
+import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 
 /**
  * Reflection-based dependency injector.
@@ -61,7 +63,7 @@ public class InjectorImpl implements IInjector {
 	public boolean inject(Object object, AbstractObjectSupplier objectSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, false /* no static */, true /* track */, true /* normal order */,
+		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, true /* normal order */,
 				requestors);
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
 		if (!resolveRequestorArgs(requestors, objectSupplier, false))
@@ -154,7 +156,7 @@ public class InjectorImpl implements IInjector {
 			return false; // not injected at this time
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, false /* no static */, true /* track */,
+		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */,
 				false /* inverse order */, requestors);
 		// might still need to get resolved values from secondary suppliers
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
@@ -201,7 +203,7 @@ public class InjectorImpl implements IInjector {
 			Method method = methods[j];
 			if (!method.getName().equals(methodName))
 				continue;
-			MethodRequestor requestor = new MethodRequestor(method, userObject, false, false, true);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, true);
 
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
@@ -231,7 +233,7 @@ public class InjectorImpl implements IInjector {
 
 	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier)
 			throws InvocationTargetException, InstantiationException {
-		IObjectDescriptor descriptor = ObjectDescriptorFactory.make(clazz, false);
+		IObjectDescriptor descriptor = ObjectDescriptorFactory.make(clazz, null);
 		return make(descriptor, objectSupplier);
 	}
 
@@ -281,7 +283,7 @@ public class InjectorImpl implements IInjector {
 			if (!cProps.shouldInject() && constructor.getParameterTypes().length != 0)
 				continue;
 
-			ConstructorRequestor requestor = new ConstructorRequestor(constructor);
+			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier);
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			if (unresolved(actualArgs) != -1)
 				continue;
@@ -321,7 +323,7 @@ public class InjectorImpl implements IInjector {
 		// TBD this is copy/paste from as invoke() with static = true.
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, true /* static */, true /* track */, true /* normal order */,
+		processClassHierarchy(object, objectSupplier, true /* static */, true /* track */, true /* normal order */,
 				requestors);
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
 		if (!resolveRequestorArgs(requestors, objectSupplier, false))
@@ -385,19 +387,19 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		for (int i = 0; i < count; i++) {
-			processPreDestory(objects[i], objects[i].getClass(), new ArrayList<Class<?>>(5));
+			processPreDestory(objects[i], objectSupplier, objects[i].getClass(), new ArrayList<Class<?>>(5));
 			uninject(objects[i], objectSupplier);
 		}
 		forgetSupplier(objectSupplier);
 		return true;
 	}
 
-	private void processPreDestory(Object userObject, Class<?> objectClass,
+	private void processPreDestory(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectClass,
 			ArrayList<Class<?>> classHierarchy) {
 		Class<?> superClass = objectClass.getSuperclass();
 		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
 			classHierarchy.add(objectClass);
-			processPreDestory(userObject, superClass, classHierarchy);
+			processPreDestory(userObject, objectSupplier, superClass, classHierarchy);
 			classHierarchy.remove(objectClass);
 		}
 		Method[] methods = objectClass.getDeclaredMethods();
@@ -409,7 +411,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 			if (!isOverridden(method, classHierarchy)) {
 				// TBD optional @PreDestory? might make sense if we allow args on those methods
-				MethodRequestor requestor = new MethodRequestor(method, userObject, false, false,
+				MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false,
 						false);
 				try {
 					requestor.execute();
@@ -533,12 +535,24 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private AbstractObjectSupplier findExtendedSupplier(IObjectDescriptor descriptor) {
-		String[] qualifiers = descriptor.getQualifiers();
+		Annotation[] qualifiers = descriptor.getQualifiers();
 		if (qualifiers == null)
 			return null;
-		for (String qualifier : qualifiers) {
-			if (extendedSuppliers.containsKey(qualifier))
-				return extendedSuppliers.get(qualifier);
+		for (Annotation qualifier : qualifiers) {
+			// TBD wrap in class-not-found if no OSGi
+			String key;
+			Type type = qualifier.annotationType();
+			if (type instanceof Class<?>) {
+				key = ((Class<?>)type).getName();
+			} else
+				continue;
+			
+			AbstractObjectSupplier supplier = ProviderHelper.findProvider(key);
+			if (supplier != null)
+				return supplier;
+			// TBD use cache
+//			if (extendedSuppliers.containsKey(qualifier))
+//				return extendedSuppliers.get(qualifier);
 		}
 		return null;
 	}
@@ -551,16 +565,16 @@ public class InjectorImpl implements IInjector {
 		return -1;
 	}
 
-	private void processClassHierarchy(Object userObject, boolean processStatic, boolean track,
+	private void processClassHierarchy(Object userObject, AbstractObjectSupplier objectSupplier, boolean processStatic, boolean track,
 			boolean normalOrder, List<Requestor> requestors) {
-		processClass(userObject, (userObject == null) ? null : userObject.getClass(),
+		processClass(userObject, objectSupplier, (userObject == null) ? null : userObject.getClass(),
 				new ArrayList<Class<?>>(5), processStatic, track, normalOrder, requestors);
 	}
 
 	/**
 	 * Make the processor visit all declared members on the given class and all superclasses
 	 */
-	private void processClass(Object userObject, Class<?> objectsClass,
+	private void processClass(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass,
 			ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track,
 			boolean normalOrder, List<Requestor> requestors) {
 		// order: superclass, fields, methods
@@ -568,26 +582,26 @@ public class InjectorImpl implements IInjector {
 			Class<?> superClass = objectsClass.getSuperclass();
 			if (!superClass.getName().equals(JAVA_OBJECT)) {
 				classHierarchy.add(objectsClass);
-				processClass(userObject, superClass, classHierarchy, processStatic, track,
+				processClass(userObject, objectSupplier, superClass, classHierarchy, processStatic, track,
 						normalOrder, requestors);
 				classHierarchy.remove(objectsClass);
 			}
 		}
 		if (normalOrder) {
-			processFields(userObject, objectsClass, processStatic, track, requestors);
-			processMethods(userObject, objectsClass, classHierarchy, processStatic, track,
+			processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
+			processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track,
 					requestors);
 		} else {
-			processMethods(userObject, objectsClass, classHierarchy, processStatic, track,
+			processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track,
 					requestors);
-			processFields(userObject, objectsClass, processStatic, track, requestors);
+			processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
 		}
 	}
 
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private void processFields(Object userObject, Class<?> objectsClass, boolean processStatic,
+	private void processFields(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, boolean processStatic,
 			boolean track, List<Requestor> requestors) {
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
@@ -601,7 +615,7 @@ public class InjectorImpl implements IInjector {
 			if (!properties.shouldInject())
 				continue;
 
-			requestors.add(new FieldRequestor(field, userObject, track, properties.groupUpdates(),
+			requestors.add(new FieldRequestor(field, this, objectSupplier, userObject, track, properties.groupUpdates(),
 					properties.isOptional()));
 		}
 	}
@@ -611,7 +625,7 @@ public class InjectorImpl implements IInjector {
 	 * 
 	 * @throws InvocationTargetException
 	 */
-	private void processMethods(final Object userObject, Class<?> objectsClass,
+	private void processMethods(final Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass,
 			ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track,
 			List<Requestor> requestors) {
 		Method[] methods = objectsClass.getDeclaredMethods();
@@ -653,7 +667,7 @@ public class InjectorImpl implements IInjector {
 			if (!properties.shouldInject())
 				continue;
 
-			requestors.add(new MethodRequestor(method, userObject, track,
+			requestors.add(new MethodRequestor(method, this, objectSupplier, userObject, track,
 					properties.groupUpdates(), properties.isOptional()));
 		}
 	}
@@ -711,7 +725,7 @@ public class InjectorImpl implements IInjector {
 			if (isOverridden(method, classHierarchy))
 				continue;
 
-			MethodRequestor requestor = new MethodRequestor(method, userObject, false, false, false);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, false);
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
@@ -796,7 +810,19 @@ public class InjectorImpl implements IInjector {
 			if (!bindings.containsKey(desiredClass))
 				return null;
 			Set<IBinding> collection = bindings.get(desiredClass);
-			String desiredQualifierName = descriptor.getQualifierValue(Named.class.getName());
+			String desiredQualifierName = null;
+			if (descriptor.hasQualifier(Named.class)) {
+				Object namedAnnotation = descriptor.getQualifier(Named.class);
+				desiredQualifierName = ((Named) namedAnnotation).value();
+			} else {
+				Annotation[] annotations = descriptor.getQualifiers();
+				if (annotations != null) {
+					for(Annotation annotation : annotations) {
+						desiredQualifierName = annotation.annotationType().getName();
+						break;
+					}
+				}
+			}
 
 			for (Iterator<IBinding> i = collection.iterator(); i.hasNext();) {
 				IBinding collectionBinding = i.next();
