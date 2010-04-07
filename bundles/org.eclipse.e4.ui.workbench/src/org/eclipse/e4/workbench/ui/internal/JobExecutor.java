@@ -11,10 +11,11 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.work.ISchedulingExecutor;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.equinox.concurrent.future.*;
 
 /**

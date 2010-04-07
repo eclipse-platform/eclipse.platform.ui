@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
  org.eclipse.e4.core.commands,
- org.eclipse.e4.core.services,
+ org.eclipse.e4.core.services.log,
+ org.eclipse.e4.core.services.util,
  org.eclipse.jface.bindings,
  org.eclipse.jface.bindings.keys,
  org.eclipse.jface.bindings.keys.formatting,

@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import org.eclipse.e4.core.services.log.Logger;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +22,6 @@ import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.Logger;
 
 /**
  *

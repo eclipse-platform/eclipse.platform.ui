@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
+import org.eclipse.e4.core.services.log.Logger;
+
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -20,7 +22,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import javax.inject.Inject;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.ui.internal.services.Activator;
 import org.eclipse.e4.ui.internal.services.ServiceMessages;
 import org.eclipse.osgi.util.NLS;

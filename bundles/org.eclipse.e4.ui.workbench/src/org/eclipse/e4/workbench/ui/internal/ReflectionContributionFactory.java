@@ -11,6 +11,9 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.contributions.IContributionFactorySpi;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,8 +29,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;

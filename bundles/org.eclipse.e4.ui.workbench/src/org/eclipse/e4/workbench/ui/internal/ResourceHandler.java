@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,7 +27,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;

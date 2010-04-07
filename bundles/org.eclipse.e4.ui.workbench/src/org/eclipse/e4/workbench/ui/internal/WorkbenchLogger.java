@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.util.ArrayList;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.debug.DebugOptions;

@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 import javax.inject.Inject;
@@ -26,9 +32,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
-import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.StatusReporter;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.internal.core.services.bundle.BundleContextStrategy;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;

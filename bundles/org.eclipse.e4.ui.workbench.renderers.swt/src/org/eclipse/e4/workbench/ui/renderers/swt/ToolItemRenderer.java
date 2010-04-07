@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +26,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
-import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.ItemType;

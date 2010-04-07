@@ -11,13 +11,14 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;

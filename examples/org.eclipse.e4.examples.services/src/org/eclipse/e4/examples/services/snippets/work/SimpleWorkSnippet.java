@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.e4.core.services.StatusReporter;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.core.services.work.WorkContext;
 import org.eclipse.e4.core.services.work.WorkRunnable;
 import org.eclipse.e4.core.services.work.WorkScheduler;

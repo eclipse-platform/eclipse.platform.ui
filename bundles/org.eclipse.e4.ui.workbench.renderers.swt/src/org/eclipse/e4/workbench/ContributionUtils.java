@@ -11,12 +11,14 @@
 
 package org.eclipse.e4.workbench;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+
+import org.eclipse.e4.core.services.log.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.ui.model.application.MContribution;
 
 /**

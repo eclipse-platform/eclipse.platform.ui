@@ -11,13 +11,15 @@
 
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+
+import org.eclipse.e4.core.services.log.Logger;
+
 import org.eclipse.e4.core.di.annotations.Optional;
 
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.StatusReporter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;

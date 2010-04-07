@@ -11,6 +11,12 @@
 
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+
+import org.eclipse.e4.core.services.log.Logger;
+
+import org.eclipse.e4.core.services.adapter.Adapter;
+
 import java.io.IOException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
@@ -25,9 +31,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
-import org.eclipse.e4.core.services.Adapter;
-import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;

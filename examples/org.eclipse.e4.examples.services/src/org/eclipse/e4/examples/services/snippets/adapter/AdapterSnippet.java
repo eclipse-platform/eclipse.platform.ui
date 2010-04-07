@@ -14,7 +14,7 @@ package org.eclipse.e4.examples.services.snippets.adapter;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.e4.core.services.Adapter;
+import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.examples.services.snippets.SnippetSetup;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;

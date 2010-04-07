@@ -13,7 +13,7 @@ package org.eclipse.e4.examples.services.snippets;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
-import org.eclipse.e4.core.services.Adapter;
+import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.contexts.*;
 
 @SuppressWarnings("restriction")
