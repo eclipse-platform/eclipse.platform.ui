@@ -348,27 +348,36 @@ public class ModeledPageLayout implements IPageLayout {
 			EList<MUIElement> children = relParent.getChildren();
 			int index = children.indexOf(relTo);
 			MPartSashContainer psc = MApplicationFactory.eINSTANCE.createPartSashContainer();
+			psc.setContainerData(relTo.getContainerData());
 			relParent.getChildren().add(index + 1, psc);
 
 			switch (swtSide) {
 			case SWT.LEFT:
 				psc.getChildren().add((MPSCElement) toInsert);
 				psc.getChildren().add((MPSCElement) relTo);
+				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
+				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.RIGHT:
 				psc.getChildren().add((MPSCElement) relTo);
 				psc.getChildren().add((MPSCElement) toInsert);
+				relTo.setContainerData("" + ratio); //$NON-NLS-1$
+				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.TOP:
 				psc.getChildren().add((MPSCElement) toInsert);
 				psc.getChildren().add((MPSCElement) relTo);
+				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
+				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
 				break;
 			case SWT.BOTTOM:
 				psc.getChildren().add((MPSCElement) relTo);
 				psc.getChildren().add((MPSCElement) toInsert);
+				relTo.setContainerData("" + ratio); //$NON-NLS-1$
+				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
 				break;
 			}
