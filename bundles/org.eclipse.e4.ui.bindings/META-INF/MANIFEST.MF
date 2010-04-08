@@ -1,8 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Bindings Support (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.bindings;singleton:=true
 Bundle-Version: 0.9.0.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.e4.ui.bindings.internal.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
