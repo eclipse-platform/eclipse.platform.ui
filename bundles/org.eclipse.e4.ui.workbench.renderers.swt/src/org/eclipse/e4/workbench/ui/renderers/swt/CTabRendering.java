@@ -770,6 +770,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	int cornerSize = 14;
 
 	boolean shadowEnabled = true;
+	Color outerKeyline, innerKeyline;
 
 	@Inject
 	public CTabRendering(CTabFolder parent) {
@@ -928,7 +929,9 @@ public class CTabRendering extends CTabFolderRenderer {
 
 		// White Keyline
 		// gc.setAntialias(SWT.ON);
-		gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+		if (innerKeyline == null)
+			innerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
+		gc.setForeground(innerKeyline);
 		gc.drawPolyline(tempPoints);
 
 		ltt = drawCircle(circX + 2, circY + 2, radius, LEFT_TOP);
@@ -943,10 +946,11 @@ public class CTabRendering extends CTabFolderRenderer {
 		int rtLength = rt.length;
 		gc.drawLine(rt[rtLength - 2], rt[rtLength - 1], ltt[0], ltt[1]);
 
-		Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
-		gc.setForeground(borderBlue);
+		// Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
+		if (outerKeyline == null)
+			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+		gc.setForeground(outerKeyline);
 		gc.drawPolyline(shape);
-		borderBlue.dispose();
 	}
 
 	void drawTabBody(GC gc, Rectangle bounds, int state) {
@@ -1054,10 +1058,11 @@ public class CTabRendering extends CTabFolderRenderer {
 		Rectangle rect = null;
 		gc.setClipping(rect);
 
-		Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
-		gc.setForeground(borderBlue);
+		// Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
+		if (outerKeyline == null)
+			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+		gc.setForeground(outerKeyline);
 		gc.drawPolyline(shape);
-		borderBlue.dispose();
 	}
 
 	static int[] drawCircle(int xC, int yC, int r, int circlePart) {
@@ -1230,6 +1235,20 @@ public class CTabRendering extends CTabFolderRenderer {
 	@Optional
 	public void setShadowVisible(@Named("shadowVisible") Boolean visible) {
 		this.shadowEnabled = visible.booleanValue();
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setOuterKeyline(@Named("outerKeyline") Color color) {
+		this.outerKeyline = color;
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setInnerKeyline(@Named("innerKeyline") Color color) {
+		this.innerKeyline = color;
 		parent.redraw();
 	}
 }

@@ -28,11 +28,13 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCornerRadiusSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyInnerKeylineSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyOuterKeylineSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
@@ -169,10 +171,20 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(CSSPropertyCornerRadiusSWTHandler.class,
 				CSSPropertyCornerRadiusSWTHandler.INSTANCE);
 		
-		//Register SWT CSS Property corner radius
+		//Register SWT CSS Property shadow visible
 		super.registerCSSProperty("shadow-visible", CSSPropertyShadowVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyShadowVisibleSWTHandler.class,
 				CSSPropertyShadowVisibleSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property outer keyline color
+		super.registerCSSProperty("outer-keyline-color", CSSPropertyOuterKeylineSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyOuterKeylineSWTHandler.class,
+				CSSPropertyOuterKeylineSWTHandler.INSTANCE);
+		
+		//Register SWT CSS Property inner keyline color
+		super.registerCSSProperty("inner-keyline-color", CSSPropertyInnerKeylineSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyInnerKeylineSWTHandler.class,
+				CSSPropertyInnerKeylineSWTHandler.INSTANCE);
 		
 		//ETabFolder properties
 		
