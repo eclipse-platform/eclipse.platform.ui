@@ -3,7 +3,7 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="application"
     nsURI="http://www.eclipse.org/ui/2010/UIModel/application" nsPrefix="application">
-  <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.services.context.IEclipseContext"
+  <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.contexts.IEclipseContext"
       serializable="false"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringToStringMap" instanceClassName="java.util.Map$Entry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -13,19 +13,19 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//commands/Command" containment="true"/>
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-      <eTypeArguments eClassifier="#//ui/base/Window"/>
+      <eTypeArguments eClassifier="#//ui/basic/Window"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/BindingTableContainer"/>
-    <eGenericSuperTypes eClassifier="#//descriptor/base/PartDescriptorContainer"/>
+    <eGenericSuperTypes eClassifier="#//descriptor/basic/PartDescriptorContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelComponents">
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//ModelComponent" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/base/PartDescriptorContainer #//ApplicationElement #//commands/HandlerContainer #//commands/BindingTableContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/basic/PartDescriptorContainer #//ApplicationElement #//commands/HandlerContainer #//commands/BindingTableContainer">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
@@ -47,7 +47,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//StringToStringMap"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//StringToStringMap"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
@@ -234,9 +235,9 @@
             eType="#//commands/Parameter" containment="true"/>
       </eClassifiers>
     </eSubpackages>
-    <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/base"
-        nsPrefix="base">
-      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//ui/base/PartSashContainerElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/base/WindowElement">
+    <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
+        nsPrefix="basic">
+      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//ui/basic/PartSashContainerElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -244,20 +245,20 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/base/Part #//ui/Input"/>
+      <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input"/>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
-          <eTypeArguments eClassifier="#//ui/base/Part"/>
+          <eTypeArguments eClassifier="#//ui/basic/Part"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/PartSashContainerElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/base/WindowElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/PartSashContainerElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
         <eGenericSuperTypes eClassifier="#//ui/GenericTile">
-          <eTypeArguments eClassifier="#//ui/base/PartSashContainerElement"/>
+          <eTypeArguments eClassifier="#//ui/basic/PartSashContainerElement"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/PartSashContainerElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/base/WindowElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/PartSashContainerElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Window">
         <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//ui/menu/Menu"
@@ -267,11 +268,11 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trims" upperBound="-1"
-            eType="#//ui/base/WindowTrim" containment="true"/>
+            eType="#//ui/basic/WindowTrim" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
-            eType="#//ui/base/Window" containment="true"/>
+            eType="#//ui/basic/Window" containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/base/WindowElement"/>
+          <eTypeArguments eClassifier="#//ui/basic/WindowElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
         <eGenericSuperTypes eClassifier="#//Context"/>
@@ -283,13 +284,13 @@
           <eBounds eClassifier="#//ui/UIElement"/>
         </eTypeParameters>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1"
-            eType="#//ui/extended/SideValue"/>
+            eType="#//ui/advanced/SideValue"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eTypeParameter="#//ui/base/TrimContainer/T"/>
+          <eTypeArguments eTypeParameter="#//ui/basic/TrimContainer/T"/>
         </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
-        <eGenericSuperTypes eClassifier="#//ui/base/TrimContainer">
+        <eGenericSuperTypes eClassifier="#//ui/basic/TrimContainer">
           <eTypeArguments eClassifier="#//ui/UIElement"/>
         </eGenericSuperTypes>
       </eClassifiers>
@@ -298,17 +299,17 @@
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement"/>
     </eSubpackages>
-    <eSubpackages name="extended" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/extended"
-        nsPrefix="extended">
+    <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
+        nsPrefix="advanced">
       <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Perspective">
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
-            eType="#//ui/base/Window" containment="true"/>
+            eType="#//ui/basic/Window" containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/base/PartSashContainerElement"/>
+          <eTypeArguments eClassifier="#//ui/basic/PartSashContainerElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
         <eGenericSuperTypes eClassifier="#//Context"/>
@@ -316,9 +317,9 @@
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
-          <eTypeArguments eClassifier="#//ui/extended/Perspective"/>
+          <eTypeArguments eClassifier="#//ui/advanced/Perspective"/>
         </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/base/WindowElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
         <eLiterals name="Top"/>
@@ -330,8 +331,8 @@
   </eSubpackages>
   <eSubpackages name="descriptor" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor"
       nsPrefix="descriptor">
-    <eSubpackages name="base" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/base"
-        nsPrefix="base">
+    <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
+        nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//Contribution #//Context #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -344,7 +345,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
-            eType="#//descriptor/base/PartDescriptor" containment="true"/>
+            eType="#//descriptor/basic/PartDescriptor" containment="true"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>
