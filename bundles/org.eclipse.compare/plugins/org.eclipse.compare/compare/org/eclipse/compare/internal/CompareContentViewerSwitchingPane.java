@@ -136,6 +136,7 @@ public class CompareContentViewerSwitchingPane extends
 				.setToolTipText(CompareMessages.CompareContentViewerSwitchingPane_optimizedTooltip);
 		clOptimized.setImage(CompareUIPlugin.getImageDescriptor(
 				OPTIMIZED_WARNING_IMAGE_NAME).createImage());
+		clOptimized.setVisible(false); // hide by default
 		clOptimized.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				Image img = clOptimized.getImage();

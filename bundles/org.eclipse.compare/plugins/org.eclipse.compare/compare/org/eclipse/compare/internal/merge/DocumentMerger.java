@@ -453,6 +453,10 @@ public class DocumentMerger {
 			fInput.getCompareConfiguration().setProperty(
 					CompareContentViewerSwitchingPane.OPTIMIZED_ALGORITHM_USED,
 					new Boolean(true));
+		else
+			fInput.getCompareConfiguration().setProperty(
+					CompareContentViewerSwitchingPane.OPTIMIZED_ALGORITHM_USED,
+					new Boolean(false));
 
 		ArrayList newAllDiffs = new ArrayList();
 		for (int i= 0; i < e.length; i++) {
