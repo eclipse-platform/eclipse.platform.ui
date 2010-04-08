@@ -9,7 +9,7 @@
             extensions="e4xmi"
             icon="icons/full/obj16/application_view_tile.png"
             id="org.eclipse.e4.tools.emf.editor3x.e4wbm"
-            name="E4 Workbenchmodel Editor">
+            name="e4 Workbenchmodel Editor">
       </editor>
    </extension>
 
