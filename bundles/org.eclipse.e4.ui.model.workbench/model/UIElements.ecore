@@ -192,7 +192,9 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//ui/menu/ItemType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//ui/menu/Item"/>
+      <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//ui/menu/Item">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="mnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Menu">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/MenuItem"/>
