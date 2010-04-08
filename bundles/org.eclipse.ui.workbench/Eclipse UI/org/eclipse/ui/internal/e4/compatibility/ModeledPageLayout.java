@@ -23,7 +23,6 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -39,8 +38,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 public class ModeledPageLayout implements IPageLayout {
 
 	private MApplication application;
-	EModelService modelService;
-	MWindow window;
+	private EModelService modelService;
 	WorkbenchPage page;
 	private MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
@@ -53,16 +51,19 @@ public class ModeledPageLayout implements IPageLayout {
 	private ArrayList showViewShortcut = new ArrayList();
 	private ArrayList actionSet = new ArrayList();
 
-	public ModeledPageLayout(MApplication application, EModelService modelService, MWindow window,
-			MPerspective perspModel,
- IPerspectiveDescriptor descriptor, WorkbenchPage page) {
+	boolean createReferences;
+
+	public ModeledPageLayout(MApplication application, EModelService modelService,
+			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
+			boolean createReferences) {
 		this.application = application;
 		this.modelService = modelService;
-		this.window = window;
 		this.page = page;
 		// Create the editor area stack
 		this.perspModel = perspModel;
 		this.descriptor = descriptor;
+
+		this.createReferences = createReferences;
 
 		MPartSashContainer esc = MApplicationFactory.eINSTANCE.createPartSashContainer();
 		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
@@ -225,7 +226,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public static MPart createViewModel(MApplication application, String id, boolean visible,
-			WorkbenchPage page) {
+			WorkbenchPage page, boolean createReferences) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getId().equals(id)) {
 				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
@@ -233,7 +234,7 @@ public class ModeledPageLayout implements IPageLayout {
 				// there should only be view references for views that are
 				// visible to the end user, that is, the tab items are being
 				// drawn
-				if (visible) {
+				if (visible && createReferences) {
 					page.createViewReferenceForPart(part, id);
 				}
 				return part;
@@ -259,7 +260,7 @@ public class ModeledPageLayout implements IPageLayout {
 			refModel = refModel.getParent();
 		}
 
-		MPart viewModel = createViewModel(application, viewId, visible, page);
+		MPart viewModel = createViewModel(application, viewId, visible, page, createReferences);
 
 		if (withStack) {
 			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$

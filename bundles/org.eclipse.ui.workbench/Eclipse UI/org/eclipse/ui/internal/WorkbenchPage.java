@@ -1589,12 +1589,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
-			String uri = part.getURI();
-			if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
-				createViewReferenceForPart(part, part.getId());
-			} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-				// TODO compat: we need that editor input back, or we have squat
-				createEditorReferenceForPart(part, null, part.getId());
+			if (part.isToBeRendered()) {
+				String uri = part.getURI();
+				if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
+					createViewReferenceForPart(part, part.getId());
+				} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+					// TODO compat: we need that editor input back, or we have
+					// squat
+					createEditorReferenceForPart(part, null, part.getId());
+				}
 			}
 		}
     }
@@ -1989,8 +1992,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
 				// use a new perspective since we're only interested in
 				// shortcuts here, see bug 305918
-				modelLayout = new ModeledPageLayout(application, modelService, window,
-						MApplicationFactory.eINSTANCE.createPerspective(), perspective, this);
+				modelLayout = new ModeledPageLayout(application, modelService,
+						MApplicationFactory.eINSTANCE.createPerspective(), perspective, this, false);
 				factory.createInitialLayout(modelLayout);
 
 				// this perspective already exists, switch to this one
@@ -2007,8 +2010,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		modelLayout = new ModeledPageLayout(application, modelService, window, modelPerspective,
-				perspective, this);
+		modelLayout = new ModeledPageLayout(application, modelService, modelPerspective,
+				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
 		tagPerspective(modelPerspective);
 
