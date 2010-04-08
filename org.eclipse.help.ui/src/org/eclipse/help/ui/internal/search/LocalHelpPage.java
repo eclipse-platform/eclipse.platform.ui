@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.ui.*;
 import org.eclipse.help.ui.internal.Messages;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -43,8 +42,6 @@ public class LocalHelpPage extends RootScopePage {
 	//private boolean firstCheck;
 
 	private WorkingSet workingSet;
-
-	private Button capabilityFiltering;
 
 	public void init(IEngineDescriptor ed, String scopeSetName) {
 		super.init(ed, scopeSetName);
@@ -148,14 +145,6 @@ public class LocalHelpPage extends RootScopePage {
 			}
 		});
 		tree.getTree().setEnabled(workingSet != null);
-		capabilityFiltering = new Button(parent, SWT.CHECK);
-		String checkboxLabel = HelpBasePlugin.getActivitySupport().getLocalScopeCheckboxLabel();
-		if (checkboxLabel==null)
-			checkboxLabel = Messages.LocalHelpPage_capabilityFiltering_name;  
-		capabilityFiltering.setText(checkboxLabel);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		capabilityFiltering.setLayoutData(gd);
 		
 		initializeCheckedState();
 		applyDialogFont(parent);
@@ -166,10 +155,6 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	private void initializeCheckedState() {
-		IPreferenceStore store = getPreferenceStore();
-		capabilityFiltering.setSelection(store.getBoolean(getEngineDescriptor()
-				.getId()
-				+ "." + LocalSearchScopeFactory.P_CAPABILITY_FILTERING)); //$NON-NLS-1$
 		if (workingSet == null)
 			return;
 
@@ -294,7 +279,7 @@ public class LocalHelpPage extends RootScopePage {
 				getScopeSetName());
 		getPreferenceStore().setValue(
 				getKey(LocalSearchScopeFactory.P_CAPABILITY_FILTERING),
-				capabilityFiltering.getSelection());
+				false);
 		return super.performOk();
 	}
 

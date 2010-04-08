@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,6 @@ public class LocalSearchScopeFactory implements ISearchScopeFactory {
         if (name != null)
             workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(name);
         boolean capabilityFiltering = store.getBoolean(engineId+"."+P_CAPABILITY_FILTERING); //$NON-NLS-1$
-        return new LocalHelpScope(workingSet, !capabilityFiltering);
+        return new LocalHelpScope(workingSet, capabilityFiltering);
     }
 }
