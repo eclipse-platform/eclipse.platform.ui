@@ -31,9 +31,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -260,7 +262,14 @@ public class PathVariablesGroup {
         if (multiSelect) {
             tableStyle |= SWT.MULTI;
         }
-        variableTable = new TableViewer(pageComponent, tableStyle);
+        
+		Composite tableComposite = new Composite(pageComponent, SWT.NONE);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		tableComposite.setLayoutData(data);
+
+		variableTable = new TableViewer(tableComposite, tableStyle);
         variableTable.getTable().addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnabledState();
@@ -272,16 +281,21 @@ public class PathVariablesGroup {
         
 		ColumnViewerToolTipSupport.enableFor(variableTable, ToolTip.NO_RECREATE);
 
-		TableViewerColumn tableColumn = new TableViewerColumn(variableTable, SWT.NONE);
-        tableColumn.setLabelProvider(new NameLabelProvider());
-        tableColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
-        tableColumn.getColumn().setWidth(150);
-        tableColumn = new TableViewerColumn(variableTable, SWT.NONE);
-        tableColumn.setLabelProvider(new ValueLabelProvider());
-        tableColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
-        tableColumn.getColumn().setWidth(280);
+		TableViewerColumn nameColumn = new TableViewerColumn(variableTable, SWT.NONE);
+		nameColumn.setLabelProvider(new NameLabelProvider());
+		nameColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
+
+        TableViewerColumn valueColumn = new TableViewerColumn(variableTable, SWT.NONE);
+        valueColumn.setLabelProvider(new ValueLabelProvider());
+        valueColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
         
-        variableTable.getTable().setHeaderVisible(true);
+        TableColumnLayout tableLayout = new TableColumnLayout();
+		tableComposite.setLayout( tableLayout );
+
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(150));
+		tableLayout.setColumnData(valueColumn.getColumn(), new ColumnWeightData(280));
+
+		variableTable.getTable().setHeaderVisible(true);
         data = new GridData(GridData.FILL_BOTH);
         data.heightHint = variableTable.getTable().getItemHeight() * 7;
         variableTable.getTable().setLayoutData(data);
