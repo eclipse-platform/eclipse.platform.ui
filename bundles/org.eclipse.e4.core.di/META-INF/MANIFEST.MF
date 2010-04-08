@@ -1,13 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: e4 Dependecy Injection
 Bundle-SymbolicName: org.eclipse.e4.core.di
 Bundle-Version: 0.9.0.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.e4.core.internal.di.DIActivator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.core.di,
  org.eclipse.e4.core.di.annotations,
- org.eclipse.e4.core.internal.di;x-internal:=true
+ org.eclipse.e4.core.internal.di;x-internal:=true,
+ org.eclipse.e4.core.internal.di.osgi;x-internal:=true
 Require-Bundle: org.eclipse.osgi;bundle-version="3.6.0";resolution:=optional
 Import-Package: javax.inject;version="1.0.0"
