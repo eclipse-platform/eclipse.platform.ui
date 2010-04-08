@@ -218,8 +218,6 @@
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx13B" id="org.eclipse.e4.samples" label="e&amp;4">
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13C" id="org.eclipse.e4.ui.examples.generatePsfProject" label="Generate e4 Example Project" command="org.eclipse.e4.ui.examples.generatePsfProject"/>
-        <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13CA" id="org.eclipse.e4.tools.context.generateContextSnapshot" label="Generate Context Snapshot" command="_oRr6EAFSEd-Z8rQksLwRYxx"/>
-        <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13CB" id="org.eclipse.e4.tools.context.diffContextSnapshot" label="Diff Context Snapshot" command="_oRr6EAFSEd-Z8rQksLwRYxy"/>
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx13D" id="help" label="&amp;Help">
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13E" id="intro" label="&amp;Welcome" command="org.eclipse.ui.help.quickStartAction"/>
@@ -255,8 +253,6 @@
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYw" keySequence="CTRL+S" id="_oRr6EAFSEd-Z8rQksLwRYw" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYx" keySequence="CTRL+SHIFT+S" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   </bindingTables>
-  <commands xmi:id="_oRr6EAFSEd-Z8rQksLwRYxx" id="org.eclipse.e4.tools.globalSnapshot" commandName="Generate Context Snapshot"/>
-  <commands xmi:id="_oRr6EAFSEd-Z8rQksLwRYxy" id="org.eclipse.e4.tools.globalDiff" commandName="Diff Context Snapshot"/>
   <commands xmi:id="e4.exit" id="e4.exit" commandName="Exit" description=""/>
   <commands xmi:id="e4.show.view" id="e4.show.view" commandName="Show View"/>
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveCommands" commandName="Save"/>
