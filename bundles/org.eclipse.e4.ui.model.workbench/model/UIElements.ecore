@@ -192,24 +192,24 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//ui/menu/ItemType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuElement" eSuperTypes="#//ui/menu/Item"/>
+      <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//ui/menu/Item"/>
       <eClassifiers xsi:type="ecore:EClass" name="Menu">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
+          <eTypeArguments eClassifier="#//ui/menu/MenuItem"/>
         </eGenericSuperTypes>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuItem">
-        <eGenericSuperTypes eClassifier="#//ui/menu/MenuElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="SubMenu">
+        <eGenericSuperTypes eClassifier="#//ui/menu/MenuItem"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
+          <eTypeArguments eClassifier="#//ui/menu/MenuItem"/>
         </eGenericSuperTypes>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//Contribution #//ui/menu/MenuElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuElement #//ui/menu/HandledItem"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//Contribution #//ui/menu/MenuItem"/>
+      <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolItem">
         <eGenericSuperTypes eClassifier="#//ui/menu/Item"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/MenuItem"/>
+          <eTypeArguments eClassifier="#//ui/menu/SubMenu"/>
         </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution"/>
