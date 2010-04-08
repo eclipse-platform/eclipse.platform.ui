@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 
 
 /**
@@ -576,10 +578,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		Object[] listeners= fDocumentPartitioningListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			IDocumentPartitioningListener l= (IDocumentPartitioningListener)listeners[i];
-			if (l instanceof IDocumentPartitioningListenerExtension)
-				((IDocumentPartitioningListenerExtension) l).documentPartitioningChanged(this, region);
-			else
-				l.documentPartitioningChanged(this);
+			try {
+				if (l instanceof IDocumentPartitioningListenerExtension)
+					((IDocumentPartitioningListenerExtension)l).documentPartitioningChanged(this, region);
+				else
+					l.documentPartitioningChanged(this);
+			} catch (Exception ex) {
+				log(ex);
+			}
 		}
 	}
 
@@ -599,14 +605,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		Object[] listeners= fDocumentPartitioningListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			IDocumentPartitioningListener l= (IDocumentPartitioningListener)listeners[i];
-			if (l instanceof IDocumentPartitioningListenerExtension2) {
-				IDocumentPartitioningListenerExtension2 extension2= (IDocumentPartitioningListenerExtension2) l;
-				extension2.documentPartitioningChanged(event);
-			} else if (l instanceof IDocumentPartitioningListenerExtension) {
-				IDocumentPartitioningListenerExtension extension= (IDocumentPartitioningListenerExtension) l;
-				extension.documentPartitioningChanged(this, event.getCoverage());
-			} else {
-				l.documentPartitioningChanged(this);
+			try {
+				if (l instanceof IDocumentPartitioningListenerExtension2) {
+					IDocumentPartitioningListenerExtension2 extension2= (IDocumentPartitioningListenerExtension2)l;
+					extension2.documentPartitioningChanged(event);
+				} else if (l instanceof IDocumentPartitioningListenerExtension) {
+					IDocumentPartitioningListenerExtension extension= (IDocumentPartitioningListenerExtension)l;
+					extension.documentPartitioningChanged(this, event.getCoverage());
+				} else {
+					l.documentPartitioningChanged(this);
+				}
+			} catch (Exception ex) {
+				log(ex);
 			}
 		}
 	}
@@ -632,19 +642,33 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 					if (extension.getActiveRewriteSession() != null)
 						continue;
 				}
-				p.documentAboutToBeChanged(event);
+				try {
+					p.documentAboutToBeChanged(event);
+				} catch (Exception ex) {
+					log(ex);
+				}
 			}
 		}
 
 		Object[] listeners= fPrenotifiedDocumentListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
+		for (int i= 0; i < listeners.length; i++) {
+			try {
+				((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
+			} catch (Exception ex) {
+				log(ex);
+			}
+		}
 
 		listeners= fDocumentListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
-	}
+		for (int i= 0; i < listeners.length; i++) {
+			try {
+				((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
+			} catch (Exception ex) {
+				log(ex);
+			}
+		}
 
+	}
 
 	/**
 	 * Updates document partitioning and document positions according to the
@@ -731,12 +755,22 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			fireDocumentPartitioningChanged(p);
 
 		Object[] listeners= fPrenotifiedDocumentListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDocumentListener)listeners[i]).documentChanged(event);
+		for (int i= 0; i < listeners.length; i++) {
+			try {
+				((IDocumentListener)listeners[i]).documentChanged(event);
+			} catch (Exception ex) {
+				log(ex);
+			}
+		}
 
 		listeners= fDocumentListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDocumentListener)listeners[i]).documentChanged(event);
+		for (int i= 0; i < listeners.length; i++) {
+			try {
+				((IDocumentListener)listeners[i]).documentChanged(event);
+			} catch (Exception ex) {
+				log(ex);
+			}
+		}
 
 		// IDocumentExtension
 		++ fReentranceCount;
@@ -1520,8 +1554,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			List list= new ArrayList(fDocumentRewriteSessionListeners);
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
-				IDocumentRewriteSessionListener l= (IDocumentRewriteSessionListener) e.next();
-				l.documentRewriteSessionChanged(event);
+				try {
+					IDocumentRewriteSessionListener l= (IDocumentRewriteSessionListener)e.next();
+					l.documentRewriteSessionChanged(event);
+				} catch (Exception ex) {
+					log(ex);
+				}
 			}
 		}
 	}
@@ -1796,5 +1834,22 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		return positions.subList(indexStart, indexEnd);
 	}
 
+	/**
+	 * Logs the given exception by reusing the code in {@link SafeRunner}.
+	 * 
+	 * @param ex the exception
+	 * @since 3.6
+	 */
+	private static void log(final Exception ex) {
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				throw ex;
+			}
+
+			public void handleException(Throwable exception) {
+				// NOTE: Logging is done by SafeRunner
+			}
+		});
+	}
 
 }
