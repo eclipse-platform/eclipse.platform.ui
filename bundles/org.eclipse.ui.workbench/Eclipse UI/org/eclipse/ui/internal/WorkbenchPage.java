@@ -1248,15 +1248,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public IEditorPart getActiveEditor() {
-		IWorkbenchPart part = getActivePart();
-		if (part instanceof IEditorPart) {
-			return (IEditorPart) part;
-		}
-
 		for (MPart model : activationList) {
 			Object object = model.getObject();
 			if (object instanceof CompatibilityEditor) {
-				return ((CompatibilityEditor) object).getEditor();
+				CompatibilityEditor editor = (CompatibilityEditor) object;
+				// see bug 308492
+				if (!editor.isBeingDisposed()) {
+					return ((CompatibilityEditor) object).getEditor();
+				}
 			}
 		}
 		return null;

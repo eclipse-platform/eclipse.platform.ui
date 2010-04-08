@@ -25,7 +25,9 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -58,6 +60,8 @@ public abstract class CompatibilityPart {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	private boolean beingDisposed = false;
 
 	/**
 	 * This handler will be notified when the contribution object has been unset
@@ -118,8 +122,28 @@ public abstract class CompatibilityPart {
 		return Util.safeString(wrapped.getTitle());
 	}
 
+	/**
+	 * Returns whether this part is being disposed. This is used for
+	 * invalidating this part so that it is not returned when a method expects a
+	 * "working" part.
+	 * <p>
+	 * See bug 308492.
+	 * </p>
+	 * 
+	 * @return if the part is currently being disposed
+	 */
+	public boolean isBeingDisposed() {
+		return beingDisposed;
+	}
+
 	@PostConstruct
 	public void create() throws PartInitException {
+		composite.addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
+				beingDisposed = true;
+			}
+		});
+
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
 				UIEvents.Contribution.OBJECT), objectUnsetHandler);
 
