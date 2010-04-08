@@ -4,9 +4,9 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2008 IBM Corporation and others.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xD;&#xA;     IBM Corporation - initial API and implementation"
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
     modelName="UIElements" modelPluginClass="org.eclipse.e4.ui.model.application.impl.MWorkbenchModelActivator"
-    nonNLSMarkers="true" rootExtendsInterface="" suppressEMFTypes="true" featureMapWrapperInternalInterface=""
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
-    interfaceNamePattern="M{0}">
+    nonNLSMarkers="true" rootExtendsInterface="" suppressEMFTypes="true" suppressEMFMetaData="true"
+    featureMapWrapperInternalInterface="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" interfaceNamePattern="M{0}">
   <foreignModel>UIElements.ecore</foreignModel>
   <genPackages prefix="Application" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
       ecorePackage="UIElements.ecore#/">
@@ -36,8 +36,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//Contribution/persistedState"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//ApplicationElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/tags"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/elementId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/tags"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//Context">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Context/context"/>
@@ -88,7 +88,7 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/KeySequence/keySequence"/>
       </genClasses>
       <genClasses ecoreClass="UIElements.ecore#//commands/Parameter">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Parameter/tag"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Parameter/name"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Parameter/value"/>
       </genClasses>
     </nestedGenPackages>
@@ -138,13 +138,16 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Item/selected"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Item/type"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/menu/DirectMenuItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/MenuItem/mnemonics"/>
+        </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/Menu"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/SubMenu"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/DirectMenuItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledMenuItem"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/ToolItem"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/DirectToolItem"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/ToolBar"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledMenuItem"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledToolItem"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledItem">
           <genFeatures notify="false" createChild="false" propertySortChoices="true"
@@ -153,57 +156,60 @@
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/menu/HandledItem/parameters"/>
         </genClasses>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Base" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/base">
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/Part">
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/base/Part/menus"/>
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/base/Part/toolbar"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/Part/closeable"/>
+      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/basic">
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/Part">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/menus"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/toolbar"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/closeable"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/InputPart"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/PartStack"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/PartSashContainer"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/Window">
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/base/Window/mainMenu"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/Window/x"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/Window/y"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/Window/width"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/Window/height"/>
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/base/Window/trims"/>
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/base/Window/windows"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartStack"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartSashContainer"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/Window">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/mainMenu"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/x"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/y"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/width"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/height"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/trims"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/windows"/>
         </genClasses>
-        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/base/TrimContainer">
-          <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/base/TrimContainer/T"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/base/TrimContainer/side"/>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/TrimContainer">
+          <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/basic/TrimContainer/T"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/TrimContainer/side"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//ui/base/WindowTrim"/>
-        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/base/PartSashContainerElement"/>
-        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/base/WindowElement"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/WindowTrim"/>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/PartSashContainerElement"/>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/WindowElement"/>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Extended" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/extended">
-        <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/extended/SideValue">
-          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/extended/SideValue/Top"/>
-          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/extended/SideValue/Bottom"/>
-          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/extended/SideValue/Left"/>
-          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/extended/SideValue/Right"/>
+      <nestedGenPackages prefix="Advanced" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">
+        <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/advanced/SideValue">
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Top"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Bottom"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Left"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Right"/>
         </genEnums>
-        <genClasses ecoreClass="UIElements.ecore#//ui/extended/Placeholder">
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Placeholder">
           <genFeatures notify="false" createChild="false" propertySortChoices="true"
-              ecoreFeature="ecore:EReference UIElements.ecore#//ui/extended/Placeholder/ref"/>
+              ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Placeholder/ref"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//ui/extended/Perspective">
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/extended/Perspective/windows"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Perspective">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Perspective/windows"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//ui/extended/PerspectiveStack"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/PerspectiveStack"/>
       </nestedGenPackages>
     </nestedGenPackages>
     <nestedGenPackages prefix="Descriptor" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor">
-      <nestedGenPackages prefix="Base" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor/base">
-        <genClasses ecoreClass="UIElements.ecore#//descriptor/base/PartDescriptor">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/base/PartDescriptor/allowMultiple"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/base/PartDescriptor/category"/>
+      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor/basic">
+        <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptor">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/allowMultiple"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/category"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/menus"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/toolbar"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/closeable"/>
         </genClasses>
-        <genClasses ecoreClass="UIElements.ecore#//descriptor/base/PartDescriptorContainer">
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/base/PartDescriptorContainer/descriptors"/>
+        <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptorContainer">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptorContainer/descriptors"/>
         </genClasses>
       </nestedGenPackages>
     </nestedGenPackages>
