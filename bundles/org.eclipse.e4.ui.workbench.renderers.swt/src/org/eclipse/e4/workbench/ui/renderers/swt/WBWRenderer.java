@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
-
-import org.eclipse.e4.core.services.log.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +21,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -315,6 +314,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell.setText(wbwModel.getLabel());
 
 		wbwShell.setImage(getImage(wbwModel));
+		//TODO: This should be added to the model, see bug 308494
+		wbwShell.setImages(Window.getDefaultImages());
 
 		// Install the drag and drop handler on all regular windows
 		if (!wbwModel.getTags().contains(DragHost.DragHostId)) {
@@ -385,8 +386,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	/*
 	 * Processing the contents of a Workbench window has to take into account
-	 * that theere may be trim elements contained in its child list. Since the
-	 * (non-Javadoc)
+	 * that there may be trim elements contained in its child list. Since the
 	 * 
 	 * @see
 	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory#processContents
