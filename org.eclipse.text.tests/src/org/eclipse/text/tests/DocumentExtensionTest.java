@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class DocumentExtensionTest extends TestCase {
 
 		int fRepetitions= 1;
 		private int fInvocations= 0;
+		private boolean fIsPostNotificationSupported= true;
 
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			++ fInvocations;
@@ -51,8 +52,13 @@ public class DocumentExtensionTest extends TestCase {
 			if (e.getDocument() instanceof IDocumentExtension) {
 				IDocumentExtension extension= (IDocumentExtension) e.getDocument();
 				Replace replace= getReplace(e);
-				if (replace != null)
-					extension.registerPostNotificationReplace(this, replace);
+				if (replace != null) {
+					try {
+						extension.registerPostNotificationReplace(this, replace);
+					} catch (UnsupportedOperationException ex) {
+						fIsPostNotificationSupported= false;
+					}
+				}
 			}
 		}
 
@@ -65,6 +71,11 @@ public class DocumentExtensionTest extends TestCase {
 		protected Replace getReplace(DocumentEvent e) {
 			return null;
 		}
+
+		public boolean isPostNotficationSupported() {
+			return fIsPostNotificationSupported;
+		}
+
 	}
 
 	static class Replace implements IDocumentExtension.IReplace {
@@ -135,6 +146,7 @@ public class DocumentExtensionTest extends TestCase {
 			assertTrue(e.isSameAs(received));
 			fPopped= false;
 		}
+
 	}
 
 
@@ -295,8 +307,14 @@ public class DocumentExtensionTest extends TestCase {
 
 		try {
 			document.replace(0, 0, "c");
+			if (!modifier.isPostNotficationSupported())
+				throw new UnsupportedOperationException();
 			document.replace(0, 0, "b");
+			if (!modifier.isPostNotficationSupported())
+				throw new UnsupportedOperationException();
 			document.replace(0, 0, "a");
+			if (!modifier.isPostNotficationSupported())
+				throw new UnsupportedOperationException();
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -325,6 +343,9 @@ public class DocumentExtensionTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Tests that this is not supported.
+	 */
 	public void testChildDocumentPC() {
 		try {
 			internalTestChildDocument(true, false, 1);
@@ -337,6 +358,9 @@ public class DocumentExtensionTest extends TestCase {
 		internalTestChildDocument(false, true, 1);
 	}
 
+	/**
+	 * Tests that this is not supported.
+	 */
 	public void testChildDocumentRepeatedPC() {
 		try {
 			internalTestChildDocument(true, false, 5);
