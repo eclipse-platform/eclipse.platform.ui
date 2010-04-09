@@ -197,12 +197,38 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	private final static String DISABLE_OVERWRITE_MODE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE;
+
 	/**
 	 * Menu id for the overview ruler context menu.
 	 *
 	 * @since 3.4
 	 */
 	public final static String DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID= "#OverviewRulerContext"; //$NON-NLS-1$
+
+
+	/**
+	 * The surrogate bits.
+	 * @since 3.6
+	 */
+	private static final int SURROGATE_BITS= 0xD800;
+	/**
+	 * The surrogate bitmask.
+	 * @since 3.6
+	 */
+	private static final int SURROGATE_BITMASK= 0xFFFFF800;
+	/**
+	 * Tells whether the given character is a surrogate.
+	 * <p>
+	 * <strong>Note:</strong> We cannot use {@link com.ibm.icu.text.UTF16} since this is not in the
+	 * <code>com.ibm.icu.base</code> bundle.</p>
+	 * 
+	 * @param ch the character
+	 * @return <code>true</code> if the character is a surrogate
+	 * @since 3.6
+	 */
+	private static boolean isSurrogate(char ch) {
+		return (ch & SURROGATE_BITMASK) == SURROGATE_BITS;
+	}
 
 
 	/**
@@ -213,6 +239,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			AbstractDecoratedTextEditor.this.gotoMarker(marker);
 		}
 	}
+
 
 	/**
 	 * The annotation preferences.
@@ -1634,7 +1661,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			while (offset < documentLength) {
 				try {
 					char ch= document.getChar(offset);
-					if (!encoder.canEncode(ch)) {
+					if (isSurrogate(ch)) {
+						offset++;
+						char trail= document.getChar(offset);
+						char[] supplement= { ch, trail };
+						if (!encoder.canEncode(new String(supplement))) {
+							selectAndReveal(offset - 1, 2);
+							return;
+						}
+					} else if (!encoder.canEncode(ch)) {
 						selectAndReveal(offset, 1);
 						return;
 					}
@@ -1646,6 +1681,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 		}
 	}
+
 
 	/**
 	 * Returns the charset of the current editor input.
