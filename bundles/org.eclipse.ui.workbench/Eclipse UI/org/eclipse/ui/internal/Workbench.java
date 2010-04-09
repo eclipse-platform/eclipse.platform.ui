@@ -1460,6 +1460,24 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			}
 		});
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.SELECTEDELEMENT), new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
+					if (UIEvents.EventTypes.SET.equals(event
+							.getProperty(UIEvents.EventTags.TYPE))) {
+						MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+						IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
+								IWorkbenchWindow.class.getName());
+						if (wwindow != null) {
+							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, wwindow);
+							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, wwindow
+									.getShell());
+						}
+					}
+				}
+			}
+		});
 
 		// watch for parts' "toBeRendered" attribute being flipped to true, if
 		// they need to be rendered, then they need a corresponding 3.x
