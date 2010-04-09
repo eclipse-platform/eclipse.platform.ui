@@ -30,7 +30,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	// keylines
 	final static int OUTER_KEYLINE = 2;
 	final static int INNER_KEYLINE = 1;
-	final static int TOP_KEYLINE = 2;
+	final static int TOP_KEYLINE = 1;
 
 	// Item Constants
 	static final int ITEM_TOP_MARGIN = 2;
