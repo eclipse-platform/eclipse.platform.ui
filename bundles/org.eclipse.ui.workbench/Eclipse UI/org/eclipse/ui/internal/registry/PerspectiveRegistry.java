@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -36,8 +34,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * Perspective registry.
  */
 public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChangeHandler {
-
-	private IPropertyChangeListener preferenceListener;
 
 	@Inject
 	private IExtensionRegistry extensionRegistry;
@@ -195,8 +191,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 */
 	public void dispose() {
 		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
-		WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
-				preferenceListener);
+		// FIXME: what was this listener for?
+		// WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
+		// preferenceListener);
 	}
 
 	/*

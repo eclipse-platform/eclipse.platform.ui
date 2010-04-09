@@ -530,6 +530,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					returnCode[0] = workbench.runUI();
 					// run the e4 event loop and instantiate ... well, stuff
 					e4Workbench.createAndRunUI(e4Workbench.getApplication());
+					workbench.close();
 					e4app.saveModel();
 					e4Workbench.close();
 				}
