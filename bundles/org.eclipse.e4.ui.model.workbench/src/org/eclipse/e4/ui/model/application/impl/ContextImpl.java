@@ -11,22 +11,23 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
@@ -106,7 +107,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.CONTEXT;
+		return ApplicationPackageImpl.Literals.CONTEXT;
 	}
 
 	/**
@@ -127,7 +128,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.CONTEXT__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTEXT__CONTEXT, oldContext, context));
 	}
 
 	/**
@@ -135,9 +136,9 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getVariables() {
+	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.CONTEXT__VARIABLES);
+			variables = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.CONTEXT__VARIABLES);
 		}
 		return variables;
 	}
@@ -147,11 +148,11 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EMap<String, String> getProperties() {
+	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.CONTEXT__PROPERTIES);
+			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.CONTEXT__PROPERTIES);
 		}
-		return properties;
+		return properties.map();
 	}
 
 	/**
@@ -162,8 +163,8 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.CONTEXT__PROPERTIES:
-				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -176,13 +177,13 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.CONTEXT__CONTEXT:
+			case ApplicationPackageImpl.CONTEXT__CONTEXT:
 				return getContext();
-			case MApplicationPackage.CONTEXT__VARIABLES:
+			case ApplicationPackageImpl.CONTEXT__VARIABLES:
 				return getVariables();
-			case MApplicationPackage.CONTEXT__PROPERTIES:
-				if (coreType) return getProperties();
-				else return getProperties().map();
+			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
+				else return getProperties();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -196,15 +197,15 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.CONTEXT__CONTEXT:
+			case ApplicationPackageImpl.CONTEXT__CONTEXT:
 				setContext((IEclipseContext)newValue);
 				return;
-			case MApplicationPackage.CONTEXT__VARIABLES:
+			case ApplicationPackageImpl.CONTEXT__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
-			case MApplicationPackage.CONTEXT__PROPERTIES:
-				((EStructuralFeature.Setting)getProperties()).set(newValue);
+			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -218,13 +219,13 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.CONTEXT__CONTEXT:
+			case ApplicationPackageImpl.CONTEXT__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
-			case MApplicationPackage.CONTEXT__VARIABLES:
+			case ApplicationPackageImpl.CONTEXT__VARIABLES:
 				getVariables().clear();
 				return;
-			case MApplicationPackage.CONTEXT__PROPERTIES:
+			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
 				getProperties().clear();
 				return;
 		}
@@ -239,11 +240,11 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.CONTEXT__CONTEXT:
+			case ApplicationPackageImpl.CONTEXT__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case MApplicationPackage.CONTEXT__VARIABLES:
+			case ApplicationPackageImpl.CONTEXT__VARIABLES:
 				return variables != null && !variables.isEmpty();
-			case MApplicationPackage.CONTEXT__PROPERTIES:
+			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
 				return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);

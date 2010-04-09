@@ -10,7 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,7 +24,6 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponents()
  * @model
  * @generated
  */
@@ -39,10 +38,9 @@ public interface MModelComponents {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Components</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponents_Components()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<MModelComponent> getComponents();
+	List<MModelComponent> getComponents();
 
 } // MModelComponents

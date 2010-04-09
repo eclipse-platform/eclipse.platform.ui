@@ -10,8 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.BasicEMap;
@@ -94,7 +92,7 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.STRING_TO_STRING_MAP;
+		return ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP;
 	}
 
 	/**
@@ -115,7 +113,7 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 		String oldKey = key;
 		key = newKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.STRING_TO_STRING_MAP__KEY, oldKey, key));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY, oldKey, key));
 	}
 
 	/**
@@ -136,7 +134,7 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 		String oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.STRING_TO_STRING_MAP__VALUE, oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE, oldValue, value));
 	}
 
 	/**
@@ -147,9 +145,9 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.STRING_TO_STRING_MAP__KEY:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY:
 				return getTypedKey();
-			case MApplicationPackage.STRING_TO_STRING_MAP__VALUE:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 				return getTypedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -163,10 +161,10 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.STRING_TO_STRING_MAP__KEY:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY:
 				setTypedKey((String)newValue);
 				return;
-			case MApplicationPackage.STRING_TO_STRING_MAP__VALUE:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 				setTypedValue((String)newValue);
 				return;
 		}
@@ -181,10 +179,10 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.STRING_TO_STRING_MAP__KEY:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY:
 				setTypedKey(KEY_EDEFAULT);
 				return;
-			case MApplicationPackage.STRING_TO_STRING_MAP__VALUE:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 				setTypedValue(VALUE_EDEFAULT);
 				return;
 		}
@@ -199,9 +197,9 @@ public class StringToStringMapImpl extends EObjectImpl implements BasicEMap.Entr
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.STRING_TO_STRING_MAP__KEY:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY:
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case MApplicationPackage.STRING_TO_STRING_MAP__VALUE:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
 		return super.eIsSet(featureID);

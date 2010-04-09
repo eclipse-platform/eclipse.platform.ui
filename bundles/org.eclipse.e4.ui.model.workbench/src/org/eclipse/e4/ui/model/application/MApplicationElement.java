@@ -10,8 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EList;
-
+import java.util.Map;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,56 +20,54 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement()
  * @model abstract="true"
  * @generated
  */
 public interface MApplicationElement {
 	/**
-	 * Returns the value of the '<em><b>Id</b></em>' attribute.
+	 * Returns the value of the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Element Id</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Id</em>' attribute.
-	 * @see #setId(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement_Id()
+	 * @return the value of the '<em>Element Id</em>' attribute.
+	 * @see #setElementId(String)
 	 * @model
 	 * @generated
 	 */
-	String getId();
+	String getElementId();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getId <em>Id</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Id</em>' attribute.
-	 * @see #getId()
+	 * @param value the new value of the '<em>Element Id</em>' attribute.
+	 * @see #getElementId()
 	 * @generated
 	 */
-	void setId(String value);
+	void setElementId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Tags</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
+	 * Returns the value of the '<em><b>Tags</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Style</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Tags</em>' map isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tags</em>' attribute list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement_Tags()
-	 * @model ordered="false"
+	 * @return the value of the '<em>Tags</em>' map.
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
 	 * @generated
 	 */
-	EList<String> getTags();
+	Map<String, String> getTags();
 
 } // MApplicationElement

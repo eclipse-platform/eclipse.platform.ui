@@ -10,7 +10,18 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
+
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,14 +35,13 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplication()
  * @model
  * @generated
  */
-public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingContainer, MPartDescriptorContainer, MBindings {
+public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer, MPartDescriptorContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MCommand}.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MCommand}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Commands</em>' containment reference list isn't clear,
@@ -39,10 +49,9 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Commands</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplication_Commands()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<MCommand> getCommands();
+	List<MCommand> getCommands();
 
 } // MApplication

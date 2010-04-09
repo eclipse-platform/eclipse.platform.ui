@@ -11,8 +11,8 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
 
@@ -68,7 +68,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.MODEL_COMPONENTS;
+		return ApplicationPackageImpl.Literals.MODEL_COMPONENTS;
 	}
 
 	/**
@@ -76,9 +76,9 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MModelComponent> getComponents() {
+	public List<MModelComponent> getComponents() {
 		if (components == null) {
-			components = new EObjectContainmentEList<MModelComponent>(MModelComponent.class, this, MApplicationPackage.MODEL_COMPONENTS__COMPONENTS);
+			components = new EObjectContainmentEList<MModelComponent>(MModelComponent.class, this, ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS);
 		}
 		return components;
 	}
@@ -91,7 +91,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return ((InternalEList<?>)getComponents()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -105,7 +105,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return getComponents();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -120,7 +120,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				getComponents().clear();
 				getComponents().addAll((Collection<? extends MModelComponent>)newValue);
 				return;
@@ -136,7 +136,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				getComponents().clear();
 				return;
 		}
@@ -151,7 +151,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return components != null && !components.isEmpty();
 		}
 		return super.eIsSet(featureID);

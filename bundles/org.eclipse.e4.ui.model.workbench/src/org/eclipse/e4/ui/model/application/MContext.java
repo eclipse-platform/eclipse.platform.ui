@@ -10,10 +10,10 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +29,6 @@ import org.eclipse.emf.common.util.EMap;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext()
  * @model abstract="true"
  * @generated
  */
@@ -44,7 +43,6 @@ public interface MContext {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Context</em>' attribute.
 	 * @see #setContext(IEclipseContext)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext_Context()
 	 * @model dataType="org.eclipse.e4.ui.model.application.IEclipseContext" transient="true"
 	 * @generated
 	 */
@@ -70,11 +68,10 @@ public interface MContext {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Variables</em>' attribute list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext_Variables()
 	 * @model ordered="false"
 	 * @generated
 	 */
-	EList<String> getVariables();
+	List<String> getVariables();
 
 	/**
 	 * Returns the value of the '<em><b>Properties</b></em>' map.
@@ -87,10 +84,9 @@ public interface MContext {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Properties</em>' map.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext_Properties()
 	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
 	 * @generated
 	 */
-	EMap<String, String> getProperties();
+	Map<String, String> getProperties();
 
 } // MContext

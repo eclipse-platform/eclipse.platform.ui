@@ -11,29 +11,39 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
-import org.eclipse.e4.ui.model.application.MBindingContext;
-import org.eclipse.e4.ui.model.application.MBindingTable;
-import org.eclipse.e4.ui.model.application.MBindings;
-import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
-import org.eclipse.e4.ui.model.application.MWindow;
+
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+
+import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.common.util.EMap;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -183,7 +193,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.APPLICATION;
+		return ApplicationPackageImpl.Literals.APPLICATION;
 	}
 
 	/**
@@ -204,7 +214,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__CONTEXT, oldContext, context));
 	}
 
 	/**
@@ -212,9 +222,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getVariables() {
+	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__VARIABLES);
+			variables = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION__VARIABLES);
 		}
 		return variables;
 	}
@@ -224,11 +234,11 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EMap<String, String> getProperties() {
+	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.APPLICATION__PROPERTIES);
+			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION__PROPERTIES);
 		}
-		return properties;
+		return properties.map();
 	}
 
 	/**
@@ -236,9 +246,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MHandler> getHandlers() {
+	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.APPLICATION__HANDLERS);
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, ApplicationPackageImpl.APPLICATION__HANDLERS);
 		}
 		return handlers;
 	}
@@ -248,9 +258,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MBindingTable> getBindingTables() {
+	public List<MBindingTable> getBindingTables() {
 		if (bindingTables == null) {
-			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, MApplicationPackage.APPLICATION__BINDING_TABLES);
+			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, ApplicationPackageImpl.APPLICATION__BINDING_TABLES);
 		}
 		return bindingTables;
 	}
@@ -273,7 +283,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		MBindingContext oldRootContext = rootContext;
 		rootContext = newRootContext;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ROOT_CONTEXT, oldRootContext, newRootContext);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, oldRootContext, newRootContext);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -288,14 +298,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		if (newRootContext != rootContext) {
 			NotificationChain msgs = null;
 			if (rootContext != null)
-				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.APPLICATION__ROOT_CONTEXT, null, msgs);
+				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, null, msgs);
 			if (newRootContext != null)
-				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.APPLICATION__ROOT_CONTEXT, null, msgs);
+				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, null, msgs);
 			msgs = basicSetRootContext(newRootContext, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ROOT_CONTEXT, newRootContext, newRootContext));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, newRootContext, newRootContext));
 	}
 
 	/**
@@ -303,9 +313,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MPartDescriptor> getDescriptors() {
+	public List<MPartDescriptor> getDescriptors() {
 		if (descriptors == null) {
-			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, MApplicationPackage.APPLICATION__DESCRIPTORS);
+			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, ApplicationPackageImpl.APPLICATION__DESCRIPTORS);
 		}
 		return descriptors;
 	}
@@ -315,9 +325,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getBindingContexts() {
+	public List<String> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.APPLICATION__BINDING_CONTEXTS);
+			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -327,9 +337,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MCommand> getCommands() {
+	public List<MCommand> getCommands() {
 		if (commands == null) {
-			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, MApplicationPackage.APPLICATION__COMMANDS);
+			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, ApplicationPackageImpl.APPLICATION__COMMANDS);
 		}
 		return commands;
 	}
@@ -342,17 +352,17 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__PROPERTIES:
-				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 				return basicSetRootContext(null, msgs);
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -366,24 +376,24 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
 				return getContext();
-			case MApplicationPackage.APPLICATION__VARIABLES:
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
 				return getVariables();
-			case MApplicationPackage.APPLICATION__PROPERTIES:
-				if (coreType) return getProperties();
-				else return getProperties().map();
-			case MApplicationPackage.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
+				else return getProperties();
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				return getBindingTables();
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 				return getRootContext();
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return getDescriptors();
-			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				return getBindingContexts();
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return getCommands();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -398,36 +408,36 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
 				setContext((IEclipseContext)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__VARIABLES:
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__PROPERTIES:
-				((EStructuralFeature.Setting)getProperties()).set(newValue);
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
 				return;
-			case MApplicationPackage.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				getBindingTables().clear();
 				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 				setRootContext((MBindingContext)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
 				getDescriptors().addAll((Collection<? extends MPartDescriptor>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				getBindingContexts().addAll((Collection<? extends String>)newValue);
 				return;
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
 				return;
@@ -443,31 +453,31 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
-			case MApplicationPackage.APPLICATION__VARIABLES:
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
 				getVariables().clear();
 				return;
-			case MApplicationPackage.APPLICATION__PROPERTIES:
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
 				getProperties().clear();
 				return;
-			case MApplicationPackage.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				getBindingTables().clear();
 				return;
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 				setRootContext((MBindingContext)null);
 				return;
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
 				return;
-			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				return;
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
 		}
@@ -482,23 +492,23 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.APPLICATION__CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case MApplicationPackage.APPLICATION__VARIABLES:
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
 				return variables != null && !variables.isEmpty();
-			case MApplicationPackage.APPLICATION__PROPERTIES:
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
 				return properties != null && !properties.isEmpty();
-			case MApplicationPackage.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				return bindingTables != null && !bindingTables.isEmpty();
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 				return rootContext != null;
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return descriptors != null && !descriptors.isEmpty();
-			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				return bindingContexts != null && !bindingContexts.isEmpty();
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 		}
 		return super.eIsSet(featureID);
@@ -513,34 +523,34 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
-				case MApplicationPackage.APPLICATION__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
-				case MApplicationPackage.APPLICATION__PROPERTIES: return MApplicationPackage.CONTEXT__PROPERTIES;
+				case ApplicationPackageImpl.APPLICATION__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
+				case ApplicationPackageImpl.APPLICATION__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
+				case ApplicationPackageImpl.APPLICATION__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				case ApplicationPackageImpl.APPLICATION__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MBindingTableContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__BINDING_TABLES: return MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES;
-				case MApplicationPackage.APPLICATION__ROOT_CONTEXT: return MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT;
+				case ApplicationPackageImpl.APPLICATION__BINDING_TABLES: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES;
+				case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__DESCRIPTORS: return MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+				case ApplicationPackageImpl.APPLICATION__DESCRIPTORS: return BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
 				default: return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.APPLICATION__BINDING_CONTEXTS: return MApplicationPackage.BINDINGS__BINDING_CONTEXTS;
+				case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
@@ -556,34 +566,34 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.APPLICATION__CONTEXT;
-				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.APPLICATION__VARIABLES;
-				case MApplicationPackage.CONTEXT__PROPERTIES: return MApplicationPackage.APPLICATION__PROPERTIES;
+				case ApplicationPackageImpl.CONTEXT__CONTEXT: return ApplicationPackageImpl.APPLICATION__CONTEXT;
+				case ApplicationPackageImpl.CONTEXT__VARIABLES: return ApplicationPackageImpl.APPLICATION__VARIABLES;
+				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return ApplicationPackageImpl.APPLICATION__PROPERTIES;
 				default: return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.APPLICATION__HANDLERS;
+				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return ApplicationPackageImpl.APPLICATION__HANDLERS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MBindingTableContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES: return MApplicationPackage.APPLICATION__BINDING_TABLES;
-				case MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT: return MApplicationPackage.APPLICATION__ROOT_CONTEXT;
+				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES: return ApplicationPackageImpl.APPLICATION__BINDING_TABLES;
+				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT: return ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS: return MApplicationPackage.APPLICATION__DESCRIPTORS;
+				case BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS: return ApplicationPackageImpl.APPLICATION__DESCRIPTORS;
 				default: return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDINGS__BINDING_CONTEXTS: return MApplicationPackage.APPLICATION__BINDING_CONTEXTS;
+				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS;
 				default: return -1;
 			}
 		}
