@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -110,14 +111,15 @@ public class WBWRenderer extends SWTPartRenderer {
 	MPart activePart = null;
 
 	@Inject
-	public void trackActivePart(
-			@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
+	void trackActivePart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		if (activePart != null) {
 			activePart.getTags().remove("active"); //$NON-NLS-1$
-			if (activePart.getRenderer() instanceof SWTPartRenderer) {
-				SWTPartRenderer renderer = (SWTPartRenderer) activePart
-						.getRenderer();
-				renderer.setCSSInfo(activePart, activePart.getWidget());
+			MUIElement parent = activePart.getParent();
+			if (parent instanceof MPartStack) {
+				parent.getTags().remove("active"); //$NON-NLS-1$
+				setCSSInfo(parent, parent.getWidget());
+			} else {
+				setCSSInfo(activePart, activePart.getWidget());
 			}
 		}
 
@@ -125,10 +127,12 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		if (activePart != null) {
 			activePart.getTags().add("active"); //$NON-NLS-1$
-			if (activePart.getRenderer() instanceof SWTPartRenderer) {
-				SWTPartRenderer renderer = (SWTPartRenderer) activePart
-						.getRenderer();
-				renderer.setCSSInfo(activePart, activePart.getWidget());
+			MUIElement parent = activePart.getParent();
+			if (parent instanceof MPartStack) {
+				parent.getTags().add("active"); //$NON-NLS-1$
+				setCSSInfo(parent, parent.getWidget());
+			} else {
+				setCSSInfo(activePart, activePart.getWidget());
 			}
 		}
 	}
