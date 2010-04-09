@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,8 +119,10 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	}
 
 	/**
-	 * Adjusts the revision information to the given diff information. Any previous diff information is discarded. <strong>Note</strong>: This is an internal framework method and must not be called by clients.
-	 *
+	 * Adjusts the revision information to the given diff information. Any previous diff information
+	 * is discarded. <strong>Note:</strong> This is an internal framework method and must not be
+	 * called by clients.
+	 * 
 	 * @param hunks the diff hunks to adjust the revision information to
 	 * @since 3.3
 	 * @noreference This method is not intended to be referenced by clients.
