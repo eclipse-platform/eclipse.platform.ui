@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorConta
 
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
@@ -123,6 +124,19 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ApplicationPackageImpl.APPLICATION_ELEMENT: {
+				MApplicationElement applicationElement = (MApplicationElement)theEObject;
+				T1 result = caseApplicationElement(applicationElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ApplicationPackageImpl.CONTRIBUTION: {
+				MContribution contribution = (MContribution)theEObject;
+				T1 result = caseContribution(contribution);
+				if (result == null) result = caseApplicationElement(contribution);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case ApplicationPackageImpl.MODEL_COMPONENTS: {
 				MModelComponents modelComponents = (MModelComponents)theEObject;
 				T1 result = caseModelComponents(modelComponents);
@@ -136,25 +150,6 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseApplicationElement(modelComponent);
 				if (result == null) result = caseHandlerContainer(modelComponent);
 				if (result == null) result = caseBindingTableContainer(modelComponent);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ApplicationPackageImpl.CONTRIBUTION: {
-				MContribution contribution = (MContribution)theEObject;
-				T1 result = caseContribution(contribution);
-				if (result == null) result = caseApplicationElement(contribution);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ApplicationPackageImpl.APPLICATION_ELEMENT: {
-				MApplicationElement applicationElement = (MApplicationElement)theEObject;
-				T1 result = caseApplicationElement(applicationElement);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ApplicationPackageImpl.CONTEXT: {
-				MContext context = (MContext)theEObject;
-				T1 result = caseContext(context);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -193,6 +188,36 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseApplicationElement(MApplicationElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContribution(MContribution object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Model Components</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -223,51 +248,6 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseContribution(MContribution object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseApplicationElement(MApplicationElement object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Context</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseContext(MContext object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>UI Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -294,6 +274,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContext(MContext object) {
 		return null;
 	}
 

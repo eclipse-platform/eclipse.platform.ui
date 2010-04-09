@@ -727,7 +727,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
+	public static final int DIRECT_MENU_ITEM__ELEMENT_ID = MENU_ITEM__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' map.
@@ -736,34 +736,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__TAGS = ApplicationPackageImpl.CONTRIBUTION__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__CONTRIBUTION_URI = ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__OBJECT = ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__PERSISTED_STATE = ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
+	public static final int DIRECT_MENU_ITEM__TAGS = MENU_ITEM__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -772,7 +745,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__WIDGET = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 0;
+	public static final int DIRECT_MENU_ITEM__WIDGET = MENU_ITEM__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -781,7 +754,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__RENDERER = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 1;
+	public static final int DIRECT_MENU_ITEM__RENDERER = MENU_ITEM__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -790,7 +763,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__TO_BE_RENDERED = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 2;
+	public static final int DIRECT_MENU_ITEM__TO_BE_RENDERED = MENU_ITEM__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -799,7 +772,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__ON_TOP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 3;
+	public static final int DIRECT_MENU_ITEM__ON_TOP = MENU_ITEM__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -808,7 +781,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__VISIBLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 4;
+	public static final int DIRECT_MENU_ITEM__VISIBLE = MENU_ITEM__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -817,7 +790,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__PARENT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 5;
+	public static final int DIRECT_MENU_ITEM__PARENT = MENU_ITEM__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -826,7 +799,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__CONTAINER_DATA = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 6;
+	public static final int DIRECT_MENU_ITEM__CONTAINER_DATA = MENU_ITEM__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -835,7 +808,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__LABEL = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 7;
+	public static final int DIRECT_MENU_ITEM__LABEL = MENU_ITEM__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -844,7 +817,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__ICON_URI = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 8;
+	public static final int DIRECT_MENU_ITEM__ICON_URI = MENU_ITEM__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -853,7 +826,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__TOOLTIP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 9;
+	public static final int DIRECT_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -862,7 +835,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__ENABLED = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 10;
+	public static final int DIRECT_MENU_ITEM__ENABLED = MENU_ITEM__ENABLED;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -871,7 +844,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__SELECTED = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 11;
+	public static final int DIRECT_MENU_ITEM__SELECTED = MENU_ITEM__SELECTED;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -880,7 +853,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__TYPE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 12;
+	public static final int DIRECT_MENU_ITEM__TYPE = MENU_ITEM__TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
@@ -889,7 +862,34 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__MNEMONICS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 13;
+	public static final int DIRECT_MENU_ITEM__MNEMONICS = MENU_ITEM__MNEMONICS;
+
+	/**
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM__CONTRIBUTION_URI = MENU_ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM__OBJECT = MENU_ITEM_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM__PERSISTED_STATE = MENU_ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
@@ -898,7 +898,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 14;
+	public static final int DIRECT_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
@@ -2749,8 +2749,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
 		subMenuEClass.getEGenericSuperTypes().add(g1);
-		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		directMenuItemEClass.getESuperTypes().add(this.getMenuItem());
+		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		handledMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		handledMenuItemEClass.getESuperTypes().add(this.getHandledItem());
 		g1 = createEGenericType(this.getItem());

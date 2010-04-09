@@ -222,7 +222,7 @@
           <eTypeArguments eClassifier="#//ui/menu/MenuItem"/>
         </eGenericSuperTypes>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//Contribution #//ui/menu/MenuItem"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolItem">
         <eGenericSuperTypes eClassifier="#//ui/menu/Item"/>

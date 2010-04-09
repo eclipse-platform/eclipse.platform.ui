@@ -145,8 +145,8 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.DIRECT_MENU_ITEM: {
 				MDirectMenuItem directMenuItem = (MDirectMenuItem)theEObject;
 				T1 result = caseDirectMenuItem(directMenuItem);
-				if (result == null) result = caseContribution(directMenuItem);
 				if (result == null) result = caseMenuItem(directMenuItem);
+				if (result == null) result = caseContribution(directMenuItem);
 				if (result == null) result = caseItem(directMenuItem);
 				if (result == null) result = caseUIElement(directMenuItem);
 				if (result == null) result = caseUILabel(directMenuItem);

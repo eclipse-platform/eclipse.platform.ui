@@ -21,5 +21,5 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * @model
  * @generated
  */
-public interface MDirectMenuItem extends MContribution, MMenuItem {
+public interface MDirectMenuItem extends MMenuItem, MContribution {
 } // MDirectMenuItem
