@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -142,7 +143,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension3;
  * @see CompareUI
  * @see CompareEditorInput
  */
-public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress, ICompareContainer {
+public abstract class CompareEditorInput extends PlatformObject implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress, ICompareContainer {
 
 	private static final boolean DEBUG= false;
 	
@@ -327,7 +328,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		}
 
-		return null;
+		return super.getAdapter(adapter);
 	}
 
 	public synchronized ICompareNavigator getNavigator() {

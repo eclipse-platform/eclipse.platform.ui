@@ -112,7 +112,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
 			if (getSite() instanceof IEditorSite) {
 				IEditorSite es = (IEditorSite) getSite();
-				es.registerContextMenu(menu, provider, false);
+				es.registerContextMenu(menu, provider, true);
 			}
 		}
 
