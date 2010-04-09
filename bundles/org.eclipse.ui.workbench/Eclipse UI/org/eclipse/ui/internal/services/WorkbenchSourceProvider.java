@@ -913,6 +913,10 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		 */
 		final IContextService contextService = (IContextService) workbench
 				.getService(IContextService.class);
+		if (contextService == null) {
+			return;
+		}
+
 		final int shellType = contextService.getShellType(newActiveShell);
 		if (shellType == IContextService.TYPE_DIALOG)
 			return;
