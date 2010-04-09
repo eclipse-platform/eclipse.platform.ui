@@ -54,14 +54,18 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			IInjector injector = requestor.getInjector();
 			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 				IEclipseContext originatingContext = event.getContext();
-				ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
-				injector.disposed(originatingSupplier);
-				return false;
+				if (originatingContext == context) {
+					ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
+					injector.disposed(originatingSupplier);
+					return false;
+				}
 			} else if (event.getEventType() == ContextChangeEvent.UNINJECTED) {
 				IEclipseContext originatingContext = event.getContext();
-				ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
-				injector.uninject(event.getArguments()[0], originatingSupplier);
-				return false;
+				if (originatingContext == context) {
+					ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
+					injector.uninject(event.getArguments()[0], originatingSupplier);
+					return false;
+				}
 			} else {
 				injector.update(new IRequestor[] { requestor }, requestor.getPrimarySupplier());
 			}
