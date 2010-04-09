@@ -213,6 +213,7 @@
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/SubMenu"/>
         </eGenericSuperTypes>
+        <eGenericSuperTypes eClassifier="#//ui/menu/ToolBarElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EEnum" name="ItemType">
@@ -223,9 +224,12 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/ToolItem"/>
+          <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
         </eGenericSuperTypes>
+        <eGenericSuperTypes eClassifier="#//ui/basic/TrimElement"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//Contribution #//ui/menu/ToolBarElement #//ui/basic/TrimElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledItem" eSuperTypes="#//ui/menu/Item">
         <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//commands/Command"/>
@@ -289,10 +293,12 @@
           <eTypeArguments eTypeParameter="#//ui/basic/TrimContainer/T"/>
         </eGenericSuperTypes>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
         <eGenericSuperTypes eClassifier="#//ui/basic/TrimContainer">
-          <eTypeArguments eClassifier="#//ui/UIElement"/>
+          <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
         </eGenericSuperTypes>
+        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainerElement" abstract="true"
           interface="true" eSuperTypes="#//ui/UIElement"/>
