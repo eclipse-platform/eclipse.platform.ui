@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -456,17 +456,16 @@ public final class ContentTypeCatalog {
 	 * @return all matching content types in the preferred order 
 	 * @see IContentTypeManager#findContentTypesFor(String)
 	 */
-	private IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator sortingPolicy) {
+	synchronized private IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator sortingPolicy) {
 		IScopeContext context = matcher.getContext();
 		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
 
 		final Set allByFileName;
 
-		if (context.equals(manager.getContext())) {
+		if (context.equals(manager.getContext()))
 			allByFileName = getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC);
-		} else {
-			Set directlyAssociated = getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED);
-			allByFileName = (directlyAssociated == Collections.EMPTY_SET ? new HashSet() : directlyAssociated);
+		else {
+			allByFileName = new HashSet(getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED));
 			allByFileName.addAll(matcher.getDirectlyAssociated(this, fileName, IContentTypeSettings.FILE_NAME_SPEC));
 		}
 		Set selectedByName = selectMatchingByName(context, allByFileName, Collections.EMPTY_SET, fileName, IContentType.FILE_NAME_SPEC);
@@ -474,11 +473,10 @@ public final class ContentTypeCatalog {
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
 			final Set allByFileExtension;
-			if (context.equals(manager.getContext())) {
+			if (context.equals(manager.getContext()))
 				allByFileExtension = getDirectlyAssociated(fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC);
-			} else {
-				Set directlyAssociated = getDirectlyAssociated(fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
-				allByFileExtension = (directlyAssociated == Collections.EMPTY_SET ? new HashSet() : directlyAssociated);
+			else {
+				allByFileExtension = new HashSet(getDirectlyAssociated(fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED));
 				allByFileExtension.addAll(matcher.getDirectlyAssociated(this, fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC));
 			}
 			Set selectedByExtension = selectMatchingByName(context, allByFileExtension, selectedByName, fileExtension, IContentType.FILE_EXTENSION_SPEC);
@@ -505,14 +503,18 @@ public final class ContentTypeCatalog {
 	 *	</ul>
 	 * @return a set of content types
 	 */
-	synchronized private Set getDirectlyAssociated(String text, int typeMask) {
+	private Set getDirectlyAssociated(String text, int typeMask) {
 		Map associations = (typeMask & IContentTypeSettings.FILE_NAME_SPEC) != 0 ? fileNames : fileExtensions;
-		Set result = Collections.EMPTY_SET;
-		Set initialSet = (Set) associations.get(FileSpec.getMappingKeyFor(text));
-		if (initialSet != null && !initialSet.isEmpty()) {
-			result = new HashSet(initialSet);
-			if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) != 0) {
-				// only those specs satisfying the type mask should be included
+		Set result = null;
+		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) == 0)
+			// no restrictions, get everything
+			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
+		else {
+			// only those specs satisfying the type mask should be included
+			Set initialSet = (Set) associations.get(FileSpec.getMappingKeyFor(text));
+			if (initialSet != null && !initialSet.isEmpty()) {
+				// copy so we can modify
+				result = new HashSet(initialSet);
 				// invert the last two bits so it is easier to compare
 				typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);
 				for (Iterator i = result.iterator(); i.hasNext();) {
@@ -522,7 +524,7 @@ public final class ContentTypeCatalog {
 				}
 			}
 		}
-		return result;
+		return result == null ? Collections.EMPTY_SET : result;
 	}
 
 	synchronized ContentType internalGetContentType(String contentTypeIdentifier) {
@@ -566,7 +568,7 @@ public final class ContentTypeCatalog {
 	 * Processes all content types in source, adding those matching the given file spec to the
 	 * destination collection.
 	 */
-	synchronized private Set selectMatchingByName(final IScopeContext context, Collection source, final Collection existing, final String fileSpecText, final int fileSpecType) {
+	private Set selectMatchingByName(final IScopeContext context, Collection source, final Collection existing, final String fileSpecText, final int fileSpecType) {
 		if (source == null || source.isEmpty())
 			return Collections.EMPTY_SET;
 		final Set destination = new HashSet(5);
