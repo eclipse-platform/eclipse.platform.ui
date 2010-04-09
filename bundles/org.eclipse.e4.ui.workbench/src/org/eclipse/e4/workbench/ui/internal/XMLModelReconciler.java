@@ -746,9 +746,12 @@ public class XMLModelReconciler extends ModelReconciler {
 		Set<Object> values = new HashSet<Object>();
 		NodeList attributes = (NodeList) node;
 		for (int j = 0; j < attributes.getLength(); j++) {
-			Element attribute = (Element) attributes.item(j);
-			Object value = getValue(feature, attribute.getAttribute(featureName));
-			values.add(value);
+			Node item = attributes.item(j);
+			if (item instanceof Element) {
+				Element attribute = (Element) attributes.item(j);
+				Object value = getValue(feature, attribute.getAttribute(featureName));
+				values.add(value);
+			}
 		}
 
 		List<?> currentValues = (List<?>) object.eGet(feature);
