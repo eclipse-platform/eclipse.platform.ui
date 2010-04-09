@@ -238,7 +238,8 @@
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/basic/TrimElement"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement" abstract="true"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement" abstract="true"
+          eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//ui/Contribution #//ui/menu/ToolBarElement #//ui/basic/TrimElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledItem" eSuperTypes="#//ui/menu/Item">
@@ -293,7 +294,7 @@
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true"/>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true" eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
         <eGenericSuperTypes eClassifier="#//ui/TrimContainer">
           <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
