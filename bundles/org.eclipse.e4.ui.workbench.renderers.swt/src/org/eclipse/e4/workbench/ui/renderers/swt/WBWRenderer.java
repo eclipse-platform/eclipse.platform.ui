@@ -321,7 +321,6 @@ public class WBWRenderer extends SWTPartRenderer {
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(), wbwModel
 				.getWidth(), wbwModel.getHeight());
-		wbwShell.setVisible(element.isVisible());
 
 		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
 		wbwShell.setLayout(tl);
@@ -475,6 +474,11 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		Shell shell = (Shell) childME.getWidget();
 		shell.layout(true);
+		if (childME.isVisible()) {
+			shell.open();
+		} else {
+			shell.setVisible(false);
+		}
 	}
 
 	private Object[] promptForSave(Shell parentShell,
