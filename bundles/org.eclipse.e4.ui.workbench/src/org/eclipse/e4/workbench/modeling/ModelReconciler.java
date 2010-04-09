@@ -221,6 +221,12 @@ public abstract class ModelReconciler {
 			.getBindingTable_Bindings().getName();
 
 	/**
+	 * Attribute defined by MBindingTables (value is <code>bindingContextId</code>).
+	 */
+	public static final String BINDINGTABLES_BINDINGCONTEXTID_ATTNAME = MApplicationPackage.eINSTANCE
+			.getBindingTable_BindingContextId().getName();
+
+	/**
 	 * Attribute defined by MHandlers (value is <code>command</code>).
 	 */
 	public static final String HANDLER_COMMAND_ATTNAME = MApplicationPackage.eINSTANCE

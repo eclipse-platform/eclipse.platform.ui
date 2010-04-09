@@ -24,6 +24,58 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerBindingContainerTest extends
 		ModelReconcilerTest {
 
+	public void testBindingContainer_Add() {
+		MApplication application = createApplication();
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, application.getBindingTables().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getBindingTables().size());
+	}
+
+	public void testBindingContainer_Remove() {
+		MApplication application = createApplication();
+
+		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		application.getBindingTables().remove(0);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getBindingTables().size());
+
+		applyAll(deltas);
+
+		assertEquals(0, application.getBindingTables().size());
+	}
+
 	private void testBindingContainer_Add_KeyBinding(String keySequence)
 			throws Exception {
 		MApplication application = createApplication();

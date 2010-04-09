@@ -183,6 +183,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getBindingContainer_RootContext();
 		} else if (featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getBindingTable_Bindings();
+		} else if (featureName.equals(BINDINGTABLES_BINDINGCONTEXTID_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getBindingTable_BindingContextId();
 		} else if (featureName.equals(HANDLER_COMMAND_ATTNAME)
 				|| featureName.equals(KEYBINDING_COMMAND_ATTNAME)
 				|| featureName.equals(HANDLEDITEM_COMMAND_ATTNAME)) {
@@ -1538,7 +1540,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// an Application has multiple commands
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
-				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME);
+				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
+				// a BindingContainer has multiple binding tables
+				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {
