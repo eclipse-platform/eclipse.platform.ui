@@ -748,7 +748,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		for (int j = 0; j < attributes.getLength(); j++) {
 			Node item = attributes.item(j);
 			if (item instanceof Element) {
-				Element attribute = (Element) attributes.item(j);
+				Element attribute = (Element) item;
 				Object value = getValue(feature, attribute.getAttribute(featureName));
 				values.add(value);
 			}
