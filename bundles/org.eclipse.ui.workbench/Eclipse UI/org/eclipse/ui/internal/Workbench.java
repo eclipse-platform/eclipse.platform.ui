@@ -1103,6 +1103,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
+
+			if (application.getSelectedElement() == window) {
+				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, result);
+				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, result.getShell());
+			}
 		}
 		return result;
 	}
