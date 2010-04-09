@@ -12,11 +12,12 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.Collection;
 import java.util.Iterator;
-
+import javax.inject.Inject;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -42,7 +43,10 @@ public final class ContextService implements IContextService {
 	 * The context manager that supports this service. This value is never
 	 * <code>null</code>.
 	 */
-	private final ContextManager contextManager;
+	private ContextManager contextManager;
+
+	@Inject
+	private EContextService contextService;
 
 	/**
 	 * The persistence class for this context service.
@@ -56,6 +60,7 @@ public final class ContextService implements IContextService {
 	 * @param contextManager
 	 *            The context manager to use; must not be <code>null</code>.
 	 */
+	@Inject
 	public ContextService(final ContextManager contextManager) {
 		if (contextManager == null) {
 			throw new NullPointerException(
@@ -94,6 +99,7 @@ public final class ContextService implements IContextService {
 		final IContextActivation activation = new ContextActivation(contextId,
 				expression, this);
 		contextAuthority.activateContext(activation);
+		contextService.activateContext(contextId);
 		return activation;
 	}
 
@@ -145,6 +151,7 @@ public final class ContextService implements IContextService {
 	 */
 	public final void deactivateContext(final IContextActivation activation) {
 		if (activation.getContextService() == this) {
+			contextService.deactivateContext(activation.getContextId());
 			contextAuthority.deactivateContext(activation);
 		}
 	}
@@ -179,7 +186,7 @@ public final class ContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#getActiveContextIds()
 	 */
 	public final Collection getActiveContextIds() {
-		return contextManager.getActiveContextIds();
+		return contextService.getActiveContextIds();
 	}
 
 	/*
@@ -188,7 +195,7 @@ public final class ContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#getContext(java.lang.String)
 	 */
 	public final Context getContext(final String contextId) {
-		return contextManager.getContext(contextId);
+		return contextService.getContext(contextId);
 	}
 
 	/*

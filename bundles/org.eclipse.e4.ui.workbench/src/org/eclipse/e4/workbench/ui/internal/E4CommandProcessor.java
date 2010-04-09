@@ -35,7 +35,10 @@ import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
@@ -69,7 +72,7 @@ public class E4CommandProcessor {
 
 	public static void processBindings(IEclipseContext context, MBindingContainer bindingContainer) {
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize binding tables from model", null); //$NON-NLS-1$
-		BindingTableManager bindingTables;
+		final BindingTableManager bindingTables;
 		try {
 			bindingTables = (BindingTableManager) ContextInjectionFactory.make(
 					BindingTableManager.class, context);
@@ -87,12 +90,37 @@ public class E4CommandProcessor {
 		if (root == null) {
 			return;
 		}
-		ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
+		final ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
 		defineContexts(null, root, manager);
 		for (MBindingTable bt : bindingContainer.getBindingTables()) {
 			Context c = manager.getContext(bt.getBindingContextId());
 			defineBindingTable(context, c, bindingTables, bt);
 		}
+
+		((EObject) bindingContainer).eAdapters().add(new EContentAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.emf.ecore.util.EContentAdapter#notifyChanged(org.eclipse.emf.common.notify
+			 * .Notification)
+			 */
+			@Override
+			public void notifyChanged(Notification notification) {
+				super.notifyChanged(notification);
+				if (notification.isTouch()) {
+					return;
+				}
+
+				if (notification.getEventType() == Notification.ADD
+						&& notification.getNewValue() instanceof MBindingTable) {
+					MBindingTable bt = (MBindingTable) notification.getNewValue();
+					Context bindingContext = manager.getContext(bt.getBindingContextId());
+					BindingTable table = new BindingTable(bindingContext);
+					bindingTables.addTable(table);
+				}
+			}
+		});
 	}
 
 	private static void defineBindingTable(IEclipseContext context, Context bindingContext,

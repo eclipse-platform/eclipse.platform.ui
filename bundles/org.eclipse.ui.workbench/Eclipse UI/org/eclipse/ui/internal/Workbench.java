@@ -25,10 +25,11 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -37,7 +38,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -67,6 +71,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MBindingTable;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -77,14 +82,15 @@ import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1702,6 +1708,30 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return service;
 	}
 
+	private void defineBindingTable(String id) {
+		EList<MBindingTable> bindingTables = application.getBindingTables();
+		if (contains(bindingTables, id)) {
+			return;
+		}
+		MBindingTable bt = MApplicationFactory.eINSTANCE.createBindingTable();
+		bt.setBindingContextId(id);
+		bindingTables.add(bt);
+	}
+
+	/**
+	 * @param bindingTables
+	 * @param id
+	 * @return true if this BT already exists
+	 */
+	private boolean contains(EList<MBindingTable> bindingTables, String id) {
+		for (MBindingTable bt : bindingTables) {
+			if (id.equals(bt.getBindingContextId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Initializes all of the default services for the workbench. For
 	 * initializing the command-based services, this also parses the registry
@@ -1756,12 +1786,51 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		});
 
-		final IContextService contextService = new ContextService(contextManager);
+		IContextService cxs = null;
+		try {
+			cxs = (IContextService) ContextInjectionFactory.make(ContextService.class, e4Context);
+		} catch (InvocationTargetException e1) {
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			e1.printStackTrace();
+		}
+		final IContextService contextService = cxs;
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
+				HashMap<String, String> contextToParent = new HashMap<String, String>();
+				Iterator i = contextManager.getDefinedContextIds().iterator();
+				while (i.hasNext()) {
+					Context c = contextManager.getContext((String) i.next());
+					if (c.isDefined()) {
+						try {
+							contextToParent.put(c.getId(), c.getParentId());
+						} catch (NotDefinedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				contextManager.addContextManagerListener(new IContextManagerListener() {
+					public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
+						if (contextManagerEvent.isContextChanged()) {
+							String id = contextManagerEvent.getContextId();
+							if (id != null) {
+								defineBindingTable(id);
+							}
+						}
+					}
+				});
 				contextService.readRegistry();
+				Iterator<Entry<String, String>> e = contextToParent.entrySet().iterator();
+				while (e.hasNext()) {
+					Entry<String, String> entry = e.next();
+					Context c = contextManager.getContext(entry.getKey());
+					if (!c.isDefined()) {
+						c.define(entry.getKey(), null, entry.getValue());
+					}
+				}
 				EContextService ecs = (EContextService) e4Context.get(EContextService.class
 						.getName());
 				ecs.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
-import org.eclipse.e4.core.di.annotations.Optional;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.jface.bindings.Binding;
@@ -76,8 +76,7 @@ public final class BindingService implements IBindingService {
 	 * .jface.bindings.IBindingManagerListener)
 	 */
 	public void addBindingManagerListener(IBindingManagerListener listener) {
-		// TODO compat addBindingManagerListener
-		E4Util.unsupported("addBindingManagerListener"); //$NON-NLS-1$
+		manager.addBindingManagerListener(listener);
 	}
 
 	/*
@@ -88,8 +87,7 @@ public final class BindingService implements IBindingService {
 	 * eclipse.jface.bindings.IBindingManagerListener)
 	 */
 	public void removeBindingManagerListener(IBindingManagerListener listener) {
-		// TODO compat removeBindingManagerListener
-		E4Util.unsupported("removeBindingManagerListener"); //$NON-NLS-1$
+		manager.removeBindingManagerListener(listener);
 	}
 
 	/*
@@ -132,9 +130,8 @@ public final class BindingService implements IBindingService {
 	 * .core.commands.ParameterizedCommand)
 	 */
 	public TriggerSequence getBestActiveBindingFor(ParameterizedCommand command) {
-		// TODO compat getBestActiveBindingFor
-		E4Util.unsupported("getBestActiveBindingFor"); //$NON-NLS-1$
-		return null;
+		TriggerSequence seq = bindingService.getBestSequenceFor(command);
+		return seq;
 	}
 
 	/*
@@ -145,9 +142,8 @@ public final class BindingService implements IBindingService {
 	 * .String)
 	 */
 	public TriggerSequence getBestActiveBindingFor(String commandId) {
-		// TODO compat getBestActiveBindingFor
-		E4Util.unsupported("getBestActiveBindingFor"); //$NON-NLS-1$
-		return null;
+		ParameterizedCommand cmd = commandService.createCommand(commandId, null);
+		return bindingService.getBestSequenceFor(cmd);
 	}
 
 	/*
@@ -323,6 +319,11 @@ public final class BindingService implements IBindingService {
 	public void readRegistryAndPreferences(ICommandService commandService) {
 		BindingPersistence reader = new BindingPersistence(manager, commandService);
 		reader.reRead();
+		Iterator i = manager.getActiveBindingsDisregardingContextFlat().iterator();
+		while (i.hasNext()) {
+			Binding b = (Binding) i.next();
+			bindingService.activateBinding(b);
+		}
 	}
 
 	/*
