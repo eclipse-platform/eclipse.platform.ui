@@ -340,7 +340,7 @@
       nsPrefix="descriptor">
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
         nsPrefix="basic">
-      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ui/Contribution #//ui/Context #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings">
+      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//commands/HandlerContainer #//commands/Bindings">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
@@ -349,6 +349,8 @@
             containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirtyable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
