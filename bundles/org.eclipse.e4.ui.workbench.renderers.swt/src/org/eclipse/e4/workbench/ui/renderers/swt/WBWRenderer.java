@@ -16,8 +16,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -103,6 +105,32 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	public WBWRenderer() {
 		super();
+	}
+
+	MPart activePart = null;
+
+	@Inject
+	public void trackActivePart(
+			@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
+		if (activePart != null) {
+			activePart.getTags().remove("active"); //$NON-NLS-1$
+			if (activePart.getRenderer() instanceof SWTPartRenderer) {
+				SWTPartRenderer renderer = (SWTPartRenderer) activePart
+						.getRenderer();
+				renderer.setCSSInfo(activePart, activePart.getWidget());
+			}
+		}
+
+		activePart = p;
+
+		if (activePart != null) {
+			activePart.getTags().add("active"); //$NON-NLS-1$
+			if (activePart.getRenderer() instanceof SWTPartRenderer) {
+				SWTPartRenderer renderer = (SWTPartRenderer) activePart
+						.getRenderer();
+				renderer.setCSSInfo(activePart, activePart.getWidget());
+			}
+		}
 	}
 
 	@PostConstruct
@@ -314,7 +342,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell.setText(wbwModel.getLabel());
 
 		wbwShell.setImage(getImage(wbwModel));
-		//TODO: This should be added to the model, see bug 308494
+		// TODO: This should be added to the model, see bug 308494
 		wbwShell.setImages(Window.getDefaultImages());
 
 		// Install the drag and drop handler on all regular windows

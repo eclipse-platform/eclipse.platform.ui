@@ -11,7 +11,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
@@ -60,14 +59,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 	}
 
-	public void bindWidget(MUIElement me, Object widget) {
-		// Create a bi-directional link between the widget and the model
-		me.setWidget(widget);
-		((Widget) widget).setData(OWNING_ME, me);
-
-		// Remember which renderer created this widget
-		me.setRenderer(this);
-
+	public void setCSSInfo(MUIElement me, Object widget) {
 		// Set up the CSS Styling parameters; id & class
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
@@ -81,6 +73,18 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		// Set the id
 		engine.setId(widget, me.getId()); // also triggers style()
+	}
+
+	public void bindWidget(MUIElement me, Object widget) {
+		// Create a bi-directional link between the widget and the model
+		me.setWidget(widget);
+		((Widget) widget).setData(OWNING_ME, me);
+
+		// Remember which renderer created this widget
+		me.setRenderer(this);
+
+		// Set up the CSS Styling parameters; id & class
+		setCSSInfo(me, widget);
 
 		// Ensure that disposed widgets are unbound form the model
 		Widget swtWidget = (Widget) widget;
