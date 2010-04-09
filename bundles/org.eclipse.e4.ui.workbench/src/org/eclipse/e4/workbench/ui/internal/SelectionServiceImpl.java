@@ -10,15 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
-
-import org.eclipse.e4.core.di.annotations.Optional;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +17,12 @@ import java.util.Set;
 import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -62,8 +58,6 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	@Inject
 	private IEventBroker eventBroker;
-
-	private Object selection;
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -129,7 +123,7 @@ public class SelectionServiceImpl implements ESelectionService {
 			if (rootContext == context) {
 				IEclipseContext partContext = part.getContext();
 				if (partContext != null) {
-					selection = partContext.get(OUT_SELECTION);
+					Object selection = partContext.get(OUT_SELECTION);
 					notifyListeners(part, selection);
 
 					track(part);
@@ -194,8 +188,6 @@ public class SelectionServiceImpl implements ESelectionService {
 					}
 
 					if (activePart == part) {
-						// update the active selection
-						SelectionServiceImpl.this.selection = selection;
 						notifyListeners(part, selection);
 					} else {
 						notifyTargetedListeners(part, selection);
@@ -227,18 +219,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	public Object getSelection() {
 		if (activePart == null) {
 			return null;
-		}
-
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext == context) {
-			return selection;
-		}
-		
-		while (rootContext != null) {
-			rootContext = (IEclipseContext) rootContext.getLocal(IContextConstants.PARENT);
-			if (rootContext == context) {
-				return selection;
-			}
 		}
 
 		IEclipseContext partContext = activePart.getContext();
