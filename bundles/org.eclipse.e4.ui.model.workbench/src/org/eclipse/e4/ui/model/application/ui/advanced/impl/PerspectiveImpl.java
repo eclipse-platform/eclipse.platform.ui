@@ -16,11 +16,10 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-import org.eclipse.e4.ui.model.application.MContext;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -472,9 +471,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		}
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.PERSPECTIVE__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
-				case AdvancedPackageImpl.PERSPECTIVE__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
-				case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
+				case AdvancedPackageImpl.PERSPECTIVE__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
+				case AdvancedPackageImpl.PERSPECTIVE__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
+				case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -498,9 +497,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		}
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTEXT__CONTEXT: return AdvancedPackageImpl.PERSPECTIVE__CONTEXT;
-				case ApplicationPackageImpl.CONTEXT__VARIABLES: return AdvancedPackageImpl.PERSPECTIVE__VARIABLES;
-				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return AdvancedPackageImpl.PERSPECTIVE__PROPERTIES;
+				case UiPackageImpl.CONTEXT__CONTEXT: return AdvancedPackageImpl.PERSPECTIVE__CONTEXT;
+				case UiPackageImpl.CONTEXT__VARIABLES: return AdvancedPackageImpl.PERSPECTIVE__VARIABLES;
+				case UiPackageImpl.CONTEXT__PROPERTIES: return AdvancedPackageImpl.PERSPECTIVE__PROPERTIES;
 				default: return -1;
 			}
 		}

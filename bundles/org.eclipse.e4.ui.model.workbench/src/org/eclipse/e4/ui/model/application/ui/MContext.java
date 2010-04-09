@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application;
+package org.eclipse.e4.ui.model.application.ui;
 
 import java.util.List;
 import java.util.Map;
@@ -23,9 +23,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getVariables <em>Variables</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MContext#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getContext <em>Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -49,7 +49,7 @@ public interface MContext {
 	IEclipseContext getContext();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MContext#getContext <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Context</em>' attribute.

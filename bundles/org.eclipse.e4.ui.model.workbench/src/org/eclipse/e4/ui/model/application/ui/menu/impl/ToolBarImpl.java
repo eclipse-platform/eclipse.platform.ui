@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.model.application.ui.menu.impl;
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -26,7 +26,7 @@ import org.eclipse.emf.ecore.EClass;
  *
  * @generated
  */
-public class ToolBarImpl extends ElementContainerImpl<MToolItem> implements MToolBar {
+public class ToolBarImpl extends ElementContainerImpl<MToolBarElement> implements MToolBar {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

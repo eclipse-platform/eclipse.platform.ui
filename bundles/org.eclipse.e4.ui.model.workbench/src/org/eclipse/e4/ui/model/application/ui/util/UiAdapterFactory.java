@@ -80,6 +80,10 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	protected UiSwitch<Adapter> modelSwitch =
 		new UiSwitch<Adapter>() {
 			@Override
+			public Adapter caseContext(MContext object) {
+				return createContextAdapter();
+			}
+			@Override
 			public Adapter caseDirtyable(MDirtyable object) {
 				return createDirtyableAdapter();
 			}
@@ -108,6 +112,10 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 				return createGenericTileAdapter();
 			}
 			@Override
+			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
+				return createTrimContainerAdapter();
+			}
+			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
 				return createApplicationElementAdapter();
 			}
@@ -130,6 +138,20 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @generated
+	 */
+	public Adapter createContextAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MDirtyable <em>Dirtyable</em>}'.
@@ -226,6 +248,20 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer <em>Trim Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer
+	 * @generated
+	 */
+	public Adapter createTrimContainerAdapter() {
 		return null;
 	}
 

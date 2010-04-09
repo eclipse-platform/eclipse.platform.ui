@@ -82,6 +82,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.TOOL_ITEM: return (EObject)createToolItem();
 			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MenuPackageImpl.TOOL_BAR: return (EObject)createToolBar();
+			case MenuPackageImpl.TOOL_CONTROL: return (EObject)createToolControl();
 			case MenuPackageImpl.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
 			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
 			default:
@@ -207,6 +208,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MToolBar createToolBar() {
 		ToolBarImpl toolBar = new ToolBarImpl();
 		return toolBar;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MToolControl createToolControl() {
+		ToolControlImpl toolControl = new ToolControlImpl();
+		return toolControl;
 	}
 
 	/**

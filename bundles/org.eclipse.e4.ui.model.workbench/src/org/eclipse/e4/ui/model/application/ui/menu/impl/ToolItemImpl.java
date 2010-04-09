@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MSubMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -253,6 +254,11 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 				default: return -1;
 			}
 		}
+		if (baseClass == MToolBarElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -267,6 +273,11 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 			switch (baseFeatureID) {
 				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return MenuPackageImpl.TOOL_ITEM__CHILDREN;
 				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT;
+				default: return -1;
+			}
+		}
+		if (baseClass == MToolBarElement.class) {
+			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

@@ -17,7 +17,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
@@ -135,7 +134,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
 	 * @generated
 	 */
-	public static final int APPLICATION_ELEMENT = 5;
+	public static final int APPLICATION_ELEMENT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -364,6 +363,70 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
+	 * @generated
+	 */
+	public static final int CONTRIBUTION = 3;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__ELEMENT_ID = APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__TAGS = APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__CONTRIBUTION_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__PERSISTED_STATE = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Contribution</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -371,7 +434,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
 	 * @generated
 	 */
-	public static final int MODEL_COMPONENTS = 2;
+	public static final int MODEL_COMPONENTS = 4;
 
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' containment reference list.
@@ -399,7 +462,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
 	 * @generated
 	 */
-	public static final int MODEL_COMPONENT = 3;
+	public static final int MODEL_COMPONENT = 5;
 
 	/**
 	 * The feature id for the '<em><b>Descriptors</b></em>' containment reference list.
@@ -519,116 +582,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int MODEL_COMPONENT_FEATURE_COUNT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
-	 * @generated
-	 */
-	public static final int CONTRIBUTION = 4;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__ELEMENT_ID = APPLICATION_ELEMENT__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__TAGS = APPLICATION_ELEMENT__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__CONTRIBUTION_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__PERSISTED_STATE = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Contribution</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContextImpl <em>Context</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ContextImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContext()
-	 * @generated
-	 */
-	public static final int CONTEXT = 6;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTEXT__CONTEXT = 0;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTEXT__VARIABLES = 1;
-
-	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTEXT__PROPERTIES = 2;
-
-	/**
-	 * The number of structural features of the '<em>Context</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTEXT_FEATURE_COUNT = 3;
-
-	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -636,7 +589,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	public static final int IECLIPSE_CONTEXT = 7;
+	public static final int IECLIPSE_CONTEXT = 6;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -657,14 +610,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass modelComponentsEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass modelComponentEClass = null;
+	private EClass applicationElementEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -678,14 +624,14 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass applicationElementEClass = null;
+	private EClass modelComponentsEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass contextEClass = null;
+	private EClass modelComponentEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -842,6 +788,95 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @generated
+	 */
+	public EClass getApplicationElement() {
+		return applicationElementEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Element Id</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getElementId()
+	 * @see #getApplicationElement()
+	 * @generated
+	 */
+	public EAttribute getApplicationElement_ElementId() {
+		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Tags</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTags()
+	 * @see #getApplicationElement()
+	 * @generated
+	 */
+	public EReference getApplicationElement_Tags() {
+		return (EReference)applicationElementEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Contribution</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @generated
+	 */
+	public EClass getContribution() {
+		return contributionEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Contribution URI</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getContributionURI()
+	 * @see #getContribution()
+	 * @generated
+	 */
+	public EAttribute getContribution_ContributionURI() {
+		return (EAttribute)contributionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Object</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getObject()
+	 * @see #getContribution()
+	 * @generated
+	 */
+	public EAttribute getContribution_Object() {
+		return (EAttribute)contributionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Persisted State</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getPersistedState()
+	 * @see #getContribution()
+	 * @generated
+	 */
+	public EReference getContribution_PersistedState() {
+		return (EReference)contributionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponents <em>Model Components</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -957,146 +992,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Contribution</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContribution
-	 * @generated
-	 */
-	public EClass getContribution() {
-		return contributionEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Contribution URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContribution#getContributionURI()
-	 * @see #getContribution()
-	 * @generated
-	 */
-	public EAttribute getContribution_ContributionURI() {
-		return (EAttribute)contributionEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Object</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContribution#getObject()
-	 * @see #getContribution()
-	 * @generated
-	 */
-	public EAttribute getContribution_Object() {
-		return (EAttribute)contributionEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Persisted State</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContribution#getPersistedState()
-	 * @see #getContribution()
-	 * @generated
-	 */
-	public EReference getContribution_PersistedState() {
-		return (EReference)contributionEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
-	 * @generated
-	 */
-	public EClass getApplicationElement() {
-		return applicationElementEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Element Id</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getElementId()
-	 * @see #getApplicationElement()
-	 * @generated
-	 */
-	public EAttribute getApplicationElement_ElementId() {
-		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Tags</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTags()
-	 * @see #getApplicationElement()
-	 * @generated
-	 */
-	public EReference getApplicationElement_Tags() {
-		return (EReference)applicationElementEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Context</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext
-	 * @generated
-	 */
-	public EClass getContext() {
-		return contextEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Context</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext#getContext()
-	 * @see #getContext()
-	 * @generated
-	 */
-	public EAttribute getContext_Context() {
-		return (EAttribute)contextEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MContext#getVariables <em>Variables</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Variables</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext#getVariables()
-	 * @see #getContext()
-	 * @generated
-	 */
-	public EAttribute getContext_Variables() {
-		return (EAttribute)contextEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MContext#getProperties <em>Properties</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Properties</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext#getProperties()
-	 * @see #getContext()
-	 * @generated
-	 */
-	public EReference getContext_Properties() {
-		return (EReference)contextEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1146,6 +1041,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		applicationEClass = createEClass(APPLICATION);
 		createEReference(applicationEClass, APPLICATION__COMMANDS);
 
+		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
+		createEReference(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
+
+		contributionEClass = createEClass(CONTRIBUTION);
+		createEAttribute(contributionEClass, CONTRIBUTION__CONTRIBUTION_URI);
+		createEAttribute(contributionEClass, CONTRIBUTION__OBJECT);
+		createEReference(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
+
 		modelComponentsEClass = createEClass(MODEL_COMPONENTS);
 		createEReference(modelComponentsEClass, MODEL_COMPONENTS__COMPONENTS);
 
@@ -1156,20 +1060,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEReference(modelComponentEClass, MODEL_COMPONENT__COMMANDS);
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PROCESSOR);
 		createEReference(modelComponentEClass, MODEL_COMPONENT__BINDINGS);
-
-		contributionEClass = createEClass(CONTRIBUTION);
-		createEAttribute(contributionEClass, CONTRIBUTION__CONTRIBUTION_URI);
-		createEAttribute(contributionEClass, CONTRIBUTION__OBJECT);
-		createEReference(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
-
-		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
-		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
-		createEReference(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
-
-		contextEClass = createEClass(CONTEXT);
-		createEAttribute(contextEClass, CONTEXT__CONTEXT);
-		createEAttribute(contextEClass, CONTEXT__VARIABLES);
-		createEReference(contextEClass, CONTEXT__PROPERTIES);
 
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
@@ -1218,7 +1108,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		EGenericType g2 = createEGenericType(theBasicPackage.getWindow());
 		g1.getETypeArguments().add(g2);
 		applicationEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getContext());
+		g1 = createEGenericType(theUiPackage.getContext());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getHandlerContainer());
 		applicationEClass.getEGenericSuperTypes().add(g1);
@@ -1228,11 +1118,11 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getBindings());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theBasicPackage_1.getPartDescriptorContainer());
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getBindingTableContainer());
-		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(stringToStringMapEClass, Map.Entry.class, "StringToStringMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1241,6 +1131,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		initEClass(applicationEClass, MApplication.class, "Application", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getApplication_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplicationElement_Tags(), this.getStringToStringMap(), null, "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(modelComponentsEClass, MModelComponents.class, "ModelComponents", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getModelComponents_Components(), this.getModelComponent(), null, "components", null, 0, -1, MModelComponents.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1252,20 +1151,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEReference(getModelComponent_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getModelComponent_Processor(), ecorePackage.getEString(), "processor", null, 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelComponent_Bindings(), theCommandsPackage.getKeyBinding(), null, "bindings", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getApplicationElement_Tags(), this.getStringToStringMap(), null, "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getContext_Context(), this.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
-		initEReference(getContext_Properties(), this.getStringToStringMap(), null, "properties", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1330,6 +1215,66 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference APPLICATION__COMMANDS = eINSTANCE.getApplication_Commands();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl <em>Element</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
+		 * @generated
+		 */
+		public static final EClass APPLICATION_ELEMENT = eINSTANCE.getApplicationElement();
+
+		/**
+		 * The meta object literal for the '<em><b>Element Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute APPLICATION_ELEMENT__ELEMENT_ID = eINSTANCE.getApplicationElement_ElementId();
+
+		/**
+		 * The meta object literal for the '<em><b>Tags</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference APPLICATION_ELEMENT__TAGS = eINSTANCE.getApplicationElement_Tags();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
+		 * @generated
+		 */
+		public static final EClass CONTRIBUTION = eINSTANCE.getContribution();
+
+		/**
+		 * The meta object literal for the '<em><b>Contribution URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CONTRIBUTION__CONTRIBUTION_URI = eINSTANCE.getContribution_ContributionURI();
+
+		/**
+		 * The meta object literal for the '<em><b>Object</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CONTRIBUTION__OBJECT = eINSTANCE.getContribution_Object();
+
+		/**
+		 * The meta object literal for the '<em><b>Persisted State</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
@@ -1406,100 +1351,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference MODEL_COMPONENT__BINDINGS = eINSTANCE.getModelComponent_Bindings();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
-		 * @generated
-		 */
-		public static final EClass CONTRIBUTION = eINSTANCE.getContribution();
-
-		/**
-		 * The meta object literal for the '<em><b>Contribution URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute CONTRIBUTION__CONTRIBUTION_URI = eINSTANCE.getContribution_ContributionURI();
-
-		/**
-		 * The meta object literal for the '<em><b>Object</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute CONTRIBUTION__OBJECT = eINSTANCE.getContribution_Object();
-
-		/**
-		 * The meta object literal for the '<em><b>Persisted State</b></em>' map feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl <em>Element</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
-		 * @generated
-		 */
-		public static final EClass APPLICATION_ELEMENT = eINSTANCE.getApplicationElement();
-
-		/**
-		 * The meta object literal for the '<em><b>Element Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute APPLICATION_ELEMENT__ELEMENT_ID = eINSTANCE.getApplicationElement_ElementId();
-
-		/**
-		 * The meta object literal for the '<em><b>Tags</b></em>' map feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference APPLICATION_ELEMENT__TAGS = eINSTANCE.getApplicationElement_Tags();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContextImpl <em>Context</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ContextImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContext()
-		 * @generated
-		 */
-		public static final EClass CONTEXT = eINSTANCE.getContext();
-
-		/**
-		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute CONTEXT__CONTEXT = eINSTANCE.getContext_Context();
-
-		/**
-		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute CONTEXT__VARIABLES = eINSTANCE.getContext_Variables();
-
-		/**
-		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference CONTEXT__PROPERTIES = eINSTANCE.getContext_Properties();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.

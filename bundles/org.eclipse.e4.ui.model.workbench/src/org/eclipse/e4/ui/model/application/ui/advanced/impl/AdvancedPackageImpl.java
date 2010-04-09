@@ -753,7 +753,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		// Obtain other dependent packages
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -767,7 +766,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getUILabel());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theApplicationPackage.getContext());
+		g1 = createEGenericType(theUiPackage.getContext());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getUIElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);

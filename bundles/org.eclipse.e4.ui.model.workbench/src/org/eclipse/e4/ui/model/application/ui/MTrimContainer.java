@@ -8,10 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.basic;
-
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
+package org.eclipse.e4.ui.model.application.ui;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
 
@@ -23,7 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer#getSide <em>Side</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide <em>Side</em>}</li>
  * </ul>
  * </p>
  *
@@ -49,7 +46,7 @@ public interface MTrimContainer<T extends MUIElement> extends MElementContainer<
 	SideValue getSide();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer#getSide <em>Side</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide <em>Side</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Side</em>' attribute.

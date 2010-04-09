@@ -12,13 +12,8 @@ package org.eclipse.e4.ui.model.application.descriptor.basic;
 
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MContribution;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -36,13 +31,15 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isCloseable <em>Closeable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI <em>Contribution URI</em>}</li>
  * </ul>
  * </p>
  *
  * @model
  * @generated
  */
-public interface MPartDescriptor extends MContribution, MContext, MHandlerContainer, MDirtyable, MBindings {
+public interface MPartDescriptor extends MHandlerContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Allow Multiple</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -158,5 +155,55 @@ public interface MPartDescriptor extends MContribution, MContext, MHandlerContai
 	 * @generated
 	 */
 	void setCloseable(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Dirtyable</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Dirtyable</em>' attribute.
+	 * @see #setDirtyable(boolean)
+	 * @model
+	 * @generated
+	 */
+	boolean isDirtyable();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Dirtyable</em>' attribute.
+	 * @see #isDirtyable()
+	 * @generated
+	 */
+	void setDirtyable(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Contribution URI</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Contribution URI</em>' attribute.
+	 * @see #setContributionURI(String)
+	 * @model
+	 * @generated
+	 */
+	String getContributionURI();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI <em>Contribution URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Contribution URI</em>' attribute.
+	 * @see #getContributionURI()
+	 * @generated
+	 */
+	void setContributionURI(String value);
 
 } // MPartDescriptor

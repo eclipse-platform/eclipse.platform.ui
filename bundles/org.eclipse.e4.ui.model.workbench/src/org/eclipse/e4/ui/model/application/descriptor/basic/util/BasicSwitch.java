@@ -12,18 +12,12 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.util;
 
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MContribution;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -105,12 +99,8 @@ public class BasicSwitch<T> {
 			case BasicPackageImpl.PART_DESCRIPTOR: {
 				MPartDescriptor partDescriptor = (MPartDescriptor)theEObject;
 				T result = casePartDescriptor(partDescriptor);
-				if (result == null) result = caseContribution(partDescriptor);
-				if (result == null) result = caseContext(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
-				if (result == null) result = caseDirtyable(partDescriptor);
 				if (result == null) result = caseBindings(partDescriptor);
-				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -155,51 +145,6 @@ public class BasicSwitch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseApplicationElement(MApplicationElement object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseContribution(MContribution object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Context</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseContext(MContext object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -211,21 +156,6 @@ public class BasicSwitch<T> {
 	 * @generated
 	 */
 	public T caseHandlerContainer(MHandlerContainer object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Dirtyable</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Dirtyable</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseDirtyable(MDirtyable object) {
 		return null;
 	}
 

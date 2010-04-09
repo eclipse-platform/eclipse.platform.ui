@@ -10,18 +10,12 @@
  */
 package org.eclipse.e4.ui.model.application.descriptor.basic.util;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MContribution;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -95,24 +89,8 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createPartDescriptorContainerAdapter();
 			}
 			@Override
-			public Adapter caseApplicationElement(MApplicationElement object) {
-				return createApplicationElementAdapter();
-			}
-			@Override
-			public Adapter caseContribution(MContribution object) {
-				return createContributionAdapter();
-			}
-			@Override
-			public Adapter caseContext(MContext object) {
-				return createContextAdapter();
-			}
-			@Override
 			public Adapter caseHandlerContainer(MHandlerContainer object) {
 				return createHandlerContainerAdapter();
-			}
-			@Override
-			public Adapter caseDirtyable(MDirtyable object) {
-				return createDirtyableAdapter();
 			}
 			@Override
 			public Adapter caseBindings(MBindings object) {
@@ -167,48 +145,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
-	 * @generated
-	 */
-	public Adapter createApplicationElementAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MContribution
-	 * @generated
-	 */
-	public Adapter createContributionAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MContext
-	 * @generated
-	 */
-	public Adapter createContextAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.commands.MHandlerContainer <em>Handler Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -219,20 +155,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MDirtyable <em>Dirtyable</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
-	 * @generated
-	 */
-	public Adapter createDirtyableAdapter() {
 		return null;
 	}
 

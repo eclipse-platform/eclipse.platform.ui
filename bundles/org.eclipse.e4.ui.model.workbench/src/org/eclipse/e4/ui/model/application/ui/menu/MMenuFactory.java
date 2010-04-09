@@ -109,6 +109,15 @@ public interface MMenuFactory {
 	MToolBar createToolBar();
 
 	/**
+	 * Returns a new object of class '<em>Tool Control</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Tool Control</em>'.
+	 * @generated
+	 */
+	MToolControl createToolControl();
+
+	/**
 	 * Returns a new object of class '<em>Handled Tool Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

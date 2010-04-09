@@ -8,31 +8,30 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.basic.impl;
+package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim;
+import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 
-import org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Window Trim</b></em>'.
+ * An implementation of the model object '<em><b>Tool Bar Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class WindowTrimImpl extends TrimContainerImpl<MTrimElement> implements MWindowTrim {
+public abstract class ToolBarElementImpl extends UIElementImpl implements MToolBarElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected WindowTrimImpl() {
+	protected ToolBarElementImpl() {
 		super();
 	}
 
@@ -43,7 +42,7 @@ public class WindowTrimImpl extends TrimContainerImpl<MTrimElement> implements M
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return BasicPackageImpl.Literals.WINDOW_TRIM;
+		return MenuPackageImpl.Literals.TOOL_BAR_ELEMENT;
 	}
 
-} //WindowTrimImpl
+} //ToolBarElementImpl

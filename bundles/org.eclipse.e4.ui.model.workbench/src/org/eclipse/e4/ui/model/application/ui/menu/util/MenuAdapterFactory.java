@@ -17,6 +17,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+
 import org.eclipse.e4.ui.model.application.ui.menu.*;
 
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -121,6 +123,14 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createToolBarAdapter();
 			}
 			@Override
+			public Adapter caseToolBarElement(MToolBarElement object) {
+				return createToolBarElementAdapter();
+			}
+			@Override
+			public Adapter caseToolControl(MToolControl object) {
+				return createToolControlAdapter();
+			}
+			@Override
 			public Adapter caseHandledToolItem(MHandledToolItem object) {
 				return createHandledToolItemAdapter();
 			}
@@ -147,6 +157,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseContribution(MContribution object) {
 				return createContributionAdapter();
+			}
+			@Override
+			public Adapter caseTrimElement(MTrimElement object) {
+				return createTrimElementAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -295,6 +309,34 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement <em>Tool Bar Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement
+	 * @generated
+	 */
+	public Adapter createToolBarElementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolControl <em>Tool Control</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolControl
+	 * @generated
+	 */
+	public Adapter createToolControlAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem <em>Handled Tool Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -389,6 +431,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
+	 * @generated
+	 */
+	public Adapter createTrimElementAdapter() {
 		return null;
 	}
 

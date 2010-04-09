@@ -95,6 +95,12 @@ public class UiSwitch<T1> {
 	 */
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case UiPackageImpl.CONTEXT: {
+				MContext context = (MContext)theEObject;
+				T1 result = caseContext(context);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case UiPackageImpl.DIRTYABLE: {
 				MDirtyable dirtyable = (MDirtyable)theEObject;
 				T1 result = caseDirtyable(dirtyable);
@@ -146,8 +152,32 @@ public class UiSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case UiPackageImpl.TRIM_CONTAINER: {
+				MTrimContainer<?> trimContainer = (MTrimContainer<?>)theEObject;
+				T1 result = caseTrimContainer(trimContainer);
+				if (result == null) result = caseElementContainer(trimContainer);
+				if (result == null) result = caseUIElement(trimContainer);
+				if (result == null) result = caseApplicationElement(trimContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContext(MContext object) {
+		return null;
 	}
 
 	/**
@@ -252,6 +282,21 @@ public class UiSwitch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <T extends MUIElement> T1 caseTrimContainer(MTrimContainer<T> object) {
 		return null;
 	}
 

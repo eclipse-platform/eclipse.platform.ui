@@ -14,11 +14,13 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.MUiFactory;
@@ -88,6 +90,52 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final UiPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl <em>Context</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.ContextImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
+	 * @generated
+	 */
+	public static final int CONTEXT = 0;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTEXT__CONTEXT = 0;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTEXT__VARIABLES = 1;
+
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTEXT__PROPERTIES = 2;
+
+	/**
+	 * The number of structural features of the '<em>Context</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTEXT_FEATURE_COUNT = 3;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl <em>Dirtyable</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -95,7 +143,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getDirtyable()
 	 * @generated
 	 */
-	public static final int DIRTYABLE = 0;
+	public static final int DIRTYABLE = 1;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -123,7 +171,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
 	 * @generated
 	 */
-	public static final int INPUT = 1;
+	public static final int INPUT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -151,7 +199,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUIElement()
 	 * @generated
 	 */
-	public static final int UI_ELEMENT = 2;
+	public static final int UI_ELEMENT = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -251,7 +299,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
 	 * @generated
 	 */
-	public static final int UI_LABEL = 3;
+	public static final int UI_LABEL = 4;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -297,7 +345,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getElementContainer()
 	 * @generated
 	 */
-	public static final int ELEMENT_CONTAINER = 4;
+	public static final int ELEMENT_CONTAINER = 5;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -415,7 +463,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericStack()
 	 * @generated
 	 */
-	public static final int GENERIC_STACK = 5;
+	public static final int GENERIC_STACK = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -533,7 +581,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTile()
 	 * @generated
 	 */
-	public static final int GENERIC_TILE = 6;
+	public static final int GENERIC_TILE = 7;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -653,6 +701,140 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TILE_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl <em>Trim Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getTrimContainer()
+	 * @generated
+	 */
+	public static final int TRIM_CONTAINER = 8;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__TAGS = ELEMENT_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__ON_TOP = ELEMENT_CONTAINER__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__CONTAINER_DATA = ELEMENT_CONTAINER__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__SELECTED_ELEMENT = ELEMENT_CONTAINER__SELECTED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Side</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Trim Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass contextEClass = null;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -700,6 +882,13 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass genericTileEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass trimContainerEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -782,6 +971,57 @@ public class UiPackageImpl extends EPackageImpl {
 		return theUiPackage;
 	}
 
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @generated
+	 */
+	public EClass getContext() {
+		return contextEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MContext#getContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getContext()
+	 * @see #getContext()
+	 * @generated
+	 */
+	public EAttribute getContext_Context() {
+		return (EAttribute)contextEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.ui.MContext#getVariables <em>Variables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Variables</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getVariables()
+	 * @see #getContext()
+	 * @generated
+	 */
+	public EAttribute getContext_Variables() {
+		return (EAttribute)contextEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.ui.MContext#getProperties <em>Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Properties</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getProperties()
+	 * @see #getContext()
+	 * @generated
+	 */
+	public EReference getContext_Properties() {
+		return (EReference)contextEClass.getEStructuralFeatures().get(2);
+	}
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MDirtyable <em>Dirtyable</em>}'.
@@ -1063,6 +1303,31 @@ public class UiPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer <em>Trim Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Trim Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer
+	 * @generated
+	 */
+	public EClass getTrimContainer() {
+		return trimContainerEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide <em>Side</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Side</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide()
+	 * @see #getTrimContainer()
+	 * @generated
+	 */
+	public EAttribute getTrimContainer_Side() {
+		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1092,6 +1357,11 @@ public class UiPackageImpl extends EPackageImpl {
 		isCreated = true;
 
 		// Create classes and their features
+		contextEClass = createEClass(CONTEXT);
+		createEAttribute(contextEClass, CONTEXT__CONTEXT);
+		createEAttribute(contextEClass, CONTEXT__VARIABLES);
+		createEReference(contextEClass, CONTEXT__PROPERTIES);
+
 		dirtyableEClass = createEClass(DIRTYABLE);
 		createEAttribute(dirtyableEClass, DIRTYABLE__DIRTY);
 
@@ -1120,6 +1390,9 @@ public class UiPackageImpl extends EPackageImpl {
 
 		genericTileEClass = createEClass(GENERIC_TILE);
 		createEAttribute(genericTileEClass, GENERIC_TILE__HORIZONTAL);
+
+		trimContainerEClass = createEClass(TRIM_CONTAINER);
+		createEAttribute(trimContainerEClass, TRIM_CONTAINER__SIDE);
 	}
 
 	/**
@@ -1160,6 +1433,7 @@ public class UiPackageImpl extends EPackageImpl {
 		ETypeParameter elementContainerEClass_T = addETypeParameter(elementContainerEClass, "T"); //$NON-NLS-1$
 		ETypeParameter genericStackEClass_T = addETypeParameter(genericStackEClass, "T"); //$NON-NLS-1$
 		ETypeParameter genericTileEClass_T = addETypeParameter(genericTileEClass, "T"); //$NON-NLS-1$
+		ETypeParameter trimContainerEClass_T = addETypeParameter(trimContainerEClass, "T"); //$NON-NLS-1$
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getUIElement());
@@ -1168,6 +1442,8 @@ public class UiPackageImpl extends EPackageImpl {
 		genericStackEClass_T.getEBounds().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		genericTileEClass_T.getEBounds().add(g1);
+		g1 = createEGenericType(this.getUIElement());
+		trimContainerEClass_T.getEBounds().add(g1);
 
 		// Add supertypes to classes
 		uiElementEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
@@ -1180,8 +1456,17 @@ public class UiPackageImpl extends EPackageImpl {
 		g2 = createEGenericType(genericTileEClass_T);
 		g1.getETypeArguments().add(g2);
 		genericTileEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getElementContainer());
+		g2 = createEGenericType(trimContainerEClass_T);
+		g1.getETypeArguments().add(g2);
+		trimContainerEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
+		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getContext_Context(), theApplicationPackage.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+		initEReference(getContext_Properties(), theApplicationPackage.getStringToStringMap(), null, "properties", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(dirtyableEClass, MDirtyable.class, "Dirtyable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getDirtyable_Dirty(), ecorePackage.getEBoolean(), "dirty", null, 0, 1, MDirtyable.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
@@ -1215,6 +1500,9 @@ public class UiPackageImpl extends EPackageImpl {
 
 		initEClass(genericTileEClass, MGenericTile.class, "GenericTile", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getGenericTile_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(trimContainerEClass, MTrimContainer.class, "TrimContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getTrimContainer_Side(), theAdvancedPackage.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 	}
 
 	/**
@@ -1230,6 +1518,40 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl <em>Context</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.ContextImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
+		 * @generated
+		 */
+		public static final EClass CONTEXT = eINSTANCE.getContext();
+
+		/**
+		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CONTEXT__CONTEXT = eINSTANCE.getContext_Context();
+
+		/**
+		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CONTEXT__VARIABLES = eINSTANCE.getContext_Variables();
+
+		/**
+		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference CONTEXT__PROPERTIES = eINSTANCE.getContext_Properties();
+
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl <em>Dirtyable</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1419,6 +1741,24 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute GENERIC_TILE__HORIZONTAL = eINSTANCE.getGenericTile_Horizontal();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl <em>Trim Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getTrimContainer()
+		 * @generated
+		 */
+		public static final EClass TRIM_CONTAINER = eINSTANCE.getTrimContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute TRIM_CONTAINER__SIDE = eINSTANCE.getTrimContainer_Side();
 
 	}
 

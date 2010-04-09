@@ -12,6 +12,8 @@ package org.eclipse.e4.ui.model.application.ui.menu;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Tool Bar</b></em>'.
@@ -21,5 +23,5 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * @model
  * @generated
  */
-public interface MToolBar extends MElementContainer<MToolItem> {
+public interface MToolBar extends MElementContainer<MToolBarElement>, MTrimElement {
 } // MToolBar

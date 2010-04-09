@@ -16,8 +16,6 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-import org.eclipse.e4.ui.model.application.MContext;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -27,6 +25,7 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -859,9 +858,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		}
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.WINDOW__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
-				case BasicPackageImpl.WINDOW__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
-				case BasicPackageImpl.WINDOW__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
+				case BasicPackageImpl.WINDOW__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
+				case BasicPackageImpl.WINDOW__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
+				case BasicPackageImpl.WINDOW__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -897,9 +896,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		}
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.WINDOW__CONTEXT;
-				case ApplicationPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.WINDOW__VARIABLES;
-				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.WINDOW__PROPERTIES;
+				case UiPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.WINDOW__CONTEXT;
+				case UiPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.WINDOW__VARIABLES;
+				case UiPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.WINDOW__PROPERTIES;
 				default: return -1;
 			}
 		}

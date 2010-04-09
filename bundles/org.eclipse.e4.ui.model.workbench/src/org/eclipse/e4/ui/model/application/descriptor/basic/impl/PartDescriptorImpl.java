@@ -12,27 +12,13 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
-import org.eclipse.e4.ui.model.application.MContext;
 
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.impl.ContributionImpl;
-import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
-
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
-
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -41,17 +27,15 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -61,63 +45,21 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getContext <em>Context</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getVariables <em>Variables</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isAllowMultiple <em>Allow Multiple</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isCloseable <em>Closeable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isDirtyable <em>Dirtyable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class PartDescriptorImpl extends ContributionImpl implements MPartDescriptor {
-	/**
-	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getContext()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final IEclipseContext CONTEXT_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getContext() <em>Context</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getContext()
-	 * @generated
-	 * @ordered
-	 */
-	protected IEclipseContext context = CONTEXT_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getVariables() <em>Variables</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getVariables()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> variables;
-
-	/**
-	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getProperties()
-	 * @generated
-	 * @ordered
-	 */
-	protected EMap<String, String> properties;
-
+public class PartDescriptorImpl extends EObjectImpl implements MPartDescriptor {
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -127,26 +69,6 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	 * @ordered
 	 */
 	protected EList<MHandler> handlers;
-
-	/**
-	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DIRTY_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
@@ -239,6 +161,46 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	protected boolean closeable = CLOSEABLE_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #isDirtyable() <em>Dirtyable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirtyable()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTYABLE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirtyable() <em>Dirtyable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirtyable()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirtyable = DIRTYABLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContributionURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTRIBUTION_URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContributionURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected String contributionURI = CONTRIBUTION_URI_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -262,77 +224,11 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public IEclipseContext getContext() {
-		return context;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setContext(IEclipseContext newContext) {
-		IEclipseContext oldContext = context;
-		context = newContext;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__CONTEXT, oldContext, context));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List<String> getVariables() {
-		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART_DESCRIPTOR__VARIABLES);
-		}
-		return variables;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Map<String, String> getProperties() {
-		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES);
-		}
-		return properties.map();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.PART_DESCRIPTOR__HANDLERS);
 		}
 		return handlers;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setDirty(boolean newDirty) {
-		boolean oldDirty = dirty;
-		dirty = newDirty;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__DIRTY, oldDirty, dirty));
 	}
 
 	/**
@@ -470,11 +366,51 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDirtyable() {
+		return dirtyable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDirtyable(boolean newDirtyable) {
+		boolean oldDirtyable = dirtyable;
+		dirtyable = newDirtyable;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE, oldDirtyable, dirtyable));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getContributionURI() {
+		return contributionURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContributionURI(String newContributionURI) {
+		String oldContributionURI = contributionURI;
+		contributionURI = newContributionURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI, oldContributionURI, contributionURI));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__MENUS:
@@ -493,17 +429,8 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.PART_DESCRIPTOR__CONTEXT:
-				return getContext();
-			case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES:
-				return getVariables();
-			case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-				else return getProperties();
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return getHandlers();
-			case BasicPackageImpl.PART_DESCRIPTOR__DIRTY:
-				return isDirty();
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return getBindingContexts();
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
@@ -516,6 +443,10 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 				return getToolbar();
 			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
 				return isCloseable();
+			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
+				return isDirtyable();
+			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
+				return getContributionURI();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -529,22 +460,9 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.PART_DESCRIPTOR__CONTEXT:
-				setContext((IEclipseContext)newValue);
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES:
-				getVariables().clear();
-				getVariables().addAll((Collection<? extends String>)newValue);
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
-				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__DIRTY:
-				setDirty((Boolean)newValue);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
@@ -566,6 +484,12 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
 				setCloseable((Boolean)newValue);
 				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
+				setDirtyable((Boolean)newValue);
+				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
+				setContributionURI((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -578,20 +502,8 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.PART_DESCRIPTOR__CONTEXT:
-				setContext(CONTEXT_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES:
-				getVariables().clear();
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-				getProperties().clear();
-				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
-				return;
-			case BasicPackageImpl.PART_DESCRIPTOR__DIRTY:
-				setDirty(DIRTY_EDEFAULT);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
@@ -611,6 +523,12 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
 				setCloseable(CLOSEABLE_EDEFAULT);
 				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
+				setDirtyable(DIRTYABLE_EDEFAULT);
+				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
+				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -623,16 +541,8 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.PART_DESCRIPTOR__CONTEXT:
-				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES:
-				return variables != null && !variables.isEmpty();
-			case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-				return properties != null && !properties.isEmpty();
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case BasicPackageImpl.PART_DESCRIPTOR__DIRTY:
-				return dirty != DIRTY_EDEFAULT;
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return bindingContexts != null && !bindingContexts.isEmpty();
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
@@ -645,6 +555,10 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 				return toolbar != null;
 			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
 				return closeable != CLOSEABLE_EDEFAULT;
+			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
+				return dirtyable != DIRTYABLE_EDEFAULT;
+			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
+				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -656,26 +570,6 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MContext.class) {
-			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART_DESCRIPTOR__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
-				case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
-				case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
-				default: return -1;
-			}
-		}
-		if (baseClass == MHandlerContainer.class) {
-			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MDirtyable.class) {
-			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART_DESCRIPTOR__DIRTY: return UiPackageImpl.DIRTYABLE__DIRTY;
-				default: return -1;
-			}
-		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
 				case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
@@ -692,26 +586,6 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MContext.class) {
-			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.PART_DESCRIPTOR__CONTEXT;
-				case ApplicationPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.PART_DESCRIPTOR__VARIABLES;
-				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES;
-				default: return -1;
-			}
-		}
-		if (baseClass == MHandlerContainer.class) {
-			switch (baseFeatureID) {
-				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return BasicPackageImpl.PART_DESCRIPTOR__HANDLERS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MDirtyable.class) {
-			switch (baseFeatureID) {
-				case UiPackageImpl.DIRTYABLE__DIRTY: return BasicPackageImpl.PART_DESCRIPTOR__DIRTY;
-				default: return -1;
-			}
-		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
 				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS;
@@ -731,13 +605,7 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (context: "); //$NON-NLS-1$
-		result.append(context);
-		result.append(", variables: "); //$NON-NLS-1$
-		result.append(variables);
-		result.append(", dirty: "); //$NON-NLS-1$
-		result.append(dirty);
-		result.append(", bindingContexts: "); //$NON-NLS-1$
+		result.append(" (bindingContexts: "); //$NON-NLS-1$
 		result.append(bindingContexts);
 		result.append(", allowMultiple: "); //$NON-NLS-1$
 		result.append(allowMultiple);
@@ -745,6 +613,10 @@ public class PartDescriptorImpl extends ContributionImpl implements MPartDescrip
 		result.append(category);
 		result.append(", closeable: "); //$NON-NLS-1$
 		result.append(closeable);
+		result.append(", dirtyable: "); //$NON-NLS-1$
+		result.append(dirtyable);
+		result.append(", contributionURI: "); //$NON-NLS-1$
+		result.append(contributionURI);
 		result.append(')');
 		return result.toString();
 	}

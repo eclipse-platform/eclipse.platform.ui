@@ -11,17 +11,18 @@
 package org.eclipse.e4.ui.model.application.ui.basic.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
@@ -113,8 +114,8 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createWindowAdapter();
 			}
 			@Override
-			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
-				return createTrimContainerAdapter();
+			public Adapter caseTrimElement(MTrimElement object) {
+				return createTrimElementAdapter();
 			}
 			@Override
 			public Adapter caseWindowTrim(MWindowTrim object) {
@@ -175,6 +176,10 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <T extends MUIElement> Adapter caseGenericTile(MGenericTile<T> object) {
 				return createGenericTileAdapter();
+			}
+			@Override
+			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
+				return createTrimContainerAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -267,16 +272,16 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer <em>Trim Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
 	 * @generated
 	 */
-	public Adapter createTrimContainerAdapter() {
+	public Adapter createTrimElementAdapter() {
 		return null;
 	}
 
@@ -351,13 +356,13 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MContext
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -487,6 +492,20 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer <em>Trim Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer
+	 * @generated
+	 */
+	public Adapter createTrimContainerAdapter() {
 		return null;
 	}
 

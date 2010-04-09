@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;

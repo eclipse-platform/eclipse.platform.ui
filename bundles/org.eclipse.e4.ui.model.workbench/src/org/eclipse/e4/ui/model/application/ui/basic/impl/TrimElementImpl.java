@@ -11,28 +11,27 @@
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim;
 
-import org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Window Trim</b></em>'.
+ * An implementation of the model object '<em><b>Trim Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class WindowTrimImpl extends TrimContainerImpl<MTrimElement> implements MWindowTrim {
+public abstract class TrimElementImpl extends UIElementImpl implements MTrimElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected WindowTrimImpl() {
+	protected TrimElementImpl() {
 		super();
 	}
 
@@ -43,7 +42,7 @@ public class WindowTrimImpl extends TrimContainerImpl<MTrimElement> implements M
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return BasicPackageImpl.Literals.WINDOW_TRIM;
+		return BasicPackageImpl.Literals.TRIM_ELEMENT;
 	}
 
-} //WindowTrimImpl
+} //TrimElementImpl

@@ -91,94 +91,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR = 0;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__TAGS = ApplicationPackageImpl.CONTRIBUTION__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__OBJECT = ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__PERSISTED_STATE = ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__CONTEXT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__VARIABLES = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__PROPERTIES = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__DIRTY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 4;
+	public static final int PART_DESCRIPTOR__HANDLERS = CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
@@ -187,7 +106,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 5;
+	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
@@ -196,7 +115,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 6;
+	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -205,7 +124,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CATEGORY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 7;
+	public static final int PART_DESCRIPTOR__CATEGORY = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -214,7 +133,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__MENUS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 8;
+	public static final int PART_DESCRIPTOR__MENUS = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -223,7 +142,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__TOOLBAR = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 9;
+	public static final int PART_DESCRIPTOR__TOOLBAR = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -232,7 +151,25 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 10;
+	public static final int PART_DESCRIPTOR__CLOSEABLE = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__DIRTYABLE = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
@@ -241,7 +178,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 11;
+	public static final int PART_DESCRIPTOR_FEATURE_COUNT = CommandsPackageImpl.HANDLER_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.
@@ -445,6 +382,32 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Dirtyable</em>'.
+	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable()
+	 * @see #getPartDescriptor()
+	 * @generated
+	 */
+	public EAttribute getPartDescriptor_Dirtyable() {
+		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI <em>Contribution URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Contribution URI</em>'.
+	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI()
+	 * @see #getPartDescriptor()
+	 * @generated
+	 */
+	public EAttribute getPartDescriptor_ContributionURI() {
+		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -505,6 +468,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEReference(partDescriptorEClass, PART_DESCRIPTOR__MENUS);
 		createEReference(partDescriptorEClass, PART_DESCRIPTOR__TOOLBAR);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__CLOSEABLE);
+		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__DIRTYABLE);
+		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__CONTRIBUTION_URI);
 
 		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
 		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
@@ -534,9 +499,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Create type parameters
@@ -544,10 +507,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		partDescriptorEClass.getESuperTypes().add(theApplicationPackage.getContribution());
-		partDescriptorEClass.getESuperTypes().add(theApplicationPackage.getContext());
 		partDescriptorEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
-		partDescriptorEClass.getESuperTypes().add(theUiPackage.getDirtyable());
 		partDescriptorEClass.getESuperTypes().add(theCommandsPackage.getBindings());
 
 		// Initialize classes and features; add operations and parameters
@@ -557,6 +517,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEReference(getPartDescriptor_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPartDescriptor_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -624,6 +586,22 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__CLOSEABLE = eINSTANCE.getPartDescriptor_Closeable();
+
+		/**
+		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute PART_DESCRIPTOR__DIRTYABLE = eINSTANCE.getPartDescriptor_Dirtyable();
+
+		/**
+		 * The meta object literal for the '<em><b>Contribution URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE.getPartDescriptor_ContributionURI();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.

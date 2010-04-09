@@ -8,18 +8,20 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.basic;
+package org.eclipse.e4.ui.model.application.ui.menu;
 
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
+import org.eclipse.e4.ui.model.application.MContribution;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Window Trim</b></em>'.
+ * A representation of the model object '<em><b>Tool Control</b></em>'.
  * <!-- end-user-doc -->
  *
  *
  * @model
  * @generated
  */
-public interface MWindowTrim extends MTrimContainer<MTrimElement>, MWindowElement {
-} // MWindowTrim
+public interface MToolControl extends MContribution, MToolBarElement, MTrimElement {
+} // MToolControl

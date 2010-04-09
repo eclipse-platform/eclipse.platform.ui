@@ -16,8 +16,6 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-import org.eclipse.e4.ui.model.application.MContext;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -28,6 +26,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ContributionImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -1115,9 +1114,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
-				case BasicPackageImpl.PART__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
-				case BasicPackageImpl.PART__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
+				case BasicPackageImpl.PART__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
+				case BasicPackageImpl.PART__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
+				case BasicPackageImpl.PART__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -1181,9 +1180,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.PART__CONTEXT;
-				case ApplicationPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.PART__VARIABLES;
-				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.PART__PROPERTIES;
+				case UiPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.PART__CONTEXT;
+				case UiPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.PART__VARIABLES;
+				case UiPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.PART__PROPERTIES;
 				default: return -1;
 			}
 		}

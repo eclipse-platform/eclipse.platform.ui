@@ -8,15 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.basic.impl;
+package org.eclipse.e4.ui.model.application.ui.impl;
 
+import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
-
-import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -31,7 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimContainerImpl#getSide <em>Side</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.TrimContainerImpl#getSide <em>Side</em>}</li>
  * </ul>
  * </p>
  *
@@ -74,7 +71,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return BasicPackageImpl.Literals.TRIM_CONTAINER;
+		return UiPackageImpl.Literals.TRIM_CONTAINER;
 	}
 
 	/**
@@ -95,7 +92,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 		SideValue oldSide = side;
 		side = newSide == null ? SIDE_EDEFAULT : newSide;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIM_CONTAINER__SIDE, oldSide, side));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.TRIM_CONTAINER__SIDE, oldSide, side));
 	}
 
 	/**
@@ -106,7 +103,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIM_CONTAINER__SIDE:
+			case UiPackageImpl.TRIM_CONTAINER__SIDE:
 				return getSide();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -120,7 +117,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIM_CONTAINER__SIDE:
+			case UiPackageImpl.TRIM_CONTAINER__SIDE:
 				setSide((SideValue)newValue);
 				return;
 		}
@@ -135,7 +132,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIM_CONTAINER__SIDE:
+			case UiPackageImpl.TRIM_CONTAINER__SIDE:
 				setSide(SIDE_EDEFAULT);
 				return;
 		}
@@ -150,7 +147,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIM_CONTAINER__SIDE:
+			case UiPackageImpl.TRIM_CONTAINER__SIDE:
 				return side != SIDE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);

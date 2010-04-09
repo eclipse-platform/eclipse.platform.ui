@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContext;
 
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -34,9 +33,12 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorConta
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
+
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -523,9 +525,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__CONTEXT: return ApplicationPackageImpl.CONTEXT__CONTEXT;
-				case ApplicationPackageImpl.APPLICATION__VARIABLES: return ApplicationPackageImpl.CONTEXT__VARIABLES;
-				case ApplicationPackageImpl.APPLICATION__PROPERTIES: return ApplicationPackageImpl.CONTEXT__PROPERTIES;
+				case ApplicationPackageImpl.APPLICATION__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
+				case ApplicationPackageImpl.APPLICATION__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
+				case ApplicationPackageImpl.APPLICATION__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
 				default: return -1;
 			}
 		}
@@ -566,9 +568,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTEXT__CONTEXT: return ApplicationPackageImpl.APPLICATION__CONTEXT;
-				case ApplicationPackageImpl.CONTEXT__VARIABLES: return ApplicationPackageImpl.APPLICATION__VARIABLES;
-				case ApplicationPackageImpl.CONTEXT__PROPERTIES: return ApplicationPackageImpl.APPLICATION__PROPERTIES;
+				case UiPackageImpl.CONTEXT__CONTEXT: return ApplicationPackageImpl.APPLICATION__CONTEXT;
+				case UiPackageImpl.CONTEXT__VARIABLES: return ApplicationPackageImpl.APPLICATION__VARIABLES;
+				case UiPackageImpl.CONTEXT__PROPERTIES: return ApplicationPackageImpl.APPLICATION__PROPERTIES;
 				default: return -1;
 			}
 		}

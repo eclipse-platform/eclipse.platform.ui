@@ -19,6 +19,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+
 import org.eclipse.e4.ui.model.application.ui.menu.*;
 
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -169,6 +171,7 @@ public class MenuSwitch<T1> {
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseElementContainer(toolItem);
+				if (result == null) result = caseToolBarElement(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseUILabel(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
@@ -182,6 +185,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseItem(directToolItem);
 				if (result == null) result = caseElementContainer(directToolItem);
+				if (result == null) result = caseToolBarElement(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
 				if (result == null) result = caseUILabel(directToolItem);
 				if (result == null) result = caseApplicationElement(directToolItem);
@@ -192,8 +196,28 @@ public class MenuSwitch<T1> {
 				MToolBar toolBar = (MToolBar)theEObject;
 				T1 result = caseToolBar(toolBar);
 				if (result == null) result = caseElementContainer(toolBar);
+				if (result == null) result = caseTrimElement(toolBar);
 				if (result == null) result = caseUIElement(toolBar);
 				if (result == null) result = caseApplicationElement(toolBar);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TOOL_BAR_ELEMENT: {
+				MToolBarElement toolBarElement = (MToolBarElement)theEObject;
+				T1 result = caseToolBarElement(toolBarElement);
+				if (result == null) result = caseUIElement(toolBarElement);
+				if (result == null) result = caseApplicationElement(toolBarElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TOOL_CONTROL: {
+				MToolControl toolControl = (MToolControl)theEObject;
+				T1 result = caseToolControl(toolControl);
+				if (result == null) result = caseContribution(toolControl);
+				if (result == null) result = caseToolBarElement(toolControl);
+				if (result == null) result = caseTrimElement(toolControl);
+				if (result == null) result = caseUIElement(toolControl);
+				if (result == null) result = caseApplicationElement(toolControl);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -204,6 +228,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
 				if (result == null) result = caseElementContainer(handledToolItem);
+				if (result == null) result = caseToolBarElement(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseUILabel(handledToolItem);
 				if (result == null) result = caseApplicationElement(handledToolItem);
@@ -360,6 +385,36 @@ public class MenuSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarElement(MToolBarElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Control</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Control</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolControl(MToolControl object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Handled Tool Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -461,6 +516,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseContribution(MContribution object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimElement(MTrimElement object) {
 		return null;
 	}
 

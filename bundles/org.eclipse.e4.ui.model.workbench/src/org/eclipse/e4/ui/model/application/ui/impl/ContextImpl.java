@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.impl;
+package org.eclipse.e4.ui.model.application.ui.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +16,10 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
+
+import org.eclipse.e4.ui.model.application.ui.MContext;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -42,9 +45,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getContext <em>Context</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getVariables <em>Variables</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContextImpl#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -107,7 +110,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return ApplicationPackageImpl.Literals.CONTEXT;
+		return UiPackageImpl.Literals.CONTEXT;
 	}
 
 	/**
@@ -128,7 +131,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTEXT__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CONTEXT__CONTEXT, oldContext, context));
 	}
 
 	/**
@@ -138,7 +141,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 */
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.CONTEXT__VARIABLES);
+			variables = new EDataTypeUniqueEList<String>(String.class, this, UiPackageImpl.CONTEXT__VARIABLES);
 		}
 		return variables;
 	}
@@ -150,7 +153,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	 */
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.CONTEXT__PROPERTIES);
+			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, UiPackageImpl.CONTEXT__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -163,7 +166,7 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+			case UiPackageImpl.CONTEXT__PROPERTIES:
 				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -177,11 +180,11 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ApplicationPackageImpl.CONTEXT__CONTEXT:
+			case UiPackageImpl.CONTEXT__CONTEXT:
 				return getContext();
-			case ApplicationPackageImpl.CONTEXT__VARIABLES:
+			case UiPackageImpl.CONTEXT__VARIABLES:
 				return getVariables();
-			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+			case UiPackageImpl.CONTEXT__PROPERTIES:
 				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
 				else return getProperties();
 		}
@@ -197,14 +200,14 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ApplicationPackageImpl.CONTEXT__CONTEXT:
+			case UiPackageImpl.CONTEXT__CONTEXT:
 				setContext((IEclipseContext)newValue);
 				return;
-			case ApplicationPackageImpl.CONTEXT__VARIABLES:
+			case UiPackageImpl.CONTEXT__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
-			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+			case UiPackageImpl.CONTEXT__PROPERTIES:
 				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
 				return;
 		}
@@ -219,13 +222,13 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.CONTEXT__CONTEXT:
+			case UiPackageImpl.CONTEXT__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
-			case ApplicationPackageImpl.CONTEXT__VARIABLES:
+			case UiPackageImpl.CONTEXT__VARIABLES:
 				getVariables().clear();
 				return;
-			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+			case UiPackageImpl.CONTEXT__PROPERTIES:
 				getProperties().clear();
 				return;
 		}
@@ -240,11 +243,11 @@ public abstract class ContextImpl extends EObjectImpl implements MContext {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.CONTEXT__CONTEXT:
+			case UiPackageImpl.CONTEXT__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case ApplicationPackageImpl.CONTEXT__VARIABLES:
+			case UiPackageImpl.CONTEXT__VARIABLES:
 				return variables != null && !variables.isEmpty();
-			case ApplicationPackageImpl.CONTEXT__PROPERTIES:
+			case UiPackageImpl.CONTEXT__PROPERTIES:
 				return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);
