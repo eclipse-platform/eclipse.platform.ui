@@ -67,7 +67,10 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	};
 
 	private static ISelection createCompatibilitySelection(Object selection) {
-		return selection instanceof ISelection ? (ISelection) selection : new StructuredSelection(
+		if (selection instanceof ISelection) {
+			return (ISelection) selection;
+		}
+		return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(
 				selection);
 	}
 
