@@ -197,7 +197,7 @@ public class ScopeRegistry {
 		{
 			String next = ""; //$NON-NLS-1$
 			
-			for (cursor=cursor;cursor<phrase.length();cursor++)
+			for (;cursor<phrase.length();cursor++)
 			{
 				char current = phrase.charAt(cursor);
 				if (current=='(')
