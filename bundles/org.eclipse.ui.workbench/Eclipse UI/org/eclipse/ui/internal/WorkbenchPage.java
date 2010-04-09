@@ -171,9 +171,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (workbenchPart == null) {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, null);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
+
+			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
+				application.getContext().set(ISources.ACTIVE_PART_NAME, null);
+				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
+			}
 		} else {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getId());
+
+			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
+				application.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
+				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getId());
+			}
 		}
 
 	}
@@ -193,6 +203,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
 		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 				editor == null ? null : editor.getEditorInput());
+
+		if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
+			application.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
+			application.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
+					editor == null ? null : editor.getEditorInput());
+		}
 	}
 
 	private IEditorPart getEditor(MPart part) {
