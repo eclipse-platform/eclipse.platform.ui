@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -690,7 +690,13 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			if (oldResource != null) {
 				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldResource.getProjectRelativePath(), newPath));
 			} else {
-				((FilterDescription) objectStack.peek()).setResource(newPath.isEmpty() ? (IResource) project : project.getFolder(newPath));
+				if (project != null) {
+					((FilterDescription) objectStack.peek()).setResource(newPath.isEmpty() ? (IResource) project : project.getFolder(newPath));
+				} else {
+					// if the project is null, that means that we're loading a project description to retrieve 
+					// some meta data only.
+					((FilterDescription) objectStack.peek()).setResource(null);
+				}
 			}
 			state = S_FILTER;
 		}

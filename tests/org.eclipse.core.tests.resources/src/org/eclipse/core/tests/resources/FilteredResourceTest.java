@@ -1650,4 +1650,44 @@ public class FilteredResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 		}
 	}
+
+	/**
+	 * Regression test for Bug 302146
+	 */
+	public void testBug302146() {
+		try {
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
+			existingFolderInExistingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0");
+		}
+
+		// close and reopen the project
+		try {
+			existingProject.close(getMonitor());
+			existingProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		IResourceFilterDescription[] filters = null;
+		try {
+			filters = existingFolderInExistingProject.getFilters();
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// check that filters are recreated when the project is reopened
+		// it means that .project was updated with filter details
+		assertEquals("4.0", filters.length, 1);
+		assertEquals("4.1", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
+		assertEquals("4.2", filters[0].getFileInfoMatcherDescription().getArguments(), "foo");
+		assertEquals("4.3", filters[0].getType(), IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS);
+		assertEquals("4.4", filters[0].getResource(), existingFolderInExistingProject);
+
+		try {
+			new ProjectDescriptionReader().read(existingProject.getFile(".project").getLocation());
+		} catch (IOException e) {
+			fail("5.0", e);
+		}
+	}
 }
