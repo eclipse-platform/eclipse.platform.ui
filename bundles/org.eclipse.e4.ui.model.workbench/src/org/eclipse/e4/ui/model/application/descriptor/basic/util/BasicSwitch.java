@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -99,6 +100,7 @@ public class BasicSwitch<T> {
 			case BasicPackageImpl.PART_DESCRIPTOR: {
 				MPartDescriptor partDescriptor = (MPartDescriptor)theEObject;
 				T result = casePartDescriptor(partDescriptor);
+				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
 				if (result == null) result = caseBindings(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
@@ -141,6 +143,21 @@ public class BasicSwitch<T> {
 	 * @generated
 	 */
 	public T casePartDescriptorContainer(MPartDescriptorContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>UI Label</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>UI Label</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseUILabel(MUILabel object) {
 		return null;
 	}
 
