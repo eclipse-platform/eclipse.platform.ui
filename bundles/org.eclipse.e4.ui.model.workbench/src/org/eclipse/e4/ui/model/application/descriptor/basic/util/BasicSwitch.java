@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.util;
 
 import java.util.List;
 
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
@@ -103,6 +104,7 @@ public class BasicSwitch<T> {
 				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
 				if (result == null) result = caseBindings(partDescriptor);
+				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -188,6 +190,21 @@ public class BasicSwitch<T> {
 	 * @generated
 	 */
 	public T caseBindings(MBindings object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseApplicationElement(MApplicationElement object) {
 		return null;
 	}
 

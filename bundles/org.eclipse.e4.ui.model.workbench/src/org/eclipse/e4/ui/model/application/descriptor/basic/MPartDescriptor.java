@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.descriptor.basic;
 
 import java.util.List;
 
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
@@ -40,7 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * @model
  * @generated
  */
-public interface MPartDescriptor extends MUILabel, MHandlerContainer, MBindings {
+public interface MPartDescriptor extends MUILabel, MHandlerContainer, MBindings, MApplicationElement {
 	/**
 	 * Returns the value of the '<em><b>Allow Multiple</b></em>' attribute.
 	 * <!-- begin-user-doc -->

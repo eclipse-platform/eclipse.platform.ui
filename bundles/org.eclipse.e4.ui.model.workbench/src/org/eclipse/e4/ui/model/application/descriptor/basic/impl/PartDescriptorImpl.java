@@ -13,6 +13,8 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 import java.util.Collection;
 import java.util.List;
 
+import java.util.Map;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 
@@ -21,6 +23,8 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -30,13 +34,16 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -48,6 +55,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getBindingContexts <em>Binding Contexts</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getElementId <em>Element Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isAllowMultiple <em>Allow Multiple</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getMenus <em>Menus</em>}</li>
@@ -80,6 +89,36 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 	 * @ordered
 	 */
 	protected EList<String> bindingContexts;
+
+	/**
+	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getElementId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ELEMENT_ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getElementId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String elementId = ELEMENT_ID_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTags()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> tags;
 
 	/**
 	 * The default value of the '{@link #isAllowMultiple() <em>Allow Multiple</em>}' attribute.
@@ -242,6 +281,39 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getElementId() {
+		return elementId;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setElementId(String newElementId) {
+		String oldElementId = elementId;
+		elementId = newElementId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID, oldElementId, elementId));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map<String, String> getTags() {
+		if (tags == null) {
+			tags = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART_DESCRIPTOR__TAGS);
+		}
+		return tags.map();
 	}
 
 	/**
@@ -414,6 +486,8 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 		switch (featureID) {
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getTags()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__MENUS:
 				return ((InternalEList<?>)getMenus()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR:
@@ -434,6 +508,11 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 				return getHandlers();
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return getBindingContexts();
+			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
+				return getElementId();
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+				if (coreType) return ((EMap.InternalMapView<String, String>)getTags()).eMap();
+				else return getTags();
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				return isAllowMultiple();
 			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
@@ -468,6 +547,12 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
+				setElementId((String)newValue);
+				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getTags()).eMap()).set(newValue);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple((Boolean)newValue);
@@ -509,6 +594,12 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
+				setElementId(ELEMENT_ID_EDEFAULT);
+				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+				getTags().clear();
+				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple(ALLOW_MULTIPLE_EDEFAULT);
 				return;
@@ -546,6 +637,10 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 				return handlers != null && !handlers.isEmpty();
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return bindingContexts != null && !bindingContexts.isEmpty();
+			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
+				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+				return tags != null && !tags.isEmpty();
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				return allowMultiple != ALLOW_MULTIPLE_EDEFAULT;
 			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
@@ -583,6 +678,13 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 				default: return -1;
 			}
 		}
+		if (baseClass == MApplicationElement.class) {
+			switch (derivedFeatureID) {
+				case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID: return ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+				case BasicPackageImpl.PART_DESCRIPTOR__TAGS: return ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -605,6 +707,13 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 				default: return -1;
 			}
 		}
+		if (baseClass == MApplicationElement.class) {
+			switch (baseFeatureID) {
+				case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID: return BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID;
+				case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS: return BasicPackageImpl.PART_DESCRIPTOR__TAGS;
+				default: return -1;
+			}
+		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
@@ -620,6 +729,8 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (bindingContexts: "); //$NON-NLS-1$
 		result.append(bindingContexts);
+		result.append(", elementId: "); //$NON-NLS-1$
+		result.append(elementId);
 		result.append(", allowMultiple: "); //$NON-NLS-1$
 		result.append(allowMultiple);
 		result.append(", category: "); //$NON-NLS-1$
