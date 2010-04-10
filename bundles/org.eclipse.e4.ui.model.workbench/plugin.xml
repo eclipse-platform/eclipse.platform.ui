@@ -11,15 +11,40 @@
  Contributors:
       IBM Corporation - initial API and implementation
 
- $Id: plugin.xml,v 1.5 2009/11/09 19:45:11 tschindl Exp $
+ $Id: plugin.xml,v 1.6 2009/11/09 20:19:46 tschindl Exp $
 -->
 
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.eclipse.org/ui/2008/UIModel"
-            class="org.eclipse.e4.ui.model.application.MApplicationPackage"/>
+            class="org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl"
+            genModel="model/UIElements.genmodel"
+            uri="http://www.eclipse.org/ui/2010/UIModel/application"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/commands"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/ui"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl"/>
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
+            genModel="model/UIElements.genmodel"
+            class="org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl"/>
    </extension>
    
 </plugin>
