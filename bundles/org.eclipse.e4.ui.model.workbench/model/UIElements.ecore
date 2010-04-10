@@ -188,10 +188,16 @@
         <eBounds eClassifier="#//ui/UIElement"/>
       </eTypeParameters>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1"
-          eType="#//ui/advanced/SideValue"/>
+          eType="#//ui/SideValue"/>
       <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
         <eTypeArguments eTypeParameter="#//ui/TrimContainer/T"/>
       </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
+      <eLiterals name="Top"/>
+      <eLiterals name="Bottom" value="1"/>
+      <eLiterals name="Left" value="2"/>
+      <eLiterals name="Right" value="3"/>
     </eClassifiers>
     <eSubpackages name="menu" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
         nsPrefix="menu">
@@ -327,12 +333,6 @@
           <eTypeArguments eClassifier="#//ui/advanced/Perspective"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
-        <eLiterals name="Top"/>
-        <eLiterals name="Bottom" value="1"/>
-        <eLiterals name="Left" value="2"/>
-        <eLiterals name="Right" value="3"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

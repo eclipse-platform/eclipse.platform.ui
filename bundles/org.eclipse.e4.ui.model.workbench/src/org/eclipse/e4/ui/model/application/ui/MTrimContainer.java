@@ -10,8 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Trim Container</b></em>'.
@@ -30,7 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
 public interface MTrimContainer<T extends MUIElement> extends MElementContainer<T> {
 	/**
 	 * Returns the value of the '<em><b>Side</b></em>' attribute.
-	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.ui.advanced.SideValue}.
+	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.ui.SideValue}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Side</em>' attribute isn't clear,
@@ -38,7 +36,7 @@ public interface MTrimContainer<T extends MUIElement> extends MElementContainer<
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Side</em>' attribute.
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.SideValue
+	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
 	 * @see #setSide(SideValue)
 	 * @model required="true"
 	 * @generated
@@ -50,7 +48,7 @@ public interface MTrimContainer<T extends MUIElement> extends MElementContainer<
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Side</em>' attribute.
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.SideValue
+	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
 	 * @see #getSide()
 	 * @generated
 	 */

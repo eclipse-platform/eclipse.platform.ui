@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.model.application.ui.impl;
 import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 
 import org.eclipse.emf.common.notify.Notification;
 

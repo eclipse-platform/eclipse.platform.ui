@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -33,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
@@ -828,6 +830,16 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.SideValue <em>Side Value</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
+	 * @generated
+	 */
+	public static final int SIDE_VALUE = 9;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -889,6 +901,13 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass trimContainerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum sideValueEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -1328,6 +1347,19 @@ public class UiPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.ui.SideValue <em>Side Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Side Value</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
+	 * @generated
+	 */
+	public EEnum getSideValue() {
+		return sideValueEEnum;
+	}
+
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1393,6 +1425,9 @@ public class UiPackageImpl extends EPackageImpl {
 
 		trimContainerEClass = createEClass(TRIM_CONTAINER);
 		createEAttribute(trimContainerEClass, TRIM_CONTAINER__SIDE);
+
+		// Create enums
+		sideValueEEnum = createEEnum(SIDE_VALUE);
 	}
 
 	/**
@@ -1502,7 +1537,14 @@ public class UiPackageImpl extends EPackageImpl {
 		initEAttribute(getGenericTile_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimContainerEClass, MTrimContainer.class, "TrimContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getTrimContainer_Side(), theAdvancedPackage.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getTrimContainer_Side(), this.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		// Initialize enums and add enum literals
+		initEEnum(sideValueEEnum, SideValue.class, "SideValue"); //$NON-NLS-1$
+		addEEnumLiteral(sideValueEEnum, SideValue.TOP);
+		addEEnumLiteral(sideValueEEnum, SideValue.BOTTOM);
+		addEEnumLiteral(sideValueEEnum, SideValue.LEFT);
+		addEEnumLiteral(sideValueEEnum, SideValue.RIGHT);
 	}
 
 	/**
@@ -1759,6 +1801,16 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute TRIM_CONTAINER__SIDE = eINSTANCE.getTrimContainer_Side();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.SideValue <em>Side Value</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.SideValue
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
+		 * @generated
+		 */
+		public static final EEnum SIDE_VALUE = eINSTANCE.getSideValue();
 
 	}
 

@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.advanced.SideValue;
 
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 
@@ -27,7 +26,6 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
@@ -492,16 +490,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.SideValue <em>Side Value</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.SideValue
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getSideValue()
-	 * @generated
-	 */
-	public static final int SIDE_VALUE = 3;
-
-	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -521,13 +509,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass perspectiveStackEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum sideValueEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -674,18 +655,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.ui.advanced.SideValue <em>Side Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Side Value</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.SideValue
-	 * @generated
-	 */
-	public EEnum getSideValue() {
-		return sideValueEEnum;
-	}
-
-	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -722,9 +691,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		createEReference(perspectiveEClass, PERSPECTIVE__WINDOWS);
 
 		perspectiveStackEClass = createEClass(PERSPECTIVE_STACK);
-
-		// Create enums
-		sideValueEEnum = createEEnum(SIDE_VALUE);
 	}
 
 	/**
@@ -785,13 +751,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-
-		// Initialize enums and add enum literals
-		initEEnum(sideValueEEnum, SideValue.class, "SideValue"); //$NON-NLS-1$
-		addEEnumLiteral(sideValueEEnum, SideValue.TOP);
-		addEEnumLiteral(sideValueEEnum, SideValue.BOTTOM);
-		addEEnumLiteral(sideValueEEnum, SideValue.LEFT);
-		addEEnumLiteral(sideValueEEnum, SideValue.RIGHT);
 	}
 
 	/**
@@ -852,16 +811,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass PERSPECTIVE_STACK = eINSTANCE.getPerspectiveStack();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.SideValue <em>Side Value</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.advanced.SideValue
-		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getSideValue()
-		 * @generated
-		 */
-		public static final EEnum SIDE_VALUE = eINSTANCE.getSideValue();
 
 	}
 
