@@ -1588,13 +1588,31 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__TYPE = ITEM__TYPE;
 
 	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_ITEM__SELECTED_ELEMENT = ITEM_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 0;
+	public static final int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2047,6 +2065,24 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
 
 	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_TOOL_ITEM__CHILDREN = TOOL_ITEM__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_TOOL_ITEM__SELECTED_ELEMENT = TOOL_ITEM__SELECTED_ELEMENT;
+
+	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2216,6 +2252,24 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DIRECT_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_TOOL_ITEM__CHILDREN = TOOL_ITEM__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_TOOL_ITEM__SELECTED_ELEMENT = TOOL_ITEM__SELECTED_ELEMENT;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -2971,8 +3025,14 @@ public class MenuPackageImpl extends EPackageImpl {
 		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		handledMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		handledMenuItemEClass.getESuperTypes().add(this.getHandledItem());
-		toolItemEClass.getESuperTypes().add(this.getItem());
-		toolItemEClass.getESuperTypes().add(this.getToolBarElement());
+		g1 = createEGenericType(this.getItem());
+		toolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getToolBarElement());
+		toolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getElementContainer());
+		g2 = createEGenericType(this.getMenuElement());
+		g1.getETypeArguments().add(g2);
+		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getElementContainer());
 		g2 = createEGenericType(this.getToolBarElement());
 		g1.getETypeArguments().add(g2);

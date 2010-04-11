@@ -235,7 +235,13 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem"/>
-      <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/ToolBarElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true">
+        <eGenericSuperTypes eClassifier="#//ui/menu/Item"/>
+        <eGenericSuperTypes eClassifier="#//ui/menu/ToolBarElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>

@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Tool Item</b></em>'.
@@ -19,5 +21,5 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * @model abstract="true"
  * @generated
  */
-public interface MToolItem extends MItem, MToolBarElement {
+public interface MToolItem extends MItem, MToolBarElement, MElementContainer<MMenuElement> {
 } // MToolItem
