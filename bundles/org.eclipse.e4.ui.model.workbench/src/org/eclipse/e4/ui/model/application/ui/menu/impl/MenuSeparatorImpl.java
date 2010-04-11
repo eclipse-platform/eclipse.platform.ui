@@ -10,26 +10,26 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Tool Item</b></em>'.
+ * An implementation of the model object '<em><b>Separator</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
+public class MenuSeparatorImpl extends MenuElementImpl implements MMenuSeparator {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ToolItemImpl() {
+	protected MenuSeparatorImpl() {
 		super();
 	}
 
@@ -40,7 +40,7 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MenuPackageImpl.Literals.TOOL_ITEM;
+		return MenuPackageImpl.Literals.MENU_SEPARATOR;
 	}
 
-} //ToolItemImpl
+} //MenuSeparatorImpl

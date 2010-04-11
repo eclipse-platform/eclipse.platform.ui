@@ -102,21 +102,31 @@ public class MenuSwitch<T1> {
 	 */
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case MenuPackageImpl.MENU_ELEMENT: {
-				MMenuElement menuElement = (MMenuElement)theEObject;
-				T1 result = caseMenuElement(menuElement);
-				if (result == null) result = caseUIElement(menuElement);
-				if (result == null) result = caseUILabel(menuElement);
-				if (result == null) result = caseApplicationElement(menuElement);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case MenuPackageImpl.ITEM: {
 				MItem item = (MItem)theEObject;
 				T1 result = caseItem(item);
 				if (result == null) result = caseUIElement(item);
 				if (result == null) result = caseUILabel(item);
 				if (result == null) result = caseApplicationElement(item);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.HANDLED_ITEM: {
+				MHandledItem handledItem = (MHandledItem)theEObject;
+				T1 result = caseHandledItem(handledItem);
+				if (result == null) result = caseItem(handledItem);
+				if (result == null) result = caseUIElement(handledItem);
+				if (result == null) result = caseUILabel(handledItem);
+				if (result == null) result = caseApplicationElement(handledItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.MENU_ELEMENT: {
+				MMenuElement menuElement = (MMenuElement)theEObject;
+				T1 result = caseMenuElement(menuElement);
+				if (result == null) result = caseUIElement(menuElement);
+				if (result == null) result = caseUILabel(menuElement);
+				if (result == null) result = caseApplicationElement(menuElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -128,6 +138,16 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseUIElement(menuItem);
 				if (result == null) result = caseUILabel(menuItem);
 				if (result == null) result = caseApplicationElement(menuItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.MENU_SEPARATOR: {
+				MMenuSeparator menuSeparator = (MMenuSeparator)theEObject;
+				T1 result = caseMenuSeparator(menuSeparator);
+				if (result == null) result = caseMenuElement(menuSeparator);
+				if (result == null) result = caseUIElement(menuSeparator);
+				if (result == null) result = caseUILabel(menuSeparator);
+				if (result == null) result = caseApplicationElement(menuSeparator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -172,25 +192,10 @@ public class MenuSwitch<T1> {
 				MToolItem toolItem = (MToolItem)theEObject;
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseItem(toolItem);
-				if (result == null) result = caseMenuElement(toolItem);
 				if (result == null) result = caseToolBarElement(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseUILabel(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.DIRECT_TOOL_ITEM: {
-				MDirectToolItem directToolItem = (MDirectToolItem)theEObject;
-				T1 result = caseDirectToolItem(directToolItem);
-				if (result == null) result = caseToolItem(directToolItem);
-				if (result == null) result = caseContribution(directToolItem);
-				if (result == null) result = caseItem(directToolItem);
-				if (result == null) result = caseMenuElement(directToolItem);
-				if (result == null) result = caseToolBarElement(directToolItem);
-				if (result == null) result = caseUIElement(directToolItem);
-				if (result == null) result = caseUILabel(directToolItem);
-				if (result == null) result = caseApplicationElement(directToolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -229,7 +234,6 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseToolItem(handledToolItem);
 				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
-				if (result == null) result = caseMenuElement(handledToolItem);
 				if (result == null) result = caseToolBarElement(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseUILabel(handledToolItem);
@@ -237,13 +241,25 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MenuPackageImpl.HANDLED_ITEM: {
-				MHandledItem handledItem = (MHandledItem)theEObject;
-				T1 result = caseHandledItem(handledItem);
-				if (result == null) result = caseItem(handledItem);
-				if (result == null) result = caseUIElement(handledItem);
-				if (result == null) result = caseUILabel(handledItem);
-				if (result == null) result = caseApplicationElement(handledItem);
+			case MenuPackageImpl.DIRECT_TOOL_ITEM: {
+				MDirectToolItem directToolItem = (MDirectToolItem)theEObject;
+				T1 result = caseDirectToolItem(directToolItem);
+				if (result == null) result = caseToolItem(directToolItem);
+				if (result == null) result = caseContribution(directToolItem);
+				if (result == null) result = caseItem(directToolItem);
+				if (result == null) result = caseToolBarElement(directToolItem);
+				if (result == null) result = caseUIElement(directToolItem);
+				if (result == null) result = caseUILabel(directToolItem);
+				if (result == null) result = caseApplicationElement(directToolItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TOOL_BAR_SEPARATOR: {
+				MToolBarSeparator toolBarSeparator = (MToolBarSeparator)theEObject;
+				T1 result = caseToolBarSeparator(toolBarSeparator);
+				if (result == null) result = caseToolBarElement(toolBarSeparator);
+				if (result == null) result = caseUIElement(toolBarSeparator);
+				if (result == null) result = caseApplicationElement(toolBarSeparator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -293,6 +309,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenuItem(MMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Separator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Separator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseMenuSeparator(MMenuSeparator object) {
 		return null;
 	}
 
@@ -368,6 +399,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseDirectToolItem(MDirectToolItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Separator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Separator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarSeparator(MToolBarSeparator object) {
 		return null;
 	}
 

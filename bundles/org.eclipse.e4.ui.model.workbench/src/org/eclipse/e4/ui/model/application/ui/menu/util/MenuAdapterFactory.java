@@ -87,16 +87,24 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	protected MenuSwitch<Adapter> modelSwitch =
 		new MenuSwitch<Adapter>() {
 			@Override
-			public Adapter caseMenuElement(MMenuElement object) {
-				return createMenuElementAdapter();
-			}
-			@Override
 			public Adapter caseItem(MItem object) {
 				return createItemAdapter();
 			}
 			@Override
+			public Adapter caseHandledItem(MHandledItem object) {
+				return createHandledItemAdapter();
+			}
+			@Override
+			public Adapter caseMenuElement(MMenuElement object) {
+				return createMenuElementAdapter();
+			}
+			@Override
 			public Adapter caseMenuItem(MMenuItem object) {
 				return createMenuItemAdapter();
+			}
+			@Override
+			public Adapter caseMenuSeparator(MMenuSeparator object) {
+				return createMenuSeparatorAdapter();
 			}
 			@Override
 			public Adapter caseMenu(MMenu object) {
@@ -115,10 +123,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createToolItemAdapter();
 			}
 			@Override
-			public Adapter caseDirectToolItem(MDirectToolItem object) {
-				return createDirectToolItemAdapter();
-			}
-			@Override
 			public Adapter caseToolBar(MToolBar object) {
 				return createToolBarAdapter();
 			}
@@ -135,8 +139,12 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createHandledToolItemAdapter();
 			}
 			@Override
-			public Adapter caseHandledItem(MHandledItem object) {
-				return createHandledItemAdapter();
+			public Adapter caseDirectToolItem(MDirectToolItem object) {
+				return createDirectToolItemAdapter();
+			}
+			@Override
+			public Adapter caseToolBarSeparator(MToolBarSeparator object) {
+				return createToolBarSeparatorAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -225,6 +233,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator <em>Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator
+	 * @generated
+	 */
+	public Adapter createMenuSeparatorAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -291,6 +313,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createDirectToolItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator <em>Tool Bar Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator
+	 * @generated
+	 */
+	public Adapter createToolBarSeparatorAdapter() {
 		return null;
 	}
 

@@ -74,16 +74,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case MenuPackageImpl.ITEM: return (EObject)createItem();
-			case MenuPackageImpl.MENU_ITEM: return (EObject)createMenuItem();
+			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
+			case MenuPackageImpl.MENU_SEPARATOR: return (EObject)createMenuSeparator();
 			case MenuPackageImpl.MENU: return (EObject)createMenu();
 			case MenuPackageImpl.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MenuPackageImpl.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
-			case MenuPackageImpl.TOOL_ITEM: return (EObject)createToolItem();
-			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MenuPackageImpl.TOOL_BAR: return (EObject)createToolBar();
 			case MenuPackageImpl.TOOL_CONTROL: return (EObject)createToolControl();
 			case MenuPackageImpl.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
-			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
+			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
+			case MenuPackageImpl.TOOL_BAR_SEPARATOR: return (EObject)createToolBarSeparator();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -134,16 +134,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuItem createMenuItem() {
-		MenuItemImpl menuItem = new MenuItemImpl();
-		return menuItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
@@ -174,9 +164,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolItem createToolItem() {
-		ToolItemImpl toolItem = new ToolItemImpl();
-		return toolItem;
+	public MDirectToolItem createDirectToolItem() {
+		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
+		return directToolItem;
 	}
 
 	/**
@@ -184,9 +174,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MDirectToolItem createDirectToolItem() {
-		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
-		return directToolItem;
+	public MToolBarSeparator createToolBarSeparator() {
+		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
+		return toolBarSeparator;
 	}
 
 	/**
@@ -227,6 +217,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MHandledItem createHandledItem() {
 		HandledItemImpl handledItem = new HandledItemImpl();
 		return handledItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuSeparator createMenuSeparator() {
+		MenuSeparatorImpl menuSeparator = new MenuSeparatorImpl();
+		return menuSeparator;
 	}
 
 	/**

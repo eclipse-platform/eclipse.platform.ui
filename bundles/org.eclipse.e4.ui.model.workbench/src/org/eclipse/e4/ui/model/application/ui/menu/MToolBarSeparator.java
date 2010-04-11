@@ -10,14 +10,15 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
+
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Tool Item</b></em>'.
+ * A representation of the model object '<em><b>Tool Bar Separator</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @model abstract="true"
+ * @model
  * @generated
  */
-public interface MToolItem extends MItem, MToolBarElement {
-} // MToolItem
+public interface MToolBarSeparator extends MToolBarElement {
+} // MToolBarSeparator

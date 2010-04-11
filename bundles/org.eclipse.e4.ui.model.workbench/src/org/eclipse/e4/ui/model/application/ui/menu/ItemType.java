@@ -52,17 +52,7 @@ public enum ItemType implements InternalItemType {
 	 * @generated
 	 * @ordered
 	 */
-	RADIO(2, "Radio", "Radio"), //$NON-NLS-1$ //$NON-NLS-2$
-
-	/**
-	 * The '<em><b>Separator</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #SEPARATOR_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	SEPARATOR(3, "Separator", "Separator"); //$NON-NLS-1$ //$NON-NLS-2$
+	RADIO(2, "Radio", "Radio"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * The '<em><b>Push</b></em>' literal value.
@@ -110,21 +100,6 @@ public enum ItemType implements InternalItemType {
 	public static final int RADIO_VALUE = 2;
 
 	/**
-	 * The '<em><b>Separator</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Separator</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #SEPARATOR
-	 * @model name="Separator"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SEPARATOR_VALUE = 3;
-
-	/**
 	 * An array of all the '<em><b>Item Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -135,7 +110,6 @@ public enum ItemType implements InternalItemType {
 			PUSH,
 			CHECK,
 			RADIO,
-			SEPARATOR,
 		};
 
 	/**
@@ -189,7 +163,6 @@ public enum ItemType implements InternalItemType {
 			case PUSH_VALUE: return PUSH;
 			case CHECK_VALUE: return CHECK;
 			case RADIO_VALUE: return RADIO;
-			case SEPARATOR_VALUE: return SEPARATOR;
 		}
 		return null;
 	}

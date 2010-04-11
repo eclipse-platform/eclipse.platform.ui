@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class MenuItemImpl extends ItemImpl implements MMenuItem {
+public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	/**
 	 * The default value of the '{@link #getMnemonics() <em>Mnemonics</em>}' attribute.
 	 * <!-- begin-user-doc -->
