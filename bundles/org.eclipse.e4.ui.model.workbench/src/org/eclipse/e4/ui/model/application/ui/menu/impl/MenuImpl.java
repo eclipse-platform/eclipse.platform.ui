@@ -10,16 +10,24 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
+import java.util.Collection;
+import java.util.List;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,70 +36,32 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getLabel <em>Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMenu {
+public class MenuImpl extends MenuElementImpl implements MMenu {
 	/**
-	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getLabel()
+	 * @see #getChildren()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String LABEL_EDEFAULT = null;
+	protected EList<MMenuElement> children;
 	/**
-	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getLabel()
+	 * @see #getSelectedElement()
 	 * @generated
 	 * @ordered
 	 */
-	protected String label = LABEL_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIconURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ICON_URI_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIconURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected String iconURI = ICON_URI_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TOOLTIP_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tooltip = TOOLTIP_EDEFAULT;
-
+	protected MMenuElement selectedElement;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -116,8 +86,11 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getLabel() {
-		return label;
+	public List<MMenuElement> getChildren() {
+		if (children == null) {
+			children = new EObjectContainmentWithInverseEList<MMenuElement>(MUIElement.class, this, MenuPackageImpl.MENU__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+		}
+		return children;
 	}
 
 	/**
@@ -125,11 +98,37 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setLabel(String newLabel) {
-		String oldLabel = label;
-		label = newLabel;
+	public MMenuElement getSelectedElement() {
+		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
+			selectedElement = (MMenuElement)eResolveProxy(oldSelectedElement);
+			if (selectedElement != oldSelectedElement) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+			}
+		}
+		return selectedElement;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuElement basicGetSelectedElement() {
+		return selectedElement;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSelectedElement(MMenuElement newSelectedElement) {
+		MMenuElement oldSelectedElement = selectedElement;
+		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__LABEL, oldLabel, label));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -137,8 +136,14 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getIconURI() {
-		return iconURI;
+	@SuppressWarnings("unchecked")
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MenuPackageImpl.MENU__CHILDREN:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -146,32 +151,13 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setIconURI(String newIconURI) {
-		String oldIconURI = iconURI;
-		iconURI = newIconURI;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__ICON_URI, oldIconURI, iconURI));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTooltip() {
-		return tooltip;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTooltip(String newTooltip) {
-		String oldTooltip = tooltip;
-		tooltip = newTooltip;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__TOOLTIP, oldTooltip, tooltip));
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MenuPackageImpl.MENU__CHILDREN:
+				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -182,12 +168,11 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
-				return getLabel();
-			case MenuPackageImpl.MENU__ICON_URI:
-				return getIconURI();
-			case MenuPackageImpl.MENU__TOOLTIP:
-				return getTooltip();
+			case MenuPackageImpl.MENU__CHILDREN:
+				return getChildren();
+			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+				if (resolve) return getSelectedElement();
+				return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -197,17 +182,16 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
-				setLabel((String)newValue);
+			case MenuPackageImpl.MENU__CHILDREN:
+				getChildren().clear();
+				getChildren().addAll((Collection<? extends MMenuElement>)newValue);
 				return;
-			case MenuPackageImpl.MENU__ICON_URI:
-				setIconURI((String)newValue);
-				return;
-			case MenuPackageImpl.MENU__TOOLTIP:
-				setTooltip((String)newValue);
+			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+				setSelectedElement((MMenuElement)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -221,14 +205,11 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
-				setLabel(LABEL_EDEFAULT);
+			case MenuPackageImpl.MENU__CHILDREN:
+				getChildren().clear();
 				return;
-			case MenuPackageImpl.MENU__ICON_URI:
-				setIconURI(ICON_URI_EDEFAULT);
-				return;
-			case MenuPackageImpl.MENU__TOOLTIP:
-				setTooltip(TOOLTIP_EDEFAULT);
+			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+				setSelectedElement((MMenuElement)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -242,12 +223,10 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
-				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case MenuPackageImpl.MENU__ICON_URI:
-				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case MenuPackageImpl.MENU__TOOLTIP:
-				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case MenuPackageImpl.MENU__CHILDREN:
+				return children != null && !children.isEmpty();
+			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+				return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -259,16 +238,10 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
+		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.MENU__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case MenuPackageImpl.MENU__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case MenuPackageImpl.MENU__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MMenuElement.class) {
-			switch (derivedFeatureID) {
+				case MenuPackageImpl.MENU__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
+				case MenuPackageImpl.MENU__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -282,40 +255,14 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
+		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.MENU__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.MENU__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.MENU__TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MMenuElement.class) {
-			switch (baseFeatureID) {
+				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return MenuPackageImpl.MENU__CHILDREN;
+				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MenuPackageImpl.MENU__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (label: "); //$NON-NLS-1$
-		result.append(label);
-		result.append(", iconURI: "); //$NON-NLS-1$
-		result.append(iconURI);
-		result.append(", tooltip: "); //$NON-NLS-1$
-		result.append(tooltip);
-		result.append(')');
-		return result.toString();
 	}
 
 } //MenuImpl

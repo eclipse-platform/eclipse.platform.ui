@@ -134,8 +134,8 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.MENU: {
 				MMenu menu = (MMenu)theEObject;
 				T1 result = caseMenu(menu);
-				if (result == null) result = caseElementContainer(menu);
 				if (result == null) result = caseMenuElement(menu);
+				if (result == null) result = caseElementContainer(menu);
 				if (result == null) result = caseUIElement(menu);
 				if (result == null) result = caseUILabel(menu);
 				if (result == null) result = caseApplicationElement(menu);

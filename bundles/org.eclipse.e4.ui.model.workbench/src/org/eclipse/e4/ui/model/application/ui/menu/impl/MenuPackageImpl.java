@@ -555,7 +555,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
+	public static final int MENU__ELEMENT_ID = MENU_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' map.
@@ -564,7 +564,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
+	public static final int MENU__TAGS = MENU_ELEMENT__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -573,7 +573,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__WIDGET = UiPackageImpl.ELEMENT_CONTAINER__WIDGET;
+	public static final int MENU__WIDGET = MENU_ELEMENT__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -582,7 +582,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__RENDERER = UiPackageImpl.ELEMENT_CONTAINER__RENDERER;
+	public static final int MENU__RENDERER = MENU_ELEMENT__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -591,7 +591,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__TO_BE_RENDERED = UiPackageImpl.ELEMENT_CONTAINER__TO_BE_RENDERED;
+	public static final int MENU__TO_BE_RENDERED = MENU_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -600,7 +600,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__ON_TOP = UiPackageImpl.ELEMENT_CONTAINER__ON_TOP;
+	public static final int MENU__ON_TOP = MENU_ELEMENT__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -609,7 +609,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__VISIBLE = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE;
+	public static final int MENU__VISIBLE = MENU_ELEMENT__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -618,7 +618,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__PARENT = UiPackageImpl.ELEMENT_CONTAINER__PARENT;
+	public static final int MENU__PARENT = MENU_ELEMENT__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -627,25 +627,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__CONTAINER_DATA = UiPackageImpl.ELEMENT_CONTAINER__CONTAINER_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU__CHILDREN = UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+	public static final int MENU__CONTAINER_DATA = MENU_ELEMENT__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -654,7 +636,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__LABEL = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	public static final int MENU__LABEL = MENU_ELEMENT__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -663,7 +645,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__ICON_URI = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+	public static final int MENU__ICON_URI = MENU_ELEMENT__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -672,7 +654,25 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+	public static final int MENU__TOOLTIP = MENU_ELEMENT__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU__CHILDREN = MENU_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU__SELECTED_ELEMENT = MENU_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Menu</em>' class.
@@ -681,7 +681,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+	public static final int MENU_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
@@ -2716,11 +2716,11 @@ public class MenuPackageImpl extends EPackageImpl {
 		itemEClass.getESuperTypes().add(theUiPackage.getUILabel());
 		menuItemEClass.getESuperTypes().add(this.getItem());
 		menuItemEClass.getESuperTypes().add(this.getMenuElement());
-		EGenericType g1 = createEGenericType(theUiPackage.getElementContainer());
+		EGenericType g1 = createEGenericType(this.getMenuElement());
+		menuEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getElementContainer());
 		EGenericType g2 = createEGenericType(this.getMenuElement());
 		g1.getETypeArguments().add(g2);
-		menuEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getMenuElement());
 		menuEClass.getEGenericSuperTypes().add(g1);
 		directMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
