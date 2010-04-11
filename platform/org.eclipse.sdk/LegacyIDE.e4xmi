@@ -1,6 +1,60 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" xmi:id="org.eclipse.e4.legacy.ide.application" id="org.eclipse.e4.legacy.ide.application">
   <children xsi:type="application:Window" xmi:id="IDEWindow" id="IDEWindow" label="Eclipse SDK 4.0" width="1024" height="768">
+    <children xsi:type="application:WindowTrim" xmi:id="org.eclipse.ui.main.toolbar" id="org.eclipse.ui.main.toolbar">
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx001" id="org.eclipse.ui.workbench.file">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx002" id="new.group" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx003" id="save" tooltip="Save" command="org.eclipse.ui.file.save" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx004" id="saveAll" tooltip="Save All" command="org.eclipse.ui.file.saveAll" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/saveall_edit.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx005" id="print" tooltip="Print" command="org.eclipse.ui.file.print" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.gif"/>
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx006" id="build.group" type="Separator"/>
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx007" id="additions" type="Separator"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx008" id="org.eclipse.debug.ui.launchActionSet">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx009" id="debug" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00A" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar" tooltip="External Tools" command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar" iconURI="platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/external_tools.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx00B" id="org.eclipse.jdt.ui.JavaElementCreationActionSet">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00C" id="JavaWizards" type="Separator"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx00D" id="org.eclipse.search.searchActionSet">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00E" id="Search" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00F" id="openType" tooltip="Open Type..." command="org.eclipse.jdt.ui.navigate.open.type" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/opentype.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx010" id="org.eclipse.ui.edit.text.actionSet.presentation">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx011" id="Presentation" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx012" id="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb" tooltip="Toggle Breadcrumb" command="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/toggle_breadcrumb.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx013" id="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences" tooltip="Toggle Mark Occurrences" command="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/mark_occurrences.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx014" id="org.eclipse.ui.edit.text.toggleBlockSelectionMode" tooltip="Toggle Block Selection Mode" command="org.eclipse.ui.edit.text.toggleBlockSelectionMode" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/block_selection_mode.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx015" id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" tooltip="Show Whitespace Characters" command="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/show_whitespace_chars.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx016" id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" tooltip="Show Source of Selected Element Only" command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/segment_edit.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx017" id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar">
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx018" id="org.eclipse.wst.xml.ui.newXMLFile" tooltip="New (New Wizard: XML File)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/new_xml.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx019" id="org.eclipse.wst.xsd.ui.newXSDFile" tooltip="New (New Wizard: XML Schema)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.xsd.ui/icons/ctool16/NewXSD.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01A" id="org.eclipse.wst.dtd.ui.newDTDFile" tooltip="New (New Wizard: DTD)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.dtd.ui/icons/full/etool16/newdtd_wiz.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx01B" id="org.eclipse.wst.xml.ui.design.DesignToolBar">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01C" id="sed.tabletree.separator.1" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01D" id="ToggleGrammarConstraints" tooltip="Turn off Grammar Constraints" command="org.eclipse.wst.xml.ui.disable.grammar.constraints" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/constrainon.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01E" id="ReloadDependencies" tooltip="Reload Dependencies" command="org.eclipse.wst.xml.ui.reload.dependecies" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/rldgrmr.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx01F" id="org.eclipse.ui.workbench.navigate">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx020" id="history.group" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx021" id="org.eclipse.ui.edit.text.gotoNextAnnotation" tooltip="Next Annotation" command="org.eclipse.ui.navigate.next" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/next_nav.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx022" id="org.eclipse.ui.edit.text.gotoPreviousAnnotation" tooltip="Previous Annotation" command="org.eclipse.ui.navigate.previous" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/prev_nav.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx023" id="org.eclipse.ui.edit.text.gotoLastEditPosition" tooltip="Last Edit Location" command="org.eclipse.ui.edit.text.gotoLastEditPosition" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/last_edit_pos.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx024" id="backardHistory" tooltip="Back" command="org.eclipse.ui.navigate.backwardHistory" iconURI="platform:/plugin/org.eclipse.ui/icons/full/elcl16/backward_nav.gif"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx025" id="forwardHistory" tooltip="Forward" command="org.eclipse.ui.navigate.forwardHistory" iconURI="platform:/plugin/org.eclipse.ui/icons/full/elcl16/forward_nav.gif"/>
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx026" id="pin.group" type="Separator"/>
+        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx027" id="org.eclipse.ui.window.pinEditor" tooltip="Pin Editor" command="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.gif"/>
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx028" id="org.eclipse.jdt.ui.CompilationUnitEditor">
+      </children>
+      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx029" id="org.eclipse.ui.workbench.help">
+        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx02A" id="group.help" type="Separator"/>
+      </children>
+    </children>
     <mainMenu xmi:id="_UW9TUPr3Ed6gmo7caOxU9g" id="org.eclipse.ui.main.menu">
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx002" id="file" label="&amp;File">
         <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx003" id="new" label="&amp;New">
@@ -218,8 +272,6 @@
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx13B" id="org.eclipse.e4.samples" label="e&amp;4">
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13C" id="org.eclipse.e4.ui.examples.generatePsfProject" label="Generate e4 Example Project" command="org.eclipse.e4.ui.examples.generatePsfProject"/>
-        <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13CA" id="org.eclipse.e4.tools.context.generateContextSnapshot" label="Generate Context Snapshot" command="_oRr6EAFSEd-Z8rQksLwRYxx"/>
-        <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13CB" id="org.eclipse.e4.tools.context.diffContextSnapshot" label="Diff Context Snapshot" command="_oRr6EAFSEd-Z8rQksLwRYxy"/>
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx13D" id="help" label="&amp;Help">
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx13E" id="intro" label="&amp;Welcome" command="org.eclipse.ui.help.quickStartAction"/>
@@ -247,7 +299,9 @@
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.internal.ide.application.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" id="org.eclipse.e4.ui.saveAllHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.internal.ide.application.SaveAllHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
-    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows">
+      <children xmi:id="_SeXUEO8EEd6FC9cDb6yV7x" id="org.eclipse.e4.ui.contexts.views" name="In Binding View"/>
+    </children>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" id="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
@@ -255,8 +309,6 @@
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYw" keySequence="CTRL+S" id="_oRr6EAFSEd-Z8rQksLwRYw" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYx" keySequence="CTRL+SHIFT+S" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   </bindingTables>
-  <commands xmi:id="_oRr6EAFSEd-Z8rQksLwRYxx" id="org.eclipse.e4.tools.globalSnapshot" commandName="Generate Context Snapshot"/>
-  <commands xmi:id="_oRr6EAFSEd-Z8rQksLwRYxy" id="org.eclipse.e4.tools.globalDiff" commandName="Diff Context Snapshot"/>
   <commands xmi:id="e4.exit" id="e4.exit" commandName="Exit" description=""/>
   <commands xmi:id="e4.show.view" id="e4.show.view" commandName="Show View"/>
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveCommands" commandName="Save"/>

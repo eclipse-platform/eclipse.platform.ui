@@ -1,8 +1,25 @@
-Shell {
-    background-color: #EEF2F7 #DEEBF3 100%;
+
+.MWindow {
+    background-color:  #EEF2F7 #DEEBF3 100%;
 }
 
-CTabFolder {
-    unselected-tabs-color: #E0E9FF F47A00 #E7EEFD #FFFFFF 100% 100%;
+.MPartStack {
     tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.workbench.ui.renderers.swt.CTabRendering');
+    unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+    outer-keyline-color: rgb(217,217,217);
+	inner-keyline-color: rgb(255,255,255);
+}
+
+.MPartStack ToolBar{
+    background-color: #FFFFFF;
+}
+
+.MPartStack.active ToolBar{
+    background-color: #DEEBF3;
+}
+
+.MPartStack.active {
+	unselected-tabs-color: #DEEBF3 #DEEBF3 #FFFFFF 100% 100%;
+    outer-keyline-color: rgb(190,216,237);
+	inner-keyline-color: rgb(255,255,255);
 }
