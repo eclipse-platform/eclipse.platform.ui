@@ -172,7 +172,7 @@ public class MenuSwitch<T1> {
 				MToolItem toolItem = (MToolItem)theEObject;
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseItem(toolItem);
-				if (result == null) result = caseElementContainer(toolItem);
+				if (result == null) result = caseMenuElement(toolItem);
 				if (result == null) result = caseToolBarElement(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseUILabel(toolItem);
@@ -186,7 +186,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseToolItem(directToolItem);
 				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseItem(directToolItem);
-				if (result == null) result = caseElementContainer(directToolItem);
+				if (result == null) result = caseMenuElement(directToolItem);
 				if (result == null) result = caseToolBarElement(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
 				if (result == null) result = caseUILabel(directToolItem);
@@ -229,7 +229,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseToolItem(handledToolItem);
 				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
-				if (result == null) result = caseElementContainer(handledToolItem);
+				if (result == null) result = caseMenuElement(handledToolItem);
 				if (result == null) result = caseToolBarElement(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseUILabel(handledToolItem);
