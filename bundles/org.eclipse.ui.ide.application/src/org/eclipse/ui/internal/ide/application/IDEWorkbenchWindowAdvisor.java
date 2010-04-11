@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -150,6 +151,20 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 		// the user has asked to close the last window, while will cause the
 		// workbench to close in due course - prompt the user for confirmation
+		return promptOnExit(getWindowConfigurer().getWindow().getShell());
+	}
+
+	/**
+	 * Asks the user whether the workbench should really be closed. Only asks if
+	 * the preference is enabled.
+	 * 
+	 * @param parentShell
+	 *            the parent shell to use for the confirmation dialog
+	 * @return <code>true</code> if OK to exit, <code>false</code> if the user
+	 *         canceled
+	 * @since 3.6
+	 */
+	static boolean promptOnExit(Shell parentShell) {
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore();
 		boolean promptOnExit = store
@@ -172,8 +187,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			}
 
 			MessageDialogWithToggle dlg = MessageDialogWithToggle
-					.openOkCancelConfirm(getWindowConfigurer().getWindow()
-							.getShell(),
+					.openOkCancelConfirm(parentShell,
 							IDEWorkbenchMessages.PromptOnExitDialog_shellTitle,
 							message,
 							IDEWorkbenchMessages.PromptOnExitDialog_choice,
