@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getSelectedElement <em>Selected Element</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#isEnabled <em>Enabled</em>}</li>
  * </ul>
  * </p>
  *
@@ -62,6 +63,24 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * @ordered
 	 */
 	protected MMenuElement selectedElement;
+	/**
+	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ENABLED_EDEFAULT = true;
+	/**
+	 * The cached value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean enabled = ENABLED_EDEFAULT;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -136,6 +155,27 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setEnabled(boolean newEnabled) {
+		boolean oldEnabled = enabled;
+		enabled = newEnabled;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__ENABLED, oldEnabled, enabled));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -173,6 +213,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
 				if (resolve) return getSelectedElement();
 				return basicGetSelectedElement();
+			case MenuPackageImpl.MENU__ENABLED:
+				return isEnabled();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -193,6 +235,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
 				setSelectedElement((MMenuElement)newValue);
 				return;
+			case MenuPackageImpl.MENU__ENABLED:
+				setEnabled((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -211,6 +256,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
 				setSelectedElement((MMenuElement)null);
 				return;
+			case MenuPackageImpl.MENU__ENABLED:
+				setEnabled(ENABLED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -227,6 +275,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 				return children != null && !children.isEmpty();
 			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
 				return selectedElement != null;
+			case MenuPackageImpl.MENU__ENABLED:
+				return enabled != ENABLED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -263,6 +313,22 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (enabled: "); //$NON-NLS-1$
+		result.append(enabled);
+		result.append(')');
+		return result.toString();
 	}
 
 } //MenuImpl
