@@ -11,32 +11,34 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 
+import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Menu</b></em>'.
+ * An implementation of the model object '<em><b>Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getLabel <em>Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getTooltip <em>Tooltip</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMenu {
+public abstract class MenuElementImpl extends UIElementImpl implements MMenuElement {
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -46,6 +48,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * @ordered
 	 */
 	protected static final String LABEL_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -55,6 +58,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * @ordered
 	 */
 	protected String label = LABEL_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -64,6 +68,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * @ordered
 	 */
 	protected static final String ICON_URI_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -73,6 +78,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * @ordered
 	 */
 	protected String iconURI = ICON_URI_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -82,6 +88,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * @ordered
 	 */
 	protected static final String TOOLTIP_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -97,7 +104,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected MenuImpl() {
+	protected MenuElementImpl() {
 		super();
 	}
 
@@ -108,7 +115,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MenuPackageImpl.Literals.MENU;
+		return MenuPackageImpl.Literals.MENU_ELEMENT;
 	}
 
 	/**
@@ -129,7 +136,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 		String oldLabel = label;
 		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__LABEL, oldLabel, label));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LABEL, oldLabel, label));
 	}
 
 	/**
@@ -150,7 +157,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__ICON_URI, oldIconURI, iconURI));
 	}
 
 	/**
@@ -171,7 +178,7 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__TOOLTIP, oldTooltip, tooltip));
 	}
 
 	/**
@@ -182,11 +189,11 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
 				return getLabel();
-			case MenuPackageImpl.MENU__ICON_URI:
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
 				return getIconURI();
-			case MenuPackageImpl.MENU__TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				return getTooltip();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -200,13 +207,13 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
 				setLabel((String)newValue);
 				return;
-			case MenuPackageImpl.MENU__ICON_URI:
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
 				setIconURI((String)newValue);
 				return;
-			case MenuPackageImpl.MENU__TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				setTooltip((String)newValue);
 				return;
 		}
@@ -221,13 +228,13 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
-			case MenuPackageImpl.MENU__ICON_URI:
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
 				return;
-			case MenuPackageImpl.MENU__TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
 		}
@@ -242,11 +249,11 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case MenuPackageImpl.MENU__ICON_URI:
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case MenuPackageImpl.MENU__TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 		}
 		return super.eIsSet(featureID);
@@ -261,14 +268,9 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.MENU__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case MenuPackageImpl.MENU__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case MenuPackageImpl.MENU__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MMenuElement.class) {
-			switch (derivedFeatureID) {
+				case MenuPackageImpl.MENU_ELEMENT__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
+				case MenuPackageImpl.MENU_ELEMENT__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
+				case MenuPackageImpl.MENU_ELEMENT__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -284,14 +286,9 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.MENU__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.MENU__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.MENU__TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MMenuElement.class) {
-			switch (baseFeatureID) {
+				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.MENU_ELEMENT__LABEL;
+				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.MENU_ELEMENT__ICON_URI;
+				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.MENU_ELEMENT__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -318,4 +315,4 @@ public class MenuImpl extends ElementContainerImpl<MMenuElement> implements MMen
 		return result.toString();
 	}
 
-} //MenuImpl
+} //MenuElementImpl

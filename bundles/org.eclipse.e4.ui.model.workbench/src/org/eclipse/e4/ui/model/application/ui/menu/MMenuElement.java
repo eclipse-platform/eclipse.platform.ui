@@ -10,16 +10,17 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Sub Menu</b></em>'.
+ * A representation of the model object '<em><b>Element</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @model
+ * @model abstract="true"
  * @generated
  */
-public interface MSubMenu extends MMenuItem, MElementContainer<MMenuItem> {
-} // MSubMenu
+public interface MMenuElement extends MUIElement, MUILabel {
+} // MMenuElement

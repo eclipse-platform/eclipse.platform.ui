@@ -55,15 +55,6 @@ public interface MMenuFactory {
 	MMenu createMenu();
 
 	/**
-	 * Returns a new object of class '<em>Sub Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Sub Menu</em>'.
-	 * @generated
-	 */
-	MSubMenu createSubMenu();
-
-	/**
 	 * Returns a new object of class '<em>Direct Menu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -87,6 +87,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	protected MenuSwitch<Adapter> modelSwitch =
 		new MenuSwitch<Adapter>() {
 			@Override
+			public Adapter caseMenuElement(MMenuElement object) {
+				return createMenuElementAdapter();
+			}
+			@Override
 			public Adapter caseItem(MItem object) {
 				return createItemAdapter();
 			}
@@ -97,10 +101,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseMenu(MMenu object) {
 				return createMenuAdapter();
-			}
-			@Override
-			public Adapter caseSubMenu(MSubMenu object) {
-				return createSubMenuAdapter();
 			}
 			@Override
 			public Adapter caseDirectMenuItem(MDirectMenuItem object) {
@@ -183,6 +183,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement <em>Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
+	 * @generated
+	 */
+	public Adapter createMenuElementAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -221,20 +235,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMenuAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MSubMenu <em>Sub Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MSubMenu
-	 * @generated
-	 */
-	public Adapter createSubMenuAdapter() {
 		return null;
 	}
 

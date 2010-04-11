@@ -28,9 +28,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MSubMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -95,6 +95,133 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final MenuPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+	 * @generated
+	 */
+	public static final int MENU_ELEMENT = 0;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__WIDGET = UiPackageImpl.UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__RENDERER = UiPackageImpl.UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__TO_BE_RENDERED = UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__ON_TOP = UiPackageImpl.UI_ELEMENT__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__VISIBLE = UiPackageImpl.UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__PARENT = UiPackageImpl.UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__CONTAINER_DATA = UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__ICON_URI = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl <em>Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -102,7 +229,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItem()
 	 * @generated
 	 */
-	public static final int ITEM = 0;
+	public static final int ITEM = 1;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -256,7 +383,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuItem()
 	 * @generated
 	 */
-	public static final int MENU_ITEM = 1;
+	public static final int MENU_ITEM = 2;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -419,7 +546,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenu()
 	 * @generated
 	 */
-	public static final int MENU = 2;
+	public static final int MENU = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -521,113 +648,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 
 	/**
-	 * The number of structural features of the '<em>Menu</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.SubMenuImpl <em>Sub Menu</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.SubMenuImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getSubMenu()
-	 * @generated
-	 */
-	public static final int SUB_MENU = 3;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__ELEMENT_ID = MENU_ITEM__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__TAGS = MENU_ITEM__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__WIDGET = MENU_ITEM__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__RENDERER = MENU_ITEM__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__TO_BE_RENDERED = MENU_ITEM__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__ON_TOP = MENU_ITEM__ON_TOP;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__VISIBLE = MENU_ITEM__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__PARENT = MENU_ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__CONTAINER_DATA = MENU_ITEM__CONTAINER_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SUB_MENU__LABEL = MENU_ITEM__LABEL;
+	public static final int MENU__LABEL = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -636,7 +663,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SUB_MENU__ICON_URI = MENU_ITEM__ICON_URI;
+	public static final int MENU__ICON_URI = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -645,70 +672,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SUB_MENU__TOOLTIP = MENU_ITEM__TOOLTIP;
+	public static final int MENU__TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * The number of structural features of the '<em>Menu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SUB_MENU__ENABLED = MENU_ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__SELECTED = MENU_ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__TYPE = MENU_ITEM__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__MNEMONICS = MENU_ITEM__MNEMONICS;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__CHILDREN = MENU_ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU__SELECTED_ELEMENT = MENU_ITEM_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Sub Menu</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SUB_MENU_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 2;
+	public static final int MENU_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
@@ -2201,6 +2174,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass menuElementEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass itemEClass = null;
 
 	/**
@@ -2216,13 +2196,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass menuEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass subMenuEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2377,6 +2350,19 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement <em>Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
+	 * @generated
+	 */
+	public EClass getMenuElement() {
+		return menuElementEClass;
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2462,18 +2448,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 */
 	public EClass getMenu() {
 		return menuEClass;
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MSubMenu <em>Sub Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Sub Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MSubMenu
-	 * @generated
-	 */
-	public EClass getSubMenu() {
-		return subMenuEClass;
 	}
 
 	/**
@@ -2665,6 +2639,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		isCreated = true;
 
 		// Create classes and their features
+		menuElementEClass = createEClass(MENU_ELEMENT);
+
 		itemEClass = createEClass(ITEM);
 		createEAttribute(itemEClass, ITEM__ENABLED);
 		createEAttribute(itemEClass, ITEM__SELECTED);
@@ -2674,8 +2650,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		createEAttribute(menuItemEClass, MENU_ITEM__MNEMONICS);
 
 		menuEClass = createEClass(MENU);
-
-		subMenuEClass = createEClass(SUB_MENU);
 
 		directMenuItemEClass = createEClass(DIRECT_MENU_ITEM);
 
@@ -2736,19 +2710,18 @@ public class MenuPackageImpl extends EPackageImpl {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		menuElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
+		menuElementEClass.getESuperTypes().add(theUiPackage.getUILabel());
 		itemEClass.getESuperTypes().add(theUiPackage.getUIElement());
 		itemEClass.getESuperTypes().add(theUiPackage.getUILabel());
 		menuItemEClass.getESuperTypes().add(this.getItem());
+		menuItemEClass.getESuperTypes().add(this.getMenuElement());
 		EGenericType g1 = createEGenericType(theUiPackage.getElementContainer());
-		EGenericType g2 = createEGenericType(this.getMenuItem());
+		EGenericType g2 = createEGenericType(this.getMenuElement());
 		g1.getETypeArguments().add(g2);
 		menuEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getMenuItem());
-		subMenuEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getElementContainer());
-		g2 = createEGenericType(this.getMenuItem());
-		g1.getETypeArguments().add(g2);
-		subMenuEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getMenuElement());
+		menuEClass.getEGenericSuperTypes().add(g1);
 		directMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		handledMenuItemEClass.getESuperTypes().add(this.getMenuItem());
@@ -2756,7 +2729,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(this.getItem());
 		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getElementContainer());
-		g2 = createEGenericType(this.getSubMenu());
+		g2 = createEGenericType(this.getMenu());
 		g1.getETypeArguments().add(g2);
 		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getToolBarElement());
@@ -2778,6 +2751,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		handledItemEClass.getESuperTypes().add(this.getItem());
 
 		// Initialize classes and features; add operations and parameters
+		initEClass(menuElementEClass, MMenuElement.class, "MenuElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
 		initEClass(itemEClass, MItem.class, "Item", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getItem_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getItem_Selected(), ecorePackage.getEBoolean(), "selected", null, 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -2787,8 +2762,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEAttribute(getMenuItem_Mnemonics(), ecorePackage.getEString(), "mnemonics", null, 0, 1, MMenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuEClass, MMenu.class, "Menu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-
-		initEClass(subMenuEClass, MSubMenu.class, "SubMenu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(directMenuItemEClass, MDirectMenuItem.class, "DirectMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2832,6 +2805,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+		 * @generated
+		 */
+		public static final EClass MENU_ELEMENT = eINSTANCE.getMenuElement();
+
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl <em>Item</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2893,16 +2876,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass MENU = eINSTANCE.getMenu();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.SubMenuImpl <em>Sub Menu</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.SubMenuImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getSubMenu()
-		 * @generated
-		 */
-		public static final EClass SUB_MENU = eINSTANCE.getSubMenu();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.

@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
-import org.eclipse.e4.ui.model.application.ui.menu.MSubMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 
@@ -59,7 +59,7 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MSubMenu> children;
+	protected EList<MMenu> children;
 
 	/**
 	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
@@ -69,7 +69,7 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * @generated
 	 * @ordered
 	 */
-	protected MSubMenu selectedElement;
+	protected MMenu selectedElement;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -95,9 +95,9 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<MSubMenu> getChildren() {
+	public List<MMenu> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MSubMenu>(MUIElement.class, this, MenuPackageImpl.TOOL_ITEM__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<MMenu>(MUIElement.class, this, MenuPackageImpl.TOOL_ITEM__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
 		}
 		return children;
 	}
@@ -107,10 +107,10 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MSubMenu getSelectedElement() {
+	public MMenu getSelectedElement() {
 		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
 			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MSubMenu)eResolveProxy(oldSelectedElement);
+			selectedElement = (MMenu)eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
@@ -124,7 +124,7 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MSubMenu basicGetSelectedElement() {
+	public MMenu basicGetSelectedElement() {
 		return selectedElement;
 	}
 
@@ -133,8 +133,8 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSelectedElement(MSubMenu newSelectedElement) {
-		MSubMenu oldSelectedElement = selectedElement;
+	public void setSelectedElement(MMenu newSelectedElement) {
+		MMenu oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
@@ -197,10 +197,10 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 		switch (featureID) {
 			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
 				getChildren().clear();
-				getChildren().addAll((Collection<? extends MSubMenu>)newValue);
+				getChildren().addAll((Collection<? extends MMenu>)newValue);
 				return;
 			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				setSelectedElement((MSubMenu)newValue);
+				setSelectedElement((MMenu)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -218,7 +218,7 @@ public class ToolItemImpl extends ItemImpl implements MToolItem {
 				getChildren().clear();
 				return;
 			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				setSelectedElement((MSubMenu)null);
+				setSelectedElement((MMenu)null);
 				return;
 		}
 		super.eUnset(featureID);

@@ -102,6 +102,15 @@ public class MenuSwitch<T1> {
 	 */
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case MenuPackageImpl.MENU_ELEMENT: {
+				MMenuElement menuElement = (MMenuElement)theEObject;
+				T1 result = caseMenuElement(menuElement);
+				if (result == null) result = caseUIElement(menuElement);
+				if (result == null) result = caseUILabel(menuElement);
+				if (result == null) result = caseApplicationElement(menuElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MenuPackageImpl.ITEM: {
 				MItem item = (MItem)theEObject;
 				T1 result = caseItem(item);
@@ -115,6 +124,7 @@ public class MenuSwitch<T1> {
 				MMenuItem menuItem = (MMenuItem)theEObject;
 				T1 result = caseMenuItem(menuItem);
 				if (result == null) result = caseItem(menuItem);
+				if (result == null) result = caseMenuElement(menuItem);
 				if (result == null) result = caseUIElement(menuItem);
 				if (result == null) result = caseUILabel(menuItem);
 				if (result == null) result = caseApplicationElement(menuItem);
@@ -125,20 +135,10 @@ public class MenuSwitch<T1> {
 				MMenu menu = (MMenu)theEObject;
 				T1 result = caseMenu(menu);
 				if (result == null) result = caseElementContainer(menu);
+				if (result == null) result = caseMenuElement(menu);
 				if (result == null) result = caseUIElement(menu);
+				if (result == null) result = caseUILabel(menu);
 				if (result == null) result = caseApplicationElement(menu);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.SUB_MENU: {
-				MSubMenu subMenu = (MSubMenu)theEObject;
-				T1 result = caseSubMenu(subMenu);
-				if (result == null) result = caseMenuItem(subMenu);
-				if (result == null) result = caseElementContainer(subMenu);
-				if (result == null) result = caseItem(subMenu);
-				if (result == null) result = caseUIElement(subMenu);
-				if (result == null) result = caseUILabel(subMenu);
-				if (result == null) result = caseApplicationElement(subMenu);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -148,6 +148,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseMenuItem(directMenuItem);
 				if (result == null) result = caseContribution(directMenuItem);
 				if (result == null) result = caseItem(directMenuItem);
+				if (result == null) result = caseMenuElement(directMenuItem);
 				if (result == null) result = caseUIElement(directMenuItem);
 				if (result == null) result = caseUILabel(directMenuItem);
 				if (result == null) result = caseApplicationElement(directMenuItem);
@@ -160,6 +161,7 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseMenuItem(handledMenuItem);
 				if (result == null) result = caseHandledItem(handledMenuItem);
 				if (result == null) result = caseItem(handledMenuItem);
+				if (result == null) result = caseMenuElement(handledMenuItem);
 				if (result == null) result = caseUIElement(handledMenuItem);
 				if (result == null) result = caseUILabel(handledMenuItem);
 				if (result == null) result = caseApplicationElement(handledMenuItem);
@@ -250,6 +252,21 @@ public class MenuSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseMenuElement(MMenuElement object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -291,21 +308,6 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenu(MMenu object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Sub Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Sub Menu</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseSubMenu(MSubMenu object) {
 		return null;
 	}
 

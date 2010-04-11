@@ -76,7 +76,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.ITEM: return (EObject)createItem();
 			case MenuPackageImpl.MENU_ITEM: return (EObject)createMenuItem();
 			case MenuPackageImpl.MENU: return (EObject)createMenu();
-			case MenuPackageImpl.SUB_MENU: return (EObject)createSubMenu();
 			case MenuPackageImpl.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MenuPackageImpl.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
 			case MenuPackageImpl.TOOL_ITEM: return (EObject)createToolItem();
@@ -148,16 +147,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MSubMenu createSubMenu() {
-		SubMenuImpl subMenu = new SubMenuImpl();
-		return subMenu;
 	}
 
 	/**

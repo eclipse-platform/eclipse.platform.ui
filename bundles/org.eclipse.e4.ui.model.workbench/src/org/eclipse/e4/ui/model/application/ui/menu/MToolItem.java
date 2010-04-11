@@ -21,5 +21,5 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * @model
  * @generated
  */
-public interface MToolItem extends MItem, MElementContainer<MSubMenu>, MToolBarElement {
+public interface MToolItem extends MItem, MElementContainer<MMenu>, MToolBarElement {
 } // MToolItem

@@ -26,7 +26,7 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * @model
  * @generated
  */
-public interface MMenuItem extends MItem {
+public interface MMenuItem extends MItem, MMenuElement {
 	/**
 	 * Returns the value of the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
