@@ -8,28 +8,27 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.descriptor.basic.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 
-import org.eclipse.e4.ui.model.application.descriptor.basic.provider.PartDescriptorContainerItemProvider;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+
+import org.eclipse.e4.ui.model.application.ui.provider.UILabelItemProvider;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -49,13 +48,13 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ModelComponentItemProvider
-	extends PartDescriptorContainerItemProvider
+public class PartDescriptorItemProvider
+	extends UILabelItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -68,7 +67,7 @@ public class ModelComponentItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModelComponentItemProvider(AdapterFactory adapterFactory) {
+	public PartDescriptorItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -83,13 +82,38 @@ public class ModelComponentItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addBindingContextsPropertyDescriptor(object);
 			addElementIdPropertyDescriptor(object);
 			addTagsPropertyDescriptor(object);
-			addPositionInParentPropertyDescriptor(object);
-			addParentIDPropertyDescriptor(object);
-			addProcessorPropertyDescriptor(object);
+			addAllowMultiplePropertyDescriptor(object);
+			addCategoryPropertyDescriptor(object);
+			addCloseablePropertyDescriptor(object);
+			addDirtyablePropertyDescriptor(object);
+			addContributionURIPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Binding Contexts feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBindingContextsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -137,19 +161,41 @@ public class ModelComponentItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Position In Parent feature.
+	 * This adds a property descriptor for the Allow Multiple feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addPositionInParentPropertyDescriptor(Object object) {
+	protected void addAllowMultiplePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ModelComponent_positionInParent_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_positionInParent_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__POSITION_IN_PARENT,
+				 getString("_UI_PartDescriptor_allowMultiple_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_allowMultiple_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__ALLOW_MULTIPLE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Category feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addCategoryPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_PartDescriptor_category_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_category_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__CATEGORY,
 				 true,
 				 false,
 				 false,
@@ -159,41 +205,63 @@ public class ModelComponentItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Parent ID feature.
+	 * This adds a property descriptor for the Closeable feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addParentIDPropertyDescriptor(Object object) {
+	protected void addCloseablePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ModelComponent_parentID_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_parentID_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__PARENT_ID,
+				 getString("_UI_PartDescriptor_closeable_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_closeable_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__CLOSEABLE,
 				 true,
 				 false,
 				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
 
 	/**
-	 * This adds a property descriptor for the Processor feature.
+	 * This adds a property descriptor for the Dirtyable feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addProcessorPropertyDescriptor(Object object) {
+	protected void addDirtyablePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ModelComponent_processor_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_processor_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__PROCESSOR,
+				 getString("_UI_PartDescriptor_dirtyable_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_dirtyable_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__DIRTYABLE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Contribution URI feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addContributionURIPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_PartDescriptor_contributionURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_contributionURI_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI,
 				 true,
 				 false,
 				 false,
@@ -215,11 +283,8 @@ public class ModelComponentItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
-			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN);
-			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS);
-			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS);
+			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS);
+			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR);
 		}
 		return childrenFeatures;
 	}
@@ -238,14 +303,14 @@ public class ModelComponentItemProvider
 	}
 
 	/**
-	 * This returns ModelComponent.gif.
+	 * This returns PartDescriptor.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ModelComponent")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/PartDescriptor")); //$NON-NLS-1$
 	}
 
 	/**
@@ -256,10 +321,10 @@ public class ModelComponentItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MModelComponent)object).getElementId();
+		String label = ((MPartDescriptor)object).getLabel();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ModelComponent_type") : //$NON-NLS-1$
-			getString("_UI_ModelComponent_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_PartDescriptor_type") : //$NON-NLS-1$
+			getString("_UI_PartDescriptor_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -273,20 +338,20 @@ public class ModelComponentItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MModelComponent.class)) {
-			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
-			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
-			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
-			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
-			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
+		switch (notification.getFeatureID(MPartDescriptor.class)) {
+			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
+			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
+			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
+			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
+			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
+			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
+			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
+			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
-			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
-			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
-			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
-			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
-			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
+			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
+			case BasicPackageImpl.PART_DESCRIPTOR__MENUS:
+			case BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -311,128 +376,13 @@ public class ModelComponentItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES,
-				 MCommandsFactory.INSTANCE.createBindingTable()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
-				 MCommandsFactory.INSTANCE.createBindingContext()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.INSTANCE.createApplication()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createMenuSeparator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS,
 				 MMenuFactory.INSTANCE.createMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createDirectMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				(BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR,
 				 MMenuFactory.INSTANCE.createToolBar()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolControl()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createDirectToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolBarSeparator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createPart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createInputPart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createPartStack()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createPartSashContainer()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindow()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPlaceholder()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspective()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS,
-				 MCommandsFactory.INSTANCE.createCommand()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS,
-				 MCommandsFactory.INSTANCE.createKeyBinding()));
 	}
 
 	/**

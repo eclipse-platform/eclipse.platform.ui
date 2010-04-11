@@ -8,12 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.commands.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.e4.ui.model.application.util.ApplicationAdapterFactory;
+import org.eclipse.e4.ui.model.application.commands.util.CommandsAdapterFactory;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class CommandsItemProviderAdapterFactory extends CommandsAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
 	/**
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc -->
@@ -71,7 +71,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProviderAdapterFactory() {
+	public CommandsItemProviderAdapterFactory() {
 		supportedTypes.add(IEditingDomainItemProvider.class);
 		supportedTypes.add(IStructuredItemContentProvider.class);
 		supportedTypes.add(ITreeItemContentProvider.class);
@@ -80,95 +80,164 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MBindingContext} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected StringToStringMapItemProvider stringToStringMapItemProvider;
+	protected BindingContextItemProvider bindingContextItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link java.util.Map.Entry}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MBindingContext}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createStringToStringMapAdapter() {
-		if (stringToStringMapItemProvider == null) {
-			stringToStringMapItemProvider = new StringToStringMapItemProvider(this);
+	public Adapter createBindingContextAdapter() {
+		if (bindingContextItemProvider == null) {
+			bindingContextItemProvider = new BindingContextItemProvider(this);
 		}
 
-		return stringToStringMapItemProvider;
+		return bindingContextItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MApplication} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MBindingTable} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ApplicationItemProvider applicationItemProvider;
+	protected BindingTableItemProvider bindingTableItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MApplication}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MBindingTable}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createApplicationAdapter() {
-		if (applicationItemProvider == null) {
-			applicationItemProvider = new ApplicationItemProvider(this);
+	public Adapter createBindingTableAdapter() {
+		if (bindingTableItemProvider == null) {
+			bindingTableItemProvider = new BindingTableItemProvider(this);
 		}
 
-		return applicationItemProvider;
+		return bindingTableItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponents} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MCommand} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentsItemProvider modelComponentsItemProvider;
+	protected CommandItemProvider commandItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponents}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MCommand}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createModelComponentsAdapter() {
-		if (modelComponentsItemProvider == null) {
-			modelComponentsItemProvider = new ModelComponentsItemProvider(this);
+	public Adapter createCommandAdapter() {
+		if (commandItemProvider == null) {
+			commandItemProvider = new CommandItemProvider(this);
 		}
 
-		return modelComponentsItemProvider;
+		return commandItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponent} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MCommandParameter} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentItemProvider modelComponentItemProvider;
+	protected CommandParameterItemProvider commandParameterItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MCommandParameter}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createModelComponentAdapter() {
-		if (modelComponentItemProvider == null) {
-			modelComponentItemProvider = new ModelComponentItemProvider(this);
+	public Adapter createCommandParameterAdapter() {
+		if (commandParameterItemProvider == null) {
+			commandParameterItemProvider = new CommandParameterItemProvider(this);
 		}
 
-		return modelComponentItemProvider;
+		return commandParameterItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MHandler} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected HandlerItemProvider handlerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MHandler}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createHandlerAdapter() {
+		if (handlerItemProvider == null) {
+			handlerItemProvider = new HandlerItemProvider(this);
+		}
+
+		return handlerItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MKeyBinding} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected KeyBindingItemProvider keyBindingItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MKeyBinding}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createKeyBindingAdapter() {
+		if (keyBindingItemProvider == null) {
+			keyBindingItemProvider = new KeyBindingItemProvider(this);
+		}
+
+		return keyBindingItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MParameter} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ParameterItemProvider parameterItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MParameter}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createParameterAdapter() {
+		if (parameterItemProvider == null) {
+			parameterItemProvider = new ParameterItemProvider(this);
+		}
+
+		return parameterItemProvider;
 	}
 
 	/**
@@ -270,10 +339,13 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * @generated
 	 */
 	public void dispose() {
-		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
-		if (applicationItemProvider != null) applicationItemProvider.dispose();
-		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
-		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
+		if (bindingContextItemProvider != null) bindingContextItemProvider.dispose();
+		if (bindingTableItemProvider != null) bindingTableItemProvider.dispose();
+		if (commandItemProvider != null) commandItemProvider.dispose();
+		if (commandParameterItemProvider != null) commandParameterItemProvider.dispose();
+		if (handlerItemProvider != null) handlerItemProvider.dispose();
+		if (keyBindingItemProvider != null) keyBindingItemProvider.dispose();
+		if (parameterItemProvider != null) parameterItemProvider.dispose();
 	}
 
 }

@@ -8,35 +8,28 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.menu.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-
-import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
-
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
-import org.eclipse.e4.ui.model.application.ui.provider.ElementContainerItemProvider;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.ResourceLocator;
-
-import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
@@ -50,13 +43,13 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MApplication} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MMenu} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProvider
-	extends ElementContainerItemProvider
+public class MenuItemProvider
+	extends MenuElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -69,7 +62,7 @@ public class ApplicationItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProvider(AdapterFactory adapterFactory) {
+	public MenuItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -84,75 +77,52 @@ public class ApplicationItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addContextPropertyDescriptor(object);
-			addVariablesPropertyDescriptor(object);
-			addBindingContextsPropertyDescriptor(object);
+			addSelectedElementPropertyDescriptor(object);
+			addEnabledPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Context feature.
+	 * This adds a property descriptor for the Selected Element feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addContextPropertyDescriptor(Object object) {
+	protected void addSelectedElementPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Context_context_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Context_context_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.CONTEXT__CONTEXT,
+				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
 				 true,
 				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 true,
+				 null,
 				 null,
 				 null));
 	}
 
 	/**
-	 * This adds a property descriptor for the Variables feature.
+	 * This adds a property descriptor for the Enabled feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addVariablesPropertyDescriptor(Object object) {
+	protected void addEnabledPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Context_variables_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Context_variables_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.CONTEXT__VARIABLES,
+				 getString("_UI_Menu_enabled_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Menu_enabled_feature", "_UI_Menu_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.MENU__ENABLED,
 				 true,
 				 false,
 				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Binding Contexts feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addBindingContextsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -169,12 +139,7 @@ public class ApplicationItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
-			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
-			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+			childrenFeatures.add(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 		}
 		return childrenFeatures;
 	}
@@ -193,14 +158,14 @@ public class ApplicationItemProvider
 	}
 
 	/**
-	 * This returns Application.gif.
+	 * This returns Menu.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Application")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Menu")); //$NON-NLS-1$
 	}
 
 	/**
@@ -211,10 +176,10 @@ public class ApplicationItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplication)object).getElementId();
+		String label = ((MMenu)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Application_type") : //$NON-NLS-1$
-			getString("_UI_Application_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Menu_type") : //$NON-NLS-1$
+			getString("_UI_Menu_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -228,18 +193,11 @@ public class ApplicationItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MApplication.class)) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+		switch (notification.getFeatureID(MMenu.class)) {
+			case MenuPackageImpl.MENU__ENABLED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			case MenuPackageImpl.MENU__CHILDREN:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -259,44 +217,108 @@ public class ApplicationItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.CONTEXT__PROPERTIES,
-				 ((EFactory)MApplicationFactory.INSTANCE).create(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP)));
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS,
-				 MCommandsFactory.INSTANCE.createHandler()));
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES,
-				 MCommandsFactory.INSTANCE.createBindingTable()));
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
-				 MCommandsFactory.INSTANCE.createBindingContext()));
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-				 MBasicFactory.INSTANCE.createPartDescriptor()));
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
-				 MCommandsFactory.INSTANCE.createCommand()));
-	}
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
 
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ResourceLocator getResourceLocator() {
-		return UIElementsEditPlugin.INSTANCE;
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolControl()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MApplicationFactory.INSTANCE.createApplication()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createWindowTrim()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
 	}
 
 }

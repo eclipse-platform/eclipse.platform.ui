@@ -8,20 +8,20 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.basic.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -31,17 +31,16 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MApplicationElement} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationElementItemProvider
-	extends ItemProviderAdapter
+public class InputPartItemProvider
+	extends PartItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -54,7 +53,7 @@ public class ApplicationElementItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationElementItemProvider(AdapterFactory adapterFactory) {
+	public InputPartItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -69,26 +68,25 @@ public class ApplicationElementItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addElementIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
+			addInputURIPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Element Id feature.
+	 * This adds a property descriptor for the Input URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addElementIdPropertyDescriptor(Object object) {
+	protected void addInputURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
+				 getString("_UI_Input_inputURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Input_inputURI_feature", "_UI_Input_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.INPUT__INPUT_URI,
 				 true,
 				 false,
 				 false,
@@ -98,36 +96,14 @@ public class ApplicationElementItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Tags feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTagsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
-				 true,
-				 false,
-				 false,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This returns ApplicationElement.gif.
+	 * This returns InputPart.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ApplicationElement")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/InputPart")); //$NON-NLS-1$
 	}
 
 	/**
@@ -138,10 +114,10 @@ public class ApplicationElementItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplicationElement)object).getElementId();
+		String label = ((MInputPart)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ApplicationElement_type") : //$NON-NLS-1$
-			getString("_UI_ApplicationElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_InputPart_type") : //$NON-NLS-1$
+			getString("_UI_InputPart_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -155,9 +131,8 @@ public class ApplicationElementItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MApplicationElement.class)) {
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
+		switch (notification.getFeatureID(MInputPart.class)) {
+			case BasicPackageImpl.INPUT_PART__INPUT_URI:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
@@ -174,17 +149,6 @@ public class ApplicationElementItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-	}
-
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ResourceLocator getResourceLocator() {
-		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

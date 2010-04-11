@@ -8,24 +8,23 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.advanced.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-
-import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
-
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+
+import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
+
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
@@ -50,12 +49,12 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MApplication} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProvider
+public class PerspectiveItemProvider
 	extends ElementContainerItemProvider
 	implements
 		IEditingDomainItemProvider,
@@ -69,7 +68,7 @@ public class ApplicationItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProvider(AdapterFactory adapterFactory) {
+	public PerspectiveItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -84,11 +83,79 @@ public class ApplicationItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addLabelPropertyDescriptor(object);
+			addIconURIPropertyDescriptor(object);
+			addTooltipPropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
-			addBindingContextsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Label feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLabelPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_label_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_label_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LABEL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Icon URI feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIconURIPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_iconURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_iconURI_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__ICON_URI,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Tooltip feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTooltipPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_tooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_tooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__TOOLTIP,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -136,28 +203,6 @@ public class ApplicationItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Binding Contexts feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addBindingContextsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -170,11 +215,7 @@ public class ApplicationItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
-			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
-			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
-			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+			childrenFeatures.add(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS);
 		}
 		return childrenFeatures;
 	}
@@ -193,14 +234,14 @@ public class ApplicationItemProvider
 	}
 
 	/**
-	 * This returns Application.gif.
+	 * This returns Perspective.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Application")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Perspective")); //$NON-NLS-1$
 	}
 
 	/**
@@ -211,10 +252,10 @@ public class ApplicationItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplication)object).getElementId();
+		String label = ((MPerspective)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Application_type") : //$NON-NLS-1$
-			getString("_UI_Application_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Perspective_type") : //$NON-NLS-1$
+			getString("_UI_Perspective_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -228,18 +269,16 @@ public class ApplicationItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MApplication.class)) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+		switch (notification.getFeatureID(MPerspective.class)) {
+			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -264,28 +303,31 @@ public class ApplicationItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS,
-				 MCommandsFactory.INSTANCE.createHandler()));
+				(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS,
+				 MBasicFactory.INSTANCE.createWindow()));
+	}
 
-		newChildDescriptors.add
-			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES,
-				 MCommandsFactory.INSTANCE.createBindingTable()));
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
 
-		newChildDescriptors.add
-			(createChildParameter
-				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
-				 MCommandsFactory.INSTANCE.createBindingContext()));
+		boolean qualify =
+			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS;
 
-		newChildDescriptors.add
-			(createChildParameter
-				(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-				 MBasicFactory.INSTANCE.createPartDescriptor()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
-				 MCommandsFactory.INSTANCE.createCommand()));
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

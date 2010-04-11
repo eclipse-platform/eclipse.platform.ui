@@ -8,12 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.e4.ui.model.application.util.ApplicationAdapterFactory;
+import org.eclipse.e4.ui.model.application.ui.util.UiAdapterFactory;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class UiItemProviderAdapterFactory extends UiAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
 	/**
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc -->
@@ -71,104 +71,12 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProviderAdapterFactory() {
+	public UiItemProviderAdapterFactory() {
 		supportedTypes.add(IEditingDomainItemProvider.class);
 		supportedTypes.add(IStructuredItemContentProvider.class);
 		supportedTypes.add(ITreeItemContentProvider.class);
 		supportedTypes.add(IItemLabelProvider.class);
 		supportedTypes.add(IItemPropertySource.class);
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected StringToStringMapItemProvider stringToStringMapItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link java.util.Map.Entry}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createStringToStringMapAdapter() {
-		if (stringToStringMapItemProvider == null) {
-			stringToStringMapItemProvider = new StringToStringMapItemProvider(this);
-		}
-
-		return stringToStringMapItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MApplication} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ApplicationItemProvider applicationItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MApplication}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createApplicationAdapter() {
-		if (applicationItemProvider == null) {
-			applicationItemProvider = new ApplicationItemProvider(this);
-		}
-
-		return applicationItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponents} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ModelComponentsItemProvider modelComponentsItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponents}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createModelComponentsAdapter() {
-		if (modelComponentsItemProvider == null) {
-			modelComponentsItemProvider = new ModelComponentsItemProvider(this);
-		}
-
-		return modelComponentsItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponent} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ModelComponentItemProvider modelComponentItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createModelComponentAdapter() {
-		if (modelComponentItemProvider == null) {
-			modelComponentItemProvider = new ModelComponentItemProvider(this);
-		}
-
-		return modelComponentItemProvider;
 	}
 
 	/**
@@ -270,10 +178,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * @generated
 	 */
 	public void dispose() {
-		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
-		if (applicationItemProvider != null) applicationItemProvider.dispose();
-		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
-		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
 	}
 
 }

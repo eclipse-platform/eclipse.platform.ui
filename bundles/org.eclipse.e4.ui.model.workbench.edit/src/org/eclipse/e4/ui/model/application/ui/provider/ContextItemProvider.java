@@ -8,20 +8,31 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+
+import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
+
+import org.eclipse.e4.ui.model.application.ui.MContext;
+
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
+
+import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -35,12 +46,12 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MApplicationElement} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.MContext} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationElementItemProvider
+public class ContextItemProvider
 	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -54,7 +65,7 @@ public class ApplicationElementItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationElementItemProvider(AdapterFactory adapterFactory) {
+	public ContextItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -69,26 +80,26 @@ public class ApplicationElementItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addElementIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
+			addContextPropertyDescriptor(object);
+			addVariablesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Element Id feature.
+	 * This adds a property descriptor for the Context feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addElementIdPropertyDescriptor(Object object) {
+	protected void addContextPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
+				 getString("_UI_Context_context_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Context_context_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.CONTEXT__CONTEXT,
 				 true,
 				 false,
 				 false,
@@ -98,36 +109,55 @@ public class ApplicationElementItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Tags feature.
+	 * This adds a property descriptor for the Variables feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addTagsPropertyDescriptor(Object object) {
+	protected void addVariablesPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
+				 getString("_UI_Context_variables_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Context_variables_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.CONTEXT__VARIABLES,
 				 true,
 				 false,
 				 false,
-				 null,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
 	}
 
 	/**
-	 * This returns ApplicationElement.gif.
+	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
+	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
+	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ApplicationElement")); //$NON-NLS-1$
+	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+		if (childrenFeatures == null) {
+			super.getChildrenFeatures(object);
+			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
+		}
+		return childrenFeatures;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		// Check the type of the specified child object and return the proper feature to use for
+		// adding (see {@link AddCommand}) it as a child.
+
+		return super.getChildFeature(object, child);
 	}
 
 	/**
@@ -138,10 +168,11 @@ public class ApplicationElementItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplicationElement)object).getElementId();
+		IEclipseContext labelValue = ((MContext)object).getContext();
+		String label = labelValue == null ? null : labelValue.toString();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ApplicationElement_type") : //$NON-NLS-1$
-			getString("_UI_ApplicationElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Context_type") : //$NON-NLS-1$
+			getString("_UI_Context_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -155,10 +186,13 @@ public class ApplicationElementItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MApplicationElement.class)) {
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
+		switch (notification.getFeatureID(MContext.class)) {
+			case UiPackageImpl.CONTEXT__CONTEXT:
+			case UiPackageImpl.CONTEXT__VARIABLES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+				return;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -174,6 +208,11 @@ public class ApplicationElementItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.CONTEXT__PROPERTIES,
+				 ((EFactory)MApplicationFactory.INSTANCE).create(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP)));
 	}
 
 	/**

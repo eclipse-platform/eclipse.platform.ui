@@ -8,12 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.advanced.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.e4.ui.model.application.util.ApplicationAdapterFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.util.AdvancedAdapterFactory;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
 	/**
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc -->
@@ -71,7 +71,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProviderAdapterFactory() {
+	public AdvancedItemProviderAdapterFactory() {
 		supportedTypes.add(IEditingDomainItemProvider.class);
 		supportedTypes.add(IStructuredItemContentProvider.class);
 		supportedTypes.add(ITreeItemContentProvider.class);
@@ -80,95 +80,72 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected StringToStringMapItemProvider stringToStringMapItemProvider;
+	protected PlaceholderItemProvider placeholderItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link java.util.Map.Entry}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createStringToStringMapAdapter() {
-		if (stringToStringMapItemProvider == null) {
-			stringToStringMapItemProvider = new StringToStringMapItemProvider(this);
+	public Adapter createPlaceholderAdapter() {
+		if (placeholderItemProvider == null) {
+			placeholderItemProvider = new PlaceholderItemProvider(this);
 		}
 
-		return stringToStringMapItemProvider;
+		return placeholderItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MApplication} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ApplicationItemProvider applicationItemProvider;
+	protected PerspectiveItemProvider perspectiveItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MApplication}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createApplicationAdapter() {
-		if (applicationItemProvider == null) {
-			applicationItemProvider = new ApplicationItemProvider(this);
+	public Adapter createPerspectiveAdapter() {
+		if (perspectiveItemProvider == null) {
+			perspectiveItemProvider = new PerspectiveItemProvider(this);
 		}
 
-		return applicationItemProvider;
+		return perspectiveItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponents} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentsItemProvider modelComponentsItemProvider;
+	protected PerspectiveStackItemProvider perspectiveStackItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponents}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createModelComponentsAdapter() {
-		if (modelComponentsItemProvider == null) {
-			modelComponentsItemProvider = new ModelComponentsItemProvider(this);
+	public Adapter createPerspectiveStackAdapter() {
+		if (perspectiveStackItemProvider == null) {
+			perspectiveStackItemProvider = new PerspectiveStackItemProvider(this);
 		}
 
-		return modelComponentsItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponent} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ModelComponentItemProvider modelComponentItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createModelComponentAdapter() {
-		if (modelComponentItemProvider == null) {
-			modelComponentItemProvider = new ModelComponentItemProvider(this);
-		}
-
-		return modelComponentItemProvider;
+		return perspectiveStackItemProvider;
 	}
 
 	/**
@@ -270,10 +247,9 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * @generated
 	 */
 	public void dispose() {
-		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
-		if (applicationItemProvider != null) applicationItemProvider.dispose();
-		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
-		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
+		if (placeholderItemProvider != null) placeholderItemProvider.dispose();
+		if (perspectiveItemProvider != null) perspectiveItemProvider.dispose();
+		if (perspectiveStackItemProvider != null) perspectiveStackItemProvider.dispose();
 	}
 
 }

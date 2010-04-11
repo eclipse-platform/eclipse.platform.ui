@@ -8,15 +8,21 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.menu.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.provider.UIElementItemProvider;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -31,17 +37,16 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MApplicationElement} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationElementItemProvider
-	extends ItemProviderAdapter
+public class MenuElementItemProvider
+	extends UIElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -54,7 +59,7 @@ public class ApplicationElementItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationElementItemProvider(AdapterFactory adapterFactory) {
+	public MenuElementItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -69,26 +74,27 @@ public class ApplicationElementItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addElementIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
+			addLabelPropertyDescriptor(object);
+			addIconURIPropertyDescriptor(object);
+			addTooltipPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Element Id feature.
+	 * This adds a property descriptor for the Label feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addElementIdPropertyDescriptor(Object object) {
+	protected void addLabelPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
+				 getString("_UI_UILabel_label_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_label_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LABEL,
 				 true,
 				 false,
 				 false,
@@ -98,36 +104,47 @@ public class ApplicationElementItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Tags feature.
+	 * This adds a property descriptor for the Icon URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addTagsPropertyDescriptor(Object object) {
+	protected void addIconURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
+				 getString("_UI_UILabel_iconURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_iconURI_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__ICON_URI,
 				 true,
 				 false,
 				 false,
-				 null,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
 	}
 
 	/**
-	 * This returns ApplicationElement.gif.
+	 * This adds a property descriptor for the Tooltip feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ApplicationElement")); //$NON-NLS-1$
+	protected void addTooltipPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_tooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_tooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__TOOLTIP,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -138,10 +155,10 @@ public class ApplicationElementItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplicationElement)object).getElementId();
+		String label = ((MMenuElement)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ApplicationElement_type") : //$NON-NLS-1$
-			getString("_UI_ApplicationElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_MenuElement_type") : //$NON-NLS-1$
+			getString("_UI_MenuElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -155,9 +172,10 @@ public class ApplicationElementItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MApplicationElement.class)) {
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
+		switch (notification.getFeatureID(MMenuElement.class)) {
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

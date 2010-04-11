@@ -8,12 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.provider;
+package org.eclipse.e4.ui.model.application.ui.basic.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.e4.ui.model.application.util.ApplicationAdapterFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.util.BasicAdapterFactory;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -40,7 +40,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class BasicItemProviderAdapterFactory extends BasicAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
 	/**
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc -->
@@ -71,7 +71,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationItemProviderAdapterFactory() {
+	public BasicItemProviderAdapterFactory() {
 		supportedTypes.add(IEditingDomainItemProvider.class);
 		supportedTypes.add(IStructuredItemContentProvider.class);
 		supportedTypes.add(ITreeItemContentProvider.class);
@@ -80,95 +80,141 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MPart} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected StringToStringMapItemProvider stringToStringMapItemProvider;
+	protected PartItemProvider partItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link java.util.Map.Entry}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MPart}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createStringToStringMapAdapter() {
-		if (stringToStringMapItemProvider == null) {
-			stringToStringMapItemProvider = new StringToStringMapItemProvider(this);
+	public Adapter createPartAdapter() {
+		if (partItemProvider == null) {
+			partItemProvider = new PartItemProvider(this);
 		}
 
-		return stringToStringMapItemProvider;
+		return partItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MApplication} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ApplicationItemProvider applicationItemProvider;
+	protected InputPartItemProvider inputPartItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MApplication}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createApplicationAdapter() {
-		if (applicationItemProvider == null) {
-			applicationItemProvider = new ApplicationItemProvider(this);
+	public Adapter createInputPartAdapter() {
+		if (inputPartItemProvider == null) {
+			inputPartItemProvider = new InputPartItemProvider(this);
 		}
 
-		return applicationItemProvider;
+		return inputPartItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponents} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MPartStack} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentsItemProvider modelComponentsItemProvider;
+	protected PartStackItemProvider partStackItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponents}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MPartStack}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createModelComponentsAdapter() {
-		if (modelComponentsItemProvider == null) {
-			modelComponentsItemProvider = new ModelComponentsItemProvider(this);
+	public Adapter createPartStackAdapter() {
+		if (partStackItemProvider == null) {
+			partStackItemProvider = new PartStackItemProvider(this);
 		}
 
-		return modelComponentsItemProvider;
+		return partStackItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponent} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentItemProvider modelComponentItemProvider;
+	protected PartSashContainerItemProvider partSashContainerItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createModelComponentAdapter() {
-		if (modelComponentItemProvider == null) {
-			modelComponentItemProvider = new ModelComponentItemProvider(this);
+	public Adapter createPartSashContainerAdapter() {
+		if (partSashContainerItemProvider == null) {
+			partSashContainerItemProvider = new PartSashContainerItemProvider(this);
 		}
 
-		return modelComponentItemProvider;
+		return partSashContainerItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MWindow} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected WindowItemProvider windowItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MWindow}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createWindowAdapter() {
+		if (windowItemProvider == null) {
+			windowItemProvider = new WindowItemProvider(this);
+		}
+
+		return windowItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected WindowTrimItemProvider windowTrimItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createWindowTrimAdapter() {
+		if (windowTrimItemProvider == null) {
+			windowTrimItemProvider = new WindowTrimItemProvider(this);
+		}
+
+		return windowTrimItemProvider;
 	}
 
 	/**
@@ -270,10 +316,12 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	 * @generated
 	 */
 	public void dispose() {
-		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
-		if (applicationItemProvider != null) applicationItemProvider.dispose();
-		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
-		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
+		if (partItemProvider != null) partItemProvider.dispose();
+		if (inputPartItemProvider != null) inputPartItemProvider.dispose();
+		if (partStackItemProvider != null) partStackItemProvider.dispose();
+		if (partSashContainerItemProvider != null) partSashContainerItemProvider.dispose();
+		if (windowItemProvider != null) windowItemProvider.dispose();
+		if (windowTrimItemProvider != null) windowTrimItemProvider.dispose();
 	}
 
 }
