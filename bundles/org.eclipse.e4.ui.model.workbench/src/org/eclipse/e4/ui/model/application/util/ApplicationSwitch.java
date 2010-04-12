@@ -153,6 +153,14 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ApplicationPackageImpl.ADDON: {
+				MAddon addon = (MAddon)theEObject;
+				T1 result = caseAddon(addon);
+				if (result == null) result = caseContribution(addon);
+				if (result == null) result = caseApplicationElement(addon);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -244,6 +252,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseModelComponent(MModelComponent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Addon</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Addon</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseAddon(MAddon object) {
 		return null;
 	}
 

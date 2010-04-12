@@ -114,6 +114,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createModelComponentAdapter();
 			}
 			@Override
+			public Adapter caseAddon(MAddon object) {
+				return createAddonAdapter();
+			}
+			@Override
 			public Adapter caseUIElement(MUIElement object) {
 				return createUIElementAdapter();
 			}
@@ -242,6 +246,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createModelComponentAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MAddon <em>Addon</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MAddon
+	 * @generated
+	 */
+	public Adapter createAddonAdapter() {
 		return null;
 	}
 

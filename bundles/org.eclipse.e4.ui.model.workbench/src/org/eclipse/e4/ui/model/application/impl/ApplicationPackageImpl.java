@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -354,13 +355,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Addons</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+
+	/**
 	 * The number of structural features of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
@@ -582,6 +592,70 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int MODEL_COMPONENT_FEATURE_COUNT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.AddonImpl <em>Addon</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.AddonImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getAddon()
+	 * @generated
+	 */
+	public static final int ADDON = 6;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__ELEMENT_ID = CONTRIBUTION__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__TAGS = CONTRIBUTION__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__CONTRIBUTION_URI = CONTRIBUTION__CONTRIBUTION_URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The number of structural features of the '<em>Addon</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -589,7 +663,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	public static final int IECLIPSE_CONTEXT = 6;
+	public static final int IECLIPSE_CONTEXT = 7;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -632,6 +706,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass modelComponentEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass addonEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -786,6 +867,20 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public EReference getApplication_Commands() {
 		return (EReference)applicationEClass.getEStructuralFeatures().get(0);
 	}
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getAddons <em>Addons</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Addons</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getAddons()
+	 * @see #getApplication()
+	 * @generated
+	 */
+	public EReference getApplication_Addons() {
+		return (EReference)applicationEClass.getEStructuralFeatures().get(1);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
@@ -992,6 +1087,19 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MAddon <em>Addon</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Addon</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MAddon
+	 * @generated
+	 */
+	public EClass getAddon() {
+		return addonEClass;
+	}
+
+
+	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1040,6 +1148,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		applicationEClass = createEClass(APPLICATION);
 		createEReference(applicationEClass, APPLICATION__COMMANDS);
+		createEReference(applicationEClass, APPLICATION__ADDONS);
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
@@ -1060,6 +1169,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEReference(modelComponentEClass, MODEL_COMPONENT__COMMANDS);
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PROCESSOR);
 		createEReference(modelComponentEClass, MODEL_COMPONENT__BINDINGS);
+
+		addonEClass = createEClass(ADDON);
 
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
@@ -1123,6 +1234,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getBindingTableContainer());
+		addonEClass.getESuperTypes().add(this.getContribution());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(stringToStringMapEClass, Map.Entry.class, "StringToStringMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1131,6 +1243,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		initEClass(applicationEClass, MApplication.class, "Application", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getApplication_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplication_Addons(), this.getAddon(), null, "addons", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1151,6 +1264,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEReference(getModelComponent_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getModelComponent_Processor(), ecorePackage.getEString(), "processor", null, 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelComponent_Bindings(), theCommandsPackage.getKeyBinding(), null, "bindings", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(addonEClass, MAddon.class, "Addon", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1215,6 +1330,14 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference APPLICATION__COMMANDS = eINSTANCE.getApplication_Commands();
+
+		/**
+		 * The meta object literal for the '<em><b>Addons</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference APPLICATION__ADDONS = eINSTANCE.getApplication_Addons();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl <em>Element</em>}' class.
@@ -1351,6 +1474,16 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference MODEL_COMPONENT__BINDINGS = eINSTANCE.getModelComponent_Bindings();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.AddonImpl <em>Addon</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.AddonImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getAddon()
+		 * @generated
+		 */
+		public static final EClass ADDON = eINSTANCE.getAddon();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.

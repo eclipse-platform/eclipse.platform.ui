@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -73,6 +74,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
  * </ul>
  * </p>
  *
@@ -178,6 +180,16 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MCommand> commands;
+
+	/**
+	 * The cached value of the '{@link #getAddons() <em>Addons</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAddons()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MAddon> addons;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -351,6 +363,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MAddon> getAddons() {
+		if (addons == null) {
+			addons = new EObjectContainmentEList<MAddon>(MAddon.class, this, ApplicationPackageImpl.APPLICATION__ADDONS);
+		}
+		return addons;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -366,6 +390,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
+				return ((InternalEList<?>)getAddons()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -397,6 +423,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return getBindingContexts();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return getCommands();
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
+				return getAddons();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -443,6 +471,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
+				getAddons().clear();
+				getAddons().addAll((Collection<? extends MAddon>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -482,6 +514,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
+				getAddons().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -512,6 +547,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return bindingContexts != null && !bindingContexts.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
+				return addons != null && !addons.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

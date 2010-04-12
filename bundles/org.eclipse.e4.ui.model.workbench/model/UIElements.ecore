@@ -13,7 +13,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//commands/Command" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="addons" upperBound="-1"
-        eType="#//Contribution" containment="true"/>
+        eType="#//Addon" containment="true"/>
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
       <eTypeArguments eClassifier="#//ui/basic/Window"/>
     </eGenericSuperTypes>
@@ -52,6 +52,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
         eType="#//commands/KeyBinding" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Addon" eSuperTypes="#//Contribution"/>
   <eSubpackages name="commands" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/commands"
       nsPrefix="commands">
     <eClassifiers xsi:type="ecore:EClass" name="BindingTableContainer" abstract="true"

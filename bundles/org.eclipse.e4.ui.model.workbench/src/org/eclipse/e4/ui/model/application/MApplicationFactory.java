@@ -54,4 +54,13 @@ public interface MApplicationFactory {
 	 */
 	MModelComponent createModelComponent();
 
+	/**
+	 * Returns a new object of class '<em>Addon</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Addon</em>'.
+	 * @generated
+	 */
+	MAddon createAddon();
+
 } //MApplicationFactory

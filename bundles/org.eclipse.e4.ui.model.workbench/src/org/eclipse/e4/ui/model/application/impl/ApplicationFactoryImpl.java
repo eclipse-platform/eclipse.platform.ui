@@ -79,6 +79,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case ApplicationPackageImpl.APPLICATION: return (EObject)createApplication();
 			case ApplicationPackageImpl.MODEL_COMPONENTS: return (EObject)createModelComponents();
 			case ApplicationPackageImpl.MODEL_COMPONENT: return (EObject)createModelComponent();
+			case ApplicationPackageImpl.ADDON: return (EObject)createAddon();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -148,6 +149,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MModelComponent createModelComponent() {
 		ModelComponentImpl modelComponent = new ModelComponentImpl();
 		return modelComponent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MAddon createAddon() {
+		AddonImpl addon = new AddonImpl();
+		return addon;
 	}
 
 	/**
