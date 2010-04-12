@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,10 +81,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
+import org.eclipse.jface.text.hyperlink.HyperlinkManager.DETECTION_STRATEGY;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
-import org.eclipse.jface.text.hyperlink.HyperlinkManager.DETECTION_STRATEGY;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
@@ -2446,9 +2446,13 @@ public class TextViewer extends Viewer implements
 			if (delta > 0) {
 				// in the middle of a multi-character line delimiter
 				offset= lineEnd;
+				length += delta;
 				String delimiter= document.getLineDelimiter(lineNumber);
-				if (delimiter != null)
-					offset += delimiter.length();
+				if (delimiter != null) {
+					int delimiterLength= delimiter.length();
+					offset += delimiterLength;
+					length -= delimiterLength;
+				}
 			}
 
 			int end= offset + length;
