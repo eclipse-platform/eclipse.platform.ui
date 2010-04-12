@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,20 +183,23 @@ public class SaveableHelper {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
-				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
-					Saveable model = (Saveable) i.next();
-					// handle case where this model got saved as a result of saving another
-					if (!model.isDirty()) {
-						monitor.worked(1);
-						continue;
+				try {
+					for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
+						Saveable model = (Saveable) i.next();
+						// handle case where this model got saved as a result of
+						// saving another
+						if (!model.isDirty()) {
+							monitor.worked(1);
+							continue;
+						}
+						doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), window, confirm);
+						if (monitor.isCanceled()) {
+							break;
+						}
 					}
-					doSaveModel(model, new SubProgressMonitor(monitorWrap, 1),
-							window, confirm);
-					if (monitor.isCanceled()) {
-						break;
-					}
+				} finally {
+					monitorWrap.done();
 				}
-				monitorWrap.done();
 			}
 		};
 
