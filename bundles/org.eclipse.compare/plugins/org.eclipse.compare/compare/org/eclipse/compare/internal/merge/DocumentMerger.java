@@ -535,9 +535,9 @@ public class DocumentMerger {
 		int aLength = ancestor == null? 0 : ancestor.getRangeCount();
 		int lLength = left.getRangeCount();
 		int rLength = right.getRangeCount();
-		if (aLength * lLength > LCS.TOO_LONG
-				|| aLength * rLength > LCS.TOO_LONG
-				|| lLength * lLength > LCS.TOO_LONG)
+		if ((double) aLength * (double) lLength > LCS.TOO_LONG
+				|| (double) aLength * (double) rLength > LCS.TOO_LONG
+				|| (double) lLength * (double) rLength > LCS.TOO_LONG)
 			return true;
 		return false;
 	}
