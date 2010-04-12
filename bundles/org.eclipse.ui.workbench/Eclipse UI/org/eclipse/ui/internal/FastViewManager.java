@@ -144,7 +144,7 @@ public class FastViewManager {
 			return;
 
 		if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
-			if (partRef instanceof IViewReference) {
+			if (partRef instanceof ViewReference) {
 				ViewReference ref = (ViewReference) partRef;
 				if (ref.getPane().getContainer() instanceof ViewStack) {
 					int viewCount = 0;
