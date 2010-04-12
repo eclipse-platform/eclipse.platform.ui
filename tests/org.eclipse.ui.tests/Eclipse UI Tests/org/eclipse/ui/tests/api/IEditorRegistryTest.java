@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
@@ -394,6 +396,62 @@ public class IEditorRegistryTest extends TestCase {
 				fReg.setDefaultEditor("*.txt", desc.getId());
 		}
 
+	}
+
+	public void testSwitchDefaultToExternalBug236104() {
+		IEditorDescriptor htmlDescriptor = fReg.getDefaultEditor("test.html");
+		assertNotNull(htmlDescriptor);
+
+		IFileEditorMapping[] src = fReg.getFileEditorMappings();
+		FileEditorMapping[] maps = new FileEditorMapping[src.length];
+		System.arraycopy(src, 0, maps, 0, src.length);
+		FileEditorMapping map = null;
+
+		for (int i = 0; i < maps.length; i++) {
+			if (maps[i].getExtension().equals("html")) {
+				map = maps[i];
+				break;
+			}
+		}
+
+		assertNotNull(map);
+
+		EditorDescriptor replacementDescriptor = EditorDescriptor
+				.createForProgram("notepad.exe");
+
+		try {
+			map.setDefaultEditor(replacementDescriptor);
+
+			// invoke the same code that FileEditorsPreferencePage does
+			((EditorRegistry) fReg).setFileEditorMappings(maps);
+			((EditorRegistry) fReg).saveAssociations();
+			PrefUtil.savePrefs();
+
+			IEditorDescriptor newDescriptor = fReg
+					.getDefaultEditor("test.html");
+
+			assertEquals(replacementDescriptor, newDescriptor);
+			assertFalse(replacementDescriptor.equals(htmlDescriptor));
+		} finally {
+			src = fReg.getFileEditorMappings();
+			maps = new FileEditorMapping[src.length];
+			System.arraycopy(src, 0, maps, 0, src.length);
+			map = null;
+
+			for (int i = 0; i < maps.length; i++) {
+				if (maps[i].getExtension().equals("html")) {
+					map = maps[i];
+					break;
+				}
+			}
+
+			assertNotNull(map);
+
+			map.setDefaultEditor((EditorDescriptor) htmlDescriptor);
+			((EditorRegistry) fReg).setFileEditorMappings(maps);
+			((EditorRegistry) fReg).saveAssociations();
+			PrefUtil.savePrefs();
+		}
 	}
 
 }
