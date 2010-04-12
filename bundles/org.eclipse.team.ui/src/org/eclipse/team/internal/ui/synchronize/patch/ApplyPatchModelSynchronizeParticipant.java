@@ -17,6 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
+import org.eclipse.team.internal.ui.synchronize.IRefreshable;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
@@ -51,8 +52,6 @@ public class ApplyPatchModelSynchronizeParticipant extends
 				.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE
 						| ISynchronizePageConfiguration.CONFLICTING_MODE);
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
-		configuration.setProperty(ModelSynchronizePage.EXCLUDE_REFRESH_ACTION,
-				new Boolean(true));
 	}
 
 	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
@@ -135,5 +134,12 @@ public class ApplyPatchModelSynchronizeParticipant extends
 			return (ICompareInput) object;
 		}
 		return null;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IRefreshable.class) {
+			return null;
+		}
+		return super.getAdapter(adapter);
 	}
 }

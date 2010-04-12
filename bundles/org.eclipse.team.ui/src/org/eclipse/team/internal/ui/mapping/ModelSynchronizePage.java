@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ import org.eclipse.team.ui.synchronize.*;
  **/
 public class ModelSynchronizePage extends AbstractSynchronizePage {
 
-	public static final String EXCLUDE_REFRESH_ACTION = TeamUIPlugin.ID + ".excludeRefreshAction"; //$NON-NLS-1$
-
 	private ModelSynchronizeParticipant participant;
 
 	/**
@@ -44,9 +42,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 		configuration.setComparisonType(isThreeWay() 
 						? ISynchronizePageConfiguration.THREE_WAY 
 						: ISynchronizePageConfiguration.TWO_WAY);
-		Boolean excludeRefresh = (Boolean) configuration.getProperty(EXCLUDE_REFRESH_ACTION);
-		if (excludeRefresh == null || (!excludeRefresh.booleanValue()))
-			configuration.addActionContribution(new RefreshActionContribution());
+		configuration.addActionContribution(new RefreshActionContribution());
 	}
 
 	private boolean isThreeWay() {
