@@ -85,7 +85,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	static class TrackableComputationExt extends Computation implements IRunAndTrack {
+	static class TrackableComputationExt extends Computation implements IRunAndTrack, IContextRecorder {
 
 		private ContextChangeEvent cachedEvent;
 
@@ -125,12 +125,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.runnable = runnable;
 		}
 
-		public Object getObject() {
-			if (runnable instanceof IRunAndTrackObject)
-				return ((IRunAndTrackObject) runnable).getObject();
-			return null;
-		}
-
 		final protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduledList) {
 			int eventType = event.getEventType();
 			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
@@ -153,7 +147,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 					cachedEvent = event;
 					EclipseContext eventsContext = (EclipseContext) event.getContext();
 					eventsContext.addWaiting(this);
-					// eventsContext.getRoot().waiting.add(this);
 					return true;
 				}
 			}
@@ -162,11 +155,18 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			boolean result = true;
 			try {
 				if (cachedEvent != null) {
-					result = runnable.notify(cachedEvent);
+					if (runnable instanceof IRunAndTrackObject)
+						result = ((IRunAndTrackObject)runnable).notify(event, this);
+					else
+						result = runnable.notify(cachedEvent);
 					cachedEvent = null;
 				}
-				if (eventType != ContextChangeEvent.UPDATE)
-					result = runnable.notify(event);
+				if (eventType != ContextChangeEvent.UPDATE) {
+					if (runnable instanceof IRunAndTrackObject)
+						result = ((IRunAndTrackObject)runnable).notify(event, this);
+					else
+						result = runnable.notify(event);
+				}
 			} finally {
 				currentComputation.set(oldComputation);
 			}
@@ -180,6 +180,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 		public String toString() {
 			return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
+		}
+
+		public void startAcessRecording() {
+			currentComputation.set(this);
+		}
+
+		public void stopAccessRecording() {
+			currentComputation.set(null);
 		}
 	}
 

@@ -11,13 +11,10 @@
 
 package org.eclipse.e4.core.internal.contexts;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
 
-public interface IRunAndTrackObject extends IRunAndTrack {
+public interface IContextRecorder {
 
-	public boolean batchProcess();
-	
-	public boolean notify(ContextChangeEvent event, IContextRecorder recorder);
+	public void startAcessRecording();
 
+	public void stopAccessRecording();
 }

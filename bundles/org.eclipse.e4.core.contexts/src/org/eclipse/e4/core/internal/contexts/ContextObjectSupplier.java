@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
@@ -19,6 +21,7 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
+import org.eclipse.e4.core.di.InjectionException;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
 
@@ -36,7 +39,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			this.context = context;
 		}
 
-		public boolean notify(ContextChangeEvent event) {
+		public boolean notify(ContextChangeEvent event, final IContextRecorder recorder) {
 			if (event.getEventType() == ContextChangeEvent.INITIAL) {
 				// needs to be done inside runnable to establish dependencies
 				for (int i = 0; i < keys.length; i++) {
@@ -50,7 +53,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				}
 				return true;
 			}
-			
+
 			IInjector injector = requestor.getInjector();
 			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 				IEclipseContext originatingContext = event.getContext();
@@ -67,9 +70,34 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 					return false;
 				}
 			} else {
-				injector.update(new IRequestor[] { requestor }, requestor.getPrimarySupplier());
+				boolean resolved = injector.resolveArguments(requestor, requestor.getPrimarySupplier());
+				if (resolved) {
+					if (recorder != null)
+						recorder.stopAccessRecording();
+						
+					try {
+						requestor.execute();
+					} catch (InvocationTargetException e) {
+						logError("Injection failed for the object \""
+								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
+								+ requestor.toString() + "\"");
+						return false;
+					} catch (InstantiationException e) {
+						logError("Injection failed for the object \""
+								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
+								+ requestor.toString() + "\"");
+						return false;
+					} finally {
+						if (recorder != null)
+							recorder.startAcessRecording();
+					}
+				}
 			}
 			return true;
+		}
+		
+		public boolean notify(ContextChangeEvent event) {
+			return notify(event, null);
 		}
 
 		@Override
@@ -103,15 +131,10 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			return true;
 		}
 
-		public Object getObject() {
-			// XXX remove?
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 		public boolean batchProcess() {
 			return requestor.shouldGroupUpdates();
 		}
+
 	}
 
 	final static private String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
@@ -185,6 +208,17 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		ContextObjectSupplier objectSupplier = new ContextObjectSupplier(context, injector);
 		context.set(key, objectSupplier);
 		return objectSupplier;
+	}
+	// TBD implement logging
+	static protected void logError(String msg) {
+		logError(msg, new InjectionException());
+	}
+
+	static protected void logError(String msg, Throwable e) {
+		if (msg != null)
+			System.err.println(msg);
+		if (e != null)
+			e.printStackTrace();
 	}
 
 }

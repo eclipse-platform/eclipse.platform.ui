@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.Preferences;
 import org.osgi.framework.FrameworkUtil;
 
@@ -98,9 +100,25 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 		node.addPreferenceChangeListener(new IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
 				IInjector requestorInjector = requestor.getInjector();
-				if (requestorInjector != null)
-					requestorInjector.update(new IRequestor[] { requestor }, requestor
+				if (requestorInjector != null) {
+					boolean resolved = requestorInjector.resolveArguments(requestor, requestor
 							.getPrimarySupplier());
+					if (resolved) {
+						try {
+							requestor.execute();
+						} catch (InvocationTargetException e) {
+							logError("Injection failed for the object \""
+									+ requestor.getRequestingObject().toString()
+									+ "\". Unable to execute \"" + requestor.toString() + "\"");
+							return;
+						} catch (InstantiationException e) {
+							logError("Injection failed for the object \""
+									+ requestor.getRequestingObject().toString()
+									+ "\". Unable to execute \"" + requestor.toString() + "\"");
+							return;
+						}
+					}
+				}
 			}
 		});
 		synchronized (listenerCache) {
@@ -112,6 +130,18 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 				listenerCache.put(nodePath, listeningRequestors);
 			}
 		}
+	}
+
+	// TBD implement logging
+	static protected void logError(String msg) {
+		logError(msg, new InjectionException());
+	}
+
+	static protected void logError(String msg, Throwable e) {
+		if (msg != null)
+			System.err.println(msg);
+		if (e != null)
+			e.printStackTrace();
 	}
 
 }

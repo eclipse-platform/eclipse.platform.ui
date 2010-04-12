@@ -347,29 +347,10 @@ public class InjectorImpl implements IInjector {
 		return true;
 	}
 
-	public boolean update(IRequestor[] requestors, AbstractObjectSupplier objectSupplier) {
-		ArrayList<Requestor> list = new ArrayList<Requestor>(requestors.length);
-		for (IRequestor requestor : requestors) {
-			list.add((Requestor) requestor);
-		}
+	public boolean resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) {
+		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
+		list.add((Requestor)requestor);
 		resolveRequestorArgs(list, objectSupplier, true);
-
-		// Call requestors in order
-		for (IRequestor requestor : requestors) {
-			try {
-				((Requestor) requestor).execute();
-			} catch (InvocationTargetException e) {
-				logError("Injection failed for the object \""
-						+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-						+ requestor.toString() + "\"");
-				return false;
-			} catch (InstantiationException e) {
-				logError("Injection failed for the object \""
-						+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-						+ requestor.toString() + "\"");
-				return false;
-			}
-		}
 		return true;
 	}
 

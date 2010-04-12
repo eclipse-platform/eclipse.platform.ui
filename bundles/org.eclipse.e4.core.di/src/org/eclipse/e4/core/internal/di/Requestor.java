@@ -11,7 +11,6 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
@@ -38,8 +37,6 @@ abstract public class Requestor implements IRequestor {
 	final protected AnnotationsSupport annotationSupport = new AnnotationsSupport();
 
 	public abstract IObjectDescriptor[] getDependentObjects();
-
-	public abstract Object execute() throws InvocationTargetException, InstantiationException;
 
 	public Requestor(IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates,
 			boolean isOptional) {

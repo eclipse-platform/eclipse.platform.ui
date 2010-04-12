@@ -42,12 +42,11 @@ public interface IInjector {
 
 	public boolean injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier);
 
-	public boolean update(IRequestor[] requestors, AbstractObjectSupplier objectSupplier);
-
 	public boolean disposed(AbstractObjectSupplier objectSupplier);
 
 	public IBinding addBinding(Class<?> clazz);
 
 	public IBinding addBinding(IBinding binding);
 
+	public boolean resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier);
 }

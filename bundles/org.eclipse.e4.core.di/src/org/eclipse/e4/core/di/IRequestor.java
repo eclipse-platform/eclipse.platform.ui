@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import java.lang.reflect.InvocationTargetException;
+
 // TBD this is really a "feedback" object. 
 /**
  * @noimplement This interface is not intended to be implemented by clients.
@@ -31,4 +33,5 @@ public interface IRequestor {
 
 	public boolean shouldGroupUpdates();
 
+	public abstract Object execute() throws InvocationTargetException, InstantiationException;
 }
