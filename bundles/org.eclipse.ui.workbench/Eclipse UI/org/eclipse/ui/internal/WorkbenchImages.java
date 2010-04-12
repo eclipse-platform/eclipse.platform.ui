@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -84,18 +83,19 @@ public/*final*/class WorkbenchImages {
 
     private final static String PATH_EVIEW = ICONS_PATH + "eview16/"; //View icons//$NON-NLS-1$
 
-    //private final static String PATH_PROD = ICONS_PATH+"prod/";	//Product images
+	private final static String PATH_OVERLAY = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
+
     private final static String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons//$NON-NLS-1$
 
     private final static String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
 
     private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
 	
+	// private final static String PATH_PROD = ICONS_PATH+"prod/"; //Product
+	// images
+	// private final static String PATH_STAT = ICONS_PATH+"stat/";
+	// private final static String PATH_MISC = ICONS_PATH+"misc/";
 
-    //private final static String PATH_STAT = ICONS_PATH+"stat/";
-    //private final static String PATH_MISC = ICONS_PATH+"misc/";
-    //private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
-    
     /**
      * Declares a workbench image given the path of the image file (relative to
      * the workbench plug-in). This is a helper method that creates the image
@@ -141,8 +141,11 @@ public/*final*/class WorkbenchImages {
      * internal ones.
      */
     private final static void declareImages() {
-		
-    	
+		// Overlays
+		declareImage(ISharedImages.IMG_DEC_FIELD_ERROR, PATH_OVERLAY + "error_ovr.gif", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.gif", true); //$NON-NLS-1$
+
+		// Pinning
 	    declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
                 PATH_ETOOL + "pin_editor.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED,
