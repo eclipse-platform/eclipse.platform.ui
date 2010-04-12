@@ -766,7 +766,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			}
 		}
 		if (isFilteredByParent())
-			setMessage(IDEWorkbenchMessages.WizardNewFileCreationPage_resourceWillBeFilteredWarning, IMessageProvider.WARNING);
+			setMessage(IDEWorkbenchMessages.WizardNewFileCreationPage_resourceWillBeFilteredWarning, IMessageProvider.ERROR);
 		return valid;
 	}
 
@@ -782,7 +782,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		if (resourceName.length() > 0) {
 			IPath newFolderPath = containerPath.append(resourceName);
 			IFile newFileHandle = createFileHandle(newFolderPath);
-			return newFileHandle.isFiltered();
+			IWorkspace workspace = newFileHandle.getWorkspace();
+			return !workspace.validateFiltered(newFileHandle).isOK();
 		}
 		return false;
 	}

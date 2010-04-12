@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -705,7 +706,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		}
 		
 		if (isFilteredByParent())
-			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning, IMessageProvider.WARNING);
+			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning, IMessageProvider.ERROR);
 		
 		return valid;
 	}
@@ -725,7 +726,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		if (resourceName.length() > 0) {
 			IPath newFolderPath = containerPath.append(resourceName);
 			IFolder newFolderHandle = createFolderHandle(newFolderPath);
-			return newFolderHandle.isFiltered();
+			IWorkspace workspace = newFolderHandle.getWorkspace();
+			return !workspace.validateFiltered(newFolderHandle).isOK();
 		}
 		return false;
 	}
