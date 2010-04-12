@@ -18,6 +18,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -30,11 +33,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -206,6 +211,41 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				});
 	}
 
+	boolean setupLinkedResourceTargetRecursiveFlag = false;
+	private void setupLinkedResourceTarget() {
+		if (!setupLinkedResourceTargetRecursiveFlag) {
+			setupLinkedResourceTargetRecursiveFlag = true;
+			try {
+				if (isFilteredByParent()) {
+					URI existingLink = linkedResourceGroup.getLinkTargetURI();
+					boolean setDefaultLinkValue = false;
+					if (existingLink == null)
+						setDefaultLinkValue = true;
+					else {
+						IPath path = URIUtil.toPath(existingLink);
+						if (path != null)
+							setDefaultLinkValue = path.toPortableString().length() > 0;
+					}
+					
+					if (setDefaultLinkValue) {
+						IPath containerPath = resourceGroup.getContainerFullPath();
+						IPath newFilePath = containerPath.append(resourceGroup.getResource());
+						IFolder newFolderHandle = createFolderHandle(newFilePath);
+						try {
+							URI uri= newFolderHandle.getPathVariableManager().convertToRelative(newFolderHandle.getLocationURI(), false, null);
+							linkedResourceGroup.setLinkTarget(URIUtil.toPath(uri).toPortableString());
+						} catch (CoreException e) {
+							// nothing
+						}
+					}
+				}
+			}
+			finally {
+				setupLinkedResourceTargetRecursiveFlag = false;
+			}
+		}
+	}
+
 	/**
 	 * (non-Javadoc) Method declared on IDialogPage.
 	 */
@@ -371,6 +411,41 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 		final boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
 		createLinkTarget();
+		if (linkTargetPath != null) {
+			URI resolvedPath = newFolderHandle.getPathVariableManager().resolveURI(linkTargetPath);
+			try {
+				IFileStore store = EFS.getStore(resolvedPath);
+				if (!store.fetchInfo().exists()) {
+					MessageDialog dlg = new MessageDialog(getContainer().getShell(),
+							IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationTitle,
+							null, 
+							NLS.bind(
+									IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationQuestion, linkTargetPath),
+							MessageDialog.QUESTION_WITH_CANCEL,
+							new String[] { IDialogConstants.YES_LABEL,
+				                    IDialogConstants.NO_LABEL,
+				                    IDialogConstants.CANCEL_LABEL },
+							0);
+					int result = dlg.open();
+					if (result == Window.OK) {
+						store.mkdir(0, new NullProgressMonitor());
+					}
+					if (result == 2)
+						return null;
+				}
+			} catch (CoreException e) {
+				MessageDialog
+						.open(MessageDialog.ERROR,
+								getContainer().getShell(),
+								IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+								NLS
+										.bind(
+												IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+												e.getMessage()), SWT.SHEET);
+	
+				return null;
+			} 
+		}
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				AbstractOperation op;
@@ -569,6 +644,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				}
 			});
 
+			setupLinkedResourceTarget();
 			composite.layout();
 			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
 		}
@@ -705,8 +781,11 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			setErrorMessage(null);
 		}
 		
-		if (isFilteredByParent())
+		if (isFilteredByParent()) {
 			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning, IMessageProvider.ERROR);
+			setupLinkedResourceTarget();
+			valid = false;
+		}
 		
 		return valid;
 	}
@@ -715,7 +794,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
 		if (createVirtualFolder)
 			return false;
-		if (linkTargetPath != null)
+		if (linkedResourceGroup.isEnabled())
 			return false;
 		IPath containerPath = resourceGroup.getContainerFullPath();
 		if (containerPath == null)

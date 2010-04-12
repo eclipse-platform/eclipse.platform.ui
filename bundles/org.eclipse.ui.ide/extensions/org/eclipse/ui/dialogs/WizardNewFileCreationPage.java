@@ -13,11 +13,16 @@
 package org.eclipse.ui.dialogs;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -31,15 +36,18 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -364,6 +372,56 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		final InputStream initialContents = getInitialContents();
 
 		createLinkTarget();
+		
+		if (linkTargetPath != null) {
+			URI resolvedPath = newFileHandle.getPathVariableManager().resolveURI(linkTargetPath);
+			try {
+				IFileStore store = EFS.getStore(resolvedPath);
+				if (!store.fetchInfo().exists()) {
+					MessageDialog dlg = new MessageDialog(getContainer().getShell(),
+							IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle,
+							null, 
+							NLS.bind(
+									IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion, linkTargetPath),
+							MessageDialog.QUESTION_WITH_CANCEL,
+							new String[] { IDialogConstants.YES_LABEL,
+				                    IDialogConstants.NO_LABEL,
+				                    IDialogConstants.CANCEL_LABEL },
+							0);
+					int result = dlg.open();
+					if (result == Window.OK) {
+						store.getParent().mkdir(0, new NullProgressMonitor());
+						OutputStream stream = store.openOutputStream(0, new NullProgressMonitor());
+						stream.close();
+					}
+					if (result == 2)
+						return null;
+				}
+			} catch (CoreException e) {
+				MessageDialog
+						.open(MessageDialog.ERROR,
+								getContainer().getShell(),
+								IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+								NLS
+										.bind(
+												IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+												e.getMessage()), SWT.SHEET);
+	
+				return null;
+			} catch (IOException e) {
+				MessageDialog
+						.open(MessageDialog.ERROR,
+								getContainer().getShell(),
+								IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+								NLS
+										.bind(
+												IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+												e.getMessage()), SWT.SHEET);
+	
+				return null;
+			}
+		}
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				CreateFileOperation op = new CreateFileOperation(newFileHandle,
@@ -552,6 +610,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		} else {
 			linkedResourceComposite = linkedResourceGroup
 					.createContents(linkedResourceParent);
+			setupLinkedResourceTarget();
 			if (linkedResourceGroupHeight == -1) {
 				Point groupSize = linkedResourceComposite.computeSize(
 						SWT.DEFAULT, SWT.DEFAULT, true);
@@ -560,6 +619,41 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 			composite.layout();
 			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
+		}
+	}
+
+	boolean setupLinkedResourceTargetRecursiveFlag = false;
+	private void setupLinkedResourceTarget() {
+		if (!setupLinkedResourceTargetRecursiveFlag) {
+			setupLinkedResourceTargetRecursiveFlag = true;
+			try {
+				if (isFilteredByParent()) {
+					URI existingLink = linkedResourceGroup.getLinkTargetURI();
+					boolean setDefaultLinkValue = false;
+					if (existingLink == null)
+						setDefaultLinkValue = true;
+					else {
+						IPath path = URIUtil.toPath(existingLink);
+						if (path != null)
+							setDefaultLinkValue = path.toPortableString().length() > 0;
+					}
+					
+					if (setDefaultLinkValue) {
+						IPath containerPath = resourceGroup.getContainerFullPath();
+						IPath newFilePath = containerPath.append(resourceGroup.getResource());
+						IFile newFileHandle = createFileHandle(newFilePath);
+						try {
+							URI uri= newFileHandle.getPathVariableManager().convertToRelative(newFileHandle.getLocationURI(), false, null);
+							linkedResourceGroup.setLinkTarget(URIUtil.toPath(uri).toPortableString());
+						} catch (CoreException e) {
+							// nothing
+						}
+					}
+				}
+			}
+			finally {
+				setupLinkedResourceTargetRecursiveFlag = false;
+			}
 		}
 	}
 
@@ -765,13 +859,16 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				}
 			}
 		}
-		if (isFilteredByParent())
+		if (isFilteredByParent()) {
 			setMessage(IDEWorkbenchMessages.WizardNewFileCreationPage_resourceWillBeFilteredWarning, IMessageProvider.ERROR);
+			setupLinkedResourceTarget();
+			valid = false;
+		}
 		return valid;
 	}
 
 	private boolean isFilteredByParent() {
-		if (linkTargetPath != null)
+		if (linkedResourceGroup.isEnabled())
 			return false;
 		IPath containerPath = resourceGroup.getContainerFullPath();
 		if (containerPath == null)
