@@ -12,11 +12,17 @@
 package org.eclipse.help.ui.internal.search;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.ui.*;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.CriterionName;
+import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.CriterionValue;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -33,11 +39,17 @@ public class LocalHelpPage extends RootScopePage {
 
 	private Button searchSelected;
 
-	private CheckboxTreeViewer tree;
+	private CheckboxTreeViewer contentTree;
 
-	private ITreeContentProvider treeContentProvider;
+	private ITreeContentProvider contentTreeContentProvider;
 
-	private ILabelProvider elementLabelProvider;
+	private ILabelProvider contentTreeLabelProvider;
+	
+	private CheckboxTreeViewer criteriaTree;
+
+	private ITreeContentProvider criteriaTreeContentProvider;
+
+	private ILabelProvider criteriaTreeLabelProvider;
 
 	//private boolean firstCheck;
 
@@ -73,8 +85,8 @@ public class LocalHelpPage extends RootScopePage {
 		searchAll.setLayoutData(gd);
 		searchAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tree.getTree().setEnabled(false);
-				// searchQueryData.setBookFiltering(false);
+				contentTree.getTree().setEnabled(false);
+				criteriaTree.getTree().setEnabled(false);
 			}
 		});
 
@@ -85,8 +97,8 @@ public class LocalHelpPage extends RootScopePage {
 		searchSelected.setLayoutData(gd);
 		searchSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tree.getTree().setEnabled(true);
-				// searchQueryData.setBookFiltering(false);
+				contentTree.getTree().setEnabled(true);
+				criteriaTree.getTree().setEnabled(true);
 			}
 		});
 
@@ -95,56 +107,28 @@ public class LocalHelpPage extends RootScopePage {
 		else
 			searchSelected.setSelection(true);
 
-		Label label = new Label(parent, SWT.WRAP);
-		label.setFont(font);
-		label.setText(Messages.WorkingSetContent); 
+		Label contentLabel = new Label(parent, SWT.WRAP);
+		contentLabel.setFont(font);
+		contentLabel.setText(Messages.WorkingSetContent); 
 		gd = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		contentLabel.setLayoutData(gd);
 
-		tree = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-		gd.heightHint = convertHeightInCharsToPixels(15);
-		gd.horizontalSpan = 2;
-		tree.getControl().setLayoutData(gd);
-		tree.getControl().setFont(font);
-
-		treeContentProvider = new HelpWorkingSetTreeContentProvider();
-		tree.setContentProvider(treeContentProvider);
-
-		elementLabelProvider = new HelpWorkingSetElementLabelProvider();
-		tree.setLabelProvider(elementLabelProvider);
-
-		tree.setUseHashlookup(true);
-
-		tree.setInput(BaseHelpSystem.getWorkingSetManager().getRoot());
-
-		tree.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event);
-			}
-		});
-
-		tree.addTreeListener(new ITreeViewerListener() {
-			public void treeCollapsed(TreeExpansionEvent event) {
-			}
-
-			public void treeExpanded(TreeExpansionEvent event) {
-				final Object element = event.getElement();
-				if (tree.getGrayed(element) == false)
-					BusyIndicator.showWhile(getShell().getDisplay(),
-							new Runnable() {
-								public void run() {
-									setSubtreeChecked(element, tree
-											.getChecked(element), false);
-								}
-							});
-			}
-		});
-		tree.getTree().setEnabled(workingSet != null);
+		createContentTree(parent, font);
+		
+		if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+			Label criteriaLabel = new Label(parent, SWT.WRAP);
+			criteriaLabel.setFont(font);
+			criteriaLabel.setText(Messages.WorkingSetCriteria); 
+			gd = new GridData(GridData.GRAB_HORIZONTAL
+					| GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_CENTER);
+			gd.horizontalSpan = 2;
+			criteriaLabel.setLayoutData(gd);
+		    createCriteriaTree(parent, font);
+		}
 		
 		initializeCheckedState();
 		applyDialogFont(parent);
@@ -154,39 +138,135 @@ public class LocalHelpPage extends RootScopePage {
 		return 1;
 	}
 
+	protected void createContentTree(Composite parent, Font font) {
+		GridData gd;
+		contentTree = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+		gd.heightHint = getTreeHeightHint();
+		gd.horizontalSpan = 2;
+		contentTree.getControl().setLayoutData(gd);
+		contentTree.getControl().setFont(font);
+
+		contentTreeContentProvider = new HelpWorkingSetTreeContentProvider();
+		contentTree.setContentProvider(contentTreeContentProvider);
+
+		contentTreeLabelProvider = new HelpWorkingSetElementLabelProvider();
+		contentTree.setLabelProvider(contentTreeLabelProvider);
+
+		contentTree.setUseHashlookup(true);
+
+		contentTree.setInput(BaseHelpSystem.getWorkingSetManager().getRoot());
+
+		contentTree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				handleCheckStateChange(event, contentTree, contentTreeContentProvider);
+			}
+		});
+
+		contentTree.addTreeListener(new ITreeViewerListener() {
+			public void treeCollapsed(TreeExpansionEvent event) {
+			}
+
+			public void treeExpanded(TreeExpansionEvent event) {
+				final Object element = event.getElement();
+				if (contentTree.getGrayed(element) == false)
+					BusyIndicator.showWhile(getShell().getDisplay(),
+							new Runnable() {
+								public void run() {
+									setSubtreeChecked(element, contentTree
+											.getChecked(element), false, contentTree, contentTreeContentProvider);
+								}
+							});
+			}
+		});
+		contentTree.getTree().setEnabled(workingSet != null);
+	}
+
+	protected int getTreeHeightHint() {
+		if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+			return convertHeightInCharsToPixels(8);
+		}
+		return convertHeightInCharsToPixels(15);
+	}
+	
+
+	protected void createCriteriaTree(Composite parent, Font font) {
+		GridData gd;
+		criteriaTree = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+		gd.heightHint = getTreeHeightHint();
+		gd.horizontalSpan = 2;
+		criteriaTree.getControl().setLayoutData(gd);
+		criteriaTree.getControl().setFont(font);
+
+		criteriaTreeContentProvider = new HelpCriteriaContentProvider();
+		criteriaTree.setContentProvider(criteriaTreeContentProvider);
+
+		criteriaTreeLabelProvider = new HelpCriteriaLabelProvider();
+		criteriaTree.setLabelProvider(criteriaTreeLabelProvider);
+
+		criteriaTree.setUseHashlookup(true);
+
+		criteriaTree.setInput(BaseHelpSystem.getWorkingSetManager().getCriterionIds());
+
+		criteriaTree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				handleCheckStateChange(event, criteriaTree, criteriaTreeContentProvider);
+			}
+		});
+
+		criteriaTree.addTreeListener(new ITreeViewerListener() {
+			public void treeCollapsed(TreeExpansionEvent event) {
+			}
+
+			public void treeExpanded(TreeExpansionEvent event) {
+				final Object element = event.getElement();
+				if (criteriaTree.getGrayed(element) == false)
+					BusyIndicator.showWhile(getShell().getDisplay(),
+							new Runnable() {
+								public void run() {
+									setSubtreeChecked(element, criteriaTree
+											.getChecked(element), false, criteriaTree, criteriaTreeContentProvider);
+								}
+							});
+			}
+		});
+		criteriaTree.getTree().setEnabled(workingSet != null);
+	}
+
+
 	private void initializeCheckedState() {
 		if (workingSet == null)
 			return;
 
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
-				Object[] elements = workingSet.getElements();
-				tree.setCheckedElements(elements);
-				for (int i = 0; i < elements.length; i++) {
-					Object element = elements[i];
-					if (isExpandable(element))
-						setSubtreeChecked(element, true, true);
-					updateParentState(element, true);
+				initializeContentTree();
+				if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+				    initializeCriteriaTree();
 				}
 			}
 		});
 	}
 
-	boolean isExpandable(Object element) {
-		return treeContentProvider.hasChildren(element);
+	boolean isExpandable(Object element, ITreeContentProvider contentProvider) {
+		return contentProvider.hasChildren(element);
 	}
 
-	void updateParentState(Object child, boolean baseChildState) {
+	void updateParentState(Object child, boolean baseChildState, 
+			               CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		if (child == null)
 			return;
 
-		Object parent = treeContentProvider.getParent(child);
+		Object parent = contentProvider.getParent(child);
 		if (parent == null)
 			return;
 
 		boolean allSameState = true;
 		Object[] children = null;
-		children = treeContentProvider.getChildren(parent);
+		children = contentProvider.getChildren(parent);
 
 		for (int i = children.length - 1; i >= 0; i--) {
 			if (tree.getChecked(children[i]) != baseChildState
@@ -199,13 +279,14 @@ public class LocalHelpPage extends RootScopePage {
 		tree.setGrayed(parent, !allSameState);
 		tree.setChecked(parent, !allSameState || baseChildState);
 
-		updateParentState(parent, baseChildState);
+		updateParentState(parent, baseChildState, tree, contentProvider);
 	}
 
 	void setSubtreeChecked(Object parent, boolean state,
-			boolean checkExpandedState) {
+			boolean checkExpandedState,  
+            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 
-		Object[] children = treeContentProvider.getChildren(parent);
+		Object[] children = contentProvider.getChildren(parent);
 		for (int i = children.length - 1; i >= 0; i--) {
 			Object element = children[i];
 			if (state) {
@@ -213,33 +294,56 @@ public class LocalHelpPage extends RootScopePage {
 				tree.setGrayed(element, false);
 			} else
 				tree.setGrayChecked(element, false);
-			if (isExpandable(element))
-				setSubtreeChecked(element, state, checkExpandedState);
+			if (isExpandable(element, contentProvider))
+				setSubtreeChecked(element, state, checkExpandedState, tree, contentProvider);
 		}
 	}
 
-	private void findCheckedElements(java.util.List checkedResources,
-			Object parent) {
-		Object[] children = treeContentProvider.getChildren(parent);
+	private void findCheckedElements(java.util.List checkedResources, Object parent,  
+            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+		Object[] children = contentProvider.getChildren(parent);
 		for (int i = 0; i < children.length; i++) {
 			if (tree.getGrayed(children[i]))
-				findCheckedElements(checkedResources, children[i]);
+				findCheckedElements(checkedResources, children[i], tree, contentProvider);
 			else if (tree.getChecked(children[i]))
 				checkedResources.add(children[i]);
 		}
 	}
+	
+	private CriterionResource[] findCheckedCriteria(Object parent,  
+            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+		Object[] children = contentProvider.getChildren(parent);
+		List resources = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			// First level children are names
+			CriterionName name = (CriterionName) children[i];
+			CriterionResource resource = new CriterionResource(name.getId());
+			Object[] grandChildren = contentProvider.getChildren(name);
+			for (int j = 0; j < grandChildren.length; j++) {
+				if (tree.getChecked(grandChildren[j])) {
+				    CriterionValue value = (CriterionValue) grandChildren[j];
+				    resource.addCriterionValue(value.getId());
+				}
+			}
+			if (resource.getCriterionValues().size() > 0) {
+				resources.add(resource);
+			}
+		}
+		return (CriterionResource[])resources.toArray(new CriterionResource[resources.size()]);
+	}
 
-	void handleCheckStateChange(final CheckStateChangedEvent event) {
+	void handleCheckStateChange(final CheckStateChangedEvent event,  
+            final CheckboxTreeViewer tree, final ITreeContentProvider contentProvider) {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				Object element = event.getElement();
 				boolean state = event.getChecked();
 				tree.setGrayed(element, false);
-				if (isExpandable(element))
-					setSubtreeChecked(element, state, state);
+				if (isExpandable(element, contentProvider))
+					setSubtreeChecked(element, state, state, tree, contentProvider);
 				// only check subtree if state is set to true
 
-				updateParentState(element, state);
+				updateParentState(element, state, tree, contentProvider);
 				// validateInput();
 			}
 		});
@@ -247,16 +351,26 @@ public class LocalHelpPage extends RootScopePage {
 
 	public WorkingSet getWorkingSet() {
 		ArrayList elements = new ArrayList(10);
-		findCheckedElements(elements, tree.getInput());
+		CriterionResource[] criteria;
+		if (!HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+			criteria = new CriterionResource[0];
+		} else {
+			criteria = findCheckedCriteria(
+				criteriaTree.getInput(), 
+				criteriaTree, 
+				criteriaTreeContentProvider);
+		}
+		findCheckedElements(elements, contentTree.getInput(), contentTree, contentTreeContentProvider);
 		if (workingSet == null) {
 			workingSet = new WorkingSet(
 					getScopeSetName(),
 					(AdaptableHelpResource[]) elements
-							.toArray(new AdaptableHelpResource[elements.size()]));
+							.toArray(new AdaptableHelpResource[elements.size()]), criteria);
 		} else {
 			workingSet.setName(getScopeSetName());
 			workingSet.setElements((AdaptableHelpResource[]) elements
 					.toArray(new AdaptableHelpResource[elements.size()]));
+			workingSet.setCriteria(criteria);
 		}
 		return workingSet;
 	}
@@ -285,5 +399,32 @@ public class LocalHelpPage extends RootScopePage {
 
 	private String getKey(String key) {
 		return getEngineDescriptor().getId() + "." + key; //$NON-NLS-1$
+	}
+
+	protected void initializeContentTree() {
+		Object[] elements = workingSet.getElements();
+		contentTree.setCheckedElements(elements);
+		for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
+			if (isExpandable(element, contentTreeContentProvider))
+				setSubtreeChecked(element, true, true, contentTree, contentTreeContentProvider);
+			updateParentState(element, true, contentTree, contentTreeContentProvider);
+		}
+	}
+
+	protected void initializeCriteriaTree() {
+		CriterionResource[] criteria = workingSet.getCriteria();
+		criteriaTree.setCheckedElements(criteria);
+		for (int i = 0; i < criteria.length; i++) {
+			CriterionResource element = criteria[i];
+			CriterionName name = new CriterionName(element.getCriterionName(), null);
+			List values = element.getCriterionValues();
+			for (Iterator iter = values.iterator(); iter.hasNext();) {
+				String valueString = (String) iter.next();
+				CriterionValue value = new CriterionValue(valueString, name);
+			    criteriaTree.setChecked(value, true);
+				updateParentState(value, true, criteriaTree, criteriaTreeContentProvider);
+			}
+		}
 	}
 }

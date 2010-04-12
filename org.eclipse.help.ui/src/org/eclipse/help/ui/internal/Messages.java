@@ -74,6 +74,8 @@ public final class Messages extends NLS {
 	public static String SearchPart_expand;
 	public static String SearchPart_potential_hit;
 	public static String WorkingSetContent;
+	public static String WorkingSetCriteria;
+	public static String UncategorizedCriteria;
 	public static String selectAll;
 	public static String selectWorkingSet;
 	public static String FederatedSearchPart_advanced;
