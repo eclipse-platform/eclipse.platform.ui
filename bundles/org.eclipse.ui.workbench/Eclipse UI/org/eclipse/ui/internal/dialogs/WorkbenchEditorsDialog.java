@@ -113,12 +113,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
     private SelectionListener headerListener = new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-            int index = editorsTable.indexOf((TableColumn) e.widget);
+			TableColumn column = (TableColumn) e.widget;
+			int index = editorsTable.indexOf(column);
             if (index == sortColumn) {
 				reverse = !reverse;
 			} else {
 				sortColumn = index;
 			}
+			editorsTable.setSortDirection(reverse ? SWT.DOWN : SWT.UP);
+			editorsTable.setSortColumn(column);
             updateItems();
         }
     };
