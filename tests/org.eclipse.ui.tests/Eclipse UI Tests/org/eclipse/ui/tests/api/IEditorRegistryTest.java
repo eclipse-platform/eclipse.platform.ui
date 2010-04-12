@@ -15,6 +15,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -451,6 +453,47 @@ public class IEditorRegistryTest extends TestCase {
 			((EditorRegistry) fReg).setFileEditorMappings(maps);
 			((EditorRegistry) fReg).saveAssociations();
 			PrefUtil.savePrefs();
+		}
+	}
+
+	public void testBug308894() throws Throwable {
+		FileEditorMapping newMapping = new FileEditorMapping("*.abc");
+		assertNull(newMapping.getDefaultEditor());
+		
+		FileEditorMapping[] src = (FileEditorMapping[]) fReg.getFileEditorMappings();
+		FileEditorMapping[] maps = new FileEditorMapping[src.length + 1];
+		System.arraycopy(src, 0, maps, 0, src.length);
+		maps[maps.length - 1] = newMapping;
+
+		final Throwable[] thrownException = new Throwable[1];
+		ILogListener listener = new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				Throwable throwable = status.getException();
+				if (throwable == null) {
+					thrownException[0] = new CoreException(status);
+				} else {
+					thrownException[0] = throwable;
+				}
+			}
+		};
+		Platform.addLogListener(listener);
+
+		try {
+			// invoke the same code that FileEditorsPreferencePage does
+			((EditorRegistry) fReg).setFileEditorMappings(maps);
+			((EditorRegistry) fReg).saveAssociations();
+			PrefUtil.savePrefs();
+		} finally {
+			// undo the change
+			((EditorRegistry) fReg).setFileEditorMappings(src);
+			((EditorRegistry) fReg).saveAssociations();
+			PrefUtil.savePrefs();
+
+			Platform.removeLogListener(listener);
+			
+			if (thrownException[0] != null) {
+				throw thrownException[0];
+			}
 		}
 	}
 
