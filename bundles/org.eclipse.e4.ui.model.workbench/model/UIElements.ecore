@@ -12,6 +12,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//commands/Command" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="addons" upperBound="-1"
+        eType="#//Contribution" containment="true"/>
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
       <eTypeArguments eClassifier="#//ui/basic/Window"/>
     </eGenericSuperTypes>
