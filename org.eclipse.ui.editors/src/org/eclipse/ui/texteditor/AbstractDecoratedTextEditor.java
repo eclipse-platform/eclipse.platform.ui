@@ -18,6 +18,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
@@ -204,31 +205,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.4
 	 */
 	public final static String DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID= "#OverviewRulerContext"; //$NON-NLS-1$
-
-
-	/**
-	 * The surrogate bits.
-	 * @since 3.6
-	 */
-	private static final int SURROGATE_BITS= 0xD800;
-	/**
-	 * The surrogate bitmask.
-	 * @since 3.6
-	 */
-	private static final int SURROGATE_BITMASK= 0xFFFFF800;
-	/**
-	 * Tells whether the given character is a surrogate.
-	 * <p>
-	 * <strong>Note:</strong> We cannot use {@link com.ibm.icu.text.UTF16} since this is not in the
-	 * <code>com.ibm.icu.base</code> bundle.</p>
-	 * 
-	 * @param ch the character
-	 * @return <code>true</code> if the character is a surrogate
-	 * @since 3.6
-	 */
-	private static boolean isSurrogate(char ch) {
-		return (ch & SURROGATE_BITMASK) == SURROGATE_BITS;
-	}
 
 
 	/**
@@ -1658,26 +1634,21 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			IDocument document= getDocumentProvider().getDocument(getEditorInput());
 			int documentLength= document.getLength();
 			int offset= 0;
+			BreakIterator charBreakIterator= BreakIterator.getCharacterInstance();
+			charBreakIterator.setText(document.get());
 			while (offset < documentLength) {
 				try {
-					char ch= document.getChar(offset);
-					if (isSurrogate(ch)) {
-						offset++;
-						char trail= document.getChar(offset);
-						char[] supplement= { ch, trail };
-						if (!encoder.canEncode(new String(supplement))) {
-							selectAndReveal(offset - 1, 2);
-							return;
-						}
-					} else if (!encoder.canEncode(ch)) {
-						selectAndReveal(offset, 1);
+					int next= charBreakIterator.next();
+					String ch= document.get(offset, next - offset);
+					if (!encoder.canEncode(ch)) {
+						selectAndReveal(offset, next - offset);
 						return;
 					}
+					offset= next;
 				} catch (BadLocationException ex) {
 					EditorsPlugin.log(ex);
 					// Skip this character. Showing yet another dialog here is overkill
 				}
-				offset++;
 			}
 		}
 	}
