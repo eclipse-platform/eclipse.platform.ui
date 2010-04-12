@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Doug Satchwell <doug.satchwell@ymail.com> - [implementation] Performance issue with jface text WordRule - http://bugs.eclipse.org/277299
  *******************************************************************************/
 package org.eclipse.jface.text.rules;
 
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-
 
 
 /**
@@ -107,6 +105,9 @@ public class WordRule implements IRule {
 		Assert.isNotNull(word);
 		Assert.isNotNull(token);
 
+		// If case-insensitive, convert to lower case before adding to the map
+		if (fIgnoreCase)
+			word= word.toLowerCase();
 		fWords.put(word, token);
 	}
 
@@ -140,18 +141,11 @@ public class WordRule implements IRule {
 				scanner.unread();
 
 				String buffer= fBuffer.toString();
+				// If case-insensitive, convert to lower case before accessing the map
+				if (fIgnoreCase)
+					buffer= buffer.toLowerCase();
+				
 				IToken token= (IToken)fWords.get(buffer);
-
-				if (token == null && fIgnoreCase) {
-					Iterator iter= fWords.keySet().iterator();
-					while (iter.hasNext()) {
-						String key= (String)iter.next();
-						if(buffer.equalsIgnoreCase(key)) {
-							token= (IToken)fWords.get(key);
-							break;
-						}
-					}
-				}
 
 				if (token != null)
 					return token;
