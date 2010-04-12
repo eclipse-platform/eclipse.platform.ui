@@ -1728,25 +1728,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isVirtual();
 
 	/**
-	 * Returns whether this resource would be excluded from 
-	 * workspace tree when its parent is synchronized with the underlying 
-	 * file system resource, due to the parent resource filter list.
-	 * 
-	 * This method does not verify if this resource is being effectively filtered
-	 * out, only that it would be if the resource existed in the workspace, and
-	 * its parent content was synchronized.
-	 * 
-	 * The resource need not to exist in the workspace nor in the
-	 * file system.
-	 *
-	 * @return <code>true</code> if this resource would filtered, and
-	 *   <code>false</code> otherwise
-	 * @since 3.6
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public boolean isFiltered();
-
-	/**
 	 * Returns <code>true</code> if this resource has been linked to 
 	 * a location other than the default location calculated by the platform. This
 	 * location can be outside the project's content area or another location
