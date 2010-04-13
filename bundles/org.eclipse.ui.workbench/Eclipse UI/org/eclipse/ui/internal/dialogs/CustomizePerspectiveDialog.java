@@ -1478,20 +1478,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
 		tab.setText(WorkbenchMessages.HideToolBarItems_toolBarItemsTab);
 		tab.setControl(createToolBarVisibilityPage(tabFolder));
-		applyDialogFont(tabFolder);
 
 		// Menu Item Hiding Page
 		tab = new TabItem(tabFolder, SWT.NONE);
 		tab.setControl(createMenuVisibilityPage(tabFolder));
 		tab.setText(WorkbenchMessages.HideMenuItems_menuItemsTab);
-		applyDialogFont(tabFolder);
 
 		// Action Set Availability Page
 		actionSetTab = new TabItem(tabFolder, SWT.NONE);
 		actionSetTab
 				.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab);
 		actionSetTab.setControl(createActionSetAvailabilityPage(tabFolder));
-		applyDialogFont(tabFolder);
 
 		// Shortcuts Page
 		if (showShortcutTab()) {
@@ -1499,6 +1496,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			item1.setText(WorkbenchMessages.Shortcuts_shortcutTab);
 			item1.setControl(createShortCutsPage(tabFolder));
 		}
+
+		applyDialogFont(tabFolder);
 
 		return composite;
 	}
