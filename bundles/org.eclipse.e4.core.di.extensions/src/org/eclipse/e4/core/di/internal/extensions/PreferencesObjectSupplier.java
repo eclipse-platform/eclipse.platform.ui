@@ -96,9 +96,14 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 				}
 			}
 		}
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		final IEclipsePreferences node = new InstanceScope().getNode(nodePath);
 		node.addPreferenceChangeListener(new IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
+				if (requestor.getRequestingObject() == null) {
+					node.removePreferenceChangeListener(this);
+					return;
+				}
+
 				IInjector requestorInjector = requestor.getInjector();
 				if (requestorInjector != null) {
 					boolean resolved = requestorInjector.resolveArguments(requestor, requestor

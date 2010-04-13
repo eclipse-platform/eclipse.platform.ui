@@ -11,10 +11,10 @@
 package org.eclipse.e4.core.internal.tests;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class CoreTestsActivator implements BundleActivator {
@@ -23,6 +23,7 @@ public class CoreTestsActivator implements BundleActivator {
 	private BundleContext bundleContext;
 	private ServiceTracker debugTracker = null;
 	private ServiceTracker preferencesTracker = null;
+	private ServiceTracker eventAdminTracker;
 
 	public CoreTestsActivator() {
 		defaultInstance = this;
@@ -44,6 +45,10 @@ public class CoreTestsActivator implements BundleActivator {
 		if (debugTracker != null) {
 			debugTracker.close();
 			debugTracker = null;
+		}
+		if (eventAdminTracker != null) {
+			eventAdminTracker.close();
+			eventAdminTracker = null;
 		}
 		bundleContext = null;
 	}
@@ -73,6 +78,15 @@ public class CoreTestsActivator implements BundleActivator {
 				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 		return defaultValue;
+	}
+	public EventAdmin getEventAdmin() {
+		if (eventAdminTracker == null) {
+			if (bundleContext == null)
+				return null;
+			eventAdminTracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker.open();
+		}
+		return (EventAdmin) eventAdminTracker.getService();
 	}
 
 }

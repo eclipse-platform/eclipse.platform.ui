@@ -618,33 +618,6 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			InjectionProperties properties = annotationSupport.getInjectProperties(method);
-
-			// replace with @Event("name") qualifier
-			// if (properties.getHandlesEvent() != null) {
-			// // XXX this is wrong, but it will be removed anyway
-			// ObjectDescriptor desc = ObjectDescriptor.make(IEventBroker.class);
-			// IEventBroker eventBroker = (IEventBroker) objectProvider.get(desc);
-			// eventBroker.subscribe(properties.getHandlesEvent(), null, new EventHandler() {
-			// public void handleEvent(Event event) {
-			// Object data = event.getProperty(IEventBroker.DATA);
-			// boolean wasAccessible = method.isAccessible();
-			// if (!wasAccessible) {
-			// method.setAccessible(true);
-			// }
-			// try {
-			// method.invoke(userObject, data);
-			// } catch (Exception e) {
-			// throw new RuntimeException(e);
-			// } finally {
-			// if (!wasAccessible) {
-			// method.setAccessible(false);
-			// }
-			// }
-			// }
-			// }, properties.getEventHeadless());
-			// continue;
-			// }
-
 			if (!properties.shouldInject())
 				continue;
 

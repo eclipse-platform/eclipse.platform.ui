@@ -35,9 +35,11 @@ abstract public class AbstractObjectSupplier {
 
 	abstract public Object get(IObjectDescriptor descriptor, IRequestor requestor);
 
+	// TBD make Supplier and SupplierMulti; move bilerplate multi <-> single code into injector?
 	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor);
 
 	public AbstractObjectSupplier() {
 		// placeholder
 	}
+	// TBD add dispose()
 }

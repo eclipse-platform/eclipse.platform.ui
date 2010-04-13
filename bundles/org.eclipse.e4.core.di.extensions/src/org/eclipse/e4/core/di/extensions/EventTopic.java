@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,34 +8,38 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.annotations;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.eclipse.e4.core.di.extensions;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.inject.Qualifier;
 
 /**
- * This annotation can be applied to methods to mark them as event handlers for
- * a given topic. UI event handlers will be notified on the UI thread.
+ * This annotation can be applied to arguments and fields that want to receive notifications on the
+ * specified event topic.
+ * <p>
+ * Normally EventTopic annotations will be marked as optional. Those annotations establish a link
+ * rather then provide a value at the time of injection.
+ * </p>
  * <p>
  * Example usage:
  * 
  * <pre>
  *   public class Car {
- *     &#064;EventHandler("org/eclipse/e4/some/event/topic") void handle(Payload payload);
+ *     &#064;void handle(@Optional @EventTopic("org/eclipse/e4/some/event/topic") Payload payload);
  *     ...
  *   }
  * </pre>
  * 
  * </p>
  */
+@Qualifier
 @Documented
-@Target({ ElementType.METHOD })
-@Retention(RUNTIME)
-public @interface UIEventHandler {
-    /** The topic. */
-    String value();
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EventTopic {
+	String value() default ""; // event id
 }

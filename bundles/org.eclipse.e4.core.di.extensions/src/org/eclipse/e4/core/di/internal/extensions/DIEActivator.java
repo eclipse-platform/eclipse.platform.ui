@@ -13,13 +13,17 @@ package org.eclipse.e4.core.di.internal.extensions;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class DIEActivator implements BundleActivator {
 
 	static private DIEActivator defaultInstance;
+
 	private BundleContext bundleContext;
-	private ServiceTracker preferencesTracker = null;
+
+	private ServiceTracker preferencesTracker;
+	private ServiceTracker eventAdminTracker;
 
 	public DIEActivator() {
 		defaultInstance = this;
@@ -38,6 +42,10 @@ public class DIEActivator implements BundleActivator {
 			preferencesTracker.close();
 			preferencesTracker = null;
 		}
+		if (eventAdminTracker != null) {
+			eventAdminTracker.close();
+			eventAdminTracker = null;
+		}
 		bundleContext = null;
 	}
 
@@ -54,6 +62,16 @@ public class DIEActivator implements BundleActivator {
 			preferencesTracker.open();
 		}
 		return (IPreferencesService) preferencesTracker.getService();
+	}
+
+	public EventAdmin getEventAdmin() {
+		if (eventAdminTracker == null) {
+			if (bundleContext == null)
+				return null;
+			eventAdminTracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker.open();
+		}
+		return (EventAdmin) eventAdminTracker.getService();
 	}
 
 }
