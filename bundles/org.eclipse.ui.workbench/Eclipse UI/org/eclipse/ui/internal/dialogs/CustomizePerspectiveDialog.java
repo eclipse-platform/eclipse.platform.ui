@@ -3120,15 +3120,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return;
 
 		if (item == wizards || item == perspectives || item == views) {
-			//Shortcuts (i.e. wizards, perspectives, views) need special
-			//handling. Shortcuts themselves are not involved in calculating
-			//whether menus are visible, therefore we must record whether the
-			//menu containing them is visible, and omit reading the shortcuts
-			//themselves in this part of the logic.
-			if (!item.getState()) {
-				String id = getCommandID(item);
-				invisible.add(id);
-			}
+			// We always want the top-level wizard/perspective/view shortcuts to
+			// be visible, see bug 293448
+			return;
 		} else if (item.getChildren().size() > 0) {
 			if (item.isChangedByUser()) {
 				String id = getCommandID(item);
