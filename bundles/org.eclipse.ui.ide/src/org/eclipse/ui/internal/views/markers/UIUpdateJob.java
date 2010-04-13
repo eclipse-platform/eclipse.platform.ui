@@ -59,6 +59,10 @@ class UIUpdateJob extends WorkbenchJob {
 			return Status.CANCEL_STATUS;
 		}
 		TreeViewer viewer = view.getViewer();
+		if (viewer.getControl().isDisposed()) {
+			return Status.CANCEL_STATUS;
+		}
+		
 		Markers clone = view.getActiveViewerInputClone();
 		try {
 			updating = true;
@@ -71,9 +75,6 @@ class UIUpdateJob extends WorkbenchJob {
 			
 			//view.indicateUpdating(MarkerMessages.MarkerView_19,
 			//		true);
-			if (viewer.getControl().isDisposed()) {
-				return Status.CANCEL_STATUS;
-			}
 
 			// If there is only one category and the user has no saved state
 			// show it
