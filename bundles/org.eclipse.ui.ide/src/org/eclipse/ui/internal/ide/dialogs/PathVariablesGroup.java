@@ -553,19 +553,23 @@ public class PathVariablesGroup {
         	// hide the PARENT variable
         	if (varNames[i].equals(PARENT_VARIABLE_NAME))
         		continue;
-            URI uri = pathVariableManager.getURIValue(varNames[i]);
-            // the value may not exist any more
-            if (uri != null) {
-                IPath value = URIUtil.toPath(uri);
-                if (value != null) {
-	                boolean isFile = value.toFile().isFile();
-	                if ((isFile && (variableType & IResource.FILE) != 0)
-	                        || (isFile == false && (variableType & IResource.FOLDER) != 0)) {
-	
-	                    tempPathVariables.put(varNames[i], value);
-	                }
-                }
-            }
+            try {
+				URI uri = pathVariableManager.getURIValue(varNames[i]);
+				// the value may not exist any more
+				if (uri != null) {
+				    IPath value = URIUtil.toPath(uri);
+				    if (value != null) {
+				        boolean isFile = value.toFile().isFile();
+				        if ((isFile && (variableType & IResource.FILE) != 0)
+				                || (isFile == false && (variableType & IResource.FOLDER) != 0)) {
+
+				            tempPathVariables.put(varNames[i], value);
+				        }
+				    }
+				}
+			} catch (Exception e) {
+				// do not present the variable
+			}
         }
         removedVariableNames.clear();
     }
