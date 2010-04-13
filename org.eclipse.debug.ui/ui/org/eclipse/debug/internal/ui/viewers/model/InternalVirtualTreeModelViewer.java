@@ -1469,4 +1469,10 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
+     */
+    public void clearSelectionQuiet() {
+    	getTree().setSelection(EMPTY_ITEMS_ARRAY);
+    }
 }

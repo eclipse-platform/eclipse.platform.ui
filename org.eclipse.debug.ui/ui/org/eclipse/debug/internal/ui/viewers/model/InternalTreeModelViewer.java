@@ -2465,4 +2465,11 @@ public class InternalTreeModelViewer extends TreeViewer
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
         }
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
+	 */
+	public void clearSelectionQuiet() {
+		getTree().setSelection(new TreeItem[0]);
+	}
 }

@@ -353,6 +353,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
         public void update(Object element) {
             SubTreeModelViewer.this.update(element);
         }
+        
+        public void clearSelectionQuiet() {
+        	SubTreeModelViewer.this.clearSelectionQuiet();
+        }
     }
 
     

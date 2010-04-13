@@ -50,6 +50,7 @@ public class ChildrenUpdateTests extends TestCase {
 				public void addSelectionChangedListener(ISelectionChangedListener listener) {}
 				public void updateViewer(IModelDelta delta) {}
 				public void setSelection(ISelection selection, boolean reveal, boolean force) {}
+				public void clearSelectionQuiet() {}
 				public boolean trySelection(ISelection selection, boolean reveal, boolean force) { return true; }
 				public void setInput(Object object) {}
 				public void setAutoExpandLevel(int level) {}
