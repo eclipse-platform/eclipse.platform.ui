@@ -11,21 +11,12 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Qualifier;
-
-import org.eclipse.e4.core.di.annotations.GroupUpdates;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
+import org.eclipse.e4.core.di.annotations.*;
 
 public class AnnotationsSupport {
 
