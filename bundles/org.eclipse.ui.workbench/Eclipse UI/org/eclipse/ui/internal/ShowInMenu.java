@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -196,6 +195,9 @@ public class ShowInMenu extends ContributionItem implements
 				viewDescriptor.getId());
 		parm.parameters = targetId;
 		parm.label = viewDescriptor.getLabel();
+		if (parm.label.length() > 0) {
+			parm.mnemonic = parm.label.substring(0, 1);
+		}
 		parm.icon = viewDescriptor.getImageDescriptor();
 		return new CommandContributionItem(parm);
 	}
