@@ -38,20 +38,6 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 						.getPrimarySupplier());
 				removeCurrentEvent(event.getTopic());
 				if (resolved) {
-					if (Display.getCurrent() == null) {
-						try {
-							requestor.execute();
-						} catch (InvocationTargetException e) {
-							logError("Injection failed for the object \""
-									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-						} catch (InstantiationException e) {
-							logError("Injection failed for the object \""
-									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-						}
-						return;
-					}
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
 							try {
