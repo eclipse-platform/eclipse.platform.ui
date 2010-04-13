@@ -120,7 +120,12 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 						return resolved;
 				}
 			}
-			return URI.create(value);
+			try {
+				return URI.create(value);
+			} catch (IllegalArgumentException e) {
+				IPath path = Path.fromPortableString(value);
+				return URIUtil.toURI(path);
+			}
 		}
 		return getWorkspaceManager().getURIValue(varName);
 	}
@@ -314,8 +319,13 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			URI currentValue = null;
 			if (value == null)
 				currentValue = getWorkspaceManager().getURIValue(varName);
-			else
-				currentValue = URI.create(value);
+			else {
+				try {
+					currentValue = URI.create(value);
+				} catch (IllegalArgumentException e) {
+					currentValue = null;
+				}
+			}
 			boolean variableExists = currentValue != null;
 			if (!variableExists && newValue == null)
 				return;

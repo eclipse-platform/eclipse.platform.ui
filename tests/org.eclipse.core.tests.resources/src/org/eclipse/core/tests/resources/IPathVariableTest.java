@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -730,4 +732,57 @@ public class IPathVariableTest extends ResourceTest {
 		super.cleanup();
 	}
 
+	/**
+	 * Regression for Bug 308975 - Can't recover from 'invalid' path variable
+	 */
+	public void testLinkExistInProjectDescriptionButNotInWorkspace() {
+		String dorProjectContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + //
+				"<projectDescription>" + //
+				"<name>ExistingProject</name>" + //
+				"<comment></comment>" + //
+				"<projects>" + //
+				"</projects>" + //
+				"<buildSpec>" + //
+				"</buildSpec>" + //
+				"<natures>" + //
+				"</natures>" + //
+				"<variableList>" + //
+				"<variable>" + //
+				"		<name>PROJ_UP</name>" + //
+				"		<value>$%7BPARENT-1-PROJECT_LOC%7D</value>" + //
+				"	</variable>" + //
+				"	</variableList>" + //
+				"</projectDescription>";
+
+		IProject existingProject = getWorkspace().getRoot().getProject("ExistingProject");
+
+		ensureExistsInWorkspace(new IResource[] {existingProject}, true);
+
+		try {
+			existingProject.close(getMonitor());
+			ProjectInfo info = (ProjectInfo) ((Project) existingProject).getResourceInfo(false, false);
+			info.clear(ICoreConstants.M_USED);
+			String dotProjectPath = existingProject.getLocation().append(".project").toOSString();
+			FileWriter fstream = new FileWriter(dotProjectPath);
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write(dorProjectContent);
+			out.close();
+			existingProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		} catch (IOException e) {
+			fail("1.99", e);
+		}
+
+		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
+		String[] varNames = pathVariableManager.getPathVariableNames();
+
+		for (int i = 0; i < varNames.length; i++) {
+			try {
+				pathVariableManager.getURIValue(varNames[i]);
+			} catch (Exception e) {
+				fail("3.99", e);
+			}
+		}
+	}
 }
