@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceManager;
 
@@ -135,6 +137,19 @@ class QuickAccessEntry {
 			}
 			break;
 		case 1:
+			String label = element.getLabel();
+			String qualifier = element.getQualifier();
+			if (qualifier != null) {
+				// this element has a qualifier, we need to style it
+				Color qualifierColor = JFaceResources.getColorRegistry().get(
+						JFacePreferences.QUALIFIER_COLOR);
+				TextStyle qualifierStyle = new TextStyle(boldStyle);
+				// we don't want the bold font
+				qualifierStyle.font = null;
+				qualifierStyle.foreground = qualifierColor;
+				// qualifiers are spec'd to be at the end of an element's label
+				textLayout.setStyle(qualifierStyle, label.length() - qualifier.length(), label.length());
+			}
 			Image image = getImage(element, resourceManager);
 			event.gc.drawImage(image, event.x + 1, event.y + 1);
 			textLayout.setText(element.getLabel());
