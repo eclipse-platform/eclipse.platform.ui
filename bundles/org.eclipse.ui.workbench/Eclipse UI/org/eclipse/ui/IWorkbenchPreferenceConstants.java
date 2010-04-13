@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -481,9 +481,8 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * Stores whether or not the workbench prompts for saving when a dirty
 	 * editor or view is closed, but the Saveable objects are still open in
-	 * other parts. If
-	 * <code>true<code> (default), the user will be prompted. If <code>false</code>, there will be
-	 * no prompt.
+	 * other parts. If <code>true</code> (default), the user will be prompted.
+	 * If <code>false</code>, there will be no prompt.
 	 * 
 	 * @see Saveable
 	 * @since 3.2
