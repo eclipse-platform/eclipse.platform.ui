@@ -181,9 +181,6 @@ public final class EditorSelectionDialog extends Dialog {
 		externalButton.setFont(font);
 
 		editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
-		editorTable.addListener(SWT.Selection, listener);
-		editorTable.addListener(SWT.DefaultSelection, listener);
-		editorTable.addListener(SWT.MouseDoubleClick, listener);
 		data = new GridData();
 		data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
 		data.horizontalAlignment = GridData.FILL;
@@ -207,6 +204,9 @@ public final class EditorSelectionDialog extends Dialog {
 				return (Image) resourceManager.get(d.getImageDescriptor());
 			}
 		});
+		editorTable.addListener(SWT.Selection, listener);
+		editorTable.addListener(SWT.DefaultSelection, listener);
+		editorTable.addListener(SWT.MouseDoubleClick, listener);
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
 		browseExternalEditorsButton
