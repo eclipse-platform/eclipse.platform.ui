@@ -238,6 +238,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		openViewModeLabel.setLayoutData(data);
+		openViewModeLabel.setFont(font);
 
 		openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 		openEmbedButton.setText(OVM_EMBED);
