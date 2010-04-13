@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -59,6 +58,16 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		if (rc != isEnabled()) {
 			setBaseEnabled(rc);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
+	 */
+	public void setEnabled(Object evaluationContext) {
+		updateEnablement();
 	}
 
 	/**
