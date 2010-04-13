@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -25,9 +26,22 @@ public class ViewElement extends QuickAccessElement {
 
 	private final IViewDescriptor viewDescriptor;
 
+	private String category;
+
 	/* package */ViewElement(IViewDescriptor viewDescriptor, ViewProvider viewProvider) {
 		super(viewProvider);
 		this.viewDescriptor = viewDescriptor;
+
+		IViewCategory[] categories = PlatformUI.getWorkbench().getViewRegistry().getCategories();
+		for (int i = 0; i < categories.length; i++) {
+			IViewDescriptor[] views = categories[i].getViews();
+			for (int j = 0; j < views.length; j++) {
+				if (views[j] == viewDescriptor) {
+					category = categories[i].getLabel();
+					return;
+				}
+			}
+		}
 	}
 
 	public void execute() {
@@ -50,7 +64,10 @@ public class ViewElement extends QuickAccessElement {
 	}
 
 	public String getLabel() {
-		return viewDescriptor.getLabel();
+		if (category == null) {
+			return viewDescriptor.getLabel();
+		}
+		return viewDescriptor.getLabel() + separator + category;
 	}
 
 	public int hashCode() {

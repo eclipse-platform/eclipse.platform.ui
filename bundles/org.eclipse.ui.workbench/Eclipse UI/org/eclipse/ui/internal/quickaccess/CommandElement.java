@@ -31,8 +31,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public class CommandElement extends QuickAccessElement {
 
-	private static final String separator = " - "; //$NON-NLS-1$
-
 	private ParameterizedCommand command;
 
 	private String id;

@@ -20,6 +20,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class QuickAccessElement {
 
+	static final String separator = " - "; //$NON-NLS-1$
+
 	private static final int[][] EMPTY_INDICES = new int[0][0];
 	private QuickAccessProvider provider;
 
