@@ -152,7 +152,7 @@ public class PlatformUIPreferenceListener implements
 						for (int j = 0; j < maps.length; j++) {
 							IFileEditorMapping fileEditorMapping = maps[j];
 							IEditorDescriptor descriptor = fileEditorMapping.getDefaultEditor();
-							if (!editorMap.containsKey(descriptor.getId())) {
+							if (descriptor != null && !editorMap.containsKey(descriptor.getId())) {
 								editorMap.put(descriptor.getId(), descriptor);
 							}
 						}
