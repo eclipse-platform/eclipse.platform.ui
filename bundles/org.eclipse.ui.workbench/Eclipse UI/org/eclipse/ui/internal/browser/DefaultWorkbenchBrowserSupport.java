@@ -60,11 +60,12 @@ public class DefaultWorkbenchBrowserSupport extends
 	 */
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
-		IWebBrowser browser = findBrowser(browserId == null? getDefaultId():browserId);
+		String id = browserId == null? getDefaultId():browserId;
+		IWebBrowser browser = findBrowser(id);
 		if (browser != null) {
 			return browser;
 		}
-		browser = doCreateBrowser(style, browserId, name, tooltip);
+		browser = doCreateBrowser(style, id, name, tooltip);
 		registerBrowser(browser);
 		return browser;
 	}
