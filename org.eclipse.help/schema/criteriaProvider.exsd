@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.help" id="criteriaProvider" name="Help Criteria Provider"/>
       </appInfo>
       <documentation>
-         Support for defining criteria idependent of the table of contents.
+         Support for defining criteria independent of the table of contents.
       </documentation>
    </annotation>
 
