@@ -135,6 +135,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.ITextViewerExtension7;
 import org.eclipse.jface.text.ITextViewerExtension8;
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
@@ -143,7 +144,6 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
@@ -2891,7 +2891,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fMouseListener= new MouseListener() {
 
 				private boolean fDoubleClicked= false;
-				private final int fDoubleClickTime= Display.getDefault().getDoubleClickTime();
+				private final int fDoubleClickTime= getSite().getShell().getDisplay().getDoubleClickTime();
 				private long fMouseUpDelta= 0;
 
 				private void triggerAction(String actionID) {
@@ -2919,7 +2919,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (delay <= 0)
 						runnable.run();
 					else
-						Display.getDefault().timerExec(delay, runnable);
+						e.widget.getDisplay().timerExec(delay, runnable);
 				}
 
 				public void mouseDoubleClick(MouseEvent e) {
@@ -2932,11 +2932,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				public void mouseDown(MouseEvent e) {
 					fMouseUpDelta= System.currentTimeMillis();
 					fDoubleClicked= false;
-					StyledText text= fSourceViewer.getTextWidget();
-					if (text != null && !text.isDisposed()) {
-							Display display= text.getDisplay();
-							Point location= display.getCursorLocation();
-							fRulerContextMenu.setLocation(location.x, location.y);
+					if (fRulerContextMenu != null && !fRulerContextMenu.isDisposed()) {
+						Display display= fRulerContextMenu.getDisplay();
+						Point location= display.getCursorLocation();
+						fRulerContextMenu.setLocation(location.x, location.y);
 					}
 				}
 			};
