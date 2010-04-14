@@ -12,12 +12,7 @@
 package org.eclipse.e4.core.contexts;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.InjectorFactory;
+import org.eclipse.e4.core.di.*;
 import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
@@ -100,8 +95,6 @@ final public class ContextInjectionFactory {
 	 * @return the return value of the method call, or <code>null</code>
 	 * @throws InvocationTargetException
 	 *             if an exception was thrown by the invoked method
-	 * @throws CoreException
-	 *             if no matching method was found
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InvocationTargetException, InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
