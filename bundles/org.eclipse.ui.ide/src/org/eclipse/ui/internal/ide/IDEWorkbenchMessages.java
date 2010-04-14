@@ -53,16 +53,22 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceFilterPage_title;
 	public static String ResourceFilterPage_noResource;
 	public static String ResourceFilterPage_addButtonLabel;
+	public static String ResourceFilterPage_addGroupButtonLabel;
 	public static String ResourceFilterPage_editButtonLabel;
 	public static String ResourceFilterPage_removeButtonLabel;
-	public static String ResourceFilterPage_upButtonLabel;
-	public static String ResourceFilterPage_downButtonLabel;
-	public static String ResourceFilterPage_addNewFilterTitle;
-	public static String ResourceFilterPage_columnFilterID;
 	public static String ResourceFilterPage_columnFilterMode;
-	public static String ResourceFilterPage_columnFilterTargets;
-	public static String ResourceFilterPage_columnFilterInheritable;
-	public static String ResourceFilterPage_columnFilterArguments;
+	public static String ResourceFilterPage_columnFilterDescription;
+	public static String ResourceFilterPage_columnFilterTarget;
+	public static String ResourceFilterPage_columnFilterPattern;
+	public static String ResourceFilterPage_applyRecursivelyToFolderStructure;
+	public static String ResourceFilterPage_condition;
+	public static String ResourceFilterPage_caseSensitive;
+	public static String ResourceFilterPage_regularExpression;
+	public static String ResourceFilterPage_multiMatcher_Matcher;
+	public static String ResourceFilterPage_multiMatcher_FileLength;
+	public static String ResourceFilterPage_multiMatcher_TimeInterval;
+	public static String ResourceFilterPage_multiMatcher_InvalidFileLength;
+	public static String ResourceFilterPage_multiMatcher_InvalidTimeInterval;
 	public static String ResourceFilterPage_includeOnly;
 	public static String ResourceFilterPage_excludeAll;
 	public static String ResourceFilterPage_includeOnlyColumn;
@@ -70,13 +76,31 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceFilterPage_filesAndFolders;
 	public static String ResourceFilterPage_files;
 	public static String ResourceFilterPage_folders;
-	public static String ResourceFilterPage_filesAndFoldersColumn;
-	public static String ResourceFilterPage_filesColumn;
-	public static String ResourceFilterPage_foldersColumn;
 	public static String ResourceFilterPage_editFilterDialogTitle;
-	public static String ResourceFilterPage_invalidFilterArgument;
-	public static String ResourceFilterPage_description;
+	public static String ResourceFilterPage_newFilterDialogTitleIncludeOnly;
+	public static String ResourceFilterPage_newFilterDialogTitleExcludeAll;
 	public static String ResourceFilterPage_addSubFilterActionLabel;
+	public static String ResourceFilterPage_addSubFilterGroupActionLabel;
+	public static String ResourceFilterPage_removeFilterActionLabel;
+	public static String ResourceFilterPage_editFilterActionLabel;
+	public static String ResourceFilterPage_multiKeyName;
+	public static String ResourceFilterPage_multiKeyProjectRelativePath;
+	public static String ResourceFilterPage_multiKeyLocation;
+	public static String ResourceFilterPage_multiKeyLastModified;
+	public static String ResourceFilterPage_multiKeyCreated;
+	public static String ResourceFilterPage_multiKeyLength;
+	public static String ResourceFilterPage_multiKeyReadOnly;
+	public static String ResourceFilterPage_multiKeySymLink;
+	public static String ResourceFilterPage_multiEquals;
+	public static String ResourceFilterPage_multiMatches;
+	public static String ResourceFilterPage_multiLargerThan;
+	public static String ResourceFilterPage_multiSmallerThan;
+	public static String ResourceFilterPage_multiBefore;
+	public static String ResourceFilterPage_multiAfter;
+	public static String ResourceFilterPage_multiWithin;
+	public static String ResourceFilterPage_true;
+	public static String ResourceFilterPage_false;
+	
 	//
 	//
 	// Copies from org.eclipse.ui.workbench

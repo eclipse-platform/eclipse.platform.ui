@@ -2328,6 +2328,14 @@
             name="%notFilterProvider.name"
             ordering="first">
       </filterMatcher>
+      <filterMatcher
+            argumentType="string"
+            class="org.eclipse.ui.internal.ide.misc.FileInfoAttributesMatcher"
+            description="%multiFilterProvider.description"
+            id="org.eclipse.ui.ide.multiFilter"
+            name="%multiFilterProvider.name"
+            ordering="first">
+      </filterMatcher>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">
