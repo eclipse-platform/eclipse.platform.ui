@@ -77,7 +77,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 			case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
 			case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case BasicPackageImpl.WINDOW: return (EObject)createWindow();
-			case BasicPackageImpl.WINDOW_TRIM: return (EObject)createWindowTrim();
+			case BasicPackageImpl.TRIMED_PART_CONTAINER: return (EObject)createTrimedPartContainer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -138,9 +138,9 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MWindowTrim createWindowTrim() {
-		WindowTrimImpl windowTrim = new WindowTrimImpl();
-		return windowTrim;
+	public MTrimedPartContainer createTrimedPartContainer() {
+		TrimedPartContainerImpl trimedPartContainer = new TrimedPartContainerImpl();
+		return trimedPartContainer;
 	}
 
 	/**

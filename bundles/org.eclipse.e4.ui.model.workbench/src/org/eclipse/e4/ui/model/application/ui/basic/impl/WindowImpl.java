@@ -30,7 +30,6 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim;
 
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -74,7 +73,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getY <em>Y</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getWidth <em>Width</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getHeight <em>Height</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getTrims <em>Trims</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getWindows <em>Windows</em>}</li>
  * </ul>
  * </p>
@@ -291,16 +289,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected int height = HEIGHT_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getTrims() <em>Trims</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTrims()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MWindowTrim> trims;
 
 	/**
 	 * The cached value of the '{@link #getWindows() <em>Windows</em>}' containment reference list.
@@ -595,18 +583,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<MWindowTrim> getTrims() {
-		if (trims == null) {
-			trims = new EObjectContainmentEList<MWindowTrim>(MWindowTrim.class, this, BasicPackageImpl.WINDOW__TRIMS);
-		}
-		return trims;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public List<MWindow> getWindows() {
 		if (windows == null) {
 			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this, BasicPackageImpl.WINDOW__WINDOWS);
@@ -628,8 +604,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.WINDOW__MAIN_MENU:
 				return basicSetMainMenu(null, msgs);
-			case BasicPackageImpl.WINDOW__TRIMS:
-				return ((InternalEList<?>)getTrims()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
 		}
@@ -671,8 +645,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return getWidth();
 			case BasicPackageImpl.WINDOW__HEIGHT:
 				return getHeight();
-			case BasicPackageImpl.WINDOW__TRIMS:
-				return getTrims();
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return getWindows();
 		}
@@ -730,10 +702,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			case BasicPackageImpl.WINDOW__HEIGHT:
 				setHeight((Integer)newValue);
 				return;
-			case BasicPackageImpl.WINDOW__TRIMS:
-				getTrims().clear();
-				getTrims().addAll((Collection<? extends MWindowTrim>)newValue);
-				return;
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				getWindows().clear();
 				getWindows().addAll((Collection<? extends MWindow>)newValue);
@@ -789,9 +757,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			case BasicPackageImpl.WINDOW__HEIGHT:
 				setHeight(HEIGHT_EDEFAULT);
 				return;
-			case BasicPackageImpl.WINDOW__TRIMS:
-				getTrims().clear();
-				return;
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				getWindows().clear();
 				return;
@@ -833,8 +798,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return width != WIDTH_EDEFAULT;
 			case BasicPackageImpl.WINDOW__HEIGHT:
 				return height != HEIGHT_EDEFAULT;
-			case BasicPackageImpl.WINDOW__TRIMS:
-				return trims != null && !trims.isEmpty();
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return windows != null && !windows.isEmpty();
 		}

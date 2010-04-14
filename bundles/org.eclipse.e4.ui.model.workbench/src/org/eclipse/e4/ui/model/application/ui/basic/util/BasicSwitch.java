@@ -24,7 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MInput;
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
@@ -188,17 +187,6 @@ public class BasicSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case BasicPackageImpl.WINDOW_TRIM: {
-				MWindowTrim windowTrim = (MWindowTrim)theEObject;
-				T1 result = caseWindowTrim(windowTrim);
-				if (result == null) result = caseTrimContainer(windowTrim);
-				if (result == null) result = caseWindowElement(windowTrim);
-				if (result == null) result = caseElementContainer(windowTrim);
-				if (result == null) result = caseUIElement(windowTrim);
-				if (result == null) result = caseApplicationElement(windowTrim);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT: {
 				MPartSashContainerElement partSashContainerElement = (MPartSashContainerElement)theEObject;
 				T1 result = casePartSashContainerElement(partSashContainerElement);
@@ -212,6 +200,16 @@ public class BasicSwitch<T1> {
 				T1 result = caseWindowElement(windowElement);
 				if (result == null) result = caseUIElement(windowElement);
 				if (result == null) result = caseApplicationElement(windowElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BasicPackageImpl.TRIMED_PART_CONTAINER: {
+				MTrimedPartContainer trimedPartContainer = (MTrimedPartContainer)theEObject;
+				T1 result = caseTrimedPartContainer(trimedPartContainer);
+				if (result == null) result = caseWindowElement(trimedPartContainer);
+				if (result == null) result = caseElementContainer(trimedPartContainer);
+				if (result == null) result = caseUIElement(trimedPartContainer);
+				if (result == null) result = caseApplicationElement(trimedPartContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -310,21 +308,6 @@ public class BasicSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Window Trim</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Window Trim</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseWindowTrim(MWindowTrim object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Part Sash Container Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -351,6 +334,21 @@ public class BasicSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseWindowElement(MWindowElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trimed Part Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trimed Part Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimedPartContainer(MTrimedPartContainer object) {
 		return null;
 	}
 
@@ -531,21 +529,6 @@ public class BasicSwitch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Trim Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Trim Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public <T extends MUIElement> T1 caseTrimContainer(MTrimContainer<T> object) {
 		return null;
 	}
 

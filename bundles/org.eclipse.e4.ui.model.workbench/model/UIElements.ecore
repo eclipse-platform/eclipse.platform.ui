@@ -290,8 +290,6 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="trims" upperBound="-1"
-            eType="#//ui/basic/WindowTrim" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
             eType="#//ui/basic/Window" containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -303,16 +301,21 @@
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true" eSuperTypes="#//ui/UIElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
-        <eGenericSuperTypes eClassifier="#//ui/TrimContainer">
-          <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
-        </eGenericSuperTypes>
-        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainerElement" abstract="true"
           interface="true" eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimedPartContainer">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//ui/basic/PartSashContainerElement"
+            containment="true"/>
+        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/TrimContainer">
+            <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
+          </eTypeArguments>
+        </eGenericSuperTypes>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
         nsPrefix="advanced">

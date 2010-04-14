@@ -22,7 +22,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MInput;
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
@@ -118,16 +117,16 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createTrimElementAdapter();
 			}
 			@Override
-			public Adapter caseWindowTrim(MWindowTrim object) {
-				return createWindowTrimAdapter();
-			}
-			@Override
 			public Adapter casePartSashContainerElement(MPartSashContainerElement object) {
 				return createPartSashContainerElementAdapter();
 			}
 			@Override
 			public Adapter caseWindowElement(MWindowElement object) {
 				return createWindowElementAdapter();
+			}
+			@Override
+			public Adapter caseTrimedPartContainer(MTrimedPartContainer object) {
+				return createTrimedPartContainerAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -176,10 +175,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <T extends MUIElement> Adapter caseGenericTile(MGenericTile<T> object) {
 				return createGenericTileAdapter();
-			}
-			@Override
-			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
-				return createTrimContainerAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -286,20 +281,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim <em>Window Trim</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim
-	 * @generated
-	 */
-	public Adapter createWindowTrimAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -324,6 +305,20 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindowElementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer <em>Trimed Part Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer
+	 * @generated
+	 */
+	public Adapter createTrimedPartContainerAdapter() {
 		return null;
 	}
 
@@ -492,20 +487,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer <em>Trim Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer
-	 * @generated
-	 */
-	public Adapter createTrimContainerAdapter() {
 		return null;
 	}
 

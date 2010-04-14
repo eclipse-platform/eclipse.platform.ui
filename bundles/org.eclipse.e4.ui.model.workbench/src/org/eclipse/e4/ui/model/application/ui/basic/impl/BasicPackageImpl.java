@@ -23,9 +23,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
@@ -1039,22 +1039,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__HEIGHT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
-	 * The feature id for the '<em><b>Trims</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW__TRIMS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
-
-	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
+	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -1063,7 +1054,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
+	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimElementImpl <em>Trim Element</em>}' class.
@@ -1166,133 +1157,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowTrimImpl <em>Window Trim</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowTrimImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindowTrim()
-	 * @generated
-	 */
-	public static final int WINDOW_TRIM = 6;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__ELEMENT_ID = UiPackageImpl.TRIM_CONTAINER__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__TAGS = UiPackageImpl.TRIM_CONTAINER__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__WIDGET = UiPackageImpl.TRIM_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__RENDERER = UiPackageImpl.TRIM_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__TO_BE_RENDERED = UiPackageImpl.TRIM_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__ON_TOP = UiPackageImpl.TRIM_CONTAINER__ON_TOP;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__VISIBLE = UiPackageImpl.TRIM_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__PARENT = UiPackageImpl.TRIM_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__CONTAINER_DATA = UiPackageImpl.TRIM_CONTAINER__CONTAINER_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__CHILDREN = UiPackageImpl.TRIM_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__SELECTED_ELEMENT = UiPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Side</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM__SIDE = UiPackageImpl.TRIM_CONTAINER__SIDE;
-
-	/**
-	 * The number of structural features of the '<em>Window Trim</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_TRIM_FEATURE_COUNT = UiPackageImpl.TRIM_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1300,7 +1164,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainerElement()
 	 * @generated
 	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT = 7;
+	public static final int PART_SASH_CONTAINER_ELEMENT = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1400,7 +1264,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindowElement()
 	 * @generated
 	 */
-	public static final int WINDOW_ELEMENT = 8;
+	public static final int WINDOW_ELEMENT = 7;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1493,6 +1357,133 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl <em>Trimed Part Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimedPartContainer()
+	 * @generated
+	 */
+	public static final int TRIMED_PART_CONTAINER = 8;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__ELEMENT_ID = WINDOW_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__TAGS = WINDOW_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__WIDGET = WINDOW_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__RENDERER = WINDOW_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__TO_BE_RENDERED = WINDOW_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__ON_TOP = WINDOW_ELEMENT__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__VISIBLE = WINDOW_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__PARENT = WINDOW_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__CONTAINER_DATA = WINDOW_ELEMENT__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__CHILDREN = WINDOW_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__SELECTED_ELEMENT = WINDOW_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Content</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER__CONTENT = WINDOW_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Trimed Part Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMED_PART_CONTAINER_FEATURE_COUNT = WINDOW_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1539,13 +1530,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass windowTrimEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass partSashContainerElementEClass = null;
 
 	/**
@@ -1554,6 +1538,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass windowElementEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass trimedPartContainerEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -1802,19 +1793,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getTrims <em>Trims</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Trims</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindow#getTrims()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	public EReference getWindow_Trims() {
-		return (EReference)windowEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWindows <em>Windows</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1824,7 +1802,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getWindow_Windows() {
-		return (EReference)windowEClass.getEStructuralFeatures().get(6);
+		return (EReference)windowEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1837,18 +1815,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 */
 	public EClass getTrimElement() {
 		return trimElementEClass;
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim <em>Window Trim</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Window Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim
-	 * @generated
-	 */
-	public EClass getWindowTrim() {
-		return windowTrimEClass;
 	}
 
 	/**
@@ -1874,6 +1840,33 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EClass getWindowElement() {
 		return windowElementEClass;
 	}
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer <em>Trimed Part Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Trimed Part Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer
+	 * @generated
+	 */
+	public EClass getTrimedPartContainer() {
+		return trimedPartContainerEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer#getContent <em>Content</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Content</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer#getContent()
+	 * @see #getTrimedPartContainer()
+	 * @generated
+	 */
+	public EReference getTrimedPartContainer_Content() {
+		return (EReference)trimedPartContainerEClass.getEStructuralFeatures().get(0);
+	}
+
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1922,16 +1915,16 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(windowEClass, WINDOW__Y);
 		createEAttribute(windowEClass, WINDOW__WIDTH);
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
-		createEReference(windowEClass, WINDOW__TRIMS);
 		createEReference(windowEClass, WINDOW__WINDOWS);
 
 		trimElementEClass = createEClass(TRIM_ELEMENT);
 
-		windowTrimEClass = createEClass(WINDOW_TRIM);
-
 		partSashContainerElementEClass = createEClass(PART_SASH_CONTAINER_ELEMENT);
 
 		windowElementEClass = createEClass(WINDOW_ELEMENT);
+
+		trimedPartContainerEClass = createEClass(TRIMED_PART_CONTAINER);
+		createEReference(trimedPartContainerEClass, TRIMED_PART_CONTAINER__CONTENT);
 	}
 
 	/**
@@ -2007,14 +2000,18 @@ public class BasicPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theCommandsPackage.getBindings());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		trimElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
-		g1 = createEGenericType(theUiPackage.getTrimContainer());
-		g2 = createEGenericType(this.getTrimElement());
-		g1.getETypeArguments().add(g2);
-		windowTrimEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getWindowElement());
-		windowTrimEClass.getEGenericSuperTypes().add(g1);
 		partSashContainerElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
 		windowElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
+		g1 = createEGenericType(this.getWindowElement());
+		trimedPartContainerEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getUIElement());
+		trimedPartContainerEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getElementContainer());
+		g2 = createEGenericType(theUiPackage.getTrimContainer());
+		g1.getETypeArguments().add(g2);
+		EGenericType g3 = createEGenericType(this.getTrimElement());
+		g2.getETypeArguments().add(g3);
+		trimedPartContainerEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(partEClass, MPart.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2034,16 +2031,16 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getWindow_Y(), ecorePackage.getEInt(), "y", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getWindow_Trims(), this.getWindowTrim(), null, "trims", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getWindow_Windows(), this.getWindow(), null, "windows", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimElementEClass, MTrimElement.class, "TrimElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(windowTrimEClass, MWindowTrim.class, "WindowTrim", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-
 		initEClass(partSashContainerElementEClass, MPartSashContainerElement.class, "PartSashContainerElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(windowElementEClass, MWindowElement.class, "WindowElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(trimedPartContainerEClass, MTrimedPartContainer.class, "TrimedPartContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getTrimedPartContainer_Content(), this.getPartSashContainerElement(), null, "content", null, 0, 1, MTrimedPartContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 	}
 
 	/**
@@ -2174,14 +2171,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
 
 		/**
-		 * The meta object literal for the '<em><b>Trims</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference WINDOW__TRIMS = eINSTANCE.getWindow_Trims();
-
-		/**
 		 * The meta object literal for the '<em><b>Windows</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2198,16 +2187,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TRIM_ELEMENT = eINSTANCE.getTrimElement();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowTrimImpl <em>Window Trim</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowTrimImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindowTrim()
-		 * @generated
-		 */
-		public static final EClass WINDOW_TRIM = eINSTANCE.getWindowTrim();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
@@ -2228,6 +2207,24 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass WINDOW_ELEMENT = eINSTANCE.getWindowElement();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl <em>Trimed Part Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimedPartContainer()
+		 * @generated
+		 */
+		public static final EClass TRIMED_PART_CONTAINER = eINSTANCE.getTrimedPartContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Content</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference TRIMED_PART_CONTAINER__CONTENT = eINSTANCE.getTrimedPartContainer_Content();
 
 	}
 

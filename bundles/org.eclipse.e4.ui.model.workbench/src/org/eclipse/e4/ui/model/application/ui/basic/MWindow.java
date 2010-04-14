@@ -34,7 +34,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getY <em>Y</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWidth <em>Width</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getHeight <em>Height</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getTrims <em>Trims</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWindows <em>Windows</em>}</li>
  * </ul>
  * </p>
@@ -167,21 +166,6 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * @generated
 	 */
 	void setHeight(int value);
-
-	/**
-	 * Returns the value of the '<em><b>Trims</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Trims</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Trims</em>' containment reference list.
-	 * @model containment="true"
-	 * @generated
-	 */
-	List<MWindowTrim> getTrims();
 
 	/**
 	 * Returns the value of the '<em><b>Windows</b></em>' containment reference list.

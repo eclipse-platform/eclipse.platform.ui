@@ -73,12 +73,12 @@ public interface MBasicFactory {
 	MWindow createWindow();
 
 	/**
-	 * Returns a new object of class '<em>Window Trim</em>'.
+	 * Returns a new object of class '<em>Trimed Part Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Window Trim</em>'.
+	 * @return a new object of class '<em>Trimed Part Container</em>'.
 	 * @generated
 	 */
-	MWindowTrim createWindowTrim();
+	MTrimedPartContainer createTrimedPartContainer();
 
 } //MBasicFactory
