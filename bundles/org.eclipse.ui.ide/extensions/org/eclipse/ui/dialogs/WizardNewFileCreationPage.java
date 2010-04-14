@@ -868,7 +868,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	}
 
 	private boolean isFilteredByParent() {
-		if (linkedResourceGroup.isEnabled())
+		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled())
 			return false;
 		IPath containerPath = resourceGroup.getContainerFullPath();
 		if (containerPath == null)

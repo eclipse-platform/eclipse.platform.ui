@@ -794,7 +794,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
 		if (createVirtualFolder)
 			return false;
-		if (linkedResourceGroup.isEnabled())
+		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled())
 			return false;
 		IPath containerPath = resourceGroup.getContainerFullPath();
 		if (containerPath == null)
