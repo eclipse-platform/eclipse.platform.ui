@@ -294,10 +294,10 @@
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" id="_UW9TY_r3Ed6gmo7caOxU9g" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.ide.application.ExitHandler" command="e4.exit"/>
-  <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" id="_BESTZfr3Ed6gmo7caOxU04" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.internal.ide.application.ShowViewHandler" persistedState="" command="e4.show.view"/>
-  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.internal.ide.application.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
-  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" id="org.eclipse.e4.ui.saveAllHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.internal.ide.application.SaveAllHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
+  <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" id="_UW9TY_r3Ed6gmo7caOxU9g" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.ui.internal.workbench.handlers.ExitHandler" command="e4.exit"/>
+  <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" id="_BESTZfr3Ed6gmo7caOxU04" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" persistedState="" command="e4.show.view"/>
+  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.ui.internal.workbench.handlers.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
+  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" id="org.eclipse.e4.ui.saveAllHandler" URI="platform:/plugin/org.eclipse.e4.ide.application/org.eclipse.e4.ui.internal.workbench.handlers.SaveAllHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" id="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" id="org.eclipse.ui.contexts.window" name="In Windows">
       <children xmi:id="_SeXUEO8EEd6FC9cDb6yV7x" id="org.eclipse.e4.ui.contexts.views" name="In Binding View"/>
