@@ -756,7 +756,7 @@ public final class IDE {
 	 * as well as traditional name/extension bindings.
 	 * </p>
 	 * <ol>
-	 * <li>The file is consulted for a persistent property named
+	 * <li>The <code>IResource</code> is consulted for a persistent property named
 	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
 	 * used.</li>
 	 * <li>The workbench editor registry is consulted to determine if an editor
@@ -767,6 +767,8 @@ public final class IDE {
 	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
 	 * 
@@ -791,7 +793,7 @@ public final class IDE {
 	 * <code>determineContentType</code>is <code>true</code>.
 	 * </p>
 	 * <ol>
-	 * <li>The file is consulted for a persistent property named
+	 * <li>The <code>IResource</code> is consulted for a persistent property named
 	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
 	 * used.</li>
 	 * <li>The workbench editor registry is consulted to determine if an editor
@@ -802,6 +804,8 @@ public final class IDE {
 	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
 	 * 
@@ -843,6 +847,8 @@ public final class IDE {
 	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
 	 * 
@@ -888,9 +894,6 @@ public final class IDE {
 	 * method will attempt to infer content type from the file name.
 	 * </p>
 	 * <ol>
-	 * <li>The file is consulted for a persistent property named
-	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
-	 * used.</li>
 	 * <li>The workbench editor registry is consulted to determine if an editor
 	 * extension has been registered for the file type. If so, an instance of
 	 * the editor extension is opened on the file. See
@@ -899,6 +902,8 @@ public final class IDE {
 	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
 	 * 
@@ -923,9 +928,6 @@ public final class IDE {
 	 * <code>inferContentType</code> is <code>true</code>.
 	 * </p>
 	 * <ol>
-	 * <li>The file is consulted for a persistent property named
-	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
-	 * used.</li>
 	 * <li>The workbench editor registry is consulted to determine if an editor
 	 * extension has been registered for the file type. If so, an instance of
 	 * the editor extension is opened on the file. See
@@ -934,6 +936,8 @@ public final class IDE {
 	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
 	 * 
