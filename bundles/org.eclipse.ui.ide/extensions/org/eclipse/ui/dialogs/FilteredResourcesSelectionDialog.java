@@ -931,6 +931,8 @@ public class FilteredResourcesSelectionDialog extends
 				patternMatcher.setPattern(filenamePattern);
 				if (sep > 0) {
 					String containerPattern = stringPattern.substring(0, sep);
+					if (!containerPattern.startsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
+						containerPattern= IPath.SEPARATOR + containerPattern;
 					this.containerPattern= new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 					this.containerPattern.setPattern(containerPattern);
 					if (searchContainer != null) {
