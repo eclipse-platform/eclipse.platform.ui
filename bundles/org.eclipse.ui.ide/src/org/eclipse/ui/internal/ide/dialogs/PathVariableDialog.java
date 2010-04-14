@@ -285,7 +285,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 	        // variable name label
 	        variableNameLabel = new Label(contents, SWT.LEAD);
 	        variableNameLabel.setText(nameLabelText);
-	     
+	        variableNameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
 	        // variable name field.  Attachments done after all widgets created.
 	        variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
 	        variableNameField.setText(variableName);
@@ -301,6 +302,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         // variable value label
         variableValueLabel = new Label(contents, SWT.LEAD);
         variableValueLabel.setText(valueLabelText);
+        variableValueLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
         // variable value field.  Attachments done after all widgets created.
         variableValueField = new Text(contents, SWT.SINGLE | SWT.BORDER);
@@ -316,40 +318,42 @@ public class PathVariableDialog extends TitleAreaDialog {
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
         		false, 1, 1));
-        GridLayout layout = new GridLayout(3, true);
+        GridLayout layout = new GridLayout(1, true);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         buttonsComposite.setLayout(layout);
 
-        // select file path button
-        fileButton = new Button(buttonsComposite, SWT.PUSH);
-        fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
-        fileButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-        		false));
-        if ((variableType & IResource.FILE) == 0) {
-			fileButton.setEnabled(false);
+        if ((variableType & IResource.FILE) != 0) {
+        	layout.numColumns++;
+	        // select file path button
+	        fileButton = new Button(buttonsComposite, SWT.PUSH);
+	        fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
+	        fileButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+	        		false));
+	
+	        fileButton.addSelectionListener(new SelectionAdapter() {
+	            public void widgetSelected(SelectionEvent e) {
+	                selectFile();
+	            }
+	        });
+	        setButtonLayoutData(fileButton);
 		}
 
-        fileButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                selectFile();
-            }
-        });
-
-        // select folder path button
-        folderButton = new Button(buttonsComposite, SWT.PUSH);
-        folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
-        folderButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-        		false));
-        if ((variableType & IResource.FOLDER) == 0) {
-			folderButton.setEnabled(false);
-		}
-
-        folderButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                selectFolder();
-            }
-        });
+        if ((variableType & IResource.FOLDER) != 0) {
+        	layout.numColumns++;
+	        // select folder path button
+	        folderButton = new Button(buttonsComposite, SWT.PUSH);
+	        folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
+	        folderButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+	        		false));
+	
+	        folderButton.addSelectionListener(new SelectionAdapter() {
+	            public void widgetSelected(SelectionEvent e) {
+	                selectFolder();
+	            }
+	        });
+	        setButtonLayoutData(folderButton);
+        }
 
     	variableButton = new Button(buttonsComposite, SWT.PUSH);
     	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
@@ -362,6 +366,7 @@ public class PathVariableDialog extends TitleAreaDialog {
                 selectVariable();
             }
         });
+        setButtonLayoutData(variableButton);
 
         // variable value label
         variableResolvedValueLabel = new Label(contents, SWT.LEAD);
