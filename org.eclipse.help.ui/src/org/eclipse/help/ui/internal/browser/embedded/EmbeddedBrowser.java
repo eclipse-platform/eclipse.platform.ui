@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,7 +221,7 @@ public class EmbeddedBrowser {
 	}
 	private static void initializeShell(Shell s) {
 		s.setText(initialTitle);
-		Image[] shellImages = createImages();
+		final Image[] shellImages = createImages();
 		if (shellImages != null)
 			s.setImages(shellImages);
 		GridLayout layout = new GridLayout();
@@ -230,6 +230,18 @@ public class EmbeddedBrowser {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		s.setLayout(layout);
+		s.addDisposeListener(new DisposeListener() {
+			
+			public void widgetDisposed(DisposeEvent e) {
+				if (shellImages != null) {
+					for (int i = 0; i < shellImages.length; i++) {
+						shellImages[i].dispose();
+					}
+				}
+				
+			}
+		});
+		
 	}
 	private void initialize(Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
