@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.ui.editors.text;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -275,7 +275,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
 		Map targets= new HashMap();
-		targets.put("org.eclipse.ui.DefaultTextEditor", null); //$NON-NLS-1$
+		targets.put(EditorsUI.DEFAULT_TEXT_EDITOR_ID, null);
 		return targets;
 	}
 
