@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -1039,7 +1040,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			}
 			DataInputStream input = new DataInputStream(zip);
 			try {
-				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
+				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt(), true);
 				reader.readTree(project, input, Policy.subMonitorFor(monitor, Policy.totalWork));
 			} finally {
 				input.close();

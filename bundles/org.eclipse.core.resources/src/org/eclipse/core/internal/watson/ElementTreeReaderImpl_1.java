@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
@@ -39,7 +40,7 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 	 */
 	public ElementTree readDelta(ElementTree parentTree, DataInput input) throws IOException {
 		DeltaDataTree complete = parentTree.getDataTree();
-		DeltaDataTree delta = dataTreeReader.readTree(complete, input);
+		DeltaDataTree delta = dataTreeReader.readTree(complete, input, ""); //$NON-NLS-1$
 
 		//if the delta is empty, just return the parent
 		if (delta.isEmptyDelta())
@@ -60,12 +61,11 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		return tree;
 	}
 
-	/**
-	 * Reads a chain of ElementTrees from the given input stream.
-	 * @return A chain of ElementTrees, where the first tree in the list is
-	 * complete, and all other trees are deltas on the previous tree in the list.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.internal.watson.ElementTreeReader#readDeltaChain(java.io.DataInput, java.lang.String)
 	 */
-	public ElementTree[] readDeltaChain(DataInput input) throws IOException {
+	public ElementTree[] readDeltaChain(DataInput input, String newProjectName) throws IOException {
 		/* read the number of trees */
 		int treeCount = readNumber(input);
 		ElementTree[] results = new ElementTree[treeCount];
@@ -81,7 +81,7 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		}
 
 		/* read the complete tree */
-		results[order[0]] = super.readTree(input);
+		results[order[0]] = super.readTree(input, newProjectName);
 
 		/* reconstitute each of the remaining trees from their written deltas */
 		for (int i = 1; i < treeCount; i++) {
@@ -91,15 +91,16 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		return results;
 	}
 
-	/** Part of <code>ElementTreeReader</code> interface.
-	 * @see ElementTreeReader
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.internal.watson.ElementTreeReader#readTree(java.io.DataInput, java.lang.String)
 	 */
-	public ElementTree readTree(DataInput input) throws IOException {
+	public ElementTree readTree(DataInput input, String newProjectName) throws IOException {
 
 		/* The format version number has already been consumed
 		 * by ElementTreeReader#readFrom.
 		 */
-		ElementTree result = new ElementTree(dataTreeReader.readTree(null, input));
+		ElementTree result = new ElementTree(dataTreeReader.readTree(null, input, newProjectName));
 		return result;
 	}
 }

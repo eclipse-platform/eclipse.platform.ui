@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -223,7 +224,12 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 			String message = Messages.resources_reading;
 			monitor.beginTask(message, 4);
 			ElementTreeReader treeReader = new ElementTreeReader(workspace.getSaveManager());
-			ElementTree[] trees = treeReader.readDeltaChain(input);
+			String newProjectName = ""; //$NON-NLS-1$
+			if (renameProjectNode) {
+				//have the existing project name (path to import into) take precedence over what we read
+				newProjectName = root.segment(0);
+			}
+			ElementTree[] trees = treeReader.readDeltaChain(input, newProjectName);
 			monitor.worked(3);
 			if (root.isRoot()) {
 				//Don't need to link because we're reading the whole workspace.

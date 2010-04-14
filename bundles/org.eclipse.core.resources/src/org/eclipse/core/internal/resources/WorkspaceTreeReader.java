@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -25,20 +26,44 @@ import org.eclipse.osgi.util.NLS;
  * from a future version).
  */
 public abstract class WorkspaceTreeReader {
-	/**
-	 * Returns the tree reader associated with the given tree version number
+	
+	/** 
+	 * Configuration setting to have an existing workspace 
+	 * project name take precedence over data being read,
+	 * when set to <code>true</code>.
 	 */
-	public static WorkspaceTreeReader getReader(Workspace workspace, int version) throws CoreException {
+	protected boolean renameProjectNode;
+	
+	/**
+	 * Returns the tree reader associated with the given tree version number.
+	 * @param renameProjectNode if <code>true</code>, set up the reader to have
+	 *     the existing root node in the workspace (that is, the project being
+	 *     read into) take precedence over the root node being read from the file.
+	 *     Otherwise, the tree file is read unmodified.
+	 */
+	public static WorkspaceTreeReader getReader(Workspace workspace, int version, boolean renameProjectNode) throws CoreException {
+		WorkspaceTreeReader w = null;
 		switch (version) {
 			case ICoreConstants.WORKSPACE_TREE_VERSION_1 :
-				return new WorkspaceTreeReader_1(workspace);
+				w = new WorkspaceTreeReader_1(workspace);
+				w.renameProjectNode = renameProjectNode;
+				return w;
 			case ICoreConstants.WORKSPACE_TREE_VERSION_2 :
-				return new WorkspaceTreeReader_2(workspace);
+				w = new WorkspaceTreeReader_2(workspace);
+				w.renameProjectNode = renameProjectNode;
+				return w;
 			default :
 				// Unknown tree version - fail to read the tree
 				String msg = NLS.bind(Messages.resources_format, new Integer(version));
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
+	}
+
+	/**
+	 * Returns the tree reader associated with the given tree version number.
+	 */
+	public static WorkspaceTreeReader getReader(Workspace workspace, int version) throws CoreException {
+		return getReader(workspace, version, false);
 	}
 
 	/**

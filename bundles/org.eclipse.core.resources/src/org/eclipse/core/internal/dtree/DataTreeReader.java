@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
@@ -52,9 +53,12 @@ public class DataTreeReader {
 	}
 
 	/**
-	 * Reads a node from the given input stream
+	 * Reads a node from the given input stream.
+	 * If newProjectName is non-empty, use it for the name of
+	 * the project (first node under root) in the created node
+	 * instead of the name read from the stream.
 	 */
-	protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
+	protected AbstractDataTreeNode readNode(IPath parentPath, String newProjectName) throws IOException {
 		/* read the node name */
 		String name = input.readUTF();
 
@@ -66,6 +70,11 @@ public class DataTreeReader {
 
 		/* if not the root node */
 		if (parentPath != null) {
+			if (parentPath.equals(Path.ROOT) &&
+					newProjectName.length() > 0 && name.length() > 0) {
+				/* use the supplied name for the project node */
+				name = newProjectName;
+			}
 			path = parentPath.append(name);
 		} else {
 			path = Path.ROOT;
@@ -91,7 +100,7 @@ public class DataTreeReader {
 		} else {
 			children = new AbstractDataTreeNode[childCount];
 			for (int i = 0; i < childCount; i++) {
-				children[i] = readNode(path);
+				children[i] = readNode(path, newProjectName);
 			}
 		}
 
@@ -128,11 +137,14 @@ public class DataTreeReader {
 	}
 
 	/**
-	 * Reads a DeltaDataTree from the given input stream
+	 * Reads a DeltaDataTree from the given input stream.
+	 * If newProjectName is non-empty, use it for the name of
+	 * the project (first node under root) in the returned tree
+	 * instead of the name read from the stream.
 	 */
-	public DeltaDataTree readTree(DeltaDataTree parent, DataInput input) throws IOException {
+	public DeltaDataTree readTree(DeltaDataTree parent, DataInput input, String newProjectName) throws IOException {
 		this.input = input;
-		AbstractDataTreeNode root = readNode(Path.ROOT);
+		AbstractDataTreeNode root = readNode(Path.ROOT, newProjectName);
 		return new DeltaDataTree(root, parent);
 	}
 }

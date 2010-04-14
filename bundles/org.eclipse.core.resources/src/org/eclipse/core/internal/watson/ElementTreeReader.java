@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
@@ -91,9 +92,22 @@ public class ElementTreeReader {
 	 * complete, and all other trees are deltas on the previous tree in the list.
 	 */
 	public ElementTree[] readDeltaChain(DataInput input) throws IOException {
+		return readDeltaChain(input, ""); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Reads a chain of ElementTrees from the given input stream.
+	 * @param input the input stream to read from.
+	 * @param newProjectName a new name to use for the root node of the
+	 *     tree being read, or the empty String ("") to read the tree
+	 *     from the given input unchanged.
+	 * @return A chain of ElementTrees, where the first tree in the list is
+	 * complete, and all other trees are deltas on the previous tree in the list.
+s	 */
+	public ElementTree[] readDeltaChain(DataInput input, String newProjectName) throws IOException {
 		/* Dispatch to the appropriate reader. */
 		ElementTreeReader realReader = getReader(readNumber(input));
-		return realReader.readDeltaChain(input);
+		return realReader.readDeltaChain(input, newProjectName);
 	}
 
 	/** 
@@ -118,8 +132,22 @@ public class ElementTreeReader {
 	 * depending on the stream version id.
 	 */
 	public ElementTree readTree(DataInput input) throws IOException {
+		return readTree(input, ""); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Reads an element tree from the input stream and returns it.
+	 * This method actually just dispatches to the appropriate reader
+	 * depending on the stream version id.
+	 * @param input the input stream to read from.
+	 * @param newProjectName a new name to use for the root node of the
+	 *     tree being read, or the empty String ("") to read the tree
+	 *     from the given input unchanged.
+	 * @return the requested ElementTree.
+	 */
+	public ElementTree readTree(DataInput input, String newProjectName) throws IOException {
 		/* Dispatch to the appropriate reader. */
 		ElementTreeReader realReader = getReader(readNumber(input));
-		return realReader.readTree(input);
+		return realReader.readTree(input, newProjectName);
 	}
 }

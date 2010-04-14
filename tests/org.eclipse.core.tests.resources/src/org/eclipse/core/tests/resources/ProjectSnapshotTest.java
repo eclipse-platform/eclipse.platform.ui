@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Francis Lynch (Wind River) - adapted from FileSystemResourceManagerTest
+ * Francis Lynch (Wind River) - adapted from FileSystemResourceManagerTest
+ * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -59,7 +60,7 @@ public class ProjectSnapshotTest extends ResourceTest {
 		// add files and folders to project
 		IFile file = project.getFile("file");
 		ensureExistsInFileSystem(file);
-		IFolder folder = projects[0].getFolder("folder");
+		IFolder folder = project.getFolder("folder");
 		IFolder subfolder = folder.getFolder("subfolder");
 		IFile subfile = folder.getFile("subfile");
 		ensureExistsInFileSystem(folder);
@@ -160,6 +161,41 @@ public class ProjectSnapshotTest extends ResourceTest {
 		assertTrue("1.2", !folder.exists());
 		assertTrue("1.3", !subfolder.exists());
 		assertTrue("1.4", !subfile.exists());
+	}
+
+	/*
+	 * Create project and populate with resources. Save snapshot.
+	 * Import the project using the snapshot but with a different
+	 * project name. All resources must be marked as "exists" in the
+	 * resource tree for the new, renamed project.
+	 */
+	public void testLoadWithRename() throws Throwable {
+		IProject project = projects[0];
+		// add files and folders to project
+		populateProject(project);
+		// perform refresh to ensure new resources in tree
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		// save project refresh snapshot outside the project
+		URI snapshotLocation = getSnapshotLocation(projects[1]);
+		project.saveSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+		// close and delete project contents
+		project.close(null);
+		project.delete(true, false, null);
+		// open the project using a different name (p3) and import refresh snapshot
+		project = getWorkspace().getRoot().getProject("p3");
+		project.create(null);
+		project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+		project.open(IResource.NONE, null);
+
+		// verify that the resources are thought to exist in this project
+		IFile file = project.getFile("file");
+		IFolder folder = project.getFolder("folder");
+		IFolder subfolder = folder.getFolder("subfolder");
+		IFile subfile = folder.getFile("subfile");
+		assertTrue("1.1", file.exists());
+		assertTrue("1.2", folder.exists());
+		assertTrue("1.3", subfolder.exists());
+		assertTrue("1.4", subfile.exists());
 	}
 
 }
