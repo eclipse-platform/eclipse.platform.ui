@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="0.9.0";visibil
  org.eclipse.emf.ecore.change;bundle-version="2.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.workbench.modeling,
+Export-Package: org.eclipse.e4.ui.internal.workbench.handlers;x-internal:=true,
+ org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui,
  org.eclipse.e4.workbench.ui.behaviors,
  org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt"

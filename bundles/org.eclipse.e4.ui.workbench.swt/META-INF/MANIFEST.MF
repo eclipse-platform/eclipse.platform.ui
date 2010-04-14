@@ -24,12 +24,14 @@ Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.e4.core.di
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.ui.workbench.swt,
+Export-Package: org.eclipse.e4.ui.internal.workbench.swt.handlers;x-internal:=true,
+ org.eclipse.e4.ui.workbench.swt,
  org.eclipse.e4.ui.workbench.swt.factories,
- org.eclipse.e4.ui.workbench.swt.internal,
- org.eclipse.e4.ui.workbench.swt.internal.parts,
+ org.eclipse.e4.ui.workbench.swt.internal;x-internal:=true,
+ org.eclipse.e4.ui.workbench.swt.internal.parts;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.modeling,
- org.eclipse.e4.ui.workbench.swt.util
+ org.eclipse.e4.ui.workbench.swt.util,
+ org.eclipse.e4.ui.workbench.trim
 Bundle-Vendor: Eclipse.org
 Import-Package: javax.inject;version="1.0.0",
  org.apache.batik.css.engine;version="1.6.0",
