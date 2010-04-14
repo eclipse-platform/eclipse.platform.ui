@@ -427,20 +427,23 @@ public abstract class AbstractTableInformationControl {
 
         fFilterText.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.keyCode == 0x0D) {
+				switch (e.keyCode) {
+				case SWT.CR:
+				case SWT.KEYPAD_CR:
 					gotoSelectedElement();
-				}
-                if (e.keyCode == SWT.ARROW_DOWN) {
-                    fTableViewer.getTable().setFocus();
-                    fTableViewer.getTable().setSelection(0);
-                }
-                if (e.keyCode == SWT.ARROW_UP) {
-                    fTableViewer.getTable().setFocus();
-                    fTableViewer.getTable().setSelection(
-                            fTableViewer.getTable().getItemCount() - 1);
-                }
-                if (e.character == 0x1B) {
+					break;
+				case SWT.ARROW_DOWN:
+					fTableViewer.getTable().setFocus();
+					fTableViewer.getTable().setSelection(0);
+					break;
+				case SWT.ARROW_UP:
+					fTableViewer.getTable().setFocus();
+					fTableViewer.getTable()
+							.setSelection(fTableViewer.getTable().getItemCount() - 1);
+					break;
+				case SWT.ESC:
 					dispose();
+					break;
 				}
             }
 
