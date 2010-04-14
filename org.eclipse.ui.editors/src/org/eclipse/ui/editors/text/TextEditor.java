@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,9 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 /**
  * The standard/default text editor.
  * <p>
- * This editor has id <code>"org.eclipse.ui.DefaultTextEditor"</code>. The editor's context menu has
- * id <code>#TextEditorContext</code>. The editor's ruler context menu has id
- * <code>#TextRulerContext</code>.
+ * This editor has id "{@link EditorsUI#DEFAULT_TEXT_EDITOR_ID org.eclipse.ui.DefaultTextEditor}".
+ * The editor's context menu has id <code>#TextEditorContext</code>. The editor's ruler context menu
+ * has id <code>#TextRulerContext</code>.
  * </p>
  * <p>
  * The workbench will automatically instantiate this class when the default editor is needed for a
