@@ -40,6 +40,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.SynchronousBundleListener;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -590,7 +591,7 @@ public abstract class AbstractUIPlugin extends Plugin {
         // Also, if the start throws an exception, the bundle will be shut down.  
         // We don't want to have created any delegates if this happens.
         // See bug 63324 for more details.
-        bundleListener = new BundleListener() {
+		bundleListener = new SynchronousBundleListener() {
             public void bundleChanged(BundleEvent event) {
                 if (event.getBundle() == getBundle()) {
                     if (event.getType() == BundleEvent.STARTED) {
