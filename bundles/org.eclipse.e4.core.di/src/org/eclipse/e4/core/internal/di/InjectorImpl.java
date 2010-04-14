@@ -537,8 +537,6 @@ public class InjectorImpl implements IInjector {
 
 	/**
 	 * Make the processor visit all declared methods on the given class.
-	 * 
-	 * @throws InvocationTargetException
 	 */
 	private void processMethods(final Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track, List<Requestor> requestors) {
 		Method[] methods = objectsClass.getDeclaredMethods();
@@ -629,7 +627,7 @@ public class InjectorImpl implements IInjector {
 
 	/**
 	 * Returns whether the given method is a post-construction process method, as defined by the
-	 * class comment of {@link ContextInjectionFactory}.
+	 * class comment of ContextInjectionFactory.
 	 */
 	private boolean isPostConstruct(Method method) {
 		return annotationSupport.isPostConstruct(method);

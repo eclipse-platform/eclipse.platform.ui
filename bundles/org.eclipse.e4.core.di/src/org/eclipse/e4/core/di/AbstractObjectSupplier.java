@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import org.osgi.framework.BundleContext;
 
 /**
  * This interface describes an "object supplier" - something that knows how to instantiate objects
