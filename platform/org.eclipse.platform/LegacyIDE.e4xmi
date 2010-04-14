@@ -29,16 +29,6 @@
         <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx015" id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" tooltip="Show Whitespace Characters" command="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/show_whitespace_chars.gif"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx016" id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" tooltip="Show Source of Selected Element Only" command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/segment_edit.gif"/>
       </children>
-      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx017" id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar">
-        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx018" id="org.eclipse.wst.xml.ui.newXMLFile" tooltip="New (New Wizard: XML File)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/new_xml.gif"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx019" id="org.eclipse.wst.xsd.ui.newXSDFile" tooltip="New (New Wizard: XML Schema)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.xsd.ui/icons/ctool16/NewXSD.gif"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01A" id="org.eclipse.wst.dtd.ui.newDTDFile" tooltip="New (New Wizard: DTD)" command="org.eclipse.ui.newWizard" iconURI="platform:/plugin/org.eclipse.wst.dtd.ui/icons/full/etool16/newdtd_wiz.gif"/>
-      </children>
-      <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx01B" id="org.eclipse.wst.xml.ui.design.DesignToolBar">
-        <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01C" id="sed.tabletree.separator.1" type="Separator"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01D" id="ToggleGrammarConstraints" tooltip="Turn off Grammar Constraints" command="org.eclipse.wst.xml.ui.disable.grammar.constraints" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/constrainon.gif"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx01E" id="ReloadDependencies" tooltip="Reload Dependencies" command="org.eclipse.wst.xml.ui.reload.dependecies" iconURI="platform:/plugin/org.eclipse.wst.xml.ui/icons/full/etool16/rldgrmr.gif"/>
-      </children>
       <children xsi:type="application:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx01F" id="org.eclipse.ui.workbench.navigate">
         <children xsi:type="application:ToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx020" id="history.group" type="Separator"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx021" id="org.eclipse.ui.edit.text.gotoNextAnnotation" tooltip="Next Annotation" command="org.eclipse.ui.navigate.next" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/next_nav.gif"/>
@@ -113,12 +103,6 @@
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx035" id="addTask" label="Add Task..." command="org.eclipse.ui.edit.addTask"/>
         <children xsi:type="application:MenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx036" id="additions" type="Separator"/>
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx037" id="XMLContentAssist" label="Content Assist" command="org.eclipse.ui.edit.text.contentAssist.proposals"/>
-        <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx038" id="expandSelectionToMenuId" label="Expand Selection To">
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx039" id="org.eclipse.wst.sse.ui.structure.select.enclosing" label="Select Enclosing Element" command="org.eclipse.wst.sse.ui.structure.select.enclosing"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx03A" id="org.eclipse.wst.sse.ui.structure.select.next" label="Select Next Element" command="org.eclipse.wst.sse.ui.structure.select.next"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx03B" id="org.eclipse.wst.sse.ui.structure.select.previous" label="Select Previous Element" command="org.eclipse.wst.sse.ui.structure.select.previous"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx03C" id="org.eclipse.wst.sse.ui.structure.select.last" label="Restore Last Selection" command="org.eclipse.wst.sse.ui.structure.select.last"/>
-        </children>
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx08F" id="navigate" label="&amp;Navigate">
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx090" id="goInto" label="Go &amp;Into" command="org.eclipse.ui.navigate.goInto"/>
@@ -130,10 +114,7 @@
           <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx096" id="org.eclipse.jdt.ui.actions.GoToType" label="&amp;Type..." command="org.eclipse.jdt.ui.navigate.gototype"/>
           <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx097" id="org.eclipse.jdt.ui.actions.GoToPackage" label="&amp;Package..." command="org.eclipse.jdt.ui.navigate.gotopackage"/>
           <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx098" id="goToResource" label="&amp;Resource..." command="org.eclipse.ui.navigate.goToResource"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx099" id="org.eclipse.wst.sse.ui.goto.matching.bracket" label="Matching Bracket" command="org.eclipse.wst.sse.ui.goto.matching.bracket"/>
           <children xsi:type="application:MenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx09A" id="goToSiblingsBegin" type="Separator"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx09B" id="GoToNextSibling" label="Next Sibling" command="org.eclipse.wst.xml.ui.nextSibling"/>
-          <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx09C" id="GoToPreviousSibling" label="Previous Sibling" command="org.eclipse.wst.xml.ui.previousSibling"/>
         </children>
         <children xsi:type="application:MenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx09D" id="open.ext" type="Separator"/>
         <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx09E" id="org.eclipse.jdt.ui.actions.Open" label="&amp;Open" command="org.eclipse.jdt.ui.edit.text.java.open.editor"/>
@@ -314,18 +295,13 @@
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYw" id="org.eclipse.e4.ui.saveCommands" commandName="Save"/>
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYx" id="org.eclipse.e4.ui.saveAllCommands" commandName="Save All"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.lineUp" id="org.eclipse.ui.edit.text.goto.lineUp" commandName="Line Up" description="Go up one line of text"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.goto.matching.bracket" id="org.eclipse.wst.sse.ui.goto.matching.bracket" commandName="Matching Bracket" description="Go to Matching Bracket"/>
   <commands xmi:id="org.eclipse.ui.window.showSystemMenu" id="org.eclipse.ui.window.showSystemMenu" commandName="Show System Menu" description="Show the system menu"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addImport" id="org.eclipse.wst.jsdt.ui.correction.addImport" commandName="Quick Fix - Add import" description="Invokes quick assist and selects 'Add import'"/>
   <commands xmi:id="org.eclipse.e4.ui.examples.generatePsfProject" id="org.eclipse.e4.ui.examples.generatePsfProject" commandName="Generate e4 Example Project"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.working.set" id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.working.set" commandName="Declaration in Working Set" description="Search for declarations of the selected element in a working set"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.DeleteCommand" id="org.eclipse.core.resources.semantic.ui.DeleteCommand" commandName="Delete"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.pull.up" id="org.eclipse.jdt.ui.edit.text.java.pull.up" commandName="Pull Up" description="Move members to a superclass"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.ToggleWatchpoint" id="org.eclipse.debug.ui.commands.ToggleWatchpoint" commandName="Toggle Watchpoint" description="Creates or removes a watchpoint"/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.previousSibling" id="org.eclipse.wst.xml.ui.previousSibling" commandName="Previous Sibling" description="Go to Previous Sibling"/>
   <commands xmi:id="org.eclipse.ui.window.switchToEditor" id="org.eclipse.ui.window.switchToEditor" commandName="Switch to Editor" description="Switch to an editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.push.down" id="org.eclipse.wst.jsdt.ui.edit.text.java.push.down" commandName="Push Down" description="Move members to subclasses"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.externalize.strings" id="org.eclipse.wst.jsdt.ui.edit.text.java.externalize.strings" commandName="Externalize Strings" description="Finds all strings that are not externalized and moves them into a separate property file"/>
   <commands xmi:id="org.eclipse.pde.runtime.spy.commands.spyCommand" id="org.eclipse.pde.runtime.spy.commands.spyCommand" commandName="Plug-in Selection Spy" description="Show the Plug-in Spy"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.create.delegate.methods" id="org.eclipse.jdt.ui.edit.text.java.create.delegate.methods" commandName="Generate Delegate Methods" description="Add delegate methods for a type's fields"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.newRendering" id="org.eclipse.debug.ui.commands.newRendering" commandName="New Rendering" description="Add a new rendering."/>
@@ -333,7 +309,6 @@
   <commands xmi:id="org.eclipse.jdt.ui.navigate.gototype" id="org.eclipse.jdt.ui.navigate.gototype" commandName="Go to Type" description="Go to Type"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.wordNext" id="org.eclipse.ui.edit.text.select.wordNext" commandName="Select Next Word" description="Select the next word"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.override.methods" id="org.eclipse.jdt.ui.edit.text.java.override.methods" commandName="Override/Implement Methods" description="Override or implement methods from super types"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.use.supertype" id="org.eclipse.wst.jsdt.ui.edit.text.java.use.supertype" commandName="Use Supertype Where Possible" description="Change occurrences of a type to use a supertype instead"/>
   <commands xmi:id="org.eclipse.ui.window.previousEditor" id="org.eclipse.ui.window.previousEditor" commandName="Previous Editor" description="Switch to the previous editor"/>
   <commands xmi:id="org.eclipse.ui.edit.text.folding.restore" id="org.eclipse.ui.edit.text.folding.restore" commandName="Reset Structure" description="Resets the folding structure"/>
   <commands xmi:id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" commandName="Show Whitespace Characters" description="Shows whitespace characters in current text editor"/>
@@ -345,10 +320,8 @@
   <commands xmi:id="org.eclipse.ui.window.pinEditor" id="org.eclipse.ui.window.pinEditor" commandName="Pin Editor" description="Pin the current editor"/>
   <commands xmi:id="org.eclipse.ui.file.import" id="org.eclipse.ui.file.import" commandName="Import" description="Import"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.UnlockCommand" id="org.eclipse.core.resources.semantic.ui.UnlockCommand" commandName="Unlock"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.rename.element" id="org.eclipse.wst.jsdt.ui.edit.text.java.rename.element" commandName="Rename - Refactoring " description="Rename the selected element"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.setKeywordSubstitution" id="org.eclipse.team.cvs.ui.setKeywordSubstitution" commandName="Change ASCII/Binary Property" description="Change whether the selected resources should be treated as ASCII or binary on the CVS Server"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.introduce.indirection" id="org.eclipse.jdt.ui.edit.text.java.introduce.indirection" commandName="Introduce Indirection" description="Introduce an indirection to encapsulate invocations of a selected method"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.refactor.apply.refactoring.script" id="org.eclipse.wst.jsdt.ui.refactor.apply.refactoring.script" commandName="Apply Script" description="Perform refactorings from a refactoring script on the local workspace"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.copy.qualified.name" id="org.eclipse.jdt.ui.edit.text.java.copy.qualified.name" commandName="Copy Qualified Name" description="Copy a fully qualified name to the system clipboard"/>
   <commands xmi:id="org.eclipse.ui.file.export" id="org.eclipse.ui.file.export" commandName="Export" description="Export"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.Watch" id="org.eclipse.jdt.debug.ui.commands.Watch" commandName="Watch" description="Create new watch expression"/>
@@ -358,28 +331,20 @@
   <commands xmi:id="org.eclipse.ui.ide.markCompleted" id="org.eclipse.ui.ide.markCompleted" commandName="Mark Completed" description="Mark the selected tasks as completed"/>
   <commands xmi:id="org.eclipse.ui.edit.addBookmark" id="org.eclipse.ui.edit.addBookmark" commandName="Add Bookmark" description="Add a bookmark"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactoring.commands.deleteResources" id="org.eclipse.ltk.ui.refactoring.commands.deleteResources" commandName="Delete Resources" description="Delete the selected resources and notify LTK participants."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.callhierarchy.view" id="org.eclipse.wst.jsdt.callhierarchy.view" commandName="JavaScript Call Hierarchy" description="Show the Call Hierarchy view"/>
   <commands xmi:id="org.eclipse.ui.editors.quickdiff.revert" id="org.eclipse.ui.editors.quickdiff.revert" commandName="Revert Lines" description="Revert the current selection, block or deleted lines"/>
   <commands xmi:id="org.eclipse.debug.ui.command.prevpage" id="org.eclipse.debug.ui.command.prevpage" commandName="Previous Page of Memory" description="Load previous page of memory"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.StepReturn" id="org.eclipse.debug.ui.commands.StepReturn" commandName="Step Return" description="Step return"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.change.type" id="org.eclipse.wst.jsdt.ui.edit.text.java.change.type" commandName="Generalize Declared Type" description="Change the declaration of a selected variable to a more general type consistent with usage"/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.referencedFileErrors" id="org.eclipse.wst.xml.ui.referencedFileErrors" commandName="Show Details..." description="Show Details..."/>
   <commands xmi:id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint" id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint" commandName="Toggle Method Breakpoint" description="Creates or removes a method breakpoint"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.exception.occurrences" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.exception.occurrences" commandName="Search Exception Occurrences in File" description="Search for exception occurrences of a selected exception type"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.Inspect" id="org.eclipse.jdt.debug.ui.commands.Inspect" commandName="Inspect" description="Inspect result of evaluating selected text"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set" id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set" commandName="Write Access in Working Set" description="Search for write references to the selected element in a working set"/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.disable.grammar.constraints" id="org.eclipse.wst.xml.ui.disable.grammar.constraints" commandName="Turn off Grammar Constraints" description="Turn off grammar Constraints"/>
   <commands xmi:id="org.eclipse.ui.edit.text.folding.expand_all" id="org.eclipse.ui.edit.text.folding.expand_all" commandName="Expand All" description="Expands all folded regions"/>
   <commands xmi:id="org.eclipse.ui.perspectives.showPerspective" id="org.eclipse.ui.perspectives.showPerspective" commandName="Show Perspective" description="Show a particular perspective"/>
   <commands xmi:id="org.eclipse.ui.navigate.forward" id="org.eclipse.ui.navigate.forward" commandName="Forward" description="Navigate forward"/>
   <commands xmi:id="org.eclipse.emf.codegen.ecore.ui.Generate" id="org.eclipse.emf.codegen.ecore.ui.Generate" commandName="Generate Code" description="Generate code for the EMF models in the workspace"/>
   <commands xmi:id="org.eclipse.gef.zoom_in" id="org.eclipse.gef.zoom_in" commandName="Zoom In" description="Zoom In"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.OpenForEditCommand" id="org.eclipse.core.resources.semantic.ui.OpenForEditCommand" commandName="Open For Edit"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.select.enclosing" id="org.eclipse.wst.jsdt.ui.edit.text.java.select.enclosing" commandName="Select Enclosing Element" description="Expand selection to include enclosing element"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.inlineLocal.assist" id="org.eclipse.jdt.ui.correction.inlineLocal.assist" commandName="Quick Assist - Inline local variable" description="Invokes quick assist and selects 'Inline local variable'"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.Suspend" id="org.eclipse.debug.ui.commands.Suspend" commandName="Suspend" description="Suspend"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addNonNLS" id="org.eclipse.wst.jsdt.ui.correction.addNonNLS" commandName="Quick Fix - Add non-NLS tag" description="Invokes quick assist and selects 'Add non-NLS tag'"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.format.document" id="org.eclipse.wst.sse.ui.format.document" commandName="Format" description="Format selection"/>
   <commands xmi:id="org.eclipse.ui.edit.text.scroll.lineUp" id="org.eclipse.ui.edit.text.scroll.lineUp" commandName="Scroll Line Up" description="Scroll up one line of text"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.closeRendering" id="org.eclipse.debug.ui.commands.closeRendering" commandName="Close Rendering" description="Close the selected rendering."/>
   <commands xmi:id="org.eclipse.ui.edit.text.upperCase" id="org.eclipse.ui.edit.text.upperCase" commandName="To Upper Case" description="Changes the selection to upper case"/>
@@ -392,7 +357,6 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.toggle.comment" id="org.eclipse.jdt.ui.edit.text.java.toggle.comment" commandName="Toggle Comment" description="Toggle comment the selected lines"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.gotoBreadcrumb" id="org.eclipse.jdt.ui.edit.text.java.gotoBreadcrumb" commandName="Show In Breadcrumb" description="Shows the Java editor breadcrumb and sets the keyboard focus into it"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.introduce.factory" id="org.eclipse.jdt.ui.edit.text.java.introduce.factory" commandName="Introduce Factory" description="Introduce a factory method to encapsulate invocation of the selected constructor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.hierarchy" commandName="Write Access in Hierarchy" description="Search for write references of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.ui.window.nextView" id="org.eclipse.ui.window.nextView" commandName="Next View" description="Switch to the next view"/>
   <commands xmi:id="org.eclipse.ui.project.buildAll" id="org.eclipse.ui.project.buildAll" commandName="Build All" description="Build all projects"/>
   <commands xmi:id="org.eclipse.ui.edit.text.toggleOverwrite" id="org.eclipse.ui.edit.text.toggleOverwrite" commandName="Toggle Overwrite" description="Toggle overwrite mode"/>
@@ -405,11 +369,8 @@
   <commands xmi:id="org.eclipse.help.ui.closeTray" id="org.eclipse.help.ui.closeTray" commandName="Close User Assistance Tray" description="Close the user assistance tray containing context help information and cheat sheets."/>
   <commands xmi:id="org.eclipse.jdt.ui.navigate.java.open.structure" id="org.eclipse.jdt.ui.navigate.java.open.structure" commandName="Open Structure" description="Show the structure of the selected element"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.add.block.comment" id="org.eclipse.jdt.ui.edit.text.java.add.block.comment" commandName="Add Block Comment" description="Enclose the selection with a block comment"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.workspace" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.workspace" commandName="Declaration in Workspace" description="Search for declarations of the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.add.javadoc.comment" id="org.eclipse.jdt.ui.edit.text.java.add.javadoc.comment" commandName="Add Javadoc Comment" description="Add a Javadoc comment stub to the member element"/>
   <commands xmi:id="org.eclipse.ui.window.resetPerspective" id="org.eclipse.ui.window.resetPerspective" commandName="Reset Perspective" description="Reset the current perspective to its default state"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.modify.method.parameters" id="org.eclipse.wst.jsdt.ui.edit.text.java.modify.method.parameters" commandName="Change Function Signature" description="Change function signature includes parameter names and parameter order"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.remove.occurrence.annotations" id="org.eclipse.wst.jsdt.ui.edit.text.remove.occurrence.annotations" commandName="Remove Occurrence Annotations" description="Removes the occurrence annotations from the current editor"/>
   <commands xmi:id="org.eclipse.ui.window.savePerspective" id="org.eclipse.ui.window.savePerspective" commandName="Save Perspective As" description="Save the current perspective"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint" id="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint" commandName="Add Java Exception Breakpoint" description="Add a Java exception breakpoint"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.find.broken.nls.keys" id="org.eclipse.jdt.ui.edit.text.java.find.broken.nls.keys" commandName="Find Broken Externalized Strings" description="Finds undefined, duplicate and unused externalized string keys in property files"/>
@@ -417,34 +378,26 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.generate.hashcode.equals" id="org.eclipse.jdt.ui.edit.text.java.generate.hashcode.equals" commandName="Generate hashCode() and equals()" description="Generates hashCode() and equals() methods for the type"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection" id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection" commandName="Step Into Selection" description="Step into the current selected statement"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.StepOver" id="org.eclipse.debug.ui.commands.StepOver" commandName="Step Over" description="Step over"/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.gotoMatchingTag" id="org.eclipse.wst.xml.ui.gotoMatchingTag" commandName="Matching Tag" description="Go to Matching Tag"/>
   <commands xmi:id="org.eclipse.debug.ui.command.gotoaddress" id="org.eclipse.debug.ui.command.gotoaddress" commandName="Go to Address" description="Go to Address"/>
   <commands xmi:id="org.eclipse.ui.edit.text.removeTrailingWhitespace" id="org.eclipse.ui.edit.text.removeTrailingWhitespace" commandName="Remove Trailing Whitespace" description="Removes the trailing whitespace of each line"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.add.unimplemented.constructors" id="org.eclipse.jdt.ui.edit.text.java.add.unimplemented.constructors" commandName="Generate Constructors from Superclass" description="Evaluate and add constructors from superclass"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delete.line.to.beginning" id="org.eclipse.ui.edit.text.delete.line.to.beginning" commandName="Delete to Beginning of Line" description="Delete to the beginning of a line of text"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy" commandName="Read Access in Hierarchy" description="Search for read references of the selected element in its hierarchy"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.ProjectsView" id="org.eclipse.wst.jsdt.ui.ProjectsView" commandName="JavaScript Projects" description="Show the Projects view"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.OpenDebugConfigurations" id="org.eclipse.debug.ui.commands.OpenDebugConfigurations" commandName="Debug..." description="Open debug launch configuration dialog"/>
   <commands xmi:id="org.eclipse.debug.ui.command.nextpage" id="org.eclipse.debug.ui.command.nextpage" commandName="Next Page of Memory" description="Load next page of memory"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.create.delegate.methods" id="org.eclipse.wst.jsdt.ui.edit.text.java.create.delegate.methods" commandName="Generate Delegate Functions" description="Add delegate functions for a type's vars"/>
   <commands xmi:id="org.eclipse.ui.help.displayHelp" id="org.eclipse.ui.help.displayHelp" commandName="Display Help" description="Display a Help topic"/>
   <commands xmi:id="org.eclipse.quickdiff.toggle" id="org.eclipse.quickdiff.toggle" commandName="Quick Diff Toggle" description="Toggles quick diff information display on the line number ruler"/>
   <commands xmi:id="org.eclipse.ui.help.installationDialog" id="org.eclipse.ui.help.installationDialog" commandName="Installation Information" description="Open the installation dialog"/>
   <commands xmi:id="org.eclipse.ui.edit.findIncremental" id="org.eclipse.ui.edit.findIncremental" commandName="Incremental Find" description="Incremental find"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.windowEnd" id="org.eclipse.ui.edit.text.goto.windowEnd" commandName="Window End" description="Go to the end of the window"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.folding.collapseComments" id="org.eclipse.jdt.ui.edit.text.java.folding.collapseComments" commandName="Collapse Comments" description="Collapse all comments"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.project" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.project" commandName="References in Project" description="Search for references to the selected element in the enclosing project"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.external.javadoc" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.external.javadoc" commandName="Open External JSDoc" description="Open the JSDoc of the selected element in an external browser"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delimiter.windows" id="org.eclipse.ui.edit.text.delimiter.windows" commandName="Convert Line Delimiters to Windows" description="Converts the line delimiters to Windows"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.surround.with.try.catch" id="org.eclipse.jdt.ui.edit.text.java.surround.with.try.catch" commandName="Surround with try/catch Block" description="Surround the selected text with a try/catch block"/>
   <commands xmi:id="org.eclipse.ui.navigate.addToWorkingSet" id="org.eclipse.ui.navigate.addToWorkingSet" commandName="Add to Working Set" description="Adds the selected object to a working set."/>
   <commands xmi:id="org.eclipse.pde.ui.openPluginArtifact" id="org.eclipse.pde.ui.openPluginArtifact" commandName="Open Plug-in Artifact" description="Open a plug-in artifact in the manifest editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.working.set" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.working.set" commandName="References in Working Set" description="Search for references to the selected element in a working set"/>
   <commands xmi:id="org.eclipse.ant.ui.renameInFile" id="org.eclipse.ant.ui.renameInFile" commandName="Rename In File" description="Renames all references within the same buildfile"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.type.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.type.hierarchy" commandName="Open Type Hierarchy" description="Open a type hierarchy on the selected element"/>
   <commands xmi:id="org.eclipse.ui.edit.text.shiftLeft" id="org.eclipse.ui.edit.text.shiftLeft" commandName="Shift Left" description="Shift a block of text to the left"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.references.in.workspace" id="org.eclipse.jdt.ui.edit.text.java.search.references.in.workspace" commandName="References in Workspace" description="Search for references to the selected element in the workspace"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.project" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.project" commandName="Write Access in Project" description="Search for write references to the selected element in the enclosing project"/>
   <commands xmi:id="sed.tabletree.expandAll" id="sed.tabletree.expandAll" commandName="Expand All"/>
   <commands xmi:id="org.eclipse.ui.navigate.previous" id="org.eclipse.ui.navigate.previous" commandName="Previous" description="Navigate to the previous item"/>
   <commands xmi:id="org.eclipse.ui.navigate.nextTab" id="org.eclipse.ui.navigate.nextTab" commandName="Next Tab" description="Switch to the next tab"/>
@@ -459,14 +412,12 @@
   <commands xmi:id="org.eclipse.jdt.junit.junitShortcut.rerunLast" id="org.eclipse.jdt.junit.junitShortcut.rerunLast" commandName="Rerun JUnit Test" description="Rerun JUnit Test"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delete.line" id="org.eclipse.ui.edit.text.delete.line" commandName="Delete Line" description="Delete a line of text"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.columnPrevious" id="org.eclipse.ui.edit.text.goto.columnPrevious" commandName="Previous Column" description="Go to the previous column"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.occurrences.in.file" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.occurrences.in.file" commandName="Search All Occurrences in File" description="Search for all occurrences of the selected element in its declaring file"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.introduce.parameter" id="org.eclipse.jdt.ui.edit.text.java.introduce.parameter" commandName="Introduce Parameter" description="Introduce a new method parameter based on the selected expression"/>
   <commands xmi:id="org.eclipse.ui.ide.configureColumns" id="org.eclipse.ui.ide.configureColumns" commandName="Columns..." description="Configure the columns in the markers view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.implementors.in.project" id="org.eclipse.jdt.ui.edit.text.java.search.implementors.in.project" commandName="Implementors in Project" description="Search for implementors of the selected interface in the enclosing project"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.convertLocalToField.assist" id="org.eclipse.jdt.ui.correction.convertLocalToField.assist" commandName="Quick Assist - Convert local variable to field" description="Invokes quick assist and selects 'Convert local variable to field'"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.replace.invocations" id="org.eclipse.jdt.ui.edit.text.java.replace.invocations" commandName="Replace Invocations" description="Replace invocations of the selected method"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.addBlock.assist" id="org.eclipse.jdt.ui.correction.addBlock.assist" commandName="Quick Assist - Replace statement with block" description="Invokes quick assist and selects 'Replace statement with block'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.MembersView" id="org.eclipse.wst.jsdt.ui.MembersView" commandName="JavaScript Members" description="Show the Members view"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.assignParamToField.assist" id="org.eclipse.jdt.ui.correction.assignParamToField.assist" commandName="Quick Assist - Assign parameter to field" description="Invokes quick assist and selects 'Assign parameter to field'"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.ToggleBreakpoint" id="org.eclipse.debug.ui.commands.ToggleBreakpoint" commandName="Toggle Breakpoint" description="Creates or removes a breakpoint"/>
   <commands xmi:id="org.eclipse.ui.window.previousPerspective" id="org.eclipse.ui.window.previousPerspective" commandName="Previous Perspective" description="Switch to the previous perspective"/>
@@ -474,23 +425,17 @@
   <commands xmi:id="org.eclipse.ui.window.showViewMenu" id="org.eclipse.ui.window.showViewMenu" commandName="Show View Menu" description="Show the view menu"/>
   <commands xmi:id="org.eclipse.ui.edit.text.cut.line" id="org.eclipse.ui.edit.text.cut.line" commandName="Cut Line" description="Cut a line of text"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.extract.method" id="org.eclipse.jdt.ui.edit.text.java.extract.method" commandName="Extract Method" description="Extract a set of statements or an expression into a new method and use the new method"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.navigate.open.type" id="org.eclipse.wst.jsdt.ui.navigate.open.type" commandName="Open Type" description="Open a type in a JavaScript editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.JavadocView" id="org.eclipse.wst.jsdt.ui.JavadocView" commandName="Documentation" description="Show the JavaScript Documentation view"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.hierarchy" commandName="References in Hierarchy" description="Search for references of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.DebugLast" id="org.eclipse.debug.ui.commands.DebugLast" commandName="Debug Last Launched" description="Debug the last launch in debug mode"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.select.enclosing" id="org.eclipse.jdt.ui.edit.text.java.select.enclosing" commandName="Select Enclosing Element" description="Expand selection to include enclosing element"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.hierarchy" commandName="Declaration in Hierarchy" description="Search for declarations of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.ui.edit.text.toggleBlockSelectionMode" id="org.eclipse.ui.edit.text.toggleBlockSelectionMode" commandName="Toggle Block Selection" description="Toggle block / column selection in the current text editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.source.quickMenu" id="org.eclipse.wst.jsdt.ui.edit.text.java.source.quickMenu" commandName="Show Source Quick Menu" description="Shows the source quick menu"/>
   <commands xmi:id="org.eclipse.search.ui.openSearchDialog" id="org.eclipse.search.ui.openSearchDialog" commandName="Open Search Dialog" description="Open the Search dialog"/>
   <commands xmi:id="org.eclipse.pde.ui.EquinoxLaunchShortcut.run" id="org.eclipse.pde.ui.EquinoxLaunchShortcut.run" commandName="Run OSGi Framework" description="Run OSGi Framework"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactor.show.refactoring.history" id="org.eclipse.ltk.ui.refactor.show.refactoring.history" commandName="Open Refactoring History " description="Opens the refactoring history"/>
   <commands xmi:id="org.eclipse.ui.ide.copyBuildIdCommand" id="org.eclipse.ui.ide.copyBuildIdCommand" commandName="Copy Build Id To Clipboard" description="Copies the build id to the clipboard."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.select.last" id="org.eclipse.wst.jsdt.ui.edit.text.java.select.last" commandName="Restore Last Selection" description="Restore last selection"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.sync" id="org.eclipse.team.cvs.ui.sync" commandName="Synchronize with Repository" description="Synchronize the workspace resources with those in the repository"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.branch" id="org.eclipse.team.cvs.ui.branch" commandName="Branch" description="Branch"/>
   <commands xmi:id="org.eclipse.ui.edit.text.recenter" id="org.eclipse.ui.edit.text.recenter" commandName="Recenter" description="Recenter the window based on the cursor"/>
-  <commands xmi:id="org.eclipse.wst.xsd.ui.refactor.makeElementGlobal" id="org.eclipse.wst.xsd.ui.refactor.makeElementGlobal" commandName="Make local element global" description="Promotes local element to global level and replaces its references"/>
   <commands xmi:id="org.eclipse.ui.edit.text.clear.mark" id="org.eclipse.ui.edit.text.clear.mark" commandName="Clear Mark" description="Clear the mark"/>
   <commands xmi:id="org.eclipse.ui.edit.findReplace" id="org.eclipse.ui.edit.findReplace" commandName="Find and Replace" description="Find and replace text"/>
   <commands xmi:id="org.eclipse.e4.ui.examples.legacy.workbench.reStyle" id="org.eclipse.e4.ui.examples.legacy.workbench.reStyle" commandName="ReStyle"/>
@@ -507,17 +452,13 @@
   <commands xmi:id="org.eclipse.team.cvs.ui.compareWithRemote" id="org.eclipse.team.cvs.ui.compareWithRemote" commandName="Compare With Latest from Repository" description="Compare with Content on CVS Server"/>
   <commands xmi:id="org.eclipse.ui.project.buildProject" id="org.eclipse.ui.project.buildProject" commandName="Build Project" description="Build the selected project"/>
   <commands xmi:id="org.eclipse.compare.copyLeftToRight" id="org.eclipse.compare.copyLeftToRight" commandName="Copy from Left to Right" description="Copy Current Change from Left to Right"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.toggle.comment" id="org.eclipse.wst.sse.ui.toggle.comment" commandName="Toggle Comment" description="Toggle Comment"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.breakpoint.properties" id="org.eclipse.jdt.debug.ui.breakpoint.properties" commandName="Java Breakpoint Properties" description="View and edit the properties for a given Java breakpoint"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.columnPrevious" id="org.eclipse.ui.edit.text.select.columnPrevious" commandName="Select Previous Column" description="Select the previous column"/>
   <commands xmi:id="org.eclipse.ui.editors.revisions.rendering.cycle" id="org.eclipse.ui.editors.revisions.rendering.cycle" commandName="Cycle Revision Coloring Mode" description="Cycles through the available coloring modes for revisions"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.goto.previous.member" id="org.eclipse.jdt.ui.edit.text.java.goto.previous.member" commandName="Go to Previous Member" description="Move the caret to the previous member of the compilation unit"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.select.next" id="org.eclipse.wst.jsdt.ui.edit.text.java.select.next" commandName="Select Next Element" description="Expand selection to include next sibling"/>
   <commands xmi:id="org.eclipse.jdt.ui.JavaPerspective" id="org.eclipse.jdt.ui.JavaPerspective" commandName="Java" description="Show the Java perspective"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.occurrences.in.file.quickMenu" id="org.eclipse.jdt.ui.edit.text.java.search.occurrences.in.file.quickMenu" commandName="Show Occurrences in File Quick Menu" description="Shows the Occurrences in File quick menu"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.navigate.gototype" id="org.eclipse.wst.jsdt.ui.navigate.gototype" commandName="Go to Type" description="Go to Type"/>
   <commands xmi:id="org.eclipse.ui.edit.copy" id="org.eclipse.ui.edit.copy" commandName="Copy" description="Copy the selection to the clipboard"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.promote.local.variable" id="org.eclipse.wst.jsdt.ui.edit.text.java.promote.local.variable" commandName="Convert Local Variable to Var" description="Convert a local variable to a var"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.extractLocal.assist" id="org.eclipse.jdt.ui.correction.extractLocal.assist" commandName="Quick Assist - Extract local variable (replace all occurrences)" description="Invokes quick assist and selects 'Extract local variable (replace all occurrences)'"/>
   <commands xmi:id="org.eclipse.ui.ide.deleteCompleted" id="org.eclipse.ui.ide.deleteCompleted" commandName="Delete Completed Tasks" description="Delete the tasks marked as completed"/>
   <commands xmi:id="org.eclipse.ui.window.showKeyAssist" id="org.eclipse.ui.window.showKeyAssist" commandName="Show Key Assist" description="Show the key assist dialog"/>
@@ -529,29 +470,19 @@
   <commands xmi:id="org.eclipse.ui.navigate.previousSubTab" id="org.eclipse.ui.navigate.previousSubTab" commandName="Previous Sub-Tab" description="Switch to the previous sub-tab"/>
   <commands xmi:id="org.eclipse.jdt.ui.refactor.migrate.jar" id="org.eclipse.jdt.ui.refactor.migrate.jar" commandName="Migrate JAR File" description="Migrate a JAR File to a new version"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.splitJoinVariableDeclaration.assist" id="org.eclipse.jdt.ui.correction.splitJoinVariableDeclaration.assist" commandName="Quick Assist - Split/Join variable declaration" description="Invokes quick assist and selects 'Split/Join variable declaration'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.clean.up" id="org.eclipse.wst.jsdt.ui.edit.text.java.clean.up" commandName="Clean Up" description="Solve problems and improve code style on selected resources"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.open.hierarchy" commandName="Quick Hierarchy" description="Show the quick hierarchy of the selected element"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.convert.anonymous.to.nested" id="org.eclipse.wst.jsdt.ui.edit.text.java.convert.anonymous.to.nested" commandName="Convert Anonymous Class to Nested" description="Convert an anonymous class to a nested class"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.surround.with.try.catch" id="org.eclipse.wst.jsdt.ui.edit.text.java.surround.with.try.catch" commandName="Surround with try/catch Block" description="Surround the selected text with a try/catch block"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.occurrences.in.file.quickMenu" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.occurrences.in.file.quickMenu" commandName="Show Occurrences in File Quick Menu" description="Shows the Occurrences in File quick menu"/>
   <commands xmi:id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run" id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run" commandName="Run Eclipse Application" description="Run Eclipse Application"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.lineEnd" id="org.eclipse.ui.edit.text.select.lineEnd" commandName="Select Line End" description="Select to the end of the line of text"/>
   <commands xmi:id="org.eclipse.ui.dialogs.openInputDialog" id="org.eclipse.ui.dialogs.openInputDialog" commandName="Open Input Dialog" description="Open an Input Dialog"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.comment" id="org.eclipse.wst.jsdt.ui.edit.text.java.comment" commandName="Comment" description="Turn the selected lines into JavaScript comments"/>
   <commands xmi:id="org.eclipse.e4.emf.javascript.ui.EditJavascriptCommand" id="org.eclipse.e4.emf.javascript.ui.EditJavascriptCommand" commandName="Edit Javascript for Selected EObject"/>
   <commands xmi:id="org.eclipse.ui.edit.text.set.mark" id="org.eclipse.ui.edit.text.set.mark" commandName="Set Mark" description="Set the mark"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.uncomment" id="org.eclipse.wst.jsdt.ui.edit.text.java.uncomment" commandName="Uncomment" description="Uncomment the selected JavaScript comment lines"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.StepInto" id="org.eclipse.debug.ui.commands.StepInto" commandName="Step Into" description="Step into"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.GenerateDiff" id="org.eclipse.team.cvs.ui.GenerateDiff" commandName="Create Patch" description="Compare your workspace contents with the server and generate a diff file that can be used as a patch file."/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.windowStart" id="org.eclipse.ui.edit.text.select.windowStart" commandName="Select Window Start" description="Select to the start of the window"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.extractLocal.assist" id="org.eclipse.wst.jsdt.ui.correction.extractLocal.assist" commandName="Quick Assist - Extract local variable" description="Invokes quick assist and selects 'Extract local variable'"/>
-  <commands xmi:id="org.eclipse.wst.xsd.ui.refactor.rename.element" id="org.eclipse.wst.xsd.ui.refactor.rename.element" commandName="Rename XSD element" description="Rename XSD element"/>
   <commands xmi:id="org.eclipse.jdt.junit.junitShortcut.run" id="org.eclipse.jdt.junit.junitShortcut.run" commandName="Run JUnit Test" description="Run JUnit Test"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.select.previous" id="org.eclipse.jdt.ui.edit.text.java.select.previous" commandName="Select Previous Element" description="Expand selection to include previous sibling"/>
   <commands xmi:id="org.eclipse.ui.edit.text.cut.line.to.end" id="org.eclipse.ui.edit.text.cut.line.to.end" commandName="Cut to End of Line" description="Cut to the end of a line of text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addCast" id="org.eclipse.wst.jsdt.ui.correction.addCast" commandName="Quick Fix - Add cast" description="Invokes quick assist and selects 'Add cast'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.pageDown" id="org.eclipse.ui.edit.text.select.pageDown" commandName="Select Page Down" description="Select to the bottom of the page"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.correction.assist.proposals" id="org.eclipse.wst.jsdt.ui.edit.text.java.correction.assist.proposals" commandName="Quick Fix"/>
   <commands xmi:id="org.eclipse.ui.cheatsheets.openCheatSheetURL" id="org.eclipse.ui.cheatsheets.openCheatSheetURL" commandName="Open Cheat Sheet from URL" description="Open a Cheat Sheet from file at a specified URL."/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy" commandName="Open Call Hierarchy" description="Open a call hierarchy on the selected element"/>
   <commands xmi:id="org.eclipse.ui.project.buildAutomatically" id="org.eclipse.ui.project.buildAutomatically" commandName="Build Automatically" description="Toggle the workspace build automatically function"/>
@@ -559,38 +490,25 @@
   <commands xmi:id="org.eclipse.ui.part.previousPage" id="org.eclipse.ui.part.previousPage" commandName="Previous Page" description="Switch to the previous page"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.project" id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.project" commandName="Declaration in Project" description="Search for declarations of the selected element in the enclosing project"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.clean.up" id="org.eclipse.jdt.ui.edit.text.java.clean.up" commandName="Clean Up" description="Solve problems and improve code style on selected resources"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.format" id="org.eclipse.wst.jsdt.ui.edit.text.java.format" commandName="Format" description="Format the selected text"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.OpenRunConfigurations" id="org.eclipse.debug.ui.commands.OpenRunConfigurations" commandName="Run..." description="Open run launch configuration dialog"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.select.previous" id="org.eclipse.wst.jsdt.ui.edit.text.java.select.previous" commandName="Select Previous Element" description="Expand selection to include previous sibling"/>
   <commands xmi:id="org.eclipse.ui.edit.text.folding.toggle" id="org.eclipse.ui.edit.text.folding.toggle" commandName="Toggle Folding" description="Toggles folding in the current editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.navigate.java.open.structure" id="org.eclipse.wst.jsdt.ui.navigate.java.open.structure" commandName="Open Structure" description="Show the structure of the selected element"/>
   <commands xmi:id="org.eclipse.ui.project.openProject" id="org.eclipse.ui.project.openProject" commandName="Open Project" description="Open a project"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb" id="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb" commandName="Toggle Java Editor Breadcrumb" description="Toggle the Java editor breadcrumb"/>
   <commands xmi:id="org.eclipse.ui.project.closeUnrelatedProjects" id="org.eclipse.ui.project.closeUnrelatedProjects" commandName="Close Unrelated Projects" description="Close unrelated projects"/>
   <commands xmi:id="org.eclipse.ui.edit.text.cut.line.to.beginning" id="org.eclipse.ui.edit.text.cut.line.to.beginning" commandName="Cut to Beginning of Line" description="Cut to the beginning of a line of text"/>
   <commands xmi:id="org.eclipse.ui.window.maximizePart" id="org.eclipse.ui.window.maximizePart" commandName="Maximize Active View or Editor" description="Toggles maximize/restore state of active view or editor"/>
   <commands xmi:id="org.eclipse.team.ui.applyPatch" id="org.eclipse.team.ui.applyPatch" commandName="Apply Patch..." description="Apply a patch to one or more workspace projects."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.show.outline" id="org.eclipse.wst.jsdt.ui.edit.text.java.show.outline" commandName="Quick Outline" description="Show the quick outline for the editor input"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.add.import" id="org.eclipse.wst.jsdt.ui.edit.text.java.add.import" commandName="Add Import" description="Create import statement on selection"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.SkipAllBreakpoints" id="org.eclipse.debug.ui.commands.SkipAllBreakpoints" commandName="Skip All Breakpoints" description="Sets whether or not any breakpoint should suspend execution"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.JavaPerspective" id="org.eclipse.wst.jsdt.ui.JavaPerspective" commandName="JavaScript" description="Show the JavaScript perspective"/>
   <commands xmi:id="org.eclipse.ui.views.properties.NewPropertySheetCommand" id="org.eclipse.ui.views.properties.NewPropertySheetCommand" commandName="Properties"/>
   <commands xmi:id="org.eclipse.ui.file.saveAs" id="org.eclipse.ui.file.saveAs" commandName="Save As" description="Save the current contents to another location"/>
   <commands xmi:id="org.eclipse.ui.edit.text.hippieCompletion" id="org.eclipse.ui.edit.text.hippieCompletion" commandName="Word Completion" description="Context insensitive completion"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.workspace" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.workspace" commandName="Write Access in Workspace" description="Search for write references to the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.compare.copyAllLeftToRight" id="org.eclipse.compare.copyAllLeftToRight" commandName="Copy All from Left to Right" description="Copy All Changes from Left to Right"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.indirection" id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.indirection" commandName="Introduce Indirection" description="Introduce an indirection to encapsulate invocations of a selected function"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.generate.xml" id="org.eclipse.wst.sse.ui.generate.xml" commandName="XML File..."/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.changeToStatic" id="org.eclipse.jdt.ui.correction.changeToStatic" commandName="Quick Fix - Change to static access" description="Invokes quick assist and selects 'Change to static access'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.find.broken.nls.keys" id="org.eclipse.wst.jsdt.ui.edit.text.java.find.broken.nls.keys" commandName="Find Broken Externalized Strings" description="Finds undefined, duplicate and unused externalized string keys in property files"/>
   <commands xmi:id="org.eclipse.jdt.junit.gotoTest" id="org.eclipse.jdt.junit.gotoTest" commandName="Referring Tests" description="Referring Tests"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.RemoveAllBreakpoints" id="org.eclipse.debug.ui.commands.RemoveAllBreakpoints" commandName="Remove All Breakpoints" description="Removes all breakpoints"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.externalize.strings" id="org.eclipse.jdt.ui.edit.text.java.externalize.strings" commandName="Externalize Strings" description="Finds all strings that are not externalized and moves them into a separate property file"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.structure.select.last" id="org.eclipse.wst.sse.ui.structure.select.last" commandName="Restore Last Selection" description="Restore last selection"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.rename.element" id="org.eclipse.jdt.ui.edit.text.java.rename.element" commandName="Rename - Refactoring " description="Rename the selected element"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.organize.imports" id="org.eclipse.wst.jsdt.ui.edit.text.java.organize.imports" commandName="Organize Imports" description="Evaluate all required imports and replace the current imports"/>
   <commands xmi:id="org.eclipse.search.ui.performTextSearchProject" id="org.eclipse.search.ui.performTextSearchProject" commandName="Find Text in Project" description="Searches the files in the project for specific text."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.SourceView" id="org.eclipse.wst.jsdt.ui.SourceView" commandName="JavaScript Declaration" description="Show the Declaration view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project" id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project" commandName="Read Access in Project" description="Search for read references to the selected element in the enclosing project"/>
   <commands xmi:id="org.eclipse.ui.navigate.selectWorkingSets" id="org.eclipse.ui.navigate.selectWorkingSets" commandName="Select Working Sets" description="Select the working sets that are applicable for this window."/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.source.quickMenu" id="org.eclipse.jdt.ui.edit.text.java.source.quickMenu" commandName="Show Source Quick Menu" description="Shows the source quick menu"/>
@@ -598,38 +516,28 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.move.element" id="org.eclipse.jdt.ui.edit.text.java.move.element" commandName="Move - Refactoring " description="Move the selected element to a new location"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.modify.method.parameters" id="org.eclipse.jdt.ui.edit.text.java.modify.method.parameters" commandName="Change Method Signature" description="Change method signature includes parameter names and parameter order"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactor.create.refactoring.script" id="org.eclipse.ltk.ui.refactor.create.refactoring.script" commandName="Create Script" description="Create a refactoring script from refactorings on the local workspace"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.self.encapsulate.field" id="org.eclipse.wst.jsdt.ui.edit.text.java.self.encapsulate.field" commandName="Encapsulate Var" description="Create getting and setting functions for the var and use only those to access the var"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.replaceWithBase" id="org.eclipse.team.cvs.ui.replaceWithBase" commandName="Revert to Base" description="Revert to Base revisions"/>
   <commands xmi:id="org.eclipse.compare.compareWithOther" id="org.eclipse.compare.compareWithOther" commandName="Compare With Other Resource" description="Compare resources, clipboard contents or editors"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.remove.occurrence.annotations" id="org.eclipse.jdt.ui.edit.text.remove.occurrence.annotations" commandName="Remove Occurrence Annotations" description="Removes the occurrence annotations from the current editor"/>
   <commands xmi:id="org.eclipse.ui.project.cleanAction" id="org.eclipse.ui.project.cleanAction" commandName="Build Clean" description="Discard old built state"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.hierarchy" commandName="Read Access in Hierarchy" description="Search for read references of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.ui.edit.text.folding.collapse_all" id="org.eclipse.ui.edit.text.folding.collapse_all" commandName="Collapse All" description="Collapses all folded regions"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.comment" id="org.eclipse.jdt.ui.edit.text.java.comment" commandName="Comment" description="Turn the selected lines into Java comments"/>
   <commands xmi:id="org.eclipse.ui.navigate.next" id="org.eclipse.ui.navigate.next" commandName="Next" description="Navigate to the next item"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.goto.matching.bracket" id="org.eclipse.jdt.ui.edit.text.java.goto.matching.bracket" commandName="Go to Matching Bracket" description="Moves the cursor to the matching bracket"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.specific_content_assist.command" id="org.eclipse.wst.jsdt.ui.specific_content_assist.command" commandName="Content Assist" description="A parameterizable command that invokes content assist with a single completion proposal category"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.refactor.migrate.jar" id="org.eclipse.wst.jsdt.ui.refactor.migrate.jar" commandName="Migrate JAR File" description="Migrate a JAR File to a new version"/>
   <commands xmi:id="org.eclipse.compare.selectNextChange" id="org.eclipse.compare.selectNextChange" commandName="Select Next Change" description="Select Next Change"/>
   <commands xmi:id="org.eclipse.ui.project.closeProject" id="org.eclipse.ui.project.closeProject" commandName="Close Project" description="Close the selected project"/>
   <commands xmi:id="org.eclipse.ui.file.openWorkspace" id="org.eclipse.ui.file.openWorkspace" commandName="Switch Workspace" description="Open the workspace selection dialog"/>
   <commands xmi:id="org.eclipse.ui.cheatsheets.openCheatSheet" id="org.eclipse.ui.cheatsheets.openCheatSheet" commandName="Open Cheat Sheet" description="Open a Cheat Sheet."/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace" id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace" commandName="Read Access in Workspace" description="Search for read references to the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.ui.edit.text.lowerCase" id="org.eclipse.ui.edit.text.lowerCase" commandName="To Lower Case" description="Changes the selection to lower case"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.indent" id="org.eclipse.wst.jsdt.ui.edit.text.java.indent" commandName="Indent Line" description="Indents the current line"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.local.variable" id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.local.variable" commandName="Extract Local Variable" description="Extracts an expression into a new local variable and uses the new local variable"/>
   <commands xmi:id="org.eclipse.equinox.p2.ui.sdk.install" id="org.eclipse.equinox.p2.ui.sdk.install" commandName="Install New Software..."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.commands.showElementInTypeHierarchyView" id="org.eclipse.wst.jsdt.ui.commands.showElementInTypeHierarchyView" commandName="Show JavaScript Element Type Hierarchy" description="Show a JavaScript element in the Type Hierarchy view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.editor" id="org.eclipse.jdt.ui.edit.text.java.open.editor" commandName="Open Declaration" description="Open an editor on the selected element"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.lineDown" id="org.eclipse.ui.edit.text.goto.lineDown" commandName="Line Down" description="Go down one line of text"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.structure.select.next" id="org.eclipse.wst.sse.ui.structure.select.next" commandName="Select Next Element" description="Expand selection to include next sibling"/>
   <commands xmi:id="org.eclipse.ant.ui.antShortcut.run" id="org.eclipse.ant.ui.antShortcut.run" commandName="Run Ant Build" description="Run Ant Build"/>
   <commands xmi:id="org.eclipse.ui.edit.addTask" id="org.eclipse.ui.edit.addTask" commandName="Add Task..." description="Add a task"/>
   <commands xmi:id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" commandName="Show Selected Element Only" description="Show Selected Element Only"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.remove.block.comment" id="org.eclipse.wst.jsdt.ui.edit.text.java.remove.block.comment" commandName="Remove Block Comment" description="Remove the block comment enclosing the selection"/>
   <commands xmi:id="org.eclipse.ui.file.print" id="org.eclipse.ui.file.print" commandName="Print" description="Print"/>
   <commands xmi:id="org.eclipse.ui.edit.findPrevious" id="org.eclipse.ui.edit.findPrevious" commandName="Find Previous" description="Find previous item"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.assignToField.assist" id="org.eclipse.wst.jsdt.ui.correction.assignToField.assist" commandName="Quick Assist - Assign to var" description="Invokes quick assist and selects 'Assign to var'"/>
   <commands xmi:id="org.eclipse.ui.navigate.showInQuickMenu" id="org.eclipse.ui.navigate.showInQuickMenu" commandName="Show In..." description="Open the Show In menu"/>
   <commands xmi:id="org.eclipse.debug.ui.actions.WatchCommand" id="org.eclipse.debug.ui.actions.WatchCommand" commandName="Watch"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.implementation" id="org.eclipse.jdt.ui.edit.text.java.open.implementation" commandName="Open Implementation" description="Opens the Implementations of a method in its hierarchy"/>
@@ -642,23 +550,18 @@
   <commands xmi:id="org.eclipse.ui.edit.text.swap.mark" id="org.eclipse.ui.edit.text.swap.mark" commandName="Swap Mark" description="Swap the mark with the cursor position"/>
   <commands xmi:id="org.eclipse.ui.editors.quickdiff.revertLine" id="org.eclipse.ui.editors.quickdiff.revertLine" commandName="Revert Line" description="Revert the current line"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactor.apply.refactoring.script" id="org.eclipse.ltk.ui.refactor.apply.refactoring.script" commandName="Apply Script" description="Perform refactorings from a refactoring script on the local workspace"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.interface" id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.interface" commandName="Extract Interface" description="Extract a set of members into a new interface and try to use the new interface"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.replaceWithTag" id="org.eclipse.team.cvs.ui.replaceWithTag" commandName="Replace With Another Branch or Version" description="Replace with Branch or Version on the CVS Server"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.add.unimplemented.constructors" id="org.eclipse.wst.jsdt.ui.edit.text.java.add.unimplemented.constructors" commandName="Generate Constructors from Superclass" description="Evaluate and add constructors from superclass"/>
   <commands xmi:id="org.eclipse.ui.navigate.up" id="org.eclipse.ui.navigate.up" commandName="Up" description="Navigate up one level"/>
   <commands xmi:id="org.eclipse.ui.update.findAndInstallUpdates" id="org.eclipse.ui.update.findAndInstallUpdates" commandName="Find and Install Updates" description="Open the feature install and update dialog"/>
   <commands xmi:id="org.eclipse.ui.edit.text.copyLineDown" id="org.eclipse.ui.edit.text.copyLineDown" commandName="Copy Lines" description="Duplicates the selected lines and moves the selection to the copy"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy" commandName="Write Access in Hierarchy" description="Search for write references of the selected element in its hierarchy"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.PackagesView" id="org.eclipse.wst.jsdt.ui.PackagesView" commandName="JavaScript Folders" description="Show the Folders view"/>
   <commands xmi:id="org.eclipse.ui.project.buildLast" id="org.eclipse.ui.project.buildLast" commandName="Repeat Working Set Build" description="Repeat the last working set build"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.cvsPerspective" id="org.eclipse.team.cvs.ui.cvsPerspective" commandName="CVS Repository Exploring" description="Open the CVS Repository Exploring Perspective"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.RunLast" id="org.eclipse.debug.ui.commands.RunLast" commandName="Run Last Launched" description="Relaunch the last launch in run mode"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.generate.tostring" id="org.eclipse.jdt.ui.edit.text.java.generate.tostring" commandName="Generate toString()" description="Generates the toString() method for the type"/>
   <commands xmi:id="org.eclipse.ant.ui.antShortcut.debug" id="org.eclipse.ant.ui.antShortcut.debug" commandName="Debug Ant Build" description="Debug Ant Build"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.assignToLocal.assist" id="org.eclipse.wst.jsdt.ui.correction.assignToLocal.assist" commandName="Quick Assist - Assign to local variable" description="Invokes quick assist and selects 'Assign to local variable'"/>
   <commands xmi:id="org.eclipse.ui.file.save" id="org.eclipse.ui.file.save" commandName="Save" description="Save the current contents"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences" id="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences" commandName="Toggle Mark Occurrences" description="Toggles mark occurrences in Java editors"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.workspace" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.references.in.workspace" commandName="References in Workspace" description="Search for references to the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.ui.window.previousView" id="org.eclipse.ui.window.previousView" commandName="Previous View" description="Switch to the previous view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.workspace" id="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.workspace" commandName="Declaration in Workspace" description="Search for declarations of the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.extract.superclass" id="org.eclipse.jdt.ui.edit.text.java.extract.superclass" commandName="Extract Superclass" description="Extract a set of members into a new superclass and try to use the new superclass"/>
@@ -673,24 +576,19 @@
   <commands xmi:id="org.eclipse.ui.project.rebuildAll" id="org.eclipse.ui.project.rebuildAll" commandName="Rebuild All" description="Rebuild all projects"/>
   <commands xmi:id="org.eclipse.team.ui.TeamSynchronizingPerspective" id="org.eclipse.team.ui.TeamSynchronizingPerspective" commandName="Team Synchronizing" description="Open the Team Synchronizing Perspective"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.textStart" id="org.eclipse.ui.edit.text.select.textStart" commandName="Select Text Start" description="Select to the beginning of the text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.previous.member" id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.previous.member" commandName="Go to Previous Member" description="Move the caret to the previous member of the JavaScript file"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.project" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.project" commandName="Implementors in Project" description="Search for implementors of the selected interface in the enclosing project"/>
   <commands xmi:id="org.eclipse.ui.browser.openBrowser" id="org.eclipse.ui.browser.openBrowser" commandName="Open Browser" description="Opens the default web browser."/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.quick.format" id="org.eclipse.jdt.ui.edit.text.java.quick.format" commandName="Format Element" description="Format enclosing text element"/>
   <commands xmi:id="org.eclipse.pde.ui.addAllPluginsToJavaSearch" id="org.eclipse.pde.ui.addAllPluginsToJavaSearch" commandName="Add All Plug-ins to Java Search" description="Adds all plug-ins in the target platform to java search"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.javaAppletShortcut.run" id="org.eclipse.jdt.debug.ui.javaAppletShortcut.run" commandName="Run Java Applet" description="Run Java Applet"/>
   <commands xmi:id="org.eclipse.ui.navigate.showResourceByPath" id="org.eclipse.ui.navigate.showResourceByPath" commandName="Show Resource in Navigator" description="Show a resource in the Navigator given its path"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.organize.imports" id="org.eclipse.jdt.ui.edit.text.java.organize.imports" commandName="Organize Imports" description="Evaluate all required imports and replace the current imports"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.changeToStatic" id="org.eclipse.wst.jsdt.ui.correction.changeToStatic" commandName="Quick Fix - Change to static access" description="Invokes quick assist and selects 'Change to static access'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delete.line.to.end" id="org.eclipse.ui.edit.text.delete.line.to.end" commandName="Delete to End of Line" description="Delete to the end of a line of text"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.showHistory" id="org.eclipse.team.cvs.ui.showHistory" commandName="Show History" description="Show History"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.type.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.open.type.hierarchy" commandName="Open Type Hierarchy" description="Open a type hierarchy on the selected element"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.assignParamToField.assist" id="org.eclipse.wst.jsdt.ui.correction.assignParamToField.assist" commandName="Quick Assist - Assign parameter to var" description="Invokes quick assist and selects 'Assign parameter to var'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delimiter.macOS9" id="org.eclipse.ui.edit.text.delimiter.macOS9" commandName="Convert Line Delimiters to MacOS 9" description="Converts the line delimiters to MacOS 9"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.references.in.working.set" id="org.eclipse.jdt.ui.edit.text.java.search.references.in.working.set" commandName="References in Working Set" description="Search for references to the selected element in a working set"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.generate.constructor.using.fields" id="org.eclipse.jdt.ui.edit.text.java.generate.constructor.using.fields" commandName="Generate Constructor using Fields" description="Choose fields to initialize and constructor from superclass to call "/>
   <commands xmi:id="org.eclipse.ui.window.closePerspective" id="org.eclipse.ui.window.closePerspective" commandName="Close Perspective" description="Close the current perspective"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.splitJoinVariableDeclaration.assist" id="org.eclipse.wst.jsdt.ui.correction.splitJoinVariableDeclaration.assist" commandName="Quick Assist - Split/Join variable declaration" description="Invokes quick assist and selects 'Split/Join variable declaration'"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.infer.type.arguments" id="org.eclipse.jdt.ui.edit.text.java.infer.type.arguments" commandName="Infer Generic Type Arguments" description="Infer type arguments for references to generic classes and remove unnecessary casts"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.change.type" id="org.eclipse.jdt.ui.edit.text.java.change.type" commandName="Generalize Declared Type" description="Change the declaration of a selected variable to a more general type consistent with usage"/>
   <commands xmi:id="org.eclipse.ui.newWizard" id="org.eclipse.ui.newWizard" commandName="New" description="Open the New item wizard"/>
@@ -700,10 +598,7 @@
   <commands xmi:id="org.eclipse.team.cvs.ui.updateSwitch" id="org.eclipse.team.cvs.ui.updateSwitch" commandName="Switch to Another Branch or Version" description="Switch to Another Branch or Version"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.Terminate" id="org.eclipse.debug.ui.commands.Terminate" commandName="Terminate" description="Terminate"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.create.getter.setter" id="org.eclipse.jdt.ui.edit.text.java.create.getter.setter" commandName="Generate Getters and Setters" description="Generate Getter and Setter methods for type's fields"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.commands.openElementInEditor" id="org.eclipse.wst.jsdt.ui.commands.openElementInEditor" commandName="Open JavaScript Element" description="Open a JavaScript element in its editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.workspace" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.workspace" commandName="Implementors in Workspace" description="Search for implementors of the selected interface"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.extractConstant.assist" id="org.eclipse.jdt.ui.correction.extractConstant.assist" commandName="Quick Assist - Extract constant" description="Invokes quick assist and selects 'Extract constant'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.superclass" id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.superclass" commandName="Extract Superclass" description="Extract a set of members into a new superclass and try to use the new superclass"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.move.inner.to.top.level" id="org.eclipse.jdt.ui.edit.text.java.move.inner.to.top.level" commandName="Convert Member Type to Top Level" description="Convert member type to top level"/>
   <commands xmi:id="org.eclipse.ui.navigate.removeFromWorkingSet" id="org.eclipse.ui.navigate.removeFromWorkingSet" commandName="Remove From Working Set" description="Removes the selected object from a working set."/>
   <commands xmi:id="org.eclipse.debug.ui.commands.TerminateAndRelaunch" id="org.eclipse.debug.ui.commands.TerminateAndRelaunch" commandName="Terminate and Relaunch" description="Terminate and Relaunch"/>
@@ -713,7 +608,6 @@
   <commands xmi:id="org.eclipse.ui.navigate.previousTab" id="org.eclipse.ui.navigate.previousTab" commandName="Previous Tab" description="Switch to the previous tab"/>
   <commands xmi:id="org.eclipse.ui.edit.text.contentAssist.contextInformation" id="org.eclipse.ui.edit.text.contentAssist.contextInformation" commandName="Context Information" description="Show Context Information"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.format" id="org.eclipse.jdt.ui.edit.text.java.format" commandName="Format" description="Format the selected text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.copy.qualified.name" id="org.eclipse.wst.jsdt.ui.edit.text.java.copy.qualified.name" commandName="Copy Qualified Name" description="Copy a fully qualified name to the system clipboard"/>
   <commands xmi:id="org.eclipse.ui.file.newQuickMenu" id="org.eclipse.ui.file.newQuickMenu" commandName="New menu" description="Open the New menu"/>
   <commands xmi:id="org.eclipse.ui.update.manageConfiguration" id="org.eclipse.ui.update.manageConfiguration" commandName="Manage Configuration" description="Open the product configuration dialog"/>
   <commands xmi:id="org.eclipse.ui.edit.redo" id="org.eclipse.ui.edit.redo" commandName="Redo" description="Redo the last operation"/>
@@ -721,24 +615,18 @@
   <commands xmi:id="org.eclipse.ui.window.preferences" id="org.eclipse.ui.window.preferences" commandName="Preferences" description="Open the preferences dialog"/>
   <commands xmi:id="org.eclipse.search.ui.performTextSearchWorkspace" id="org.eclipse.search.ui.performTextSearchWorkspace" commandName="Find Text in Workspace" description="Searches the files in the workspace for specific text."/>
   <commands xmi:id="org.eclipse.ui.ide.copyConfigCommand" id="org.eclipse.ui.ide.copyConfigCommand" commandName="Copy Configuration Data To Clipboard" description="Copies the configuration data (system properties, installed bundles, etc) to the clipboard."/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.search.find.occurrences" id="org.eclipse.wst.sse.ui.search.find.occurrences" commandName="Occurrences in File" description="Find occurrences of the selection in the file"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.merge" id="org.eclipse.team.cvs.ui.merge" commandName="Merge" description="Merge"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.wordPrevious" id="org.eclipse.ui.edit.text.select.wordPrevious" commandName="Select Previous Word" description="Select the previous word"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.next.member" id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.next.member" commandName="Go to Next Member" description="Move the caret to the next member of the JavaScript file"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals" id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals" commandName="Quick Fix" description="Suggest possible fixes for a problem"/>
   <commands xmi:id="org.eclipse.ui.window.activateEditor" id="org.eclipse.ui.window.activateEditor" commandName="Activate Editor" description="Activate the editor"/>
   <commands xmi:id="org.eclipse.ui.edit.text.openLocalFile" id="org.eclipse.ui.edit.text.openLocalFile" commandName="Open File..." description="Open a file"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.assignToField.assist" id="org.eclipse.jdt.ui.correction.assignToField.assist" commandName="Quick Assist - Assign to field" description="Invokes quick assist and selects 'Assign to field'"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.structure.select.previous" id="org.eclipse.wst.sse.ui.structure.select.previous" commandName="Select Previous Element" description="Expand selection to include previous sibling"/>
   <commands xmi:id="org.eclipse.ui.edit.text.moveLineUp" id="org.eclipse.ui.edit.text.moveLineUp" commandName="Move Lines Up" description="Moves the selected lines up"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.generate.javadoc" id="org.eclipse.wst.jsdt.ui.generate.javadoc" commandName="Generate JSDoc" description="Generates JSDoc for a selectable set of JavaScript resources"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.uncomment" id="org.eclipse.jdt.ui.edit.text.java.uncomment" commandName="Uncomment" description="Uncomment the selected Java comment lines"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.generate.constructor.using.fields" id="org.eclipse.wst.jsdt.ui.edit.text.java.generate.constructor.using.fields" commandName="Generate Constructor using Vars" description="Choose vars to initialize and constructor from superclass to call "/>
   <commands xmi:id="org.eclipse.debug.ui.commands.addMemoryMonitor" id="org.eclipse.debug.ui.commands.addMemoryMonitor" commandName="Add Memory Block" description="Add Memory block"/>
   <commands xmi:id="z.ex.check.genMenuBar" id="z.ex.check.genMenuBar" commandName="Gen Menu Bar"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.update" id="org.eclipse.team.cvs.ui.update" commandName="Update" description="Update resources with new content from the repository"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint" id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint" commandName="Add Class Load Breakpoint" description="Add a class load breakpoint"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.extractConstant.assist" id="org.eclipse.wst.jsdt.ui.correction.extractConstant.assist" commandName="Quick Assist - Extract constant" description="Invokes quick assist and selects 'Extract constant'"/>
   <commands xmi:id="org.eclipse.gef.zoom_out" id="org.eclipse.gef.zoom_out" commandName="Zoom Out" description="Zoom Out"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.refactor.quickMenu" id="org.eclipse.jdt.ui.edit.text.java.refactor.quickMenu" commandName="Show Refactor Quick Menu" description="Shows the refactor quick menu"/>
   <commands xmi:id="org.eclipse.ui.file.properties" id="org.eclipse.ui.file.properties" commandName="Properties" description="Display the properties of the selected item"/>
@@ -746,53 +634,35 @@
   <commands xmi:id="org.eclipse.ui.edit.text.contentAssist.proposals" id="org.eclipse.ui.edit.text.contentAssist.proposals" commandName="Content Assist" description="Content Assist"/>
   <commands xmi:id="org.eclipse.ui.navigate.back" id="org.eclipse.ui.navigate.back" commandName="Back" description="Navigate back"/>
   <commands xmi:id="org.eclipse.ui.edit.text.smartEnterInverse" id="org.eclipse.ui.edit.text.smartEnterInverse" commandName="Insert Line Above Current Line" description="Adds a new line above the current line"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addBlock.assist" id="org.eclipse.wst.jsdt.ui.correction.addBlock.assist" commandName="Quick Assist - Replace statement with block" description="Invokes quick assist and selects 'Replace statement with block'"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.add.block.comment" id="org.eclipse.wst.sse.ui.add.block.comment" commandName="Add Block Comment" description="Add Block Comment"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.replaceWithRevision" id="org.eclipse.team.cvs.ui.replaceWithRevision" commandName="Replace With Revision" description="Replace with Revision on CVS Server"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.refactor.create.refactoring.script" id="org.eclipse.wst.jsdt.ui.refactor.create.refactoring.script" commandName="Create Script" description="Create a refactoring script from refactorings on the local workspace"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.sort.members" id="org.eclipse.wst.jsdt.ui.edit.text.java.sort.members" commandName="Sort Members" description="Sort all members using the member order preference"/>
   <commands xmi:id="org.eclipse.ui.help.helpSearch" id="org.eclipse.ui.help.helpSearch" commandName="Help Search" description="Open the help search"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.tag" id="org.eclipse.team.cvs.ui.tag" commandName="Tag as Version" description="Tag the resources with a CVS version tag"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.TypeHierarchy" id="org.eclipse.wst.jsdt.ui.TypeHierarchy" commandName="JavaScript Type Hierarchy" description="Show the Type Hierarchy view"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.format.active.elements" id="org.eclipse.wst.sse.ui.format.active.elements" commandName="Format Active Elements" description="Format active elements"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.surround.with.quickMenu" id="org.eclipse.jdt.ui.edit.text.java.surround.with.quickMenu" commandName="Surround With Quick Menu" description="Shows the Surround With quick menu"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.inline" id="org.eclipse.wst.jsdt.ui.edit.text.java.inline" commandName="Inline" description="Inline a constant, local variable or function"/>
   <commands xmi:id="org.eclipse.compare.selectPreviousChange" id="org.eclipse.compare.selectPreviousChange" commandName="Select Previous Change" description="Select Previous Change"/>
   <commands xmi:id="org.eclipse.jdt.ui.JavaHierarchyPerspective" id="org.eclipse.jdt.ui.JavaHierarchyPerspective" commandName="Java Type Hierarchy" description="Show the Java Type Hierarchy perspective"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.eof" id="org.eclipse.debug.ui.commands.eof" commandName="EOF" description="Send end of file"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.Resume" id="org.eclipse.debug.ui.commands.Resume" commandName="Resume" description="Resume"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.inlineLocal.assist" id="org.eclipse.wst.jsdt.ui.correction.inlineLocal.assist" commandName="Quick Assist - Inline local variable" description="Invokes quick assist and selects 'Inline local variable'"/>
   <commands xmi:id="org.eclipse.gef.ui.palette_view" id="org.eclipse.gef.ui.palette_view" commandName="Palette"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.assignToLocal.assist" id="org.eclipse.jdt.ui.correction.assignToLocal.assist" commandName="Quick Assist - Assign to local variable" description="Invokes quick assist and selects 'Assign to local variable'"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.extract.interface" id="org.eclipse.jdt.ui.edit.text.java.extract.interface" commandName="Extract Interface" description="Extract a set of members into a new interface and try to use the new interface"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.convertLocalToField.assist" id="org.eclipse.wst.jsdt.ui.correction.convertLocalToField.assist" commandName="Quick Assist - Convert local variable to var" description="Invokes quick assist and selects 'Convert local variable to var'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.constant" id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.constant" commandName="Extract Constant" description="Extracts a constant into a new static var and uses the new static var"/>
   <commands xmi:id="org.eclipse.ui.window.nextEditor" id="org.eclipse.ui.window.nextEditor" commandName="Next Editor" description="Switch to the next editor"/>
   <commands xmi:id="org.eclipse.ui.help.helpContents" id="org.eclipse.ui.help.helpContents" commandName="Help Contents" description="Open the help contents"/>
   <commands xmi:id="org.eclipse.ui.editors.revisions.id.toggle" id="org.eclipse.ui.editors.revisions.id.toggle" commandName="Toggle Revision Id Display" description="Toggles the display of the revision id"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.lineDown" id="org.eclipse.ui.edit.text.select.lineDown" commandName="Select Line Down" description="Extend the selection to the next line of text"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.commit" id="org.eclipse.team.cvs.ui.commit" commandName="Commit" description="Commit resources to the repository"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.refactor.quickMenu" id="org.eclipse.wst.jsdt.ui.edit.text.java.refactor.quickMenu" commandName="Show Refactor Quick Menu" description="Shows the refactor quick menu"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.indent" id="org.eclipse.jdt.ui.edit.text.java.indent" commandName="Correct Indentation" description="Corrects the indentation of the selected lines"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.toggle.comment" id="org.eclipse.wst.jsdt.ui.edit.text.java.toggle.comment" commandName="Toggle Comment" description="Toggle comment the selected lines"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.textEnd" id="org.eclipse.ui.edit.text.goto.textEnd" commandName="Text End" description="Go to the end of the text"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.textStart" id="org.eclipse.ui.edit.text.goto.textStart" commandName="Text Start" description="Go to the beginning of the text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.add.javadoc.comment" id="org.eclipse.wst.jsdt.ui.edit.text.java.add.javadoc.comment" commandName="Add JSDoc Comment" description="Add a JSDoc comment stub to the member element"/>
   <commands xmi:id="org.eclipse.ui.edit.paste" id="org.eclipse.ui.edit.paste" commandName="Paste" description="Paste from the clipboard"/>
   <commands xmi:id="org.eclipse.ui.file.restartWorkbench" id="org.eclipse.ui.file.restartWorkbench" commandName="Restart" description="Restart the workbench"/>
   <commands xmi:id="org.eclipse.ui.window.lockToolBar" id="org.eclipse.ui.window.lockToolBar" commandName="Lock the Toolbars" description="Lock the Toolbars"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.localJavaShortcut.debug" id="org.eclipse.jdt.debug.ui.localJavaShortcut.debug" commandName="Debug Java Application" description="Debug Java Application"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.workspace" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.workspace" commandName="Read Access in Workspace" description="Search for read references to the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.ui.ide.configureFilters" id="org.eclipse.ui.ide.configureFilters" commandName="Configure Contents..." description="Configure the filters to apply to the markers view"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.project" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.project" commandName="Declaration in Project" description="Search for declarations of the selected element in the enclosing project"/>
   <commands xmi:id="org.eclipse.ui.window.minimizePart" id="org.eclipse.ui.window.minimizePart" commandName="Minimize Active View or Editor" description="Minimizes the active view or editor"/>
   <commands xmi:id="org.eclipse.ui.edit.findNext" id="org.eclipse.ui.edit.findNext" commandName="Find Next" description="Find next item"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.JavaBrowsingPerspective" id="org.eclipse.wst.jsdt.ui.JavaBrowsingPerspective" commandName="JavaScript Browsing" description="Show the JavaScript Browsing perspective"/>
   <commands xmi:id="org.eclipse.ui.edit.text.showChangeRulerInformation" id="org.eclipse.ui.edit.text.showChangeRulerInformation" commandName="Show Quick Diff Ruler Tooltip" description="Displays quick diff or revision information for the caret line in a focused hover"/>
   <commands xmi:id="org.eclipse.ui.edit.text.copyLineUp" id="org.eclipse.ui.edit.text.copyLineUp" commandName="Duplicate Lines" description="Duplicates the selected lines and leaves the selection unchanged"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.navigate.open.type.in.hierarchy" id="org.eclipse.wst.jsdt.ui.navigate.open.type.in.hierarchy" commandName="Open Type in Hierarchy" description="Open a type in the type hierarchy view"/>
   <commands xmi:id="org.eclipse.ui.part.nextPage" id="org.eclipse.ui.part.nextPage" commandName="Next Page" description="Switch to the next page"/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.reload.dependecies" id="org.eclipse.wst.xml.ui.reload.dependecies" commandName="Reload Dependencies" description="Reload Dependencies"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set" id="org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set" commandName="Read Access in Working Set" description="Search for read references to the selected element in a working set"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.RunToLine" id="org.eclipse.debug.ui.commands.RunToLine" commandName="Run to Line" description="Resume and break when execution reaches the current line"/>
   <commands xmi:id="org.eclipse.ui.edit.delete" id="org.eclipse.ui.edit.delete" commandName="Delete" description="Delete the selection"/>
@@ -803,51 +673,36 @@
   <commands xmi:id="org.eclipse.ui.edit.text.goto.wordNext" id="org.eclipse.ui.edit.text.goto.wordNext" commandName="Next Word" description="Go to the next word"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.ToggleStepFilters" id="org.eclipse.debug.ui.commands.ToggleStepFilters" commandName="Use Step Filters" description="Toggles enablement of debug step filters"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.folding.collapseMembers" id="org.eclipse.jdt.ui.edit.text.java.folding.collapseMembers" commandName="Collapse Members" description="Collapse all members"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.move.inner.to.top.level" id="org.eclipse.wst.jsdt.ui.edit.text.java.move.inner.to.top.level" commandName="Convert Member Type to Top Level" description="Convert member type to top level"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.introduce.parameter.object" id="org.eclipse.jdt.ui.edit.text.java.introduce.parameter.object" commandName="Introduce Parameter Object" description="Introduce a parameter object to a selected method"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.DiffCommand" id="org.eclipse.core.resources.semantic.ui.DiffCommand" commandName="Diff"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.windowStart" id="org.eclipse.ui.edit.text.goto.windowStart" commandName="Window Start" description="Go to the start of the window"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.TypesView" id="org.eclipse.wst.jsdt.ui.TypesView" commandName="JavaScript Types" description="Show the Types view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.use.supertype" id="org.eclipse.jdt.ui.edit.text.java.use.supertype" commandName="Use Supertype Where Possible" description="Change occurrences of a type to use a supertype instead"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.RemoteHistoryCommand" id="org.eclipse.core.resources.semantic.ui.RemoteHistoryCommand" commandName="Remote History"/>
   <commands xmi:id="org.eclipse.help.ui.indexcommand" id="org.eclipse.help.ui.indexcommand" commandName="Index" description="Show Keyword Index"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.compareWithRevision" id="org.eclipse.team.cvs.ui.compareWithRevision" commandName="Compare With Revision" description="Compare with Revision on CVS Server"/>
   <commands xmi:id="org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst" id="org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst" commandName="Rerun JUnit Test - Failures First" description="Rerun JUnit Test - Failures First"/>
   <commands xmi:id="org.eclipse.jdt.ui.JavaBrowsingPerspective" id="org.eclipse.jdt.ui.JavaBrowsingPerspective" commandName="Java Browsing" description="Show the Java Browsing perspective"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.structure.select.enclosing" id="org.eclipse.wst.sse.ui.structure.select.enclosing" commandName="Select Enclosing Element" description="Expand selection to include enclosing element"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.lineStart" id="org.eclipse.ui.edit.text.select.lineStart" commandName="Select Line Start" description="Select to the beginning of the line of text"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.LockCommand" id="org.eclipse.core.resources.semantic.ui.LockCommand" commandName="Lock"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.show.in.package.view" id="org.eclipse.wst.jsdt.ui.edit.text.java.show.in.package.view" commandName="Show in Script Explorer" description="Show the selected element in the Script Explorer"/>
   <commands xmi:id="org.eclipse.ui.browser.openBundleResource" id="org.eclipse.ui.browser.openBundleResource" commandName="Open Resource in Browser" description="Opens a bundle resource in the default web browser."/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addSuppressWarnings" id="org.eclipse.wst.jsdt.ui.correction.addSuppressWarnings" commandName="Quick Fix - Add @SuppressWarnings" description="Invokes quick fix and selects 'Add @SuppressWarnings' "/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.implement.occurrences" id="org.eclipse.jdt.ui.edit.text.java.search.implement.occurrences" commandName="Search Implement Occurrences in File" description="Search for implement occurrences of a selected type"/>
   <commands xmi:id="org.eclipse.ui.edit.text.folding.expand" id="org.eclipse.ui.edit.text.folding.expand" commandName="Expand" description="Expands the folded region at the current selection"/>
   <commands xmi:id="org.eclipse.ui.edit.text.deletePreviousWord" id="org.eclipse.ui.edit.text.deletePreviousWord" commandName="Delete Previous Word" description="Delete the previous word"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.refactor.show.refactoring.history" id="org.eclipse.wst.jsdt.ui.refactor.show.refactoring.history" commandName="History..."/>
   <commands xmi:id="org.eclipse.ui.edit.text.toggleInsertMode" id="org.eclipse.ui.edit.text.toggleInsertMode" commandName="Toggle Insert Mode" description="Toggle insert mode"/>
   <commands xmi:id="org.eclipse.ui.help.aboutAction" id="org.eclipse.ui.help.aboutAction" commandName="About" description="Open the about dialog"/>
   <commands xmi:id="org.eclipse.ui.views.showView" id="org.eclipse.ui.views.showView" commandName="Show View" description="Shows a particular view"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.select.last" id="org.eclipse.jdt.ui.edit.text.java.select.last" commandName="Restore Last Selection" description="Restore last selection"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.working.set" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.working.set" commandName="Declaration in Working Set" description="Search for declarations of the selected element in a working set"/>
-  <commands xmi:id="org.eclipse.wst.xsd.ui.refactor.renameTargetNamespace" id="org.eclipse.wst.xsd.ui.refactor.renameTargetNamespace" commandName="Rename Target Namespace" description="Changes the target namespace of the schema"/>
   <commands xmi:id="org.eclipse.compare.copyRightToLeft" id="org.eclipse.compare.copyRightToLeft" commandName="Copy from Right to Left" description="Copy Current Change from Right to Left"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.extract.class" id="org.eclipse.jdt.ui.edit.text.java.extract.class" commandName="Extract Class..." description="Extracts fields into a new class"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.working.set" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.working.set" commandName="Read Access in Working Set" description="Search for read references to the selected element in a working set"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.method.exits" id="org.eclipse.jdt.ui.edit.text.java.search.method.exits" commandName="Search Method Exit Occurrences in File" description="Search for method exit occurrences of a selected return type"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.addThrowsDecl" id="org.eclipse.wst.jsdt.ui.correction.addThrowsDecl" commandName="Quick Fix - Add throws declaration" description="Invokes quick assist and selects 'Add throws declaration'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.delimiter.unix" id="org.eclipse.ui.edit.text.delimiter.unix" commandName="Convert Line Delimiters to Unix" description="Converts the line delimiters to Unix"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.parameter" id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.parameter" commandName="Introduce Parameter" description="Introduce a new function parameter based on the selected expression"/>
   <commands xmi:id="org.eclipse.jdt.ui.commands.showElementInPackageView" id="org.eclipse.jdt.ui.commands.showElementInPackageView" commandName="Show Java Element in Package Explorer" description="Select Java element in the Package Explorer view"/>
   <commands xmi:id="org.eclipse.jdt.ui.navigate.gotopackage" id="org.eclipse.jdt.ui.navigate.gotopackage" commandName="Go to Package" description="Go to Package"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.external.javadoc" id="org.eclipse.jdt.ui.edit.text.java.open.external.javadoc" commandName="Open Attached Javadoc" description="Open the attached Javadoc of the selected element in a browser"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.UnshareCommand" id="org.eclipse.core.resources.semantic.ui.UnshareCommand" commandName="Unshare"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.matching.bracket" id="org.eclipse.wst.jsdt.ui.edit.text.java.goto.matching.bracket" commandName="Go to Matching Bracket" description="Moves the cursor to the matching bracket"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.goto.next.member" id="org.eclipse.jdt.ui.edit.text.java.goto.next.member" commandName="Go to Next Member" description="Move the caret to the next member of the compilation unit"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.replace.invocations" id="org.eclipse.wst.jsdt.ui.edit.text.java.replace.invocations" commandName="Replace Invocations" description="Replace invocations of the selected function"/>
-  <commands xmi:id="org.eclipse.wst.xsd.ui.refactor.makeTypeGlobal" id="org.eclipse.wst.xsd.ui.refactor.makeTypeGlobal" commandName="Make anonymous type global" description="Promotes anonymous type to global level and replaces its references"/>
   <commands xmi:id="org.eclipse.ui.file.revert" id="org.eclipse.ui.file.revert" commandName="Revert" description="Revert to the last saved state"/>
   <commands xmi:id="org.eclipse.search.ui.performTextSearchFile" id="org.eclipse.search.ui.performTextSearchFile" commandName="Find Text in File" description="Searches the files in the file for specific text."/>
-  <commands xmi:id="org.eclipse.wst.xml.ui.nextSibling" id="org.eclipse.wst.xml.ui.nextSibling" commandName="Next Sibling" description="Go to Next Sibling"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.add" id="org.eclipse.team.cvs.ui.add" commandName="Add to Version Control" description="Add the Selected Resources to Version Control"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.Restart" id="org.eclipse.debug.ui.commands.Restart" commandName="Restart" description="Restart a process or debug target without terminating and re-launching"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactoring.commands.moveResources" id="org.eclipse.ltk.ui.refactoring.commands.moveResources" commandName="Move Resources" description="Move the selected resources and notify LTK participants."/>
@@ -855,17 +710,13 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace" id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace" commandName="Write Access in Workspace" description="Search for write references to the selected element in the workspace"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project" id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project" commandName="Write Access in Project" description="Search for write references to the selected element in the enclosing project"/>
   <commands xmi:id="org.eclipse.ant.ui.toggleMarkOccurrences" id="org.eclipse.ant.ui.toggleMarkOccurrences" commandName="Toggle Ant Mark Occurrences" description="Toggles mark occurrences in Ant editors"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.format" id="org.eclipse.wst.sse.ui.format" commandName="Format"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.move.element" id="org.eclipse.wst.jsdt.ui.edit.text.java.move.element" commandName="Move - Refactoring " description="Move the selected element to a new location"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.OpenProfileConfigurations" id="org.eclipse.debug.ui.commands.OpenProfileConfigurations" commandName="Profile..." description="Open profile launch configuration dialog"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.wordPrevious" id="org.eclipse.ui.edit.text.goto.wordPrevious" commandName="Previous Word" description="Go to the previous word"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.promote.local.variable" id="org.eclipse.jdt.ui.edit.text.java.promote.local.variable" commandName="Convert Local Variable to Field" description="Convert a local variable to a field"/>
   <commands xmi:id="org.eclipse.ui.ide.OpenMarkersView" id="org.eclipse.ui.ide.OpenMarkersView" commandName="Open Another" description="Open another view"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.replace" id="org.eclipse.team.cvs.ui.replace" commandName="Replace With Latest from Repository" description="Replace with last committed content from CVS Server"/>
   <commands xmi:id="org.eclipse.ui.dialogs.openMessageDialog" id="org.eclipse.ui.dialogs.openMessageDialog" commandName="Open Message Dialog" description="Open a Message Dialog"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.declarations.in.hierarchy" commandName="Declaration in Hierarchy" description="Search for declarations of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.ui.editors.lineNumberToggle" id="org.eclipse.ui.editors.lineNumberToggle" commandName="Show Line Numbers" description="Toggle display of line numbers"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.super.implementation" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.super.implementation" commandName="Open Super Implementation" description="Open the Implementation in the Super Type"/>
   <commands xmi:id="org.eclipse.ui.edit.cut" id="org.eclipse.ui.edit.cut" commandName="Cut" description="Cut the selection to the clipboard"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.AllInstances" id="org.eclipse.jdt.debug.ui.commands.AllInstances" commandName="All Instances" description="View all instances of the selected type loaded in the target VM"/>
   <commands xmi:id="org.eclipse.compare.ignoreWhiteSpace" id="org.eclipse.compare.ignoreWhiteSpace" commandName="Ignore White Space" description="Ignore white space where applicable"/>
@@ -873,80 +724,52 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.select.next" id="org.eclipse.jdt.ui.edit.text.java.select.next" commandName="Select Next Element" description="Expand selection to include next sibling"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane" id="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane" commandName="Toggle Memory Monitors Pane" description="Toggle visibility of the Memory Monitors Pane"/>
   <commands xmi:id="org.eclipse.ui.editors.revisions.author.toggle" id="org.eclipse.ui.editors.revisions.author.toggle" commandName="Toggle Revision Author Display" description="Toggles the display of the revision author"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.qualifyField" id="org.eclipse.wst.jsdt.ui.correction.qualifyField" commandName="Quick Fix - Qualify var access" description="Invokes quick assist and selects 'Qualify var access'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.surround.with.quickMenu" id="org.eclipse.wst.jsdt.ui.edit.text.java.surround.with.quickMenu" commandName="Surround With Quick Menu" description="Shows the Surround With quick menu"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.checkout" id="org.eclipse.team.cvs.ui.checkout" commandName="Checkout from CVS" description="Checkout from CVS"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.override.methods" id="org.eclipse.wst.jsdt.ui.edit.text.java.override.methods" commandName="Override/Implement Functions" description="Override or implement functions from super types"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.extractLocalNotReplaceOccurrences.assist" id="org.eclipse.jdt.ui.correction.extractLocalNotReplaceOccurrences.assist" commandName="Quick Assist - Extract local variable" description="Invokes quick assist and selects 'Extract local variable'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.showRulerContextMenu" id="org.eclipse.ui.edit.text.showRulerContextMenu" commandName="Show Ruler Context Menu" description="Show the context menu for the ruler"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.generate.hashcode.equals" id="org.eclipse.wst.jsdt.ui.edit.text.java.generate.hashcode.equals" commandName="Generate hashCode() and equals()" description="Generates hashCode() and equals() functions for the type"/>
   <commands xmi:id="org.eclipse.pde.runtime.spy.commands.menuSpyCommand" id="org.eclipse.pde.runtime.spy.commands.menuSpyCommand" commandName="Plug-in Menu Spy" description="Show the Plug-in Spy"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.commands.showElementInPackageView" id="org.eclipse.wst.jsdt.ui.commands.showElementInPackageView" commandName="Show JavaScript Element in Script Explorer" description="Select JavaScript element in the Script Explorer view"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.textEnd" id="org.eclipse.ui.edit.text.select.textEnd" commandName="Select Text End" description="Select to the end of the text"/>
   <commands xmi:id="org.eclipse.ui.edit.move" id="org.eclipse.ui.edit.move" commandName="Move..." description="Move the selected item"/>
   <commands xmi:id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar" commandName="Run Last Launched External Tool" description="Runs the last launched external Tool"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.method" id="org.eclipse.wst.jsdt.ui.edit.text.java.extract.method" commandName="Extract Function" description="Extract a set of statements or an expression into a new function and use the new function"/>
   <commands xmi:id="org.eclipse.debug.ui.commands.ToggleLineBreakpoint" id="org.eclipse.debug.ui.commands.ToggleLineBreakpoint" commandName="Toggle Line Breakpoint"/>
   <commands xmi:id="org.eclipse.ui.file.closeAll" id="org.eclipse.ui.file.closeAll" commandName="Close All" description="Close all editors"/>
   <commands xmi:id="org.eclipse.equinox.p2.ui.sdk.update" id="org.eclipse.equinox.p2.ui.sdk.update" commandName="Check for Updates"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.encapsulateField.assist" id="org.eclipse.jdt.ui.correction.encapsulateField.assist" commandName="Quick Assist - Create getter/setter for field" description="Invokes quick assist and selects 'Create getter/setter for field'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.smartEnter" id="org.eclipse.ui.edit.text.smartEnter" commandName="Insert Line Below Current Line" description="Adds a new line below the current line"/>
   <commands xmi:id="org.eclipse.ui.navigate.goInto" id="org.eclipse.ui.navigate.goInto" commandName="Go Into" description="Navigate into the selected item"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.infer.type.arguments" id="org.eclipse.wst.jsdt.ui.edit.text.java.infer.type.arguments" commandName="Infer Generic Type Arguments" description="Infer type arguments for references to generic classes and remove unnecessary casts"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.addImport" id="org.eclipse.jdt.ui.correction.addImport" commandName="Quick Fix - Add import" description="Invokes quick assist and selects 'Add import'"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.extract.constant" id="org.eclipse.jdt.ui.edit.text.java.extract.constant" commandName="Extract Constant" description="Extracts a constant into a new static field and uses the new static field"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.updateAll" id="org.eclipse.team.cvs.ui.updateAll" commandName="Update All Incoming Changes" description="Update all incoming changes with new content from the repository"/>
   <commands xmi:id="org.eclipse.core.resources.semantic.ui.RemoveCommand" id="org.eclipse.core.resources.semantic.ui.RemoveCommand" commandName="Remove From Workspace"/>
   <commands xmi:id="org.eclipse.ui.edit.text.scroll.lineDown" id="org.eclipse.ui.edit.text.scroll.lineDown" commandName="Scroll Line Down" description="Scroll down one line of text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.folding.collapseComments" id="org.eclipse.wst.jsdt.ui.edit.text.java.folding.collapseComments" commandName="Collapse Comments" description="Collapse all comments"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.create.getter.setter" id="org.eclipse.wst.jsdt.ui.edit.text.java.create.getter.setter" commandName="Generate Getters and Setters" description="Generate Getter and Setter functions for type's vars"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.working.set" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.write.access.in.working.set" commandName="Write Access in Working Set" description="Search for write references to the selected element in a working set"/>
   <commands xmi:id="sed.tabletree.collapseAll" id="sed.tabletree.collapseAll" commandName="Collapse All"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.PackageExplorer" id="org.eclipse.wst.jsdt.ui.PackageExplorer" commandName="JavaScript Script Explorer" description="Show the Script Explorer"/>
   <commands xmi:id="org.eclipse.ui.edit.text.shiftRight" id="org.eclipse.ui.edit.text.shiftRight" commandName="Shift Right" description="Shift a block of text to the right"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.convertAnonymousToLocal.assist" id="org.eclipse.wst.jsdt.ui.correction.convertAnonymousToLocal.assist" commandName="Quick Assist - Convert anonymous to local class" description="Invokes quick assist and selects 'Convert anonymous to local class'"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.references.in.hierarchy" id="org.eclipse.jdt.ui.edit.text.java.search.references.in.hierarchy" commandName="References in Hierarchy" description="Search for references of the selected element in its hierarchy"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.qualifyField" id="org.eclipse.jdt.ui.correction.qualifyField" commandName="Quick Fix - Qualify field access" description="Invokes quick assist and selects 'Qualify field access'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.deletePrevious" id="org.eclipse.ui.edit.text.deletePrevious" commandName="Delete Previous" description="Delete the previous character"/>
   <commands xmi:id="org.eclipse.ui.window.customizePerspective" id="org.eclipse.ui.window.customizePerspective" commandName="Customize Perspective" description="Customize the current perspective"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.columnNext" id="org.eclipse.ui.edit.text.goto.columnNext" commandName="Next Column" description="Go to the next column"/>
   <commands xmi:id="org.eclipse.ui.file.close" id="org.eclipse.ui.file.close" commandName="Close" description="Close the active editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.working.set" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implementors.in.working.set" commandName="Implementors in Working Set" description="Search for implementors of the selected interface in a working set"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.renameInFile.assist" id="org.eclipse.jdt.ui.correction.renameInFile.assist" commandName="Quick Assist - Rename in file" description="Invokes quick assist and selects 'Rename in file'"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.remove.block.comment" id="org.eclipse.wst.sse.ui.remove.block.comment" commandName="Remove Block Comment" description="Remove Block Comment"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.pull.up" id="org.eclipse.wst.jsdt.ui.edit.text.java.pull.up" commandName="Pull Up" description="Move members to a superclass"/>
   <commands xmi:id="org.eclipse.jdt.ui.navigate.open.type.in.hierarchy" id="org.eclipse.jdt.ui.navigate.open.type.in.hierarchy" commandName="Open Type in Hierarchy" description="Open a type in the type hierarchy view"/>
   <commands xmi:id="org.eclipse.ui.navigate.goToResource" id="org.eclipse.ui.navigate.goToResource" commandName="Go to" description="Go to a particular resource in the active view"/>
   <commands xmi:id="org.eclipse.compare.copyAllRightToLeft" id="org.eclipse.compare.copyAllRightToLeft" commandName="Copy All from Right to Left" description="Copy All Changes from Right to Left"/>
   <commands xmi:id="org.eclipse.ui.help.quickStartAction" id="org.eclipse.ui.help.quickStartAction" commandName="Welcome" description="Show help for beginning users"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.open.super.implementation" id="org.eclipse.jdt.ui.edit.text.java.open.super.implementation" commandName="Open Super Implementation" description="Open the Implementation in the Super Type"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.cleanup.document" id="org.eclipse.wst.sse.ui.cleanup.document" commandName="Cleanup Document..." description="Cleanup document"/>
   <commands xmi:id="org.eclipse.jdt.debug.ui.commands.Display" id="org.eclipse.jdt.debug.ui.commands.Display" commandName="Display" description="Display result of evaluating selected text"/>
   <commands xmi:id="org.eclipse.jdt.ui.navigate.open.type" id="org.eclipse.jdt.ui.navigate.open.type" commandName="Open Type" description="Open a type in a Java editor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.factory" id="org.eclipse.wst.jsdt.ui.edit.text.java.introduce.factory" commandName="Introduce Factory" description="Introduce a factory function to encapsulate invocation of the selected constructor"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.folding.collapseMembers" id="org.eclipse.wst.jsdt.ui.edit.text.java.folding.collapseMembers" commandName="Collapse Members" description="Collapse all members"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.toggleMarkOccurrences" id="org.eclipse.wst.jsdt.ui.edit.text.java.toggleMarkOccurrences" commandName="Toggle Mark Occurrences" description="Toggles mark occurrences in JavaScript editors"/>
   <commands xmi:id="org.eclipse.pde.ui.edit.text.format" id="org.eclipse.pde.ui.edit.text.format" commandName="Format Source" description="Format a PDE Source Page"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.project" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.read.access.in.project" commandName="Read Access in Project" description="Search for read references to the selected element in the enclosing project"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.lineStart" id="org.eclipse.ui.edit.text.goto.lineStart" commandName="Line Start" description="Go to the start of the line of text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.editor" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.editor" commandName="Open Declaration" description="Open an editor on the selected element"/>
   <commands xmi:id="org.eclipse.ui.file.closeOthers" id="org.eclipse.ui.file.closeOthers" commandName="Close Others" description="Close all editors except the one that is active"/>
   <commands xmi:id="org.eclipse.ui.edit.text.gotoLastEditPosition" id="org.eclipse.ui.edit.text.gotoLastEditPosition" commandName="Last Edit Location" description="Last edit location"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.navigate.gotopackage" id="org.eclipse.wst.jsdt.ui.navigate.gotopackage" commandName="Go to Folder" description="Go to Folder"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.correction.renameInFile.assist" id="org.eclipse.wst.jsdt.ui.correction.renameInFile.assist" commandName="Quick Assist - Rename in file" description="Invokes quick assist and selects 'Rename in file'"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implement.occurrences" id="org.eclipse.wst.jsdt.ui.edit.text.java.search.implement.occurrences" commandName="Search Implement Occurrences in File" description="Search for implement occurrences of a selected type"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.search.exception.occurrences" id="org.eclipse.jdt.ui.edit.text.java.search.exception.occurrences" commandName="Search Exception Occurrences in File" description="Search for exception occurrences of a selected exception type"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.line" id="org.eclipse.ui.edit.text.goto.line" commandName="Go to Line" description="Go to a specified line of text"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.add.block.comment" id="org.eclipse.wst.jsdt.ui.edit.text.java.add.block.comment" commandName="Add Block Comment" description="Enclose the selection with a block comment"/>
   <commands xmi:id="org.eclipse.ui.navigate.expandAll" id="org.eclipse.ui.navigate.expandAll" commandName="Expand All" description="Expand the current tree"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.hierarchy" commandName="Quick Hierarchy" description="Show the quick hierarchy of the selected element"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.self.encapsulate.field" id="org.eclipse.jdt.ui.edit.text.java.self.encapsulate.field" commandName="Encapsulate Field" description="Create getting and setting methods for the field and use only those to access the field"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.pageUp" id="org.eclipse.ui.edit.text.select.pageUp" commandName="Select Page Up" description="Select to the top of the page"/>
   <commands xmi:id="org.eclipse.ui.edit.rename" id="org.eclipse.ui.edit.rename" commandName="Rename" description="Rename the selected item"/>
   <commands xmi:id="org.eclipse.ui.navigate.nextSubTab" id="org.eclipse.ui.navigate.nextSubTab" commandName="Next Sub-Tab" description="Switch to the next sub-tab"/>
   <commands xmi:id="org.eclipse.ui.edit.text.deleteNext" id="org.eclipse.ui.edit.text.deleteNext" commandName="Delete Next" description="Delete the next character"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.open.call.hierarchy" id="org.eclipse.wst.jsdt.ui.edit.text.java.open.call.hierarchy" commandName="Open Call Hierarchy" description="Open a call hierarchy on the selected element"/>
-  <commands xmi:id="org.eclipse.wst.sse.ui.open.file.from.source" id="org.eclipse.wst.sse.ui.open.file.from.source" commandName="Open Selection" description="Open an editor on the selected link"/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.inline" id="org.eclipse.jdt.ui.edit.text.java.inline" commandName="Inline" description="Inline a constant, local variable or method"/>
   <commands xmi:id="org.eclipse.ui.edit.text.select.lineUp" id="org.eclipse.ui.edit.text.select.lineUp" commandName="Select Line Up" description="Extend the selection to the previous line of text"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.convertAnonymousToLocal.assist" id="org.eclipse.jdt.ui.correction.convertAnonymousToLocal.assist" commandName="Quick Assist - Convert anonymous to local class" description="Invokes quick assist and selects 'Convert anonymous to local class'"/>
@@ -958,7 +781,6 @@
   <commands xmi:id="org.eclipse.ui.edit.selectAll" id="org.eclipse.ui.edit.selectAll" commandName="Select All" description="Select all"/>
   <commands xmi:id="org.eclipse.jdt.ui.correction.addNonNLS" id="org.eclipse.jdt.ui.correction.addNonNLS" commandName="Quick Fix - Add non-NLS tag" description="Invokes quick assist and selects 'Add non-NLS tag'"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.pageUp" id="org.eclipse.ui.edit.text.goto.pageUp" commandName="Page Up" description="Go up one page"/>
-  <commands xmi:id="org.eclipse.wst.jsdt.ui.edit.text.java.quick.format" id="org.eclipse.wst.jsdt.ui.edit.text.java.quick.format" commandName="Format Element" description="Format enclosing text element"/>
   <commands xmi:id="org.eclipse.ui.window.quickAccess" id="org.eclipse.ui.window.quickAccess" commandName="Quick Access" description="Quickly access UI elements"/>
   <commands xmi:id="org.eclipse.team.cvs.ui.commitAll" id="org.eclipse.team.cvs.ui.commitAll" commandName="Commit All Outgoing Changes" description="Commit all outgoing changes to the repository"/>
   <commands xmi:id="org.eclipse.ltk.ui.refactoring.commands.renameResource" id="org.eclipse.ltk.ui.refactoring.commands.renameResource" commandName="Rename Resource" description="Rename the selected resource and notify LTK participants."/>
