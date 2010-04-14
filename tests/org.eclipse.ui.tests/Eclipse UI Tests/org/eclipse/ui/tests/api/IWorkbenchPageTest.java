@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -690,6 +692,33 @@ public class IWorkbenchPageTest extends UITestCase {
 		IDE.openEditor(fActivePage, marker, false);
 		assertEquals(listenerCall.contains("partBroughtToTop"), true);
 		assertEquals(listenerCall.contains("partActivated"), true);
+	}
+
+	/**
+	 * Tests that the marker's value for the <code>IDE.EDITOR_ID_ATTR</code>
+	 * attribute.
+	 */
+	public void testOpenEditor7_Bug203640() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		IFile file = FileUtil.createFile("aa.mock2", proj);
+		IMarker marker = file.createMarker(
+				IMarker.TASK);
+		marker.setAttribute(IDE.EDITOR_ID_ATTR, MockEditorPart.ID1);
+
+		// open a regular text editor
+		IEditorPart regularEditor = fActivePage.openEditor(new FileEditorInput(file), EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+		assertNotNull(regularEditor);
+		assertTrue(regularEditor instanceof TextEditor);
+
+		// open the registered editor for the marker resource
+		IEditorPart markerEditor = IDE.openEditor(fActivePage, marker);
+		assertNotNull(markerEditor);
+		assertTrue(markerEditor instanceof MockEditorPart);
+		
+		// these shouldn't be the same, if they are it's a bug
+		assertFalse(markerEditor == regularEditor);
+		assertFalse(markerEditor.equals(regularEditor));
+		assertEquals(2, fActivePage.getEditorReferences().length);
 	}
 
 	public void testGetPerspective() throws Throwable {

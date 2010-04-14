@@ -1105,7 +1105,7 @@ public final class IDE {
 			editor = openEditor(page, file, activate);
 		} else {
 			editor = page.openEditor(new FileEditorInput(file), editorDesc
-					.getId(), activate);
+					.getId(), activate, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
 		}
 
 		// get the editor to update its position based on the marker
