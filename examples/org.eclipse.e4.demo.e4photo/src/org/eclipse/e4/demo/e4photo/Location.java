@@ -12,30 +12,28 @@ package org.eclipse.e4.demo.e4photo;
 
 import javax.inject.Inject;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
-public class Location implements EventHandler {
+public class Location {
 
 	private Browser browser;
 	private Composite browserParent;
 	private Exif exif;
 
 	@Inject
-	public Location(Composite parent, IEventBroker eventBroker) {
+	public Location(Composite parent) {
 		parent.setLayout(new FillLayout());
 		parent.setData("org.eclipse.e4.ui.css.id", "location");
 		browserParent = parent;
-		eventBroker.subscribe(ExifTable.EVENT_NAME, this);
 	}
 
-	public void handleEvent(Event event) {
-		Exif input = (Exif) event.getProperty(IEventBroker.DATA);
+	@Inject @Optional
+	public void setInput(@UIEventTopic(ExifTable.EVENT_NAME) Exif input) {
 		if (input == null || this.exif == input) {
 			return;
 		}

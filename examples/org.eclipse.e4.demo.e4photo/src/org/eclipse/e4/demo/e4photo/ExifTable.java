@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.util.JSONObject;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -42,6 +42,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.osgi.service.event.EventAdmin;
 
 public class ExifTable {
 
@@ -50,7 +51,7 @@ public class ExifTable {
 	private IContainer input;
 	private String persistedState;
 	
-	static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif"; 
+	final static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif"; 
 
 	@Inject
 	private Composite parent;
@@ -58,9 +59,7 @@ public class ExifTable {
 	private Logger logger;
 	
 	@Inject
-	private IEventBroker eventBroker;
-	
-	
+	private EventAdmin eventAdmin;
 
 	public ExifTable() {
 		super();
@@ -158,8 +157,8 @@ public class ExifTable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((StructuredSelection) event.getSelection()).getFirstElement();
-				if (eventBroker != null)
-					eventBroker.post(EVENT_NAME, selected);
+				if (eventAdmin != null)
+					EventUtils.post(eventAdmin, EVENT_NAME, selected);
 			}
 		});
 
