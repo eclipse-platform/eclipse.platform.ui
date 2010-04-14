@@ -97,7 +97,7 @@ public class CommandElement extends QuickAccessElement {
 
 		String binding = getQualifier();
 		if (binding != null) {
-			label.append(separator).append(binding);
+			label.append(' ').append(binding);
 		}
 		return label.toString();
 	}
@@ -116,7 +116,7 @@ public class CommandElement extends QuickAccessElement {
 		TriggerSequence[] triggerSeq = service.getBindingManager()
 				.getActiveBindingsDisregardingContextFor(command);
 		if (triggerSeq != null && triggerSeq.length > 0) {
-			return triggerSeq[0].format();
+			return '(' + triggerSeq[0].format() + ')';
 		}
 		return null;
 	}
