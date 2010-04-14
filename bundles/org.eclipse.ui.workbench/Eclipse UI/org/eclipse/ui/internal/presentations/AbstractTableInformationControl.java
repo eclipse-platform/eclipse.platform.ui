@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,13 +217,30 @@ public abstract class AbstractTableInformationControl {
         final Table table = fTableViewer.getTable();
         table.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.character == SWT.ESC) {
+				switch (e.keyCode) {
+				case SWT.ESC:
 					dispose();
-				} else if (e.character == SWT.DEL) {
-                    removeSelectedItems();
-                    e.character = SWT.NONE;
-                    e.doit = false;
-                }
+					break;
+				case SWT.DEL:
+					removeSelectedItems();
+					e.character = SWT.NONE;
+					e.doit = false;
+					break;
+				case SWT.ARROW_UP:
+					if (table.getSelectionIndex() == 0) {
+						// on the first item, going up should grant focus to
+						// text field
+						fFilterText.setFocus();
+					}
+					break;
+				case SWT.ARROW_DOWN:
+					if (table.getSelectionIndex() == table.getItemCount() - 1) {
+						// on the last item, going down should grant focus to
+						// the text field
+						fFilterText.setFocus();
+					}
+					break;
+				}
             }
 
             public void keyReleased(KeyEvent e) {
