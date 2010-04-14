@@ -324,27 +324,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		return textWidthDelta;
 	}
 	
-	/**
-	 * @param layout
-	 * @param cell
-	 */
-	private void updateLayoutAlignment(TextLayout layout, ViewerCell cell) {
-		int alignment = -1;
-		int style = viewer.getColumnViewerOwner(cell.getColumnIndex())
-				.getStyle();
-		if ((style & SWT.LEFT) != 0) {
-			alignment = SWT.LEFT;
-		} else if ((style & SWT.RIGHT) != 0) {
-			alignment = SWT.RIGHT;
-		} else if ((style & SWT.CENTER) != 0) {
-			alignment = SWT.CENTER;
-		}
-		if (alignment != -1) {
-			layout.setAlignment(alignment);
-		}
-		layout.setWidth(cell.getTextBounds().width);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -415,8 +394,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 				}
 			}
 			/* remove-end if bug 228376 fixed */
-			
-			updateLayoutAlignment(textLayout, cell);//Fix for Bug 291245
 			
 			Rectangle layoutBounds = textLayout.getBounds();
 	
