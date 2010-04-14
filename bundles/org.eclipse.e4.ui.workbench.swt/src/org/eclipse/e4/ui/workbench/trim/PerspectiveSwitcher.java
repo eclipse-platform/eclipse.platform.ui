@@ -171,7 +171,7 @@ public class PerspectiveSwitcher {
 	}
 
 	@PreDestroy
-	private void removeListeners() {
+	void removeListeners() {
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);

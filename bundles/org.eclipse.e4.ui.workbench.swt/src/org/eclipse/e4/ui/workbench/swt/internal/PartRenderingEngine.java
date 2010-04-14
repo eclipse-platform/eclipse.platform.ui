@@ -234,7 +234,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	@PreDestroy
-	private void contextDisposed() {
+	void contextDisposed() {
 		if (eventBroker == null)
 			return;
 		eventBroker.unsubscribe(toBeRenderedHandler);
