@@ -12,7 +12,7 @@
 package org.eclipse.e4.core.contexts;
 
 import java.lang.reflect.InvocationTargetException;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.IInjector;
@@ -83,8 +83,7 @@ final public class ContextInjectionFactory {
 	 * @return Returns the injected object
 	 */
 	static public Object inject(Object object, IEclipseContext context) {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context,
-				injector);
+		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.inject(object, supplier);
 		return object;
 	}
@@ -104,10 +103,8 @@ final public class ContextInjectionFactory {
 	 * @throws CoreException
 	 *             if no matching method was found
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context)
-			throws InvocationTargetException, InjectionException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context,
-				injector);
+	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InvocationTargetException, InjectionException {
+		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, methodName, supplier);
 	}
 
@@ -126,10 +123,8 @@ final public class ContextInjectionFactory {
 	 * @throws InvocationTargetException
 	 *             if an exception was thrown by the invoked method
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context,
-			Object defaultValue) throws InvocationTargetException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context,
-				injector);
+	static public Object invoke(Object object, String methodName, IEclipseContext context, Object defaultValue) throws InvocationTargetException {
+		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, methodName, defaultValue, supplier);
 	}
 
@@ -160,10 +155,8 @@ final public class ContextInjectionFactory {
 	 * @throws InvocationTargetException
 	 *             if invoked constructor generated an exception
 	 */
-	static public Object make(Class clazz, final IEclipseContext context)
-			throws InvocationTargetException, InstantiationException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context,
-				injector);
+	static public Object make(Class clazz, final IEclipseContext context) throws InvocationTargetException, InstantiationException {
+		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
 	}
 }
