@@ -195,7 +195,7 @@ public class CloseResourceAction extends WorkspaceAction implements
      * Handles a resource changed event by updating the enablement
      * if one of the selected projects is opened or closed.
      */
-    public void resourceChanged(IResourceChangeEvent event) {
+    public synchronized void resourceChanged(IResourceChangeEvent event) {
         // Warning: code duplicated in OpenResourceAction
         List sel = getSelectedResources();
         // don't bother looking at delta if selection not applicable
@@ -215,6 +215,21 @@ public class CloseResourceAction extends WorkspaceAction implements
                 }
             }
         }
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
+     */
+    protected synchronized List getSelectedResources() {
+    	return super.getSelectedResources();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedNonResources()
+     */
+    protected synchronized List getSelectedNonResources() {
+    	return super.getSelectedNonResources();
     }
     
     /**
