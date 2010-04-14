@@ -21,7 +21,7 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
-import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
 
@@ -78,14 +78,14 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 					try {
 						requestor.execute();
 					} catch (InvocationTargetException e) {
-						logError("Injection failed for the object \""
+						CoreLogger.logError("Injection failed for the object \""
 								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-								+ requestor.toString() + "\"");
+								+ requestor.toString() + "\"", e);
 						return false;
 					} catch (InstantiationException e) {
-						logError("Injection failed for the object \""
+						CoreLogger.logError("Injection failed for the object \""
 								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-								+ requestor.toString() + "\"");
+								+ requestor.toString() + "\"", e);
 						return false;
 					} finally {
 						if (recorder != null)
@@ -208,17 +208,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		ContextObjectSupplier objectSupplier = new ContextObjectSupplier(context, injector);
 		context.set(key, objectSupplier);
 		return objectSupplier;
-	}
-	// TBD implement logging
-	static protected void logError(String msg) {
-		logError(msg, new InjectionException());
-	}
-
-	static protected void logError(String msg, Throwable e) {
-		if (msg != null)
-			System.err.println(msg);
-		if (e != null)
-			e.printStackTrace();
 	}
 
 }

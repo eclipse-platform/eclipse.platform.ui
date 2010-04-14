@@ -16,6 +16,7 @@ import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.extensions.UIEventTopic;
+import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.EventHandler;
 
@@ -43,12 +44,12 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 							try {
 								requestor.execute();
 							} catch (InvocationTargetException e) {
-								logError("Injection failed for the object \""
+								CoreLogger.logError("Injection failed for the object \""
 										+ requestor.getRequestingObject().toString()
 										+ "\". Unable to execute \"" + requestor.toString() + "\"",
 										e);
 							} catch (InstantiationException e) {
-								logError("Injection failed for the object \""
+								CoreLogger.logError("Injection failed for the object \""
 										+ requestor.getRequestingObject().toString()
 										+ "\". Unable to execute \"" + requestor.toString() + "\"",
 										e);

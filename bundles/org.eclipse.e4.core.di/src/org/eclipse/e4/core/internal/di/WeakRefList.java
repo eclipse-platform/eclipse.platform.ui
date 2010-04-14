@@ -11,19 +11,17 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * A list that holds weak references to the objects.
  */
 public class WeakRefList {
 
-	private List userObjects;
+	private List<WeakReference<?>> userObjects;
 
 	public WeakRefList(int initialSize) {
-		userObjects = new ArrayList(initialSize);
+		userObjects = new ArrayList<WeakReference<?>>(initialSize);
 	}
 
 	public Object[] getSafeCopy() {
@@ -31,8 +29,8 @@ public class WeakRefList {
 		int pos = 0;
 		synchronized (userObjects) {
 			result = new Object[userObjects.size()];
-			for (Iterator i = userObjects.iterator(); i.hasNext();) {
-				WeakReference ref = (WeakReference) i.next();
+			for (Iterator<WeakReference<?>> i = userObjects.iterator(); i.hasNext();) {
+				WeakReference<?> ref = i.next();
 				Object userObject = ref.get();
 				if (userObject == null) {
 					// user object got GCed, clean up refs for future
@@ -52,7 +50,7 @@ public class WeakRefList {
 	}
 
 	public void add(Object object) {
-		WeakReference ref = new WeakReference(object);
+		WeakReference<?> ref = new WeakReference<Object>(object);
 		synchronized (userObjects) {
 			userObjects.add(ref);
 		}
@@ -60,8 +58,8 @@ public class WeakRefList {
 
 	public boolean remove(Object object) {
 		synchronized (userObjects) {
-			for (Iterator i = userObjects.iterator(); i.hasNext();) {
-				WeakReference ref = (WeakReference) i.next();
+			for (Iterator<WeakReference<?>> i = userObjects.iterator(); i.hasNext();) {
+				WeakReference<?> ref = i.next();
 				Object userObject = ref.get();
 				if (userObject == null) {
 					i.remove();

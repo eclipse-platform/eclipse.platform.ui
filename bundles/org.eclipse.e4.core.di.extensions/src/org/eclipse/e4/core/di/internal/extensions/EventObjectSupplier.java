@@ -22,9 +22,11 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
+import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -81,12 +83,12 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 					try {
 						requestor.execute();
 					} catch (InvocationTargetException e) {
-						logError("Injection failed for the object \""
+						CoreLogger.logError("Injection failed for the object \""
 								+ requestor.getRequestingObject().toString()
 								+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
 						return;
 					} catch (InstantiationException e) {
-						logError("Injection failed for the object \""
+						CoreLogger.logError("Injection failed for the object \""
 								+ requestor.getRequestingObject().toString()
 								+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
 						return;
@@ -182,7 +184,9 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 		}
 		BundleContext bundleContext = DIEActivator.getDefault().getBundleContext();
 		if (bundleContext == null) {
-			logError("Unable to subscribe to events: DI extension bundle is not activated", null);
+			CoreLogger.logError(
+					"Unable to subscribe to events: DI extension bundle is not activated",
+					new InjectionException());
 			return;
 		}
 		String[] topics = new String[] { topic };
@@ -249,13 +253,4 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 			array[i].unregister();
 		}
 	}
-
-	// TBD add logging
-	static protected void logError(String msg, Throwable e) {
-		if (msg != null)
-			System.err.println(msg);
-		if (e != null)
-			e.printStackTrace();
-	}
-
 }

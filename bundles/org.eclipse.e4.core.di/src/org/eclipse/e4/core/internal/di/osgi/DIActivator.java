@@ -8,8 +8,9 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.internal.di;
+package org.eclipse.e4.core.internal.di.osgi;
 
+import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -20,6 +21,7 @@ public class DIActivator implements BundleActivator {
 	static private DIActivator defaultInstance;
 	private BundleContext bundleContext;
 	private ServiceTracker debugTracker = null;
+	private ServiceTracker logTracker = null;
 
 	public DIActivator() {
 		defaultInstance = this;
@@ -38,6 +40,11 @@ public class DIActivator implements BundleActivator {
 			debugTracker.close();
 			debugTracker = null;
 		}
+		if (logTracker != null) {
+			logTracker.close();
+			logTracker = null;
+		}
+
 		bundleContext = null;
 	}
 
@@ -57,6 +64,16 @@ public class DIActivator implements BundleActivator {
 				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 		return defaultValue;
+	}
+
+	public FrameworkLog getFrameworkLog() {
+		if (logTracker == null) {
+			if (bundleContext == null)
+				return null;
+			logTracker = new ServiceTracker(bundleContext, FrameworkLog.class.getName(), null);
+			logTracker.open();
+		}
+		return (FrameworkLog) logTracker.getService();
 	}
 
 }

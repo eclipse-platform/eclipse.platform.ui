@@ -24,8 +24,8 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
-import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.Preferences;
+import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.FrameworkUtil;
 
 public class PreferencesObjectSupplier extends AbstractObjectSupplier {
@@ -112,14 +112,14 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 						try {
 							requestor.execute();
 						} catch (InvocationTargetException e) {
-							logError("Injection failed for the object \""
+							CoreLogger.logError("Injection failed for the object \""
 									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"");
+									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
 							return;
 						} catch (InstantiationException e) {
-							logError("Injection failed for the object \""
+							CoreLogger.logError("Injection failed for the object \""
 									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"");
+									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
 							return;
 						}
 					}
@@ -135,18 +135,6 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 				listenerCache.put(nodePath, listeningRequestors);
 			}
 		}
-	}
-
-	// TBD implement logging
-	static protected void logError(String msg) {
-		logError(msg, new InjectionException());
-	}
-
-	static protected void logError(String msg, Throwable e) {
-		if (msg != null)
-			System.err.println(msg);
-		if (e != null)
-			e.printStackTrace();
 	}
 
 }

@@ -11,11 +11,8 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.ref.WeakReference;
-
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
+import org.eclipse.e4.core.di.*;
+import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -26,7 +23,7 @@ abstract public class Requestor implements IRequestor {
 	final private boolean track;
 	final private boolean groupUpdates;
 	final private boolean isOptional;
-	
+
 	final private IInjector injector;
 	final private AbstractObjectSupplier primarySupplier;
 
@@ -38,8 +35,7 @@ abstract public class Requestor implements IRequestor {
 
 	public abstract IObjectDescriptor[] getDependentObjects();
 
-	public Requestor(IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates,
-			boolean isOptional) {
+	public Requestor(IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean isOptional) {
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
 		if (requestingObject != null)
@@ -50,11 +46,11 @@ abstract public class Requestor implements IRequestor {
 		this.groupUpdates = groupUpdates;
 		this.isOptional = isOptional;
 	}
-	
+
 	public IInjector getInjector() {
 		return injector;
 	}
-	
+
 	public AbstractObjectSupplier getPrimarySupplier() {
 		return primarySupplier;
 	}
@@ -67,8 +63,6 @@ abstract public class Requestor implements IRequestor {
 
 	/**
 	 * Determines if the requestor wants to be called whenever one of the dependent object changes.
-	 * 
-	 * @return
 	 */
 	public boolean shouldTrack() {
 		return track;
@@ -95,17 +89,7 @@ abstract public class Requestor implements IRequestor {
 
 	protected void logError(Object destination, Exception e) {
 		String msg = "Injection failed " + destination.toString();
-		logError(msg, e);
-	}
-
-	protected void logError(String msg, Exception e) {
-		System.out.println(msg); //$NON-NLS-1$
-		if (e != null)
-			e.printStackTrace();
-		// TBD convert this into real logging
-		// String msg = NLS.bind("Injection failed", destination.toString());
-		// RuntimeLog.log(new Status(IStatus.WARNING,
-		// IRuntimeConstants.PI_COMMON, 0, msg, e));
+		CoreLogger.logError(msg, e);
 	}
 
 }

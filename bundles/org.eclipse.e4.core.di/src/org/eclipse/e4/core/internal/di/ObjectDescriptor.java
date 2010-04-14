@@ -13,7 +13,6 @@ package org.eclipse.e4.core.internal.di;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.annotations.Optional;
 
@@ -56,7 +55,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 			return false;
 		if (annotations == null)
 			return false;
-		for(Annotation annotation : annotations) {
+		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(clazz))
 				return true;
 		}
@@ -69,22 +68,19 @@ public class ObjectDescriptor implements IObjectDescriptor {
 
 	/**
 	 * Returns null if qualifier is not present
-	 * 
-	 * @param qualifier
-	 * @return
 	 */
 	public Object getQualifier(Class<? extends Annotation> clazz) {
 		if (clazz == null)
 			return null;
 		if (annotations == null)
 			return null;
-		for(Annotation annotation : annotations) {
+		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(clazz))
 				return annotation;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
