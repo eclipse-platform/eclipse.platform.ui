@@ -260,7 +260,7 @@ public class AboutDialog extends TrayDialog {
 
         int topContainerHeightHint = 100;
         
-		topContainerHeightHint = Math.max(topContainerHeightHint, lineHeight * 11);
+		topContainerHeightHint = Math.max(topContainerHeightHint, lineHeight * 6);
 
         //image on left side of dialog
         if (aboutImage != null) {
