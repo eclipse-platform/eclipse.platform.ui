@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Francis Upton - <francisu@ieee.org> - 
  *     		Fix for Bug 217777 [Workbench] Workbench event loop does not terminate if Display is closed
+ *     Tasktop Technologies -  Bug 304716 -  [UX] [Progress] Show Eclipse startup progress in the Eclipse icon on the Windows 7 Task Bar
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
-
-import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
@@ -94,6 +93,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TaskBar;
+import org.eclipse.swt.widgets.TaskItem;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -169,6 +170,7 @@ import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
 import org.eclipse.ui.internal.splash.SplashHandlerFactory;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -217,6 +219,165 @@ import org.osgi.framework.SynchronousBundleListener;
  * </p>
  */
 public final class Workbench extends EventManager implements IWorkbench {
+
+	private final class TaskBarDelegatingProgressMontior implements IProgressMonitor {
+		private final Shell shell;
+		private IProgressMonitor progessMonitor;
+		private TaskItem systemTaskItem;
+		private int totalWork;
+		private int totalWorked;
+
+		public TaskBarDelegatingProgressMontior(IProgressMonitor progressMonitor, Shell shell) {
+			Assert.isNotNull(progressMonitor);
+			this.shell = shell;
+			this.progessMonitor = progressMonitor;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+		 * int)
+		 */
+		public void beginTask(String name, int totalWork) {
+			progessMonitor.beginTask(name, totalWork);
+			if (this.totalWork == 0) {
+				this.totalWork = totalWork;
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+		 */
+		public void worked(int work) {
+			progessMonitor.worked(work);
+			totalWorked += work;
+			if (Display.getCurrent() != null) {
+				handleTaskBarProgressUpdated();
+			} else if (getDisplay() != null && !getDisplay().isDisposed()) {
+				getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						handleTaskBarProgressUpdated();
+					}
+				});
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
+		 */
+		public void done() {
+			progessMonitor.done();
+
+			if (Display.getCurrent() != null) {
+				handleTaskBarProgressDone();
+			} else if (getDisplay() != null && !getDisplay().isDisposed()) {
+				getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						handleTaskBarProgressDone();
+					}
+				});
+			}
+		}
+
+		private TaskItem getTaskItem(Shell shell) {
+			if (Display.getCurrent() == null) {
+				return null;
+			}
+			if (systemTaskItem == null) {
+				if (getDisplay() != null && shell != null && !shell.isDisposed()) {
+					TaskBar systemTaskBar = getDisplay().getSystemTaskBar();
+					if (systemTaskBar != null) {
+						systemTaskItem = systemTaskBar.getItem(shell);
+						if (systemTaskItem == null) {
+							// fall back to the application TaskItem if there
+							// isn't one for the shell
+							systemTaskItem = systemTaskBar.getItem(null);
+						}
+					}
+				}
+			}
+			return systemTaskItem;
+		}
+
+		private void handleTaskBarProgressUpdated() {
+			if (systemTaskItem == null) {
+				systemTaskItem = getTaskItem(shell);
+			}
+			if (systemTaskItem != null && !systemTaskItem.isDisposed()) {
+				if (systemTaskItem.getProgressState() != SWT.NORMAL) {
+					systemTaskItem.setProgressState(SWT.NORMAL);
+				}
+				float percentComplete = ((float) totalWorked / (float) totalWork) * 100f;
+				systemTaskItem.setProgress(Math.round(percentComplete));
+			}
+		}
+
+		private void handleTaskBarProgressDone() {
+			if (systemTaskItem == null) {
+				systemTaskItem = getTaskItem(shell);
+			}
+			if (systemTaskItem != null && !systemTaskItem.isDisposed()) {
+				if (systemTaskItem.getProgressState() != SWT.DEFAULT) {
+					systemTaskItem.setProgressState(SWT.DEFAULT);
+				}
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+		 */
+		public void internalWorked(double work) {
+			progessMonitor.internalWorked(work);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		 */
+		public boolean isCanceled() {
+			return progessMonitor.isCanceled();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+		 */
+		public void setCanceled(boolean value) {
+			progessMonitor.setCanceled(value);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String
+		 * )
+		 */
+		public void setTaskName(String name) {
+			progessMonitor.setTaskName(name);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+		 */
+		public void subTask(String name) {
+			progessMonitor.subTask(name);
+		}
+
+	}
 
 	private final class StartupProgressBundleListener implements
 			SynchronousBundleListener {
@@ -1823,6 +1984,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// fall back to starting without showing progress.
 			runnable.run();
 		} else {
+			Shell shell = null;
+			if (handler != null) {
+				shell = handler.getSplash();
+			}
+			progressMonitor = new TaskBarDelegatingProgressMontior(progressMonitor, shell);
 			progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
 			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
 					progressMonitor, (int) (expectedProgressCount * cutoff));
