@@ -11,7 +11,7 @@
 
 package org.eclipse.e4.workbench.modeling;
 
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 /**
  * @since 1.0

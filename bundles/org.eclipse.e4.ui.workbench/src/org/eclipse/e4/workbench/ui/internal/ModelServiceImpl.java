@@ -11,24 +11,23 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MGenericStack;
-import org.eclipse.e4.ui.model.application.MGenericTile;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPlaceholder;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
+import org.eclipse.e4.ui.model.application.ui.MGenericTile;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
-import org.eclipse.emf.common.util.EList;
 
 /**
  *
@@ -51,14 +50,14 @@ public class ModelServiceImpl implements EModelService {
 	 * @return <code>true</code> iff all the tests pass
 	 */
 	private boolean match(MUIElement element, String id, Class clazz, List<String> tagsToMatch) {
-		if (id != null && !id.equals(element.getId()))
+		if (id != null && !id.equals(element.getElementId()))
 			return false;
 
 		if (clazz != null && !(clazz.isInstance(element)))
 			return false;
 
 		if (tagsToMatch != null) {
-			EList<String> elementTags = element.getTags();
+			List<String> elementTags = element.getTags();
 			for (String tag : tagsToMatch) {
 				if (!elementTags.contains(tag))
 					return false;
@@ -76,7 +75,7 @@ public class ModelServiceImpl implements EModelService {
 
 		if (searchRoot instanceof MElementContainer<?>) {
 			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
-			EList<MUIElement> children = container.getChildren();
+			List<MUIElement> children = container.getChildren();
 			for (MUIElement child : children) {
 				findElementsRecursive(child, id, type, tagsToMatch, elements);
 			}
@@ -182,7 +181,7 @@ public class ModelServiceImpl implements EModelService {
 		newParent.getChildren().add(index, element);
 
 		if (leavePlaceholder) {
-			MPlaceholder ph = MApplicationFactory.eINSTANCE.createPlaceholder();
+			MPlaceholder ph = MAdvancedFactory.INSTANCE.createPlaceholder();
 			ph.setRef(element);
 			curParent.getChildren().add(curIndex, ph);
 		}
@@ -292,8 +291,8 @@ public class ModelServiceImpl implements EModelService {
 		}
 	}
 
-	private void combine(MPSCElement toInsert, MPSCElement relTo, MPartSashContainer newSash,
-			boolean newFirst, int ratio) {
+	private void combine(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
+			MPartSashContainer newSash, boolean newFirst, int ratio) {
 		MElementContainer<MUIElement> curParent = relTo.getParent();
 		int index = curParent.getChildren().indexOf(relTo);
 		curParent.getChildren().remove(relTo);
@@ -318,9 +317,11 @@ public class ModelServiceImpl implements EModelService {
 	 * 
 	 * @see
 	 * org.eclipse.e4.workbench.modeling.EModelService#insert(org.eclipse.e4.ui.model.application
-	 * .MPSCElement, org.eclipse.e4.ui.model.application.MPSCElement, int, int)
+	 * .MPartSashContainerElement, org.eclipse.e4.ui.model.application.MPartSashContainerElement,
+	 * int, int)
 	 */
-	public void insert(MPSCElement toInsert, MPSCElement relTo, int where, int ratio) {
+	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
+			int where, int ratio) {
 		if (toInsert == null || relTo == null)
 			return;
 
@@ -338,13 +339,13 @@ public class ModelServiceImpl implements EModelService {
 		MUIElement insertRoot = relTo.getParent();
 		while (insertRoot != null && !(insertRoot instanceof MWindow)
 				&& !(insertRoot instanceof MPartSashContainer)) {
-			relTo = (MPSCElement) insertRoot;
+			relTo = (MPartSashContainerElement) insertRoot;
 			insertRoot = insertRoot.getParent();
 		}
 
 		if (insertRoot instanceof MWindow) {
 			// OK, we're certainly going to need a new sash
-			MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE.createPartSashContainer();
+			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			newSash.setHorizontal(where == LEFT_OF || where == RIGHT_OF);
 			combine(toInsert, relTo, newSash, newFirst, ratio);
 		} else if (insertRoot instanceof MGenericTile<?>) {
@@ -352,14 +353,12 @@ public class ModelServiceImpl implements EModelService {
 
 			// do we need a new sash or can we extend the existing one?
 			if (curTile.isHorizontal() && (where == ABOVE || where == BELOW)) {
-				MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE
-						.createPartSashContainer();
+				MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 				newSash.setHorizontal(false);
 				newSash.setContainerData(relTo.getContainerData());
 				combine(toInsert, relTo, newSash, newFirst, ratio);
 			} else if (!curTile.isHorizontal() && (where == LEFT_OF || where == RIGHT_OF)) {
-				MPartSashContainer newSash = ApplicationFactoryImpl.eINSTANCE
-						.createPartSashContainer();
+				MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 				newSash.setHorizontal(true);
 				newSash.setContainerData(relTo.getContainerData());
 				combine(toInsert, relTo, newSash, newFirst, ratio);
@@ -393,9 +392,9 @@ public class ModelServiceImpl implements EModelService {
 	 * 
 	 * @see
 	 * org.eclipse.e4.workbench.modeling.EModelService#detach(org.eclipse.e4.ui.model.application
-	 * .MPSCElement)
+	 * .MPartSashContainerElement)
 	 */
-	public void detach(MPSCElement element) {
+	public void detach(MWindowElement element) {
 		// Determine the correct parent for the new window
 		MUIElement curParent = element.getParent();
 		while (curParent != null && !(curParent instanceof MPerspective)
@@ -405,7 +404,7 @@ public class ModelServiceImpl implements EModelService {
 		if (curParent == null)
 			return; // log??
 
-		MWindow newWindow = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow newWindow = BasicFactoryImpl.INSTANCE.createWindow();
 
 		// HACK! should either be args or should be computed from the control being detached
 		newWindow.setX(100);

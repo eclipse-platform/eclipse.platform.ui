@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.log.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,17 +29,18 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MInputPart;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -50,7 +49,6 @@ import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.service.event.Event;
@@ -358,7 +356,7 @@ public class PartServiceImpl implements EPartService {
 
 	private MPartDescriptor findDescriptor(String id) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getId().equals(id)) {
+			if (descriptor.getElementId().equals(id)) {
 				return descriptor;
 			}
 		}
@@ -379,10 +377,10 @@ public class PartServiceImpl implements EPartService {
 			return providedPart;
 		}
 
-		MPartDescriptor descriptor = findDescriptor(providedPart.getId());
+		MPartDescriptor descriptor = findDescriptor(providedPart.getElementId());
 		if (descriptor == null) {
 			if (providedPart != localPart) {
-				MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+				MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 				stack.getChildren().add(providedPart);
 				rootContainer.getChildren().add(stack);
 			}
@@ -424,14 +422,14 @@ public class PartServiceImpl implements EPartService {
 		MElementContainer<MUIElement> searchRoot = rootContainer;
 		List<MUIElement> children = searchRoot.getChildren();
 		if (children.size() == 0) {
-			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			searchRoot.getChildren().add(stack);
 			return stack;
 		}
 
 		MElementContainer<?> lastContainer = getLastContainer(searchRoot, children);
 		if (lastContainer == null) {
-			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			searchRoot.getChildren().add(stack);
 			return stack;
 		}
@@ -505,7 +503,7 @@ public class PartServiceImpl implements EPartService {
 		Assert.isNotNull(part);
 		Assert.isNotNull(partState);
 
-		MPart localPart = findPart(part.getId());
+		MPart localPart = findPart(part.getElementId());
 		if (localPart != null) {
 			return showPart(partState, part, localPart);
 		}
@@ -518,7 +516,7 @@ public class PartServiceImpl implements EPartService {
 
 			if (part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
 				MElementContainer<MUIElement> parent = part.getParent();
-				EList<MUIElement> children = parent.getChildren();
+				List<MUIElement> children = parent.getChildren();
 				children.remove(part);
 
 				// FIXME: should be based on activation list

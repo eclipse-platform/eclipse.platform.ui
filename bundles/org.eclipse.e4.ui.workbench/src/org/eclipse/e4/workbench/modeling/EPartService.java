@@ -12,8 +12,8 @@ package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.e4.ui.model.application.MInputPart;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 /**
  * The part service provides clients with the functionalities of showing and hiding parts. Part

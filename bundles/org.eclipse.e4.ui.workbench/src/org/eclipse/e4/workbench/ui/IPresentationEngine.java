@@ -12,9 +12,8 @@
 package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 /**
  * Engine the workbench delegates the rendering of the ui to a service
