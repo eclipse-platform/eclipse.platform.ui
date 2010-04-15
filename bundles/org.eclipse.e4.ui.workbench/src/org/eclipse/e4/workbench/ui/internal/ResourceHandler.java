@@ -27,6 +27,12 @@ import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -65,8 +71,23 @@ public class ResourceHandler {
 		resourceSetImpl = new ResourceSetImpl();
 		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
 				Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
-		resourceSetImpl.getPackageRegistry().put(MApplicationPackage.eNS_URI,
-				MApplicationPackage.eINSTANCE);
+
+		resourceSetImpl.getPackageRegistry().put(ApplicationPackageImpl.eNS_URI,
+				ApplicationPackageImpl.eINSTANCE);
+		resourceSetImpl.getPackageRegistry().put(CommandsPackageImpl.eNS_URI,
+				CommandsPackageImpl.eINSTANCE);
+		resourceSetImpl.getPackageRegistry().put(UiPackageImpl.eNS_URI, UiPackageImpl.eINSTANCE);
+		resourceSetImpl.getPackageRegistry()
+				.put(MenuPackageImpl.eNS_URI, MenuPackageImpl.eINSTANCE);
+		resourceSetImpl.getPackageRegistry().put(BasicPackageImpl.eNS_URI,
+				BasicPackageImpl.eINSTANCE);
+		resourceSetImpl.getPackageRegistry().put(AdvancedPackageImpl.eNS_URI,
+				AdvancedPackageImpl.eINSTANCE);
+		resourceSetImpl
+				.getPackageRegistry()
+				.put(
+						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
+						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// this.registry = registry;
 		try {
