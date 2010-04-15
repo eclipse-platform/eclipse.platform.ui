@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,11 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -88,7 +89,7 @@ public class MSashTest extends TestCase {
 	public void testSashWeights() {
 		MWindow window = createSashWithNViews(2);
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
@@ -169,19 +170,19 @@ public class MSashTest extends TestCase {
 	}
 
 	private MWindow createSashWithNViews(int n) {
-		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(401);
 		window.setLabel("MyWindow");
-		MPartSashContainer sash = MApplicationFactory.eINSTANCE
+		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
 
 		for (int i = 0; i < n; i++) {
-			MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
+			MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
 			contributedPart.setLabel("Sample View" + i);
 			contributedPart
-					.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 			sash.getChildren().add(contributedPart);
 		}
 

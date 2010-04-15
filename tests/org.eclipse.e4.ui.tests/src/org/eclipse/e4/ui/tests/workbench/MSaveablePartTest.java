@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,21 +16,17 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 public class MSaveablePartTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -64,15 +60,10 @@ public class MSaveablePartTest extends TestCase {
 		}
 	}
 
-	protected Control[] getPresentationControls(Shell shell) {
-		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
-		return tpl.clientArea.getChildren();
-	}
-
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView("Part Name");
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
@@ -81,25 +72,15 @@ public class MSaveablePartTest extends TestCase {
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
-		Widget topWidget = (Widget) window.getWidget();
-		assertNotNull(topWidget);
-		assertTrue(topWidget instanceof Shell);
-		Shell shell = (Shell) topWidget;
-		assertEquals("MyWindow", shell.getText());
-		Control[] controls = getPresentationControls(shell);
-		assertEquals(1, controls.length);
-		SashForm sash = (SashForm) controls[0];
-		Control[] sashChildren = sash.getChildren();
-		assertEquals(1, sashChildren.length);
-
-		CTabFolder folder = (CTabFolder) sashChildren[0];
-		CTabItem item = folder.getItem(0);
-		assertEquals("Part Name", item.getText());
-
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
+
+		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabItem item = folder.getItem(0);
+		assertEquals("Part Name", item.getText());
+
 		assertFalse(part.isDirty());
 
 		part.setDirty(true);
@@ -110,20 +91,20 @@ public class MSaveablePartTest extends TestCase {
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
-		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setLabel("MyWindow");
-		MPartSashContainer sash = MApplicationFactory.eINSTANCE
+		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		sash.getChildren().add(stack);
-		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
+		MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel(partName);
 		contributedPart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		return window;
 	}
