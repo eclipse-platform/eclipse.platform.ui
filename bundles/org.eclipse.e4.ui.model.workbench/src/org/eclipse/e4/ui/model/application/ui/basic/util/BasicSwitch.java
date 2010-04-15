@@ -180,6 +180,20 @@ public class BasicSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case BasicPackageImpl.TRIMMED_WINDOW: {
+				MTrimmedWindow trimmedWindow = (MTrimmedWindow)theEObject;
+				T1 result = caseTrimmedWindow(trimmedWindow);
+				if (result == null) result = caseWindow(trimmedWindow);
+				if (result == null) result = caseElementContainer(trimmedWindow);
+				if (result == null) result = caseUILabel(trimmedWindow);
+				if (result == null) result = caseContext(trimmedWindow);
+				if (result == null) result = caseHandlerContainer(trimmedWindow);
+				if (result == null) result = caseBindings(trimmedWindow);
+				if (result == null) result = caseUIElement(trimmedWindow);
+				if (result == null) result = caseApplicationElement(trimmedWindow);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case BasicPackageImpl.TRIM_ELEMENT: {
 				MTrimElement trimElement = (MTrimElement)theEObject;
 				T1 result = caseTrimElement(trimElement);
@@ -211,16 +225,6 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseElementContainer(trimBar);
 				if (result == null) result = caseUIElement(trimBar);
 				if (result == null) result = caseApplicationElement(trimBar);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case BasicPackageImpl.TRIM_CONTAINER: {
-				MTrimContainer trimContainer = (MTrimContainer)theEObject;
-				T1 result = caseTrimContainer(trimContainer);
-				if (result == null) result = caseWindowElement(trimContainer);
-				if (result == null) result = caseElementContainer(trimContainer);
-				if (result == null) result = caseUIElement(trimContainer);
-				if (result == null) result = caseApplicationElement(trimContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -304,6 +308,21 @@ public class BasicSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trimmed Window</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trimmed Window</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimmedWindow(MTrimmedWindow object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Trim Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -360,21 +379,6 @@ public class BasicSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseTrimBar(MTrimBar object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Trim Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Trim Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseTrimContainer(MTrimContainer object) {
 		return null;
 	}
 

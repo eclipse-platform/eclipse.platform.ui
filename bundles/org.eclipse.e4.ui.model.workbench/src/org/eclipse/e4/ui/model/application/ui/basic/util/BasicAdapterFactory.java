@@ -114,6 +114,10 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createWindowAdapter();
 			}
 			@Override
+			public Adapter caseTrimmedWindow(MTrimmedWindow object) {
+				return createTrimmedWindowAdapter();
+			}
+			@Override
 			public Adapter caseTrimElement(MTrimElement object) {
 				return createTrimElementAdapter();
 			}
@@ -128,10 +132,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseTrimBar(MTrimBar object) {
 				return createTrimBarAdapter();
-			}
-			@Override
-			public Adapter caseTrimContainer(MTrimContainer object) {
-				return createTrimContainerAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -276,6 +276,20 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow <em>Trimmed Window</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow
+	 * @generated
+	 */
+	public Adapter createTrimmedWindowAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -328,20 +342,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTrimBarAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer <em>Trim Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer
-	 * @generated
-	 */
-	public Adapter createTrimContainerAdapter() {
 		return null;
 	}
 

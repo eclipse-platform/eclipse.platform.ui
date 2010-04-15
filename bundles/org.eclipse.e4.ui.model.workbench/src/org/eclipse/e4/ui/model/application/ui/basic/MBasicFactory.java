@@ -73,6 +73,15 @@ public interface MBasicFactory {
 	MWindow createWindow();
 
 	/**
+	 * Returns a new object of class '<em>Trimmed Window</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Trimmed Window</em>'.
+	 * @generated
+	 */
+	MTrimmedWindow createTrimmedWindow();
+
+	/**
 	 * Returns a new object of class '<em>Trim Bar</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -80,14 +89,5 @@ public interface MBasicFactory {
 	 * @generated
 	 */
 	MTrimBar createTrimBar();
-
-	/**
-	 * Returns a new object of class '<em>Trim Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Trim Container</em>'.
-	 * @generated
-	 */
-	MTrimContainer createTrimContainer();
 
 } //MBasicFactory

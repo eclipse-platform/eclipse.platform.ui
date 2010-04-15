@@ -299,6 +299,10 @@
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimmedWindow" eSuperTypes="#//ui/basic/Window">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="trimBars" upperBound="-1"
+            eType="#//ui/basic/TrimBar" containment="true"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true" eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainerElement" abstract="true"
           interface="true" eSuperTypes="#//ui/UIElement"/>
@@ -309,15 +313,6 @@
           <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TrimContainer">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//ui/basic/PartSashContainerElement"
-            containment="true"/>
-        <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/basic/TrimBar"/>
-        </eGenericSuperTypes>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
