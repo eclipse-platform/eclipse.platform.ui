@@ -1,7 +1,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt.dnd;
 
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;

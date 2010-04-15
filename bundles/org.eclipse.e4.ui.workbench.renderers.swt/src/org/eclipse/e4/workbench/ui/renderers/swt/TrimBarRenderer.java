@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  *
  */
-public class TrimRenderer extends SWTPartRenderer {
+public class TrimBarRenderer extends SWTPartRenderer {
 
 	ControlListener childResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
