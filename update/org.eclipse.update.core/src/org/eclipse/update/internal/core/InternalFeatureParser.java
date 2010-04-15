@@ -98,6 +98,10 @@ public class InternalFeatureParser extends DefaultHandler {
 	private static final String IMPORT = "import"; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String DATA = "data"; //$NON-NLS-1$
+	
+	//debug message
+	private static final String UNSUPPORTED_FILTER_MSG = "Unsupported \"filter\" attribute, ignoring {0}, with id {1}, version {2}";
+	
 	// Current State Information
 	Stack stateStack = new Stack();
 
@@ -107,6 +111,7 @@ public class InternalFeatureParser extends DefaultHandler {
 
 	private int currentState;
     private String location;
+    private boolean ignoredElement = false;
 	
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
@@ -451,10 +456,13 @@ public class InternalFeatureParser extends DefaultHandler {
 			case STATE_REQUIRES :
 				stateStack.pop();
 				if (objectStack.peek() instanceof FeatureModel) {
+					boolean foundIgnored = ignoredElement;
+					ignoredElement = false;
 					featureModel = (FeatureModel) objectStack.peek();
 					ImportModel[] importModels = featureModel.getImportModels();
 					if (importModels.length == 0) {
-						internalError(Messages.DefaultFeatureParser_RequireStateWithoutImportElement); 
+						if (!foundIgnored) //don't report error if we ignored something
+							internalError(Messages.DefaultFeatureParser_RequireStateWithoutImportElement);
 					} else {
 						boolean patchMode = false;
 						for (int i = 0; i < importModels.length; i++) {
@@ -838,6 +846,14 @@ public class InternalFeatureParser extends DefaultHandler {
 			internalError(NLS.bind(Messages.DefaultFeatureParser_IdOrVersionInvalid, (new String[] { id, ver, getState(currentState)})));
 		}
 
+		String filter = attributes.getValue("filter");
+		if (filter != null) {
+			//unsupported, ignore this element
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) 
+				debug(NLS.bind(UNSUPPORTED_FILTER_MSG, new String [] {INCLUDES, id, ver}));
+			return;
+		}
+		
 		IncludedFeatureReferenceModel includedFeature = factory.createIncludedFeatureReferenceModel();
 		includedFeature.setFeatureIdentifier(id);
 		includedFeature.setFeatureVersion(ver);
@@ -933,10 +949,19 @@ public class InternalFeatureParser extends DefaultHandler {
 		if (id == null || id.trim().equals("")) //$NON-NLS-1$
 			internalError(NLS.bind(Messages.DefaultFeatureParser_MissingId, (new String[] { getState(currentState) })));
 		else {
-			ImportModel imp = factory.createImportModel();
+			String filter = attributes.getValue("filter");
 			String ver = attributes.getValue("version"); //$NON-NLS-1$
 			String match = attributes.getValue("match"); //$NON-NLS-1$
 			String patch = attributes.getValue("patch"); //$NON-NLS-1$
+			
+			if (filter != null) {
+				//unsupported, ignore this element
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) 
+					debug(NLS.bind(UNSUPPORTED_FILTER_MSG, new String [] {IMPORT + ' ' + (pluginID != null ? PLUGIN : FEATURE), id, ver}));
+				ignoredElement = true;
+				return;
+			}
+			ImportModel imp = factory.createImportModel();
 
 			imp.setPatch(patch != null && patch.equalsIgnoreCase("true")); //$NON-NLS-1$
 
@@ -1006,6 +1031,14 @@ public class InternalFeatureParser extends DefaultHandler {
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
 			internalError(NLS.bind(Messages.DefaultFeatureParser_IdOrVersionInvalid, (new String[] { id, ver, getState(currentState)})));
 		} else {
+			String filter = attributes.getValue("filter");
+			if (filter != null) {
+				//unsupported, ignore this element
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) 
+					debug(NLS.bind(UNSUPPORTED_FILTER_MSG, new String [] {PLUGIN, id, ver}));
+				return;
+			}
+			
 			PluginEntryModel pluginEntry = factory.createPluginEntryModel();
 			pluginEntry.setPluginIdentifier(id);
 			pluginEntry.setPluginVersion(ver);

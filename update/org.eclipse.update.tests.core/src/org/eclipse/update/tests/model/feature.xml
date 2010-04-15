@@ -29,12 +29,17 @@
       <import plugin="plugin.1" version="1.0.0" match="perfect"/>
       <import plugin="plugin.2" version="3.2.0"/>
       <import plugin="plugin.3"/>
+      <import plugin="plugin.4" version="1.0.0" filter="(installPlugin=true)" />
+      <import feature="feature.1" version="1.0.0" filter="(installFeature=true)" />
    </requires>
    
    <plugin id="my.plugin.1" version="1.0.0" fragment="true"
            os="Win32" ws="Win32" nl="en_US" download-size="23456" install-size="1234567"/>
    <plugin id="my.plugin.2" version="1.0.1"/>
    <plugin id="my.plugin.3" version="1.0.2"/>
+   <plugin id="my.plugin.4" version="1.0.0" filter="(ignoreThis = true)" />
+   
+   <includes id="some.feature" version="1.0.0" filter="(ignoreThis=also)"/>
    
    <data id="examples.zip" download-size="23456" install-size="1234567"/>
    <data id="custom/rt.jar"/>

@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -43,6 +44,15 @@ public class FeatureMain extends UpdateManagerTestCase {
 		System.out.println("Resolving feature using "+base+" ...");
 		ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
 		feature.resolve(new URL(base), new URL(base));
+		
+		ImportModel[] importModels = feature.getImportModels();
+		assertEquals(3, importModels.length);
+		
+		PluginEntryModel[] pluginEntryModels = feature.getPluginEntryModels();
+		assertEquals(3, pluginEntryModels.length);
+		
+		IIncludedFeatureReference[] featureIncluded = feature.getFeatureIncluded();
+		assertEquals(0, featureIncluded.length);
 	}
 	
 //	private static void writeFeature(PrintWriter w, int level, FeatureModel feature) {
