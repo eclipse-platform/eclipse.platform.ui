@@ -134,6 +134,26 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MHandledItem createHandledItem() {
+		HandledItemImpl handledItem = new HandledItemImpl();
+		return handledItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuSeparator createMenuSeparator() {
+		MenuSeparatorImpl menuSeparator = new MenuSeparatorImpl();
+		return menuSeparator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
@@ -157,26 +177,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MHandledMenuItem createHandledMenuItem() {
 		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
 		return handledMenuItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MDirectToolItem createDirectToolItem() {
-		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
-		return directToolItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MToolBarSeparator createToolBarSeparator() {
-		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
-		return toolBarSeparator;
 	}
 
 	/**
@@ -214,9 +214,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MHandledItem createHandledItem() {
-		HandledItemImpl handledItem = new HandledItemImpl();
-		return handledItem;
+	public MDirectToolItem createDirectToolItem() {
+		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
+		return directToolItem;
 	}
 
 	/**
@@ -224,9 +224,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuSeparator createMenuSeparator() {
-		MenuSeparatorImpl menuSeparator = new MenuSeparatorImpl();
-		return menuSeparator;
+	public MToolBarSeparator createToolBarSeparator() {
+		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
+		return toolBarSeparator;
 	}
 
 	/**

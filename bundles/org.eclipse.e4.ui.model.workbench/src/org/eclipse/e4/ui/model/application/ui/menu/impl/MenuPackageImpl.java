@@ -97,16 +97,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final MenuPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
-	 * @generated
-	 */
-	public static final int MENU_ELEMENT = 2;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl <em>Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -259,126 +249,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int ITEM_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuItem()
-	 * @generated
-	 */
-	public static final int MENU_ITEM = 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl <em>Separator</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuSeparator()
-	 * @generated
-	 */
-	public static final int MENU_SEPARATOR = 4;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl <em>Menu</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenu()
-	 * @generated
-	 */
-	public static final int MENU = 5;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectMenuItem()
-	 * @generated
-	 */
-	public static final int DIRECT_MENU_ITEM = 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledMenuItem()
-	 * @generated
-	 */
-	public static final int HANDLED_MENU_ITEM = 7;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl <em>Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolItem()
-	 * @generated
-	 */
-	public static final int TOOL_ITEM = 8;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
-	 * @generated
-	 */
-	public static final int DIRECT_TOOL_ITEM = 13;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl <em>Tool Bar Separator</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
-	 * @generated
-	 */
-	public static final int TOOL_BAR_SEPARATOR = 14;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl <em>Tool Bar</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBar()
-	 * @generated
-	 */
-	public static final int TOOL_BAR = 9;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl <em>Tool Bar Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarElement()
-	 * @generated
-	 */
-	public static final int TOOL_BAR_ELEMENT = 10;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl <em>Tool Control</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolControl()
-	 * @generated
-	 */
-	public static final int TOOL_CONTROL = 11;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledToolItem()
-	 * @generated
-	 */
-	public static final int HANDLED_TOOL_ITEM = 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -562,6 +432,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+	 * @generated
+	 */
+	public static final int MENU_ELEMENT = 2;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -677,6 +557,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuItem()
+	 * @generated
+	 */
+	public static final int MENU_ITEM = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -832,6 +722,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl <em>Separator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuSeparator()
+	 * @generated
+	 */
+	public static final int MENU_SEPARATOR = 4;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -947,6 +847,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_SEPARATOR_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl <em>Menu</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenu()
+	 * @generated
+	 */
+	public static final int MENU = 5;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1091,6 +1001,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectMenuItem()
+	 * @generated
+	 */
+	public static final int DIRECT_MENU_ITEM = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1273,6 +1193,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledMenuItem()
+	 * @generated
+	 */
+	public static final int HANDLED_MENU_ITEM = 7;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1453,6 +1383,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl <em>Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolItem()
+	 * @generated
+	 */
+	public static final int TOOL_ITEM = 8;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1615,6 +1555,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl <em>Tool Bar</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBar()
+	 * @generated
+	 */
+	public static final int TOOL_BAR = 9;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1723,6 +1673,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl <em>Tool Bar Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarElement()
+	 * @generated
+	 */
+	public static final int TOOL_BAR_ELEMENT = 10;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1811,6 +1771,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_BAR_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl <em>Tool Control</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolControl()
+	 * @generated
+	 */
+	public static final int TOOL_CONTROL = 11;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1928,6 +1898,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_CONTROL_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 7;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledToolItem()
+	 * @generated
+	 */
+	public static final int HANDLED_TOOL_ITEM = 12;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2119,6 +2099,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM_FEATURE_COUNT = TOOL_ITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
+	 * @generated
+	 */
+	public static final int DIRECT_TOOL_ITEM = 13;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2308,6 +2298,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM_FEATURE_COUNT = TOOL_ITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl <em>Tool Bar Separator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
+	 * @generated
+	 */
+	public static final int TOOL_BAR_SEPARATOR = 14;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2412,14 +2412,21 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass menuElementEClass = null;
+	private EClass itemEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass itemEClass = null;
+	private EClass handledItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass menuElementEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2468,20 +2475,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass directToolItemEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass toolBarSeparatorEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass toolBarEClass = null;
 
 	/**
@@ -2510,7 +2503,14 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass handledItemEClass = null;
+	private EClass directToolItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass toolBarSeparatorEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2602,19 +2602,6 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement <em>Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
-	 * @generated
-	 */
-	public EClass getMenuElement() {
-		return menuElementEClass;
-	}
-
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2666,6 +2653,69 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem <em>Handled Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Handled Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem
+	 * @generated
+	 */
+	public EClass getHandledItem() {
+		return handledItemEClass;
+	}
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getCommand <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getCommand()
+	 * @see #getHandledItem()
+	 * @generated
+	 */
+	public EReference getHandledItem_Command() {
+		return (EReference)handledItemEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand <em>Wb Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Wb Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand()
+	 * @see #getHandledItem()
+	 * @generated
+	 */
+	public EAttribute getHandledItem_WbCommand() {
+		return (EAttribute)handledItemEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getParameters <em>Parameters</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getParameters()
+	 * @see #getHandledItem()
+	 * @generated
+	 */
+	public EReference getHandledItem_Parameters() {
+		return (EReference)handledItemEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement <em>Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
+	 * @generated
+	 */
+	public EClass getMenuElement() {
+		return menuElementEClass;
+	}
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2702,7 +2752,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return menuSeparatorEClass;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2727,7 +2776,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EAttribute getMenu_Enabled() {
 		return (EAttribute)menuEClass.getEStructuralFeatures().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem <em>Direct Menu Item</em>}'.
@@ -2764,31 +2812,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EClass getToolItem() {
 		return toolItemEClass;
 	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem <em>Direct Tool Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Direct Tool Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem
-	 * @generated
-	 */
-	public EClass getDirectToolItem() {
-		return directToolItemEClass;
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator <em>Tool Bar Separator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Tool Bar Separator</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator
-	 * @generated
-	 */
-	public EClass getToolBarSeparator() {
-		return toolBarSeparatorEClass;
-	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBar <em>Tool Bar</em>}'.
@@ -2839,54 +2862,27 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem <em>Handled Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem <em>Direct Tool Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Handled Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem
+	 * @return the meta object for class '<em>Direct Tool Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem
 	 * @generated
 	 */
-	public EClass getHandledItem() {
-		return handledItemEClass;
+	public EClass getDirectToolItem() {
+		return directToolItemEClass;
 	}
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getCommand <em>Command</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator <em>Tool Bar Separator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getCommand()
-	 * @see #getHandledItem()
+	 * @return the meta object for class '<em>Tool Bar Separator</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator
 	 * @generated
 	 */
-	public EReference getHandledItem_Command() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand <em>Wb Command</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Wb Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand()
-	 * @see #getHandledItem()
-	 * @generated
-	 */
-	public EAttribute getHandledItem_WbCommand() {
-		return (EAttribute)handledItemEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getParameters <em>Parameters</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getParameters()
-	 * @see #getHandledItem()
-	 * @generated
-	 */
-	public EReference getHandledItem_Parameters() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(2);
+	public EClass getToolBarSeparator() {
+		return toolBarSeparatorEClass;
 	}
 
 	/**
@@ -3109,16 +3105,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 */
 	public interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
-		 * @generated
-		 */
-		public static final EClass MENU_ELEMENT = eINSTANCE.getMenuElement();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl <em>Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3151,6 +3137,50 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute ITEM__TYPE = eINSTANCE.getItem_Type();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledItem()
+		 * @generated
+		 */
+		public static final EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
+
+		/**
+		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference HANDLED_ITEM__PARAMETERS = eINSTANCE.getHandledItem_Parameters();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl <em>Element</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+		 * @generated
+		 */
+		public static final EClass MENU_ELEMENT = eINSTANCE.getMenuElement();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
@@ -3229,26 +3259,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass TOOL_ITEM = eINSTANCE.getToolItem();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
-		 * @generated
-		 */
-		public static final EClass DIRECT_TOOL_ITEM = eINSTANCE.getDirectToolItem();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl <em>Tool Bar Separator</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
-		 * @generated
-		 */
-		public static final EClass TOOL_BAR_SEPARATOR = eINSTANCE.getToolBarSeparator();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl <em>Tool Bar</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3289,38 +3299,24 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass HANDLED_TOOL_ITEM = eINSTANCE.getHandledToolItem();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledItem()
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
 		 * @generated
 		 */
-		public static final EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
+		public static final EClass DIRECT_TOOL_ITEM = eINSTANCE.getDirectToolItem();
 
 		/**
-		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl <em>Tool Bar Separator</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
 		 * @generated
 		 */
-		public static final EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
-
-		/**
-		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
-
-		/**
-		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference HANDLED_ITEM__PARAMETERS = eINSTANCE.getHandledItem_Parameters();
+		public static final EClass TOOL_BAR_SEPARATOR = eINSTANCE.getToolBarSeparator();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}' enum.

@@ -10,22 +10,23 @@
  */
 package org.eclipse.e4.ui.model.application.ui;
 
+
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Trim Container</b></em>'.
+ * A representation of the model object '<em><b>Generic Trim Container</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide <em>Side</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer#getSide <em>Side</em>}</li>
  * </ul>
  * </p>
  *
  * @model abstract="true"
  * @generated
  */
-public interface MTrimContainer<T extends MUIElement> extends MElementContainer<T> {
+public interface MGenericTrimContainer<T extends MUIElement> extends MElementContainer<T> {
 	/**
 	 * Returns the value of the '<em><b>Side</b></em>' attribute.
 	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.ui.SideValue}.
@@ -44,7 +45,7 @@ public interface MTrimContainer<T extends MUIElement> extends MElementContainer<
 	SideValue getSide();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer#getSide <em>Side</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer#getSide <em>Side</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Side</em>' attribute.
@@ -54,4 +55,4 @@ public interface MTrimContainer<T extends MUIElement> extends MElementContainer<
 	 */
 	void setSide(SideValue value);
 
-} // MTrimContainer
+} // MGenericTrimContainer

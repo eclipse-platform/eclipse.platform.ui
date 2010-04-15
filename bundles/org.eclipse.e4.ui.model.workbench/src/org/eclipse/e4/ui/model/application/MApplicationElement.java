@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,7 +59,7 @@ public interface MApplicationElement {
 	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Tags</em>' map isn't clear,
+	 * If the meaning of the '<em>Tags</em>' attribute list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

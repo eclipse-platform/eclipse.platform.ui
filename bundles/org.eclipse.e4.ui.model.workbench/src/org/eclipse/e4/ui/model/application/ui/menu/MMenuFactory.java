@@ -37,6 +37,24 @@ public interface MMenuFactory {
 	MItem createItem();
 
 	/**
+	 * Returns a new object of class '<em>Handled Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Item</em>'.
+	 * @generated
+	 */
+	MHandledItem createHandledItem();
+
+	/**
+	 * Returns a new object of class '<em>Separator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Separator</em>'.
+	 * @generated
+	 */
+	MMenuSeparator createMenuSeparator();
+
+	/**
 	 * Returns a new object of class '<em>Menu</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -62,24 +80,6 @@ public interface MMenuFactory {
 	 * @generated
 	 */
 	MHandledMenuItem createHandledMenuItem();
-
-	/**
-	 * Returns a new object of class '<em>Direct Tool Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Direct Tool Item</em>'.
-	 * @generated
-	 */
-	MDirectToolItem createDirectToolItem();
-
-	/**
-	 * Returns a new object of class '<em>Tool Bar Separator</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Tool Bar Separator</em>'.
-	 * @generated
-	 */
-	MToolBarSeparator createToolBarSeparator();
 
 	/**
 	 * Returns a new object of class '<em>Tool Bar</em>'.
@@ -109,21 +109,21 @@ public interface MMenuFactory {
 	MHandledToolItem createHandledToolItem();
 
 	/**
-	 * Returns a new object of class '<em>Handled Item</em>'.
+	 * Returns a new object of class '<em>Direct Tool Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handled Item</em>'.
+	 * @return a new object of class '<em>Direct Tool Item</em>'.
 	 * @generated
 	 */
-	MHandledItem createHandledItem();
+	MDirectToolItem createDirectToolItem();
 
 	/**
-	 * Returns a new object of class '<em>Separator</em>'.
+	 * Returns a new object of class '<em>Tool Bar Separator</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Separator</em>'.
+	 * @return a new object of class '<em>Tool Bar Separator</em>'.
 	 * @generated
 	 */
-	MMenuSeparator createMenuSeparator();
+	MToolBarSeparator createToolBarSeparator();
 
 } //MMenuFactory

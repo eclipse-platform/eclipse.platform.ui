@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * @generated
  */
 public interface MMenu extends MMenuElement, MElementContainer<MMenuElement> {
-
 	/**
 	 * Returns the value of the '<em><b>Enabled</b></em>' attribute.
 	 * The default value is <code>"true"</code>.
@@ -54,4 +53,5 @@ public interface MMenu extends MMenuElement, MElementContainer<MMenuElement> {
 	 * @generated
 	 */
 	void setEnabled(boolean value);
+
 } // MMenu

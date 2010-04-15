@@ -185,14 +185,14 @@
         <eTypeArguments eTypeParameter="#//ui/GenericTile/T"/>
       </eGenericSuperTypes>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="TrimContainer" abstract="true">
+    <eClassifiers xsi:type="ecore:EClass" name="GenericTrimContainer" abstract="true">
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
       </eTypeParameters>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1"
           eType="#//ui/SideValue"/>
       <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-        <eTypeArguments eTypeParameter="#//ui/TrimContainer/T"/>
+        <eTypeArguments eTypeParameter="#//ui/GenericTrimContainer/T"/>
       </eGenericSuperTypes>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
@@ -304,15 +304,19 @@
           interface="true" eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="TrimedPartContainer">
+      <eClassifiers xsi:type="ecore:EClass" name="TrimBar">
+        <eGenericSuperTypes eClassifier="#//ui/GenericTrimContainer">
+          <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
+        </eGenericSuperTypes>
+        <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimContainer">
         <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//ui/basic/PartSashContainerElement"
             containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/TrimContainer">
-            <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
-          </eTypeArguments>
+          <eTypeArguments eClassifier="#//ui/basic/TrimBar"/>
         </eGenericSuperTypes>
       </eClassifiers>
     </eSubpackages>

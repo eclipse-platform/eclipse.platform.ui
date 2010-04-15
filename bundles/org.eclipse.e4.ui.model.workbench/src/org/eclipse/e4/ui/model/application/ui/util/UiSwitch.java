@@ -152,12 +152,12 @@ public class UiSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case UiPackageImpl.TRIM_CONTAINER: {
-				MTrimContainer<?> trimContainer = (MTrimContainer<?>)theEObject;
-				T1 result = caseTrimContainer(trimContainer);
-				if (result == null) result = caseElementContainer(trimContainer);
-				if (result == null) result = caseUIElement(trimContainer);
-				if (result == null) result = caseApplicationElement(trimContainer);
+			case UiPackageImpl.GENERIC_TRIM_CONTAINER: {
+				MGenericTrimContainer<?> genericTrimContainer = (MGenericTrimContainer<?>)theEObject;
+				T1 result = caseGenericTrimContainer(genericTrimContainer);
+				if (result == null) result = caseElementContainer(genericTrimContainer);
+				if (result == null) result = caseUIElement(genericTrimContainer);
+				if (result == null) result = caseApplicationElement(genericTrimContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -286,17 +286,17 @@ public class UiSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Trim Container</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Generic Trim Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Trim Container</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Generic Trim Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T extends MUIElement> T1 caseTrimContainer(MTrimContainer<T> object) {
+	public <T extends MUIElement> T1 caseGenericTrimContainer(MGenericTrimContainer<T> object) {
 		return null;
 	}
 

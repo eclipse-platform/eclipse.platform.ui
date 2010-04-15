@@ -14,12 +14,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -40,20 +39,20 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Trimed Part Container</b></em>'.
+ * An implementation of the model object '<em><b>Trim Container</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl#getSelectedElement <em>Selected Element</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimedPartContainerImpl#getContent <em>Content</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimContainerImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimContainerImpl#getSelectedElement <em>Selected Element</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimContainerImpl#getContent <em>Content</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPartContainer {
+public class TrimContainerImpl extends UIElementImpl implements MTrimContainer {
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -62,7 +61,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MTrimContainer<MTrimElement>> children;
+	protected EList<MTrimBar> children;
 
 	/**
 	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
@@ -72,7 +71,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * @generated
 	 * @ordered
 	 */
-	protected MTrimContainer<MTrimElement> selectedElement;
+	protected MTrimBar selectedElement;
 
 	/**
 	 * The cached value of the '{@link #getContent() <em>Content</em>}' containment reference.
@@ -89,7 +88,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected TrimedPartContainerImpl() {
+	protected TrimContainerImpl() {
 		super();
 	}
 
@@ -100,7 +99,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return BasicPackageImpl.Literals.TRIMED_PART_CONTAINER;
+		return BasicPackageImpl.Literals.TRIM_CONTAINER;
 	}
 
 	/**
@@ -108,9 +107,9 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<MTrimContainer<MTrimElement>> getChildren() {
+	public List<MTrimBar> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MTrimContainer<MTrimElement>>(MUIElement.class, this, BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<MTrimBar>(MUIElement.class, this, BasicPackageImpl.TRIM_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
 		}
 		return children;
 	}
@@ -120,14 +119,13 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
-	public MTrimContainer<MTrimElement> getSelectedElement() {
+	public MTrimBar getSelectedElement() {
 		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
 			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MTrimContainer<MTrimElement>)eResolveProxy(oldSelectedElement);
+			selectedElement = (MTrimBar)eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
 		return selectedElement;
@@ -138,7 +136,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MTrimContainer<MTrimElement> basicGetSelectedElement() {
+	public MTrimBar basicGetSelectedElement() {
 		return selectedElement;
 	}
 
@@ -147,11 +145,11 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSelectedElement(MTrimContainer<MTrimElement> newSelectedElement) {
-		MTrimContainer<MTrimElement> oldSelectedElement = selectedElement;
+	public void setSelectedElement(MTrimBar newSelectedElement) {
+		MTrimBar oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -172,7 +170,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 		MPartSashContainerElement oldContent = content;
 		content = newContent;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT, oldContent, newContent);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIM_CONTAINER__CONTENT, oldContent, newContent);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -187,14 +185,14 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 		if (newContent != content) {
 			NotificationChain msgs = null;
 			if (content != null)
-				msgs = ((InternalEObject)content).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT, null, msgs);
+				msgs = ((InternalEObject)content).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.TRIM_CONTAINER__CONTENT, null, msgs);
 			if (newContent != null)
-				msgs = ((InternalEObject)newContent).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT, null, msgs);
+				msgs = ((InternalEObject)newContent).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.TRIM_CONTAINER__CONTENT, null, msgs);
 			msgs = basicSetContent(newContent, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT, newContent, newContent));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.TRIM_CONTAINER__CONTENT, newContent, newContent));
 	}
 
 	/**
@@ -206,7 +204,7 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
@@ -220,9 +218,9 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				return basicSetContent(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -236,12 +234,12 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				return getChildren();
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT:
+			case BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT:
 				if (resolve) return getSelectedElement();
 				return basicGetSelectedElement();
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				return getContent();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -256,14 +254,14 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				getChildren().clear();
-				getChildren().addAll((Collection<? extends MTrimContainer<MTrimElement>>)newValue);
+				getChildren().addAll((Collection<? extends MTrimBar>)newValue);
 				return;
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT:
-				setSelectedElement((MTrimContainer<MTrimElement>)newValue);
+			case BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT:
+				setSelectedElement((MTrimBar)newValue);
 				return;
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				setContent((MPartSashContainerElement)newValue);
 				return;
 		}
@@ -278,13 +276,13 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				getChildren().clear();
 				return;
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT:
-				setSelectedElement((MTrimContainer<MTrimElement>)null);
+			case BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT:
+				setSelectedElement((MTrimBar)null);
 				return;
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				setContent((MPartSashContainerElement)null);
 				return;
 		}
@@ -299,11 +297,11 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
 				return children != null && !children.isEmpty();
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT:
+			case BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT:
 				return selectedElement != null;
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				return content != null;
 		}
 		return super.eIsSet(featureID);
@@ -318,8 +316,8 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-				case BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+				case BasicPackageImpl.TRIM_CONTAINER__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
+				case BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
@@ -335,12 +333,12 @@ public class TrimedPartContainerImpl extends UIElementImpl implements MTrimedPar
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN;
-				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return BasicPackageImpl.TRIMED_PART_CONTAINER__SELECTED_ELEMENT;
+				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return BasicPackageImpl.TRIM_CONTAINER__CHILDREN;
+				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return BasicPackageImpl.TRIM_CONTAINER__SELECTED_ELEMENT;
 				default: return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
-} //TrimedPartContainerImpl
+} //TrimContainerImpl

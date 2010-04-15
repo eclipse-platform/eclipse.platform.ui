@@ -11,7 +11,9 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import java.util.Map;
+
 import org.eclipse.e4.ui.model.application.MContribution;
+
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 
@@ -21,6 +23,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EMap;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;

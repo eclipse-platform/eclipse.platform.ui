@@ -112,8 +112,8 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 				return createGenericTileAdapter();
 			}
 			@Override
-			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
-				return createTrimContainerAdapter();
+			public <T extends MUIElement> Adapter caseGenericTrimContainer(MGenericTrimContainer<T> object) {
+				return createGenericTrimContainerAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -252,16 +252,16 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MTrimContainer <em>Trim Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer <em>Generic Trim Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.MTrimContainer
+	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer
 	 * @generated
 	 */
-	public Adapter createTrimContainerAdapter() {
+	public Adapter createGenericTrimContainerAdapter() {
 		return null;
 	}
 

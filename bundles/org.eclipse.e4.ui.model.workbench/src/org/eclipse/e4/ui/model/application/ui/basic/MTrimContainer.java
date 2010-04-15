@@ -11,25 +11,24 @@
 package org.eclipse.e4.ui.model.application.ui.basic;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Trimed Part Container</b></em>'.
+ * A representation of the model object '<em><b>Trim Container</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer#getContent <em>Content</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer#getContent <em>Content</em>}</li>
  * </ul>
  * </p>
  *
  * @model
  * @generated
  */
-public interface MTrimedPartContainer extends MWindowElement, MUIElement, MElementContainer<MTrimContainer<MTrimElement>> {
+public interface MTrimContainer extends MWindowElement, MUIElement, MElementContainer<MTrimBar> {
 	/**
 	 * Returns the value of the '<em><b>Content</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -46,7 +45,7 @@ public interface MTrimedPartContainer extends MWindowElement, MUIElement, MEleme
 	MPartSashContainerElement getContent();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer#getContent <em>Content</em>}' containment reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer#getContent <em>Content</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Content</em>' containment reference.
@@ -55,4 +54,4 @@ public interface MTrimedPartContainer extends MWindowElement, MUIElement, MEleme
 	 */
 	void setContent(MPartSashContainerElement value);
 
-} // MTrimedPartContainer
+} // MTrimContainer

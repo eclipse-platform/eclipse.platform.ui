@@ -881,7 +881,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return (EReference)applicationEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1097,7 +1096,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public EClass getAddon() {
 		return addonEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
