@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.diff.provider.DiffTree;
 import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.synchronize.patch.*;
@@ -68,6 +69,8 @@ public class IgnoreLeadingPathSegmentsAction extends Action {
 			String input = dlg.getValue();
 			int newValue = Integer.parseInt(input);
 			if (newValue != oldValue) {
+				DiffTree tree = (DiffTree)context.getDiffTree();
+				tree.clear();
 				SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) context
 						.getAdapter(SubscriberDiffTreeEventHandler.class);
 				handler.reset();

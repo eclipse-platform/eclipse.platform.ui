@@ -86,9 +86,9 @@ public class ApplyPatchModelSynchronizeParticipant extends
 				Utils.initAction(fuzzFactor, "action.fuzzFactor."); //$NON-NLS-1$
 				IgnoreLeadingPathSegmentsAction ignoreAction = new IgnoreLeadingPathSegmentsAction(
 						getConfiguration());
-//				appendToGroup(menu,
-//						ISynchronizePageConfiguration.PREFERENCES_GROUP,
-//						ignoreAction);
+				appendToGroup(menu,
+						ISynchronizePageConfiguration.PREFERENCES_GROUP,
+						ignoreAction);
 				Utils.initAction(ignoreAction,
 						"action.ignoreLeadingPathSegments."); //$NON-NLS-1$
 				GererateRejFileAction generateAction = new GererateRejFileAction(

@@ -72,20 +72,17 @@ public class PatchModelProvider extends ModelProvider {
 		return resource;
 	}
 
-	static Object/*DiffProject or FilePatch2*/ getPatchObject(IResource resource, WorkspacePatcher patcher) {
-		switch (resource.getType()) {
-		case IResource.PROJECT: {
+	static Object/* DiffProject or FilePatch2 */getPatchObject(
+			IResource resource, WorkspacePatcher patcher) {
+		if (resource.getType() == IResource.PROJECT) {
 			if (patcher.isWorkspacePatch()) {
 				DiffProject[] diffProjects = patcher.getDiffProjects();
 				for (int i = 0; i < diffProjects.length; i++) {
 					if (diffProjects[i].getName().equals(resource.getName()))
 						return diffProjects[i];
 				}
-			} else {
-				// TODO:
 			}
-		}
-		case IResource.FILE: {
+		} else if (resource.getType() == IResource.FILE) {
 			FilePatch2[] diffs = patcher.getDiffs();
 			for (int i = 0; i < diffs.length; i++) {
 				if (resource.equals(getFile(diffs[i], patcher))) {
@@ -93,25 +90,28 @@ public class PatchModelProvider extends ModelProvider {
 				}
 			}
 		}
-		}
 		return null;
 	}
-	
+
 	static IFile getFile(FilePatch2 diff, WorkspacePatcher patcher) {
 		IProject project = null;
 		if (patcher.isWorkspacePatch()) {
-			DiffProject diffProject = (diff).getProject();
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(diffProject.getName());
-			if (project.getName().equals(diffProject.getName())) {
-				return project.getFile(diff.getPath(patcher.isReversed()));
-			}
+			DiffProject diffProject = diff.getProject();
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+					diffProject.getName());
+			return project.getFile(diff.getPath(patcher.isReversed()));
 		} else {
-			project = patcher.getTarget().getProject();
-			if (project.getName().equals(patcher.getTarget().getProject().getName())) {
-				return project.getFile(diff.getPath(patcher.isReversed()));
+			IResource target = patcher.getTarget();
+			if (target.getType() == IResource.PROJECT
+					|| target.getType() == IResource.FOLDER) {
+				IContainer container = (IContainer) target;
+				return container.getFile(diff.getStrippedPath(patcher
+						.getStripPrefixSegments(), patcher.isReversed()));
 			}
+			IContainer container = target.getParent();
+			return container.getFile(diff.getStrippedPath(patcher
+					.getStripPrefixSegments(), patcher.isReversed()));
 		}
-		return project.getFile(diff.getPath(patcher.isReversed()));
 	}
 
 	public static PatchWorkspace getPatchWorkspace(Subscriber subscriber) {
