@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,10 @@ package org.eclipse.ui.fieldassist;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -24,15 +28,15 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.swt.IFocusService;
 
 /**
  * ContentAssistCommandAdapter extends {@link ContentProposalAdapter} to invoke
@@ -51,7 +55,12 @@ import org.eclipse.ui.keys.IBindingService;
  */
 public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 
+	// ID used in the decoration registry.
 	private static final String CONTENT_ASSIST_DECORATION_ID = "org.eclipse.ui.fieldAssist.ContentAssistField"; //$NON-NLS-1$
+
+	// ID prefix used when registering our control with the focus service. 
+	private static final String CONTROL_ID_PREFIX = "org.eclipse.ui.fieldAssist.ContentAssistField.ControlID"; //$NON-NLS-1$
+
 	private String commandId;
 
 	/**
@@ -66,10 +75,6 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	// TODO: This should eventually be controlled by
 	// a platform UI preference.
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY = 500;
-
-	private IHandlerService handlerService;
-
-	private IHandlerActivation activeHandler;
 
 	private IHandler proposalHandler = new AbstractHandler() {
 		public Object execute(ExecutionEvent event) {
@@ -168,16 +173,8 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		// Set a default autoactivation delay.
 		setAutoActivationDelay(DEFAULT_AUTO_ACTIVATION_DELAY);
 
-		// Cache the handler service so we don't have to retrieve it each time
-		this.handlerService = (IHandlerService) PlatformUI.getWorkbench()
-				.getService(IHandlerService.class);
-
-		// Add listeners to the control to manage activation of the handler
-		addListeners(control);
-
-		if (control.isFocusControl()) {
-			activateHandler();
-		}
+		// Activate the handler
+		activateHandler(control);
 
 		if (installDecoration) {
 			// Note top left is used for compatibility with 3.2, although
@@ -189,31 +186,6 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 			decoration.setDescriptionText(dec.getDescription());
 		}
 
-	}
-
-	/*
-	 * Add the listeners needed in order to activate the content assist command
-	 * on the control.
-	 */
-	private void addListeners(Control control) {
-		control.addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e) {
-				deactivateHandler();
-			}
-
-			public void focusGained(FocusEvent e) {
-				if (isEnabled()) {
-					activateHandler();
-				} else {
-					deactivateHandler();
-				}
-			}
-		});
-		control.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				deactivateHandler();
-			}
-		});
 	}
 
 	/**
@@ -283,26 +255,33 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 				decoration.hide();
 			}
 		}
-		if (getControl().isFocusControl()) {
-			if (enabled) {
-				activateHandler();
-			} else {
-				deactivateHandler();
-			}
-		}
 	}
 
-	private void activateHandler() {
-		if (activeHandler == null) {
-			activeHandler = handlerService.activateHandler(commandId,
-					proposalHandler);
-		}
-	}
+	private void activateHandler(final Control control) {
+		IFocusService fs = (IFocusService) PlatformUI.getWorkbench()
+				.getService(IFocusService.class);
+		final IHandlerService hs = (IHandlerService) PlatformUI.getWorkbench().getService(
+				IHandlerService.class);
+		if (fs != null && hs != null) {
+			fs.addFocusTracker(control, CONTROL_ID_PREFIX + hashCode());
+			final IHandlerActivation handlerActivation = hs.activateHandler(commandId,
+					proposalHandler, new Expression() {
+						public EvaluationResult evaluate(IEvaluationContext context) {
+							return context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_NAME) == control
+									&& ContentAssistCommandAdapter.this.isEnabled() ? EvaluationResult.TRUE
+									: EvaluationResult.FALSE;
+						}
 
-	private void deactivateHandler() {
-		if (activeHandler != null) {
-			handlerService.deactivateHandler(activeHandler);
-			activeHandler = null;
+						public void collectExpressionInfo(final ExpressionInfo info) {
+							info.addVariableNameAccess(ISources.ACTIVE_FOCUS_CONTROL_NAME);
+						}
+
+				});
+			control.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					hs.deactivateHandler(handlerActivation);
+				}
+			});
 		}
 	}
 }
