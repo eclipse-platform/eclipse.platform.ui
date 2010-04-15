@@ -15,8 +15,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MApplicationPackage.Literals;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -27,15 +31,56 @@ public class GenTopic implements IApplication {
 
 	public Object start(IApplicationContext context) throws Exception {
 		try {
-			processLiterals(MApplicationPackage.Literals.class);
+			processHeader();
+			processLiterals(CommandsPackageImpl.Literals.class);
+			processLiterals(BasicPackageImpl.Literals.class);
+			processLiterals(ApplicationPackageImpl.Literals.class);
+			processLiterals(AdvancedPackageImpl.Literals.class);
+			processLiterals(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.class);
+			processLiterals(UiPackageImpl.Literals.class);
+			processLiterals(MenuPackageImpl.Literals.class);
+			processFooter();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return IApplication.EXIT_OK;
 	}
 
-	private void processLiterals(Class<Literals> literals)
+	private void processLiterals(Class<?> literals)
 			throws IllegalArgumentException, IllegalAccessException {
+		Field[] fields = literals.getFields();
+		Map<String, EClass> classes = new TreeMap<String, EClass>();
+		for (int i = 0; i < fields.length; i++) {
+			Object value = fields[i].get(null);
+			if (value instanceof EClass) {
+				classes.put(((EClass) value).getName(), (EClass) value);
+			}
+		}
+		for (EClass ec : classes.values()) {
+			processEClass(ec);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void processFooter() {
+		System.out
+				.println("\n\tpublic static String buildTopic(String topic) {"
+						+ "\n\t\treturn topic + TOPIC_SEP + ALL_SUB_TOPICS;"
+						+ "\n\t}"
+						+ "\n\tpublic static String buildTopic(String topic, String attrName) {"
+						+ "\n\t\treturn topic + TOPIC_SEP + attrName + TOPIC_SEP + ALL_SUB_TOPICS;"
+						+ "\n\t}"
+						+ "\n\tpublic static String buildTopic(String topic, String attrName, String eventType) {"
+						+ "\n\t\treturn topic + TOPIC_SEP + attrName + TOPIC_SEP + eventType;"
+						+ "\n\t}" + "\n}");
+	}
+
+	/**
+	 * 
+	 */
+	private void processHeader() {
 		System.out
 				.print("/*******************************************************************************\n * Copyright (c) 2009 IBM Corporation and others.\n * All rights reserved. This program and the accompanying materials\n * are made available under the terms of the Eclipse Public License v1.0\n * which accompanies this distribution, and is available at\n * http://www.eclipse.org/legal/epl-v10.html\n *\n * Contributors:\n *     IBM Corporation - initial API and implementation\n ******************************************************************************/"
 						+ "\npackage org.eclipse.e4.workbench.ui;\n\npublic class UIEvents {"
@@ -56,27 +101,6 @@ public class GenTopic implements IApplication {
 						+ "\n\t\tpublic static final String OLD_VALUE = \"OldValue\"; //$NON-NLS-1$"
 						+ "\n\t\tpublic static final String NEW_VALUE = \"NewValue\"; //$NON-NLS-1$"
 						+ "\n\t}");
-		Field[] fields = literals.getFields();
-		Map<String, EClass> classes = new TreeMap<String, EClass>();
-		for (int i = 0; i < fields.length; i++) {
-			Object value = fields[i].get(null);
-			if (value instanceof EClass) {
-				classes.put(((EClass) value).getName(), (EClass) value);
-			}
-		}
-		for (EClass ec : classes.values()) {
-			processEClass(ec);
-		}
-		System.out
-				.println("\n\tpublic static String buildTopic(String topic) {"
-						+ "\n\t\treturn topic + TOPIC_SEP + ALL_SUB_TOPICS;"
-						+ "\n\t}"
-						+ "\n\tpublic static String buildTopic(String topic, String attrName) {"
-						+ "\n\t\treturn topic + TOPIC_SEP + attrName + TOPIC_SEP + ALL_SUB_TOPICS;"
-						+ "\n\t}"
-						+ "\n\tpublic static String buildTopic(String topic, String attrName, String eventType) {"
-						+ "\n\t\treturn topic + TOPIC_SEP + attrName + TOPIC_SEP + eventType;"
-						+ "\n\t}" + "\n}");
 	}
 
 	private void processEClass(EClass eClass) {
