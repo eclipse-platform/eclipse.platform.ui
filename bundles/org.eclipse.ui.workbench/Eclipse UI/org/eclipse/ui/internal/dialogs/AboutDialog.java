@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProduct;
@@ -254,18 +253,15 @@ public class AboutDialog extends TrayDialog {
         topContainer.setLayout(layout);
         
 
+		// Calculate a good height for the text
         GC gc = new GC(parent);
-        // arbitrary default
+		int lineHeight = gc.getFontMetrics().getHeight();
+		gc.dispose();
+
         int topContainerHeightHint = 100;
-        try {
-			// default height enough for 6 lines of text
-			topContainerHeightHint = Math.max(topContainerHeightHint, gc
-					.getFontMetrics().getHeight() * 6);
-        }
-        finally {
-        	gc.dispose();
-        }
         
+		topContainerHeightHint = Math.max(topContainerHeightHint, lineHeight * 11);
+
         //image on left side of dialog
         if (aboutImage != null) {
             Label imageLabel = new Label(topContainer, SWT.NONE);
@@ -290,12 +286,17 @@ public class AboutDialog extends TrayDialog {
         topContainer.setLayoutData(data);
         
         if (item != null) {
-			final int minWidth = 400; // This value should really be calculated
+			final int minWidth = 432;
+			// This value should really be calculated
         	// from the computeSize(SWT.DEFAULT,
         	// SWT.DEFAULT) of all the
         	// children in infoArea excluding the
         	// wrapped styled text
         	// There is no easy way to do this.
+
+			// A scrolled composite is used instead of a vertical scroll bar on
+			// the styled text, because styled text does not automatically
+			// remove the vertical bar when not needed.
         	final ScrolledComposite scroller = new ScrolledComposite(topContainer,
     				SWT.V_SCROLL | SWT.H_SCROLL);
         	data = new GridData(GridData.FILL_BOTH);
