@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class Utils {
 	 */
 	public static boolean isRunning() {
 		Bundle bundle = getBundle(PI_OSGI);
-		return  bundle == null ? false : bundle.getState() == Bundle.ACTIVE;
+		return  bundle == null ? false : (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING)) != 0;
 	}
 
 	/**
