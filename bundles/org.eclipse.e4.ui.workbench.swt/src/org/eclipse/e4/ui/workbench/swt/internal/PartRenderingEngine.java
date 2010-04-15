@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map.Entry;
+import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
@@ -31,12 +31,12 @@ import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MGenericStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -276,8 +276,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					lclContext.declareModifiable(variable);
 				}
 
-				for (Entry<String, String> property : ctxt.getProperties()) {
-					lclContext.set(property.getKey(), property.getValue());
+				Map<String, String> props = ctxt.getProperties();
+				for (String key : props.keySet()) {
+					lclContext.set(key, props.get(key));
 				}
 
 				E4Workbench.processHierarchy(element);

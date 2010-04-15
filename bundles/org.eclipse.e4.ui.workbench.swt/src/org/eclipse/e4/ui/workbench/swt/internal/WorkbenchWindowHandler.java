@@ -1,8 +1,7 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.swt.SWT;
