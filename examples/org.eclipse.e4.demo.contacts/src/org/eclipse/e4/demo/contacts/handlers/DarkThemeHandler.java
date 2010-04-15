@@ -13,7 +13,7 @@
 package org.eclipse.e4.demo.contacts.handlers;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 public class DarkThemeHandler {
 
