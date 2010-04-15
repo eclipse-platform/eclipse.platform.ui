@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,8 +169,8 @@ public class UIEvents {
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
 	}
 
-	public static interface TrimedPartContainer {
-		public static final String TOPIC = UITopicBase + "/basic/TrimedPartContainer"; //$NON-NLS-1$
+	public static interface TrimContainer {
+		public static final String TOPIC = UITopicBase + "/basic/TrimContainer"; //$NON-NLS-1$
 		public static final String CONTENT = "content"; //$NON-NLS-1$
 	}
 
@@ -207,14 +207,14 @@ public class UIEvents {
 		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
 	}
 
+	public static interface GenericTrimContainer {
+		public static final String TOPIC = UITopicBase + "/ui/GenericTrimContainer"; //$NON-NLS-1$
+		public static final String SIDE = "side"; //$NON-NLS-1$
+	}
+
 	public static interface Input {
 		public static final String TOPIC = UITopicBase + "/ui/Input"; //$NON-NLS-1$
 		public static final String INPUTURI = "inputURI"; //$NON-NLS-1$
-	}
-
-	public static interface TrimContainer {
-		public static final String TOPIC = UITopicBase + "/ui/TrimContainer"; //$NON-NLS-1$
-		public static final String SIDE = "side"; //$NON-NLS-1$
 	}
 
 	public static interface UIElement {
