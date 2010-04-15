@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Gross (schtoo@schtoo.com) - patch for bug 16179
- *     Eugene Ostroukhov <eugeneo@symbian.org> -  Bug 287887 [Wizards] [api] Cancel button has two distinct roles
+ *     Eugene Ostroukhov <eugeneo@symbian.org> - Bug 287887 [Wizards] [api] Cancel button has two distinct roles
+ *     Paul Adams <padams@ittvis.com> - Bug 202534 - [Dialogs] SWT error in Wizard dialog when help is displayed and "Finish" is pressed
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
