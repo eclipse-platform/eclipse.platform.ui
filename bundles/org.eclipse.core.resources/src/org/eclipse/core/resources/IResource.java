@@ -286,6 +286,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 0x2000) indicating that a 
 	 * resource should be marked as a virtual resource.
 	 * 
+	 * @see IFolder#create(int, boolean, IProgressMonitor)
 	 * @since 3.6
 	 */
 	public static final int VIRTUAL = 0x2000;
@@ -1719,10 +1720,16 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isLinked();
 
 	/**
-	 * Returns whether this resource is a virtual resource.
+	 * Returns whether this resource is a virtual resource. Returns <code>true</code>
+	 * for folders that have been marked virtual using the {@link #VIRTUAL} update
+	 * flag.  Returns <code>false</code> in all other cases, including 
+	 * the case where this resource does not exist.  The workspace root, projects
+	 * and files currently cannot be made virtual.
 	 * 
 	 * @return <code>true</code> if this resource is virtual, and
 	 *         <code>false</code> otherwise
+	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
+	 * @see #VIRTUAL
 	 * @since 3.6
 	 */
 	public boolean isVirtual();
@@ -1735,7 +1742,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * the case where this resource does not exist.  The workspace root and 
 	 * projects are never linked.
 	 * <p>
-	 * This method returns true only for a resource that has been linked using
+	 * This method returns true for a resource that has been linked using
 	 * the <code>createLink</code> method.  
 	 * </p>
 	 * <p>
