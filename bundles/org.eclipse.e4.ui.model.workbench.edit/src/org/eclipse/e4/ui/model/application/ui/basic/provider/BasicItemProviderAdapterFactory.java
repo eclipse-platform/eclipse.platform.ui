@@ -195,26 +195,26 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected WindowTrimItemProvider windowTrimItemProvider;
+	protected TrimedPartContainerItemProvider trimedPartContainerItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createWindowTrimAdapter() {
-		if (windowTrimItemProvider == null) {
-			windowTrimItemProvider = new WindowTrimItemProvider(this);
+	public Adapter createTrimedPartContainerAdapter() {
+		if (trimedPartContainerItemProvider == null) {
+			trimedPartContainerItemProvider = new TrimedPartContainerItemProvider(this);
 		}
 
-		return windowTrimItemProvider;
+		return trimedPartContainerItemProvider;
 	}
 
 	/**
@@ -321,7 +321,7 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 		if (partStackItemProvider != null) partStackItemProvider.dispose();
 		if (partSashContainerItemProvider != null) partSashContainerItemProvider.dispose();
 		if (windowItemProvider != null) windowItemProvider.dispose();
-		if (windowTrimItemProvider != null) windowTrimItemProvider.dispose();
+		if (trimedPartContainerItemProvider != null) trimedPartContainerItemProvider.dispose();
 	}
 
 }

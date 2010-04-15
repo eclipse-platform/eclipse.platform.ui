@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.advanced.provider;
+package org.eclipse.e4.ui.model.application.ui.basic.provider;
 
 
 import java.util.Collection;
@@ -19,11 +19,11 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer;
+
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
@@ -48,12 +48,12 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class PerspectiveStackItemProvider
+public class TrimedPartContainerItemProvider
 	extends UIElementItemProvider
 	implements
 		IEditingDomainItemProvider,
@@ -67,7 +67,7 @@ public class PerspectiveStackItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public PerspectiveStackItemProvider(AdapterFactory adapterFactory) {
+	public TrimedPartContainerItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -122,6 +122,7 @@ public class PerspectiveStackItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			childrenFeatures.add(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT);
 		}
 		return childrenFeatures;
 	}
@@ -140,14 +141,14 @@ public class PerspectiveStackItemProvider
 	}
 
 	/**
-	 * This returns PerspectiveStack.gif.
+	 * This returns TrimedPartContainer.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/PerspectiveStack")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/TrimedPartContainer")); //$NON-NLS-1$
 	}
 
 	/**
@@ -158,10 +159,10 @@ public class PerspectiveStackItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MPerspectiveStack)object).getElementId();
+		String label = ((MTrimedPartContainer)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_PerspectiveStack_type") : //$NON-NLS-1$
-			getString("_UI_PerspectiveStack_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_TrimedPartContainer_type") : //$NON-NLS-1$
+			getString("_UI_TrimedPartContainer_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -175,8 +176,9 @@ public class PerspectiveStackItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MPerspectiveStack.class)) {
-			case AdvancedPackageImpl.PERSPECTIVE_STACK__CHILDREN:
+		switch (notification.getFeatureID(MTrimedPartContainer.class)) {
+			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -197,17 +199,32 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspective()));
+				 MBasicFactory.INSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+				 MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -272,32 +289,60 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPartStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPartSashContainer()));
+	}
 
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindow()));
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
 
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
+		boolean qualify =
+			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

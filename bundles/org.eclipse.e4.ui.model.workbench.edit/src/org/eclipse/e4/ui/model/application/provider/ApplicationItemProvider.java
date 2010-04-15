@@ -175,6 +175,7 @@ public class ApplicationItemProvider
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 		}
 		return childrenFeatures;
 	}
@@ -240,6 +241,7 @@ public class ApplicationItemProvider
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -286,6 +288,11 @@ public class ApplicationItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
 				 MCommandsFactory.INSTANCE.createCommand()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.APPLICATION__ADDONS,
+				 MApplicationFactory.INSTANCE.createAddon()));
 	}
 
 	/**

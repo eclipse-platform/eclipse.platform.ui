@@ -337,7 +337,6 @@ public class WindowItemProvider
 			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
-			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__TRIMS);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__WINDOWS);
 		}
 		return childrenFeatures;
@@ -408,7 +407,6 @@ public class WindowItemProvider
 			case BasicPackageImpl.WINDOW__PROPERTIES:
 			case BasicPackageImpl.WINDOW__HANDLERS:
 			case BasicPackageImpl.WINDOW__MAIN_MENU:
-			case BasicPackageImpl.WINDOW__TRIMS:
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -444,11 +442,6 @@ public class WindowItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.WINDOW__TRIMS,
-				 MBasicFactory.INSTANCE.createWindowTrim()));
-
-		newChildDescriptors.add
-			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
 				 MBasicFactory.INSTANCE.createWindow()));
 	}
@@ -467,7 +460,6 @@ public class WindowItemProvider
 		boolean qualify =
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
-			childFeature == BasicPackageImpl.Literals.WINDOW__TRIMS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 
 		if (qualify) {

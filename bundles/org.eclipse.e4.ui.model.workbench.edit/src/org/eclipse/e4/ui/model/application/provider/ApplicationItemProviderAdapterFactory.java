@@ -172,6 +172,29 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MAddon} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected AddonItemProvider addonItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MAddon}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createAddonAdapter() {
+		if (addonItemProvider == null) {
+			addonItemProvider = new AddonItemProvider(this);
+		}
+
+		return addonItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -274,6 +297,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (applicationItemProvider != null) applicationItemProvider.dispose();
 		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
 		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
+		if (addonItemProvider != null) addonItemProvider.dispose();
 	}
 
 }

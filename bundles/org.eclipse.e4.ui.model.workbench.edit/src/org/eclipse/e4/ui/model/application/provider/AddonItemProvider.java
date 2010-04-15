@@ -8,22 +8,16 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.basic.provider;
+package org.eclipse.e4.ui.model.application.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim;
-
-import org.eclipse.e4.ui.model.application.ui.provider.TrimContainerItemProvider;
+import org.eclipse.e4.ui.model.application.MAddon;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -33,13 +27,13 @@ import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MWindowTrim} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.MAddon} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class WindowTrimItemProvider
-	extends TrimContainerItemProvider
+public class AddonItemProvider
+	extends ContributionItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -52,7 +46,7 @@ public class WindowTrimItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WindowTrimItemProvider(AdapterFactory adapterFactory) {
+	public AddonItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -72,14 +66,14 @@ public class WindowTrimItemProvider
 	}
 
 	/**
-	 * This returns WindowTrim.gif.
+	 * This returns Addon.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/WindowTrim")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Addon")); //$NON-NLS-1$
 	}
 
 	/**
@@ -90,10 +84,10 @@ public class WindowTrimItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MWindowTrim)object).getElementId();
+		String label = ((MAddon)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_WindowTrim_type") : //$NON-NLS-1$
-			getString("_UI_WindowTrim_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Addon_type") : //$NON-NLS-1$
+			getString("_UI_Addon_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -119,17 +113,6 @@ public class WindowTrimItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-	}
-
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ResourceLocator getResourceLocator() {
-		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

@@ -407,7 +407,7 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindowTrim()));
+				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter

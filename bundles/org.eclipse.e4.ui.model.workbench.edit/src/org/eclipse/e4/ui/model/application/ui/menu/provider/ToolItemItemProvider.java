@@ -276,7 +276,7 @@ public class ToolItemItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindowTrim()));
+				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter
