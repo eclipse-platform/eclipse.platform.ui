@@ -147,7 +147,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_ELEMENT__ELEMENT_ID = 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -184,7 +184,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -392,7 +392,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int CONTRIBUTION__ELEMENT_ID = APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -493,7 +493,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int MODEL_COMPONENT__ELEMENT_ID = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -611,7 +611,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int ADDON__ELEMENT_ID = CONTRIBUTION__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -908,16 +908,16 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Tags</em>'.
+	 * @return the meta object for the attribute list '<em>Tags</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTags()
 	 * @see #getApplicationElement()
 	 * @generated
 	 */
-	public EReference getApplicationElement_Tags() {
-		return (EReference)applicationElementEClass.getEStructuralFeatures().get(1);
+	public EAttribute getApplicationElement_Tags() {
+		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1152,7 +1152,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
-		createEReference(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 
 		contributionEClass = createEClass(CONTRIBUTION);
 		createEAttribute(contributionEClass, CONTRIBUTION__CONTRIBUTION_URI);
@@ -1247,7 +1247,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getApplicationElement_Tags(), this.getStringToStringMap(), null, "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getApplicationElement_Tags(), ecorePackage.getEString(), "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1358,12 +1358,12 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		public static final EAttribute APPLICATION_ELEMENT__ELEMENT_ID = eINSTANCE.getApplicationElement_ElementId();
 
 		/**
-		 * The meta object literal for the '<em><b>Tags</b></em>' map feature.
+		 * The meta object literal for the '<em><b>Tags</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EReference APPLICATION_ELEMENT__TAGS = eINSTANCE.getApplicationElement_Tags();
+		public static final EAttribute APPLICATION_ELEMENT__TAGS = eINSTANCE.getApplicationElement_Tags();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.

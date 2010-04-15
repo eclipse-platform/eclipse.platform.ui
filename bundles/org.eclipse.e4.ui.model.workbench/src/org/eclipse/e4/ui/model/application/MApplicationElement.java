@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,19 +56,18 @@ public interface MApplicationElement {
 	void setElementId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Tags</b></em>' map.
-	 * The key is of type {@link java.lang.String},
-	 * and the value is of type {@link java.lang.String},
+	 * Returns the value of the '<em><b>Tags</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Tags</em>' map isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tags</em>' map.
-	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+	 * @return the value of the '<em>Tags</em>' attribute list.
+	 * @model
 	 * @generated
 	 */
-	Map<String, String> getTags();
+	List<String> getTags();
 
 } // MApplicationElement

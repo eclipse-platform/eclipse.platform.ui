@@ -108,7 +108,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -343,7 +343,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int INPUT_PART__ELEMENT_ID = PART__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -587,7 +587,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__ELEMENT_ID = UiPackageImpl.GENERIC_STACK__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -705,7 +705,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER__ELEMENT_ID = UiPackageImpl.GENERIC_TILE__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -832,7 +832,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1076,7 +1076,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1176,7 +1176,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1276,7 +1276,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1376,7 +1376,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMED_PART_CONTAINER__ELEMENT_ID = WINDOW_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

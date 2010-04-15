@@ -101,7 +101,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -210,7 +210,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -391,7 +391,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

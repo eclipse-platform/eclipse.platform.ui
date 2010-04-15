@@ -177,7 +177,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_CONTEXT__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -241,7 +241,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -296,7 +296,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -360,7 +360,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND_PARAMETER__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -424,7 +424,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int HANDLER__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -562,7 +562,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int KEY_BINDING__ELEMENT_ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -617,7 +617,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int PARAMETER__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

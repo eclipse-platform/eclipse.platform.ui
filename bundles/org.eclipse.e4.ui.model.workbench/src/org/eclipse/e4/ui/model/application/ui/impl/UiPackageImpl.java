@@ -213,7 +213,7 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_ELEMENT__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -359,7 +359,7 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int ELEMENT_CONTAINER__ELEMENT_ID = UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -477,7 +477,7 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_STACK__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -595,7 +595,7 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TILE__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -722,7 +722,7 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTAINER__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

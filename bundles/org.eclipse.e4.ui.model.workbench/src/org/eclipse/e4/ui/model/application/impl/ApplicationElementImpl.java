@@ -10,11 +10,14 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EMap;
@@ -26,6 +29,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -65,14 +69,14 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' map.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, String> tags;
+	protected EList<String> tags;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -119,25 +123,11 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getTags() {
+	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
+			tags = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
 		}
-		return tags.map();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getTags()).eMap()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
+		return tags;
 	}
 
 	/**
@@ -151,8 +141,7 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 				return getElementId();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getTags()).eMap();
-				else return getTags();
+				return getTags();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -162,6 +151,7 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -169,7 +159,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 				setElementId((String)newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getTags()).eMap()).set(newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -221,6 +212,8 @@ public abstract class ApplicationElementImpl extends EObjectImpl implements MApp
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (elementId: "); //$NON-NLS-1$
 		result.append(elementId);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(')');
 		return result.toString();
 	}

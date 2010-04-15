@@ -126,7 +126,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int ITEM__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -400,7 +400,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_ITEM__ELEMENT_ID = ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -571,7 +571,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -688,7 +688,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ITEM__ELEMENT_ID = ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -841,7 +841,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__ELEMENT_ID = MENU_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -958,7 +958,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU__ELEMENT_ID = MENU_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1102,7 +1102,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_MENU_ITEM__ELEMENT_ID = MENU_ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1282,7 +1282,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM__ELEMENT_ID = MENU_ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1462,7 +1462,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__ELEMENT_ID = ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1624,7 +1624,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1732,7 +1732,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1822,7 +1822,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_CONTROL__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1939,7 +1939,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__ELEMENT_ID = TOOL_ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2128,7 +2128,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__ELEMENT_ID = TOOL_ITEM__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2317,7 +2317,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_SEPARATOR__ELEMENT_ID = TOOL_BAR_ELEMENT__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

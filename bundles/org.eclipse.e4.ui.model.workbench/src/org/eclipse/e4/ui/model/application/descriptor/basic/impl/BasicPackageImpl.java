@@ -145,7 +145,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__ELEMENT_ID = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' map.
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

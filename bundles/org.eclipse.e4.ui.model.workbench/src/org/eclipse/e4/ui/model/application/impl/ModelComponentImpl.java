@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -92,14 +93,14 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' map.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, String> tags;
+	protected EList<String> tags;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -266,11 +267,11 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getTags() {
+	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.MODEL_COMPONENT__TAGS);
+			tags = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.MODEL_COMPONENT__TAGS);
 		}
-		return tags.map();
+		return tags;
 	}
 
 	/**
@@ -447,8 +448,6 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getTags()).eMap()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
@@ -476,8 +475,7 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
 				return getElementId();
 			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getTags()).eMap();
-				else return getTags();
+				return getTags();
 			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				return getHandlers();
 			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
@@ -513,7 +511,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				setElementId((String)newValue);
 				return;
 			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getTags()).eMap()).set(newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				getHandlers().clear();
@@ -702,6 +701,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (elementId: "); //$NON-NLS-1$
 		result.append(elementId);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(", positionInParent: "); //$NON-NLS-1$
 		result.append(positionInParent);
 		result.append(", parentID: "); //$NON-NLS-1$

@@ -111,14 +111,14 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' map.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, String> tags;
+	protected EList<String> tags;
 
 	/**
 	 * The default value of the '{@link #isAllowMultiple() <em>Allow Multiple</em>}' attribute.
@@ -309,11 +309,11 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getTags() {
+	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART_DESCRIPTOR__TAGS);
+			tags = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART_DESCRIPTOR__TAGS);
 		}
-		return tags.map();
+		return tags;
 	}
 
 	/**
@@ -486,8 +486,6 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 		switch (featureID) {
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getTags()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__MENUS:
 				return ((InternalEList<?>)getMenus()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR:
@@ -511,8 +509,7 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
 				return getElementId();
 			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getTags()).eMap();
-				else return getTags();
+				return getTags();
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				return isAllowMultiple();
 			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
@@ -552,7 +549,8 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 				setElementId((String)newValue);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getTags()).eMap()).set(newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple((Boolean)newValue);
@@ -731,6 +729,8 @@ public class PartDescriptorImpl extends UILabelImpl implements MPartDescriptor {
 		result.append(bindingContexts);
 		result.append(", elementId: "); //$NON-NLS-1$
 		result.append(elementId);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(", allowMultiple: "); //$NON-NLS-1$
 		result.append(allowMultiple);
 		result.append(", category: "); //$NON-NLS-1$

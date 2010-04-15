@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -100,14 +101,14 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' map.
+	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTags()
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, String> tags;
+	protected EList<String> tags;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -195,11 +196,11 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getTags() {
+	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, CommandsPackageImpl.KEY_BINDING__TAGS);
+			tags = new EDataTypeUniqueEList<String>(String.class, this, CommandsPackageImpl.KEY_BINDING__TAGS);
 		}
-		return tags.map();
+		return tags;
 	}
 
 	/**
@@ -260,8 +261,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getTags()).eMap()).basicRemove(otherEnd, msgs);
 			case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 		}
@@ -281,8 +280,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
 				return getElementId();
 			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getTags()).eMap();
-				else return getTags();
+				return getTags();
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
@@ -308,7 +306,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				setElementId((String)newValue);
 				return;
 			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getTags()).eMap()).set(newValue);
+				getTags().clear();
+				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
@@ -418,6 +417,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		result.append(keySequence);
 		result.append(", elementId: "); //$NON-NLS-1$
 		result.append(elementId);
+		result.append(", tags: "); //$NON-NLS-1$
+		result.append(tags);
 		result.append(')');
 		return result.toString();
 	}
