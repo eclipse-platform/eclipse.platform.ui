@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.signedcontent.SignedContent;
 import org.eclipse.osgi.signedcontent.SignedContentFactory;
@@ -105,17 +104,17 @@ public class AboutBundleData extends AboutData {
 		SignedContentFactory contentFactory = (SignedContentFactory) bundleContext
 				.getService(factoryRef);
 		try {
+			isSignedDetermined = true;
 			SignedContent signedContent = contentFactory.getSignedContent(bundle);
 			isSigned = signedContent != null && signedContent.isSigned();
-			isSignedDetermined = true;
-			return isSigned;
 		} catch (IOException e) {
-			throw (IllegalStateException) new IllegalStateException().initCause(e);
+			isSigned = false;
 		} catch (GeneralSecurityException e){
-			throw (IllegalStateException) new IllegalStateException().initCause(e);
+			isSigned = false;
 		} finally {
 			bundleContext.ungetService(factoryRef);
 		}
+		return isSigned;
 	}
 
 	/**

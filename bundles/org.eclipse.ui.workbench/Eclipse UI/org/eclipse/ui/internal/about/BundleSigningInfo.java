@@ -21,10 +21,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -161,6 +160,9 @@ public class BundleSigningInfo {
 				myData.getId())) {
 
 			protected IStatus run(IProgressMonitor monitor) {
+				final String[] signingInfo = new String[] {
+						WorkbenchMessages.BundleSigningTray_Unsigned,
+						WorkbenchMessages.BundleSigningTray_Unsigned };
 				try {
 					if (myData != data)
 						return Status.OK_STATUS;
@@ -169,18 +171,14 @@ public class BundleSigningInfo {
 					if (myData != data)
 						return Status.OK_STATUS;
 					SignerInfo[] signers = signedContent.getSignerInfos();
-					final String signerText, dateText;
 					if (!isOpen() && BundleSigningInfo.this.data == myData)
 						return Status.OK_STATUS;
 
-					if (signers.length == 0) {
-						signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
-						dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
-					} else {
+					if (signers.length > 0) {
 						Properties[] certs = parseCerts(signers[0]
 								.getCertificateChain());
 						if (certs.length == 0)
-							signerText = WorkbenchMessages.BundleSigningTray_Unknown;
+							signingInfo[0] = WorkbenchMessages.BundleSigningTray_Unknown;
 						else {
 							StringBuffer buffer = new StringBuffer();
 							for (Iterator i = certs[0].entrySet().iterator(); i
@@ -192,39 +190,40 @@ public class BundleSigningInfo {
 								if (i.hasNext())
 									buffer.append('\n');
 							}
-							signerText = buffer.toString();
+							signingInfo[0] = buffer.toString();
 						}
 
 						Date signDate = signedContent
 								.getSigningTime(signers[0]);
 						if (signDate != null)
-							dateText = DateFormat.getDateTimeInstance().format(
+							signingInfo[1] = DateFormat.getDateTimeInstance().format(
 									signDate);
 						else
-							dateText = WorkbenchMessages.BundleSigningTray_Unknown;
+							signingInfo[1] = WorkbenchMessages.BundleSigningTray_Unknown;
 					}
-
-					PlatformUI.getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
-								public void run() {
-									// check to see if the tray is still visible
-									// and if
-									// we're still looking at the same item
-									if (!isOpen()
-											&& BundleSigningInfo.this.data != myData)
-										return;
-									certificate.setText(signerText);
-									date.setText(dateText);
-								}
-							});
-
 				} catch (IOException e) {
-					return new Status(IStatus.ERROR,
-							WorkbenchPlugin.PI_WORKBENCH, e.getMessage(), e);
+					// default "unsigned info" is ok for the user, but log the
+					// problem.
+					StatusManager.getManager().handle(
+							new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e.getMessage(),
+									e), StatusManager.LOG);
 				} catch (GeneralSecurityException e) {
-					return new Status(IStatus.ERROR,
-							WorkbenchPlugin.PI_WORKBENCH, e.getMessage(), e);
+					// default "unsigned info is ok, but log the problem.
+					StatusManager.getManager().handle(
+							new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e.getMessage(),
+									e), StatusManager.LOG);
 				}
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						// check to see if the tray is still visible
+						// and if we're still looking at the same item
+						if (!isOpen() && BundleSigningInfo.this.data != myData)
+							return;
+						certificate.setText(signingInfo[0]);
+						date.setText(signingInfo[1]);
+					}
+				});
+
 				return Status.OK_STATUS;
 			}
 		};
