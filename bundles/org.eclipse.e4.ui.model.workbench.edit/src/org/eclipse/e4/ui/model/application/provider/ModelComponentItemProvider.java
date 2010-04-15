@@ -131,7 +131,7 @@ public class ModelComponentItemProvider
 				 true,
 				 false,
 				 false,
-				 null,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -407,7 +407,12 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter

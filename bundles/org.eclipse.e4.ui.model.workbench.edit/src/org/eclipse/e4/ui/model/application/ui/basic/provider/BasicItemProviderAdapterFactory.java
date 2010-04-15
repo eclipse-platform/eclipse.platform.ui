@@ -195,26 +195,49 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected TrimedPartContainerItemProvider trimedPartContainerItemProvider;
+	protected TrimBarItemProvider trimBarItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createTrimedPartContainerAdapter() {
-		if (trimedPartContainerItemProvider == null) {
-			trimedPartContainerItemProvider = new TrimedPartContainerItemProvider(this);
+	public Adapter createTrimBarAdapter() {
+		if (trimBarItemProvider == null) {
+			trimBarItemProvider = new TrimBarItemProvider(this);
 		}
 
-		return trimedPartContainerItemProvider;
+		return trimBarItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected TrimContainerItemProvider trimContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createTrimContainerAdapter() {
+		if (trimContainerItemProvider == null) {
+			trimContainerItemProvider = new TrimContainerItemProvider(this);
+		}
+
+		return trimContainerItemProvider;
 	}
 
 	/**
@@ -321,7 +344,8 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 		if (partStackItemProvider != null) partStackItemProvider.dispose();
 		if (partSashContainerItemProvider != null) partSashContainerItemProvider.dispose();
 		if (windowItemProvider != null) windowItemProvider.dispose();
-		if (trimedPartContainerItemProvider != null) trimedPartContainerItemProvider.dispose();
+		if (trimBarItemProvider != null) trimBarItemProvider.dispose();
+		if (trimContainerItemProvider != null) trimContainerItemProvider.dispose();
 	}
 
 }

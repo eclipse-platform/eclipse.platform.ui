@@ -8,37 +8,38 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.provider;
+package org.eclipse.e4.ui.model.application.ui.basic.provider;
 
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.ui.MTrimContainer;
+import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+
+import org.eclipse.e4.ui.model.application.ui.provider.GenericTrimContainerItemProvider;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
+import org.eclipse.emf.common.util.ResourceLocator;
+
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.MTrimContainer} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class TrimContainerItemProvider
-	extends ElementContainerItemProvider
+public class TrimBarItemProvider
+	extends GenericTrimContainerItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -51,7 +52,7 @@ public class TrimContainerItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public TrimContainerItemProvider(AdapterFactory adapterFactory) {
+	public TrimBarItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -66,31 +67,19 @@ public class TrimContainerItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addSidePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Side feature.
+	 * This returns TrimBar.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addSidePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_TrimContainer_side_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_TrimContainer_side_feature", "_UI_TrimContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.TRIM_CONTAINER__SIDE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+	@Override
+	public Object getImage(Object object) {
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/TrimBar")); //$NON-NLS-1$
 	}
 
 	/**
@@ -101,10 +90,10 @@ public class TrimContainerItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MTrimContainer<?>)object).getElementId();
+		String label = ((MTrimBar)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_TrimContainer_type") : //$NON-NLS-1$
-			getString("_UI_TrimContainer_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_TrimBar_type") : //$NON-NLS-1$
+			getString("_UI_TrimBar_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -117,12 +106,6 @@ public class TrimContainerItemProvider
 	@Override
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
-
-		switch (notification.getFeatureID(MTrimContainer.class)) {
-			case UiPackageImpl.TRIM_CONTAINER__SIDE:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-		}
 		super.notifyChanged(notification);
 	}
 
@@ -136,6 +119,17 @@ public class TrimContainerItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+	}
+
+	/**
+	 * Return the resource locator for this item provider's resources.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ResourceLocator getResourceLocator() {
+		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

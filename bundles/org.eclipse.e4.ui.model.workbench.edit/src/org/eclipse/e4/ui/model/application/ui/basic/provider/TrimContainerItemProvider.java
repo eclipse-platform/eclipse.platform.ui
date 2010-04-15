@@ -21,7 +21,7 @@ import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
 
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 
@@ -48,12 +48,12 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimedPartContainer} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class TrimedPartContainerItemProvider
+public class TrimContainerItemProvider
 	extends UIElementItemProvider
 	implements
 		IEditingDomainItemProvider,
@@ -67,7 +67,7 @@ public class TrimedPartContainerItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public TrimedPartContainerItemProvider(AdapterFactory adapterFactory) {
+	public TrimContainerItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -122,7 +122,7 @@ public class TrimedPartContainerItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			childrenFeatures.add(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT);
+			childrenFeatures.add(BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT);
 		}
 		return childrenFeatures;
 	}
@@ -141,17 +141,6 @@ public class TrimedPartContainerItemProvider
 	}
 
 	/**
-	 * This returns TrimedPartContainer.gif.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/TrimedPartContainer")); //$NON-NLS-1$
-	}
-
-	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -159,10 +148,10 @@ public class TrimedPartContainerItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MTrimedPartContainer)object).getElementId();
+		String label = ((MTrimContainer)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_TrimedPartContainer_type") : //$NON-NLS-1$
-			getString("_UI_TrimedPartContainer_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_TrimContainer_type") : //$NON-NLS-1$
+			getString("_UI_TrimContainer_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -176,9 +165,9 @@ public class TrimedPartContainerItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MTrimedPartContainer.class)) {
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CHILDREN:
-			case BasicPackageImpl.TRIMED_PART_CONTAINER__CONTENT:
+		switch (notification.getFeatureID(MTrimContainer.class)) {
+			case BasicPackageImpl.TRIM_CONTAINER__CHILDREN:
+			case BasicPackageImpl.TRIM_CONTAINER__CONTENT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -224,7 +213,12 @@ public class TrimedPartContainerItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -303,22 +297,22 @@ public class TrimedPartContainerItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
+				(BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
+				(BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
+				(BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPartStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT,
+				(BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT,
 				 MBasicFactory.INSTANCE.createPartSashContainer()));
 	}
 
@@ -335,7 +329,7 @@ public class TrimedPartContainerItemProvider
 
 		boolean qualify =
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == BasicPackageImpl.Literals.TRIMED_PART_CONTAINER__CONTENT;
+			childFeature == BasicPackageImpl.Literals.TRIM_CONTAINER__CONTENT;
 
 		if (qualify) {
 			return getString

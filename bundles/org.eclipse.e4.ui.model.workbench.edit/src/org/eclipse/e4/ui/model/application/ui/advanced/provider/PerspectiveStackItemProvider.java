@@ -297,7 +297,12 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimedPartContainer()));
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimContainer()));
 	}
 
 	/**
