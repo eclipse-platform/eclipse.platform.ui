@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Erven <hannes@erven.at> - Bug 293841 - [FieldAssist] NumLock keyDown event should not close the proposal popup [with patch]
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
@@ -319,7 +320,8 @@ public class ContentProposalAdapter {
 					// Modifier keys are explicitly checked and ignored because
 					// they are not complete yet (no character).
 					default:
-						if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1
+						if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.NUM_LOCK 
+								&& e.keyCode != SWT.MOD1
 								&& e.keyCode != SWT.MOD2
 								&& e.keyCode != SWT.MOD3
 								&& e.keyCode != SWT.MOD4) {
