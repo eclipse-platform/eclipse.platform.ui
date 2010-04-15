@@ -15,13 +15,14 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EModelService;
 
@@ -46,50 +47,50 @@ public class EModelServiceInsertTest extends TestCase {
 	}
 
 	private MApplication createSimpleApplication() {
-		MApplication app = MApplicationFactory.eINSTANCE.createApplication();
+		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		app.setContext(applicationContext);
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setId("main.Window");
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setElementId("main.Window");
 		app.getChildren().add(window);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("theStack");
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.setElementId("theStack");
 		window.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
-		part1.setId("part1");
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		part1.setElementId("part1");
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
-		part2.setId("part2");
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		part2.setElementId("part2");
 		stack.getChildren().add(part2);
 
 		return app;
 	}
 
 	private MApplication createApplication() {
-		MApplication app = MApplicationFactory.eINSTANCE.createApplication();
+		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		app.setContext(applicationContext);
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setId("main.Window");
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setElementId("main.Window");
 		app.getChildren().add(window);
 
-		MPartSashContainer psc = MApplicationFactory.eINSTANCE
+		MPartSashContainer psc = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		psc.setHorizontal(true);
-		psc.setId("topSash");
+		psc.setElementId("topSash");
 		window.getChildren().add(psc);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("theStack");
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.setElementId("theStack");
 		psc.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
-		part1.setId("part1");
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		part1.setElementId("part1");
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
-		part2.setId("part2");
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		part2.setElementId("part2");
 		stack.getChildren().add(part2);
 
 		return app;
@@ -103,10 +104,11 @@ public class EModelServiceInsertTest extends TestCase {
 
 		MUIElement relTo = modelService.find(relToId, app);
 
-		MPart newPart = MApplicationFactory.eINSTANCE.createPart();
-		newPart.setId("newPart");
+		MPart newPart = BasicFactoryImpl.eINSTANCE.createPart();
+		newPart.setElementId("newPart");
 
-		modelService.insert(newPart, (MPSCElement) relTo, where, ratio);
+		modelService.insert(newPart, (MPartSashContainerElement) relTo, where,
+				ratio);
 
 		MUIElement newPartParent = newPart.getParent();
 		assertTrue("parent must be a sash",

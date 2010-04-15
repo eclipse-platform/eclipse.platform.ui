@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,9 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -27,10 +27,10 @@ public abstract class ModelReconcilerContributionTest extends
 			String userChange, String newApplicationState) {
 		MApplication application = createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.getPersistedState().put("testing", applicationState);
 		window.getChildren().add(part);
 
@@ -221,7 +221,7 @@ public abstract class ModelReconcilerContributionTest extends
 	public void testContribution_NewPersistedState() {
 		MApplication application = createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
 		saveModel();
@@ -229,7 +229,7 @@ public abstract class ModelReconcilerContributionTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.getPersistedState().put("key", "value");
 		window.getChildren().add(part);
 
@@ -252,11 +252,11 @@ public abstract class ModelReconcilerContributionTest extends
 			String newApplicationURI) {
 		MApplication application = createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setURI(applicationURI);
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI(applicationURI);
 		window.getChildren().add(part);
 
 		saveModel();
@@ -264,32 +264,32 @@ public abstract class ModelReconcilerContributionTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setURI(userChange);
+		part.setContributionURI(userChange);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
 		part = (MPart) window.getChildren().get(0);
-		part.setURI(newApplicationURI);
+		part.setContributionURI(newApplicationURI);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(newApplicationURI, part.getURI());
+		assertEquals(newApplicationURI, part.getContributionURI());
 
 		applyAll(deltas);
 
 		if (applicationURI == null) {
 			if (userChange == null) {
-				assertEquals(newApplicationURI, part.getURI());
+				assertEquals(newApplicationURI, part.getContributionURI());
 			} else {
-				assertEquals(userChange, part.getURI());
+				assertEquals(userChange, part.getContributionURI());
 			}
 		} else {
 			if (userChange == null || !applicationURI.equals(userChange)) {
-				assertEquals(userChange, part.getURI());
+				assertEquals(userChange, part.getContributionURI());
 			} else {
-				assertEquals(newApplicationURI, part.getURI());
+				assertEquals(newApplicationURI, part.getContributionURI());
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -95,14 +96,14 @@ public abstract class ModelResourceTest extends TestCase {
 			return (MApplication) resource.getContents().get(0);
 		}
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		resource.getContents().add((EObject) application);
 		return application;
 	}
 
 	protected MWindow createWindow(MApplication application) {
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		return window;
 	}

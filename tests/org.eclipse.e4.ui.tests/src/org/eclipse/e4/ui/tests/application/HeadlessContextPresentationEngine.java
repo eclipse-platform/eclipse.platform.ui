@@ -23,12 +23,12 @@ import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -160,7 +160,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 			if (element instanceof MContribution && createContributions) {
 				MContribution contribution = (MContribution) element;
-				String uri = contribution.getURI();
+				String uri = contribution.getContributionURI();
 				if (uri != null) {
 					Object clientObject = contributionFactory.create(uri,
 							createdContext);

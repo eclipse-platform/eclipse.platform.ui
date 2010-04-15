@@ -214,8 +214,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return BasicPackageImpl.eINSTANCE.getPart_Toolbar();
 		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)) {
 			return UiPackageImpl.eINSTANCE.getGenericTile_Horizontal();
-		} else if (featureName.equals(TRIMCONTAINER_SIDE_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getTrimContainer_Side();
+		} else if (featureName.equals(GENERICTRIMCONTAINER_SIDE_ATTNAME)) {
+			return UiPackageImpl.eINSTANCE.getGenericTrimContainer_Side();
 		} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {
 			return CommandsPackageImpl.eINSTANCE.getHandlerContainer_Handlers();
 		} else if (featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
@@ -264,7 +264,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			return Integer.valueOf(featureValue);
 		} else if (instanceClass == boolean.class) {
 			return Boolean.valueOf(featureValue);
-		} else if (feature == UiPackageImpl.eINSTANCE.getTrimContainer_Side()) {
+		} else if (feature == UiPackageImpl.eINSTANCE.getGenericTrimContainer_Side()) {
 			return SideValue.getByName(featureValue);
 		} else if (feature == MenuPackageImpl.eINSTANCE.getItem_Type()) {
 			return ItemType.getByName(featureValue);
@@ -1086,6 +1086,34 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (!bindingsChanged) {
 				return reference.eContainer();
 			}
+		}
+
+		if (reference instanceof MPartDescriptor) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+			boolean descriptorsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(
+								PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME)) {
+							List<?> descriptors = (List<?>) change.getValue();
+							for (Object descriptor : descriptors) {
+								if (descriptor == reference) {
+									return key;
+								}
+							}
+							descriptorsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return descriptorsChanged ? null : reference.eContainer();
 		}
 
 		if (reference instanceof MUIElement) {

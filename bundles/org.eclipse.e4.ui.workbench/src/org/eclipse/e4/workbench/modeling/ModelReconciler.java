@@ -201,10 +201,10 @@ public abstract class ModelReconciler {
 			.getGenericTile_Horizontal().getName();
 
 	/**
-	 * Attribute defined by MTrimContainers (value is <code>side</code>).
+	 * Attribute defined by MGenericTrimContainers (value is <code>side</code>).
 	 */
-	public static final String TRIMCONTAINER_SIDE_ATTNAME = UiPackageImpl.eINSTANCE
-			.getTrimContainer_Side().getName();
+	public static final String GENERICTRIMCONTAINER_SIDE_ATTNAME = UiPackageImpl.eINSTANCE
+			.getGenericTrimContainer_Side().getName();
 
 	/**
 	 * Attribute defined by MBindingContainers (value is <code>rootContext</code>).
@@ -219,10 +219,10 @@ public abstract class ModelReconciler {
 			.getBindingTableContainer_BindingTables().getName();
 
 	/**
-	 * Attribute defined by MBindingTables (value is <code>bindingTables</code>).
+	 * Attribute defined by MBindingTables (value is <code>bindings</code>).
 	 */
 	public static final String BINDINGTABLES_BINDINGS_ATTNAME = CommandsPackageImpl.eINSTANCE
-			.getBindingTableContainer_BindingTables().getName();
+			.getBindingTable_Bindings().getName();
 
 	/**
 	 * Attribute defined by MBindingTables (value is <code>bindingContextId</code>).

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,11 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.tests.Activator;
@@ -177,13 +177,13 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				while (display.readAndDispatch())
 					;
 
-				assertEquals(parts[0].getId(), context
+				assertEquals(parts[0].getElementId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 
 				context.set(IServiceConstants.ACTIVE_PART, parts[1]);
 				while (display.readAndDispatch())
 					;
-				assertEquals(parts[1].getId(), context
+				assertEquals(parts[1].getElementId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
@@ -202,13 +202,13 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				while (display.readAndDispatch())
 					;
 
-				assertEquals(parts[0].getId(), context
+				assertEquals(parts[0].getElementId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 
 				service.activate(parts[1]);
 				while (display.readAndDispatch())
 					;
-				assertEquals(parts[1].getId(), context
+				assertEquals(parts[1].getElementId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
@@ -225,9 +225,9 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	// });
 	// }
 
-	private static MPSCElement getNonContainer(MPSCElement activeChild) {
+	private static MWindowElement getNonContainer(MWindowElement activeChild) {
 		if (activeChild instanceof MElementContainer<?>) {
-			activeChild = (MPSCElement) ((MElementContainer<?>) activeChild)
+			activeChild = (MWindowElement) ((MElementContainer<?>) activeChild)
 					.getSelectedElement();
 			assertNotNull(activeChild);
 
@@ -238,7 +238,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	private static IEclipseContext getActiveChildContext(
 			MApplication application) {
-		MPSCElement nonContainer = getNonContainer(application
+		MWindowElement nonContainer = getNonContainer(application
 				.getSelectedElement().getSelectedElement());
 		return ((MContext) nonContainer).getContext();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,16 +15,18 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.MWindowTrim;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -41,7 +43,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setLabel("newPart");
 		window.getChildren().add(part);
 
@@ -67,7 +69,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
 		saveModel();
@@ -75,7 +77,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part = MApplicationFactory.eINSTANCE.createPart();
+		part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setLabel("newPart");
 		window.getChildren().add(part);
 
@@ -105,7 +107,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 
 		window.getChildren().add(stack);
 
@@ -114,7 +116,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setLabel("newPart");
 		stack.getChildren().add(part);
 
@@ -146,7 +148,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart editor = MApplicationFactory.eINSTANCE.createPart();
+		MPart editor = BasicFactoryImpl.eINSTANCE.createPart();
 		editor.setLabel("newEditor");
 		window.getChildren().add(editor);
 
@@ -177,10 +179,10 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPerspectiveStack stack = MApplicationFactory.eINSTANCE
+		MPerspectiveStack stack = AdvancedFactoryImpl.eINSTANCE
 				.createPerspectiveStack();
 
-		MPerspective perspective = MApplicationFactory.eINSTANCE
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
 				.createPerspective();
 		perspective.setLabel("newEditor");
 		stack.getChildren().add(perspective);
@@ -216,7 +218,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
 				.createPerspectiveStack();
 		window.getChildren().add(perspectiveStack);
 
@@ -236,42 +238,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(window.getChildren().get(0) instanceof MPerspectiveStack);
 	}
 
-	public void testElementContainer_Children_Add7() {
-		MApplication application = createApplication();
-
-		MWindow window = createWindow(application);
-
-		saveModel();
-
-		ModelReconciler reconciler = createModelReconciler();
-		reconciler.recordChanges(application);
-
-		MPartDescriptor part = MApplicationFactory.eINSTANCE
-				.createPartDescriptor();
-		window.getChildren().add(part);
-
-		Object state = reconciler.serialize();
-
-		application = createApplication();
-		window = application.getChildren().get(0);
-
-		Collection<ModelDelta> deltas = constructDeltas(application, state);
-
-		assertEquals(0, window.getChildren().size());
-
-		applyAll(deltas);
-
-		assertEquals(1, window.getChildren().size());
-
-		assertTrue(window.getChildren().get(0) instanceof MPartDescriptor);
-	}
-
 	public void testElementContainer_Children_Remove() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
 		saveModel();
@@ -303,10 +275,10 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part2);
 
 		saveModel();
@@ -344,10 +316,10 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part);
 
 		saveModel();
@@ -380,13 +352,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part2);
 
 		saveModel();
@@ -421,16 +393,16 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = MApplicationFactory.eINSTANCE.createPartStack();
-		MPartStack stack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
 
 		window.getChildren().add(stack1);
 		window.getChildren().add(stack2);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack1.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack2.getChildren().add(part2);
 
 		saveModel();
@@ -474,13 +446,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part2);
 
 		saveModel();
@@ -488,7 +460,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		stack.getChildren().move(0, 1);
+		stack.getChildren().remove(part1);
+		stack.getChildren().add(part1);
 
 		Object state = reconciler.serialize();
 
@@ -522,11 +495,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(partSashContainer);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		partSashContainer.getChildren().add(part);
 
 		Object state = reconciler.serialize();
@@ -559,11 +532,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartSashContainer partSashContainer1 = MApplicationFactory.eINSTANCE
+		MPartSashContainer partSashContainer1 = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(partSashContainer1);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		partSashContainer1.getChildren().add(part1);
 
 		saveModel();
@@ -571,11 +544,11 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartSashContainer partSashContainer2 = MApplicationFactory.eINSTANCE
+		MPartSashContainer partSashContainer2 = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(partSashContainer2);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		partSashContainer2.getChildren().add(part2);
 
 		Object state = reconciler.serialize();
@@ -614,7 +587,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(partSashContainer2.getChildren().get(0) instanceof MPart);
 	}
 
-	public void testElementContainer_Children_Add_WindowTrim() {
+	public void testElementContainer_Children_Add_TrimContainer() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
@@ -623,9 +596,9 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim);
+		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
+				.createTrimContainer();
+		window.getChildren().add(trimContainer);
 
 		Object state = reconciler.serialize();
 
@@ -646,16 +619,16 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		assertEquals(1, window.getChildren().size());
 		assertNotNull(window.getChildren().get(0));
-		assertTrue(window.getChildren().get(0) instanceof MWindowTrim);
+		assertTrue(window.getChildren().get(0) instanceof MTrimContainer);
 	}
 
 	public void testElementContainer_Children_Remove_WindowTrim() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim);
+		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
+				.createTrimContainer();
+		window.getChildren().add(trimContainer);
 
 		saveModel();
 
@@ -668,7 +641,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		application = createApplication();
 		window = application.getChildren().get(0);
-		windowTrim = (MWindowTrim) window.getChildren().get(0);
+		trimContainer = (MTrimContainer) window.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -676,7 +649,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(windowTrim, window.getChildren().get(0));
+		assertEquals(trimContainer, window.getChildren().get(0));
 
 		applyAll(deltas);
 
@@ -690,23 +663,27 @@ public abstract class ModelReconcilerElementContainerTest extends
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim);
+		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
+				.createTrimContainer();
+		window.getChildren().add(trimContainer);
+
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimContainer.getChildren().add(trimBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
-		windowTrim.getChildren().add(toolBar);
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		trimBar.getChildren().add(toolBar);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
-		windowTrim = (MWindowTrim) window.getChildren().get(0);
+		trimContainer = (MTrimContainer) window.getChildren().get(0);
+		trimBar = trimContainer.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -714,9 +691,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(windowTrim, window.getChildren().get(0));
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(0, windowTrim.getChildren().size());
+		assertEquals(1, trimContainer.getChildren().size());
+		assertEquals(trimBar, trimContainer.getChildren().get(0));
+
+		assertEquals(0, trimBar.getChildren().size());
 
 		applyAll(deltas);
 
@@ -724,36 +704,43 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(windowTrim, window.getChildren().get(0));
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(1, windowTrim.getChildren().size());
-		assertTrue(windowTrim.getChildren().get(0) instanceof MToolBar);
+		assertEquals(1, trimContainer.getChildren().size());
+		assertEquals(trimBar, trimContainer.getChildren().get(0));
+
+		assertEquals(1, trimBar.getChildren().size());
+		assertTrue(trimBar.getChildren().get(0) instanceof MToolBar);
 	}
 
 	public void testElementContainer_Children_Remove_ToolBar() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim);
+		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
+				.createTrimContainer();
+		window.getChildren().add(trimContainer);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
-		windowTrim.getChildren().add(toolBar);
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimContainer.getChildren().add(trimBar);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		trimBar.getChildren().add(toolBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		windowTrim.getChildren().remove(0);
+		trimBar.getChildren().remove(0);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
-		windowTrim = (MWindowTrim) window.getChildren().get(0);
-		toolBar = (MToolBar) windowTrim.getChildren().get(0);
+		trimContainer = (MTrimContainer) window.getChildren().get(0);
+		trimBar = trimContainer.getChildren().get(0);
+		toolBar = (MToolBar) trimBar.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -761,10 +748,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(windowTrim, window.getChildren().get(0));
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(1, windowTrim.getChildren().size());
-		assertEquals(toolBar, windowTrim.getChildren().get(0));
+		assertEquals(1, trimContainer.getChildren().size());
+		assertEquals(trimBar, trimContainer.getChildren().get(0));
+
+		assertEquals(1, trimBar.getChildren().size());
+		assertEquals(toolBar, trimBar.getChildren().get(0));
 
 		assertEquals(0, toolBar.getChildren().size());
 
@@ -774,52 +764,62 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(1, window.getChildren().size());
-		assertEquals(windowTrim, window.getChildren().get(0));
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(0, windowTrim.getChildren().size());
+		assertEquals(1, trimContainer.getChildren().size());
+		assertEquals(trimBar, trimContainer.getChildren().get(0));
+
+		assertEquals(0, trimBar.getChildren().size());
 	}
 
 	public void testElementContainer_Children_SwitchParent_ToolBar() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MWindowTrim windowTrim1 = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim1);
-		MWindowTrim windowTrim2 = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim2);
+		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
+				.createTrimContainer();
+		window.getChildren().add(trimContainer);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
-		windowTrim1.getChildren().add(toolBar);
+		MTrimBar trimBar1 = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimContainer.getChildren().add(trimBar1);
+
+		MTrimBar trimBar2 = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimContainer.getChildren().add(trimBar2);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		trimBar1.getChildren().add(toolBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		windowTrim2.getChildren().add(windowTrim1.getChildren().remove(0));
+		trimBar2.getChildren().add(trimBar1.getChildren().remove(0));
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
-		windowTrim1 = (MWindowTrim) window.getChildren().get(0);
-		windowTrim2 = (MWindowTrim) window.getChildren().get(1);
-		toolBar = (MToolBar) windowTrim1.getChildren().get(0);
+		trimContainer = (MTrimContainer) window.getChildren().get(0);
+		trimBar1 = trimContainer.getChildren().get(0);
+		trimBar2 = trimContainer.getChildren().get(1);
+		toolBar = (MToolBar) trimBar1.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(2, window.getChildren().size());
-		assertEquals(windowTrim1, window.getChildren().get(0));
-		assertEquals(windowTrim2, window.getChildren().get(1));
+		assertEquals(1, window.getChildren().size());
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(1, windowTrim1.getChildren().size());
-		assertEquals(toolBar, windowTrim1.getChildren().get(0));
-		assertEquals(0, windowTrim2.getChildren().size());
+		assertEquals(2, trimContainer.getChildren().size());
+		assertEquals(trimBar1, trimContainer.getChildren().get(0));
+		assertEquals(trimBar2, trimContainer.getChildren().get(1));
+
+		assertEquals(1, trimBar1.getChildren().size());
+		assertEquals(toolBar, trimBar1.getChildren().get(0));
+		assertEquals(0, trimBar2.getChildren().size());
 
 		assertEquals(0, toolBar.getChildren().size());
 
@@ -828,13 +828,16 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(2, window.getChildren().size());
-		assertEquals(windowTrim1, window.getChildren().get(0));
-		assertEquals(windowTrim2, window.getChildren().get(1));
+		assertEquals(1, window.getChildren().size());
+		assertEquals(trimContainer, window.getChildren().get(0));
 
-		assertEquals(0, windowTrim1.getChildren().size());
-		assertEquals(1, windowTrim2.getChildren().size());
-		assertEquals(toolBar, windowTrim2.getChildren().get(0));
+		assertEquals(2, trimContainer.getChildren().size());
+		assertEquals(trimBar1, trimContainer.getChildren().get(0));
+		assertEquals(trimBar2, trimContainer.getChildren().get(1));
+
+		assertEquals(0, trimBar1.getChildren().size());
+		assertEquals(1, trimBar2.getChildren().size());
+		assertEquals(toolBar, trimBar2.getChildren().get(0));
 
 		assertEquals(0, toolBar.getChildren().size());
 	}
@@ -844,13 +847,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part2);
 
 		saveModel();
@@ -883,13 +886,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stack);
 
-		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part1);
 
-		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(part2);
 
 		stack.setSelectedElement(part1);
@@ -932,13 +935,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 		reconciler.recordChanges(application);
 
 		// create a part sash container and add it to the window
-		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(partSashContainer);
 
 		// add a new part as a child of the container and also set it as the
 		// active child
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		if (setActiveChildFirst) {
 			partSashContainer.setSelectedElement(part);
 			partSashContainer.getChildren().add(part);

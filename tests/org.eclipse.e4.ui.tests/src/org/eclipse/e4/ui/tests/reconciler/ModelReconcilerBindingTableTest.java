@@ -14,8 +14,8 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -25,7 +25,7 @@ public abstract class ModelReconcilerBindingTableTest extends
 	private void testBindingTable_BindingContextId(String before, String after) {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = MApplicationFactory.eINSTANCE
+		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
 				.createBindingTable();
 		bindingTable.setBindingContextId(before);
 		application.getBindingTables().add(bindingTable);

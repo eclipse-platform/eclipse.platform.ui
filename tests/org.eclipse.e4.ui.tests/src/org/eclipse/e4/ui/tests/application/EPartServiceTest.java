@@ -24,22 +24,24 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MInputPart;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -304,22 +306,22 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testBringToTop_ActivationChanges() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
-		MPart partFrontA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partBackA = MApplicationFactory.eINSTANCE.createPart();
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPart partFrontA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partBackA = BasicFactoryImpl.eINSTANCE.createPart();
 		partStackA.getChildren().add(partFrontA);
 		partStackA.getChildren().add(partBackA);
 		window.getChildren().add(partStackA);
 
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
-		MPart partFrontB = MApplicationFactory.eINSTANCE.createPart();
-		MPart partBackB = MApplicationFactory.eINSTANCE.createPart();
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPart partFrontB = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partBackB = BasicFactoryImpl.eINSTANCE.createPart();
 		partStackB.getChildren().add(partFrontB);
 		partStackB.getChildren().add(partBackB);
 		window.getChildren().add(partStackB);
@@ -447,31 +449,31 @@ public class EPartServiceTest extends TestCase {
 		final String uri1 = "file:///a.txt";
 		final String uri2 = "file:///b.txt";
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MInputPart inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		MInputPart inputPart = BasicFactoryImpl.eINSTANCE.createInputPart();
 		inputPart.setInputURI(uri1);
 		window.getChildren().add(inputPart);
 
-		part = MApplicationFactory.eINSTANCE.createPart();
+		part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		inputPart = BasicFactoryImpl.eINSTANCE.createInputPart();
 		inputPart.setInputURI(uri2);
 		window.getChildren().add(inputPart);
 
-		inputPart = MApplicationFactory.eINSTANCE.createInputPart();
+		inputPart = BasicFactoryImpl.eINSTANCE.createInputPart();
 		inputPart.setInputURI(uri1);
 		window.getChildren().add(inputPart);
 
-		part = MApplicationFactory.eINSTANCE.createPart();
+		part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
 		initialize(applicationContext, application);
@@ -491,13 +493,13 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testIsPartVisible_NotInStack(boolean selected, boolean visible) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setVisible(visible);
 		window.getChildren().add(part);
 
@@ -880,9 +882,9 @@ public class EPartServiceTest extends TestCase {
 	public void testCreatePart() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		getEngine().createGui(window);
@@ -895,9 +897,9 @@ public class EPartServiceTest extends TestCase {
 	public void testCreatePart2() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		getEngine().createGui(window);
@@ -910,9 +912,9 @@ public class EPartServiceTest extends TestCase {
 	public void testShowPart_Id_ACTIVATE() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		getEngine().createGui(window);
@@ -921,27 +923,28 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 		MPart part = partService.showPart("partId", PartState.ACTIVATE);
 		assertNotNull(part);
-		assertEquals("partId", part.getId());
+		assertEquals("partId", part.getElementId());
 		assertEquals(part, partService.getActivePart());
 		assertTrue("Shown part should be visible", part.isVisible());
 	}
 
 	public void testShowPart_Id_ACTIVATE_DefinedCategoryStackNotExists() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setCategory("categoryId");
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
-		partDescriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
 		partDescriptor.setCategory("categoryId");
-		partDescriptor.setId("partId2");
+		partDescriptor.setElementId("partId2");
 		application.getDescriptors().add(partDescriptor);
 
 		initialize(applicationContext, application);
@@ -970,24 +973,25 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_ACTIVATE_DefinedCategoryStackExists() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setCategory("categoryId");
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
-		partDescriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
 		partDescriptor.setCategory("categoryId");
-		partDescriptor.setId("partId2");
+		partDescriptor.setElementId("partId2");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		stack.getTags().add("categoryId");
 		window.getChildren().add(stack);
 
@@ -1010,27 +1014,27 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_CREATE() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
 		window.getChildren().add(partStackB);
 
-		MPart partA1 = MApplicationFactory.eINSTANCE.createPart();
-		MPart partA2 = MApplicationFactory.eINSTANCE.createPart();
-		partA1.setId("partA1");
-		partA2.setId("partA2");
+		MPart partA1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA2 = BasicFactoryImpl.eINSTANCE.createPart();
+		partA1.setElementId("partA1");
+		partA2.setElementId("partA2");
 		partStackA.getChildren().add(partA1);
 		partStackA.getChildren().add(partA2);
 
-		MPart partB1 = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB2 = MApplicationFactory.eINSTANCE.createPart();
-		partB1.setId("partB1");
-		partB2.setId("partB2");
+		MPart partB1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB2 = BasicFactoryImpl.eINSTANCE.createPart();
+		partB1.setElementId("partB1");
+		partB2.setElementId("partB2");
 		partStackB.getChildren().add(partB1);
 		partStackB.getChildren().add(partB2);
 
@@ -1079,23 +1083,23 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_CREATE2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partB");
+		partDescriptor.setElementId("partB");
 		partDescriptor.setCategory("aCategory");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack partStack = MApplicationFactory.eINSTANCE.createPartStack();
-		partStack.setId("aCategory");
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setElementId("aCategory");
 		window.getChildren().add(partStack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId("partA");
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
 		partStack.getChildren().add(partA);
 
 		partStack.setSelectedElement(partA);
@@ -1124,25 +1128,25 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_CREATE3() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partB");
+		partDescriptor.setElementId("partB");
 		partDescriptor.setCategory("aCategory");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
 		partStackB.getTags().add("aCategory");
 		window.getChildren().add(partStackB);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId("partA");
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
 		partStackA.getChildren().add(partA);
 
 		partStackA.setSelectedElement(partA);
@@ -1173,17 +1177,17 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_CREATE4() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		stack.getTags().add("stackId");
 		window.getChildren().add(stack);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("part");
+		partDescriptor.setElementId("part");
 		partDescriptor.setCategory("stackId");
 		application.getDescriptors().add(partDescriptor);
 
@@ -1204,27 +1208,27 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_VISIBLE() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
 		window.getChildren().add(partStackB);
 
-		MPart partA1 = MApplicationFactory.eINSTANCE.createPart();
-		MPart partA2 = MApplicationFactory.eINSTANCE.createPart();
-		partA1.setId("partA1");
-		partA2.setId("partA2");
+		MPart partA1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA2 = BasicFactoryImpl.eINSTANCE.createPart();
+		partA1.setElementId("partA1");
+		partA2.setElementId("partA2");
 		partStackA.getChildren().add(partA1);
 		partStackA.getChildren().add(partA2);
 
-		MPart partB1 = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB2 = MApplicationFactory.eINSTANCE.createPart();
-		partB1.setId("partB1");
-		partB2.setId("partB2");
+		MPart partB1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB2 = BasicFactoryImpl.eINSTANCE.createPart();
+		partB1.setElementId("partB1");
+		partB2.setElementId("partB2");
 		partStackB.getChildren().add(partB1);
 		partStackB.getChildren().add(partB2);
 
@@ -1257,23 +1261,23 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_VISIBLE2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partB");
+		partDescriptor.setElementId("partB");
 		partDescriptor.setCategory("aCategory");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack partStack = MApplicationFactory.eINSTANCE.createPartStack();
-		partStack.setId("aCategory");
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setElementId("aCategory");
 		window.getChildren().add(partStack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId("partA");
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
 		partStack.getChildren().add(partA);
 
 		partStack.setSelectedElement(partA);
@@ -1303,25 +1307,25 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_VISIBLE3() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partB");
+		partDescriptor.setElementId("partB");
 		partDescriptor.setCategory("aCategory");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack partStackA = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(partStackA);
-		MPartStack partStackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
 		partStackB.getTags().add("aCategory");
 		window.getChildren().add(partStackB);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId("partA");
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
 		partStackA.getChildren().add(partA);
 
 		partStackA.setSelectedElement(partA);
@@ -1352,17 +1356,17 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_VISIBLE4() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		stack.getTags().add("stackId");
 		window.getChildren().add(stack);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("part");
+		partDescriptor.setElementId("part");
 		partDescriptor.setCategory("stackId");
 		application.getDescriptors().add(partDescriptor);
 
@@ -1383,27 +1387,27 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_VISIBLE5() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partB");
+		partDescriptor.setElementId("partB");
 		partDescriptor.setCategory("aCategory");
 		application.getDescriptors().add(partDescriptor);
 
-		MPartStack partStack = MApplicationFactory.eINSTANCE.createPartStack();
-		partStack.setId("aCategory");
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setElementId("aCategory");
 		window.getChildren().add(partStack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId("partA");
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
 		partStack.getChildren().add(partA);
 
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId("partB");
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
 		partB.setToBeRendered(false);
 		partStack.getChildren().add(partB);
 
@@ -1436,14 +1440,14 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private void testShowPart_Id_Unrendered(EPartService.PartState partState) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId("partId");
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setElementId("partId");
 		part.setToBeRendered(false);
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
@@ -1477,9 +1481,9 @@ public class EPartServiceTest extends TestCase {
 	private void testShowPart_Id_PartAlreadyShown(PartState partState) {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		getEngine().createGui(window);
@@ -1488,7 +1492,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 		MPart part = partService.showPart("partId", partState);
 		assertNotNull(part);
-		assertEquals("partId", part.getId());
+		assertEquals("partId", part.getElementId());
 		assertEquals(part, partService.getActivePart());
 
 		MPart part2 = partService.showPart("partId", partState);
@@ -1511,9 +1515,9 @@ public class EPartServiceTest extends TestCase {
 	private void testShowPart_Id_IncorrectDescriptor(PartState partState) {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		getEngine().createGui(window);
@@ -1542,10 +1546,10 @@ public class EPartServiceTest extends TestCase {
 		MPartStack stack = (MPartStack) window.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setAllowMultiple(multipleAllowed);
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		stack.setSelectedElement(part);
@@ -1586,29 +1590,29 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Id_PartInInactivePerspective() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
 				.createPerspectiveStack();
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 
-		MPerspective perspectiveA = MApplicationFactory.eINSTANCE
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
 				.createPerspective();
 		perspectiveStack.getChildren().add(perspectiveA);
 		perspectiveStack.setSelectedElement(perspectiveA);
 
-		MPerspective perspectiveB = MApplicationFactory.eINSTANCE
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
 				.createPerspective();
 		perspectiveStack.getChildren().add(perspectiveB);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		initialize(applicationContext, application);
@@ -1648,14 +1652,14 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private void testShowPart_Part(PartState partState) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		application.setSelectedElement(window);
@@ -1689,10 +1693,10 @@ public class EPartServiceTest extends TestCase {
 		MPartStack stack = (MPartStack) window.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setAllowMultiple(multipleAllowed);
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		stack.setSelectedElement(part);
@@ -1740,16 +1744,16 @@ public class EPartServiceTest extends TestCase {
 
 	private void testShowPart_Part_MultipleNonexistent(boolean multipleAllowed,
 			PartState partState) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setAllowMultiple(multipleAllowed);
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		initialize(applicationContext, application);
@@ -1789,16 +1793,16 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Part_MultipleWithoutCategory() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		partDescriptor.setAllowMultiple(true);
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		application.getDescriptors().add(partDescriptor);
 
 		initialize(applicationContext, application);
@@ -1819,21 +1823,21 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Part_MultipleWithCategory() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		stack.getTags().add("categoryId");
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptor.setAllowMultiple(true);
-		descriptor.setId("partId");
+		descriptor.setElementId("partId");
 		descriptor.setCategory("categoryId");
 		application.getDescriptors().add(descriptor);
 
@@ -1858,26 +1862,26 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testShowPart_Part_ExistingInNonstandardCategory() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("categoryId2");
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.setElementId("categoryId2");
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId("partId");
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setElementId("partId");
 		stack.getChildren().add(part);
 		stack.setSelectedElement(part);
 
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptor.setAllowMultiple(true);
-		descriptor.setId("partId");
+		descriptor.setElementId("partId");
 		descriptor.setCategory("categoryId");
 		application.getDescriptors().add(descriptor);
 
@@ -1931,13 +1935,13 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private void testHidePart_Tagged(boolean tagged) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
@@ -1991,12 +1995,12 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private void testGetDirtyParts3(boolean before, boolean after) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(before);
 		window.getChildren().add(saveablePart);
 
@@ -2070,20 +2074,20 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testEvent_PartActivated2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow windowA = MApplicationFactory.eINSTANCE.createWindow();
-		MWindow windowB = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.getChildren().add(windowB);
 		application.setSelectedElement(windowA);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		windowB.getChildren().add(stack);
 		windowB.setSelectedElement(stack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
 		stack.setSelectedElement(partA);
@@ -2140,20 +2144,20 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testEvent_PartDeactivated2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow windowA = MApplicationFactory.eINSTANCE.createWindow();
-		MWindow windowB = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.getChildren().add(windowB);
 		application.setSelectedElement(windowA);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		windowB.getChildren().add(stack);
 		windowB.setSelectedElement(stack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
 		stack.setSelectedElement(partA);
@@ -2217,20 +2221,20 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testEvent_PartHidden2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow windowA = MApplicationFactory.eINSTANCE.createWindow();
-		MWindow windowB = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.getChildren().add(windowB);
 		application.setSelectedElement(windowA);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		windowB.getChildren().add(stack);
 		windowB.setSelectedElement(stack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
 		stack.setSelectedElement(partA);
@@ -2294,20 +2298,20 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testEvent_PartVisible2() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow windowA = MApplicationFactory.eINSTANCE.createWindow();
-		MWindow windowB = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.getChildren().add(windowB);
 		application.setSelectedElement(windowA);
 
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		windowB.getChildren().add(stack);
 		windowB.setSelectedElement(stack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
 		stack.setSelectedElement(partA);
@@ -2341,15 +2345,15 @@ public class EPartServiceTest extends TestCase {
 	private void testSavePart(final Save returnValue, boolean confirm,
 			boolean beforeDirty, boolean afterDirty, boolean success,
 			boolean saveCalled, boolean throwException) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize(applicationContext, application);
@@ -2586,15 +2590,15 @@ public class EPartServiceTest extends TestCase {
 
 	private void testSavePart_NoHandler(boolean beforeDirty,
 			boolean throwException, boolean confirm) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize(applicationContext, application);
@@ -2654,12 +2658,12 @@ public class EPartServiceTest extends TestCase {
 		testSavePart_NoHandler(false, false, false);
 	}
 
-	private MPart createSaveablePart(MElementContainer<MPSCElement> container,
-			boolean beforeDirty) {
-		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+	private MPart createSaveablePart(
+			MElementContainer<MWindowElement> container, boolean beforeDirty) {
+		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		container.getChildren().add(saveablePart);
 		return saveablePart;
 	}
@@ -2671,10 +2675,10 @@ public class EPartServiceTest extends TestCase {
 	private void testSaveAll(final Save[] returnValues, boolean confirm,
 			boolean[] beforeDirty, boolean[] afterDirty, boolean success,
 			boolean[] saveCalled, boolean[] throwException) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		final MPart saveablePart = createSaveablePart(window, beforeDirty[0]);
 		final MPart saveablePart2 = createSaveablePart(window, beforeDirty[1]);
@@ -4111,15 +4115,15 @@ public class EPartServiceTest extends TestCase {
 
 	private void testSaveAll_NoHandler(boolean beforeDirty,
 			boolean throwException, boolean confirm) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
-		MPart saveablePart = MApplicationFactory.eINSTANCE.createPart();
+		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize(applicationContext, application);
@@ -4181,10 +4185,10 @@ public class EPartServiceTest extends TestCase {
 	private void testSaveAll_NoHandlers(boolean confirm, boolean[] beforeDirty,
 			boolean[] afterDirty, boolean success, boolean[] saveCalled,
 			boolean[] throwException) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		final MPart saveablePart = createSaveablePart(window, beforeDirty[0]);
 		final MPart saveablePart2 = createSaveablePart(window, beforeDirty[1]);
@@ -4382,16 +4386,16 @@ public class EPartServiceTest extends TestCase {
 
 	public void testSwitchWindows() {
 		// create an application with two windows
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
-		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window1 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window1);
 		application.getChildren().add(window2);
 		application.setSelectedElement(window1);
 
 		// place a part in the first window
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window1.getChildren().add(part);
 		window1.setSelectedElement(part);
 
@@ -4437,14 +4441,14 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testApplicationContextHasActivePart() {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
 		window.setSelectedElement(partA);
@@ -4470,25 +4474,25 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private void testShowPart_Bug307747(PartState partState) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
-		partDescriptor.setId("partId");
+		partDescriptor.setElementId("partId");
 		partDescriptor.setCategory("category");
 		application.getDescriptors().add(partDescriptor);
 
-		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
 		// create a stack
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.setId("category");
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.setElementId("category");
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(partA);
 		stack.setSelectedElement(partA);
 
@@ -4531,20 +4535,19 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	private MApplication createApplication(int windows, String[][] partIds) {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
 		for (int i = 0; i < windows; i++) {
-			MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+			MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 			application.getChildren().add(window);
 
-			MPartStack partStack = MApplicationFactory.eINSTANCE
-					.createPartStack();
+			MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			window.getChildren().add(partStack);
 
 			for (int j = 0; j < partIds[i].length; j++) {
-				MPart part = MApplicationFactory.eINSTANCE.createPart();
-				part.setId(partIds[i][j]);
+				MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+				part.setElementId(partIds[i][j]);
 				partStack.getChildren().add(part);
 			}
 		}

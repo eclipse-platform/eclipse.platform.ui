@@ -15,21 +15,20 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 
 public class MMenuItemTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -53,23 +52,18 @@ public class MMenuItemTest extends TestCase {
 		}
 	}
 
-	protected Control[] getPresentationControls(Shell shell) {
-		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
-		return tpl.clientArea.getChildren();
-	}
-
 	private void testMMenuItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 
 		menuItem.setLabel(before);
 
 		window.setMainMenu(menu);
 		menu.getChildren().add(menuItem);
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
@@ -132,10 +126,10 @@ public class MMenuItemTest extends TestCase {
 	}
 
 	public void testMMenuItem_RadioItems() {
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		MMenuItem menuItem1 = MApplicationFactory.eINSTANCE.createMenuItem();
-		MMenuItem menuItem2 = MApplicationFactory.eINSTANCE.createMenuItem();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem menuItem1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem menuItem2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 
 		menuItem1.setType(ItemType.RADIO);
 		menuItem2.setType(ItemType.RADIO);
@@ -144,7 +138,7 @@ public class MMenuItemTest extends TestCase {
 		menu.getChildren().add(menuItem2);
 		window.setMainMenu(menu);
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
