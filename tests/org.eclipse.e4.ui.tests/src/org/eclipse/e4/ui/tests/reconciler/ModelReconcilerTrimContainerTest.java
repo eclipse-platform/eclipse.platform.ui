@@ -16,8 +16,7 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -29,15 +28,11 @@ public abstract class ModelReconcilerTrimContainerTest extends
 			SideValue userChange, SideValue newApplicationState) {
 		MApplication application = createApplication();
 
-		MWindow window = createWindow(application);
-
-		MTrimContainer windowTrim = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(windowTrim);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
 		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
 		trimBar.setSide(applicationState);
-		windowTrim.getChildren().add(trimBar);
+		window.getTrimBars().add(trimBar);
 
 		saveModel();
 
@@ -49,9 +44,8 @@ public abstract class ModelReconcilerTrimContainerTest extends
 		Object serialize = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		windowTrim = (MTrimContainer) window.getChildren().get(0);
-		trimBar = windowTrim.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar = window.getTrimBars().get(0);
 
 		trimBar.setSide(newApplicationState);
 

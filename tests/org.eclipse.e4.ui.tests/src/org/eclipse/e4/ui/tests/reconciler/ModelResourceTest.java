@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
@@ -104,6 +105,13 @@ public abstract class ModelResourceTest extends TestCase {
 
 	protected MWindow createWindow(MApplication application) {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		return window;
+	}
+
+	protected MTrimmedWindow createTrimmedWindow(MApplication application) {
+		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
+				.createTrimmedWindow();
 		application.getChildren().add(window);
 		return window;
 	}
