@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,14 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
@@ -75,7 +76,7 @@ public class NewMWindowTest extends TestCase {
 	}
 
 	public void testCreateWindow() {
-		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
 		wb = new E4Workbench(window, appContext);
 
@@ -170,8 +171,9 @@ public class NewMWindowTest extends TestCase {
 		fileMenu.notifyListeners(SWT.Hide, null);
 
 		MMenu mainMenu = window.getMainMenu();
-		final MMenuItem item2Model = mainMenu.getChildren().get(0)
-				.getChildren().get(0);
+		MMenu modelFileMenu = (MMenu) mainMenu.getChildren().get(0);
+		final MMenuItem item2Model = (MMenuItem) modelFileMenu.getChildren()
+				.get(0);
 		item2Model.setToBeRendered(false);
 		fileMenu.notifyListeners(SWT.Show, null);
 		assertEquals(1, fileMenu.getItemCount());
@@ -193,42 +195,43 @@ public class NewMWindowTest extends TestCase {
 	}
 
 	private MWindow createWindowWithOneView() {
-		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setLabel("MyWindow");
-		MPartSashContainer sash = MApplicationFactory.eINSTANCE
+		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		sash.getChildren().add(stack);
-		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
+		MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel("Sample View");
 		contributedPart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		return window;
 	}
 
 	private MWindow createWindowWithOneViewAndMenu() {
 		final MWindow window = createWindowWithOneView();
-		final MMenu menuBar = MApplicationFactory.eINSTANCE.createMenu();
+		final MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
 		window.setMainMenu(menuBar);
-		final MMenuItem fileItem = MApplicationFactory.eINSTANCE
-				.createMenuItem();
-		fileItem.setLabel("File");
-		fileItem.setId("file");
-		menuBar.getChildren().add(fileItem);
+		final MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setLabel("File");
+		fileMenu.setElementId("file");
+		menuBar.getChildren().add(fileMenu);
 
-		final MMenuItem item1 = MApplicationFactory.eINSTANCE.createMenuItem();
-		item1.setId("item1");
+		final MMenuItem item1 = MenuFactoryImpl.eINSTANCE
+				.createDirectMenuItem();
+		item1.setElementId("item1");
 		item1.setLabel("item1");
-		fileItem.getChildren().add(item1);
-		final MMenuItem item2 = MApplicationFactory.eINSTANCE.createMenuItem();
-		item2.setId("item2");
+		fileMenu.getChildren().add(item1);
+		final MMenuItem item2 = MenuFactoryImpl.eINSTANCE
+				.createDirectMenuItem();
+		item2.setElementId("item2");
 		item2.setLabel("item2");
-		fileItem.getChildren().add(item2);
+		fileMenu.getChildren().add(item2);
 
 		return window;
 	}
