@@ -40,6 +40,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -360,6 +362,15 @@ public class XMLModelReconciler extends ModelReconciler {
 			MWindow window = (MWindow) object;
 			if (constructDeltas(deltas, references, (EObject) window.getMainMenu(), element, id)) {
 				return true;
+			}
+
+			if (object instanceof MTrimmedWindow) {
+				MTrimmedWindow trimmedWindow = (MTrimmedWindow) object;
+				for (MTrimBar trimBar : trimmedWindow.getTrimBars()) {
+					if (constructDeltas(deltas, references, (EObject) trimBar, element, id)) {
+						return true;
+					}
+				}
 			}
 		}
 
@@ -1578,7 +1589,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
 				// a BindingContainer has multiple binding tables
-				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME);
+				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME) ||
+				// a TrimmedWindow has multiple trim bars
+				featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

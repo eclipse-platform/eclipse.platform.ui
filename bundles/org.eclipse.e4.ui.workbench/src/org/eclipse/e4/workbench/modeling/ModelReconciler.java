@@ -147,6 +147,12 @@ public abstract class ModelReconciler {
 			.getWindow_MainMenu().getName();
 
 	/**
+	 * Attribute defined by MTrimmedWindows (value is <code>trimBars</code>).
+	 */
+	public static final String TRIMMEDWINDOW_TRIMBARS_ATTNAME = BasicPackageImpl.eINSTANCE
+			.getTrimmedWindow_TrimBars().getName();
+
+	/**
 	 * Attribute defined by MCommands (value is <code>commandName</code>).
 	 */
 	public static final String COMMAND_COMMANDNAME_ATTNAME = CommandsPackageImpl.eINSTANCE
