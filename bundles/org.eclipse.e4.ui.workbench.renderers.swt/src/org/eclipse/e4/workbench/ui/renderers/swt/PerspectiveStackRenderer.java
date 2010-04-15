@@ -11,13 +11,11 @@
 
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 import javax.inject.Inject;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.swt.SWT;

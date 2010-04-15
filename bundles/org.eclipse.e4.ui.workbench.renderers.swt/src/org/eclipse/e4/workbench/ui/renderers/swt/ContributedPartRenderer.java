@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -56,8 +54,8 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);
 
-		Object newPart = contributionFactory
-				.create(part.getURI(), localContext);
+		Object newPart = contributionFactory.create(part.getContributionURI(),
+				localContext);
 		part.setObject(newPart);
 
 		return newWidget;

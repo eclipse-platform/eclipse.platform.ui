@@ -12,6 +12,7 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -35,7 +36,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -113,20 +113,13 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			return null;
 
 		MMenuItem itemModel = (MMenuItem) element;
-		Menu parentMenu = (Menu) parent;
 
 		// determine the index at which we should create the new item
 		int addIndex = calcVisibleIndex(element);
 
-		if (itemModel.getType() == ItemType.SEPARATOR) {
-			return new MenuItem(parentMenu, SWT.SEPARATOR, addIndex);
-		}
-
 		// OK, it's a real menu item, what kind?
 		int flags = 0;
-		if (itemModel.getChildren().size() > 0)
-			flags = SWT.CASCADE;
-		else if (itemModel.getType() == ItemType.PUSH)
+		if (itemModel.getType() == ItemType.PUSH)
 			flags = SWT.PUSH;
 		else if (itemModel.getType() == ItemType.CHECK)
 			flags = SWT.CHECK;
@@ -215,7 +208,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 
 		// 'Execute' the operation if possible
 		if (me instanceof MContribution
-				&& ((MContribution) me).getURI() != null) {
+				&& ((MContribution) me).getContributionURI() != null) {
 			final MMenuItem item = (MMenuItem) me;
 			final MContribution contrib = (MContribution) me;
 			final IEclipseContext lclContext = getContext(me);
@@ -225,8 +218,8 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					if (contrib.getObject() == null) {
 						IContributionFactory cf = (IContributionFactory) lclContext
 								.get(IContributionFactory.class.getName());
-						contrib.setObject(cf.create(contrib.getURI(),
-								lclContext));
+						contrib.setObject(cf.create(contrib
+								.getContributionURI(), lclContext));
 					}
 					try {
 						lclContext.set(MItem.class.getName(), item);
@@ -296,15 +289,15 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		ECommandService cmdService = (ECommandService) lclContext
 				.get(ECommandService.class.getName());
 		Map<String, Object> parameters = null;
-		EList<MParameter> modelParms = item.getParameters();
+		List<MParameter> modelParms = item.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
 			parameters = new HashMap<String, Object>();
 			for (MParameter mParm : modelParms) {
-				parameters.put(mParm.getTag(), mParm.getValue());
+				parameters.put(mParm.getName(), mParm.getValue());
 			}
 		}
 		ParameterizedCommand cmd = cmdService.createCommand(item.getCommand()
-				.getId(), parameters);
+				.getElementId(), parameters);
 		item.setWbCommand(cmd);
 		return cmd;
 	}
