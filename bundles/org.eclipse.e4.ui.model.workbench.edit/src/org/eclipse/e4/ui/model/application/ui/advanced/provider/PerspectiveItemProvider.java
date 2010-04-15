@@ -305,6 +305,11 @@ public class PerspectiveItemProvider
 			(createChildParameter
 				(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS,
 				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 	}
 
 	/**

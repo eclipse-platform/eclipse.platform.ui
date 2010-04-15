@@ -195,6 +195,29 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected TrimmedWindowItemProvider trimmedWindowItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createTrimmedWindowAdapter() {
+		if (trimmedWindowItemProvider == null) {
+			trimmedWindowItemProvider = new TrimmedWindowItemProvider(this);
+		}
+
+		return trimmedWindowItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -215,29 +238,6 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 		}
 
 		return trimBarItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected TrimContainerItemProvider trimContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createTrimContainerAdapter() {
-		if (trimContainerItemProvider == null) {
-			trimContainerItemProvider = new TrimContainerItemProvider(this);
-		}
-
-		return trimContainerItemProvider;
 	}
 
 	/**
@@ -344,8 +344,8 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 		if (partStackItemProvider != null) partStackItemProvider.dispose();
 		if (partSashContainerItemProvider != null) partSashContainerItemProvider.dispose();
 		if (windowItemProvider != null) windowItemProvider.dispose();
+		if (trimmedWindowItemProvider != null) trimmedWindowItemProvider.dispose();
 		if (trimBarItemProvider != null) trimBarItemProvider.dispose();
-		if (trimContainerItemProvider != null) trimContainerItemProvider.dispose();
 	}
 
 }

@@ -444,6 +444,11 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
 				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 	}
 
 	/**

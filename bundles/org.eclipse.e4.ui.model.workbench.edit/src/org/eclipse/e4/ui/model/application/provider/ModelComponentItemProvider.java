@@ -407,12 +407,12 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimBar()));
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimContainer()));
+				 MBasicFactory.INSTANCE.createTrimBar()));
 
 		newChildDescriptors.add
 			(createChildParameter

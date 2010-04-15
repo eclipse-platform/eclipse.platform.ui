@@ -303,12 +303,12 @@ public class MenuItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimBar()));
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimContainer()));
+				 MBasicFactory.INSTANCE.createTrimBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
