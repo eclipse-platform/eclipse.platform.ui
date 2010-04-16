@@ -61,19 +61,16 @@ public abstract class CompatibilityPart {
 	private boolean beingDisposed = false;
 
 	/**
-	 * This handler will be notified when the contribution object has been unset
-	 * from the part.
+	 * This handler will be notified when the part's contribution has been
+	 * un/set.
 	 */
-	private EventHandler objectUnsetHandler = new EventHandler() {
+	private EventHandler objectSetHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			// check that we're looking at our own part and that the object is
 			// being unset
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				WorkbenchPartReference reference = getReference();
-				// notify the workbench we're being closed
-				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
-
 				reference.invalidate();
 
 				if (wrapped != null) {
@@ -84,6 +81,22 @@ public abstract class CompatibilityPart {
 				if (site != null) {
 					site.dispose();
 				}
+			}
+		}
+	};
+
+	/**
+	 * This handler will be notified when the part's widget has been un/set.
+	 */
+	private EventHandler widgetSetHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			// check that we're looking at our own part and that the widget is
+			// being unset
+			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
+					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+				WorkbenchPartReference reference = getReference();
+				// notify the workbench we're being closed
+				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 			}
 		}
 	};
@@ -142,7 +155,10 @@ public abstract class CompatibilityPart {
 		});
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
-				UIEvents.Contribution.OBJECT), objectUnsetHandler);
+				UIEvents.Contribution.OBJECT), objectSetHandler);
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.WIDGET), widgetSetHandler);
 
 		WorkbenchPartReference reference = getReference();
 		// ask our reference to instantiate the part through the registry
@@ -178,7 +194,8 @@ public abstract class CompatibilityPart {
 
 	@PreDestroy
 	void destroy() {
-		eventBroker.unsubscribe(objectUnsetHandler);
+		eventBroker.unsubscribe(objectSetHandler);
+		eventBroker.unsubscribe(widgetSetHandler);
 	}
 
 	void doSave(@Optional IProgressMonitor monitor) {
