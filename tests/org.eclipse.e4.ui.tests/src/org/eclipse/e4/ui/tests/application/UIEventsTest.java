@@ -24,6 +24,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.tests.model.test.MTestFactory;
+import org.eclipse.e4.ui.tests.model.test.MTestHarness;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.UIEvents.ApplicationElement;
 import org.eclipse.e4.workbench.ui.UIEvents.Command;
@@ -233,22 +235,21 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 				parameterTester, uiElementTester, uiItemTester, windowTester };
 
 		// Create the test harness and hook up the event publisher
-		MTestHarness allData = MApplicationFactory.eINSTANCE
-				.createTestHarness();
+		MTestHarness allData = MTestFactory.eINSTANCE.createTestHarness();
 		((Notifier) allData).eAdapters().add(
 				new UIEventPublisher(applicationContext));
 
 		// AppElement
 		reset(allTesters);
 		String newId = "Some New Id";
-		allData.setId(newId);
+		allData.setElementId(newId);
 		allData.getTags().add("Testing");
 		// allData.setTags("new Style");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events
 		appTester.reset();
-		allData.setId(newId);
+		allData.setElementId(newId);
 		assertTrue("event thrown on No-Op",
 				appTester.getAttIds(true).length == 0);
 
@@ -267,7 +268,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Contribution
 		reset(allTesters);
-		allData.setURI("Some URI");
+		allData.setContributionURI("Some URI");
 		allData.setObject("Some onbject");
 		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, contributionTester);
@@ -291,14 +292,13 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Parameter
 		reset(allTesters);
-		allData.setTag("New Tag");
+		allData.setName("New Tag");
 		allData.setValue("New Value");
 		checkForFailures(allTesters, parameterTester);
 
 		// UIElement
 		reset(allTesters);
-		MTestHarness newParent = MApplicationFactory.eINSTANCE
-				.createTestHarness();
+		MTestHarness newParent = MTestFactory.eINSTANCE.createTestHarness();
 		allData.setRenderer("New Renderer");
 		allData.setParent(newParent);
 		allData.setToBeRendered(!allData.isToBeRendered());
