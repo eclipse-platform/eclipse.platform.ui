@@ -15,8 +15,8 @@
           <children xsi:type="basic:PartSashContainer" xmi:id="_hKibQEleEd-TVO58rzJVgA" elementId="_hKibQEleEd-TVO58rzJVgA" containerData="70">
             <children xsi:type="basic:Part" xmi:id="_krbvIEleEd-TVO58rzJVgA" elementId="_krbvIEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview"/>
             <children xsi:type="basic:PartStack" xmi:id="_sRLYgEleEd-TVO58rzJVgA" elementId="_sRLYgEleEd-TVO58rzJVgA" containerData="30">
-              <children xsi:type="basic:Part" xmi:id="_tuj8gEleEd-TVO58rzJVgA" elementId="_tuj8gEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
-              <children xsi:type="basic:Part" xmi:id="_xPeegEleEd-TVO58rzJVgA" elementId="_xPeegEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
+              <children xsi:type="basic:Part" xmi:id="_tuj8gEleEd-TVO58rzJVgA" elementId="ThumbnailsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
+              <children xsi:type="basic:Part" xmi:id="_xPeegEleEd-TVO58rzJVgA" elementId="ExifView" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
             </children>
           </children>
         </children>
