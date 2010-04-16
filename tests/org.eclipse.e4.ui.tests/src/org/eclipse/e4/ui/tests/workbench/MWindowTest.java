@@ -161,9 +161,8 @@ public class MWindowTest extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		assertEquals(1, folder.getItemCount());
 		Control c = folder.getItem(0).getControl();
 		assertTrue(c instanceof Composite);

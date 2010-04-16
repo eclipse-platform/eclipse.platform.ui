@@ -49,8 +49,6 @@ import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -364,7 +362,23 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MPart createPart(MPartDescriptor descriptor) {
-		return descriptor == null ? null : (MPart) EcoreUtil.copy((EObject) descriptor);
+		if (descriptor == null) {
+			return null;
+		}
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setElementId(descriptor.getElementId());
+		part.getMenus().addAll(descriptor.getMenus());
+		part.setToolbar(descriptor.getToolbar());
+		part.setCloseable(part.isCloseable());
+		part.setContributionURI(descriptor.getContributionURI());
+		part.setLabel(descriptor.getLabel());
+		part.setIconURI(descriptor.getIconURI());
+		part.setTooltip(descriptor.getTooltip());
+		part.getHandlers().addAll(descriptor.getHandlers());
+		part.getTags().addAll(descriptor.getTags());
+		part.getBindingContexts().addAll(descriptor.getBindingContexts());
+		return part;
 	}
 
 	public MPart createPart(String id) {

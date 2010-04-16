@@ -77,7 +77,7 @@ public class MSaveablePartTest extends TestCase {
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);
 		assertEquals("Part Name", item.getText());
 

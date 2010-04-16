@@ -78,7 +78,7 @@ public class MPartTest extends TestCase {
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);
 		assertEquals("Part Name", item.getText());
 
@@ -101,9 +101,8 @@ public class MPartTest extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);
 		assertNotNull(item.getImage());
 	}
@@ -155,9 +154,8 @@ public class MPartTest extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);
 		assertEquals(expectedToolTip, item.getToolTipText());
 	}
@@ -191,7 +189,7 @@ public class MPartTest extends TestCase {
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) part.getWidget();
+		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);
 		assertEquals(null, item.getToolTipText());
 
