@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,7 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * @model
  * @generated
  */
-public interface MPlaceholder extends MUIElement {
+public interface MPlaceholder extends MPartSashContainerElement {
 	/**
 	 * Returns the value of the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->

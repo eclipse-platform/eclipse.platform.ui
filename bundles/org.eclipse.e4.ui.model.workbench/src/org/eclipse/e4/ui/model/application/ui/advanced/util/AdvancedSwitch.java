@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.*;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 import org.eclipse.emf.ecore.EClass;
@@ -106,6 +107,7 @@ public class AdvancedSwitch<T1> {
 			case AdvancedPackageImpl.PLACEHOLDER: {
 				MPlaceholder placeholder = (MPlaceholder)theEObject;
 				T1 result = casePlaceholder(placeholder);
+				if (result == null) result = casePartSashContainerElement(placeholder);
 				if (result == null) result = caseUIElement(placeholder);
 				if (result == null) result = caseApplicationElement(placeholder);
 				if (result == null) result = defaultCase(theEObject);
@@ -209,6 +211,21 @@ public class AdvancedSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseUIElement(MUIElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Part Sash Container Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Part Sash Container Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 casePartSashContainerElement(MPartSashContainerElement object) {
 		return null;
 	}
 
