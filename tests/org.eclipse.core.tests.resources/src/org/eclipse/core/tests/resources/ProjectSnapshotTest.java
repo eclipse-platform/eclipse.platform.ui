@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Tests API for save/load refresh snapshots introduced in 3.6M6 (bug 301563):
@@ -175,6 +176,50 @@ public class ProjectSnapshotTest extends ResourceTest {
 		populateProject(project);
 		// perform refresh to ensure new resources in tree
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		// save project refresh snapshot outside the project
+		URI snapshotLocation = getSnapshotLocation(projects[1]);
+		project.saveSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+		// close and delete project contents
+		project.close(null);
+		project.delete(true, false, null);
+		// open the project using a different name (p3) and import refresh snapshot
+		project = getWorkspace().getRoot().getProject("p3");
+		project.create(null);
+		project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+		project.open(IResource.NONE, null);
+
+		// verify that the resources are thought to exist in this project
+		IFile file = project.getFile("file");
+		IFolder folder = project.getFolder("folder");
+		IFolder subfolder = folder.getFolder("subfolder");
+		IFile subfile = folder.getFile("subfile");
+		assertTrue("1.1", file.exists());
+		assertTrue("1.2", folder.exists());
+		assertTrue("1.3", subfolder.exists());
+		assertTrue("1.4", subfile.exists());
+	}
+
+	/*
+	 * Create project and populate with resources. Rename the project.
+	 * Save snapshot. Delete project (also delete resources on disk).
+	 * Import project with snapshot with a different project name.
+	 * All resources must be marked as "exists" in the resource tree
+	 * for the new, renamed project, even though they are not actually present.
+	 */
+	public void testLoadWithRename2() throws Throwable {
+		IProject project = projects[0];
+		// add files and folders to project
+		populateProject(project);
+		// perform refresh to ensure new resources in tree
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		// rename the project
+		project.move(Path.ROOT.append("p0"), true, null);
+		project = getWorkspace().getRoot().getProject("p0");
+		// add two more files to probably provoke a tree delta chain
+		// In SaveManager.writeTree() line 1885, treesToSave.length must be 1
+		IFile file2 = project.getFile("file2");
+		ensureExistsInFileSystem(file2);
+		project.getFile("file3");
 		// save project refresh snapshot outside the project
 		URI snapshotLocation = getSnapshotLocation(projects[1]);
 		project.saveSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
