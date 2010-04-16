@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -439,7 +438,6 @@ public class WBWRenderer extends SWTPartRenderer {
 			renderer.createGui(wbwModel.getMainMenu(), me.getWidget());
 			Shell shell = (Shell) me.getWidget();
 			shell.setMenuBar((Menu) wbwModel.getMainMenu().getWidget());
-			// createMenu(me, me.getWidget(), wbwModel.getMainMenu());
 		}
 
 		// create Detached Windows
@@ -450,13 +448,9 @@ public class WBWRenderer extends SWTPartRenderer {
 		// Populate the trim (if any)
 		if (wbwModel instanceof MTrimmedWindow) {
 			Shell shell = (Shell) wbwModel.getWidget();
-			TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
 			MTrimmedWindow tWindow = (MTrimmedWindow) wbwModel;
 			for (MTrimBar trimBar : tWindow.getTrimBars()) {
-				if (trimBar.getSide() == SideValue.BOTTOM) {
-					renderer.createGui(trimBar, tpl.getTrimComposite(shell,
-							SWT.BOTTOM));
-				}
+				renderer.createGui(trimBar, shell);
 			}
 		}
 	}
