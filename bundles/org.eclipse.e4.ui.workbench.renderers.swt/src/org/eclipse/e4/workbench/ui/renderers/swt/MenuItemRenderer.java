@@ -261,29 +261,6 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer#getUIContainer
-	 * (org.eclipse.e4.ui.model.application.MUIElement)
-	 */
-	@Override
-	public Object getUIContainer(MUIElement element) {
-		if (!(element instanceof MMenuItem))
-			return null;
-
-		if (!(element.getParent().getWidget() instanceof MenuItem))
-			return null;
-
-		MenuItem mi = (MenuItem) element.getParent().getWidget();
-		if (mi.getMenu() == null) {
-			mi.setMenu(new Menu(mi));
-		}
-
-		return mi.getMenu();
-	}
-
 	private ParameterizedCommand generateParameterizedCommand(
 			final MHandledItem item, final IEclipseContext lclContext) {
 		ECommandService cmdService = (ECommandService) lclContext

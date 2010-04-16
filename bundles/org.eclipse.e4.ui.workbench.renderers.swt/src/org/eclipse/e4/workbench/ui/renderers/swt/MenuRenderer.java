@@ -14,7 +14,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -30,8 +30,10 @@ import org.eclipse.swt.widgets.Widget;
 public class MenuRenderer extends SWTPartRenderer {
 
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (!(element instanceof MMenu) || element instanceof MMenuItem)
+		if (!(element instanceof MMenu))
 			return null;
+
+		MMenu menuModel = (MMenu) element;
 
 		Menu newMenu = null;
 		if (parent instanceof Decorations) {
@@ -52,13 +54,25 @@ public class MenuRenderer extends SWTPartRenderer {
 					newMenu = new Menu((Decorations) parent, SWT.POP_UP);
 				}
 			}
-		} else if (parent instanceof MenuItem) {
-			newMenu = new Menu((MenuItem) parent);
+		} else if (parent instanceof Menu) {
+			MenuItem newItem = new MenuItem((Menu) parent, SWT.CASCADE);
+			setItemText(menuModel, newItem);
+			newItem.setImage(getImage(menuModel));
+			newItem.setEnabled(menuModel.isEnabled());
+			return newItem;
 		} else if (parent instanceof Control) {
 			newMenu = new Menu((Control) parent);
 		}
 
 		return newMenu;
+	}
+
+	private void setItemText(MMenu model, MenuItem item) {
+		String text = model.getLabel();
+		if (text == null) {
+			text = ""; //$NON-NLS-1$
+		}
+		item.setText(text);
 	}
 
 	/*
@@ -79,6 +93,29 @@ public class MenuRenderer extends SWTPartRenderer {
 		Widget widget = (Widget) child.getWidget();
 		if (widget != null && !widget.isDisposed())
 			widget.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer#getUIContainer
+	 * (org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public Object getUIContainer(MUIElement element) {
+		if (!(element instanceof MMenuElement))
+			return null;
+
+		if (element.getParent().getWidget() instanceof MenuItem) {
+			MenuItem mi = (MenuItem) element.getParent().getWidget();
+			if (mi.getMenu() == null) {
+				mi.setMenu(new Menu(mi));
+			}
+			return mi.getMenu();
+		}
+
+		return super.getUIContainer(element);
 	}
 
 }
