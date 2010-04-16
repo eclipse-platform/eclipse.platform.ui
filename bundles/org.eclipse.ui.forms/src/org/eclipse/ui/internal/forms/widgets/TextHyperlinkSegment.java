@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,8 +66,8 @@ public class TextHyperlinkSegment extends TextSegment implements
 		gc.setForeground(savedFg);
 	}
 	
-	protected void drawString(GC gc, String s, int clipX, int clipY) {
-		gc.drawString(s, clipX, clipY, false);
+	protected void drawText(GC gc, String s, int clipX, int clipY) {
+		gc.drawText(s, clipX, clipY, false);
 	}
 
 	public String getTooltipText() {
