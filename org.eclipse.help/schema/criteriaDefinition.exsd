@@ -51,7 +51,7 @@
    <element name="criteriaDefinition">
       <annotation>
          <documentation>
-            an criteria contribution made by supplying an XML file
+            A criteria contribution made by supplying an XML file
          </documentation>
       </annotation>
       <complexType>
