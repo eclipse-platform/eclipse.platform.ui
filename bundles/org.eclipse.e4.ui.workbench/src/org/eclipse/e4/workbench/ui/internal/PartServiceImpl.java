@@ -370,7 +370,7 @@ public class PartServiceImpl implements EPartService {
 		part.setElementId(descriptor.getElementId());
 		part.getMenus().addAll(descriptor.getMenus());
 		part.setToolbar(descriptor.getToolbar());
-		part.setCloseable(part.isCloseable());
+		part.setCloseable(descriptor.isCloseable());
 		part.setContributionURI(descriptor.getContributionURI());
 		part.setLabel(descriptor.getLabel());
 		part.setIconURI(descriptor.getIconURI());
