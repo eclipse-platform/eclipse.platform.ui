@@ -12,7 +12,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -23,6 +25,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private MenuItemRenderer menuItemRenderer;
 	private ToolBarRenderer toolbarRenderer;
 	private ToolItemRenderer toolItemRenderer;
+	private SeparatorRenderer separatorRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
 	private PerspectiveStackRenderer perspStackRenderer;
 	private PerspectiveRenderer perspRenderer;
@@ -64,6 +67,13 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(toolItemRenderer);
 			}
 			return toolItemRenderer;
+		} else if (uiElement instanceof MMenuSeparator
+				|| uiElement instanceof MToolBarSeparator) {
+			if (separatorRenderer == null) {
+				separatorRenderer = new SeparatorRenderer();
+				initRenderer(separatorRenderer);
+			}
+			return perspRenderer;
 		} else if (uiElement instanceof MPerspective) {
 			if (perspRenderer == null) {
 				perspRenderer = new PerspectiveRenderer();
