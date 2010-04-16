@@ -2,34 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.e4.workbench.parts">
-      <part
-            class="org.eclipse.e4.demo.e4photo.Library"
-            label="Albums"
-            parentId="org.eclipse.e4.ui.tags.navigation">
-      </part>
-      <part
-            class="org.eclipse.e4.demo.e4photo.Thumbnails"
-            label="Thumbnails"
-            parentId="org.eclipse.e4.ui.tags.content">
-      </part>
-      <part
-            class="org.eclipse.e4.demo.e4photo.Preview"
-            label="Preview"
-            parentId="org.eclipse.e4.ui.tags.details">
-      </part>
-      <part
-            class="org.eclipse.e4.demo.e4photo.ExifTable"
-            label="Details"
-            parentId="org.eclipse.e4.ui.tags.content">
-      </part>
-      <part
-            class="org.eclipse.e4.demo.e4photo.Location"
-            label="Map"
-            parentId="org.eclipse.e4.ui.tags.geolocation">
-      </part>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.e4.demo.e4photo.Exif"

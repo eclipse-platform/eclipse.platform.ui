@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" xmi:id="_UW9TZfr3Ed6gmo7caOxU9h">
-  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9o" id="_UW9TZfr3Ed6gmo7caOxU9o" parentID="org.eclipse.e4.ide.app.menu.file">
-    <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TZfr3Ed6gmo7caOxU9p" id="_UW9TZfr3Ed6gmo7caOxU9p" label="Create Album 2" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
-  </components>
-  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9q" id="_UW9TZfr3Ed6gmo7caOxU9q" parentID="org.eclipse.e4.ide.application">
-    <descriptors id="_BESTZfr3Ed6gmo7caOxU01" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library" category="org.eclipse.e4.primaryNavigationStack"/>
-    <descriptors id="_BESTZfr3Ed6gmo7caOxU02" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview" category="org.eclipse.e4.primaryDataStack"/>
-    <descriptors id="_BESTZfr3Ed6gmo7caOxU11" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails" category="org.eclipse.e4.secondaryDataStack"/>
-    <descriptors id="_BESTZfr3Ed6gmo7caOxU12" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif" category="org.eclipse.e4.secondaryDataStack"/>
-    <commands xmi:id="org.eclipse.e4.demo.e4photo.command.createAlbum" id="org.eclipse.e4.demo.e4photo.command.createAlbum" commandName="Create Album Snippet"/>
-    <handlers xmi:id="_UW9TZfr3Ed6gmo7caOxU9s" id="_UW9TZfr3Ed6gmo7caOxU9s" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmi:id="_rd8OoUlnEd-SOJlNeoxGXA">
+  <components xmi:id="_w_9FsElnEd-SOJlNeoxGXA" elementId="_w_9FsElnEd-SOJlNeoxGXA" parentID="org.eclipse.e4.ide.app.menu.file"/>
+  <components xmi:id="__Z8qEElnEd-SOJlNeoxGXA" elementId="__Z8qEElnEd-SOJlNeoxGXA" parentID="org.eclipse.e4.ide.application">
+    <descriptors xmi:id="_igXaMEloEd-SOJlNeoxGXA" label="Library" elementId="org.eclipse.e4.primaryNavigationStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
+    <descriptors xmi:id="_oP-oYEloEd-SOJlNeoxGXA" label="Preview" elementId="org.eclipse.e4.primaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview"/>
+    <descriptors xmi:id="_p1hp4EloEd-SOJlNeoxGXA" label="Thumbnails" elementId="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails"/>
+    <descriptors xmi:id="_rpjzUEloEd-SOJlNeoxGXA" label="Exif" elementId="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable"/>
+    <handlers xmi:id="_BzSgAEloEd-SOJlNeoxGXA" elementId="_BzSgAEloEd-SOJlNeoxGXA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="_FQnigEloEd-SOJlNeoxGXA"/>
+    <commands xmi:id="_FQnigEloEd-SOJlNeoxGXA" elementId="org.eclipse.e4.demo.e4photo.command.createAlbum" commandName="Create Album Snippet"/>
   </components>
 </application:ModelComponents>
