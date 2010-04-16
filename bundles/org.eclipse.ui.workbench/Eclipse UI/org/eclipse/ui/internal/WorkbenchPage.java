@@ -1987,8 +1987,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IPerspectiveDescriptor)
 	 */
 	public void setPerspective(IPerspectiveDescriptor perspective) {
-		if (perspective == null)
+		if (perspective == null) {
 			return;
+		}
+
+		IPerspectiveDescriptor lastPerspective = this.perspective;
 		this.perspective = perspective;
 
 		if (sortedPerspectives.contains(perspective)) {
@@ -2011,9 +2014,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						AdvancedFactoryImpl.eINSTANCE.createPerspective(), perspective, this, false);
 				factory.createInitialLayout(modelLayout);
 
+				if (lastPerspective != null) {
+					legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
+				}
+
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
+				legacyWindow.firePerspectiveDeactivated(this, perspective);
 				return;
 			}
 		}
@@ -2031,11 +2039,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		factory.createInitialLayout(modelLayout);
 		tagPerspective(modelPerspective);
 
+		if (lastPerspective != null) {
+			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
+		}
+
 		// add it to the stack
 		perspectives.getChildren().add(modelPerspective);
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
 		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
+		legacyWindow.firePerspectiveDeactivated(this, perspective);
 
 		// FIXME: we need to fire events
 	}
