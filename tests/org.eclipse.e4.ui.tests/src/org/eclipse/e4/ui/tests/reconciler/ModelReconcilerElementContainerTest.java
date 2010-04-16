@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -587,23 +587,22 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(partSashContainer2.getChildren().get(0) instanceof MPart);
 	}
 
-	public void testElementContainer_Children_Add_TrimContainer() {
+	public void testElementContainer_Children_Add_TrimBar() {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(trimContainer);
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trimBar);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -617,58 +616,52 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertNotNull(window.getChildren().get(0));
-		assertTrue(window.getChildren().get(0) instanceof MTrimContainer);
+		assertEquals(1, window.getTrimBars().size());
+		assertNotNull(window.getTrimBars().get(0));
 	}
 
-	public void testElementContainer_Children_Remove_WindowTrim() {
+	public void testElementContainer_Children_Remove_TrimBar() {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
-		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(trimContainer);
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trimBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.getChildren().remove(0);
+		window.getTrimBars().remove(0);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		trimContainer = (MTrimContainer) window.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar = window.getTrimBars().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
+		assertEquals(1, window.getTrimBars().size());
+		assertEquals(trimBar, window.getTrimBars().get(0));
 
 		applyAll(deltas);
 
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(0, window.getChildren().size());
+		assertEquals(0, window.getTrimBars().size());
 	}
 
 	public void testElementContainer_Children_Add_ToolBar() {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
-
-		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(trimContainer);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
 		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimContainer.getChildren().add(trimBar);
+		window.getTrimBars().add(trimBar);
 
 		saveModel();
 
@@ -681,20 +674,16 @@ public abstract class ModelReconcilerElementContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		trimContainer = (MTrimContainer) window.getChildren().get(0);
-		trimBar = trimContainer.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar = window.getTrimBars().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(1, trimContainer.getChildren().size());
-		assertEquals(trimBar, trimContainer.getChildren().get(0));
+		assertEquals(1, window.getTrimBars().size());
+		assertEquals(trimBar, window.getTrimBars().get(0));
 
 		assertEquals(0, trimBar.getChildren().size());
 
@@ -703,11 +692,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(1, trimContainer.getChildren().size());
-		assertEquals(trimBar, trimContainer.getChildren().get(0));
+		assertEquals(1, window.getTrimBars().size());
+		assertEquals(trimBar, window.getTrimBars().get(0));
 
 		assertEquals(1, trimBar.getChildren().size());
 		assertTrue(trimBar.getChildren().get(0) instanceof MToolBar);
@@ -715,14 +701,10 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 	public void testElementContainer_Children_Remove_ToolBar() {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
-
-		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(trimContainer);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
 		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimContainer.getChildren().add(trimBar);
+		window.getTrimBars().add(trimBar);
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		trimBar.getChildren().add(toolBar);
@@ -737,9 +719,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		trimContainer = (MTrimContainer) window.getChildren().get(0);
-		trimBar = trimContainer.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar = window.getTrimBars().get(0);
 		toolBar = (MToolBar) trimBar.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -747,11 +728,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(1, trimContainer.getChildren().size());
-		assertEquals(trimBar, trimContainer.getChildren().get(0));
+		assertEquals(1, window.getTrimBars().size());
+		assertEquals(trimBar, window.getTrimBars().get(0));
 
 		assertEquals(1, trimBar.getChildren().size());
 		assertEquals(toolBar, trimBar.getChildren().get(0));
@@ -763,28 +741,21 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(1, trimContainer.getChildren().size());
-		assertEquals(trimBar, trimContainer.getChildren().get(0));
+		assertEquals(1, window.getTrimBars().size());
+		assertEquals(trimBar, window.getTrimBars().get(0));
 
 		assertEquals(0, trimBar.getChildren().size());
 	}
 
 	public void testElementContainer_Children_SwitchParent_ToolBar() {
 		MApplication application = createApplication();
-		MWindow window = createWindow(application);
-
-		MTrimContainer trimContainer = BasicFactoryImpl.eINSTANCE
-				.createTrimContainer();
-		window.getChildren().add(trimContainer);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
 		MTrimBar trimBar1 = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimContainer.getChildren().add(trimBar1);
+		window.getTrimBars().add(trimBar1);
 
 		MTrimBar trimBar2 = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimContainer.getChildren().add(trimBar2);
+		window.getTrimBars().add(trimBar2);
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		trimBar1.getChildren().add(toolBar);
@@ -799,10 +770,9 @@ public abstract class ModelReconcilerElementContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		trimContainer = (MTrimContainer) window.getChildren().get(0);
-		trimBar1 = trimContainer.getChildren().get(0);
-		trimBar2 = trimContainer.getChildren().get(1);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar1 = window.getTrimBars().get(0);
+		trimBar2 = window.getTrimBars().get(1);
 		toolBar = (MToolBar) trimBar1.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -810,12 +780,9 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(2, trimContainer.getChildren().size());
-		assertEquals(trimBar1, trimContainer.getChildren().get(0));
-		assertEquals(trimBar2, trimContainer.getChildren().get(1));
+		assertEquals(2, window.getTrimBars().size());
+		assertEquals(trimBar1, window.getTrimBars().get(0));
+		assertEquals(trimBar2, window.getTrimBars().get(1));
 
 		assertEquals(1, trimBar1.getChildren().size());
 		assertEquals(toolBar, trimBar1.getChildren().get(0));
@@ -828,12 +795,9 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, application.getChildren().size());
 		assertEquals(window, application.getChildren().get(0));
 
-		assertEquals(1, window.getChildren().size());
-		assertEquals(trimContainer, window.getChildren().get(0));
-
-		assertEquals(2, trimContainer.getChildren().size());
-		assertEquals(trimBar1, trimContainer.getChildren().get(0));
-		assertEquals(trimBar2, trimContainer.getChildren().get(1));
+		assertEquals(2, window.getTrimBars().size());
+		assertEquals(trimBar1, window.getTrimBars().get(0));
+		assertEquals(trimBar2, window.getTrimBars().get(1));
 
 		assertEquals(0, trimBar1.getChildren().size());
 		assertEquals(1, trimBar2.getChildren().size());

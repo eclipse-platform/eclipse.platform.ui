@@ -1127,6 +1127,45 @@ public class XMLModelReconciler extends ModelReconciler {
 			return descriptorsChanged ? null : reference.eContainer();
 		}
 
+		if (reference instanceof MTrimBar) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+			boolean trimBarsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key instanceof MTrimmedWindow) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
+							List<?> trimBars = (List<?>) change.getValue();
+							for (Object trimBar : trimBars) {
+								if (trimBar == reference) {
+									return key;
+								}
+							}
+							trimBarsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			if (trimBarsChanged) {
+				return null;
+			}
+
+			for (EObject rootChild : rootObject.eContents()) {
+				if (rootChild instanceof MTrimmedWindow) {
+					if (((MTrimmedWindow) rootChild).getTrimBars().contains(reference)) {
+						return rootChild;
+					}
+				}
+			}
+
+			return null;
+		}
+
 		if (reference instanceof MUIElement) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
