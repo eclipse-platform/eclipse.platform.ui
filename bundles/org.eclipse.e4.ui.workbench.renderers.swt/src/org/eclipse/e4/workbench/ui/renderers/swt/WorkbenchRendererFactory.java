@@ -73,7 +73,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				separatorRenderer = new SeparatorRenderer();
 				initRenderer(separatorRenderer);
 			}
-			return perspRenderer;
+			return separatorRenderer;
 		} else if (uiElement instanceof MPerspective) {
 			if (perspRenderer == null) {
 				perspRenderer = new PerspectiveRenderer();
