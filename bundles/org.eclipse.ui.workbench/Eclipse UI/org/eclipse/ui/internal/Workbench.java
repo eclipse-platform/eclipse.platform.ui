@@ -70,19 +70,19 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MBindingTable;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -1518,11 +1518,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 					}
 				});
 		
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
 		descriptor.setCloseable(true);
 		descriptor.setAllowMultiple(true);
-		descriptor.setId("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
-		descriptor.setURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
+		descriptor.setElementId("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
 		descriptor.setCategory("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		application.getDescriptors().add(descriptor);
 
@@ -1560,7 +1561,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            the part's context
 	 */
 	private void setReference(MPart part, IEclipseContext context) {
-		String uri = part.getURI();
+		String uri = part.getContributionURI();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
 			WorkbenchPage page = getWorkbenchPage(part);
 			ViewReference ref = page.getViewReference(part);
@@ -1580,7 +1581,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	private ViewReference createViewReference(MPart part, WorkbenchPage page) {
 		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(part.getId());
+		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(part.getElementId());
 		ViewReference ref = new ViewReference(window.getModel().getContext(), page, part,
 				(ViewDescriptor) desc);
 		page.addViewReference(ref);
@@ -1603,7 +1604,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            the model part to create a 3.x part reference for
 	 */
 	private void createReference(MPart part) {
-		String uri = part.getURI();
+		String uri = part.getContributionURI();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
 			WorkbenchPage page = getWorkbenchPage(part);
 			ViewReference ref = page.getViewReference(part);
@@ -1681,7 +1682,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		ArrayList<MCommand> existing = new ArrayList<MCommand>(app.getCommands());
 		HashSet<String> existingIds = new HashSet<String>();
 		for (MCommand mCommand : existing) {
-			existingIds.add(mCommand.getId());
+			existingIds.add(mCommand.getElementId());
 		}
 
 		CommandService service = new CommandService(commandManager);
@@ -1718,8 +1719,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			// must match definition in CommandServiceImpl
 			appContext.set(CommandServiceImpl.CMD_ID + cmdId, cmd);
-			MCommand mcmd = MApplicationFactory.eINSTANCE.createCommand();
-			mcmd.setId(cmdId);
+			MCommand mcmd = CommandsFactoryImpl.eINSTANCE.createCommand();
+			mcmd.setElementId(cmdId);
 			try {
 				mcmd.setCommandName(cmd.getName());
 			} catch (NotDefinedException e) {
@@ -1733,11 +1734,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private void defineBindingTable(String id) {
-		EList<MBindingTable> bindingTables = application.getBindingTables();
+		List<MBindingTable> bindingTables = application.getBindingTables();
 		if (contains(bindingTables, id)) {
 			return;
 		}
-		MBindingTable bt = MApplicationFactory.eINSTANCE.createBindingTable();
+		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
 		bt.setBindingContextId(id);
 		bindingTables.add(bt);
 	}
@@ -1747,7 +1748,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @param id
 	 * @return true if this BT already exists
 	 */
-	private boolean contains(EList<MBindingTable> bindingTables, String id) {
+	private boolean contains(List<MBindingTable> bindingTables, String id) {
 		for (MBindingTable bt : bindingTables) {
 			if (id.equals(bt.getBindingContextId())) {
 				return true;
@@ -2125,7 +2126,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		return openWorkbenchWindow(input, descriptor, window, true);
 	}
 

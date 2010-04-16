@@ -14,17 +14,16 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
@@ -65,14 +64,14 @@ public class ModeledPageLayout implements IPageLayout {
 
 		this.createReferences = createReferences;
 
-		MPartSashContainer esc = MApplicationFactory.eINSTANCE.createPartSashContainer();
-		editorStack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartSashContainer esc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+		editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		// temporary HACK for bug 303982
 		editorStack.getTags().add("newtablook"); //$NON-NLS-1$
 		editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-		editorStack.setId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+		editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		esc.getChildren().add(editorStack);
-		esc.setId(getEditorArea());
+		esc.setElementId(getEditorArea());
 
 		// editorArea.setName("Editor Area");
 
@@ -228,7 +227,7 @@ public class ModeledPageLayout implements IPageLayout {
 	public static MPart createViewModel(MApplication application, String id, boolean visible,
 			WorkbenchPage page, boolean createReferences) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getId().equals(id)) {
+			if (descriptor.getElementId().equals(id)) {
 				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
 				part.setToBeRendered(visible);
 				// there should only be view references for views that are
@@ -245,10 +244,10 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public static MPartStack createStack(String id, boolean visible) {
-		MPartStack newStack = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack newStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		// temporary HACK for bug 303982
 		newStack.getTags().add("newtablook"); //$NON-NLS-1$
-		newStack.setId(id);
+		newStack.setElementId(id);
 		newStack.setVisible(visible);
 		return newStack;
 	}
@@ -345,37 +344,37 @@ public class ModeledPageLayout implements IPageLayout {
 
 		MElementContainer<MUIElement> relParent = relTo.getParent();
 		if (relParent != null) {
-			EList<MUIElement> children = relParent.getChildren();
+			List<MUIElement> children = relParent.getChildren();
 			int index = children.indexOf(relTo);
-			MPartSashContainer psc = MApplicationFactory.eINSTANCE.createPartSashContainer();
+			MPartSashContainer psc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			psc.setContainerData(relTo.getContainerData());
 			relParent.getChildren().add(index + 1, psc);
 
 			switch (swtSide) {
 			case SWT.LEFT:
-				psc.getChildren().add((MPSCElement) toInsert);
-				psc.getChildren().add((MPSCElement) relTo);
+				psc.getChildren().add((MPartSashContainerElement) toInsert);
+				psc.getChildren().add((MPartSashContainerElement) relTo);
 				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
 				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.RIGHT:
-				psc.getChildren().add((MPSCElement) relTo);
-				psc.getChildren().add((MPSCElement) toInsert);
+				psc.getChildren().add((MPartSashContainerElement) relTo);
+				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				relTo.setContainerData("" + ratio); //$NON-NLS-1$
 				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.TOP:
-				psc.getChildren().add((MPSCElement) toInsert);
-				psc.getChildren().add((MPSCElement) relTo);
+				psc.getChildren().add((MPartSashContainerElement) toInsert);
+				psc.getChildren().add((MPartSashContainerElement) relTo);
 				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
 				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
 				break;
 			case SWT.BOTTOM:
-				psc.getChildren().add((MPSCElement) relTo);
-				psc.getChildren().add((MPSCElement) toInsert);
+				psc.getChildren().add((MPartSashContainerElement) relTo);
+				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				relTo.setContainerData("" + ratio); //$NON-NLS-1$
 				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
@@ -390,14 +389,14 @@ public class ModeledPageLayout implements IPageLayout {
 		// Create the new sash if we're going to need one
 		MPartSashContainer newSash = null;
 		if ((swtSide == SWT.TOP || swtSide == SWT.BOTTOM) && !isStack) {
-			newSash = MApplicationFactory.eINSTANCE.createPartSashContainer();
-			String label = "Vertical Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			newSash.setId(label);
+			newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			String label = "Vertical Sash[" + toInsert.getElementId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			newSash.setElementId(label);
 			newSash.setHorizontal(false);
 		} else if ((swtSide == SWT.LEFT || swtSide == SWT.RIGHT) && !isStack) {
-			newSash = MApplicationFactory.eINSTANCE.createPartSashContainer();
-			String label = "Horizontal Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			newSash.setId(label);
+			newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			String label = "Horizontal Sash[" + toInsert.getElementId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			newSash.setElementId(label);
 			newSash.setHorizontal(true);
 		}
 

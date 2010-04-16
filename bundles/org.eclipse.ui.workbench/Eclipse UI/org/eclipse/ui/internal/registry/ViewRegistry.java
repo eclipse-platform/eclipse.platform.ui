@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -43,8 +42,9 @@ public class ViewRegistry implements IViewRegistry {
 	@PostConstruct
 	void postConstruct() {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (!descriptor.getURI().equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-				descriptors.put(descriptor.getId(), new ViewDescriptor(application, descriptor,
+			if (!descriptor.getContributionURI().equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+				descriptors.put(descriptor.getElementId(), new ViewDescriptor(application,
+						descriptor,
 						null));
 			}
 		}
@@ -52,10 +52,10 @@ public class ViewRegistry implements IViewRegistry {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
-				MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+				MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
 				descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-				descriptor.setId(id);
+				descriptor.setElementId(id);
 				if (id.equals(IPageLayout.ID_RES_NAV) || id.equals(IPageLayout.ID_PROJECT_EXPLORER)) {
 					descriptor.setCategory("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
 				} else if (id.equals(IPageLayout.ID_OUTLINE)) {
@@ -68,7 +68,7 @@ public class ViewRegistry implements IViewRegistry {
 				descriptor.setAllowMultiple(Boolean.parseBoolean(element
 						.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 				descriptor
-						.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
+						.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
 
 				String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (iconURI != null) {
@@ -85,7 +85,8 @@ public class ViewRegistry implements IViewRegistry {
 				}
 
 				application.getDescriptors().add(descriptor);
-				descriptors.put(descriptor.getId(), new ViewDescriptor(application, descriptor,
+				descriptors.put(descriptor.getElementId(), new ViewDescriptor(application,
+						descriptor,
 						element));
 			}
 		}

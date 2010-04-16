@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.URI;
@@ -56,7 +56,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	public IViewPart createView() throws CoreException {
 		if (element == null) {
 			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					"Unable to create an e4 view of id " + descriptor.getId())); //$NON-NLS-1$
+					"Unable to create an e4 view of id " + descriptor.getElementId())); //$NON-NLS-1$
 		}
 		return (IViewPart) element.createExecutableExtension("class"); //$NON-NLS-1$
 	}
@@ -85,7 +85,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getId()
 	 */
 	public String getId() {
-		return descriptor.getId();
+		return descriptor.getElementId();
 	}
 
 	/*

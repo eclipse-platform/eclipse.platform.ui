@@ -12,8 +12,8 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.ui.IFolderLayout;
 
 public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout

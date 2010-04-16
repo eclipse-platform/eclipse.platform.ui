@@ -18,7 +18,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -333,7 +333,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getId()
 	 */
 	public String getId() {
-		return part.getId();
+		return part.getElementId();
 	}
 
     /**

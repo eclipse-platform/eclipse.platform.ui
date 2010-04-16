@@ -11,15 +11,14 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.core.di.annotations.Optional;
-
+import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -86,9 +85,9 @@ public class CompatibilityView extends CompatibilityPart {
 		if (mm.getItems().length > 0) {
 			Control partCtrl = (Control) part.getWidget();
 			partCtrl.setData("legacyMM", mm); //$NON-NLS-1$
-			EList<MMenu> menus = part.getMenus();
+			List<MMenu> menus = part.getMenus();
 			if (menus.size() == 0) {
-				MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+				MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 
 				// HACK!! Identifies this to the TB renderer
 				menu.getTags().add("LegacyMenu"); //$NON-NLS-1$
@@ -102,7 +101,7 @@ public class CompatibilityView extends CompatibilityPart {
 		if (tbm.getItems().length > 0) {
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar == null) {
-				toolbar = MApplicationFactory.eINSTANCE.createToolBar();
+				toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
 
 				// HACK!! Identifies this to the TB renderer
 				toolbar.getTags().add("LegacyTB"); //$NON-NLS-1$
