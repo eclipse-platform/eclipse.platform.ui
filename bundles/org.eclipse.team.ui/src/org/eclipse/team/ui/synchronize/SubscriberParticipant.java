@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 /**
  * A synchronize participant that displays synchronization information for local resources that are 
@@ -500,6 +501,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		Job.getJobManager().cancel(this);
 		RefreshParticipantJob job = new RefreshSubscriberParticipantJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);
+		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		Utils.schedule(job, site);
 		
 		// Remember the last participant synchronized
