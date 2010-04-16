@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -605,6 +605,10 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected void createChildren(Widget widget) {
+		createChildren(widget, true);
+	}
+
+	void createChildren(Widget widget, boolean materialize) {
 		if (contentProviderIsLazy) {
 			Object element = widget.getData();
 			if (element == null && widget instanceof TreeItem) {
@@ -626,12 +630,16 @@ public class TreeViewer extends AbstractTreeViewer {
 			// touch all children to make sure they are materialized
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].getData() == null) {
-					virtualLazyUpdateWidget(widget, i);
+					if (materialize) {
+						virtualLazyUpdateWidget(widget, i);
+					} else {
+						((TreeItem)children[i]).clearAll(true);
+					}
 				}
 			}
 			return;
 		}
-		super.createChildren(widget);
+		super.createChildren(widget, materialize);
 	}
 
 	protected void internalAdd(Widget widget, Object parentElement,

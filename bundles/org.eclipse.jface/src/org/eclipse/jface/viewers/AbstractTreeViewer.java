@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -762,6 +762,24 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the widget
 	 */
 	protected void createChildren(final Widget widget) {
+		createChildren(widget, true);
+	}
+	
+	/**
+	 * Creates all children for the given widget.
+	 * <p>
+	 * The default implementation of this framework method assumes that
+	 * <code>widget.getData()</code> returns the element corresponding to the
+	 * node. Note: the node is not visually expanded! You may have to call
+	 * <code>parent.setExpanded(true)</code>.
+	 * </p>
+	 *
+	 * @param widget
+	 *            the widget
+	 * @param materialize 
+	 * 			  true if children are expected to be fully materialized
+	 */
+	void createChildren(final Widget widget, boolean materialize) {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
@@ -1699,7 +1717,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					&& !isExpandable((Item) widget, null, widget.getData())) {
 				return;
 			}
-			createChildren(widget);
+			createChildren(widget, false);
 			if (widget instanceof Item) {
 				setExpanded((Item) widget, true);
 			}
