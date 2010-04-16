@@ -4,114 +4,20 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2008 IBM Corporation and others.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xD;&#xA;     IBM Corporation - initial API and implementation"
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
     modelName="UIElements" modelPluginClass="org.eclipse.e4.ui.model.application.impl.MWorkbenchModelActivator"
-    nonNLSMarkers="true" rootExtendsInterface="" featureMapWrapperInternalInterface=""
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
-    interfaceNamePattern="M{0}">
+    nonNLSMarkers="true" rootExtendsInterface="" suppressEMFTypes="true" suppressEMFMetaData="true"
+    featureMapWrapperInternalInterface="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" interfaceNamePattern="M{0}">
   <foreignModel>UIElements.ecore</foreignModel>
   <genPackages prefix="Application" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
       ecorePackage="UIElements.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ItemType">
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ItemType/Push"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ItemType/Check"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ItemType/Radio"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ItemType/Separator"/>
-    </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//SideValue">
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//SideValue/Top"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//SideValue/Bottom"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//SideValue/Left"/>
-      <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//SideValue/Right"/>
-    </genEnums>
     <genDataTypes ecoreDataType="UIElements.ecore#//IEclipseContext"/>
-    <genDataTypes ecoreDataType="UIElements.ecore#//ParameterizedCommand"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V____________ConstantsAndTypes_____________V"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V____________Abstract_____________V"/>
-    <genClasses ecoreClass="UIElements.ecore#//ApplicationElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/style"/>
+    <genClasses ecoreClass="UIElements.ecore#//StringToStringMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//StringToStringMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//StringToStringMap/value"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//Contribution">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/URI"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/object"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/persistedState"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//Dirtyable">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Dirtyable/dirty"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Input">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Input/inputURI"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//UIElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/widget"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/renderer"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/toBeRendered"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/onTop"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/visible"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//UIElement/parent"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UIElement/containerData"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//UILabel">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UILabel/label"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UILabel/iconURI"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//UILabel/tooltip"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Context">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Context/context"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Context/variables"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V_________AbstractContainers__________V"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//ElementContainer">
-      <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ElementContainer/T"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ElementContainer/children"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//ElementContainer/activeChild"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//GenericStack">
-      <genTypeParameters ecoreTypeParameter="UIElements.ecore#//GenericStack/T"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//GenericTile">
-      <genTypeParameters ecoreTypeParameter="UIElements.ecore#//GenericTile/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//GenericTile/horizontal"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________MenusAndTBs_______________V"/>
-    <genClasses ecoreClass="UIElements.ecore#//Item" labelFeature="#//application/UILabel/label">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Item/enabled"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Item/selected"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Item/type"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//MenuItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//DirectMenuItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//Menu"/>
-    <genClasses ecoreClass="UIElements.ecore#//ToolItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//DirectToolItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//ToolBar"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________RCP_______________V"/>
     <genClasses ecoreClass="UIElements.ecore#//Application">
       <genFeatures property="None" children="true" createChild="true" propertySortChoices="true"
           ecoreFeature="ecore:EReference UIElements.ecore#//Application/commands"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//PSCElement"/>
-    <genClasses ecoreClass="UIElements.ecore#//Part" labelFeature="#//application/UILabel/label">
-      <genFeatures notify="false" children="true" createChild="true" propertySortChoices="true"
-          ecoreFeature="ecore:EReference UIElements.ecore#//Part/menus"/>
-      <genFeatures notify="false" children="true" createChild="true" propertySortChoices="true"
-          ecoreFeature="ecore:EReference UIElements.ecore#//Part/toolbar"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//PartDescriptor" labelFeature="#//application/UILabel/label">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//PartDescriptor/allowMultiple"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//PartDescriptor/category"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//PartDescriptorContainer">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//PartDescriptorContainer/descriptors"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//SaveablePart" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//PartStack"/>
-    <genClasses ecoreClass="UIElements.ecore#//PartSashContainer"/>
-    <genClasses ecoreClass="UIElements.ecore#//Window" labelFeature="#//application/UILabel/label">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Window/mainMenu"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Window/x"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Window/y"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Window/width"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Window/height"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//ModelComponents">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ModelComponents/components"/>
@@ -121,61 +27,191 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ModelComponent/parentID"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ModelComponent/children"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ModelComponent/commands"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ModelComponent/handlers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ModelComponent/processor"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ModelComponent/bindings"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________Commands_______________V"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//BindingContainer">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//BindingContainer/bindings"/>
+    <genClasses image="false" ecoreClass="UIElements.ecore#//Contribution">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/contributionURI"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/object"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//Contribution/persistedState"/>
     </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Command" labelFeature="#//application/Command/commandName">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Command/commandName"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Command/description"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Command/parameters"/>
+    <genClasses ecoreClass="UIElements.ecore#//ApplicationElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/elementId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/tags"/>
     </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//CommandParameter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//CommandParameter/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//CommandParameter/typeId"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//CommandParameter/optional"/>
+    <genClasses ecoreClass="UIElements.ecore#//Context">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Context/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Context/variables"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Context/properties"/>
     </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Handler">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//Handler/command"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//HandlerContainer">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//HandlerContainer/handlers"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//HandledItem" labelFeature="#//application/UILabel/label">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//HandledItem/command"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//HandledItem/wbCommand"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//HandledItem/parameters"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//HandledMenuItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//HandledToolItem" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//KeyBinding">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//KeyBinding/command"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//KeyBinding/parameters"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//KeySequence">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//KeySequence/keySequence"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Parameter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Parameter/tag"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Parameter/value"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________Trim_______________V"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//TrimContainer">
-      <genTypeParameters ecoreTypeParameter="UIElements.ecore#//TrimContainer/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//TrimContainer/side"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//WindowTrim"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________Editing_______________V"/>
-    <genClasses ecoreClass="UIElements.ecore#//Editor" labelFeature="#//application/UILabel/label"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V______________SharedElements_______________V"/>
-    <genClasses ecoreClass="UIElements.ecore#//Placeholder">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//Placeholder/ref"/>
-    </genClasses>
-    <genClasses ecoreClass="UIElements.ecore#//Perspective" labelFeature="#//application/UILabel/label"/>
-    <genClasses ecoreClass="UIElements.ecore#//PerspectiveStack"/>
-    <genClasses image="false" ecoreClass="UIElements.ecore#//V_________Testing__________V"/>
-    <genClasses ecoreClass="UIElements.ecore#//TestHarness" labelFeature="#//application/UILabel/label"/>
+    <nestedGenPackages prefix="Commands" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//commands">
+      <genDataTypes ecoreDataType="UIElements.ecore#//commands/ParameterizedCommand"/>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//commands/BindingTableContainer">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTableContainer/bindingTables"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTableContainer/rootContext"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//commands/Bindings">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Bindings/bindingContexts"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/BindingContext">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingContext/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingContext/description"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingContext/children"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/BindingTable">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingTable/bindingContextId"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTable/bindings"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/Command">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/commandName"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/description"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/Command/parameters"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/CommandParameter">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/CommandParameter/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/CommandParameter/typeId"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/CommandParameter/optional"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/Handler">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference UIElements.ecore#//commands/Handler/command"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//commands/HandlerContainer">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/HandlerContainer/handlers"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/KeyBinding">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference UIElements.ecore#//commands/KeyBinding/command"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/KeyBinding/parameters"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//commands/KeySequence">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/KeySequence/keySequence"/>
+      </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//commands/Parameter">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Parameter/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Parameter/value"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Ui" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui">
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/Dirtyable">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/Dirtyable/dirty"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/Input">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/Input/inputURI"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UIElement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/widget"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/renderer"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/toBeRendered"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/onTop"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/visible"/>
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//ui/UIElement/parent"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/containerData"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UILabel">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/label"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/iconURI"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/tooltip"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/ElementContainer">
+        <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/ElementContainer/T"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/children"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/selectedElement"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/GenericStack">
+        <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/GenericStack/T"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/GenericTile">
+        <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/GenericTile/T"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/GenericTile/horizontal"/>
+      </genClasses>
+      <nestedGenPackages prefix="Menu" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/menu">
+        <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/menu/ItemType">
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Push"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Check"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Radio"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Separator"/>
+        </genEnums>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/Item">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Item/enabled"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Item/selected"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Item/type"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/MenuItem/mnemonics"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/Menu"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/SubMenu"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/DirectMenuItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledMenuItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/ToolItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/DirectToolItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/ToolBar"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledToolItem"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/HandledItem">
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference UIElements.ecore#//ui/menu/HandledItem/command"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/HandledItem/wbCommand"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/menu/HandledItem/parameters"/>
+        </genClasses>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/basic">
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/Part">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/menus"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/toolbar"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/closeable"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartStack"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartSashContainer"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/Window">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/mainMenu"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/x"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/y"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/width"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/height"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/trims"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/windows"/>
+        </genClasses>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/TrimContainer">
+          <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/basic/TrimContainer/T"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/TrimContainer/side"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/WindowTrim"/>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/PartSashContainerElement"/>
+        <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/WindowElement"/>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Advanced" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">
+        <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/advanced/SideValue">
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Top"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Bottom"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Left"/>
+          <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/advanced/SideValue/Right"/>
+        </genEnums>
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Placeholder">
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Placeholder/ref"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Perspective">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Perspective/windows"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/advanced/PerspectiveStack"/>
+      </nestedGenPackages>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Descriptor" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor">
+      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor/basic">
+        <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptor">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/allowMultiple"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/category"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/menus"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/toolbar"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/closeable"/>
+        </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptorContainer">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptorContainer/descriptors"/>
+        </genClasses>
+      </nestedGenPackages>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

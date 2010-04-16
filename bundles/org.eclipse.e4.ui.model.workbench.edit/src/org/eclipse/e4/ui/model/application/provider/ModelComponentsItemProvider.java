@@ -15,8 +15,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MModelComponents;
+
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -85,7 +86,7 @@ public class ModelComponentsItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS);
 		}
 		return childrenFeatures;
 	}
@@ -137,7 +138,7 @@ public class ModelComponentsItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MModelComponents.class)) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -157,8 +158,8 @@ public class ModelComponentsItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS,
-				 MApplicationFactory.eINSTANCE.createModelComponent()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS,
+				 MApplicationFactory.INSTANCE.createModelComponent()));
 	}
 
 	/**

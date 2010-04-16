@@ -15,11 +15,26 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MModelComponent;
+
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.provider.PartDescriptorContainerItemProvider;
+
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -68,7 +83,7 @@ public class ModelComponentItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addIdPropertyDescriptor(object);
+			addElementIdPropertyDescriptor(object);
 			addTagsPropertyDescriptor(object);
 			addPositionInParentPropertyDescriptor(object);
 			addParentIDPropertyDescriptor(object);
@@ -78,19 +93,19 @@ public class ModelComponentItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Id feature.
+	 * This adds a property descriptor for the Element Id feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addIdPropertyDescriptor(Object object) {
+	protected void addElementIdPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_id_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_id_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__ID,
+				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
 				 true,
 				 false,
 				 false,
@@ -112,7 +127,7 @@ public class ModelComponentItemProvider
 				 getResourceLocator(),
 				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
+				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -134,7 +149,7 @@ public class ModelComponentItemProvider
 				 getResourceLocator(),
 				 getString("_UI_ModelComponent_positionInParent_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_positionInParent_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.MODEL_COMPONENT__POSITION_IN_PARENT,
+				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__POSITION_IN_PARENT,
 				 true,
 				 false,
 				 false,
@@ -156,7 +171,7 @@ public class ModelComponentItemProvider
 				 getResourceLocator(),
 				 getString("_UI_ModelComponent_parentID_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_parentID_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.MODEL_COMPONENT__PARENT_ID,
+				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__PARENT_ID,
 				 true,
 				 false,
 				 false,
@@ -178,7 +193,7 @@ public class ModelComponentItemProvider
 				 getResourceLocator(),
 				 getString("_UI_ModelComponent_processor_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ModelComponent_processor_feature", "_UI_ModelComponent_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.MODEL_COMPONENT__PROCESSOR,
+				 ApplicationPackageImpl.Literals.MODEL_COMPONENT__PROCESSOR,
 				 true,
 				 false,
 				 false,
@@ -199,12 +214,12 @@ public class ModelComponentItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
-			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN);
-			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS);
-			childrenFeatures.add(MApplicationPackage.Literals.MODEL_COMPONENT__BINDINGS);
+			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
+			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS);
 		}
 		return childrenFeatures;
 	}
@@ -241,7 +256,7 @@ public class ModelComponentItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MModelComponent)object).getId();
+		String label = ((MModelComponent)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ModelComponent_type") : //$NON-NLS-1$
 			getString("_UI_ModelComponent_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -259,19 +274,19 @@ public class ModelComponentItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MModelComponent.class)) {
-			case MApplicationPackage.MODEL_COMPONENT__ID:
-			case MApplicationPackage.MODEL_COMPONENT__TAGS:
-			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
-			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
-			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -291,167 +306,149 @@ public class ModelComponentItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS,
-				 MApplicationFactory.eINSTANCE.createHandler()));
+				(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS,
+				 MCommandsFactory.INSTANCE.createHandler()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES,
-				 MApplicationFactory.eINSTANCE.createBindingTable()));
+				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES,
+				 MCommandsFactory.INSTANCE.createBindingTable()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT,
-				 MApplicationFactory.eINSTANCE.createBindingContext()));
+				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
+				 MCommandsFactory.INSTANCE.createBindingContext()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createMenu()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createMenuItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createDirectMenuItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createToolItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createDirectToolItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createToolBar()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createApplication()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPart()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolControl()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createInputPart()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartStack()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPartSashContainer()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createWindow()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createPartStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledMenuItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createHandledToolItem()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createWindowTrim()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPlaceholder()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MBasicFactory.INSTANCE.createTrimBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPerspective()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createPerspectiveStack()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN,
-				 MApplicationFactory.eINSTANCE.createTestHarness()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS,
-				 MApplicationFactory.eINSTANCE.createCommand()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS,
+				 MCommandsFactory.INSTANCE.createCommand()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS,
-				 MApplicationFactory.eINSTANCE.createTestHarness()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(MApplicationPackage.Literals.MODEL_COMPONENT__BINDINGS,
-				 MApplicationFactory.eINSTANCE.createKeyBinding()));
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS,
+				 MCommandsFactory.INSTANCE.createKeyBinding()));
 	}
 
 	/**
-	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * Return the resource locator for this item provider's resources.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
-		Object childFeature = feature;
-		Object childObject = child;
-
-		boolean qualify =
-			childFeature == MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS ||
-			childFeature == MApplicationPackage.Literals.MODEL_COMPONENT__CHILDREN ||
-			childFeature == MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS;
-
-		if (qualify) {
-			return getString
-				("_UI_CreateChild_text2", //$NON-NLS-1$
-				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
-		}
-		return super.getCreateChildText(owner, feature, child, selection);
+	public ResourceLocator getResourceLocator() {
+		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

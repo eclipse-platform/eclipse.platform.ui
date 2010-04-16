@@ -10,18 +10,21 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import java.util.Map;
+
 import org.eclipse.e4.ui.model.application.MContribution;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.common.util.EMap;
+
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -32,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl#getURI <em>URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
@@ -42,24 +45,24 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public abstract class ContributionImpl extends ApplicationElementImpl implements MContribution {
 	/**
-	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
+	 * The default value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getURI()
+	 * @see #getContributionURI()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String URI_EDEFAULT = null;
+	protected static final String CONTRIBUTION_URI_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getURI() <em>URI</em>}' attribute.
+	 * The cached value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getURI()
+	 * @see #getContributionURI()
 	 * @generated
 	 * @ordered
 	 */
-	protected String uri = URI_EDEFAULT;
+	protected String contributionURI = CONTRIBUTION_URI_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getObject() <em>Object</em>}' attribute.
@@ -107,7 +110,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.CONTRIBUTION;
+		return ApplicationPackageImpl.Literals.CONTRIBUTION;
 	}
 
 	/**
@@ -115,8 +118,8 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getURI() {
-		return uri;
+	public String getContributionURI() {
+		return contributionURI;
 	}
 
 	/**
@@ -124,11 +127,11 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setURI(String newURI) {
-		String oldURI = uri;
-		uri = newURI;
+	public void setContributionURI(String newContributionURI) {
+		String oldContributionURI = contributionURI;
+		contributionURI = newContributionURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.CONTRIBUTION__URI, oldURI, uri));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI, oldContributionURI, contributionURI));
 	}
 
 	/**
@@ -149,7 +152,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 		Object oldObject = object;
 		object = newObject;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.CONTRIBUTION__OBJECT, oldObject, object));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTRIBUTION__OBJECT, oldObject, object));
 	}
 
 	/**
@@ -157,11 +160,11 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EMap<String, String> getPersistedState() {
+	public Map<String, String> getPersistedState() {
 		if (persistedState == null) {
-			persistedState = new EcoreEMap<String,String>(MApplicationPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MApplicationPackage.CONTRIBUTION__PERSISTED_STATE);
+			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE);
 		}
-		return persistedState;
+		return persistedState.map();
 	}
 
 	/**
@@ -172,8 +175,8 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
-				return ((InternalEList<?>)getPersistedState()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -186,13 +189,13 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.CONTRIBUTION__URI:
-				return getURI();
-			case MApplicationPackage.CONTRIBUTION__OBJECT:
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				return getContributionURI();
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 				return getObject();
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
-				if (coreType) return getPersistedState();
-				else return getPersistedState().map();
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
+				if (coreType) return ((EMap.InternalMapView<String, String>)getPersistedState()).eMap();
+				else return getPersistedState();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -205,14 +208,14 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.CONTRIBUTION__URI:
-				setURI((String)newValue);
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				setContributionURI((String)newValue);
 				return;
-			case MApplicationPackage.CONTRIBUTION__OBJECT:
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 				setObject(newValue);
 				return;
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
-				((EStructuralFeature.Setting)getPersistedState()).set(newValue);
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -226,13 +229,13 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.CONTRIBUTION__URI:
-				setURI(URI_EDEFAULT);
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
 				return;
-			case MApplicationPackage.CONTRIBUTION__OBJECT:
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
 				getPersistedState().clear();
 				return;
 		}
@@ -247,11 +250,11 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.CONTRIBUTION__URI:
-				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
-			case MApplicationPackage.CONTRIBUTION__OBJECT:
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
 				return persistedState != null && !persistedState.isEmpty();
 		}
 		return super.eIsSet(featureID);
@@ -267,8 +270,8 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (URI: "); //$NON-NLS-1$
-		result.append(uri);
+		result.append(" (contributionURI: "); //$NON-NLS-1$
+		result.append(contributionURI);
 		result.append(", object: "); //$NON-NLS-1$
 		result.append(object);
 		result.append(')');

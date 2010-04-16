@@ -15,7 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -68,26 +69,26 @@ public class ApplicationElementItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addIdPropertyDescriptor(object);
+			addElementIdPropertyDescriptor(object);
 			addTagsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Id feature.
+	 * This adds a property descriptor for the Element Id feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addIdPropertyDescriptor(Object object) {
+	protected void addElementIdPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_id_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_id_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__ID,
+				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
 				 true,
 				 false,
 				 false,
@@ -109,7 +110,7 @@ public class ApplicationElementItemProvider
 				 getResourceLocator(),
 				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.APPLICATION_ELEMENT__TAGS,
+				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -133,11 +134,11 @@ public class ApplicationElementItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MApplicationElement)object).getId();
+		String label = ((MApplicationElement)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ApplicationElement_type") : //$NON-NLS-1$
 			getString("_UI_ApplicationElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -155,8 +156,8 @@ public class ApplicationElementItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MApplicationElement.class)) {
-			case MApplicationPackage.APPLICATION_ELEMENT__ID:
-			case MApplicationPackage.APPLICATION_ELEMENT__TAGS:
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

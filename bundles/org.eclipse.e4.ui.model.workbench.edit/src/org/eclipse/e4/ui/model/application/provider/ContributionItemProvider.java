@@ -14,8 +14,9 @@ package org.eclipse.e4.ui.model.application.provider;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContribution;
+
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -65,7 +66,7 @@ public class ContributionItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addURIPropertyDescriptor(object);
+			addContributionURIPropertyDescriptor(object);
 			addObjectPropertyDescriptor(object);
 			addPersistedStatePropertyDescriptor(object);
 		}
@@ -73,19 +74,19 @@ public class ContributionItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the URI feature.
+	 * This adds a property descriptor for the Contribution URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addURIPropertyDescriptor(Object object) {
+	protected void addContributionURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Contribution_URI_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_URI_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__URI,
+				 getString("_UI_Contribution_contributionURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_contributionURI_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
 				 true,
 				 false,
 				 false,
@@ -107,7 +108,7 @@ public class ContributionItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Contribution_object_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_object_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__OBJECT,
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT,
 				 true,
 				 false,
 				 false,
@@ -129,7 +130,7 @@ public class ContributionItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTRIBUTION__PERSISTED_STATE,
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE,
 				 true,
 				 false,
 				 false,
@@ -142,11 +143,11 @@ public class ContributionItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MContribution)object).getId();
+		String label = ((MContribution)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Contribution_type") : //$NON-NLS-1$
 			getString("_UI_Contribution_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,9 +165,9 @@ public class ContributionItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MContribution.class)) {
-			case MApplicationPackage.CONTRIBUTION__URI:
-			case MApplicationPackage.CONTRIBUTION__OBJECT:
-			case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE:
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
+			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

@@ -16,11 +16,27 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+
+import org.eclipse.e4.ui.model.application.ui.provider.ElementContainerItemProvider;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.ResourceLocator;
+
+import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
@@ -88,7 +104,7 @@ public class ApplicationItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Context_context_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Context_context_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTEXT__CONTEXT,
+				 UiPackageImpl.Literals.CONTEXT__CONTEXT,
 				 true,
 				 false,
 				 false,
@@ -110,7 +126,7 @@ public class ApplicationItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Context_variables_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Context_variables_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.CONTEXT__VARIABLES,
+				 UiPackageImpl.Literals.CONTEXT__VARIABLES,
 				 true,
 				 false,
 				 false,
@@ -132,7 +148,7 @@ public class ApplicationItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.BINDINGS__BINDING_CONTEXTS,
+				 CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS,
 				 true,
 				 false,
 				 false,
@@ -153,12 +169,13 @@ public class ApplicationItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(MApplicationPackage.Literals.CONTEXT__PROPERTIES);
-			childrenFeatures.add(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES);
-			childrenFeatures.add(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
-			childrenFeatures.add(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-			childrenFeatures.add(MApplicationPackage.Literals.APPLICATION__COMMANDS);
+			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
+			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
+			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 		}
 		return childrenFeatures;
 	}
@@ -191,11 +208,11 @@ public class ApplicationItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MApplication)object).getId();
+		String label = ((MApplication)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Application_type") : //$NON-NLS-1$
 			getString("_UI_Application_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -213,17 +230,18 @@ public class ApplicationItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MApplication.class)) {
-			case MApplicationPackage.APPLICATION__CONTEXT:
-			case MApplicationPackage.APPLICATION__VARIABLES:
-			case MApplicationPackage.APPLICATION__BINDING_CONTEXTS:
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case MApplicationPackage.APPLICATION__PROPERTIES:
-			case MApplicationPackage.APPLICATION__HANDLERS:
-			case MApplicationPackage.APPLICATION__BINDING_TABLES:
-			case MApplicationPackage.APPLICATION__ROOT_CONTEXT:
-			case MApplicationPackage.APPLICATION__DESCRIPTORS:
-			case MApplicationPackage.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -243,62 +261,49 @@ public class ApplicationItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.CONTEXT__PROPERTIES,
-				 MApplicationFactory.eINSTANCE.create(MApplicationPackage.Literals.STRING_TO_STRING_MAP)));
+				(UiPackageImpl.Literals.CONTEXT__PROPERTIES,
+				 ((EFactory)MApplicationFactory.INSTANCE).create(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP)));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.HANDLER_CONTAINER__HANDLERS,
-				 MApplicationFactory.eINSTANCE.createHandler()));
+				(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS,
+				 MCommandsFactory.INSTANCE.createHandler()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES,
-				 MApplicationFactory.eINSTANCE.createBindingTable()));
+				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES,
+				 MCommandsFactory.INSTANCE.createBindingTable()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT,
-				 MApplicationFactory.eINSTANCE.createBindingContext()));
+				(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
+				 MCommandsFactory.INSTANCE.createBindingContext()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-				 MApplicationFactory.eINSTANCE.createPartDescriptor()));
+				(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
+				 MBasicFactory.INSTANCE.createPartDescriptor()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.APPLICATION__COMMANDS,
-				 MApplicationFactory.eINSTANCE.createCommand()));
+				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
+				 MCommandsFactory.INSTANCE.createCommand()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(MApplicationPackage.Literals.APPLICATION__COMMANDS,
-				 MApplicationFactory.eINSTANCE.createTestHarness()));
+				(ApplicationPackageImpl.Literals.APPLICATION__ADDONS,
+				 MApplicationFactory.INSTANCE.createAddon()));
 	}
 
 	/**
-	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * Return the resource locator for this item provider's resources.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
-		Object childFeature = feature;
-		Object childObject = child;
-
-		boolean qualify =
-			childFeature == MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS ||
-			childFeature == MApplicationPackage.Literals.APPLICATION__COMMANDS;
-
-		if (qualify) {
-			return getString
-				("_UI_CreateChild_text2", //$NON-NLS-1$
-				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
-		}
-		return super.getCreateChildText(owner, feature, child, selection);
+	public ResourceLocator getResourceLocator() {
+		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

@@ -10,7 +10,16 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
+
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,11 +38,10 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent()
  * @model
  * @generated
  */
-public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement, MHandlerContainer, MBindingContainer {
+public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement, MHandlerContainer, MBindingTableContainer {
 	/**
 	 * Returns the value of the '<em><b>Position In Parent</b></em>' attribute.
 	 * The default value is <code>""</code>.
@@ -45,7 +53,6 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Position In Parent</em>' attribute.
 	 * @see #setPositionInParent(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_PositionInParent()
 	 * @model default=""
 	 * @generated
 	 */
@@ -71,7 +78,6 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Parent ID</em>' attribute.
 	 * @see #setParentID(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_ParentID()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -89,7 +95,7 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 
 	/**
 	 * Returns the value of the '<em><b>Children</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MUIElement}.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.MUIElement}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Children</em>' containment reference list isn't clear,
@@ -97,15 +103,14 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Children</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Children()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<MUIElement> getChildren();
+	List<MUIElement> getChildren();
 
 	/**
 	 * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MCommand}.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MCommand}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Commands</em>' containment reference list isn't clear,
@@ -113,11 +118,10 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Commands</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Commands()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<MCommand> getCommands();
+	List<MCommand> getCommands();
 
 	/**
 	 * Returns the value of the '<em><b>Processor</b></em>' attribute.
@@ -129,7 +133,6 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Processor</em>' attribute.
 	 * @see #setProcessor(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Processor()
 	 * @model
 	 * @generated
 	 */
@@ -147,7 +150,7 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 
 	/**
 	 * Returns the value of the '<em><b>Bindings</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MKeyBinding}.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MKeyBinding}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Bindings</em>' containment reference list isn't clear,
@@ -155,10 +158,9 @@ public interface MModelComponent extends MPartDescriptorContainer, MApplicationE
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Bindings</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getModelComponent_Bindings()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<MKeyBinding> getBindings();
+	List<MKeyBinding> getBindings();
 
 } // MModelComponent

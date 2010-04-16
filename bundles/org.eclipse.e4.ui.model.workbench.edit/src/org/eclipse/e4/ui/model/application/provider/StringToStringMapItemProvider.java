@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -87,7 +87,7 @@ public class StringToStringMapItemProvider
 				 getResourceLocator(),
 				 getString("_UI_StringToStringMap_key_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_StringToStringMap_key_feature", "_UI_StringToStringMap_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.STRING_TO_STRING_MAP__KEY,
+				 ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__KEY,
 				 true,
 				 false,
 				 false,
@@ -109,7 +109,7 @@ public class StringToStringMapItemProvider
 				 getResourceLocator(),
 				 getString("_UI_StringToStringMap_value_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_StringToStringMap_value_feature", "_UI_StringToStringMap_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MApplicationPackage.Literals.STRING_TO_STRING_MAP__VALUE,
+				 ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__VALUE,
 				 true,
 				 false,
 				 false,
@@ -153,8 +153,8 @@ public class StringToStringMapItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Map.Entry.class)) {
-			case MApplicationPackage.STRING_TO_STRING_MAP__KEY:
-			case MApplicationPackage.STRING_TO_STRING_MAP__VALUE:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY:
+			case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

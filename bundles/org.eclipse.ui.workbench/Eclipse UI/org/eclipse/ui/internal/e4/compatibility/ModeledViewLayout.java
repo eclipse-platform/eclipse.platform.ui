@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.ui.IViewLayout;
 
 public class ModeledViewLayout implements IViewLayout {

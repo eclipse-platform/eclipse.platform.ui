@@ -11,18 +11,24 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
-import org.eclipse.e4.ui.model.application.MBindingContext;
-import org.eclipse.e4.ui.model.application.MBindingTable;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MUIElement;
+
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl;
+
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -45,7 +51,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindingTables <em>Binding Tables</em>}</li>
@@ -63,24 +69,24 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ModelComponentImpl extends PartDescriptorContainerImpl implements MModelComponent {
 	/**
-	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getId()
+	 * @see #getElementId()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String ID_EDEFAULT = null;
+	protected static final String ELEMENT_ID_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * The cached value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getId()
+	 * @see #getElementId()
 	 * @generated
 	 * @ordered
 	 */
-	protected String id = ID_EDEFAULT;
+	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
@@ -228,7 +234,7 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.MODEL_COMPONENT;
+		return ApplicationPackageImpl.Literals.MODEL_COMPONENT;
 	}
 
 	/**
@@ -236,8 +242,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getId() {
-		return id;
+	public String getElementId() {
+		return elementId;
 	}
 
 	/**
@@ -245,11 +251,11 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setId(String newId) {
-		String oldId = id;
-		id = newId;
+	public void setElementId(String newElementId) {
+		String oldElementId = elementId;
+		elementId = newElementId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__ID, oldId, id));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID, oldElementId, elementId));
 	}
 
 	/**
@@ -257,9 +263,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getTags() {
+	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.MODEL_COMPONENT__TAGS);
+			tags = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.MODEL_COMPONENT__TAGS);
 		}
 		return tags;
 	}
@@ -269,75 +275,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getPositionInParent() {
-		return positionInParent;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setPositionInParent(String newPositionInParent) {
-		String oldPositionInParent = positionInParent;
-		positionInParent = newPositionInParent;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT, oldPositionInParent, positionInParent));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getParentID() {
-		return parentID;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setParentID(String newParentID) {
-		String oldParentID = parentID;
-		parentID = newParentID;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__PARENT_ID, oldParentID, parentID));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<MUIElement> getChildren() {
-		if (children == null) {
-			children = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, MApplicationPackage.MODEL_COMPONENT__CHILDREN);
-		}
-		return children;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<MCommand> getCommands() {
-		if (commands == null) {
-			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, MApplicationPackage.MODEL_COMPONENT__COMMANDS);
-		}
-		return commands;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<MHandler> getHandlers() {
+	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.MODEL_COMPONENT__HANDLERS);
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS);
 		}
 		return handlers;
 	}
@@ -347,9 +287,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MBindingTable> getBindingTables() {
+	public List<MBindingTable> getBindingTables() {
 		if (bindingTables == null) {
-			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES);
+			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES);
 		}
 		return bindingTables;
 	}
@@ -372,7 +312,7 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		MBindingContext oldRootContext = rootContext;
 		rootContext = newRootContext;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, oldRootContext, newRootContext);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT, oldRootContext, newRootContext);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -387,14 +327,80 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		if (newRootContext != rootContext) {
 			NotificationChain msgs = null;
 			if (rootContext != null)
-				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
+				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
 			if (newRootContext != null)
-				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
+				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT, null, msgs);
 			msgs = basicSetRootContext(newRootContext, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT, newRootContext, newRootContext));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT, newRootContext, newRootContext));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPositionInParent() {
+		return positionInParent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPositionInParent(String newPositionInParent) {
+		String oldPositionInParent = positionInParent;
+		positionInParent = newPositionInParent;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT, oldPositionInParent, positionInParent));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getParentID() {
+		return parentID;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setParentID(String newParentID) {
+		String oldParentID = parentID;
+		parentID = newParentID;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID, oldParentID, parentID));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<MUIElement> getChildren() {
+		if (children == null) {
+			children = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN);
+		}
+		return children;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<MCommand> getCommands() {
+		if (commands == null) {
+			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS);
+		}
+		return commands;
 	}
 
 	/**
@@ -415,7 +421,7 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		String oldProcessor = processor;
 		processor = newProcessor;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MODEL_COMPONENT__PROCESSOR, oldProcessor, processor));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR, oldProcessor, processor));
 	}
 
 	/**
@@ -423,9 +429,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MKeyBinding> getBindings() {
+	public List<MKeyBinding> getBindings() {
 		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.MODEL_COMPONENT__BINDINGS);
+			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS);
 		}
 		return bindings;
 	}
@@ -438,17 +444,17 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return basicSetRootContext(null, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -462,27 +468,27 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENT__ID:
-				return getId();
-			case MApplicationPackage.MODEL_COMPONENT__TAGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
+				return getElementId();
+			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
 				return getTags();
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				return getHandlers();
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 				return getBindingTables();
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return getRootContext();
-			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return getPositionInParent();
-			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
 				return getParentID();
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				return getChildren();
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 				return getCommands();
-			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
 				return getProcessor();
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				return getBindings();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -497,42 +503,42 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENT__ID:
-				setId((String)newValue);
+			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
+				setElementId((String)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__TAGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
 				getTags().clear();
 				getTags().addAll((Collection<? extends String>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 				getBindingTables().clear();
 				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				setRootContext((MBindingContext)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent((String)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
 				setParentID((String)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				getChildren().clear();
 				getChildren().addAll((Collection<? extends MUIElement>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
 				setProcessor((String)newValue);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				getBindings().clear();
 				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
 				return;
@@ -548,37 +554,37 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENT__ID:
-				setId(ID_EDEFAULT);
+			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
+				setElementId(ELEMENT_ID_EDEFAULT);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__TAGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
 				getTags().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				getHandlers().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 				getBindingTables().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				setRootContext((MBindingContext)null);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
 				setParentID(PARENT_ID_EDEFAULT);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				getChildren().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 				getCommands().clear();
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
 				setProcessor(PROCESSOR_EDEFAULT);
 				return;
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				getBindings().clear();
 				return;
 		}
@@ -593,27 +599,27 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENT__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.MODEL_COMPONENT__TAGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID:
+				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
+			case ApplicationPackageImpl.MODEL_COMPONENT__TAGS:
 				return tags != null && !tags.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__HANDLERS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 				return bindingTables != null && !bindingTables.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return rootContext != null;
-			case MApplicationPackage.MODEL_COMPONENT__POSITION_IN_PARENT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
-			case MApplicationPackage.MODEL_COMPONENT__PARENT_ID:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
 				return PARENT_ID_EDEFAULT == null ? parentID != null : !PARENT_ID_EDEFAULT.equals(parentID);
-			case MApplicationPackage.MODEL_COMPONENT__CHILDREN:
+			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				return children != null && !children.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__COMMANDS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 				return commands != null && !commands.isEmpty();
-			case MApplicationPackage.MODEL_COMPONENT__PROCESSOR:
+			case ApplicationPackageImpl.MODEL_COMPONENT__PROCESSOR:
 				return PROCESSOR_EDEFAULT == null ? processor != null : !PROCESSOR_EDEFAULT.equals(processor);
-			case MApplicationPackage.MODEL_COMPONENT__BINDINGS:
+			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
 				return bindings != null && !bindings.isEmpty();
 		}
 		return super.eIsSet(featureID);
@@ -628,21 +634,21 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MODEL_COMPONENT__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
-				case MApplicationPackage.MODEL_COMPONENT__TAGS: return MApplicationPackage.APPLICATION_ELEMENT__TAGS;
+				case ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID: return ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+				case ApplicationPackageImpl.MODEL_COMPONENT__TAGS: return ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 				default: return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MODEL_COMPONENT__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MBindingTableContainer.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES: return MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES;
-				case MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT: return MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT;
+				case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES;
+				case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
@@ -658,21 +664,21 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.MODEL_COMPONENT__ID;
-				case MApplicationPackage.APPLICATION_ELEMENT__TAGS: return MApplicationPackage.MODEL_COMPONENT__TAGS;
+				case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID: return ApplicationPackageImpl.MODEL_COMPONENT__ELEMENT_ID;
+				case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS: return ApplicationPackageImpl.MODEL_COMPONENT__TAGS;
 				default: return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.MODEL_COMPONENT__HANDLERS;
+				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS;
 				default: return -1;
 			}
 		}
-		if (baseClass == MBindingContainer.class) {
+		if (baseClass == MBindingTableContainer.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.BINDING_CONTAINER__BINDING_TABLES: return MApplicationPackage.MODEL_COMPONENT__BINDING_TABLES;
-				case MApplicationPackage.BINDING_CONTAINER__ROOT_CONTEXT: return MApplicationPackage.MODEL_COMPONENT__ROOT_CONTEXT;
+				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES: return ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES;
+				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT: return ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT;
 				default: return -1;
 			}
 		}
@@ -689,8 +695,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (id: "); //$NON-NLS-1$
-		result.append(id);
+		result.append(" (elementId: "); //$NON-NLS-1$
+		result.append(elementId);
 		result.append(", tags: "); //$NON-NLS-1$
 		result.append(tags);
 		result.append(", positionInParent: "); //$NON-NLS-1$

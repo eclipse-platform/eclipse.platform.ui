@@ -30,16 +30,16 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.EPartService.PartState;
@@ -178,11 +178,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		} else {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
-			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getId());
+			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getElementId());
 
 			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
 				application.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
-				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getId());
+				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getElementId());
 			}
 		}
 
@@ -540,7 +540,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	MPartDescriptor findDescriptor(String id) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getId().equals(id)) {
+			if (descriptor.getElementId().equals(id)) {
 				return descriptor;
 			}
 		}
@@ -554,7 +554,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
-			if (part.getId().equals(viewId) && part.getTags().contains(secondaryId)) {
+			if (part.getElementId().equals(viewId) && part.getTags().contains(secondaryId)) {
 				return part;
 			}
 		}
@@ -1605,13 +1605,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
 			if (part.isToBeRendered()) {
-				String uri = part.getURI();
+				String uri = part.getContributionURI();
 				if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
-					createViewReferenceForPart(part, part.getId());
+					createViewReferenceForPart(part, part.getElementId());
 				} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
 					// TODO compat: we need that editor input back, or we have
 					// squat
-					createEditorReferenceForPart(part, null, part.getId());
+					createEditorReferenceForPart(part, null, part.getElementId());
 				}
 			}
 		}
@@ -2002,13 +2002,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
-			if (mperspective.getId().equals(perspective.getId())) {
+			if (mperspective.getElementId().equals(perspective.getId())) {
 				// instantiate the perspective
 				IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
 				// use a new perspective since we're only interested in
 				// shortcuts here, see bug 305918
-				modelLayout = new ModeledPageLayout(application, modelService,
-						MApplicationFactory.eINSTANCE.createPerspective(), perspective, this, false);
+				modelLayout = new ModeledPageLayout(application, modelService, partService,
+						AdvancedFactoryImpl.eINSTANCE.createPerspective(), perspective, this, false);
 				factory.createInitialLayout(modelLayout);
 
 				// this perspective already exists, switch to this one
@@ -2019,13 +2019,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		// couldn't find the perspective, create a new one
-		MPerspective modelPerspective = MApplicationFactory.eINSTANCE.createPerspective();
+		MPerspective modelPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
 		// tag it with the same id
-		modelPerspective.setId(perspective.getId());
+		modelPerspective.setElementId(perspective.getId());
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		modelLayout = new ModeledPageLayout(application, modelService, modelPerspective,
+		modelLayout = new ModeledPageLayout(application, modelService, partService,
+				modelPerspective,
 				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
 		tagPerspective(modelPerspective);
@@ -2043,7 +2044,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * Alters known 3.x perspective part folders into their e4 counterparts.
 	 */
 	private void tagPerspective(MPerspective perspective) {
-		String id = perspective.getId();
+		String id = perspective.getElementId();
 		if (id == null) {
 			return;
 		}
@@ -2154,13 +2155,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @return the stack of perspectives of this page's containing window
 	 */
 	private MPerspectiveStack getPerspectiveStack() {
-		for (MPSCElement child : window.getChildren()) {
+		for (MWindowElement child : window.getChildren()) {
 			if (child instanceof MPerspectiveStack) {
 				return (MPerspectiveStack) child;
 			}
 		}
 
-		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE.createPerspectiveStack();
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE.createPerspectiveStack();
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 		return perspectiveStack;

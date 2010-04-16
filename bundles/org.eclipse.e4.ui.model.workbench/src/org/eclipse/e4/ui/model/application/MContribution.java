@@ -10,8 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EMap;
-
+import java.util.Map;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,42 +20,40 @@ import org.eclipse.emf.common.util.EMap;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getURI <em>URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution()
  * @model abstract="true"
  * @generated
  */
 public interface MContribution extends MApplicationElement {
 	/**
-	 * Returns the value of the '<em><b>URI</b></em>' attribute.
+	 * Returns the value of the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>URI</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Contribution URI</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>URI</em>' attribute.
-	 * @see #setURI(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_URI()
+	 * @return the value of the '<em>Contribution URI</em>' attribute.
+	 * @see #setContributionURI(String)
 	 * @model
 	 * @generated
 	 */
-	String getURI();
+	String getContributionURI();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MContribution#getURI <em>URI</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>URI</em>' attribute.
-	 * @see #getURI()
+	 * @param value the new value of the '<em>Contribution URI</em>' attribute.
+	 * @see #getContributionURI()
 	 * @generated
 	 */
-	void setURI(String value);
+	void setContributionURI(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Object</b></em>' attribute.
@@ -68,7 +65,6 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Object</em>' attribute.
 	 * @see #setObject(Object)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_Object()
 	 * @model transient="true"
 	 * @generated
 	 */
@@ -90,15 +86,14 @@ public interface MContribution extends MApplicationElement {
 	 * and the value is of type {@link java.lang.String},
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Persisted State</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Persisted State</em>' map isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Persisted State</em>' map.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_PersistedState()
 	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
 	 * @generated
 	 */
-	EMap<String, String> getPersistedState();
+	Map<String, String> getPersistedState();
 
 } // MContribution

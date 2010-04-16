@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.HashMap;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -104,7 +104,7 @@ public class ActionBars extends SubActionBars {
 		getStatusLineManager().update(false);
 		getMenuManager().update(false);
 		if (toolbarManager != null) {
-			System.err.println("update toolbar manager for " + part.getId()); //$NON-NLS-1$
+			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
 			getToolBarManager().update(false);
 		}
 	}
