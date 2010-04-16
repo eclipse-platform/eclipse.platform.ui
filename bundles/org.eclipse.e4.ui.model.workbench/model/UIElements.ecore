@@ -317,7 +317,7 @@
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
         nsPrefix="advanced">
-      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement">
+      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/basic/PartSashContainerElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement"/>
       </eClassifiers>
