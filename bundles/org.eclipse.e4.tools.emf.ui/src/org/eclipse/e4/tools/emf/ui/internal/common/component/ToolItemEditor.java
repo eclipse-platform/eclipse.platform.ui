@@ -10,17 +10,16 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.ui.model.application.ItemType;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MToolItem;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -31,46 +30,19 @@ import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ToolItemEditor extends AbstractComponentEditor {
+public abstract class ToolItemEditor extends AbstractComponentEditor {
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 
 	public ToolItemEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-	}
-
-	@Override
-	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/ToolItem_separator.gif"));
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return image;
-	}
-
-	@Override
-	public String getLabel(Object element) {
-		return "Separator";
-	}
-
-	@Override
-	public String getDescription(Object element) {
-		return "Separator bla bla bla";
 	}
 
 	@Override
@@ -96,11 +68,9 @@ public class ToolItemEditor extends AbstractComponentEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.APPLICATION_ELEMENT__ID).observeDetail(master));
+		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));
 
-		if (this.getClass() != ToolItemEditor.class) {
-			createFormSubTypeForm(parent, context, master);
-		}
+		createFormSubTypeForm(parent, context, master);
 
 		return parent;
 	}
@@ -119,7 +89,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 			GridData gd = new GridData();
 			gd.horizontalSpan = 2;
 			viewer.getControl().setLayoutData(gd);
-			IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.ITEM__TYPE).observeDetail(master);
+			IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(master);
 			context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
 		}
 
@@ -132,7 +102,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL).observeDetail(master));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL).observeDetail(master));
 		}
 
 		// ------------------------------------------------------------
@@ -144,7 +114,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
 		}
 
 		// ------------------------------------------------------------
@@ -154,7 +124,7 @@ public class ToolItemEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
@@ -182,23 +152,16 @@ public class ToolItemEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MToolItem item = (MToolItem) element;
-		if (item.getType() == ItemType.SEPARATOR) {
-			return null;
-		} else {
-			if (item.getLabel() != null && item.getLabel().trim().length() > 0) {
-				return item.getLabel();
-			} else if (item.getTooltip() != null && item.getTooltip().trim().length() > 0) {
-				return item.getTooltip();
-			}
+		if (item.getLabel() != null && item.getLabel().trim().length() > 0) {
+			return item.getLabel();
+		} else if (item.getTooltip() != null && item.getTooltip().trim().length() > 0) {
+			return item.getTooltip();
 		}
 		return null;
 	}
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] {
-			FeaturePath.fromList(MApplicationPackage.Literals.UI_LABEL__LABEL),
-			FeaturePath.fromList(MApplicationPackage.Literals.UI_LABEL__TOOLTIP)
-		};
+		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__TOOLTIP) };
 	}
 }

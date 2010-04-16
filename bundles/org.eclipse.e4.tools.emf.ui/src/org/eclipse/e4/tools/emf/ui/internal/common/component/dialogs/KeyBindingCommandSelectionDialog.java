@@ -11,9 +11,9 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -44,6 +44,6 @@ public class KeyBindingCommandSelectionDialog extends AbstractCommandSelectionDi
 	
 	@Override
 	protected Command createStoreCommand( EditingDomain editingDomain, MCommand command) {
-		return SetCommand.create(editingDomain, binding, MApplicationPackage.Literals.KEY_BINDING__COMMAND, command);
+		return SetCommand.create(editingDomain, binding, CommandsPackageImpl.Literals.KEY_BINDING__COMMAND, command);
 	}
 }

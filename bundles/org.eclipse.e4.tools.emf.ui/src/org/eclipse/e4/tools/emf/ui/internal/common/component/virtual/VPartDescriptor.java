@@ -18,11 +18,12 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -109,7 +110,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			viewer.getTable().setHeaderVisible(true);
 
 			{
-				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.UI_LABEL__LABEL);
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL);
 					
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Name");
@@ -118,7 +119,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			}
 			
 			{
-				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), MApplicationPackage.Literals.PART_DESCRIPTOR__CATEGORY);
+				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CATEGORY);
 					
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Category");
@@ -149,7 +150,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 							MPartDescriptorContainer container = (MPartDescriptorContainer) getMaster().getValue();
 							int idx = container.getDescriptors().indexOf(obj) - 1;
 							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -176,7 +177,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 							MPartDescriptorContainer container = (MPartDescriptorContainer) getMaster().getValue();
 							int idx = container.getDescriptors().indexOf(obj) + 1;
 							if( idx < container.getDescriptors().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -196,8 +197,8 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MPartDescriptor command = MApplicationFactory.eINSTANCE.createPartDescriptor();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
+					MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -215,7 +216,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if( ! viewer.getSelection().isEmpty() ) {
 						List<?> commands = ((IStructuredSelection)viewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, commands);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, commands);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

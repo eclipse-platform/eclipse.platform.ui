@@ -18,11 +18,8 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -35,67 +32,42 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PlaceholderEditor extends AbstractComponentEditor {
+public class MenuSeparatorEditor extends AbstractComponentEditor {
+	private Image separatorImage;
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
-
-	public PlaceholderEditor(EditingDomain editingDomain) {
+	
+	public MenuSeparatorEditor(EditingDomain editingDomain) {
 		super(editingDomain);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
+		if (separatorImage == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Placeholder.gif")); //$NON-NLS-1$
+				separatorImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/MenuSeparator.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		return image;
+		return separatorImage;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return Messages.PlaceholderEditor_Label;
+		return Messages.MenuSeparatorEditor_Label;
 	}
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MPlaceholder pl = (MPlaceholder) element;
-		if( pl.getRef() != null ) {
-			StringBuilder b = new StringBuilder();
-
-			b.append(((EObject)pl.getRef()).eClass().getName());
-			if( pl.getRef() instanceof MUILabel ) {
-				MUILabel label = (MUILabel) pl.getRef();
-				if( label.getLabel() != null && label.getLabel().trim().length() > 0 ) {
-					b.append(" (" + label.getLabel() + ")");  //$NON-NLS-1$//$NON-NLS-2$
-				} else if( label.getTooltip() != null && label.getTooltip().trim().length() > 0 ) {
-					b.append(" (" + label.getTooltip() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					if( pl.getRef().getElementId() != null && pl.getRef().getElementId().trim().length() > 0 ) {
-						b.append(pl.getRef().getElementId());
-					}
-				}
-			} else {
-				if( pl.getRef().getElementId() != null && pl.getRef().getElementId().trim().length() > 0 ) {
-					b.append(" (" + pl.getRef().getElementId() + ")");  //$NON-NLS-1$//$NON-NLS-2$
-				}
-			}
-
-			return b.toString();
-		}
-
 		return null;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return Messages.PlaceholderEditor_Descriptor;
+		return null;
 	}
 
 	@Override
@@ -107,8 +79,8 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 		getMaster().setValue(object);
 		return composite;
 	}
-
-	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master) {
+	
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
@@ -117,20 +89,23 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PlaceholderEditor_Id);
+			l.setText(Messages.MenuSeparatorEditor_Id);
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
+		
+		//TODO Should we add visible to mimic a GroupMarker of 3.x
 
 		return parent;
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

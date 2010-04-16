@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
-import org.eclipse.e4.ui.model.application.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")

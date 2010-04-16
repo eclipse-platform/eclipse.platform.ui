@@ -8,16 +8,20 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor;
+package org.eclipse.e4.tools.emf.editor3x.wizard;
 
-import javax.inject.Named;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.emf.ecore.EObject;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.modeling.EPartService;
 
-public class SaveModelFileHandler {
-	public void execute(@Named(IServiceConstants.ACTIVE_PART) MPart part, EPartService partService) {
-		partService.savePart(part, false);
+public class NewApplicationModelWizard extends BaseApplicationModelWizard {
+
+	@Override
+	public String getDefaultFileName() {
+		return "Application.e4xmi";
+	}
+	
+	protected EObject createInitialModel() {
+		return (EObject) MApplicationFactory.INSTANCE.createApplication();
 	}
 }

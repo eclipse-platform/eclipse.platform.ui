@@ -13,13 +13,12 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -145,8 +144,8 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 			if( cmd.getDescription() != null ) {
 				styledString.append(" - " + cmd.getDescription(),StyledString.DECORATIONS_STYLER);
 			}
-			if( cmd.getId() != null ) {
-				styledString.append(" - " + cmd.getId(),StyledString.DECORATIONS_STYLER);
+			if( cmd.getElementId() != null ) {
+				styledString.append(" - " + cmd.getElementId(),StyledString.DECORATIONS_STYLER);
 			}
 			cell.setText(styledString.getString());
 			cell.setStyleRanges(styledString.getStyleRanges());
@@ -167,8 +166,8 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 				s += " " + command.getDescription();
 			}
 			
-			if( command.getId() != null ) {
-				s += " " + command.getId();
+			if( command.getElementId() != null ) {
+				s += " " + command.getElementId();
 			}
 			
 			return s;

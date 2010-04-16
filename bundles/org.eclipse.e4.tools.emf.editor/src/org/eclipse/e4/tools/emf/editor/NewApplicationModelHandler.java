@@ -17,8 +17,9 @@ import javax.inject.Named;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MInputPart;
-import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.internal.E4XMIResource;
@@ -39,16 +40,16 @@ public class NewApplicationModelHandler {
 			
 			try {
 				E4XMIResource resource = new E4XMIResource();
-				resource.getContents().add((EObject) MApplicationFactory.eINSTANCE.createApplication());
+				resource.getContents().add((EObject) MApplicationFactory.INSTANCE.createApplication());
 				resource.setURI(URI.createFileURI(file));
 				resource.save(null);
 				
 				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
 				
-				MInputPart part = MApplicationFactory.eINSTANCE.createInputPart();
+				MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 				part.setLabel(name);
 				part.setTooltip(file);
-				part.setURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
+				part.setContributionURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
 				part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
 				part.setInputURI(filePath);
 				

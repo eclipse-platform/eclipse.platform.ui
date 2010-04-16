@@ -21,12 +21,10 @@ public class ClassContributionCollector {
 	private CopyOnWriteArrayList<IClassContributionProvider> providers = new CopyOnWriteArrayList<IClassContributionProvider>();
 	
 	public void addContributor(IClassContributionProvider contributor) {
-		System.err.println("Add Contributor: " + contributor);
 		providers.add(contributor);
 	}
 	
 	public void removeContributor(IClassContributionProvider contributor) {
-		System.err.println("Remove Contributor: " + contributor);
 		providers.remove(contributor);
 	}
 	

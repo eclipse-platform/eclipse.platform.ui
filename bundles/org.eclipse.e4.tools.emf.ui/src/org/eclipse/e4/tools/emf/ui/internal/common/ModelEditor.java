@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
@@ -43,7 +41,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEdito
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuSeparatorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
@@ -54,19 +52,25 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarSeparatorEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolControlEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimBarEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelComponentBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
@@ -92,17 +96,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class ModelEditor {
-	public static final int VIRTUAL_MENU = 0;
+	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
+	
+	public static final int VIRTUAL_PART_MENU = 0;
 	public static final int VIRTUAL_PART = 1;
 	public static final int VIRTUAL_HANDLER = 2;
 	public static final int VIRTUAL_BINDING_TABLE = 3;
 	public static final int VIRTUAL_COMMAND = 4;
 	public static final int VIRTUAL_WINDOWS = 5;
 	public static final int VIRTUAL_WINDOW_CONTROLS = 6;
-	public static final int VIRTUAL_WINDOW_TRIMS = 7;
-	public static final int VIRTUAL_PART_DESCRIPTORS = 8;
-	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 9;
-	public static final int VIRTUAL_MODEL_COMP_BINDINGS = 10;
+	public static final int VIRTUAL_PART_DESCRIPTORS = 7;
+	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 8;
+	public static final int VIRTUAL_MODEL_COMP_BINDINGS = 9;
+	public static final int VIRTUAL_PARTDESCRIPTOR_MENU = 10;
+	public static final int VIRTUAL_TRIMMED_WINDOW_TRIMS = 11;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private AbstractComponentEditor[] virtualEditors;
@@ -115,7 +122,6 @@ public class ModelEditor {
 	private IModelResource modelProvider;
 	private IProject project;
 
-	@Inject
 	public ModelEditor(Composite composite, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
@@ -144,7 +150,7 @@ public class ModelEditor {
 
 		Composite headerContainer = new Composite(editingArea, SWT.NONE);
 		headerContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		headerContainer.setData("org.eclipse.e4.ui.css.CssClassName", "headerSectionContainer");
+		headerContainer.setData(CSS_CLASS_KEY, "headerSectionContainer"); //$NON-NLS-1$
 		headerContainer.setLayout(new GridLayout(2, false));
 		headerContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -152,15 +158,15 @@ public class ModelEditor {
 		iconLabel.setLayoutData(new GridData(20, 20));
 
 		final Label textLabel = new Label(headerContainer, SWT.NONE);
-		textLabel.setData("org.eclipse.e4.ui.css.CssClassName", "sectionHeader");
+		textLabel.setData(CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final ScrolledComposite scrolling = new ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		scrolling.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
+		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		
 		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
-		contentContainer.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
+		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		scrolling.setExpandHorizontal(true);
 		scrolling.setExpandVertical(true);
 		scrolling.setContent(contentContainer);
@@ -217,7 +223,7 @@ public class ModelEditor {
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setData("org.eclipse.e4.ui.css.CssClassName", "formContainer");
+		parent.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		FillLayout l = new FillLayout();
@@ -266,17 +272,18 @@ public class ModelEditor {
 	}
 
 	private void registerVirtualEditors() {
-		virtualEditors = new AbstractComponentEditor[] { new VMenuEditor(modelProvider.getEditingDomain(), this), // V-Menu
+		virtualEditors = new AbstractComponentEditor[] { new VMenuEditor(modelProvider.getEditingDomain(), this, BasicPackageImpl.Literals.PART__MENUS), // V-Menu
 				null, // V-Part
 				new VHandlerEditor(modelProvider.getEditingDomain(), this), 
 				new VBindingTableEditor(modelProvider.getEditingDomain(), this), 
-				new VCommandEditor(modelProvider.getEditingDomain(), this, MApplicationPackage.Literals.APPLICATION__COMMANDS), 
+				new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS), 
 				new VWindowEditor(modelProvider.getEditingDomain(), this), 
-				new VControlEditor(modelProvider.getEditingDomain(), this), 
-				new VWindowTrimEditor(modelProvider.getEditingDomain(), this),
+				new VWindowControlEditor(modelProvider.getEditingDomain(), this), 
 				new VPartDescriptor(modelProvider.getEditingDomain(), this),
-				new VCommandEditor(modelProvider.getEditingDomain(), this, MApplicationPackage.Literals.MODEL_COMPONENT__COMMANDS),
-				new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this)
+				new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS),
+				new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this),
+				new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS),
+				new VWindowTrimEditor(modelProvider.getEditingDomain(), this)
 		};
 	}
 
@@ -285,31 +292,39 @@ public class ModelEditor {
 	}
 
 	private void registerDefaultEditors() {
-		registerEditor(MApplicationPackage.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain(),this));
-		registerEditor(MApplicationPackage.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PART, new PartEditor(modelProvider.getEditingDomain(),project));
-		registerEditor(MApplicationPackage.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain(),project));
-		registerEditor(MApplicationPackage.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(),modelProvider));
-		registerEditor(MApplicationPackage.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider,project));
-		registerEditor(MApplicationPackage.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain(),this));
-		registerEditor(MApplicationPackage.Literals.WINDOW_TRIM, new WindowTrimEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain(),project));
-		registerEditor(MApplicationPackage.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.TOOL_ITEM, new ToolItemEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PERSPECTIVE, new PerspectiveEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.PLACEHOLDER, new PlaceholderEditor(modelProvider.getEditingDomain()));
-		registerEditor(MApplicationPackage.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.MENU_ITEM, new MenuItemEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
-		registerEditor(MApplicationPackage.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(MApplicationPackage.Literals.INPUT_PART, new InputPartEditor(modelProvider.getEditingDomain(), project));
+		registerEditor(ApplicationPackageImpl.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
+		registerEditor(ApplicationPackageImpl.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain(),this));
+		registerEditor(ApplicationPackageImpl.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
+		
+		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(),modelProvider));
+		registerEditor(CommandsPackageImpl.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(),modelProvider,project));
+		registerEditor(CommandsPackageImpl.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain()));
+		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
+		
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain(),project));
+		registerEditor(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain(),modelProvider));
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, new ToolBarSeparatorEditor(modelProvider.getEditingDomain()));
+		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL, new ToolControlEditor(modelProvider.getEditingDomain(),project));
+		
+		registerEditor(MenuPackageImpl.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR, new MenuSeparatorEditor(modelProvider.getEditingDomain()));
+		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), modelProvider));
+		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
+		
+		registerEditor(BasicPackageImpl.Literals.PART, new PartEditor(modelProvider.getEditingDomain(),project));
+		registerEditor(BasicPackageImpl.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain()));
+		registerEditor(BasicPackageImpl.Literals.TRIMMED_WINDOW, new TrimmedWindowEditor(modelProvider.getEditingDomain()));
+		registerEditor(BasicPackageImpl.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(BasicPackageImpl.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain(),this));
+		registerEditor(BasicPackageImpl.Literals.INPUT_PART, new InputPartEditor(modelProvider.getEditingDomain(), project));
+		registerEditor(BasicPackageImpl.Literals.TRIM_BAR, new TrimBarEditor(modelProvider.getEditingDomain(), this));
+		
+		registerEditor(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR, new PartDescriptorEditor(modelProvider.getEditingDomain(),project));
+		
+		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain(),this));
+		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE, new PerspectiveEditor(modelProvider.getEditingDomain(),this));
+		registerEditor(AdvancedPackageImpl.Literals.PLACEHOLDER, new PlaceholderEditor(modelProvider.getEditingDomain()));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

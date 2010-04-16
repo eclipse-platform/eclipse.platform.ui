@@ -22,15 +22,17 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
-import org.eclipse.e4.ui.model.application.MBindingContext;
-import org.eclipse.e4.ui.model.application.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -89,7 +91,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Binding Configuration";
+		return Messages.VBindingTableEditor_Label;
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Binding Configuration Bla Bla Bla Bla";
+		return Messages.VBindingTableEditor_Description;
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Contexts");
+			l.setText(Messages.VBindingTableEditor_Contexts);
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			contextsViewer = new TreeViewer(parent);
@@ -133,7 +135,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			
 			final WritableList list = new WritableList();
 			
-			IEMFValueProperty listProp = EMFProperties.value(MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT);
+			IEMFValueProperty listProp = EMFProperties.value(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 			IObservableValue val = listProp.observeDetail(getMaster());
 			val.addValueChangeListener(new IValueChangeListener() {
 				
@@ -151,10 +153,10 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			
 			
 			{
-				IEMFValueProperty prop = EMFProperties.value(MApplicationPackage.Literals.BINDING_CONTEXT__NAME);
+				IEMFValueProperty prop = EMFProperties.value(CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME);
 				
 				TreeViewerColumn column = new TreeViewerColumn(contextsViewer, SWT.NONE);
-				column.getColumn().setText("Name");
+				column.getColumn().setText(Messages.VBindingTableEditor_Name);
 				column.getColumn().setWidth(200);				
 				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));
 				column.setEditingSupport(new EditingSupport(contextsViewer) {
@@ -162,7 +164,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					
 					@Override
 					protected void setValue(Object element, Object value) {
-						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.BINDING_CONTEXT__NAME, value);
+						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME, value);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
@@ -171,7 +173,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					@Override
 					protected Object getValue(Object element) {
 						MBindingContext ctx = (MBindingContext) element; 
-						return ctx.getName() != null ? ctx.getName() : "";
+						return ctx.getName() != null ? ctx.getName() : ""; //$NON-NLS-1$
 					}
 					
 					@Override
@@ -187,10 +189,10 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			}
 			
 			{
-				IEMFValueProperty prop = EMFProperties.value(MApplicationPackage.Literals.BINDING_CONTEXT__DESCRIPTION);
+				IEMFValueProperty prop = EMFProperties.value(CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION);
 				
 				TreeViewerColumn column = new TreeViewerColumn(contextsViewer, SWT.NONE);
-				column.getColumn().setText("Description");
+				column.getColumn().setText(Messages.VBindingTableEditor_LabelDescription);
 				column.getColumn().setWidth(200);				
 				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));				
 				column.setEditingSupport(new EditingSupport(contextsViewer) {
@@ -198,7 +200,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					
 					@Override
 					protected void setValue(Object element, Object value) {
-						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.BINDING_CONTEXT__DESCRIPTION, value);
+						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION, value);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
@@ -207,7 +209,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					@Override
 					protected Object getValue(Object element) {
 						MBindingContext ctx = (MBindingContext) element; 
-						return ctx.getDescription() != null ? ctx.getDescription() : "";
+						return ctx.getDescription() != null ? ctx.getDescription() : ""; //$NON-NLS-1$
 					}
 					
 					@Override
@@ -223,10 +225,10 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			}
 			
 			{
-				IEMFValueProperty prop = EMFProperties.value(MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
+				IEMFValueProperty prop = EMFProperties.value(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
 				
 				TreeViewerColumn column = new TreeViewerColumn(contextsViewer, SWT.NONE);
-				column.getColumn().setText("Id");
+				column.getColumn().setText(Messages.VBindingTableEditor_Id);
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MBindingContext>(prop.observeDetail(pv.getKnownElements())));				
 				column.setEditingSupport(new EditingSupport(contextsViewer) {
@@ -234,7 +236,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					
 					@Override
 					protected void setValue(Object element, Object value) {
-						Command cmd = SetCommand.create(getEditingDomain(), element, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID, value);
+						Command cmd = SetCommand.create(getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, value);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
@@ -243,7 +245,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 					@Override
 					protected Object getValue(Object element) {
 						MBindingContext ctx = (MBindingContext) element; 
-						return ctx.getId() != null ? ctx.getId() : "";
+						return ctx.getElementId() != null ? ctx.getElementId() : ""; //$NON-NLS-1$
 					}
 					
 					@Override
@@ -269,7 +271,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 							|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
 				}
 			};
-			TreeViewerEditor.create(contextsViewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
+			TreeViewerEditor.create(contextsViewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR | ColumnViewerEditor.KEEP_EDITOR_ON_DOUBLE_CLICK);
 
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -282,36 +284,36 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 			
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Up");
+			b.setText(Messages.VBindingTableEditor_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Down");
+			b.setText(Messages.VBindingTableEditor_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add ...");
+			b.setText(Messages.VBindingTableEditor_Add);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					IStructuredSelection s = (IStructuredSelection) contextsViewer.getSelection();
-					MBindingContext context = MApplicationFactory.eINSTANCE.createBindingContext();
+					MBindingContext context = MCommandsFactory.INSTANCE.createBindingContext();
 					MBindingContext parentContext = null;
 					
 					if( ! s.isEmpty() ) {
 						parentContext = (MBindingContext) s.getFirstElement();
-						Command cmd = AddCommand.create(getEditingDomain(), parentContext, MApplicationPackage.Literals.BINDING_CONTEXT__CHILDREN, context);
+						Command cmd = AddCommand.create(getEditingDomain(), parentContext, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, context);
 						
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 							contextsViewer.setSelection(new StructuredSelection(context));
 						}
-					} else if( s.isEmpty() && ((MBindingContainer)getMaster().getValue()).getRootContext() == null ) {
-						Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT, context);
+					} else if( s.isEmpty() && ((MBindingTableContainer)getMaster().getValue()).getRootContext() == null ) {
+						Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT, context);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 							contextsViewer.setSelection(new StructuredSelection(context));
@@ -323,7 +325,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			});
 			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Remove");
+			b.setText(Messages.VBindingTableEditor_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -336,14 +338,14 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 						for( Object o : s.toArray() ) {
 							MBindingContext ctx = (MBindingContext) o;
 							EObject owner = ((EObject)ctx).eContainer();
-							if( owner instanceof MBindingContainer ) {
-								Command cmd = SetCommand.create(getEditingDomain(), owner, MApplicationPackage.Literals.BINDING_CONTAINER__ROOT_CONTEXT, null);
+							if( owner instanceof MBindingTableContainer ) {
+								Command cmd = SetCommand.create(getEditingDomain(), owner, CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT, null);
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									return;
 								}
 							} else {
-								commands.add(RemoveCommand.create(getEditingDomain(), owner, MApplicationPackage.Literals.BINDING_CONTEXT__CHILDREN, ctx));
+								commands.add(RemoveCommand.create(getEditingDomain(), owner, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, ctx));
 							}
 						}
 						
@@ -389,10 +391,10 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection) bindingViewer.getSelection();
 						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
-							MBindingContainer container = (MBindingContainer) getMaster().getValue();
+							MBindingTableContainer container = (MBindingTableContainer) getMaster().getValue();
 							int idx = container.getBindingTables().indexOf(obj) - 1;
 							if (idx >= 0) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES, obj, idx);
 
 								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -416,10 +418,10 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection) bindingViewer.getSelection();
 						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
-							MBindingContainer container = (MBindingContainer) getMaster().getValue();
+							MBindingTableContainer container = (MBindingTableContainer) getMaster().getValue();
 							int idx = container.getBindingTables().indexOf(obj) + 1;
 							if (idx < container.getBindingTables().size()) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES, obj, idx);
 
 								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -439,8 +441,8 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MBindingTable command = MApplicationFactory.eINSTANCE.createBindingTable();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES, command);
+					MBindingTable command = MCommandsFactory.INSTANCE.createBindingTable();
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES, command);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -458,7 +460,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if (!bindingViewer.getSelection().isEmpty()) {
 						List<?> commands = ((IStructuredSelection) bindingViewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.BINDING_CONTAINER__BINDING_TABLES, commands);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES, commands);
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
@@ -477,7 +479,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 	}
 
 	private class ObservableFactoryImpl implements IObservableFactory {
-		private IEMFListProperty prop = EMFProperties.list(MApplicationPackage.Literals.BINDING_CONTEXT__CHILDREN);
+		private IEMFListProperty prop = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 		
 		public IObservable createObservable(Object target) {
 			if( target instanceof IObservableList ) {

@@ -44,7 +44,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 					cell.setText(label);
 				} else {
 					StyledString styledString = new StyledString(label, null);
-					styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER);
+					styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 					cell.setText(styledString.getString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 				}
@@ -56,7 +56,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 			String s = cell.getElement().toString();
 			cell.setText(s);
 		} else {
-			cell.setText(cell.getElement()+"");
+			cell.setText(cell.getElement().toString());
 		}
 	}
 

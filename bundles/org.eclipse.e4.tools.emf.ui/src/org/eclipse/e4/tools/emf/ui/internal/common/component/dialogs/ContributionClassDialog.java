@@ -17,8 +17,8 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -155,7 +155,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		if( ! s.isEmpty() ) {
 			ContributionData cd = (ContributionData) s.getFirstElement();
 			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className;
-			Command cmd = SetCommand.create(editingDomain, contribution, MApplicationPackage.Literals.CONTRIBUTION__URI, uri);
+			Command cmd = SetCommand.create(editingDomain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, uri);
 			if( cmd.canExecute() ) {
 				editingDomain.getCommandStack().execute(cmd);
 				super.okPressed();

@@ -17,12 +17,13 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
@@ -47,7 +48,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class ModelComponentsEditor extends AbstractComponentEditor {
 
-	private IListProperty MODEL_COMPONENTS__COMPONENTS = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
+	private IListProperty MODEL_COMPONENTS__COMPONENTS = EMFProperties.list(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS);
 
 	private Composite composite;
 	private Image image;
@@ -62,7 +63,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/ModelComponents.gif"));
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/ModelComponents.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -73,12 +74,12 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Model Components";
+		return Messages.ModelComponentsEditor_Label;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Some bla bla bla bla";
+		return Messages.ModelComponentsEditor_Description;
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Model Contributions");
+			l.setText(Messages.ModelComponentsEditor_ModelContributions);
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			final TableViewer viewer = new TableViewer(parent);
@@ -106,7 +107,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
 
-			IEMFListProperty prop = EMFProperties.list(MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS);
+			IEMFListProperty prop = EMFProperties.list(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -119,7 +120,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Up");
+			b.setText(Messages.ModelComponentsEditor_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -132,7 +133,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 							MModelComponents container = (MModelComponents) getMaster().getValue();
 							int idx = container.getComponents().indexOf(obj) - 1;
 							if (idx >= 0) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS, obj, idx);
 
 								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -146,7 +147,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Down");
+			b.setText(Messages.ModelComponentsEditor_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -159,7 +160,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 							MModelComponents container = (MModelComponents) getMaster().getValue();
 							int idx = container.getComponents().indexOf(obj) + 1;
 							if (idx < container.getComponents().size()) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS, obj, idx);
 
 								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -173,15 +174,15 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Add");
+			b.setText(Messages.ModelComponentsEditor_Add);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MModelComponent component = MApplicationFactory.eINSTANCE.createModelComponent();
+					MModelComponent component = MApplicationFactory.INSTANCE.createModelComponent();
 
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS, component);
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS, component);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -191,7 +192,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Remove");
+			b.setText(Messages.ModelComponentsEditor_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -200,7 +201,7 @@ public class ModelComponentsEditor extends AbstractComponentEditor {
 					if (!viewer.getSelection().isEmpty()) {
 						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
 
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.MODEL_COMPONENTS__COMPONENTS, elements);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS, elements);
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

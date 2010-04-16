@@ -18,15 +18,17 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -49,13 +51,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VControlEditor extends AbstractComponentEditor {
+public class VWindowControlEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
 	private TableViewer viewer;
 
-	public VControlEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public VWindowControlEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
 	}
@@ -112,7 +114,7 @@ public class VControlEditor extends AbstractComponentEditor {
 			viewer.getControl().setLayoutData(gd);
 
 			
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN);
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -138,7 +140,7 @@ public class VControlEditor extends AbstractComponentEditor {
 							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 							int idx = container.getChildren().indexOf(obj) - 1;
 							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -165,7 +167,7 @@ public class VControlEditor extends AbstractComponentEditor {
 							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 							int idx = container.getChildren().indexOf(obj) + 1;
 							if( idx < container.getChildren().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -189,12 +191,13 @@ public class VControlEditor extends AbstractComponentEditor {
 				}
 			});
 			childrenDropDown.setInput(new EClass[] {
-					MApplicationPackage.Literals.PERSPECTIVE_STACK,
-					MApplicationPackage.Literals.PART_SASH_CONTAINER,
-					MApplicationPackage.Literals.PART_STACK,
-					MApplicationPackage.Literals.PART
+					AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+					BasicPackageImpl.Literals.PART_STACK,
+					BasicPackageImpl.Literals.PART,
+					BasicPackageImpl.Literals.INPUT_PART
 			});
-			childrenDropDown.setSelection(new StructuredSelection(MApplicationPackage.Literals.PERSPECTIVE_STACK));
+			childrenDropDown.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 			
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
@@ -204,9 +207,10 @@ public class VControlEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if( ! childrenDropDown.getSelection().isEmpty() ) {
 						EClass eClass = (EClass) ((IStructuredSelection)childrenDropDown.getSelection()).getFirstElement();
-						EObject eObject = MApplicationFactory.eINSTANCE.create(eClass);
 						
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+						EObject eObject = EcoreUtil.create(eClass);
+						
+						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 						
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
@@ -226,7 +230,7 @@ public class VControlEditor extends AbstractComponentEditor {
 					if( ! viewer.getSelection().isEmpty() ) {
 						List<?> elements = ((IStructuredSelection)viewer.getSelection()).toList();
 						
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

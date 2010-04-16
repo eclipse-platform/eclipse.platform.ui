@@ -30,11 +30,11 @@ public abstract class AbstractComponentEditor {
 
 	private static Map<Integer, Image> IMAGE_MAP = new HashMap<Integer, Image>();
 	private static final String[] IMAGES = {
-		"/icons/full/obj16/zoom.png",
-		"/icons/full/obj16/table_add.png",
-		"/icons/full/obj16/table_delete.png",
-		"/icons/full/obj16/arrow_up.png",
-		"/icons/full/obj16/arrow_down.png",
+		"/icons/full/obj16/zoom.png", //$NON-NLS-1$
+		"/icons/full/obj16/table_add.png", //$NON-NLS-1$
+		"/icons/full/obj16/table_delete.png", //$NON-NLS-1$
+		"/icons/full/obj16/arrow_up.png", //$NON-NLS-1$
+		"/icons/full/obj16/arrow_down.png" //$NON-NLS-1$
 	};
 
 	private WritableValue master = new WritableValue();

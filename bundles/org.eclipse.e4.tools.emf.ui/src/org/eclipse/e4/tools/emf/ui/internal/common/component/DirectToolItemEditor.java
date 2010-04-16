@@ -15,9 +15,10 @@ import java.net.URL;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -47,7 +48,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	public Image getImage(Object element, Display display) {
 		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/DirectToolItem.gif"));
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/DirectToolItem.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -63,14 +64,14 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Class URI");
+		l.setText(Messages.DirectToolItemEditor_ClassURI);
 
 		Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), MApplicationPackage.Literals.CONTRIBUTION__URI).observeDetail(master));
+		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
 		final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-		b.setText("Find ...");
+		b.setText(Messages.DirectToolItemEditor_Find);
 		b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -84,11 +85,11 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Direct Tool Item";
+		return Messages.DirectToolItemEditor_Label;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Direct Tool Item bla bla bla";
+		return Messages.DirectToolItemEditor_Description;
 	}
 }
