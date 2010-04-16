@@ -1,8 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import org.eclipse.e4.core.services.log.Logger;
-
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -13,21 +20,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class StatusReporterCreationFunction implements IContextFunction {
 
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		try {
-			return ContextInjectionFactory.make(WorkbenchStatusReporter.class,
-					context);
-		} catch (InvocationTargetException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null) {
-				logger.error(e);
-			}
-		} catch (InstantiationException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null) {
-				logger.error(e);
-			}
-		}
-		return null;
+		return ContextInjectionFactory.make(WorkbenchStatusReporter.class,
+				context);
 	}
 
 }

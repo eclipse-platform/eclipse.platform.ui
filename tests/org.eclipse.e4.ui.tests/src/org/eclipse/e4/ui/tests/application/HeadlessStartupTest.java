@@ -99,8 +99,8 @@ public abstract class HeadlessStartupTest extends TestCase {
 		// TODO is there a reason the logger isn't injected with the context?
 		appContext.set(Logger.class.getName(), new WorkbenchLogger());
 
-		appContext.set(Adapter.class.getName(), ContextInjectionFactory.inject(
-				new EclipseAdapter(), appContext));
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
+				EclipseAdapter.class, appContext));
 		appContext.set(ContextManager.class.getName(), new ContextManager());
 
 		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,

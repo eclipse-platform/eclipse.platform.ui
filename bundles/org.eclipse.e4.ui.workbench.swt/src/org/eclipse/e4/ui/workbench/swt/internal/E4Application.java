@@ -232,10 +232,10 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
-				new WorkbenchLogger(), appContext));
-		appContext.set(Adapter.class.getName(), ContextInjectionFactory.inject(
-				new EclipseAdapter(), appContext));
+		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
+				WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
+				EclipseAdapter.class, appContext));
 
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 

@@ -11,9 +11,6 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.log.Logger;
-
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -32,20 +29,7 @@ public class PartServiceCreationFunction extends ContextFunction {
 	 */
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		try {
-			return ContextInjectionFactory.make(PartServiceImpl.class, context);
-		} catch (InvocationTargetException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null) {
-				logger.error(e);
-			}
-		} catch (InstantiationException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null) {
-				logger.error(e);
-			}
-		}
-		return null;
+		return ContextInjectionFactory.make(PartServiceImpl.class, context);
 	}
 
 }

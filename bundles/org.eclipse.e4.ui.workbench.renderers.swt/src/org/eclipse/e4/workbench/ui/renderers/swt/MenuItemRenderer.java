@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -221,18 +219,10 @@ public class MenuItemRenderer extends SWTPartRenderer {
 						contrib.setObject(cf.create(contrib
 								.getContributionURI(), lclContext));
 					}
-					try {
-						lclContext.set(MItem.class.getName(), item);
-						ContextInjectionFactory.invoke(contrib.getObject(),
-								"execute", lclContext); //$NON-NLS-1$
-						lclContext.remove(MItem.class.getName());
-					} catch (InvocationTargetException e1) {
-						if (logger != null)
-							logger.error(e1);
-					} catch (InjectionException e1) {
-						if (logger != null)
-							logger.error(e1);
-					}
+					lclContext.set(MItem.class.getName(), item);
+					ContextInjectionFactory.invoke(contrib.getObject(),
+							"execute", lclContext); //$NON-NLS-1$
+					lclContext.remove(MItem.class.getName());
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

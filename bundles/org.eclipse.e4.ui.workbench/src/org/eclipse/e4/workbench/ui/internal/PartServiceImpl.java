@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -579,9 +578,6 @@ public class PartServiceImpl implements EPartService {
 		Object client = part.getObject();
 		try {
 			ContextInjectionFactory.invoke(client, "doSave", part.getContext()); //$NON-NLS-1$
-		} catch (InvocationTargetException e) {
-			logger.error(e.getCause());
-			return false;
 		} catch (InjectionException e) {
 			Throwable throwable = e.getCause();
 			if (throwable == null) {

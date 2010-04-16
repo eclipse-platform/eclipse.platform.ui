@@ -84,22 +84,14 @@ public class BindingLookupTest extends TestCase {
 	}
 
 	private void defineBindingTables(IEclipseContext context) {
-		try {
-			BindingTableManager btm = (BindingTableManager) ContextInjectionFactory
-					.make(BindingTableManager.class, context);
-			context.set(BindingTableManager.class.getName(), btm);
-			ContextManager cm = (ContextManager) context
-					.get(ContextManager.class.getName());
-			btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
-			btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
-			btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		BindingTableManager btm = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, context);
+		context.set(BindingTableManager.class.getName(), btm);
+		ContextManager cm = (ContextManager) context
+				.get(ContextManager.class.getName());
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
+		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
 	}
 
 	@Override

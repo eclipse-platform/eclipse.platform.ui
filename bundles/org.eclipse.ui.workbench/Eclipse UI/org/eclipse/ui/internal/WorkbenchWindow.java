@@ -1603,14 +1603,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// actionPersistence);
 		// actionPersistence.read();
 
-		try {
-			selectionService = (ISelectionService) ContextInjectionFactory.make(
-					SelectionService.class, model.getContext());
-		} catch (InvocationTargetException e) {
-			WorkbenchPlugin.log(e);
-		} catch (InstantiationException e) {
-			WorkbenchPlugin.log(e);
-		}
+		selectionService = (ISelectionService) ContextInjectionFactory.make(SelectionService.class,
+				model.getContext());
 
 		ContextInjectionFactory.inject(page, model.getContext());
 		page.setPerspective(perspective);

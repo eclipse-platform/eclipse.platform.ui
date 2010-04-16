@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,20 +71,9 @@ public class E4CommandProcessor {
 	public static void processBindings(IEclipseContext context,
 			MBindingTableContainer bindingContainer) {
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize binding tables from model", null); //$NON-NLS-1$
-		final BindingTableManager bindingTables;
-		try {
-			bindingTables = (BindingTableManager) ContextInjectionFactory.make(
-					BindingTableManager.class, context);
-			context.set(BindingTableManager.class.getName(), bindingTables);
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		final BindingTableManager bindingTables = (BindingTableManager) ContextInjectionFactory
+				.make(BindingTableManager.class, context);
+		context.set(BindingTableManager.class.getName(), bindingTables);
 		MBindingContext root = bindingContainer.getRootContext();
 		if (root == null) {
 			return;

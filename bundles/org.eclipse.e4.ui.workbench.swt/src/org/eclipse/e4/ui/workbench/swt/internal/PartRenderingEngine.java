@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
@@ -494,24 +494,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 								.getBundleAdmin()));
 
 				// set up the keybinding manager
-				try {
-					KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
-							.make(KeyBindingDispatcher.class, runContext);
-					runContext.set(KeyBindingDispatcher.class.getName(),
-							dispatcher);
-					org.eclipse.swt.widgets.Listener listener = dispatcher
-							.getKeyDownFilter();
-					display.addFilter(SWT.KeyDown, listener);
-					display.addFilter(SWT.Traverse, listener);
-				} catch (InvocationTargetException e) {
-					if (logger != null) {
-						logger.error(e);
-					}
-				} catch (InstantiationException e) {
-					if (logger != null) {
-						logger.error(e);
-					}
-				}
+				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
+						.make(KeyBindingDispatcher.class, runContext);
+				runContext
+						.set(KeyBindingDispatcher.class.getName(), dispatcher);
+				org.eclipse.swt.widgets.Listener listener = dispatcher
+						.getKeyDownFilter();
+				display.addFilter(SWT.KeyDown, listener);
+				display.addFilter(SWT.Traverse, listener);
 
 				// Show the initial UI
 

@@ -1266,14 +1266,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				if (perspRegistry == null) {
-					try {
-						perspRegistry = (PerspectiveRegistry) ContextInjectionFactory.make(
-								PerspectiveRegistry.class, e4Context);
-					} catch (InvocationTargetException e) {
-						log(e);
-					} catch (InstantiationException e) {
-						log(e);
-					}
+					perspRegistry = (PerspectiveRegistry) ContextInjectionFactory.make(
+							PerspectiveRegistry.class, e4Context);
 				}
 				return perspRegistry;
 			}
@@ -1283,14 +1277,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				if (viewRegistry == null) {
-					try {
-						viewRegistry = (ViewRegistry) ContextInjectionFactory.make(
-								ViewRegistry.class, e4Context);
-					} catch (InvocationTargetException e) {
-						log(e);
-					} catch (InstantiationException e) {
-						log(e);
-					}
+					viewRegistry = (ViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
+							e4Context);
 				}
 				return viewRegistry;
 			}

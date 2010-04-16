@@ -11,16 +11,12 @@
 
 package org.eclipse.e4.core.commands.internal;
 
-import org.eclipse.e4.core.services.log.Logger;
-
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -82,16 +78,8 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 		addParmsToContext(command);
-		Boolean result;
-		try {
-			result = ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE,
-					context, Boolean.TRUE));
-		} catch (InvocationTargetException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null)
-				logger.error(e);
-			return true;
-		}
+		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE,
+				context, Boolean.TRUE));
 		return result.booleanValue();
 	}
 
@@ -119,25 +107,11 @@ public class HandlerServiceImpl implements EHandlerService {
 		}
 		addParmsToContext(command);
 
-		try {
-			Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
-					Boolean.TRUE);
-			if (Boolean.FALSE.equals(rc))
-				return null;
-		} catch (InvocationTargetException e1) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null)
-				logger.error(e1);
-		}
-
-		try {
-			return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
-		} catch (InvocationTargetException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null)
-				logger.error(e);
+		Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
+				Boolean.TRUE);
+		if (Boolean.FALSE.equals(rc))
 			return null;
-		}
+		return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
 	}
 
 	@Inject

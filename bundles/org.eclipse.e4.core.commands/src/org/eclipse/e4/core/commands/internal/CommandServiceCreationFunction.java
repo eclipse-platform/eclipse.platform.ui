@@ -11,15 +11,10 @@
 
 package org.eclipse.e4.core.commands.internal;
 
-import org.eclipse.e4.core.services.log.Logger;
-
-import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
-
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -42,20 +37,8 @@ public class CommandServiceCreationFunction extends ContextFunction {
 			IEclipseContext root = getRootContext(context);
 			manager = new CommandManager();
 			root.set(CommandManager.class.getName(), manager);
-			try {
-				service = (CommandServiceImpl) ContextInjectionFactory.make(
-						CommandServiceImpl.class, root);
-			} catch (InvocationTargetException e) {
-				Logger logger = (Logger) context.get(Logger.class.getName());
-				if (logger != null) {
-					logger.error(e);
-				}
-			} catch (InstantiationException e) {
-				Logger logger = (Logger) context.get(Logger.class.getName());
-				if (logger != null) {
-					logger.error(e);
-				}
-			}
+			service = (CommandServiceImpl) ContextInjectionFactory.make(CommandServiceImpl.class,
+					root);
 		}
 		return service;
 	}

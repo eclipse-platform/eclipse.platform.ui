@@ -11,12 +11,9 @@
 
 package org.eclipse.e4.workbench;
 
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MContribution;
 
 /**
@@ -60,17 +57,7 @@ public class ContributionUtils {
 			MContribution contrib, IEclipseContext context) {
 		context.set(MContribution.class.getName(), contrib);
 		Object implementation = getInstance(factory, contrib, context);
-		try {
-			ContextInjectionFactory.invoke(implementation, "execute", context); //$NON-NLS-1$
-		} catch (InvocationTargetException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null)
-				logger.error(e);
-		} catch (InjectionException e) {
-			Logger logger = (Logger) context.get(Logger.class.getName());
-			if (logger != null)
-				logger.error(e);
-		}
+		ContextInjectionFactory.invoke(implementation, "execute", context); //$NON-NLS-1$
 		context.remove(MContribution.class.getName());
 	}
 

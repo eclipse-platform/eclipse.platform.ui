@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -72,14 +70,8 @@ public class Bug299755Test extends TestCase {
 					@Override
 					public Object compute(IEclipseContext context,
 							Object[] arguments) {
-						try {
-							return ContextInjectionFactory.make(
-									InjectionObject.class, context);
-						} catch (InvocationTargetException e) {
-							throw new RuntimeException(e);
-						} catch (InstantiationException e) {
-							throw new RuntimeException(e);
-						}
+						return ContextInjectionFactory.make(
+								InjectionObject.class, context);
 					}
 				});
 		// declare selection as modifiable

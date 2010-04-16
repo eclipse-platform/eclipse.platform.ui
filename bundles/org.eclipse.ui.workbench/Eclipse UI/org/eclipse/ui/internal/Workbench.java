@@ -28,8 +28,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -87,10 +87,10 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1811,14 +1811,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		});
 
-		IContextService cxs = null;
-		try {
-			cxs = (IContextService) ContextInjectionFactory.make(ContextService.class, e4Context);
-		} catch (InvocationTargetException e1) {
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		}
+		IContextService cxs = (IContextService) ContextInjectionFactory.make(ContextService.class,
+				e4Context);
+
 		final IContextService contextService = cxs;
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
@@ -1872,15 +1867,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 				bindingManager = new BindingManager(contextManager, commandManager);
 				serviceLocator.registerService(BindingManager.class, bindingManager);
-				try {
-					bindingService[0] = (IBindingService) ContextInjectionFactory.make(
-							BindingService.class, e4Context);
-				} catch (InvocationTargetException e) {
-					WorkbenchPlugin.log(e);
-				} catch (InstantiationException e) {
-					WorkbenchPlugin.log(e);
-				}
-
+				bindingService[0] = (IBindingService) ContextInjectionFactory.make(
+						BindingService.class, e4Context);
 			}
 		});
 
