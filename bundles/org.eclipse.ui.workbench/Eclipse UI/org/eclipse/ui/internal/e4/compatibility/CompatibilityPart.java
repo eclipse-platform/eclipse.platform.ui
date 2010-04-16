@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -94,6 +95,8 @@ public abstract class CompatibilityPart {
 			// being unset
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+				Assert.isTrue(!composite.isDisposed(),
+						"The widget should not have been disposed at this point"); //$NON-NLS-1$
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
