@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.demo.contacts.databinding.AggregateNameObservableValue;
 import org.eclipse.e4.demo.contacts.model.Contact;
-import org.eclipse.e4.ui.model.application.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;

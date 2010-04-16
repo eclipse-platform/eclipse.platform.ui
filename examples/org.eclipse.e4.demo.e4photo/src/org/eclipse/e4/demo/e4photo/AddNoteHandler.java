@@ -15,7 +15,8 @@ import javax.inject.Named;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IWorkbench;
@@ -31,10 +32,10 @@ public class AddNoteHandler {
 		System.out.println("AddNoteHandler called " + selection.toString());
 		// add an editor next to the Exif tab
 		MPart exifPart = partService.findPart("e4.photo.demo.exif");
-		MPart editor = MApplicationFactory.eINSTANCE.createPart();
+		MPart editor = BasicFactoryImpl.eINSTANCE.createPart();
 		editor.setLabel("Note");
-		editor.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NoteEditor");
-		editor.setId("org.eclipse.e4.demo.e4photo.noteEditor" + editors);
+		editor.setContributionURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NoteEditor");
+		editor.setElementId("org.eclipse.e4.demo.e4photo.noteEditor" + editors);
 		editors++;
 		
 		IPath path = selection.getLocation();

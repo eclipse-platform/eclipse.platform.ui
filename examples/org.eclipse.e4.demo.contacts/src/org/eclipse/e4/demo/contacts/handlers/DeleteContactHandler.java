@@ -16,7 +16,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
-import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class DeleteContactHandler {

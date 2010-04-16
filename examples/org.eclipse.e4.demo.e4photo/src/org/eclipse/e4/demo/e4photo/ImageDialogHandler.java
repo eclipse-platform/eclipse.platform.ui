@@ -16,9 +16,10 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.dialogs.Dialog;
@@ -94,17 +95,16 @@ public class ImageDialogHandler {
 		
 		private MUIElement createDlgModel() {
 			// Create a side-by-side sash
-			MPartSashContainer sash = MApplicationFactory.eINSTANCE.createPartSashContainer();
+			MPartSashContainer sash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			sash.setHorizontal(true);
 			
 			// Create the 'Library' part
-			MPart library = MApplicationFactory.eINSTANCE.createPart();
-			library.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
+			MPart library = BasicFactoryImpl.eINSTANCE.createPart();
+			library.setContributionURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
 			library.setLabel("Library");
 			
 			// Create the 'Preview' part
-			MPart preview = MApplicationFactory.eINSTANCE.createPart();
-			preview.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview");
+			MPart preview = BasicFactoryImpl.eINSTANCE.createPart();
 			preview.setLabel("Preview");
 			
 			// Add them to the sash, library first

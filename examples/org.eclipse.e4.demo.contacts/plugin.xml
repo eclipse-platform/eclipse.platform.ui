@@ -2,21 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.e4.workbench.parts">
-      <part
-            class="org.eclipse.e4.demo.contacts.views.ListView"
-            icon="icons/silk/folder_user.png"
-            label="Contacts"
-            parentId="org.eclipse.e4.ui.tags.navigation">
-      </part>
-      <part
-            class="org.eclipse.e4.demo.contacts.views.DetailsView"
-            icon="icons/silk/report_user.png"
-            label="Details"
-            parentId="org.eclipse.e4.ui.tags.content">
-      </part>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
