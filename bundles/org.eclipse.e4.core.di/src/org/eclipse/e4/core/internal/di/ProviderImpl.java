@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.IInjector;
-
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
-
-import java.lang.reflect.InvocationTargetException;
 import javax.inject.Provider;
+import org.eclipse.e4.core.di.*;
 
 public class ProviderImpl<T> implements Provider<T> {
 
@@ -25,8 +19,7 @@ public class ProviderImpl<T> implements Provider<T> {
 	final private IObjectDescriptor objectDescriptor;
 	final private IInjector injector;
 
-	public ProviderImpl(IObjectDescriptor descriptor, IInjector injector,
-			AbstractObjectSupplier provider) {
+	public ProviderImpl(IObjectDescriptor descriptor, IInjector injector, AbstractObjectSupplier provider) {
 		objectDescriptor = descriptor;
 		objectProvider = provider;
 		this.injector = injector;
@@ -37,14 +30,6 @@ public class ProviderImpl<T> implements Provider<T> {
 		try {
 			return (T) injector.make(objectDescriptor, objectProvider);
 		} catch (ClassCastException e) {
-			return null;
-		} catch (InvocationTargetException e) {
-			// TBD add proper logging
-			e.printStackTrace();
-			return null;
-		} catch (InstantiationException e) {
-			// TBD add proper logging
-			e.printStackTrace();
 			return null;
 		}
 	}

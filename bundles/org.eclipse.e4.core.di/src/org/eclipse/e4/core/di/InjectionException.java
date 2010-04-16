@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
-public class InjectionException extends Exception {
+public class InjectionException extends RuntimeException {
 
 	private static final long serialVersionUID = 3098545573510654907L;
 

@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.inject.Named;
-
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
@@ -21,7 +18,6 @@ import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
 
@@ -70,32 +66,19 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 					return false;
 				}
 			} else {
-				boolean resolved = injector.resolveArguments(requestor, requestor.getPrimarySupplier());
-				if (resolved) {
+				injector.resolveArguments(requestor, requestor.getPrimarySupplier());
+				if (recorder != null)
+					recorder.stopAccessRecording();
+				try {
+					requestor.execute();
+				} finally {
 					if (recorder != null)
-						recorder.stopAccessRecording();
-						
-					try {
-						requestor.execute();
-					} catch (InvocationTargetException e) {
-						CoreLogger.logError("Injection failed for the object \""
-								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-								+ requestor.toString() + "\"", e);
-						return false;
-					} catch (InstantiationException e) {
-						CoreLogger.logError("Injection failed for the object \""
-								+ requestor.getRequestingObject().toString() + "\". Unable to execute \""
-								+ requestor.toString() + "\"", e);
-						return false;
-					} finally {
-						if (recorder != null)
-							recorder.startAcessRecording();
-					}
+						recorder.startAcessRecording();
 				}
 			}
 			return true;
 		}
-		
+
 		public boolean notify(ContextChangeEvent event) {
 			return notify(event, null);
 		}
@@ -153,7 +136,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		// This method is rarely or never used on the primary supplier
 		if (descriptor == null)
 			return IInjector.NOT_A_VALUE;
-		Object[] result = get(new IObjectDescriptor[] { descriptor }, requestor);
+		Object[] result = get(new IObjectDescriptor[] {descriptor}, requestor);
 		if (result == null)
 			return null;
 		return result[0];
@@ -200,8 +183,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		return null;
 	}
 
-	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context,
-			IInjector injector) {
+	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {
 		String key = ContextObjectSupplier.class.getName();
 		if (context.containsKey(key, true))
 			return (ContextObjectSupplier) context.get(key);

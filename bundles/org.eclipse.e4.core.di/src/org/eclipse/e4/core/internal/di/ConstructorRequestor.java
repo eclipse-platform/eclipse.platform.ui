@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-
-
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.ObjectDescriptorFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.IObjectDescriptor;
+import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 
 public class ConstructorRequestor extends Requestor {
 
@@ -27,11 +25,11 @@ public class ConstructorRequestor extends Requestor {
 
 	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, AbstractObjectSupplier primarySupplier) {
 		// TBD make an integer update types? 0 - static , 1 - normal, 2 - grouped?
-		super(injector, primarySupplier, null,  false /* do not track */, false /* N/A: no updates */, false /* mandatory */);
+		super(injector, primarySupplier, null, false /* do not track */, false /* N/A: no updates */, false /* mandatory */);
 		this.constructor = constructor;
 	}
 
-	public Object execute() throws InvocationTargetException, InstantiationException {
+	public Object execute() throws InjectionException {
 		return callConstructor(constructor, actualArgs);
 	}
 
@@ -47,8 +45,7 @@ public class ConstructorRequestor extends Requestor {
 		return descriptors;
 	}
 
-	private Object callConstructor(Constructor<?> constructor, Object[] args)
-			throws InvocationTargetException, InstantiationException {
+	private Object callConstructor(Constructor<?> constructor, Object[] args) throws InjectionException {
 		Object result = null;
 		boolean wasAccessible = true;
 		if (!constructor.isAccessible()) {
@@ -58,18 +55,30 @@ public class ConstructorRequestor extends Requestor {
 		try {
 			result = constructor.newInstance(args);
 		} catch (IllegalArgumentException e) {
-			// should not happen, is checked at the start of this method
-			logError(constructor, e);
-			return null;
+			throw new InjectionException(e);
+		} catch (InstantiationException e) {
+			throw new InjectionException(e);
 		} catch (IllegalAccessException e) {
-			// should not happen as we set constructor to be accessible
-			logError(constructor, e);
-			return null;
+			throw new InjectionException(e);
+		} catch (InvocationTargetException e) {
+			Throwable originalException = e.getCause();
+			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
 			if (!wasAccessible)
 				constructor.setAccessible(false);
 		}
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer tmp = new StringBuffer();
+		Object object = getRequestingObject();
+		if (object != null)
+			tmp.append(object.getClass().getSimpleName());
+		tmp.append('(');
+		tmp.append(')');
+		return tmp.toString();
 	}
 
 }

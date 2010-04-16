@@ -84,7 +84,9 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		if (desiredType != null)
+		if (desiredType instanceof Class<?>)
+			buffer.append(((Class<?>) desiredType).getSimpleName());
+		else if (desiredType != null)
 			buffer.append(desiredType);
 		if (annotations != null) {
 			buffer.append('[');

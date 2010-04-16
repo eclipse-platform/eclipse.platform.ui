@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -44,7 +42,7 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 		if (getEventAdmin() == null) {
 			Bundle[] bundles = DIEActivator.getDefault().getBundleContext().getBundles();
 			for (Bundle bundle : bundles) {
-				if (!"org.eclipse.equinox.event".equals(bundle.getSymbolicName()))
+				if (!"org.eclipse.equinox.event".equals(bundle.getSymbolicName())) //$NON-NLS-1$
 					continue;
 				try {
 					bundle.start(Bundle.START_TRANSIENT);
@@ -76,24 +74,9 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 			if (requestorInjector != null) {
 				Object data = event.getProperty(EventUtils.DATA);
 				addCurrentEvent(event.getTopic(), data);
-				boolean resolved = requestorInjector.resolveArguments(requestor, requestor
-						.getPrimarySupplier());
+				requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
 				removeCurrentEvent(event.getTopic());
-				if (resolved) {
-					try {
-						requestor.execute();
-					} catch (InvocationTargetException e) {
-						CoreLogger.logError("Injection failed for the object \""
-								+ requestor.getRequestingObject().toString()
-								+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-						return;
-					} catch (InstantiationException e) {
-						CoreLogger.logError("Injection failed for the object \""
-								+ requestor.getRequestingObject().toString()
-								+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-						return;
-					}
-				}
+				requestor.execute();
 			}
 		}
 	}
@@ -183,18 +166,14 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 				return;
 		}
 		BundleContext bundleContext = DIEActivator.getDefault().getBundleContext();
-		if (bundleContext == null) {
-			CoreLogger.logError(
-					"Unable to subscribe to events: DI extension bundle is not activated",
-					new InjectionException());
-			return;
-		}
-		String[] topics = new String[] { topic };
+		if (bundleContext == null)
+			throw new InjectionException("Unable to subscribe to events: org.eclipse.e4.core.di.extensions bundle is not activated"); //$NON-NLS-1$
+
+		String[] topics = new String[] {topic};
 		Dictionary<String, Object> d = new Hashtable<String, Object>();
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		EventHandler wrappedHandler = makeHandler(requestor);
-		ServiceRegistration registration = bundleContext.registerService(EventHandler.class
-				.getName(), wrappedHandler, d);
+		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
 		// due to the way requestors are constructed this limited synch should be OK
 		synchronized (registrations) {
 			registrations.put(subscriber, registration);
@@ -227,8 +206,7 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 
 	protected void unsubscribe(IRequestor requestor) {
 		synchronized (registrations) {
-			Iterator<Entry<Subscriber, ServiceRegistration>> i = registrations.entrySet()
-					.iterator();
+			Iterator<Entry<Subscriber, ServiceRegistration>> i = registrations.entrySet().iterator();
 			while (i.hasNext()) {
 				Entry<Subscriber, ServiceRegistration> entry = i.next();
 				Subscriber key = entry.getKey();

@@ -11,24 +11,18 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.ObjectDescriptorFactory;
+import org.eclipse.e4.core.di.*;
 
 public class FieldRequestor extends Requestor {
 
 	final private Field field;
 
-	public FieldRequestor(Field field, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track,
-			boolean groupUpdates, boolean optional) {
+	public FieldRequestor(Field field, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean optional) {
 		super(injector, primarySupplier, requestingObject, track, groupUpdates, optional);
 		this.field = field;
 	}
 
-	public Object execute() throws InvocationTargetException, InstantiationException {
+	public Object execute() throws InjectionException {
 		setField(field, actualArgs[0]);
 		return null;
 	}
@@ -36,12 +30,11 @@ public class FieldRequestor extends Requestor {
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
 		InjectionProperties properties = annotationSupport.getInjectProperties(field);
-		IObjectDescriptor objectDescriptor = ObjectDescriptorFactory.make(field.getGenericType(),
-				properties.getQualifiers());
-		return new IObjectDescriptor[] { objectDescriptor };
+		IObjectDescriptor objectDescriptor = ObjectDescriptorFactory.make(field.getGenericType(), properties.getQualifiers());
+		return new IObjectDescriptor[] {objectDescriptor};
 	}
 
-	private boolean setField(Field field, Object value) {
+	private boolean setField(Field field, Object value) throws InjectionException {
 		Object userObject = getRequestingObject();
 		if (userObject == null)
 			return false;
@@ -53,16 +46,25 @@ public class FieldRequestor extends Requestor {
 		try {
 			field.set(userObject, value);
 		} catch (IllegalArgumentException e) {
-			logError(field, e);
-			return false;
+			throw new InjectionException(e);
 		} catch (IllegalAccessException e) {
-			logError(field, e);
-			return false;
+			throw new InjectionException(e);
 		} finally {
 			if (!wasAccessible)
 				field.setAccessible(false);
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer tmp = new StringBuffer();
+		Object object = getRequestingObject();
+		if (object != null)
+			tmp.append(object.getClass().getSimpleName());
+		tmp.append('.');
+		tmp.append(field.getName());
+		return tmp.toString();
 	}
 
 }

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.extensions.UIEventTopic;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.EventHandler;
 
@@ -24,7 +22,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 
 	class UIEventHandler implements EventHandler {
 
-		final private IRequestor requestor;
+		final protected IRequestor requestor;
 
 		public UIEventHandler(IRequestor requestor) {
 			this.requestor = requestor;
@@ -35,28 +33,13 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 			if (requestorInjector != null) {
 				Object data = event.getProperty(EventUtils.DATA);
 				addCurrentEvent(event.getTopic(), data);
-				boolean resolved = requestorInjector.resolveArguments(requestor, requestor
-						.getPrimarySupplier());
+				requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
 				removeCurrentEvent(event.getTopic());
-				if (resolved) {
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							try {
-								requestor.execute();
-							} catch (InvocationTargetException e) {
-								CoreLogger.logError("Injection failed for the object \""
-										+ requestor.getRequestingObject().toString()
-										+ "\". Unable to execute \"" + requestor.toString() + "\"",
-										e);
-							} catch (InstantiationException e) {
-								CoreLogger.logError("Injection failed for the object \""
-										+ requestor.getRequestingObject().toString()
-										+ "\". Unable to execute \"" + requestor.toString() + "\"",
-										e);
-							}
-						}
-					});
-				}
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						requestor.execute();
+					}
+				});
 			}
 		}
 	}

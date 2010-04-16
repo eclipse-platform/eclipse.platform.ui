@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.extensions.Preferences;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.FrameworkUtil;
 
 public class PreferencesObjectSupplier extends AbstractObjectSupplier {
@@ -106,23 +104,8 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 
 				IInjector requestorInjector = requestor.getInjector();
 				if (requestorInjector != null) {
-					boolean resolved = requestorInjector.resolveArguments(requestor, requestor
-							.getPrimarySupplier());
-					if (resolved) {
-						try {
-							requestor.execute();
-						} catch (InvocationTargetException e) {
-							CoreLogger.logError("Injection failed for the object \""
-									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-							return;
-						} catch (InstantiationException e) {
-							CoreLogger.logError("Injection failed for the object \""
-									+ requestor.getRequestingObject().toString()
-									+ "\". Unable to execute \"" + requestor.toString() + "\"", e);
-							return;
-						}
-					}
+					requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
+					requestor.execute();
 				}
 			}
 		});

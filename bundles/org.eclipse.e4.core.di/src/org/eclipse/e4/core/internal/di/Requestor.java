@@ -11,8 +11,10 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.ref.WeakReference;
-import org.eclipse.e4.core.di.*;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.IObjectDescriptor;
+import org.eclipse.e4.core.di.IRequestor;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -85,11 +87,6 @@ abstract public class Requestor implements IRequestor {
 
 	public void setResolvedArgs(Object[] actualArgs) {
 		this.actualArgs = actualArgs;
-	}
-
-	protected void logError(Object destination, Exception e) {
-		String msg = "Injection failed " + destination.toString();
-		CoreLogger.logError(msg, e);
 	}
 
 }

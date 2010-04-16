@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Describes externally-visible injector functionality.
  * <p>
@@ -24,29 +22,76 @@ public interface IInjector {
 
 	final public static Object NOT_A_VALUE = new Object();
 
-	public boolean inject(Object object, AbstractObjectSupplier objectSupplier);
+	/**
+	 * @param object
+	 * @param objectSupplier
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public void inject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public boolean uninject(Object object, AbstractObjectSupplier objectSupplier);
+	/**
+	 * @param object
+	 * @param objectSupplier
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public void uninject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier)
-			throws InvocationTargetException, InjectionException;
+	/**
+	 * @param object
+	 * @param methodName
+	 * @param objectSupplier
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public Object invoke(Object object, String methodName, Object defaultValue,
-			AbstractObjectSupplier objectSupplier) throws InvocationTargetException;
+	/**
+	 * @param object
+	 * @param methodName
+	 * @param defaultValue
+	 * @param objectSupplier
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier)
-			throws InvocationTargetException, InstantiationException;
+	/**
+	 * @param clazz
+	 * @param objectSupplier
+	 * @return an instance of the specified class
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier)
-			throws InvocationTargetException, InstantiationException;
+	/**
+	 * @param descriptor
+	 * @param objectSupplier
+	 * @return an instance of the specified class
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public boolean injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier);
+	/**
+	 * @param clazz
+	 * @param objectSupplier
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public void injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	public boolean disposed(AbstractObjectSupplier objectSupplier);
+	/**
+	 * @param objectSupplier
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public void disposed(AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	public IBinding addBinding(Class<?> clazz);
 
 	public IBinding addBinding(IBinding binding);
 
-	public boolean resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier);
+	/**
+	 * @param requestor
+	 * @param objectSupplier
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 */
+	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 }

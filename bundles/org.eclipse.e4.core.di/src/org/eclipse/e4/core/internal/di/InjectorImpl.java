@@ -12,12 +12,33 @@ package org.eclipse.e4.core.internal.di;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.*;
-import java.util.*;
-import javax.inject.*;
-import org.eclipse.e4.core.di.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IBinding;
+import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.IObjectDescriptor;
+import org.eclipse.e4.core.di.IRequestor;
+import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
-import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 
 /**
  * Reflection-based dependency injector.
@@ -36,42 +57,24 @@ public class InjectorImpl implements IInjector {
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
 	private Map<Class<?>, Set<IBinding>> bindings = new HashMap<Class<?>, Set<IBinding>>();
 
-	public boolean inject(Object object, AbstractObjectSupplier objectSupplier) {
+	public void inject(Object object, AbstractObjectSupplier objectSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
 		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, true /* normal order */, requestors);
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		if (!resolveRequestorArgs(requestors, objectSupplier, false))
-			return false;
+		resolveRequestorArgs(requestors, objectSupplier, false);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
-			try {
-				if (requestor.isResolved())
-					requestor.execute();
-			} catch (InvocationTargetException e) {
-				CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			} catch (InstantiationException e) {
-				CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			}
+			if (requestor.isResolved())
+				requestor.execute();
 		}
 		rememberInjectedObject(object, objectSupplier);
 
 		// TBD current tests assume that @PostConstruct methods will be
 		// called after injection; however, name implies that it is only
 		// called when the object is constructed. Fix this after the 1.4/1.5 merge.
-		try {
-			processPostConstruct(object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
-		} catch (InvocationTargetException e) {
-			CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to process post-construct methods.", e);
-			return false;
-		} catch (InstantiationException e) {
-			CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to process post-construct methods.", e);
-			return false;
-		}
-		return true;
+		processPostConstruct(object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
 	}
 
 	private void rememberInjectedObject(Object object, AbstractObjectSupplier objectSupplier) {
@@ -121,45 +124,34 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
-	public boolean uninject(Object object, AbstractObjectSupplier objectSupplier) {
+	public void uninject(Object object, AbstractObjectSupplier objectSupplier) {
 		if (!forgetInjectedObject(object, objectSupplier))
-			return false; // not injected at this time
+			return; // not injected at this time
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
 		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, false /* inverse order */, requestors);
 		// might still need to get resolved values from secondary suppliers
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		if (!resolveRequestorArgs(requestors, null, true /* fill with nulls */))
-			return false;
+		resolveRequestorArgs(requestors, null, true /* fill with nulls */);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
-			try {
-				requestor.execute();
-			} catch (InvocationTargetException e) {
-				CoreLogger.logError("Uninjection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			} catch (InstantiationException e) {
-				CoreLogger.logError("Uninjection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			}
+			requestor.execute();
 		}
-		return true;
 	}
 
-	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) throws InvocationTargetException, InjectionException {
+	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) {
 		Object result = invokeUsingClass(object, object.getClass(), methodName, IInjector.NOT_A_VALUE, objectSupplier);
-		if (result == IInjector.NOT_A_VALUE) {
-			throw new InjectionException("Unable to find matching method to invoke");
-		}
+		if (result == IInjector.NOT_A_VALUE)
+			throw new InjectionException("Unable to find matching method to invoke"); //$NON-NLS-1$
 		return result;
 	}
 
-	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InvocationTargetException {
+	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) {
 		return invokeUsingClass(object, object.getClass(), methodName, defaultValue, objectSupplier);
 	}
 
-	private Object invokeUsingClass(Object userObject, Class<?> currentClass, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InvocationTargetException {
+	private Object invokeUsingClass(Object userObject, Class<?> currentClass, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) {
 		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
@@ -169,33 +161,24 @@ public class InjectorImpl implements IInjector {
 
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
-			if (unresolved != -1) {
-				CoreLogger.logError("Injection failed for object \"" + requestor.getRequestingObject().toString() + "\". Unable to find value for \"" + requestor.getDependentObjects()[unresolved] + "\"", new InjectionException());
-				return null;
-			}
+			if (unresolved != -1)
+				reportUnresolvedArgument(requestor, unresolved);
 			requestor.setResolvedArgs(actualArgs);
-
-			try {
-				return requestor.execute();
-			} catch (InstantiationException e) {
-				// TBD clean up the error handling; need to propagate original exception
-				CoreLogger.logError("Exception occured in the injected method " + method.getName(), e);
-				return null;
-			}
+			return requestor.execute();
 		}
 		Class<?> superClass = currentClass.getSuperclass();
-		if (superClass == null) {
+		if (superClass == null)
 			return defaultValue;
-		}
+
 		return invokeUsingClass(userObject, superClass, methodName, defaultValue, objectSupplier);
 	}
 
-	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InvocationTargetException, InstantiationException {
+	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
 		IObjectDescriptor descriptor = ObjectDescriptorFactory.make(clazz, null);
 		return make(descriptor, objectSupplier);
 	}
 
-	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) throws InvocationTargetException, InstantiationException {
+	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) {
 		IBinding binding = findBinding(descriptor);
 		if (binding == null) {
 			Class<?> desiredClass = descriptor.getElementClass();
@@ -204,7 +187,7 @@ public class InjectorImpl implements IInjector {
 		return internalMake(binding.getImplementationClass(), objectSupplier);
 	}
 
-	private Object internalMake(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InvocationTargetException, InstantiationException {
+	private Object internalMake(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
 
 		boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
 		if (isSingleton) {
@@ -255,61 +238,36 @@ public class InjectorImpl implements IInjector {
 				return newInstance;
 			}
 		}
-
-		CoreLogger.logError("Could not find satisfiable constructor in class " + clazz.getName(), new InjectionException());
-		return null;
+		throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
 	}
 
-	public boolean injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
+	public void injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
 		// TBD add processing on a null object
-		Object object;
-		try {
-			object = make(clazz, objectSupplier);
-		} catch (InvocationTargetException e) {
-			// try-catch won't be necessary once we stop creating an object
-			e.printStackTrace();
-			return false;
-		} catch (InstantiationException e) {
-			// try-catch won't be necessary once we stop creating an object
-			e.printStackTrace();
-			return false;
-		}
+		Object object = make(clazz, objectSupplier);
 
 		// TBD this is copy/paste from as invoke() with static = true.
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
 		processClassHierarchy(object, objectSupplier, true /* static */, true /* track */, true /* normal order */, requestors);
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		if (!resolveRequestorArgs(requestors, objectSupplier, false))
-			return false;
+		resolveRequestorArgs(requestors, objectSupplier, false);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
-			try {
-				requestor.execute();
-			} catch (InvocationTargetException e) {
-				CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			} catch (InstantiationException e) {
-				CoreLogger.logError("Injection failed for the object \"" + object.toString() + "\". Unable to execute \"" + requestor.toString() + "\"", e);
-				return false;
-			}
+			requestor.execute();
 		}
-
-		return true;
 	}
 
-	public boolean resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) {
+	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		list.add((Requestor) requestor);
 		resolveRequestorArgs(list, objectSupplier, true);
-		return true;
 	}
 
-	public boolean disposed(AbstractObjectSupplier objectSupplier) {
+	public void disposed(AbstractObjectSupplier objectSupplier) {
 		List<WeakReference<?>> references = getSupplierObjects(objectSupplier);
 		if (references == null)
-			return true;
+			return;
 		Object[] objects = new Object[references.size()];
 		int count = 0;
 		for (WeakReference<?> ref : references) {
@@ -324,7 +282,6 @@ public class InjectorImpl implements IInjector {
 			uninject(objects[i], objectSupplier);
 		}
 		forgetSupplier(objectSupplier);
-		return true;
 	}
 
 	private void processPreDestory(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectClass, ArrayList<Class<?>> classHierarchy) {
@@ -344,20 +301,14 @@ public class InjectorImpl implements IInjector {
 			if (!isOverridden(method, classHierarchy)) {
 				// TBD optional @PreDestory? might make sense if we allow args on those methods
 				MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, false);
-				try {
-					requestor.execute();
-				} catch (InvocationTargetException e) {
-					CoreLogger.logError("Unable to call pre-destory method \"" + method.getName() + "\"", e);
-				} catch (InstantiationException e) {
-					CoreLogger.logError("Unable to call pre-destory method \"" + method.getName() + "\"", e);
-				}
+				requestor.execute();
 			}
 		}
 		if (userObject instanceof IDisposable)
 			((IDisposable) userObject).dispose();
 	}
 
-	private boolean resolveRequestorArgs(ArrayList<Requestor> requestors, AbstractObjectSupplier objectSupplier, boolean fillNulls) {
+	private void resolveRequestorArgs(ArrayList<Requestor> requestors, AbstractObjectSupplier objectSupplier, boolean fillNulls) {
 		for (Requestor requestor : requestors) {
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, fillNulls);
 			int unresolved = unresolved(actualArgs);
@@ -368,12 +319,19 @@ public class InjectorImpl implements IInjector {
 
 			if (requestor.isOptional())
 				requestor.setResolvedArgs(null);
-			else {
-				CoreLogger.logError("Injection failed for object \"" + requestor.getRequestingObject().toString() + "\". Unable to find value for \"" + requestor.getDependentObjects()[unresolved] + "\"", new InjectionException());
-				return false;
-			}
+			else
+				reportUnresolvedArgument(requestor, unresolved);
 		}
-		return true;
+	}
+
+	private void reportUnresolvedArgument(Requestor requestor, int argIndex) {
+		StringBuffer tmp = new StringBuffer();
+		tmp.append("Unable to process \""); //$NON-NLS-1$
+		tmp.append(requestor.toString());
+		tmp.append("\": no actual value was found for the argument \""); //$NON-NLS-1$
+		tmp.append(requestor.getDependentObjects()[argIndex].toString());
+		tmp.append("\"."); //$NON-NLS-1$
+		throw new InjectionException(tmp.toString());
 	}
 
 	private Object[] resolveArgs(Requestor requestor, AbstractObjectSupplier objectSupplier, boolean fillNulls) {
@@ -426,17 +384,8 @@ public class InjectorImpl implements IInjector {
 			if (descriptors[i] == null)
 				continue; // already resolved
 			IBinding binding = findBinding(descriptors[i]);
-			if (binding != null) {
-				try {
-					actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier);
-				} catch (InvocationTargetException e) {
-					CoreLogger.logError("Unable to create object for class \"" + binding.getImplementationClass() + "\".", e);
-					continue;
-				} catch (InstantiationException e) {
-					CoreLogger.logError("Unable to create object for class \"" + binding.getImplementationClass() + "\".", e);
-					continue;
-				}
-			}
+			if (binding != null)
+				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier);
 		}
 
 		// 5) post process
@@ -591,7 +540,7 @@ public class InjectorImpl implements IInjector {
 		return false;
 	}
 
-	private void processPostConstruct(Object userObject, Class<?> objectClass, AbstractObjectSupplier objectSupplier, ArrayList<Class<?>> classHierarchy) throws InvocationTargetException, InstantiationException {
+	private void processPostConstruct(Object userObject, Class<?> objectClass, AbstractObjectSupplier objectSupplier, ArrayList<Class<?>> classHierarchy) throws InjectionException {
 		Class<?> superClass = objectClass.getSuperclass();
 		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
 			classHierarchy.add(objectClass);
@@ -609,19 +558,10 @@ public class InjectorImpl implements IInjector {
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, false);
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
-			if (unresolved != -1) {
-				CoreLogger.logError("Injection failed for object \"" + requestor.getRequestingObject().toString() + "\". Unable to find value for \"" + requestor.getDependentObjects()[unresolved] + "\"", new InjectionException());
-				continue;
-			}
+			if (unresolved != -1)
+				reportUnresolvedArgument(requestor, unresolved);
 			requestor.setResolvedArgs(actualArgs);
-
-			try {
-				requestor.execute();
-			} catch (InvocationTargetException e) {
-				CoreLogger.logError("Unable to call post-construct method \"" + method.getName() + "\"", e);
-			} catch (InstantiationException e) {
-				CoreLogger.logError("Unable to call post-construct method \"" + method.getName() + "\"", e);
-			}
+			requestor.execute();
 		}
 	}
 

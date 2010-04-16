@@ -11,8 +11,12 @@
 
 package org.eclipse.e4.core.contexts;
 
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.e4.core.di.*;
+import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.InjectorFactory;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
@@ -30,31 +34,19 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * <p>
  * The injection of values is generally done as a number of calls. User objects that want to
  * finalize the injected data (for instance, to perform calculations based on multiple injected
- * values) can place such calculations in a method with one of the following signatures:
- * <ul>
- * <li><code>public void contextSet(IEquinoxContext context);</code></li>
- * <li><code>public void contextSet();</code></li>
- * <li>A method with the <code>org.eclipse.e4.core.services.annotations.PostConstruct</code>
- * annotation.</li>
- * </ul>
- * </p>
- * <p>
- * This method will be called as a last step in the injection process.
+ * values) can place such calculations in a method with the {@link PostConstruct} annotation.
  * </p>
  * <p>
  * When injecting values, all fields are injected prior to injection of methods. When values are
  * removed from the context or the context is disposed, injection of null values occurs in the
  * reverse order: methods and then fields. As a result, injection methods can safely make use of
- * injected field values. The order in which methods and fields are injected is undefined, so
- * injection methods should not rely on other injection methods having been run already.
+ * injected field values. The order in which methods are injected is undefined, so
+ * injection methods should not rely on other injection methods having been run already. Methods
+ * and field on superclasses are injected before methods in fields on the subclasses. 
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling a disposal method. Disposal methods are:
- * <ul>
- * <li>Methods identified by the "@PreDestory" annotations, and</li>
- * <li>Methods implementing {@link IDisposable#dispose()}.</li>
- * </ul>
+ * calling methods with the {@link PreDestroy} annotation before resetting injected values to <code>null</code>.
  * 
  * @noextend This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -71,32 +63,25 @@ final public class ContextInjectionFactory {
 	 * Injects a context into a domain object. See the class comment for details on the injection
 	 * algorithm that is used.
 	 * 
-	 * @param object
-	 *            The object to perform injection on
-	 * @param context
-	 *            The context to obtain injected values from
-	 * @return Returns the injected object
+	 * @param object The object to perform injection on
+	 * @param context The context to obtain injected values from
+	 * @throws InjectionExeption if an exception occurred while performing this operation
 	 */
-	static public Object inject(Object object, IEclipseContext context) {
+	static public void inject(Object object, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.inject(object, supplier);
-		return object;
 	}
 
 	/**
 	 * Call a method, injecting the parameters from the context.
 	 * 
-	 * @param object
-	 *            The object to perform injection on
-	 * @param methodName
-	 *            The method to call
-	 * @param context
-	 *            The context to obtain injected values from
-	 * @return the return value of the method call, or <code>null</code>
-	 * @throws InvocationTargetException
-	 *             if an exception was thrown by the invoked method
+	 * @param object The object to perform injection on
+	 * @param methodName The method to call
+	 * @param context The context to obtain injected values from
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionExeption if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InvocationTargetException, InjectionException {
+	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, methodName, supplier);
 	}
@@ -104,19 +89,14 @@ final public class ContextInjectionFactory {
 	/**
 	 * Call a method, injecting the parameters from the context.
 	 * 
-	 * @param object
-	 *            The object to perform injection on
-	 * @param methodName
-	 *            The method to call
-	 * @param context
-	 *            The context to obtain injected values from
-	 * @param defaultValue
-	 *            A value to be returned if the method cannot be called
-	 * @return the return value of the method call, or <code>null</code>
-	 * @throws InvocationTargetException
-	 *             if an exception was thrown by the invoked method
+	 * @param object The object to perform injection on
+	 * @param methodName The method to call
+	 * @param context The context to obtain injected values from
+	 * @param defaultValue A value to be returned if the method cannot be called, might be <code>null</code>
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionExeption if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context, Object defaultValue) throws InvocationTargetException {
+	static public Object invoke(Object object, String methodName, IEclipseContext context, Object defaultValue) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, methodName, defaultValue, supplier);
 	}
@@ -124,12 +104,11 @@ final public class ContextInjectionFactory {
 	/**
 	 * Un-injects the context from the object.
 	 * 
-	 * @param object
-	 *            the object previously injected into the context
-	 * @param context
-	 *            the context previously injected into the object
+	 * @param object The domain object previously injected with the context
+	 * @param context The context previously injected into the object
+	 * @throws InjectionExeption if an exception occurred while performing this operation
 	 */
-	static public void uninject(Object object, IEclipseContext context) {
+	static public void uninject(Object object, IEclipseContext context) throws InjectionException {
 		((EclipseContext) context).removeListenersTo(object);
 	}
 
@@ -139,16 +118,13 @@ final public class ContextInjectionFactory {
 	 * Class'es scope dictates if a new instance of the class will be created, or existing instance
 	 * will be reused.
 	 * </p>
-	 * 
-	 * @param clazz
-	 *            the class to be instantiated
+	 * @param clazz The class to be instantiated
 	 * @return an instance of the specified class
-	 * @throws InstantiationException
-	 *             if the class is abstract (or an interface) and can not instantiated
-	 * @throws InvocationTargetException
-	 *             if invoked constructor generated an exception
+	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @see @Scope
+	 * @see @Singleton
 	 */
-	static public Object make(Class clazz, final IEclipseContext context) throws InvocationTargetException, InstantiationException {
+	static public Object make(Class<?> clazz, final IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
 	}
