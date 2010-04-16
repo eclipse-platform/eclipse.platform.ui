@@ -24,8 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -38,6 +37,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MApplication application;
 	private EModelService modelService;
+	EPartService partService;
 	WorkbenchPage page;
 	private MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
@@ -53,10 +53,12 @@ public class ModeledPageLayout implements IPageLayout {
 	boolean createReferences;
 
 	public ModeledPageLayout(MApplication application, EModelService modelService,
+			EPartService partService,
 			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
 			boolean createReferences) {
 		this.application = application;
 		this.modelService = modelService;
+		this.partService = partService;
 		this.page = page;
 		// Create the editor area stack
 		this.perspModel = perspModel;
@@ -225,10 +227,10 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public static MPart createViewModel(MApplication application, String id, boolean visible,
-			WorkbenchPage page, boolean createReferences) {
+			WorkbenchPage page, EPartService partService, boolean createReferences) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getElementId().equals(id)) {
-				MPart part = (MPart) EcoreUtil.copy((EObject) descriptor);
+				MPart part = (MPart) partService.createPart(id);
 				part.setToBeRendered(visible);
 				// there should only be view references for views that are
 				// visible to the end user, that is, the tab items are being
@@ -259,7 +261,8 @@ public class ModeledPageLayout implements IPageLayout {
 			refModel = refModel.getParent();
 		}
 
-		MPart viewModel = createViewModel(application, viewId, visible, page, createReferences);
+		MPart viewModel = createViewModel(application, viewId, visible, page, partService,
+				createReferences);
 
 		if (withStack) {
 			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$

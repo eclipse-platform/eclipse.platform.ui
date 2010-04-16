@@ -31,7 +31,7 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 	public void addPlaceholder(String viewId) {
 		MPart viewModel = ModeledPageLayout.createViewModel(application, viewId, false,
-				layout.page, layout.createReferences);
+				layout.page, layout.partService, layout.createReferences);
 		folderModel.getChildren().add(viewModel);
 	}
 

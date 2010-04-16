@@ -25,6 +25,7 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 
 	public void addView(String viewId) {
 		MPart viewModel = ModeledPageLayout.createViewModel(application, viewId, true, layout.page,
+				layout.partService,
 				layout.createReferences);
 		folderModel.getChildren().add(viewModel);
 	}

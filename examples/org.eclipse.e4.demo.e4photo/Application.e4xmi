@@ -25,6 +25,8 @@
         <children xsi:type="advanced:Placeholder" xmi:id="_A3JFAElhEd-gnfb0CEj9-g" elementId="_A3JFAElhEd-gnfb0CEj9-g" ref="_hKibQEleEd-TVO58rzJVgA"/>
       </children>
     </children>
+    <variables>selection</variables>
+    <variables>input</variables>
     <mainMenu xmi:id="_9rNPkUjTEd-v7fhjaiz65w" elementId="_9rNPkUjTEd-v7fhjaiz65w">
       <children xsi:type="menu:Menu" xmi:id="_E5HnwEjUEd-v7fhjaiz65w" elementId="org.eclipse.e4.ide.app.menu.file" label="File">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_IHQXsEjUEd-v7fhjaiz65w" elementId="_IHQXsEjUEd-v7fhjaiz65w" label="Create Album" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
