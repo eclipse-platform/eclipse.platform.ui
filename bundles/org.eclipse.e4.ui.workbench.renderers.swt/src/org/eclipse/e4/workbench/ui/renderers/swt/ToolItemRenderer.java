@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
-
-import org.eclipse.e4.core.services.log.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -26,19 +23,20 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MItem;
-import org.eclipse.e4.ui.model.application.MParameter;
-import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUILabel;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -120,15 +118,15 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		ECommandService cmdService = (ECommandService) lclContext
 				.get(ECommandService.class.getName());
 		Map<String, Object> parameters = null;
-		EList<MParameter> modelParms = item.getParameters();
+		List<MParameter> modelParms = item.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
 			parameters = new HashMap<String, Object>();
 			for (MParameter mParm : modelParms) {
-				parameters.put(mParm.getTag(), mParm.getValue());
+				parameters.put(mParm.getName(), mParm.getValue());
 			}
 		}
 		ParameterizedCommand cmd = cmdService.createCommand(item.getCommand()
-				.getId(), parameters);
+				.getElementId(), parameters);
 		item.setWbCommand(cmd);
 		return cmd;
 	}
@@ -162,15 +160,10 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		if (!(element instanceof MToolItem) || !(parent instanceof ToolBar))
 			return null;
 
-		ToolBar tb = (ToolBar) parent;
 		MToolItem itemModel = (MToolItem) element;
 
 		// determine the index at which we should create the new item
 		int addIndex = calcVisibleIndex(element);
-
-		if (itemModel.getType() == ItemType.SEPARATOR) {
-			return new ToolItem(tb, SWT.SEPARATOR, addIndex);
-		}
 
 		// OK, it's a real menu item, what kind?
 		int flags = itemModel.getChildren().size() > 0 ? SWT.DROP_DOWN : 0;
@@ -245,7 +238,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 		// 'Execute' the operation if possible
 		if (me instanceof MContribution
-				&& ((MContribution) me).getURI() != null) {
+				&& ((MContribution) me).getContributionURI() != null) {
 			final MToolItem item = (MToolItem) me;
 			final MContribution contrib = (MContribution) me;
 			final IEclipseContext lclContext = getContext(me);
@@ -255,8 +248,8 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					if (contrib.getObject() == null) {
 						IContributionFactory cf = (IContributionFactory) lclContext
 								.get(IContributionFactory.class.getName());
-						contrib.setObject(cf.create(contrib.getURI(),
-								lclContext));
+						contrib.setObject(cf.create(contrib
+								.getContributionURI(), lclContext));
 					}
 					try {
 						lclContext.set(MItem.class.getName(), item);

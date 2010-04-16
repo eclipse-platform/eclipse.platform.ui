@@ -86,7 +86,7 @@ public class E4XMIResource extends XMIResourceImpl {
 
 		if (eObject instanceof MApplicationElement) {
 			MApplicationElement element = (MApplicationElement) eObject;
-			id = element.getId();
+			id = element.getElementId();
 			if (id != null && id.length() != 0) {
 				id = getUniqueId();
 				setID(eObject, id);
@@ -94,7 +94,7 @@ public class E4XMIResource extends XMIResourceImpl {
 			}
 
 			id = getUniqueId();
-			element.setId(id);
+			element.setElementId(id);
 			setID(eObject, id);
 		} else {
 			id = getUniqueId();

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -43,17 +43,17 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			return;
 
 		// Process any contents of the newly created ME
-		EList<MUIElement> parts = container.getChildren();
+		List<MUIElement> parts = container.getChildren();
 		if (parts != null) {
 			// loading a legacy app will add children to the window while it is
 			// being rendered.
 			// this is *not* the correct place for this
 			// hope that the ADD event will pick up the new part.
+			IPresentationEngine renderer = (IPresentationEngine) context
+					.get(IPresentationEngine.class.getName());
 			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
 			for (int i = 0; i < plist.length; i++) {
 				MUIElement childME = plist[i];
-				IPresentationEngine renderer = (IPresentationEngine) context
-						.get(IPresentationEngine.class.getName());
 				renderer.createGui(childME);
 			}
 		}
@@ -72,7 +72,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		engine.setClassname(widget, cssClassStr);
 
 		// Set the id
-		engine.setId(widget, me.getId()); // also triggers style()
+		engine.setId(widget, me.getElementId()); // also triggers style()
 	}
 
 	public void bindWidget(MUIElement me, Object widget) {

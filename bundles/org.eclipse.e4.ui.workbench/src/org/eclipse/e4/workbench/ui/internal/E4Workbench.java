@@ -11,11 +11,8 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
-
-import org.eclipse.e4.core.services.log.Logger;
-
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -27,16 +24,18 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MBindings;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -44,7 +43,6 @@ import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.EList;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -167,7 +165,7 @@ public class E4Workbench implements IWorkbench {
 			public boolean notify(ContextChangeEvent event) {
 				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
-					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getId());
+					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getElementId());
 				}
 				return true;
 			}
@@ -224,11 +222,11 @@ public class E4Workbench implements IWorkbench {
 				IContributionFactory cf = (IContributionFactory) context
 						.get(IContributionFactory.class.getName());
 				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
-				EList<MHandler> handlers = container.getHandlers();
+				List<MHandler> handlers = container.getHandlers();
 				for (MHandler handler : handlers) {
-					String commandId = handler.getCommand().getId();
+					String commandId = handler.getCommand().getElementId();
 					if (handler.getObject() == null) {
-						handler.setObject(cf.create(handler.getURI(), context));
+						handler.setObject(cf.create(handler.getContributionURI(), context));
 					}
 					hs.activateHandler(commandId, handler.getObject());
 				}
@@ -237,7 +235,7 @@ public class E4Workbench implements IWorkbench {
 		if (me instanceof MBindings) {
 			MContext contextModel = (MContext) me;
 			MBindings container = (MBindings) me;
-			EList<String> bindingContexts = container.getBindingContexts();
+			List<String> bindingContexts = container.getBindingContexts();
 			IEclipseContext context = contextModel.getContext();
 			if (context != null && !bindingContexts.isEmpty()) {
 				EContextService cs = (EContextService) context.get(EContextService.class.getName());
@@ -247,10 +245,10 @@ public class E4Workbench implements IWorkbench {
 			}
 		}
 		if (me instanceof MElementContainer<?>) {
-			EList children = ((MElementContainer) me).getChildren();
-			Iterator i = children.iterator();
+			List<MUIElement> children = ((MElementContainer) me).getChildren();
+			Iterator<MUIElement> i = children.iterator();
 			while (i.hasNext()) {
-				MUIElement e = (MUIElement) i.next();
+				MUIElement e = i.next();
 				processHierarchy(e);
 			}
 		}
@@ -287,7 +285,7 @@ public class E4Workbench implements IWorkbench {
 		}
 
 		// declares modifiable variables from the model
-		EList<String> containedProperties = contextModel.getVariables();
+		List<String> containedProperties = contextModel.getVariables();
 		for (String name : containedProperties) {
 			context.declareModifiable(name);
 		}

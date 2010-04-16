@@ -12,7 +12,7 @@
 package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 public interface ISaveHandler {
 

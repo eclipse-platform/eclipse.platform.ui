@@ -1,14 +1,10 @@
 package org.eclipse.e4.workbench.ui.renderers.swt.dnd;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.MWindowTrim;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -77,7 +73,7 @@ public class DragHost {
 	private void attach() {
 		dragElement.getParent().getChildren().remove(dragElement);
 		((Shell) baseWindow.getWidget()).getDisplay().update();
-		dragWindow = MApplicationFactory.eINSTANCE.createWindow();
+		dragWindow = BasicFactoryImpl.eINSTANCE.createWindow();
 		dragWindow.getTags().add(DragHostId);
 		formatModel(dragWindow);
 
@@ -100,26 +96,26 @@ public class DragHost {
 		dragWindow.setHeight(size.y);
 
 		// add the window as a child oc the base window
-		baseWindow.getChildren().add(dragWindow);
+		// baseWindow.getChildren().add(dragWindow);
 
 		getShell().layout(getShell().getChildren(), SWT.CHANGED | SWT.DEFER);
 		getShell().setVisible(true);
 	}
 
 	private void formatModel(MWindow dragWindow) {
-		if (dragElement instanceof MToolItem) {
-			MWindowTrim trim = MApplicationFactory.eINSTANCE.createWindowTrim();
-			MToolBar mtb = MApplicationFactory.eINSTANCE.createToolBar();
-			trim.getChildren().add(mtb);
-			mtb.getChildren().add((MToolItem) dragElement);
-			dragWindow.getChildren().add(trim);
-		} else if (dragElement instanceof MToolBar) {
-			MWindowTrim trim = MApplicationFactory.eINSTANCE.createWindowTrim();
-			trim.getChildren().add(dragElement);
-			dragWindow.getChildren().add(trim);
-		} else if (dragElement instanceof MPSCElement) {
-			dragWindow.getChildren().add((MPSCElement) dragElement);
-		}
+		// if (dragElement instanceof MToolItem) {
+		// MWindowTrim trim = MApplicationFactory.eINSTANCE.createWindowTrim();
+		// MToolBar mtb = MApplicationFactory.eINSTANCE.createToolBar();
+		// trim.getChildren().add(mtb);
+		// mtb.getChildren().add((MToolItem) dragElement);
+		// dragWindow.getChildren().add(trim);
+		// } else if (dragElement instanceof MToolBar) {
+		// MWindowTrim trim = MApplicationFactory.eINSTANCE.createWindowTrim();
+		// trim.getChildren().add(dragElement);
+		// dragWindow.getChildren().add(trim);
+		// } else if (dragElement instanceof MPSCElement) {
+		// dragWindow.getChildren().add((MPSCElement) dragElement);
+		// }
 	}
 
 	public void drop(MElementContainer<MUIElement> newContainer, int itemIndex) {

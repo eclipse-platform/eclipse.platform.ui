@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -123,8 +124,7 @@ public class ModelExtensionProcessor {
 							contributor.getName());
 					continue;
 				}
-				EList<MModelComponent> snippets = ((MModelComponents) extensionRoot)
-						.getComponents();
+				List<MModelComponent> snippets = ((MModelComponents) extensionRoot).getComponents();
 				for (MModelComponent snippet : snippets) {
 					Object parentElement = findDefaultParent(snippet.getParentID());
 					if (parentElement == null) {
@@ -205,7 +205,7 @@ public class ModelExtensionProcessor {
 		if (id == null || id.length() == 0)
 			return null;
 		// is it me?
-		if (id.equals(element.getId()))
+		if (id.equals(element.getElementId()))
 			return element;
 		// Recurse if this is a container
 		EList<EObject> elements = ((EObject) element).eContents();

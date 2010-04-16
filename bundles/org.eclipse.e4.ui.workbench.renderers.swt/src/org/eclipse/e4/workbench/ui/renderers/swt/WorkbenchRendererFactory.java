@@ -2,18 +2,18 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MTrimContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 
@@ -28,7 +28,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private PerspectiveRenderer perspRenderer;
 	private SashRenderer partSashRenderer;
 	private StackRenderer stackRenderer;
-	private TrimRenderer trimRenderer;
+	private TrimBarRenderer trimBarRenderer;
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
@@ -88,12 +88,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(stackRenderer);
 			}
 			return stackRenderer;
-		} else if (uiElement instanceof MTrimContainer<?>) {
-			if (trimRenderer == null) {
-				trimRenderer = new TrimRenderer();
-				initRenderer(trimRenderer);
+		} else if (uiElement instanceof MTrimBar) {
+			if (trimBarRenderer == null) {
+				trimBarRenderer = new TrimBarRenderer();
+				initRenderer(trimBarRenderer);
 			}
-			return trimRenderer;
+			return trimBarRenderer;
 		} else if (uiElement instanceof MWindow) {
 			if (wbwRenderer == null) {
 				wbwRenderer = new WBWRenderer();

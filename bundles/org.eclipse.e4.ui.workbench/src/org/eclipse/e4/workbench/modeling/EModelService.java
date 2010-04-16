@@ -11,13 +11,13 @@
 
 package org.eclipse.e4.workbench.modeling;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.List;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPlaceholder;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 /**
  * @since 1.0
@@ -163,7 +163,8 @@ public interface EModelService {
 	 * @param ratio
 	 *            The percentage of the area to be occupied by the inserted element
 	 */
-	public void insert(MPSCElement toInsert, MPSCElement relTo, int where, int ratio);
+	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
+			int where, int ratio);
 
 	/**
 	 * Created a separate (detached) window containing the given element.
@@ -171,5 +172,5 @@ public interface EModelService {
 	 * @param element
 	 *            The element to detach
 	 */
-	public void detach(MPSCElement element);
+	public void detach(MWindowElement element);
 }

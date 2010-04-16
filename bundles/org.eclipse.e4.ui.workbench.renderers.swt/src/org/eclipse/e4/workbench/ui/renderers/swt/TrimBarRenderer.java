@@ -11,10 +11,10 @@
 
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MTrimContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  *
  */
-public class TrimRenderer extends SWTPartRenderer {
+public class TrimBarRenderer extends SWTPartRenderer {
 
 	ControlListener childResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
@@ -46,15 +46,14 @@ public class TrimRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MTrimContainer)
-				|| !(parent instanceof Composite))
+		if (!(element instanceof MTrimBar) || !(parent instanceof Composite))
 			return null;
 
 		Composite parentComp = (Composite) parent;
 		if (!(parentComp.getLayout() instanceof TrimmedPartLayout))
 			return null;
 
-		MTrimContainer<?> trimModel = (MTrimContainer<?>) element;
+		MTrimBar trimModel = (MTrimBar) element;
 		TrimmedPartLayout tpl = (TrimmedPartLayout) parentComp.getLayout();
 
 		switch (trimModel.getSide().getValue()) {
@@ -80,7 +79,7 @@ public class TrimRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(me instanceof MTrimContainer))
+		if (!(((MUIElement) me) instanceof MTrimBar))
 			return;
 		// MTrimContainer trimModel = (MTrimContainer) me;
 

@@ -13,8 +13,8 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
@@ -24,9 +24,9 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
@@ -159,7 +159,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private void notifyTargetedListeners(MPart part, Object selection) {
-		String id = part.getId();
+		String id = part.getElementId();
 		if (id != null) {
 			Set<ISelectionListener> listeners = targetedListeners.get(id);
 			if (listeners != null) {

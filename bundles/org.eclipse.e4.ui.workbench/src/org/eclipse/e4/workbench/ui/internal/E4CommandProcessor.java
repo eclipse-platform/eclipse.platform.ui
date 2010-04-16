@@ -28,15 +28,14 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
-import org.eclipse.e4.ui.model.application.MBindingContext;
-import org.eclipse.e4.ui.model.application.MBindingTable;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MCommandParameter;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.bindings.Binding;
@@ -54,14 +53,14 @@ public class E4CommandProcessor {
 				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
 		for (MCommand cmd : commands) {
 			IParameter[] parms = null;
-			String id = cmd.getId();
+			String id = cmd.getElementId();
 			String name = cmd.getCommandName();
-			EList<MCommandParameter> modelParms = cmd.getParameters();
+			List<MCommandParameter> modelParms = cmd.getParameters();
 			if (modelParms != null && !modelParms.isEmpty()) {
 				ArrayList<Parameter> parmList = new ArrayList<Parameter>();
 				for (MCommandParameter cmdParm : modelParms) {
-					parmList.add(new Parameter(cmdParm.getId(), cmdParm.getName(), null, null,
-							cmdParm.isOptional()));
+					parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null,
+							null, cmdParm.isOptional()));
 				}
 				parms = parmList.toArray(new Parameter[parmList.size()]);
 			}
@@ -70,7 +69,8 @@ public class E4CommandProcessor {
 
 	}
 
-	public static void processBindings(IEclipseContext context, MBindingContainer bindingContainer) {
+	public static void processBindings(IEclipseContext context,
+			MBindingTableContainer bindingContainer) {
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize binding tables from model", null); //$NON-NLS-1$
 		final BindingTableManager bindingTables;
 		try {
@@ -129,17 +129,18 @@ public class E4CommandProcessor {
 		manager.addTable(table);
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
-		EList<MKeyBinding> bindings = bt.getBindings();
+		List<MKeyBinding> bindings = bt.getBindings();
 		for (MKeyBinding binding : bindings) {
 			Map<String, Object> parameters = null;
-			EList<MParameter> modelParms = binding.getParameters();
+			List<MParameter> modelParms = binding.getParameters();
 			if (modelParms != null && !modelParms.isEmpty()) {
 				parameters = new HashMap<String, Object>();
 				for (MParameter mParm : modelParms) {
-					parameters.put(mParm.getTag(), mParm.getValue());
+					parameters.put(mParm.getName(), mParm.getValue());
 				}
 			}
-			ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(), parameters);
+			ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getElementId(),
+					parameters);
 			TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
 			if (cmd == null || sequence == null) {
 				System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
@@ -153,10 +154,10 @@ public class E4CommandProcessor {
 
 	private static void defineContexts(MBindingContext parent, MBindingContext current,
 			ContextManager manager) {
-		Context context = manager.getContext(current.getId());
+		Context context = manager.getContext(current.getElementId());
 		if (!context.isDefined()) {
 			context.define(current.getName(), current.getDescription(), parent == null ? null
-					: parent.getId());
+					: parent.getElementId());
 		}
 		for (MBindingContext child : current.getChildren()) {
 			defineContexts(current, child, manager);

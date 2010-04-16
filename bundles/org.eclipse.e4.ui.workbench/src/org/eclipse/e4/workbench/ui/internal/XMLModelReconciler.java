@@ -22,27 +22,33 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MBindingContainer;
-import org.eclipse.e4.ui.model.application.MBindingTable;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -139,7 +145,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (node instanceof Element) {
 				Element element = (Element) node;
 				constructDeltas(deltas, references, rootObject, element, element
-						.getAttribute(APPLICATIONELEMENT_ID_ATTNAME));
+						.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME));
 			}
 		}
 
@@ -147,97 +153,101 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private static EStructuralFeature getStructuralFeature(EObject object, String featureName) {
-		if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
+		if (featureName.equals(APPLICATIONELEMENT_ELEMENTID_ATTNAME)) {
+			return ApplicationPackageImpl.eINSTANCE.getApplicationElement_ElementId();
 		} else if (featureName.equals(APPLICATIONELEMENT_TAGS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getApplicationElement_Tags();
+			return ApplicationPackageImpl.eINSTANCE.getApplicationElement_Tags();
 		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getApplication_Commands();
+			return ApplicationPackageImpl.eINSTANCE.getApplication_Commands();
 		} else if (featureName.equals(UILABEL_LABEL_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUILabel_Label();
+			return UiPackageImpl.eINSTANCE.getUILabel_Label();
 		} else if (featureName.equals(UILABEL_TOOLTIP_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUILabel_Tooltip();
+			return UiPackageImpl.eINSTANCE.getUILabel_Tooltip();
 		} else if (featureName.equals(UILABEL_ICONURI_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUILabel_IconURI();
+			return UiPackageImpl.eINSTANCE.getUILabel_IconURI();
 		} else if (featureName.equals(UIELEMENT_TOBERENDERED_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIElement_ToBeRendered();
+			return UiPackageImpl.eINSTANCE.getUIElement_ToBeRendered();
 		} else if (featureName.equals(UIELEMENT_VISIBLE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIElement_Visible();
+			return UiPackageImpl.eINSTANCE.getUIElement_Visible();
 		} else if (featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getElementContainer_Children();
+			return UiPackageImpl.eINSTANCE.getElementContainer_Children();
 		} else if (featureName.equals(UIELEMENT_PARENT_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIElement_Parent();
+			return UiPackageImpl.eINSTANCE.getUIElement_Parent();
 		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIElement_ContainerData();
+			return UiPackageImpl.eINSTANCE.getUIElement_ContainerData();
 		} else if (featureName.equals(ELEMENTCONTAINER_SELECTEDELEMENT_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getElementContainer_SelectedElement();
+			return UiPackageImpl.eINSTANCE.getElementContainer_SelectedElement();
 		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getCommand_CommandName();
+			return CommandsPackageImpl.eINSTANCE.getCommand_CommandName();
 		} else if (featureName.equals(COMMAND_DESCRIPTION_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getCommand_Description();
+			return CommandsPackageImpl.eINSTANCE.getCommand_Description();
 		} else if (featureName.equals(KEYSEQUENCE_KEYSEQUENCE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getKeySequence_KeySequence();
+			return CommandsPackageImpl.eINSTANCE.getKeySequence_KeySequence();
 		} else if (featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getBindingContainer_BindingTables();
+			return CommandsPackageImpl.eINSTANCE.getBindingTableContainer_BindingTables();
 		} else if (featureName.equals(BINDINGCONTAINER_ROOTCONTEXT_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getBindingContainer_RootContext();
+			return CommandsPackageImpl.eINSTANCE.getBindingTableContainer_RootContext();
 		} else if (featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getBindingTable_Bindings();
+			return CommandsPackageImpl.eINSTANCE.getBindingTable_Bindings();
 		} else if (featureName.equals(BINDINGTABLES_BINDINGCONTEXTID_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getBindingTable_BindingContextId();
+			return CommandsPackageImpl.eINSTANCE.getBindingTable_BindingContextId();
 		} else if (featureName.equals(HANDLER_COMMAND_ATTNAME)
 				|| featureName.equals(KEYBINDING_COMMAND_ATTNAME)
 				|| featureName.equals(HANDLEDITEM_COMMAND_ATTNAME)) {
 			// technically all three names are the same
 
 			if (object instanceof MKeyBinding) {
-				return MApplicationPackage.eINSTANCE.getKeyBinding_Command();
+				return CommandsPackageImpl.eINSTANCE.getKeyBinding_Command();
 			} else if (object instanceof MHandler) {
-				return MApplicationPackage.eINSTANCE.getHandler_Command();
+				return CommandsPackageImpl.eINSTANCE.getHandler_Command();
 			}
-			return MApplicationPackage.eINSTANCE.getHandledItem_Command();
+			return MenuPackageImpl.eINSTANCE.getHandledItem_Command();
 		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getKeyBinding_Parameters();
+			return CommandsPackageImpl.eINSTANCE.getKeyBinding_Parameters();
 		} else if (featureName.equals(ITEM_ENABLED_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getItem_Enabled();
+			return MenuPackageImpl.eINSTANCE.getItem_Enabled();
 		} else if (featureName.equals(ITEM_SELECTED_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getItem_Selected();
+			return MenuPackageImpl.eINSTANCE.getItem_Selected();
 		} else if (featureName.equals(ITEM_TYPE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getItem_Type();
+			return MenuPackageImpl.eINSTANCE.getItem_Type();
 		} else if (featureName.equals(PART_MENUS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getPart_Menus();
+			return BasicPackageImpl.eINSTANCE.getPart_Menus();
 		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getPart_Toolbar();
+			return BasicPackageImpl.eINSTANCE.getPart_Toolbar();
 		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getGenericTile_Horizontal();
-		} else if (featureName.equals(TRIMCONTAINER_SIDE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getTrimContainer_Side();
+			return UiPackageImpl.eINSTANCE.getGenericTile_Horizontal();
+		} else if (featureName.equals(GENERICTRIMCONTAINER_SIDE_ATTNAME)) {
+			return UiPackageImpl.eINSTANCE.getGenericTrimContainer_Side();
 		} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getHandlerContainer_Handlers();
+			return CommandsPackageImpl.eINSTANCE.getHandlerContainer_Handlers();
 		} else if (featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getContribution_PersistedState();
+			return ApplicationPackageImpl.eINSTANCE.getContribution_PersistedState();
 		} else if (featureName.equals(CONTRIBUTION_URI_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getContribution_URI();
+			return ApplicationPackageImpl.eINSTANCE.getContribution_ContributionURI();
 		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_MainMenu();
+			return BasicPackageImpl.eINSTANCE.getWindow_MainMenu();
 		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_X();
+			return BasicPackageImpl.eINSTANCE.getWindow_X();
 		} else if (featureName.equals(WINDOW_Y_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Y();
+			return BasicPackageImpl.eINSTANCE.getWindow_Y();
 		} else if (featureName.equals(WINDOW_WIDTH_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Width();
+			return BasicPackageImpl.eINSTANCE.getWindow_Width();
 		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Height();
+			return BasicPackageImpl.eINSTANCE.getWindow_Height();
 		} else if (featureName.equals(PARTDESCRIPTOR_ALLOWMULTIPLE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getPartDescriptor_AllowMultiple();
+			return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
+					.getPartDescriptor_AllowMultiple();
 		} else if (featureName.equals(PARTDESCRIPTOR_CATEGORY_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getPartDescriptor_Category();
+			return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
+					.getPartDescriptor_Category();
 		} else if (featureName.equals(PART_CLOSEABLE_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getPart_Closeable();
+			return BasicPackageImpl.eINSTANCE.getPart_Closeable();
 		} else if (featureName.equals(INPUT_INPUTURI_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getInput_InputURI();
+			return UiPackageImpl.eINSTANCE.getInput_InputURI();
 		} else if (featureName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getContext_Properties();
+			return UiPackageImpl.eINSTANCE.getContext_Properties();
+		} else if (featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
+			return BasicPackageImpl.eINSTANCE.getTrimmedWindow_TrimBars();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -258,9 +268,9 @@ public class XMLModelReconciler extends ModelReconciler {
 			return Integer.valueOf(featureValue);
 		} else if (instanceClass == boolean.class) {
 			return Boolean.valueOf(featureValue);
-		} else if (feature == MApplicationPackage.eINSTANCE.getTrimContainer_Side()) {
+		} else if (feature == UiPackageImpl.eINSTANCE.getGenericTrimContainer_Side()) {
 			return SideValue.getByName(featureValue);
-		} else if (feature == MApplicationPackage.eINSTANCE.getItem_Type()) {
+		} else if (feature == MenuPackageImpl.eINSTANCE.getItem_Type()) {
 			return ItemType.getByName(featureValue);
 		}
 		return null;
@@ -293,8 +303,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		}
 
-		if (object instanceof MBindingContainer) {
-			for (MBindingTable bindingTable : ((MBindingContainer) object).getBindingTables()) {
+		if (object instanceof MBindingTableContainer) {
+			for (MBindingTable bindingTable : ((MBindingTableContainer) object).getBindingTables()) {
 				if (constructDeltas(deltas, references, (EObject) bindingTable, element, id)) {
 					return true;
 				}
@@ -355,6 +365,15 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (constructDeltas(deltas, references, (EObject) window.getMainMenu(), element, id)) {
 				return true;
 			}
+
+			if (object instanceof MTrimmedWindow) {
+				MTrimmedWindow trimmedWindow = (MTrimmedWindow) object;
+				for (MTrimBar trimBar : trimmedWindow.getTrimBars()) {
+					if (constructDeltas(deltas, references, (EObject) trimBar, element, id)) {
+						return true;
+					}
+				}
+			}
 		}
 
 		return false;
@@ -364,10 +383,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			EObject object, Element element) {
 		String elementName = element.getNodeName();
 		if (elementName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
-			constructEntryDelta(deltas, MApplicationPackage.eINSTANCE.getContext_Properties(),
-					object, element);
+			constructEntryDelta(deltas, UiPackageImpl.eINSTANCE.getContext_Properties(), object,
+					element);
 		} else if (elementName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
-			constructEntryDelta(deltas, MApplicationPackage.eINSTANCE
+			constructEntryDelta(deltas, ApplicationPackageImpl.eINSTANCE
 					.getContribution_PersistedState(), object, element);
 		} else {
 			constructObjectDeltas(deltas, references, object, element);
@@ -432,7 +451,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			List<Object> references, EObject eObject, EStructuralFeature feature, Element node) {
 		NodeList referencedIds = (NodeList) node;
 		Element reference = getFirstElement(referencedIds);
-		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME);
 
 		Object match = findReference(references, referenceId);
 		if (match == null) {
@@ -458,7 +477,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		NodeList referencedIds = (NodeList) node;
 
 		Element reference = getFirstElement(referencedIds);
-		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME);
 
 		Object match = findReference(references, referenceId);
 		if (match == null) {
@@ -607,7 +626,8 @@ public class XMLModelReconciler extends ModelReconciler {
 				if (isUnset(reference)) {
 					userReferences.add(createObject(deltas, reference, references));
 				} else {
-					String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+					String referenceId = reference
+							.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME);
 					Object match = findReference(references, referenceId);
 					if (match != null) {
 						// determine if this was a reference set by the user or a reference that was
@@ -641,7 +661,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private Object getReference(Collection<ModelDelta> deltas, Element element,
 			List<Object> references) {
-		String id = element.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+		String id = element.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME);
 		if (!id.equals("")) { //$NON-NLS-1$
 			return findReference(references, id);
 		}
@@ -912,7 +932,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private Element createElement(Document document, String elementName, EObject object) {
 		Element modelChange = document.createElement(elementName);
-		modelChange.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, getOriginalId(object));
+		modelChange.setAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME, getOriginalId(object));
 		return modelChange;
 	}
 
@@ -1079,6 +1099,73 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (!bindingsChanged) {
 				return reference.eContainer();
 			}
+		}
+
+		if (reference instanceof MPartDescriptor) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+			boolean descriptorsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(
+								PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME)) {
+							List<?> descriptors = (List<?>) change.getValue();
+							for (Object descriptor : descriptors) {
+								if (descriptor == reference) {
+									return key;
+								}
+							}
+							descriptorsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return descriptorsChanged ? null : reference.eContainer();
+		}
+
+		if (reference instanceof MTrimBar) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+			boolean trimBarsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key instanceof MTrimmedWindow) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
+							List<?> trimBars = (List<?>) change.getValue();
+							for (Object trimBar : trimBars) {
+								if (trimBar == reference) {
+									return key;
+								}
+							}
+							trimBarsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			if (trimBarsChanged) {
+				return null;
+			}
+
+			for (EObject rootChild : rootObject.eContents()) {
+				if (rootChild instanceof MTrimmedWindow) {
+					if (((MTrimmedWindow) rootChild).getTrimBars().contains(reference)) {
+						return rootChild;
+					}
+				}
+			}
+
+			return null;
 		}
 
 		if (reference instanceof MUIElement) {
@@ -1312,7 +1399,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	 */
 	private Element createOriginalReferenceElement(Document document, Object reference) {
 		Element referenceElement = document.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
-		referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, getOriginalId(reference));
+		referenceElement.setAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME,
+				getOriginalId(reference));
 		return referenceElement;
 	}
 
@@ -1351,7 +1439,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
-		referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
+		referenceElement.setAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME, id);
 		return referenceElement;
 	}
 
@@ -1542,7 +1630,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
 				// a BindingContainer has multiple binding tables
-				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME);
+				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME) ||
+				// a TrimmedWindow has multiple trim bars
+				featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

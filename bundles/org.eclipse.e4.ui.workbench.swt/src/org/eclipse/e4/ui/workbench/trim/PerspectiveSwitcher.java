@@ -17,17 +17,18 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindowTrim;
-import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
@@ -78,9 +79,12 @@ public class PerspectiveSwitcher {
 		}
 
 		private void clearCurSelection() {
-			for (MToolItem ti : perspectiveSwitcherTB.getChildren()) {
-				if (ti.isSelected())
-					ti.setSelected(false);
+			for (MToolBarElement te : perspectiveSwitcherTB.getChildren()) {
+				if (te instanceof MToolItem) {
+					MToolItem ti = (MToolItem) te;
+					if (ti.isSelected())
+						ti.setSelected(false);
+				}
 			}
 		}
 	};
@@ -204,13 +208,13 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addSwitcher(MApplication appModel, MPerspectiveStack ps) {
-		List<MWindowTrim> trimList = modelService.findElements(appModel, null,
-				MWindowTrim.class, null);
-		for (MWindowTrim trim : trimList) {
+		List<MTrimBar> trimList = modelService.findElements(appModel, null,
+				MTrimBar.class, null);
+		for (MTrimBar trim : trimList) {
 			if (trim.getSide() == SideValue.TOP) {
-				perspectiveSwitcherTB = MApplicationFactory.eINSTANCE
+				perspectiveSwitcherTB = MenuFactoryImpl.eINSTANCE
 						.createToolBar();
-				perspectiveSwitcherTB.setId(PERSPECTIVE_SWITCHER_ID);
+				perspectiveSwitcherTB.setElementId(PERSPECTIVE_SWITCHER_ID);
 
 				// Create an item for each perspective that should show up
 				for (MPerspective persp : ps.getChildren()) {
@@ -225,21 +229,21 @@ public class PerspectiveSwitcher {
 	}
 
 	private MToolItem addPerspectiveItem(MPerspective persp) {
-		MDirectToolItem psItem = MApplicationFactory.eINSTANCE
+		MDirectToolItem psItem = MenuFactoryImpl.eINSTANCE
 				.createDirectToolItem();
-		psItem.setId(persp.getId());
+		psItem.setElementId(persp.getElementId());
 		psItem.setLabel(persp.getLabel());
 		psItem.setIconURI(persp.getIconURI());
 		psItem.setTooltip(persp.getTooltip());
 		psItem.setType(ItemType.CHECK);
-		psItem.setURI("platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.trim.SwitchPerspective");
+		psItem.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.trim.SwitchPerspective");
 
 		perspectiveSwitcherTB.getChildren().add(psItem);
 		return psItem;
 	}
 
 	protected MToolItem getItemFor(MPerspective persp) {
-		return (MToolItem) modelService.find(persp.getId(),
+		return (MToolItem) modelService.find(persp.getElementId(),
 				perspectiveSwitcherTB);
 	}
 

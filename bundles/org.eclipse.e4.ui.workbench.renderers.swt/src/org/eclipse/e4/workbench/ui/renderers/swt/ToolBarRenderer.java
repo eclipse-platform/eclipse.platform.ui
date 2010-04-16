@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MTrimContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -34,9 +34,9 @@ public class ToolBarRenderer extends SWTPartRenderer {
 
 		int orientation = SWT.HORIZONTAL;
 
-		if (element.getParent() instanceof MTrimContainer<?>) {
-			MTrimContainer<?> trimContainer = (MTrimContainer<?>) element
-					.getParent();
+		MUIElement theParent = element.getParent();
+		if (theParent instanceof MTrimBar) {
+			MTrimBar trimContainer = (MTrimBar) theParent;
 			SideValue side = trimContainer.getSide();
 			if (side.getValue() == SideValue.LEFT_VALUE
 					|| side.getValue() == SideValue.RIGHT_VALUE)
