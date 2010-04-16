@@ -246,6 +246,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return UiPackageImpl.eINSTANCE.getInput_InputURI();
 		} else if (featureName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
 			return UiPackageImpl.eINSTANCE.getContext_Properties();
+		} else if (featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
+			return BasicPackageImpl.eINSTANCE.getTrimmedWindow_TrimBars();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
