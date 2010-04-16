@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -63,7 +63,7 @@ public class RenderingTestCase extends TestCase {
 			.getServiceContext(Activator.getDefault().getBundle()
 					.getBundleContext());
 
-	protected static MApplication app = MApplicationFactory.eINSTANCE
+	protected static MApplication app = ApplicationFactoryImpl.eINSTANCE
 			.createApplication();
 
 	protected static Display display = Display.getCurrent() != null ? Display
@@ -104,7 +104,7 @@ public class RenderingTestCase extends TestCase {
 
 		appContext = E4Workbench.createWorkbenchContext(serviceContext,
 				RegistryFactory.getRegistry(), null, null);
-		MApplication app = MApplicationFactory.eINSTANCE.createApplication();
+		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
 
 		appContext.set(MApplication.class.getName(), app);
 		appContext.set(IContributionFactory.class.getName(),

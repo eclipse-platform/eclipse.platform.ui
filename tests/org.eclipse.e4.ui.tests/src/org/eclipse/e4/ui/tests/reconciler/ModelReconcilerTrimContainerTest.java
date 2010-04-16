@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.application.MWindowTrim;
-import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -28,41 +28,39 @@ public abstract class ModelReconcilerTrimContainerTest extends
 			SideValue userChange, SideValue newApplicationState) {
 		MApplication application = createApplication();
 
-		MWindow window = createWindow(application);
+		MTrimmedWindow window = createTrimmedWindow(application);
 
-		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
-				.createWindowTrim();
-		window.getChildren().add(windowTrim);
-
-		windowTrim.setSide(applicationState);
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimBar.setSide(applicationState);
+		window.getTrimBars().add(trimBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		windowTrim.setSide(userChange);
+		trimBar.setSide(userChange);
 
 		Object serialize = reconciler.serialize();
 
 		application = createApplication();
-		window = application.getChildren().get(0);
-		windowTrim = (MWindowTrim) window.getChildren().get(0);
+		window = (MTrimmedWindow) application.getChildren().get(0);
+		trimBar = window.getTrimBars().get(0);
 
-		windowTrim.setSide(newApplicationState);
+		trimBar.setSide(newApplicationState);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, serialize);
 
-		assertEquals(newApplicationState, windowTrim.getSide());
+		assertEquals(newApplicationState, trimBar.getSide());
 
 		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied
-			assertEquals(newApplicationState, windowTrim.getSide());
+			assertEquals(newApplicationState, trimBar.getSide());
 		} else {
 			// user change must override application state
-			assertEquals(userChange, windowTrim.getSide());
+			assertEquals(userChange, trimBar.getSide());
 		}
 	}
 

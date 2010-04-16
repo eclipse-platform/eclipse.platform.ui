@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,18 +16,16 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
 public class MPartSashContainerTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -51,30 +49,23 @@ public class MPartSashContainerTest extends TestCase {
 		}
 	}
 
-	protected Control[] getPresentationControls(Shell shell) {
-		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
-		return tpl.clientArea.getChildren();
-	}
-
 	public void testPartSashContainer_Horizontal() {
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 
 		partSashContainer.setHorizontal(true);
-		partA
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
-		partB
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		window.getChildren().add(partSashContainer);
 		partSashContainer.getChildren().add(partA);
 		partSashContainer.getChildren().add(partB);
 
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);

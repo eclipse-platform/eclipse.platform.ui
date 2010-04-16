@@ -20,9 +20,12 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MTestHarness;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.tests.model.test.MTestFactory;
+import org.eclipse.e4.ui.tests.model.test.MTestHarness;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.UIEvents.ApplicationElement;
 import org.eclipse.e4.workbench.ui.UIEvents.Command;
@@ -117,7 +120,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
 			super("AppElement", ApplicationElement.TOPIC, new String[] {
-					ApplicationElement.ID, ApplicationElement.TAGS },
+					ApplicationElement.ELEMENTID, ApplicationElement.TAGS },
 					eventBroker);
 		}
 	}
@@ -139,7 +142,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class ContributionTester extends EventTester {
 		ContributionTester(IEventBroker eventBroker) {
 			super("Contribution", Contribution.TOPIC, new String[] {
-					Contribution.URI, Contribution.PERSISTEDSTATE,
+					Contribution.CONTRIBUTIONURI, Contribution.PERSISTEDSTATE,
 					Contribution.OBJECT }, eventBroker);
 		}
 	}
@@ -168,7 +171,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class ParameterTester extends EventTester {
 		ParameterTester(IEventBroker eventBroker) {
-			super("Parameter", Parameter.TOPIC, new String[] { Parameter.TAG,
+			super("Parameter", Parameter.TOPIC, new String[] { Parameter.NAME,
 					Parameter.VALUE }, eventBroker);
 		}
 	}
@@ -200,10 +203,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	@Override
 	protected MApplicationElement createApplicationElement(
 			IEclipseContext appContext) throws Exception {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = MApplicationFactory.INSTANCE
 				.createApplication();
-		application.getChildren().add(
-				MApplicationFactory.eINSTANCE.createWindow());
+		application.getChildren().add(MBasicFactory.INSTANCE.createWindow());
 		return application;
 	}
 
@@ -233,22 +235,21 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 				parameterTester, uiElementTester, uiItemTester, windowTester };
 
 		// Create the test harness and hook up the event publisher
-		MTestHarness allData = MApplicationFactory.eINSTANCE
-				.createTestHarness();
+		MTestHarness allData = MTestFactory.eINSTANCE.createTestHarness();
 		((Notifier) allData).eAdapters().add(
 				new UIEventPublisher(applicationContext));
 
 		// AppElement
 		reset(allTesters);
 		String newId = "Some New Id";
-		allData.setId(newId);
+		allData.setElementId(newId);
 		allData.getTags().add("Testing");
 		// allData.setTags("new Style");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events
 		appTester.reset();
-		allData.setId(newId);
+		allData.setElementId(newId);
 		assertTrue("event thrown on No-Op",
 				appTester.getAttIds(true).length == 0);
 
@@ -267,14 +268,14 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Contribution
 		reset(allTesters);
-		allData.setURI("Some URI");
+		allData.setContributionURI("Some URI");
 		allData.setObject("Some onbject");
 		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, contributionTester);
 
 		// ElementContainer
 		reset(allTesters);
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
 		allData.getChildren().add(menu);
 		allData.setSelectedElement(menu);
 		checkForFailures(allTesters, elementContainerTester);
@@ -291,14 +292,13 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Parameter
 		reset(allTesters);
-		allData.setTag("New Tag");
+		allData.setName("New Tag");
 		allData.setValue("New Value");
 		checkForFailures(allTesters, parameterTester);
 
 		// UIElement
 		reset(allTesters);
-		MTestHarness newParent = MApplicationFactory.eINSTANCE
-				.createTestHarness();
+		MTestHarness newParent = MTestFactory.eINSTANCE.createTestHarness();
 		allData.setRenderer("New Renderer");
 		allData.setParent(newParent);
 		allData.setToBeRendered(!allData.isToBeRendered());
@@ -324,7 +324,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		window.setWidth(1234);
 		window.setHeight(1234);
 
-		MMenu newMainMenu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu newMainMenu = MMenuFactory.INSTANCE.createMenu();
 		window.setMainMenu(newMainMenu);
 		checkForFailures(allTesters, windowTester);
 	}

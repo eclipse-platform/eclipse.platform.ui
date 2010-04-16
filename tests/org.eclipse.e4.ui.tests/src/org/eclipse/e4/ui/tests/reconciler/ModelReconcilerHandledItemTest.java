@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,16 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.MHandledToolItem;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -31,18 +33,18 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Command_Set() {
 		MApplication application = createApplication();
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MApplicationFactory.eINSTANCE
+		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
 				.createHandledToolItem();
 		toolBar.getChildren().add(handledToolItem);
 
@@ -75,18 +77,18 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Command_Unset() {
 		MApplication application = createApplication();
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MApplicationFactory.eINSTANCE
+		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
 				.createHandledToolItem();
 		toolBar.getChildren().add(handledToolItem);
 
@@ -119,15 +121,15 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledMenuItem_Command_Set() {
 		MApplication application = createApplication();
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MApplicationFactory.eINSTANCE
+		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
 				.createHandledMenuItem();
 		menu.getChildren().add(handledMenuItem);
 
@@ -159,15 +161,15 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledMenuItem_Command_Unset() {
 		MApplication application = createApplication();
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MApplicationFactory.eINSTANCE
+		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
 				.createHandledMenuItem();
 		handledMenuItem.setCommand(command);
 		menu.getChildren().add(handledMenuItem);

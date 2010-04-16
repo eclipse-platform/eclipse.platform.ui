@@ -23,10 +23,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MPartStack;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 
@@ -61,24 +62,24 @@ public class Bug308317Test extends TestCase {
 	}
 
 	public void testBug308317() throws Exception {
-		MApplication application = MApplicationFactory.eINSTANCE
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
-		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartStack stackA = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stackA = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stackA);
 		window.setSelectedElement(stackA);
 
-		MPartStack stackB = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack stackB = BasicFactoryImpl.eINSTANCE.createPartStack();
 		window.getChildren().add(stackB);
 
-		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		stackA.getChildren().add(partA);
 		stackA.setSelectedElement(partA);
 
-		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		stackB.getChildren().add(partB);
 		stackB.setSelectedElement(partB);
 

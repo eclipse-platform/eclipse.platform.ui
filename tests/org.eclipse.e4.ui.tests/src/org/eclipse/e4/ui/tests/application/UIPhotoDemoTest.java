@@ -11,7 +11,7 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 public class UIPhotoDemoTest extends UIStartupTest {
 

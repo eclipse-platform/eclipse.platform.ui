@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,25 +14,27 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 
-	private void testPartMenu_Children_Add(MMenuItem menuItem) {
+	private void testPartMenu_Children_Add(MMenuElement menuItem) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		part.getMenus().add(menu);
 
 		saveModel();
@@ -60,18 +62,18 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		assertEquals(menuItem.getClass(), menu.getChildren().get(0).getClass());
 	}
 
-	public void testPartMenu_Children_Add_MenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
-				.createMenuItem());
+	public void testPartMenu_Children_Add_MenuSeparator() {
+		testPartMenu_Children_Add(MenuFactoryImpl.eINSTANCE
+				.createMenuSeparator());
 	}
 
 	public void testPartMenu_Children_Add_DirectMenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
+		testPartMenu_Children_Add(MenuFactoryImpl.eINSTANCE
 				.createDirectMenuItem());
 	}
 
 	public void testPartMenu_Children_Add_HandledMenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
+		testPartMenu_Children_Add(MenuFactoryImpl.eINSTANCE
 				.createHandledMenuItem());
 	}
 
@@ -80,13 +82,13 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		part.getMenus().add(menu);
 
-		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		MMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 		menu.getChildren().add(menuItem);
 
 		saveModel();
@@ -104,7 +106,7 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 
 		menu = part.getMenus().get(0);
 
-		menuItem = menu.getChildren().get(0);
+		menuItem = (MMenuItem) menu.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 

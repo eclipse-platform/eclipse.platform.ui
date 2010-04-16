@@ -14,8 +14,8 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -24,7 +24,7 @@ public abstract class ModelReconcilerPartDescriptorTest extends
 
 	private void testPartDescriptor_AllowMultiple(boolean before, boolean after) {
 		MApplication application = createApplication();
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		application.getDescriptors().add(descriptor);
 
@@ -69,7 +69,7 @@ public abstract class ModelReconcilerPartDescriptorTest extends
 
 	private void testUIItem_Tooltip(String before, String after) {
 		MApplication application = createApplication();
-		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE
+		MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		application.getDescriptors().add(descriptor);
 

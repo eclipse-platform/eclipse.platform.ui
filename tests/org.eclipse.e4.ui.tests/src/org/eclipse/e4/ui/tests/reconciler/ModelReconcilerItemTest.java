@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
 
-import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -30,8 +30,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -50,7 +50,7 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		menu = window.getMainMenu();
-		item = menu.getChildren().get(0);
+		item = (MMenuItem) menu.getChildren().get(0);
 
 		item.setEnabled(newApplicationState);
 
@@ -107,8 +107,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -127,7 +127,7 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		menu = window.getMainMenu();
-		item = menu.getChildren().get(0);
+		item = (MMenuItem) menu.getChildren().get(0);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -187,8 +187,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -207,7 +207,7 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		menu = window.getMainMenu();
-		item = menu.getChildren().get(0);
+		item = (MMenuItem) menu.getChildren().get(0);
 
 		item.setType(newApplicationState);
 
@@ -260,34 +260,5 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 	public void testItem_Type_RadioRadioRadio() {
 		testItem_Type(ItemType.RADIO, ItemType.RADIO, ItemType.RADIO);
-	}
-
-	public void testItem_Type_RadioRadioSeparator() {
-		testItem_Type(ItemType.RADIO, ItemType.RADIO, ItemType.SEPARATOR);
-	}
-
-	public void testItem_Type_RadioSeparatorRadio() {
-		testItem_Type(ItemType.RADIO, ItemType.SEPARATOR, ItemType.RADIO);
-	}
-
-	public void testItem_Type_RadioSeparatorSeparator() {
-		testItem_Type(ItemType.RADIO, ItemType.SEPARATOR, ItemType.SEPARATOR);
-	}
-
-	public void testItem_Type_SeparatorSeparatorSeparator() {
-		testItem_Type(ItemType.SEPARATOR, ItemType.SEPARATOR,
-				ItemType.SEPARATOR);
-	}
-
-	public void testItem_Type_SeparatorSeparatorPush() {
-		testItem_Type(ItemType.SEPARATOR, ItemType.SEPARATOR, ItemType.PUSH);
-	}
-
-	public void testItem_Type_SeparatorPushSeparator() {
-		testItem_Type(ItemType.SEPARATOR, ItemType.PUSH, ItemType.SEPARATOR);
-	}
-
-	public void testItem_Type_SeparatorPushPush() {
-		testItem_Type(ItemType.SEPARATOR, ItemType.PUSH, ItemType.PUSH);
 	}
 }

@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.tests.application;
 
 import javax.inject.Inject;
 
-import org.eclipse.e4.ui.model.application.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 
 public class ClientEditor {
 

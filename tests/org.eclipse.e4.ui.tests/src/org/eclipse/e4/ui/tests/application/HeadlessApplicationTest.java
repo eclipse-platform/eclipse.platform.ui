@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.application;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.commands.Category;
@@ -23,19 +24,18 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MContext;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -170,7 +170,7 @@ public abstract class HeadlessApplicationTest extends
 		MPart[] parts = getTwoParts();
 
 		context.set(IServiceConstants.ACTIVE_PART, parts[0]);
-		assertEquals(parts[0].getId(), context
+		assertEquals(parts[0].getElementId(), context
 				.get(IServiceConstants.ACTIVE_PART_ID));
 
 		// the OSGi context should not have been affected by the recursion
@@ -178,7 +178,7 @@ public abstract class HeadlessApplicationTest extends
 		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
 
 		context.set(IServiceConstants.ACTIVE_PART, parts[1]);
-		assertEquals(parts[1].getId(), context
+		assertEquals(parts[1].getElementId(), context
 				.get(IServiceConstants.ACTIVE_PART_ID));
 
 		// the OSGi context should not have been affected by the recursion
@@ -284,7 +284,7 @@ public abstract class HeadlessApplicationTest extends
 
 		ResourceSet set = new ResourceSetImpl();
 		set.getPackageRegistry().put("http://MApplicationPackage/",
-				MApplicationPackage.eINSTANCE);
+				ApplicationPackageImpl.eINSTANCE);
 
 		Resource resource = set.getResource(initialWorkbenchDefinitionInstance,
 				true);
@@ -297,15 +297,15 @@ public abstract class HeadlessApplicationTest extends
 				.get(ECommandService.class.getName());
 		Category cat = cs.defineCategory(MApplication.class.getName(),
 				"Application Category", null); //$NON-NLS-1$
-		EList<MCommand> commands = application.getCommands();
+		List<MCommand> commands = application.getCommands();
 		for (MCommand cmd : commands) {
-			String id = cmd.getId();
+			String id = cmd.getElementId();
 			String name = cmd.getCommandName();
 			cs.defineCommand(id, name, null, cat, null);
 		}
 
 		// take care of generating the contexts.
-		EList<MWindow> windows = application.getChildren();
+		List<MWindow> windows = application.getChildren();
 		for (MWindow window : windows) {
 			E4Workbench.initializeContext(appContext, window);
 		}
@@ -332,20 +332,20 @@ public abstract class HeadlessApplicationTest extends
 				.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
-			MPart part = MApplicationFactory.eINSTANCE.createPart();
+			MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 			part.setLabel(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("icon")); //$NON-NLS-1$
-			part.setURI("platform:/plugin/" //$NON-NLS-1$
+			part.setContributionURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
 			Object parent = findObject(resource.getAllContents(), parentId);
 			if (parent instanceof MElementContainer<?>) {
-				((MElementContainer<MPSCElement>) parent).getChildren().add(
-						part);
+				((MElementContainer<MPartSashContainerElement>) parent)
+						.getChildren().add(part);
 			}
 		}
 
@@ -370,11 +370,11 @@ public abstract class HeadlessApplicationTest extends
 
 	private MApplicationElement findElement(MElementContainer<?> container,
 			String id) {
-		if (id.equals(container.getId())) {
+		if (id.equals(container.getElementId())) {
 			return container;
 		}
 
-		EList<?> children = container.getChildren();
+		List<?> children = container.getChildren();
 		for (Object child : children) {
 			MApplicationElement element = (MApplicationElement) child;
 			if (element instanceof MElementContainer<?>) {
@@ -383,7 +383,7 @@ public abstract class HeadlessApplicationTest extends
 				if (found != null) {
 					return found;
 				}
-			} else if (id.equals(element.getId())) {
+			} else if (id.equals(element.getElementId())) {
 				return element;
 			}
 		}

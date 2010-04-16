@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,25 +14,27 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 
-	private void testToolBar_Children_Add(MToolItem toolItem) {
+	private void testToolBar_Children_Add(MToolBarElement toolItem) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		part.setToolbar(toolBar);
 
 		saveModel();
@@ -61,17 +63,18 @@ public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 				.getClass());
 	}
 
-	public void testToolBar_Children_Add_ToolItem() {
-		testToolBar_Children_Add(MApplicationFactory.eINSTANCE.createToolItem());
+	public void testToolBar_Children_Add_ToolBarSeparator() {
+		testToolBar_Children_Add(MenuFactoryImpl.eINSTANCE
+				.createToolBarSeparator());
 	}
 
 	public void testToolBar_Children_Add_DirectToolItem() {
-		testToolBar_Children_Add(MApplicationFactory.eINSTANCE
+		testToolBar_Children_Add(MenuFactoryImpl.eINSTANCE
 				.createDirectToolItem());
 	}
 
 	public void testToolBar_Children_Add_HandledToolItem() {
-		testToolBar_Children_Add(MApplicationFactory.eINSTANCE
+		testToolBar_Children_Add(MenuFactoryImpl.eINSTANCE
 				.createHandledToolItem());
 	}
 
@@ -80,13 +83,13 @@ public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		part.setToolbar(toolBar);
 
-		MToolItem toolItem = MApplicationFactory.eINSTANCE.createToolItem();
+		MToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 		toolBar.getChildren().add(toolItem);
 
 		saveModel();
@@ -103,7 +106,7 @@ public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 
 		part = (MPart) window.getChildren().get(0);
 		toolBar = part.getToolbar();
-		toolItem = toolBar.getChildren().get(0);
+		toolItem = (MToolItem) toolBar.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 

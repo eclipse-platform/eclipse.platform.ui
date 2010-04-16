@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -91,7 +91,7 @@ public abstract class ModelReconcilerApplicationElementTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		command.getTags().add("tag");
 		application.getCommands().add(command);
 
@@ -120,13 +120,13 @@ public abstract class ModelReconcilerApplicationElementTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		if (createIdFirst) {
-			command.setId("commandId");
+			command.setElementId("commandId");
 			application.getCommands().add(command);
 		} else {
 			application.getCommands().add(command);
-			command.setId("commandId");
+			command.setElementId("commandId");
 		}
 
 		Object state = reconciler.serialize();
@@ -142,7 +142,7 @@ public abstract class ModelReconcilerApplicationElementTest extends
 		assertEquals(1, application.getCommands().size());
 
 		command = application.getCommands().get(0);
-		assertEquals("commandId", command.getId());
+		assertEquals("commandId", command.getElementId());
 	}
 
 	public void testApplicationElement_Id_New_True() {
@@ -155,14 +155,14 @@ public abstract class ModelReconcilerApplicationElementTest extends
 
 	private void testApplicationElement_Id(String before, String after) {
 		MApplication application = createApplication();
-		application.setId(before);
+		application.setElementId(before);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setId(after);
+		application.setElementId(after);
 
 		Object state = reconciler.serialize();
 
@@ -170,11 +170,11 @@ public abstract class ModelReconcilerApplicationElementTest extends
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, application.getId());
+		assertEquals(before, application.getElementId());
 
 		applyAll(deltas);
 
-		assertEquals(after, application.getId());
+		assertEquals(after, application.getElementId());
 	}
 
 	public void testApplicationElement_Id_NullNull() {
