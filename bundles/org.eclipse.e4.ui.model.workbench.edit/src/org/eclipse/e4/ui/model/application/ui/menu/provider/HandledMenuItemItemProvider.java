@@ -169,10 +169,10 @@ public class HandledMenuItemItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MHandledMenuItem)object).getElementId();
+		String label = ((MHandledMenuItem)object).getLabel();
 		return label == null || label.length() == 0 ?
 			getString("_UI_HandledMenuItem_type") : //$NON-NLS-1$
-			getString("_UI_HandledMenuItem_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_HandledMenuItem_type") + " - " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

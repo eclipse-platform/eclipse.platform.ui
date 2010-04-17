@@ -155,10 +155,10 @@ public class MenuElementItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MMenuElement)object).getElementId();
+		String label = ((MMenuElement)object).getLabel();
 		return label == null || label.length() == 0 ?
 			getString("_UI_MenuElement_type") : //$NON-NLS-1$
-			getString("_UI_MenuElement_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_MenuElement_type") + " - " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

@@ -374,10 +374,10 @@ public class WindowItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MWindow)object).getElementId();
+		String label = ((MWindow)object).getLabel();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Window_type") : //$NON-NLS-1$
-			getString("_UI_Window_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Window_type") + " - " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

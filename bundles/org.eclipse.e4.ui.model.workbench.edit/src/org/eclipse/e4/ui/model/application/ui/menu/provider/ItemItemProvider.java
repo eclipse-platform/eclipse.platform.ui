@@ -235,10 +235,10 @@ public class ItemItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MItem)object).getElementId();
+		String label = ((MItem)object).getLabel();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Item_type") : //$NON-NLS-1$
-			getString("_UI_Item_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Item_type") + " - " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

@@ -122,10 +122,10 @@ public class TrimmedWindowItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MTrimmedWindow)object).getElementId();
+		String label = ((MTrimmedWindow)object).getLabel();
 		return label == null || label.length() == 0 ?
 			getString("_UI_TrimmedWindow_type") : //$NON-NLS-1$
-			getString("_UI_TrimmedWindow_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_TrimmedWindow_type") + " - " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
