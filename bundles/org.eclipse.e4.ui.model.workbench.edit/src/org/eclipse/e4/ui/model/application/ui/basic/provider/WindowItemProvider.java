@@ -370,11 +370,11 @@ public class WindowItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MWindow)object).getElementId();
+		String label = null; //((MWindow)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Window_type") : //$NON-NLS-1$
 			getString("_UI_Window_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

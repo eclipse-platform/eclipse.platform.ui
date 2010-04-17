@@ -97,11 +97,11 @@ public class GenericTileItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MGenericTile<?>)object).getElementId();
+		String label = null; // ((MGenericTile<?>)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_GenericTile_type") : //$NON-NLS-1$
 			getString("_UI_GenericTile_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

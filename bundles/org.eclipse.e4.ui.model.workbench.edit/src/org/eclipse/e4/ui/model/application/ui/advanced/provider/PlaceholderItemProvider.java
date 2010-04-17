@@ -112,11 +112,11 @@ public class PlaceholderItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MPlaceholder)object).getElementId();
+		String label = null; //((MPlaceholder)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Placeholder_type") : //$NON-NLS-1$
 			getString("_UI_Placeholder_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

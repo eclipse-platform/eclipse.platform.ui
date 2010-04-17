@@ -108,11 +108,11 @@ public class MenuItemItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MMenuItem)object).getElementId();
+		String label = null; // ((MMenuItem)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_MenuItem_type") : //$NON-NLS-1$
 			getString("_UI_MenuItem_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

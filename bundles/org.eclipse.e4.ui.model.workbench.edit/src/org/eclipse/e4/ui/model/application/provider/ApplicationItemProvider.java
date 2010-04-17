@@ -208,11 +208,11 @@ public class ApplicationItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MApplication)object).getElementId();
+		String label = null; //((MApplication)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Application_type") : //$NON-NLS-1$
 			getString("_UI_Application_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

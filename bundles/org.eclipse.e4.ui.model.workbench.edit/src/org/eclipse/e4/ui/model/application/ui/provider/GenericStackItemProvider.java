@@ -69,11 +69,11 @@ public class GenericStackItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MGenericStack<?>)object).getElementId();
+		String label = null; // ((MGenericStack<?>)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_GenericStack_type") : //$NON-NLS-1$
 			getString("_UI_GenericStack_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

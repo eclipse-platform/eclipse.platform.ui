@@ -460,14 +460,14 @@ public class PartItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
 		String label = ((MPart)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Part_type") : //$NON-NLS-1$
-			getString("_UI_Part_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Part_type") + " -> " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

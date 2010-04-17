@@ -230,11 +230,11 @@ public class ToolControlItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MToolControl)object).getElementId();
+		String label = null; // ((MToolControl)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ToolControl_type") : //$NON-NLS-1$
 			getString("_UI_ToolControl_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

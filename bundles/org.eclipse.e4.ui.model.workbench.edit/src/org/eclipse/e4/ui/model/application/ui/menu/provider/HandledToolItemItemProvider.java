@@ -165,11 +165,11 @@ public class HandledToolItemItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MHandledToolItem)object).getElementId();
+		String label = null; //((MHandledToolItem)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_HandledToolItem_type") : //$NON-NLS-1$
 			getString("_UI_HandledToolItem_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

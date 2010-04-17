@@ -252,11 +252,11 @@ public class ModelComponentItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MModelComponent)object).getElementId();
+		String label = null; //((MModelComponent)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ModelComponent_type") : //$NON-NLS-1$
 			getString("_UI_ModelComponent_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
