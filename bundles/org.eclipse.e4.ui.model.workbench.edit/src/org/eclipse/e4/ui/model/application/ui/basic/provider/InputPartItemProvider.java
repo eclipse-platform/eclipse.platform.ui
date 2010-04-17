@@ -114,7 +114,7 @@ public class InputPartItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MInputPart)object).getElementId();
+		String label = ((MInputPart)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_InputPart_type") : //$NON-NLS-1$
 			getString("_UI_InputPart_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

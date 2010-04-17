@@ -464,7 +464,7 @@ public class PartItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MPart)object).getElementId();
+		String label = ((MPart)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Part_type") : //$NON-NLS-1$
 			getString("_UI_Part_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

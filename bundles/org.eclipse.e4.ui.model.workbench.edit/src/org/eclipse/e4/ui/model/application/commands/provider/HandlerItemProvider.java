@@ -115,7 +115,7 @@ public class HandlerItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MHandler)object).getElementId();
+		String label = ((MHandler)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Handler_type") : //$NON-NLS-1$
 			getString("_UI_Handler_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

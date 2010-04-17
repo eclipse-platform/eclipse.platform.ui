@@ -147,7 +147,7 @@ public class ContributionItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MContribution)object).getElementId();
+		String label = ((MContribution)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Contribution_type") : //$NON-NLS-1$
 			getString("_UI_Contribution_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

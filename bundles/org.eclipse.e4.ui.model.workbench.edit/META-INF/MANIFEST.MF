@@ -8,7 +8,13 @@ Bundle-Activator: org.eclipse.e4.ui.model.application.provider.UIElementsEditPlu
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.ui.model.application.provider
+Export-Package: org.eclipse.e4.ui.model.application.commands.provider,
+ org.eclipse.e4.ui.model.application.descriptor.basic.provider,
+ org.eclipse.e4.ui.model.application.provider,
+ org.eclipse.e4.ui.model.application.ui.advanced.provider,
+ org.eclipse.e4.ui.model.application.ui.basic.provider,
+ org.eclipse.e4.ui.model.application.ui.menu.provider,
+ org.eclipse.e4.ui.model.application.ui.provider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.model.workbench;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,

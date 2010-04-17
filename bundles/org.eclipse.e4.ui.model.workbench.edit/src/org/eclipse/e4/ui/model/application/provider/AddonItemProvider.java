@@ -84,7 +84,7 @@ public class AddonItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MAddon)object).getElementId();
+		String label = ((MAddon)object).getContributionURI();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Addon_type") : //$NON-NLS-1$
 			getString("_UI_Addon_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
