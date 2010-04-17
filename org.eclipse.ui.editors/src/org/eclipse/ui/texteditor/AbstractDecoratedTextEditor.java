@@ -1838,8 +1838,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			revisionMenu.add(new Separator());
 
-			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE));
-			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE));
+			IAction action= getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE);
+			if (action instanceof IUpdate)
+				((IUpdate)action).update();
+			revisionMenu.add(action);
+			action= getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE);
+			if (action instanceof IUpdate)
+				((IUpdate)action).update();
+			revisionMenu.add(action);
 		}
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
