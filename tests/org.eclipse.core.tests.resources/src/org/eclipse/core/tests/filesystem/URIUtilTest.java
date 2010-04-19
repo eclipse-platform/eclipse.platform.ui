@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,5 +145,17 @@ public class URIUtilTest extends FileSystemTest {
 
 		assertEquals("1.0", aPath.toString(), URIUtil.toPath(aUri).toString());
 		assertEquals("2.0", rPath.toString(), URIUtil.toPath(rUri).toString());
+	}
+
+	public void testBug291323_doubleDotLocationPath() {
+		URI aUri = URIUtil.toURI("..");
+		URI bUri = null;
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			bUri = URIUtil.toURI(""); // resolved to "C:/"
+		} else {
+			bUri = URIUtil.toURI("/");
+		}
+
+		assertEquals("1.0", URIUtil.toPath(bUri).toString(), URIUtil.toPath(aUri).toString());
 	}
 }
