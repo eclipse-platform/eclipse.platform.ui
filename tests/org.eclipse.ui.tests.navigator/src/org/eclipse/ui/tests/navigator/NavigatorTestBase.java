@@ -36,6 +36,7 @@ import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
 import org.eclipse.ui.tests.navigator.extension.TestSorterData;
@@ -229,7 +230,7 @@ public class NavigatorTestBase extends TestCase {
 	protected void clearAll() throws Exception {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			projects[i].delete(true, null);
+			FileUtil.delete(projects[i]);
 		}
 	}
 

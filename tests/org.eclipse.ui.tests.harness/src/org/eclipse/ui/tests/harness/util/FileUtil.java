@@ -15,6 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +27,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class FileUtil {
 
+	private static final int MAX_RETRY = 5;
+
+	
     /**
      * Creates a new project.
      * 
@@ -68,6 +72,25 @@ public class FileUtil {
         }
         return file;
     }
+    
+	public static void delete(IResource resource) throws CoreException {
+		for (int i= 0; i < MAX_RETRY; i++) {
+			try {
+				resource.delete(true, null);
+				i= MAX_RETRY;
+			} catch (CoreException e) {
+				if (i == MAX_RETRY - 1) {
+					throw e;
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+				}
+			}
+		}
+	}
+
+    
 
 }
 
