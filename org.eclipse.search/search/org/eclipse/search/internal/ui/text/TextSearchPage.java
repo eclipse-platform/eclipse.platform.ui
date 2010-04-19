@@ -321,6 +321,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 							resources.add(resource);
 						}
 					}
+				} else if (curr instanceof LineElement) {
+					IResource resource= ((LineElement)curr).getParent();
+					if (resource != null && resource.isAccessible())
+						resources.add(resource);
 				} else if (curr instanceof IAdaptable) {
 					IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
 					if (resource != null && resource.isAccessible()) {
