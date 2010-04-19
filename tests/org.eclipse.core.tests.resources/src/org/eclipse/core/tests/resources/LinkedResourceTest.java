@@ -1851,4 +1851,50 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.0", link.exists());
 		assertTrue("2.1", linkChild.exists());
 	}
+
+	public void testBug293935_linkedFolderWithOverlappingLocation() {
+		IWorkspace workspace = getWorkspace();
+
+		IPath projectLocation = existingProject.getLocation();
+		IFolder folderByIPath = existingProject.getFolder("overlappingLinkedFolderByIPath");
+		assertTrue("1.1", !workspace.validateLinkLocation(folderByIPath, projectLocation).isOK());
+		try {
+			folderByIPath.createLink(projectLocation, IResource.NONE, getMonitor());
+			fail("1.2");
+		} catch (CoreException e) {
+			// expected to fail
+		}
+
+		URI projectLocationURI = existingProject.getLocationURI();
+		IFolder folderByURI = existingProject.getFolder("overlappingLinkedFolderByURI");
+		assertTrue("2.1", !workspace.validateLinkLocationURI(folderByURI, projectLocationURI).isOK());
+		try {
+			folderByURI.createLink(projectLocationURI, IResource.NONE, getMonitor());
+			fail("2.2");
+		} catch (CoreException e) {
+			// expected to fail just like when creating link by IPath
+		}
+
+		// device is missing
+
+		IPath projectLocationWithoutDevice = projectLocation.setDevice(null);
+		IFolder folderByUnixLikeIPath = existingProject.getFolder("overlappingLinkedFolderByUnixLikeIPath");
+		assertTrue("3.1", !workspace.validateLinkLocation(folderByUnixLikeIPath, projectLocationWithoutDevice).isOK());
+		try {
+			folderByUnixLikeIPath.createLink(projectLocationWithoutDevice, IResource.NONE, getMonitor());
+			fail("3.2");
+		} catch (CoreException e) {
+			// expected to fail
+		}
+
+		URI projectLocationURIWithoutDevice = URIUtil.toURI(projectLocationWithoutDevice.toString());
+		IFolder folderByUnixLikeURI = existingProject.getFolder("overlappingLinkedFolderByUnixLikeURI");
+		assertTrue("4.1", !workspace.validateLinkLocationURI(folderByUnixLikeURI, projectLocationURIWithoutDevice).isOK());
+		try {
+			folderByUnixLikeURI.createLink(projectLocationURIWithoutDevice, IResource.NONE, getMonitor());
+			fail("4.2");
+		} catch (CoreException e) {
+			// expected to fail
+		}
+	}
 }
