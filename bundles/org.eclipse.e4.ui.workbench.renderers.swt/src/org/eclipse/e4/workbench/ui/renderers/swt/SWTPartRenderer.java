@@ -63,6 +63,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		// Set up the CSS Styling parameters; id & class
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
+		if (engine == null)
+			return;
 
 		// Put all the tags into the class string
 		EObject eObj = (EObject) me;

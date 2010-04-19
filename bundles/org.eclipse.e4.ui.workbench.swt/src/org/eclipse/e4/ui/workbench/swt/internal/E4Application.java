@@ -295,6 +295,8 @@ public class E4Application implements IApplication {
 					// we need to consider detached windows
 					MUIElement window = (MUIElement) current.get(MWindow.class
 							.getName());
+					if (window == null)
+						return null;
 					MElementContainer<?> parent = window.getParent();
 					while (parent != null && !(parent instanceof MApplication)) {
 						window = parent;
