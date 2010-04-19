@@ -12,7 +12,6 @@
 package org.eclipse.e4.core.contexts;
 
 import java.util.WeakHashMap;
-
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
@@ -43,7 +42,8 @@ public final class EclipseContextFactory {
 	 *            The context parent to delegate lookup of values not defined in the returned
 	 *            context.
 	 * @param strategy
-	 *            The context strategy to use in this context
+	 *            The context strategy to use in this context. Pass <code>null</code>
+	 *            to indicate that default strategy should be used. 
 	 * @return A new empty context with the given parent and strategy
 	 */
 	static public IEclipseContext create(IEclipseContext parent, IEclipseContextStrategy strategy) {
@@ -67,8 +67,7 @@ public final class EclipseContextFactory {
 			IEclipseContext result = serviceContexts.get(bundleContext);
 			if (result == null) {
 				result = create(null, new OSGiContextStrategy(bundleContext));
-				result.set(IContextConstants.DEBUG_STRING,
-						"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+				result.set(IContextConstants.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
 				serviceContexts.put(bundleContext, result);
 			}
 			return result;
@@ -93,8 +92,7 @@ public final class EclipseContextFactory {
 	 *            type of event.
 	 * @return A new context change event
 	 */
-	public static ContextChangeEvent createContextEvent(IEclipseContext context, int eventType,
-			Object[] args, String name, Object oldValue) {
+	public static ContextChangeEvent createContextEvent(IEclipseContext context, int eventType, Object[] args, String name, Object oldValue) {
 		return new ContextChangeEvent(context, eventType, args, name, oldValue);
 	}
 }
