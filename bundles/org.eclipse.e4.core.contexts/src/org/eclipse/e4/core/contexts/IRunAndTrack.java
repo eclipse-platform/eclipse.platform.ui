@@ -20,9 +20,8 @@ public interface IRunAndTrack {
 	/**
 	 * Executes this runnable. The reason for the execution is provided in the
 	 * <code>eventType</code> argument.
-	 * 
-	 * @param event
-	 *            The event that occurred
+	 * @param event The event that occurred
+	 * @return <code>true</code> to continue receiving notifications; <code>false</code> otherwise
 	 */
 	public boolean notify(ContextChangeEvent event);
 }
