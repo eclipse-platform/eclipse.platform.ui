@@ -10,7 +10,8 @@ Require-Bundle: org.junit;bundle-version="3.8.2",
  org.eclipse.e4.core.di,
  org.eclipse.e4.core.di.extensions,
  org.eclipse.e4.core.contexts,
- org.eclipse.osgi.services;bundle-version="3.2.100"
+ org.eclipse.osgi.services;bundle-version="3.2.100",
+ com.google.code.atinject.tck;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: javax.inject;version="1.0.0"
