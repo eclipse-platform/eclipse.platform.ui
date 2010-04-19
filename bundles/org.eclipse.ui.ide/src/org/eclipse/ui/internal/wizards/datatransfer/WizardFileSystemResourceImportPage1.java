@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -57,6 +59,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
+import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -77,6 +80,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected Button createOnlySelectedButton;
 
+    protected Button createVirtualFoldersButton;
+
+    protected Button createLinkedFileButton;
+    
+    protected RelativePathVariableGroup relativePathVariableGroup;
+    
+    protected String pathVariable;
+    
     protected Button sourceBrowseButton;
 
     protected Button selectTypesButton;
@@ -96,6 +107,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
 
     private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";//$NON-NLS-1$
+
+    private final static String STORE_CREATE_VIRTUAL_FOLDERS_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID";//$NON-NLS-1$
+
+    private final static String STORE_CREATE_LINKED_RESOURCES_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_LINKED_RESOURCES_ID";//$NON-NLS-1$
+
+    private final static String STORE_PATH_VARIABLE_SELECTED_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID";//$NON-NLS-1$
+
+    private final static String STORE_PATH_VARIABLE_NAME_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_NAME_ID";//$NON-NLS-1$
 
     private static final String SELECT_TYPES_TITLE = DataTransferMessages.DataTransfer_selectTypes;
 
@@ -252,19 +271,112 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         overwriteExistingResourcesCheckbox.setFont(optionsGroup.getFont());
         overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
 
-        // create containers radio
-        createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
-        createContainerStructureButton.setFont(optionsGroup.getFont());
-        createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
-        createContainerStructureButton.setSelection(false);
+		Composite radioGroup = new Composite(optionsGroup, 0);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		radioGroup.setFont(optionsGroup.getFont());
+		radioGroup.setLayoutData(gridData);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		layout.marginLeft= 0;
+		layout.marginRight= 0;
+		layout.marginTop= 0;
+		layout.marginBottom= 0;
+		radioGroup.setLayout(layout);
 
         // create selection only radio
-        createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
+        createOnlySelectedButton = new Button(radioGroup, SWT.RADIO);
         createOnlySelectedButton.setFont(optionsGroup.getFont());
         createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
         createOnlySelectedButton.setSelection(true);
 
+        // create containers radio
+        createContainerStructureButton = new Button(radioGroup, SWT.RADIO);
+        createContainerStructureButton.setFont(optionsGroup.getFont());
+        createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
+        createContainerStructureButton.setSelection(false);
+
+        // create virtual folders check
+        createVirtualFoldersButton = new Button(optionsGroup, SWT.CHECK);
+        createVirtualFoldersButton.setFont(optionsGroup.getFont());
+        createVirtualFoldersButton.setText(DataTransferMessages.FileImport_createVirtualFolders);
+        createVirtualFoldersButton.setSelection(false);
+
+        createVirtualFoldersButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		setupRelativePathVariableEnablement();
+        	}
+        });
+
+        // create linked resource check
+        createLinkedFileButton = new Button(optionsGroup, SWT.CHECK);
+        createLinkedFileButton.setFont(optionsGroup.getFont());
+        createLinkedFileButton.setText(DataTransferMessages.FileImport_createLinkedFiles);
+        createLinkedFileButton.setSelection(false);
+        
+        createLinkedFileButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		setupRelativePathVariableEnablement();
+        	}
+        });
+        
+		Composite relativeGroup = new Composite(optionsGroup, 0);
+		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.horizontalIndent = 12;
+		relativeGroup.setFont(optionsGroup.getFont());
+		relativeGroup.setLayoutData(gridData);
+
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		layout.marginLeft= 0;
+		layout.marginRight= 0;
+		layout.marginTop= 0;
+		layout.marginBottom= 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		relativeGroup.setLayout(layout);
+
+		relativePathVariableGroup = new RelativePathVariableGroup(new RelativePathVariableGroup.IModel() {
+			public IResource getResource() {
+				IPath path = getContainerFullPath();
+				if (path != null)
+					return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				return null;
+			}
+			public void setVariable(String string) {
+				pathVariable = string;
+			}
+			public String getVariable() {
+				return pathVariable;
+			}
+        });
+        relativePathVariableGroup.createContents(relativeGroup);
+        
+        
+    	setupRelativePathVariableEnablement();
+		relativePathVariableGroup.setSelection(true);
     }
+
+	/**
+	 * 
+	 */
+	private void setupRelativePathVariableEnablement() {
+		IPath path = getContainerFullPath();
+    	if (path != null && relativePathVariableGroup != null) {
+			IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (target != null && target.isVirtual()) {
+				createLinkedFileButton.setSelection(true);
+				createVirtualFoldersButton.setSelection(true);
+			}
+    	}
+		if (createVirtualFoldersButton.getSelection())
+			createLinkedFileButton.setSelection(true);
+		relativePathVariableGroup.setEnabled(createLinkedFileButton.getSelection());
+	}
 
     /**
      *	Create the group for creating the root directory
@@ -357,7 +469,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         //Update enablements when this is selected
         updateWidgetEnablements();
         fileSystemStructureProvider.clearVisitedDirs();
-        
     }
 
     /**
@@ -659,7 +770,23 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         return executeImportOperation(operation);
     }
 
-    /**
+    protected void handleContainerBrowseButtonPressed() {
+    	super.handleContainerBrowseButtonPressed();
+    	IPath path = getContainerFullPath();
+    	if (path != null && relativePathVariableGroup != null) {
+			IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			File file = getSourceDirectory();
+			if (file != null && target != null) {
+				relativePathVariableGroup.setupVariableContent();
+				String preferedVariable = RelativePathVariableGroup.getPreferredVariable(new IPath[] {Path.fromOSString(file.getAbsolutePath())}, (IContainer) target);
+				if (preferedVariable != null)
+					relativePathVariableGroup.selectVariable(preferedVariable);
+			}
+    	}
+    	setupRelativePathVariableEnablement();
+    }
+
+   	/**
      * Initializes the specified operation appropriately.
      */
     protected void initializeOperation(ImportOperation op) {
@@ -667,6 +794,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 .getSelection());
         op.setOverwriteResources(overwriteExistingResourcesCheckbox
                 .getSelection());
+        op.setVirtualFolders(createVirtualFoldersButton
+                .getSelection());
+        op.setCreateLinkFilesOnly(createLinkedFileButton
+                .getSelection());
+        if (relativePathVariableGroup.getSelection())
+        	op.setRelativeVariable(pathVariable);
     }
 
     /**
@@ -700,6 +833,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         MinimizedFileSystemElement currentRoot = getFileSystemTree();
         this.selectionGroup.setRoot(currentRoot);
 
+        File sourceDirectory = getSourceDirectory();
+        if (sourceDirectory != null) {
+			IPath path = getContainerFullPath();
+	    	if (path != null && relativePathVariableGroup != null) {
+				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (target != null) {
+			        String variable = RelativePathVariableGroup.getPreferredVariable(new IPath[] {Path.fromOSString(sourceDirectory.getAbsolutePath())}, (IContainer) target);
+			        if (variable != null)
+			        	relativePathVariableGroup.selectVariable(variable);
+				}
+	    	}
+        }
+
     }
 
     /**
@@ -728,6 +874,21 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             createContainerStructureButton.setSelection(createStructure);
             createOnlySelectedButton.setSelection(!createStructure);
 
+            boolean createVirtualFolders = settings
+            		.getBoolean(STORE_CREATE_VIRTUAL_FOLDERS_ID);
+            createVirtualFoldersButton.setSelection(createVirtualFolders);
+
+            boolean createLinkedResources = settings
+    				.getBoolean(STORE_CREATE_LINKED_RESOURCES_ID);
+            createLinkedFileButton.setSelection(createLinkedResources);
+
+            boolean pathVariableSelected = settings
+					.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
+            relativePathVariableGroup.setSelection(pathVariableSelected);
+
+            pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
+        	relativePathVariableGroup.selectVariable(pathVariable);
+        	setupRelativePathVariableEnablement();
         }
     }
 
@@ -754,6 +915,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             settings.put(STORE_CREATE_CONTAINER_STRUCTURE_ID,
                     createContainerStructureButton.getSelection());
 
+            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
+            		createVirtualFoldersButton.getSelection());
+
+            settings.put(STORE_CREATE_LINKED_RESOURCES_ID,
+            		createLinkedFileButton.getSelection());
+
+            settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
+            		relativePathVariableGroup.getSelection());
+
+            settings.put(STORE_PATH_VARIABLE_NAME_ID,
+            		pathVariable);
         }
     }
 

@@ -88,6 +88,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
     private boolean createVirtualFolder = false;
 
     private boolean createLinks = false;
+    
+    private boolean createLinkFilesOnly = false;
 
     private String relativeVariable = null;
 
@@ -570,7 +572,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				targetResource.setContents(contentStream,
                         IResource.KEEP_HISTORY, null);
             } else {
-                if (createVirtualFolder || createLinks)
+                if (createVirtualFolder || createLinks || createLinkFilesOnly)
                     targetResource.createLink(createRelativePath(
                             new Path(provider
                                     .getFullPath(fileObject)), targetResource), 0, null);
@@ -963,6 +965,16 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public void setCreateLinks(boolean links) {
         createLinks = links;
+    }
+
+    /**
+     * Set Whether links will be created instead of files 
+     * 
+     * @param linkFilesOnly
+     * @since 3.6
+     */
+    public void setCreateLinkFilesOnly(boolean linkFilesOnly) {
+        createLinkFilesOnly = linkFilesOnly;
     }
 
     /**
