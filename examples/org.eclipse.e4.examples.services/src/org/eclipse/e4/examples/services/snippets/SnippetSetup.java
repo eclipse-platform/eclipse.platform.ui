@@ -12,9 +12,11 @@
 package org.eclipse.e4.examples.services.snippets;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
-import org.eclipse.e4.core.contexts.*;
 
 @SuppressWarnings("restriction")
 public class SnippetSetup  {
@@ -31,8 +33,8 @@ public class SnippetSetup  {
 		Assert.isNotNull(context);
 		
 		// Set up the e4 services into the context
-		context.set(Adapter.class.getName(), ContextInjectionFactory.inject(
-				new EclipseAdapter(), context));
+		context.set(Adapter.class.getName(), ContextInjectionFactory.make(
+				EclipseAdapter.class, context));
 	}
 	
 	public static void setup(Object toBeSetup) {
