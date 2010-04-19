@@ -22,6 +22,7 @@ public class Messages {
 	public static String ApplicationEditor_BindingTables;
 	public static String ApplicationEditor_Commands;
 	public static String ApplicationEditor_Windows;
+	public static String ApplicationEditor_Addons;
 
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
@@ -293,16 +294,9 @@ public class Messages {
 	public static String VBindingTableEditor_Add;
 	public static String VBindingTableEditor_Remove;
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public static String AddonsEditor_Id;
+	public static String AddonsEditor_ClassURI;
+	public static String AddonsEditor_Find;
 	
 	
 	static {
