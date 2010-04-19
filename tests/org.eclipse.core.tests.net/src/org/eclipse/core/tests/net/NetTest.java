@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -399,6 +399,31 @@ public class NetTest extends TestCase {
 		setSystemProxiesEnabled(false);
 		validateSystemProperties(true);
 
+	}
+
+	public void testNonProxyHosts() throws CoreException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+
+		String[] oldHosts = this.getProxyManager().getNonProxiedHosts();
+
+		// add new host to the nonProxiedHosts list
+		String testHost = "bug284540.com";
+		ArrayList hostsList = new ArrayList();
+		Collections.addAll(hostsList, oldHosts);
+		hostsList.add(testHost);
+		String[] newHosts = (String[]) hostsList.toArray(new String[] {});
+
+		this.getProxyManager().setNonProxiedHosts(newHosts);
+
+		// check if system properties are updated
+		String sysPropNonProxyHosts = System.getProperty("http.nonProxyHosts");
+		String assertMessage = "http.nonProxyHost should contain '" + testHost 
+				+ "', but its current value is '" + sysPropNonProxyHosts + "'";
+		assertTrue(assertMessage, sysPropNonProxyHosts.contains(testHost));
+
+		this.getProxyManager().setNonProxiedHosts(oldHosts);
 	}
 
 	private void validateSystemProperties(boolean present) {
