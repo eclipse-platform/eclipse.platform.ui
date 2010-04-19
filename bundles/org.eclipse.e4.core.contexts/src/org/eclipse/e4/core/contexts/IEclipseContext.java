@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.core.contexts;
 
-
 /**
  * A context is used to isolate application code from its dependencies on an application framework
  * or container. This helps avoid building in dependencies on a specific framework that inhibit
@@ -87,8 +86,19 @@ public interface IEclipseContext {
 	public Object get(String name, Object[] arguments);
 
 	/**
-	 * TODO Remove this. It should be up to the context implementation to decide whether to retrieve
-	 * a local value or delegate the computation to a parent or elsewhere.
+	 * Returns the context value associated with the given name in this context, or <code>null</code> if 
+	 * no such value is defined in this context.
+	 * <p>
+	 * This method does not search for the value on other elements on the context tree.
+	 * </p>
+	 * <p>
+	 * If the value associated with this name is an {@link IContextFunction}, this method will
+	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with the provided
+	 * arguments.
+	 * </p>
+	 * @param name
+	 *            The name of the value to return
+	 * @return An object corresponding to the given name, or <code>null</code>
 	 */
 	public Object getLocal(String name);
 
