@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class CheckLinkAction implements ILiveHelpAction {
 	
+	private static final String HELP_TOPIC = "/help/topic";
 	private static Map links = new HashMap();
 	private String link;
 	public final static String ALL_PAGES_LOADED = "ALL_PAGES_LOADED";
@@ -50,9 +51,14 @@ public class CheckLinkAction implements ILiveHelpAction {
 	private void checkLinks() {
 		String errorPage = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
 		setPageNotFoundPreference("");
-		System.out.println("Start check links");
+		System.out.println("Start checking " + links.size() + " links");
+		int count = 0;
 		for (Iterator iter = links.keySet().iterator(); iter.hasNext(); ) {
 			String next = (String)iter.next();
+			count++;
+			if (count % 1000 == 0)  {
+				System.out.println("Checked " + count + " links");
+			}
 			//System.out.println("Process " + next);
 			URL url;
 			boolean opened;
@@ -74,8 +80,8 @@ public class CheckLinkAction implements ILiveHelpAction {
 			}
 			if (!opened) {
 				String containingPage = (String) links.get(next);
-				System.out.println("Cannot open link from " + containingPage                       
-				       + " to " + next);
+				System.out.println("Cannot open link from " + trimPath(containingPage)                       
+				       + " to " + trimPath(next));
 			}
 		}
 		//EclipseConnector.setNotFoundCallout(null);
@@ -84,6 +90,19 @@ public class CheckLinkAction implements ILiveHelpAction {
 		System.out.println("End check links");
 	}
 	
+	private String trimPath(String next) {
+        String result = next;
+		int htIndex = result.indexOf(HELP_TOPIC);
+		if (htIndex >  0) {
+			result = result.substring(htIndex + HELP_TOPIC.length());
+		}
+		int queryIndex = result.lastIndexOf('?');
+		if (queryIndex > 0) {
+			result = result.substring(0, queryIndex);
+		}
+		return result;
+	}
+
 	private void setPageNotFoundPreference(String value) {
 		InstanceScope instanceScope = new InstanceScope();
 		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
