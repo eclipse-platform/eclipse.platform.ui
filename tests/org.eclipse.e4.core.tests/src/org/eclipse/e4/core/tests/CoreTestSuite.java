@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
+import org.eclipse.e4.core.internal.tests.di.InvokeTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionMixedSuppliersTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
@@ -28,6 +29,9 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectionPreferencesTest.class);
 		addTestSuite(InjectionMixedSuppliersTest.class);
 		addTestSuite(InjectionEventTest.class);
+		
+		// DI
 		addTestSuite(InjectionOrderTest.class);
+		addTestSuite(InvokeTest.class);
 	}
 }
