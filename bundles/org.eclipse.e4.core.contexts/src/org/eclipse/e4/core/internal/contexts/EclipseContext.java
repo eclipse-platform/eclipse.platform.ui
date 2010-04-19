@@ -10,16 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
-import org.eclipse.e4.core.contexts.IContextFunction;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
-import org.eclipse.e4.core.di.IDisposable;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.IContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * This implementation assumes that all contexts are of the class EclipseContext. The external
@@ -140,10 +138,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			// is this a structural event?
 			// structural changes: INITIAL, DISPOSE, UNINJECTED are always processed right away
 			int eventType = event.getEventType();
-			if ((runnable instanceof IRunAndTrackObject)
-					&& ((IRunAndTrackObject) runnable).batchProcess()) {
-				if ((eventType == ContextChangeEvent.ADDED)
-						|| (eventType == ContextChangeEvent.REMOVED)) {
+			if ((runnable instanceof IRunAndTrackObject) && ((IRunAndTrackObject) runnable).batchProcess()) {
+				if ((eventType == ContextChangeEvent.ADDED) || (eventType == ContextChangeEvent.REMOVED)) {
 					cachedEvent = event;
 					EclipseContext eventsContext = (EclipseContext) event.getContext();
 					eventsContext.addWaiting(this);
@@ -156,14 +152,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			try {
 				if (cachedEvent != null) {
 					if (runnable instanceof IRunAndTrackObject)
-						result = ((IRunAndTrackObject)runnable).notify(event, this);
+						result = ((IRunAndTrackObject) runnable).notify(event, this);
 					else
 						result = runnable.notify(cachedEvent);
 					cachedEvent = null;
 				}
 				if (eventType != ContextChangeEvent.UPDATE) {
 					if (runnable instanceof IRunAndTrackObject)
-						result = ((IRunAndTrackObject)runnable).notify(event, this);
+						result = ((IRunAndTrackObject) runnable).notify(event, this);
 					else
 						result = runnable.notify(event);
 				}
@@ -221,10 +217,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	static class DebugSnap {
 		Set<Computation> listeners = new HashSet<Computation>();
-		Map<LookupKey, ValueComputation> localValueComputations = Collections
-				.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
-		Map<String, Object> localValues = Collections
-				.synchronizedMap(new HashMap<String, Object>());
+		Map<LookupKey, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
+		Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 	}
 
 	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
@@ -238,19 +232,18 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	final Map<Computation, Computation> listeners = Collections
-			.synchronizedMap(new LinkedHashMap<Computation, Computation>());
+	final Map<Computation, Computation> listeners = Collections.synchronizedMap(new LinkedHashMap<Computation, Computation>());
 
-	final Map<LookupKey, ValueComputation> localValueComputations = Collections
-			.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
-	final Map<String, Object> localValues = Collections
-			.synchronizedMap(new HashMap<String, Object>());
+	final Map<LookupKey, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
+	final Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
 	private final IEclipseContextStrategy strategy;
 
 	private ArrayList<String> modifiable;
 
 	private ArrayList<Computation> waiting; // list of Computations; null for all non-root entries
+
+	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
@@ -284,8 +277,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void debugSnap() {
 		snapshot = new DebugSnap();
 		snapshot.listeners = new HashSet<Computation>(listeners.keySet());
-		snapshot.localValueComputations = new HashMap<LookupKey, ValueComputation>(
-				localValueComputations);
+		snapshot.localValueComputations = new HashMap<LookupKey, ValueComputation>(localValueComputations);
 		snapshot.localValues = new HashMap<String, Object>(localValues);
 	}
 
@@ -303,8 +295,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			System.out.println("\t" + it.next()); //$NON-NLS-1$
 		}
 
-		Set<ValueComputation> computationDiff = new HashSet<ValueComputation>(
-				localValueComputations.values());
+		Set<ValueComputation> computationDiff = new HashSet<ValueComputation>(localValueComputations.values());
 		computationDiff.removeAll(snapshot.localValueComputations.values());
 		System.out.println("localValueComputations diff (" + computationDiff.size() + " leaked): "); //$NON-NLS-1$ //$NON-NLS-2$
 		for (Iterator<ValueComputation> it = computationDiff.iterator(); it.hasNext();) {
@@ -325,9 +316,25 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * @see org.eclipse.e4.core.services.context.IEclipseContext#dispose()
 	 */
 	public void dispose() {
+		// dispose of child contexts first
+		EclipseContext[] currentChildren;
+		synchronized (children) {
+			Set<EclipseContext> localCopy = new HashSet<EclipseContext>(children.size());
+			for (WeakReference<EclipseContext> childContextRef : children) {
+				EclipseContext childContext = childContextRef.get();
+				if (childContext != null)
+					localCopy.add(childContext);
+			}
+			currentChildren = new EclipseContext[localCopy.size()];
+			localCopy.toArray(currentChildren);
+			children.clear(); // just in case
+		}
+		for (EclipseContext childContext : currentChildren) {
+			childContext.dispose();
+		}
+
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
-				ContextChangeEvent.DISPOSE, null, null, null);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		// reverse order of listeners
 		for (int i = ls.length - 1; i >= 0; i--) {
 			List<Scheduled> scheduled = new ArrayList<Scheduled>();
@@ -355,8 +362,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return internalGet(this, name, null, true);
 	}
 
-	public Object internalGet(EclipseContext originatingContext, String name, Object[] arguments,
-			boolean local) {
+	public Object internalGet(EclipseContext originatingContext, String name, Object[] arguments, boolean local) {
 		trackAccess(name);
 		if (DEBUG_VERBOSE) {
 			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -380,8 +386,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		// if we found something, compute the concrete value and return
 		if (result != null) {
 			if (result instanceof IContextFunction) {
-				ValueComputation valueComputation = new ValueComputation(this, originatingContext,
-						name, ((IContextFunction) result));
+				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IContextFunction) result));
 				if (EclipseContext.DEBUG)
 					System.out.println("created " + valueComputation); //$NON-NLS-1$
 				if (lookupKey == null)
@@ -401,8 +406,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (!local) {
 			IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
 			if (parent != null) {
-				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments,
-						local); // XXX
+				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local); // XXX
 				// IEclipseContext
 			}
 		}
@@ -427,8 +431,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	void handleInvalid(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
-				name, oldValue);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null, name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(event, scheduled);
 		}
@@ -471,8 +474,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
-				ContextChangeEvent.INITIAL, args, null, null);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.INITIAL, args, null, null);
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
 		computation.notify(event);
 	}
@@ -495,9 +497,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void set(String name, Object value) {
 		if (IContextConstants.PARENT.equals(name)) {
 			// TBD make setting parent a separate operation
+			EclipseContext parentContext = (EclipseContext) localValues.get(IContextConstants.PARENT);
+			if (parentContext != null)
+				parentContext.removeChild(this);
 			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			handleReparent((EclipseContext) value, scheduled);
 			localValues.put(IContextConstants.PARENT, value);
+			if (value != null)
+				((EclipseContext) value).addChild(this);
 			processScheduled(scheduled);
 			return;
 		}
@@ -590,8 +597,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (object == null)
 			return;
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
-				ContextChangeEvent.UNINJECTED, new Object[] { object }, null, null);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
 		for (Computation computation : ls) {
 			((IRunAndTrack) computation).notify(event);
 		}
@@ -635,8 +641,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		// create update notifications
 		Computation[] ls = waiting.toArray(new Computation[waiting.size()]);
 		waiting.clear();
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
-				ContextChangeEvent.UPDATE, null, null, null);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.UPDATE, null, null, null);
 		for (int i = 0; i < ls.length; i++) {
 			if (ls[i] instanceof TrackableComputationExt)
 				((TrackableComputationExt) ls[i]).notify(event);
@@ -663,6 +668,28 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			current = current.getParent();
 		} while (current != null);
 		return root;
+	}
+
+	public void addChild(EclipseContext childContext) {
+		synchronized (children) {
+			children.add(new WeakReference<EclipseContext>(childContext));
+		}
+	}
+
+	public void removeChild(EclipseContext childContext) {
+		synchronized (children) {
+			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {
+				EclipseContext referredContext = i.next().get();
+				if (referredContext == null) {
+					i.remove();
+					continue;
+				}
+				if (referredContext == childContext) {
+					i.remove();
+					return;
+				}
+			}
+		}
 	}
 
 }

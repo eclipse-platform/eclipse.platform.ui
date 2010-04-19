@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
-
+import java.util.List;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
-import java.util.List;
+import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 public class ValueComputation extends Computation {
 	Object cachedValue;
@@ -27,8 +25,7 @@ public class ValueComputation extends Computation {
 	EclipseContext originatingContext; // XXX IEclipseContext
 	private boolean computing; // cycle detection
 
-	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext,
-			String name, IContextFunction computedValue) {
+	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext, String name, IContextFunction computedValue) {
 		this.context = context;
 		this.originatingContext = (EclipseContext) originatingContext;
 		this.name = name;
@@ -46,8 +43,7 @@ public class ValueComputation extends Computation {
 		result = prime * result + ((context == null) ? 0 : context.hashCode());
 		result = prime * result + ((function == null) ? 0 : function.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((originatingContext == null) ? 0 : originatingContext.hashCode());
+		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());
 		return result;
 	}
 
@@ -119,11 +115,10 @@ public class ValueComputation extends Computation {
 				removeAll(originatingContext);
 				return;
 			}
+			return;
 		}
 		// this.originatingContext.handleInvalid(this.name,
-		((EclipseContext) this.originatingContext).invalidate(this.name,
-				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
-				event.getOldValue(), scheduled);
+		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType, event.getOldValue(), scheduled);
 	}
 
 	final Object get(Object[] arguments) {
