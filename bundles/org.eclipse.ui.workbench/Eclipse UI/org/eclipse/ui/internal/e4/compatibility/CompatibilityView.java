@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.List;
 import javax.inject.Inject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -38,11 +36,6 @@ public class CompatibilityView extends CompatibilityPart {
 	CompatibilityView(MPart part, ViewReference ref) {
 		super(part);
 		reference = ref;
-	}
-
-	// FIXME: remove me when bug 299760 is fixed
-	void doSave(@Optional IProgressMonitor monitor) {
-		super.doSave(monitor);
 	}
 
 	public IViewPart getView() {

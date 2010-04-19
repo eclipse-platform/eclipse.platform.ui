@@ -14,8 +14,6 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.util.Iterator;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -65,11 +63,6 @@ public class CompatibilityEditor extends CompatibilityPart {
 				part.setIconURI(builder.toString());
 			}
 		}
-	}
-
-	// FIXME: remove me when bug 299760 is fixed
-	void doSave(@Optional IProgressMonitor monitor) {
-		super.doSave(monitor);
 	}
 
 	public IEditorPart getEditor() {
