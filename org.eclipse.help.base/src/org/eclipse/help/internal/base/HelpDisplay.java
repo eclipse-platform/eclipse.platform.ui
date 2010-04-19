@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,10 @@ public class HelpDisplay {
 	 * </ul>
 	 */
 	public void displayHelpResource(String href, boolean forceExternal) {
+		if (href.startsWith("/file")) { //$NON-NLS-1$
+			displayHelpResource(href.substring(1), forceExternal);
+			return;
+		}
 		if (href != null && (href.startsWith("tab=") //$NON-NLS-1$
 				|| href.startsWith("toc=") //$NON-NLS-1$
 				|| href.startsWith("topic=") //$NON-NLS-1$
