@@ -1,5 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -28,6 +31,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private IProject project;
+	private Image image;
 	
 	public AddonsEditor(EditingDomain editingDomain, IProject project) {
 		super(editingDomain);
@@ -36,7 +40,17 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		return null;
+		if( image == null ) {
+			try {
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Addons.png")); //$NON-NLS-1$
+//				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/Addons.gif")); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return image;
 	}
 
 	@Override
