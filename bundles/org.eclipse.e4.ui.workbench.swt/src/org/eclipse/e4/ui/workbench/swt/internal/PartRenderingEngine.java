@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
