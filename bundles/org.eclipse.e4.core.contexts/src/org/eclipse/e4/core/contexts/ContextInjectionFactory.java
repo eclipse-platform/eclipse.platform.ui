@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.core.contexts;
 
+import javax.inject.Scope;
+import javax.inject.Singleton;
 import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
@@ -65,7 +66,7 @@ final public class ContextInjectionFactory {
 	 * 
 	 * @param object The object to perform injection on
 	 * @param context The context to obtain injected values from
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public void inject(Object object, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
@@ -79,7 +80,7 @@ final public class ContextInjectionFactory {
 	 * @param methodName The method to call
 	 * @param context The context to obtain injected values from
 	 * @return the return value of the method call, might be <code>null</code>
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
@@ -94,7 +95,7 @@ final public class ContextInjectionFactory {
 	 * @param context The context to obtain injected values from
 	 * @param defaultValue A value to be returned if the method cannot be called, might be <code>null</code>
 	 * @return the return value of the method call, might be <code>null</code>
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context, Object defaultValue) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
@@ -106,7 +107,7 @@ final public class ContextInjectionFactory {
 	 * 
 	 * @param object The domain object previously injected with the context
 	 * @param context The context previously injected into the object
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public void uninject(Object object, IEclipseContext context) throws InjectionException {
 		((EclipseContext) context).removeListenersTo(object);
@@ -120,9 +121,9 @@ final public class ContextInjectionFactory {
 	 * </p>
 	 * @param clazz The class to be instantiated
 	 * @return an instance of the specified class
-	 * @throws InjectionExeption if an exception occurred while performing this operation
-	 * @see @Scope
-	 * @see @Singleton
+	 * @throws InjectionException if an exception occurred while performing this operation
+	 * @see Scope
+	 * @see Singleton
 	 */
 	static public Object make(Class<?> clazz, final IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
