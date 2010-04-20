@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.ide.application;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
@@ -32,7 +31,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
     }
 
     /**
-     * Defines the initial layout for a perspective.  
+     * Defines the initial layout for a perspective.
      *
      * Implementors of this method may add additional views to a
      * perspective.  The perspective already contains an editor folder
@@ -51,7 +50,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
     }
 
     /**
-     * Defines the initial actions for a page.  
+     * Defines the initial actions for a page.
      * @param layout The layout we are filling
      */
     public void defineActions(IPageLayout layout) {
@@ -60,7 +59,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
         layout.addNewWizardShortcut(BasicNewFileResourceWizard.WIZARD_ID);
 
         // Add "show views".
-        layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
+		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
         layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
         layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
         layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
@@ -72,7 +71,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
     }
 
     /**
-     * Defines the initial layout for a page.  
+     * Defines the initial layout for a page.
      * @param layout The layout we are filling
      */
     public void defineLayout(IPageLayout layout) {
@@ -82,7 +81,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
         // Top left.
         IFolderLayout topLeft = layout.createFolder(
                 "topLeft", IPageLayout.LEFT, (float) 0.26, editorArea);//$NON-NLS-1$
-        topLeft.addView(ProjectExplorer.VIEW_ID);
+		topLeft.addView(IPageLayout.ID_PROJECT_EXPLORER);
         topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
         // Add a placeholder for the old navigator to maintain compatibility
