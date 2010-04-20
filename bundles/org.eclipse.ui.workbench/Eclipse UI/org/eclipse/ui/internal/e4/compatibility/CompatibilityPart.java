@@ -23,9 +23,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -97,6 +95,7 @@ public abstract class CompatibilityPart {
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				Assert.isTrue(!composite.isDisposed(),
 						"The widget should not have been disposed at this point"); //$NON-NLS-1$
+				beingDisposed = true;
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
@@ -151,12 +150,6 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() throws PartInitException {
-		composite.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				beingDisposed = true;
-			}
-		});
-
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
 				UIEvents.Contribution.OBJECT), objectSetHandler);
 
