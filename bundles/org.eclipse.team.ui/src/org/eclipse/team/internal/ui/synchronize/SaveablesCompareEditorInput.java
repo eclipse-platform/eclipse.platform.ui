@@ -14,8 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -28,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
@@ -38,8 +38,10 @@ import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A compare editor input that makes use of a {@link Saveable} to manage the
@@ -524,8 +526,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		if (lLeftSaveable instanceof LocalResourceSaveableComparison) {
 			pMenuManager.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
-					handleMenuAboutToShow(manager, lLeftSaveable, lLeftElement,
-							pSelectionProvider);
+					handleMenuAboutToShow(manager, getContainer(), lLeftSaveable, lLeftElement, pSelectionProvider);
 				}
 			});
 		}
@@ -535,8 +536,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		if (lRightSaveable instanceof LocalResourceSaveableComparison) {
 			pMenuManager.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
-					handleMenuAboutToShow(manager, lRightSaveable,
-							lRightElement, pSelectionProvider);
+					handleMenuAboutToShow(manager, getContainer(), lRightSaveable, lRightElement, pSelectionProvider);
 				}
 			});
 		}
@@ -628,45 +628,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		return true;
 	}
 
-	private void handleMenuAboutToShow(IMenuManager manager, Saveable saveable,
-			ITypedElement element, ISelectionProvider provider) {
-		if (provider instanceof ITextViewer) {
-			ITextViewer v = (ITextViewer) provider;
-			IDocument d = v.getDocument();
-			IDocument other = (IDocument) Utils.getAdapter(saveable,
-					IDocument.class);
-			if (d == other) {
-				if (element instanceof IResourceProvider) {
-					IResourceProvider rp = (IResourceProvider) element;
-					IResource resource = rp.getResource();
-					StructuredSelection selection = new StructuredSelection(
-							resource);
-					IWorkbenchPart workbenchPart = getContainer()
-							.getWorkbenchPart();
-					if (workbenchPart != null) {
-						IWorkbenchSite ws = workbenchPart.getSite();
-						MenuManager submenu1 = new MenuManager(
-								getShowInMenuLabel());
-						IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN
-								.create(ws.getWorkbenchWindow());
-						submenu1.add(showInMenu);
-						manager.insertAfter("file", submenu1); //$NON-NLS-1$
-						MenuManager submenu2 = new MenuManager(
-								TeamUIMessages.OpenWithActionGroup_0);
-						submenu2.add(new OpenWithMenu(ws.getPage(), resource));
-						manager.insertAfter("file", submenu2); //$NON-NLS-1$
-
-						OpenFileAction openFileAction = new OpenFileAction(ws
-								.getPage());
-						openFileAction.selectionChanged(selection);
-						manager.insertAfter("file", openFileAction); //$NON-NLS-1$
-					}
-				}
-			}
-		}
-	}
-
-	private String getShowInMenuLabel() {
+	private static String getShowInMenuLabel() {
 		String keyBinding = null;
 
 		IBindingService bindingService = (IBindingService) PlatformUI
@@ -784,4 +746,116 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 			return false;
 		}
 	}
+
+	public static void handleMenuAboutToShow(IMenuManager manager, ICompareContainer container, Saveable saveable, ITypedElement element, ISelectionProvider provider) {
+		if (provider instanceof ITextViewer) {
+			final ITextViewer v= (ITextViewer)provider;
+			IDocument d= v.getDocument();
+			IDocument other= (IDocument)Utils.getAdapter(saveable, IDocument.class);
+			if (d == other) {
+				if (element instanceof IResourceProvider) {
+					IResourceProvider rp= (IResourceProvider)element;
+					IResource resource= rp.getResource();
+					StructuredSelection selection= new StructuredSelection(resource);
+					IWorkbenchPart workbenchPart= container.getWorkbenchPart();
+					if (workbenchPart != null) {
+						final IWorkbenchSite ws= workbenchPart.getSite();
+
+						MenuManager submenu1= new MenuManager(getShowInMenuLabel());
+						IContributionItem showInMenu= ContributionItemFactory.VIEWS_SHOW_IN.create(ws.getWorkbenchWindow());
+						submenu1.add(showInMenu);
+						manager.insertAfter("file", submenu1); //$NON-NLS-1$
+						MenuManager submenu2= new MenuManager(TeamUIMessages.OpenWithActionGroup_0);
+
+						// XXX: Internal reference will get fixed during 3.7, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=307026
+						submenu2.add(new OpenWithMenu(ws.getPage(), resource) {
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.
+							 * IEditorDescriptor, boolean)
+							 */
+							protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
+								super.openEditor(editorDescriptor, openUsingDescriptor);
+								IEditorPart editor= ws.getPage().getActiveEditor();
+								Point selectedRange= v.getSelectedRange();
+								revealInEditor(editor, selectedRange.x, selectedRange.y);
+							}
+						});
+						manager.insertAfter("file", submenu2); //$NON-NLS-1$
+
+						// XXX: Internal reference will get fixed during 3.7, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=307026
+						OpenFileAction openFileAction= new OpenFileAction(ws.getPage()) {
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see org.eclipse.ui.actions.OpenSystemEditorAction#run()
+							 */
+							public void run() {
+								super.run();
+								IEditorPart editor= ws.getPage().getActiveEditor();
+								Point selectedRange= v.getSelectedRange();
+								revealInEditor(editor, selectedRange.x, selectedRange.y);
+							}
+						};
+						openFileAction.selectionChanged(selection);
+						manager.insertAfter("file", openFileAction); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Selects and reveals the given offset and length in the given editor part.
+	 * 
+	 * @param editor the editor part
+	 * @param offset the offset
+	 * @param length the length
+	 * @since 3.6
+	 */
+	private static void revealInEditor(IEditorPart editor, final int offset, final int length) {
+		if (editor instanceof ITextEditor) {
+			((ITextEditor)editor).selectAndReveal(offset, length);
+			return;
+		}
+
+		// Support for non-text editor - try IGotoMarker interface
+		final IGotoMarker gotoMarkerTarget;
+		if (editor instanceof IGotoMarker)
+			gotoMarkerTarget= (IGotoMarker)editor;
+		else
+			gotoMarkerTarget= editor != null ? (IGotoMarker)editor.getAdapter(IGotoMarker.class) : null;
+		if (gotoMarkerTarget != null) {
+			final IEditorInput input= editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+					protected void execute(IProgressMonitor monitor) throws CoreException {
+						IMarker marker= null;
+						try {
+							marker= ((IFileEditorInput)input).getFile().createMarker(IMarker.TEXT);
+							marker.setAttribute(IMarker.CHAR_START, offset);
+							marker.setAttribute(IMarker.CHAR_END, offset + length);
+
+							gotoMarkerTarget.gotoMarker(marker);
+
+						} finally {
+							if (marker != null)
+								marker.delete();
+						}
+					}
+				};
+
+				try {
+					op.run(null);
+				} catch (InvocationTargetException ex) {
+					// reveal failed
+				} catch (InterruptedException e) {
+					Assert.isTrue(false, "this operation can not be canceled"); //$NON-NLS-1$
+				}
+			}
+			return;
+		}
+	}
+
 }

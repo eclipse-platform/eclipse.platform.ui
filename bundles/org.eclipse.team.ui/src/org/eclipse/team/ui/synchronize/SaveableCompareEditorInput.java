@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -31,13 +30,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.EditableSharedDocumentAdapter.ISharedDocumentAdapterListener;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -472,59 +468,13 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		super.registerContextMenu(menu, selectionProvider);
 		final Saveable saveable = getSaveable();
 		if (saveable instanceof LocalResourceSaveableComparison) {
+			final ITypedElement element= getFileElement(getCompareInput(), this);
 			menu.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
-					handleMenuAboutToShow(manager, saveable, selectionProvider);
+					SaveablesCompareEditorInput.handleMenuAboutToShow(manager, getContainer(), saveable, element, selectionProvider);
 				}
 			});
 		}
 	}
 	
-	/* package */ void handleMenuAboutToShow (IMenuManager manager, Saveable saveable, ISelectionProvider provider) {
-		if (provider instanceof ITextViewer) {
-			ITextViewer v = (ITextViewer) provider;
-			IDocument d = v.getDocument();
-			IDocument other = (IDocument)Utils.getAdapter(saveable, IDocument.class);
-			if (d == other) {
-				ITypedElement element = getFileElement(getCompareInput(), this);
-				if (element instanceof IResourceProvider) {
-					IResourceProvider rp = (IResourceProvider) element;
-					IResource resource = rp.getResource();
-					StructuredSelection selection = new StructuredSelection(resource);
-					IWorkbenchPart workbenchPart = getContainer().getWorkbenchPart();
-					if (workbenchPart != null) {
-						IWorkbenchSite ws = workbenchPart.getSite();
-						
-						MenuManager submenu1 =
-							new MenuManager(getShowInMenuLabel());
-						IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN.create(ws.getWorkbenchWindow());
-						submenu1.add(showInMenu);
-						manager.insertAfter("file", submenu1); //$NON-NLS-1$
-						MenuManager submenu2 =
-							new MenuManager(TeamUIMessages.OpenWithActionGroup_0);
-						submenu2.add(new OpenWithMenu(ws.getPage(), resource));
-						manager.insertAfter("file", submenu2); //$NON-NLS-1$
-						
-						OpenFileAction openFileAction = new OpenFileAction(ws.getPage());
-						openFileAction.selectionChanged(selection);
-						manager.insertAfter("file", openFileAction); //$NON-NLS-1$
-					}
-				}
-			}
-		}
-	}
-	
-	private String getShowInMenuLabel() {
-		String keyBinding= null;
-		
-		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-		if (bindingService != null)
-			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
-		
-		if (keyBinding == null)
-			keyBinding= ""; //$NON-NLS-1$
-		
-		return NLS.bind(TeamUIMessages.SaveableCompareEditorInput_0, keyBinding);
-	}
-
 }
