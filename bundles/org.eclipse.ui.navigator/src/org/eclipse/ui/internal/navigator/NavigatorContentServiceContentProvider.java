@@ -99,22 +99,22 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
 	}
 
-	public synchronized void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
+	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
 		viewer = aViewer;
 		contentService.updateService(aViewer, anOldInput, aNewInput);
 	}
 
-	public synchronized Object[] getElements(Object anInputElement) {
+	public Object[] getElements(Object anInputElement) {
 		Set rootContentExtensions = contentService.findRootContentExtensions(anInputElement);
 		return internalGetChildren(anInputElement, anInputElement, rootContentExtensions, ELEMENTS);
 	}
 
-	public synchronized Object[] getChildren(Object aParentElement) {
+	public Object[] getChildren(Object aParentElement) {
 		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
 		return internalGetChildren(aParentElement, aParentElement, enabledExtensions, !ELEMENTS);
 	}
 
-	public synchronized Object[] getChildren(TreePath parentPath) {
+	public Object[] getChildren(TreePath parentPath) {
 		Object aParentElement = internalAsElement(parentPath);
 		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
 		return internalGetChildren(aParentElement, parentPath, enabledExtensions, !ELEMENTS);
@@ -262,7 +262,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return false;
 	}
 
-	public synchronized Object getParent(Object anElement) {
+	public Object getParent(Object anElement) {
 		Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
 
 		Object parent;
@@ -292,7 +292,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return null;
 	}
 
-	public synchronized TreePath[] getParents(Object anElement) {
+	public TreePath[] getParents(Object anElement) {
 		List paths = new ArrayList();
 		TreePathCompiler compiler = new TreePathCompiler(anElement);
 		Set compilers = findPaths(compiler);
@@ -351,7 +351,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 *  For pipelined calls, we simply ask the pipelined content provider about the children
 	 *  and they can override this as they would in the case where they are providing the objects.
 	 */
-	public synchronized boolean hasChildren(Object anElementOrPath) {
+	public boolean hasChildren(Object anElementOrPath) {
 		Object anElement = internalAsElement(anElementOrPath);
 		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
 
@@ -387,7 +387,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return suggestedHasChildren;
 	}
 
-	public synchronized boolean hasChildren(TreePath path) {
+	public boolean hasChildren(TreePath path) {
 		return hasChildren((Object)path);
 	}
 
@@ -434,7 +434,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
-	public synchronized void dispose() {
+	public void dispose() {
 		if (disposeContentService) {
 			contentService.dispose();
 		}

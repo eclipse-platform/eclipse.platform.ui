@@ -695,21 +695,28 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @param source
 	 * @param element
 	 */
-	public void rememberContribution(INavigatorContentDescriptor source, INavigatorContentDescriptor firstClassSource, Object element) {
+	public void rememberContribution(INavigatorContentDescriptor source,
+			INavigatorContentDescriptor firstClassSource, Object element) {
 		/*
-		 * We want to write to (overwrite) the contributionMemory only if we have never heard of the element before, or if the 
-		 * element is coming from the same first class NCE, which means that the subsequent NCE is an override.  The override will
-		 * take precedence over the originally contributing NCE.  However in the case of different first class NCEs, the first one 
-		 * wins, so we don't update the contribution memory. 
+		 * We want to write to (overwrite) the contributionMemory only if we
+		 * have never heard of the element before, or if the element is coming
+		 * from the same first class NCE, which means that the subsequent NCE is
+		 * an override. The override will take precedence over the originally
+		 * contributing NCE. However in the case of different first class NCEs,
+		 * the first one wins, so we don't update the contribution memory.
 		 */
-		if (contributionMemory.get(element) == null || contributionMemoryFirstClass.get(element) == firstClassSource) {
-			if (Policy.DEBUG_RESOLUTION)
-				System.out.println("rememberContribution: " + Policy.getObjectString(element) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
-			contributionMemory.put(element, source);
-			contributionMemoryFirstClass.put(element, firstClassSource);
+		synchronized (this) {
+			if (contributionMemory.get(element) == null
+					|| contributionMemoryFirstClass.get(element) == firstClassSource) {
+				if (Policy.DEBUG_RESOLUTION)
+					System.out
+							.println("rememberContribution: " + Policy.getObjectString(element) + " source: " + source); //$NON-NLS-1$//$NON-NLS-2$
+				contributionMemory.put(element, source);
+				contributionMemoryFirstClass.put(element, firstClassSource);
+			}
 		}
 	}
-	
+
 	/**
 	 * Forget about the specified element
 	 * 
@@ -717,17 +724,22 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *            The element to forget.
 	 */
 	public void forgetContribution(Object element) {
-		contributionMemory.remove(element);
-		contributionMemoryFirstClass.remove(element);
+		synchronized (this) {
+			contributionMemory.remove(element);
+			contributionMemoryFirstClass.remove(element);
+		}
 	}
-	
+
 	/**
 	 * @param element
 	 * @return the remembered NavigatorContentDescriptor
 	 */
 	public NavigatorContentDescriptor getContribution(Object element)
 	{
-		NavigatorContentDescriptor desc = (NavigatorContentDescriptor) contributionMemory.get(element);
+		NavigatorContentDescriptor desc;
+		synchronized (this) {
+			desc = (NavigatorContentDescriptor) contributionMemory.get(element);
+		}
 		return desc;
 	}
 	
@@ -744,7 +756,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (structuredViewerManager == null)
 			return null;
 		// Try here first because it might not yet be in the tree
-		NavigatorContentDescriptor src = (NavigatorContentDescriptor) contributionMemory.get(element);
+		NavigatorContentDescriptor src;
+		synchronized (this) {
+			src = (NavigatorContentDescriptor) contributionMemory.get(element);
+		}
 		if (src != null)
 			return src;
 		return (NavigatorContentDescriptor) structuredViewerManager.getData(element);
