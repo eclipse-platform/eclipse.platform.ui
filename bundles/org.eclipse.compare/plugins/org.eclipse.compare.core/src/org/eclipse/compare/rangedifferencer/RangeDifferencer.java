@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,10 +186,30 @@ public final class RangeDifferencer {
 				else if (yourIter.fDifference == null)
 					startThread= myIter;
 				else { // not at end of both scripts take the lowest range
-					if (myIter.fDifference.leftStart <= yourIter.fDifference.leftStart) // 2 -> common (Ancestor) change range
+					if (myIter.fDifference.leftStart < yourIter.fDifference.leftStart) { // 2 -> common (Ancestor) change range
 						startThread= myIter;
-					else
+					} else if (myIter.fDifference.leftStart > yourIter.fDifference.leftStart) {
 						startThread= yourIter;
+					} else {
+						if (myIter.fDifference.leftLength == 0 && yourIter.fDifference.leftLength == 0) {
+							//insertion into the same position is conflict. 
+							changeRangeStart= myIter.fDifference.leftStart;
+							changeRangeEnd= myIter.fDifference.leftEnd();
+							myIter.next();
+							yourIter.next();
+							diff3.add(createRangeDifference3(factory, myIter, yourIter, diff3, right, left, changeRangeStart, changeRangeEnd));
+							continue;
+						} else 	if (myIter.fDifference.leftLength == 0) {
+							//insertion into a position, and modification to the next line, is not conflict.
+							startThread= myIter;
+						} else if (yourIter.fDifference.leftLength == 0) {
+							startThread = yourIter;
+						} else {
+							//modifications to overlapping lines is conflict.
+							startThread= myIter;
+						}
+					}
+						
 				}
 				changeRangeStart= startThread.fDifference.leftStart;
 				changeRangeEnd= startThread.fDifference.leftEnd();
@@ -201,11 +221,11 @@ public final class RangeDifferencer {
 				// merge overlapping changes with this range
 				//
 				DifferencesIterator other= startThread.other(myIter, yourIter);
-				while (other.fDifference != null && other.fDifference.leftStart <= changeRangeEnd) {
+				while (other.fDifference != null && other.fDifference.leftStart < changeRangeEnd) {
 					int newMax= other.fDifference.leftEnd();
 					other.next();
 					monitor.worked(1);
-					if (newMax >= changeRangeEnd) {
+					if (newMax > changeRangeEnd) {
 						changeRangeEnd= newMax;
 						other= other.other(myIter, yourIter);
 					}
