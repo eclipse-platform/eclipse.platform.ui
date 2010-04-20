@@ -34,9 +34,12 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 	private PatchInaccessibleProjectsPage fPatchInaccessibleProjectsPage;
 
 	public ApplyPatchSynchronizationWizard() {
-		// TODO: get selection, available when launched from toolbar or main
-		// menu
-		super((IStorage) null, (IResource) null, new CompareConfiguration());
+		this(null, null, new CompareConfiguration());
+	}
+
+	public ApplyPatchSynchronizationWizard(IStorage patch, IResource target,
+			CompareConfiguration configuration) {
+		super(patch, target, configuration);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -88,15 +91,23 @@ public class ApplyPatchSynchronizationWizard extends PatchWizard implements
 		if (getPatch() == null || !getPatcher().isWorkspacePatch())
 			addPage(fPatchTargetPage = new PatchTargetPage(getPatcher()) {
 				public IWizardPage getNextPage() {
-					if (!isTargetingInaccessibleProjects())
-						return super.getNextPage().getNextPage();
-					return super.getNextPage();
+					IWizardPage nextPage = super.getNextPage();
+					if (!isTargetingInaccessibleProjects() && nextPage != this)
+						return nextPage.getNextPage();
+					return nextPage;
 				}
 			});
 		if (getPatch() == null || isTargetingInaccessibleProjects())
 			addPage(fPatchInaccessibleProjectsPage = new PatchInaccessibleProjectsPage(
 					getPatcher()));
 		addPage(new PatchParsedPage());
+	}
+
+	public boolean isComplete() {
+		if (getPatch() == null || !getPatcher().isWorkspacePatch()
+				|| isTargetingInaccessibleProjects())
+			return false;
+		return true;
 	}
 
 	private boolean isTargetingInaccessibleProjects() {

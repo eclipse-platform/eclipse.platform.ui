@@ -86,6 +86,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts"; //$NON-NLS-1$
 	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
 	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
+	public static final String APPLY_PATCH_IN_SYNCHRONIZE_VIEW= PREFIX + "applyPatchInSychronizeView"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SYNCHRONIZE_SCROLLING),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_PSEUDO_CONFLICTS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, APPLY_PATCH_IN_SYNCHRONIZE_VIEW),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ADDED_LINES_REGEX),
@@ -135,6 +137,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(SYNCHRONIZE_SCROLLING, true);
 		store.setDefault(SHOW_PSEUDO_CONFLICTS, false);
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
+		store.setDefault(APPLY_PATCH_IN_SYNCHRONIZE_VIEW, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
 		store.setDefault(PREF_SAVE_ALL_EDITORS, false);
 		store.setDefault(ADDED_LINES_REGEX, ""); //$NON-NLS-1$
@@ -268,6 +271,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		// a spacer
 		new Label(composite, SWT.NONE);
 
+		addCheckBox(composite, "ComparePreferencePage.applyPatchInSynchronizeView.label", APPLY_PATCH_IN_SYNCHRONIZE_VIEW, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.saveBeforePatching.label", PREF_SAVE_ALL_EDITORS, 0);	//$NON-NLS-1$
 
 		// a spacer

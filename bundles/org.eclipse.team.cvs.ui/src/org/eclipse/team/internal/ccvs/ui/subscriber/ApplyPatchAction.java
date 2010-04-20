@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -20,6 +19,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
+import org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 
