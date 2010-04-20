@@ -12,9 +12,15 @@ package org.eclipse.core.tests.net;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxyType;
@@ -411,7 +417,7 @@ public class NetTest extends TestCase {
 		// add new host to the nonProxiedHosts list
 		String testHost = "bug284540.com";
 		ArrayList hostsList = new ArrayList();
-		Collections.addAll(hostsList, oldHosts);
+		hostsList.addAll(Arrays.asList(oldHosts));
 		hostsList.add(testHost);
 		String[] newHosts = (String[]) hostsList.toArray(new String[] {});
 
@@ -421,7 +427,7 @@ public class NetTest extends TestCase {
 		String sysPropNonProxyHosts = System.getProperty("http.nonProxyHosts");
 		String assertMessage = "http.nonProxyHost should contain '" + testHost 
 				+ "', but its current value is '" + sysPropNonProxyHosts + "'";
-		assertTrue(assertMessage, sysPropNonProxyHosts.contains(testHost));
+		assertTrue(assertMessage, sysPropNonProxyHosts.indexOf(testHost) > -1);
 
 		this.getProxyManager().setNonProxiedHosts(oldHosts);
 	}
