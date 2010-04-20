@@ -45,10 +45,10 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.commands.ICommandService;
@@ -1177,7 +1177,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         	// do the work
     		infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
         	boolean found = hasWelcomePage(infos);
-            prefs.setValue(quickStartKey, found);
+            prefs.setValue(quickStartKey, String.valueOf(found));
             if (found) {
                 quickStartAction = IDEActionFactory.QUICK_START.create(window);
                 register(quickStartAction);
@@ -1202,7 +1202,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	    		infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 	    	}
 	    	boolean found = hasTipsAndTricks(infos);
-	    	prefs.setValue(tipsAndTricksKey, found);
+	    	prefs.setValue(tipsAndTricksKey, String.valueOf(found));
 	    	if (found) {
 	            tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS
 						.create(window);
