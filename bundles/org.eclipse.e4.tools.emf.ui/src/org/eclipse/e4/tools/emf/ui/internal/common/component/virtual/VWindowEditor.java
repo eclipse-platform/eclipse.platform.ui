@@ -236,7 +236,6 @@ public class VWindowEditor extends AbstractComponentEditor {
 		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.WINDOW));
 		
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Add ...");
 		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
