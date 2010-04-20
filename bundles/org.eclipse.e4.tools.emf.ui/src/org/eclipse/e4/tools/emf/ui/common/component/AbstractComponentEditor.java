@@ -13,7 +13,9 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -21,6 +23,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -100,5 +103,9 @@ public abstract class AbstractComponentEditor {
 	
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] {};
+	}
+	
+	public List<Action> getActions(Object element) {
+		return Collections.emptyList();
 	}
 }

@@ -144,6 +144,7 @@ public class Messages {
 	public static String MenuItemEditor_Tooltip;
 	public static String MenuItemEditor_IconURI;
 	public static String MenuItemEditor_Find;
+	public static String MenuEditor_MainMenu;
 	
 	public static String MenuSeparatorEditor_Label;
 	public static String MenuSeparatorEditor_Id;
@@ -297,6 +298,7 @@ public class Messages {
 	public static String AddonsEditor_Id;
 	public static String AddonsEditor_ClassURI;
 	public static String AddonsEditor_Find;
+	
 	
 	
 	static {

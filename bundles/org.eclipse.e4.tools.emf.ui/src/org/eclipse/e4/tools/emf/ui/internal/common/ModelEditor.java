@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,10 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -222,6 +227,34 @@ public class ModelEditor {
 
 		form.setWeights(new int[] { 1, 2 });
 		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
+		
+		MenuManager mgr = new MenuManager();
+		mgr.setRemoveAllWhenShown(true);
+		mgr.addMenuListener(new IMenuListener() {
+			
+			public void menuAboutToShow(IMenuManager manager) {
+				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+				if( ! s.isEmpty() ) {
+					List<Action> actions;
+					if( s.getFirstElement() instanceof VirtualEntry<?> ) {
+						actions = virtualEditors[((VirtualEntry<?>)s.getFirstElement()).getId()].getActions(s.getFirstElement());
+					} else {
+						EObject o = (EObject) s.getFirstElement();
+						AbstractComponentEditor editor = editorMap.get(o.eClass());
+						if( editor != null ) {
+							actions = editor.getActions(s.getFirstElement());
+						} else {
+							actions = Collections.emptyList();
+						}
+					}
+					
+					for( Action a : actions ) {
+						manager.add(a);
+					}
+				}
+			}
+		});
+		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 	}
 
 	private TreeViewer createTreeViewerArea(Composite parent) {

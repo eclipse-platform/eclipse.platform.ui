@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -25,14 +27,20 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
@@ -56,8 +64,20 @@ public class WindowEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 
+	private Action addMainMenu; 
+	
 	public WindowEditor(EditingDomain editingDomain) {
 		super(editingDomain);
+		addMainMenu = new Action("Add Main Menu") {
+			@Override
+			public void run() {
+				MMenu menu = MMenuFactory.INSTANCE.createMenu();
+				Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
+				if( cmd.canExecute() ) {
+					getEditingDomain().getCommandStack().execute(cmd);
+				}
+			}
+		};
 	}
 
 	@Override
@@ -271,5 +291,17 @@ public class WindowEditor extends AbstractComponentEditor {
 		return new FeaturePath[] {
 			FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL)	
 		};
+	}
+	
+	@Override
+	public List<Action> getActions(Object element) {
+		List<Action> actions = new ArrayList<Action>();
+		
+		MWindow window = (MWindow) element;
+		if( window.getMainMenu() == null ) {
+			actions.add(addMainMenu);
+		}
+		
+		return actions;
 	}
 }

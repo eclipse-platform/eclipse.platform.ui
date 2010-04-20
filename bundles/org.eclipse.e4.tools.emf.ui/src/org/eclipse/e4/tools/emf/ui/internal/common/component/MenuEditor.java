@@ -25,7 +25,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -35,6 +37,7 @@ import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
@@ -51,6 +54,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -58,6 +62,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -70,6 +75,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	private ModelEditor editor;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private StackLayout stackLayout;
 
 	private class Struct {
 		private final String label;
@@ -103,11 +109,6 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public String getLabel(Object element) {
-		return Messages.MenuEditor_Label;
-	}
-
-	@Override
 	public String getDescription(Object element) {
 		return Messages.MenuEditor_Description;
 	}
@@ -116,13 +117,31 @@ public class MenuEditor extends AbstractComponentEditor {
 	public Composite getEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			composite = new Composite(parent, SWT.NONE);
+			stackLayout = new StackLayout();
+			composite.setLayout(stackLayout);
+			
+			createForm(composite, context, getMaster(),false);
+			createForm(composite, context, getMaster(),true);
 		}
+		EObject o = (EObject) object;
+		Control topControl;
+		if( o.eContainer() instanceof MWindow ) {
+			topControl = composite.getChildren()[1];
+		} else {
+			topControl = composite.getChildren()[0];
+		}
+		
+		if( stackLayout.topControl != topControl ) {
+			stackLayout.topControl = topControl;
+			composite.layout(true, true);
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
@@ -141,6 +160,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
+		if( ! rootMenu )
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_LabelLabel);
@@ -153,6 +173,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
+		if( ! rootMenu )
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_Tooltip);
@@ -165,6 +186,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
+		if( ! rootMenu )
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_IconURI);
@@ -342,7 +364,23 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	@Override
+	public String getLabel(Object element) {
+		MMenu menu = (MMenu) element;
+		if( menu.getParent() == null ) {
+			EObject o = (EObject) element;
+			if( o.eContainer() instanceof MWindow ) {
+				return Messages.MenuEditor_MainMenu;
+			}
+		}
+		return Messages.MenuEditor_Label;
+	}
+	
+	@Override
 	public String getDetailLabel(Object element) {
+		MMenu menu = (MMenu) element;
+		if( menu.getLabel() != null && menu.getLabel().trim().length() > 0 ) {
+			return menu.getLabel();
+		}
 		return null;
 	}
 }
