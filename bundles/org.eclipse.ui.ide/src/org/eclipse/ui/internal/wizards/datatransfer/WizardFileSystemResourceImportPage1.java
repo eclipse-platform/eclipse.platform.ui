@@ -208,9 +208,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         layout.makeColumnsEqualWidth = true;
         buttonComposite.setLayout(layout);
         buttonComposite.setFont(parent.getFont());
-        GridData buttonData = new GridData(GridData.VERTICAL_ALIGN_FILL
-                | GridData.HORIZONTAL_ALIGN_FILL);
-        buttonData.horizontalSpan = 2;
+        GridData buttonData = new GridData(SWT.FILL, SWT.FILL, true, false);
         buttonComposite.setLayoutData(buttonData);
 
         // types edit button
