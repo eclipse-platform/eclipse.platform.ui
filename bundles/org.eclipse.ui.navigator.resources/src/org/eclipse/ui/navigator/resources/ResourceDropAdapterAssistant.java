@@ -11,22 +11,38 @@
 
 package org.eclipse.ui.navigator.resources;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
+import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -62,6 +78,9 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	private static final IResource[] NO_RESOURCES = new IResource[0];
 
+	private RefactoringStatus refactoringStatus;
+	private IStatus returnStatus;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -451,8 +470,79 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 					WorkbenchNavigatorMessages.MoveResourceAction_title,
 					WorkbenchNavigatorMessages.MoveResourceAction_checkMoveMessage);
 			sources = checker.checkReadOnlyResources(sources);
-			MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
-			operation.copyResources(sources, target);
+
+			try {
+				RefactoringContribution contribution = RefactoringCore
+						.getRefactoringContribution(MoveResourcesDescriptor.ID);
+				MoveResourcesDescriptor descriptor = (MoveResourcesDescriptor) contribution.createDescriptor();
+				descriptor.setResourcesToMove(sources);
+				descriptor.setDestination(target);
+				refactoringStatus = new RefactoringStatus();
+				final Refactoring refactoring = descriptor.createRefactoring(refactoringStatus);
+				
+				returnStatus = null;
+				IRunnableWithProgress checkOp = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) {
+						try {
+						refactoringStatus = refactoring.checkAllConditions(monitor);
+					} catch (CoreException ex) {
+						returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
+					}}
+				};
+				
+				if (returnStatus != null)
+					return returnStatus;
+
+				try {
+					PlatformUI.getWorkbench().getProgressService().run(false, false, checkOp);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				} catch (InvocationTargetException e) {
+					return WorkbenchNavigatorPlugin.createErrorStatus(0, e.getLocalizedMessage(), e);
+				}
+				
+				if (refactoringStatus.hasEntries()) {
+					Dialog dialog= RefactoringUI.createLightWeightStatusDialog(refactoringStatus, getShell(), WorkbenchNavigatorMessages.MoveResourceAction_title);
+					int result = dialog.open();
+					if (result != IStatus.OK)
+						return Status.CANCEL_STATUS;
+				}
+				
+				final PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring,
+						CheckConditionsOperation.ALL_CONDITIONS);
+
+				final IWorkspaceRunnable r = new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						op.run(monitor);
+					}
+				};
+
+				returnStatus = null;
+				IRunnableWithProgress refactorOp = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) {
+						try {
+							ResourcesPlugin.getWorkspace().run(r, ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+						} catch (CoreException ex) {
+							returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
+						}
+					}
+				};
+				
+				if (returnStatus != null)
+					return returnStatus;
+				
+				try {
+					PlatformUI.getWorkbench().getProgressService().run(false, false, refactorOp);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				} catch (InvocationTargetException e) {
+					return WorkbenchNavigatorPlugin.createErrorStatus(0, e.getLocalizedMessage(), e);
+				}
+
+			} catch (CoreException ex) {
+				return WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
+			} catch (OperationCanceledException e) {
+			}
 		}
 
 		return problems;
