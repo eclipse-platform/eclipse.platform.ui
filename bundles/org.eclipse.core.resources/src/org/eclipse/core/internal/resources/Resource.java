@@ -2074,19 +2074,27 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 	
-	public IFileInfo[] filterChildren(IFileInfo[] list, boolean throwExeception) throws CoreException {
-		IPath relativePath = getProjectRelativePath();
+	public IFileInfo[] filterChildren(IFileInfo[] list, boolean throwException) throws CoreException {
 		Project project = (Project) getProject();
-		if ((project != null) && (relativePath != null)) {
-			LinkedList/*<Filter>*/currentIncludeFilters = new LinkedList/*<FilterDescription>*/();
-			LinkedList/*<Filter>*/currentExcludeFilters = new LinkedList/*<FilterDescription>*/();
-			LinkedList/*<FilterDescription>*/filters = null;
-			if (project.internalGetDescription() != null) {
-				filters = project.internalGetDescription().getFilter(relativePath);
-				if (filters != null) {
-					Iterator/*FilterDescription*/it = filters.iterator();
-					while (it.hasNext()) {
-						FilterDescription desc = (FilterDescription) it.next();
+		if (project == null)
+			return list;
+		final ProjectDescription description = project.internalGetDescription();
+		if (description == null)
+			return list;
+		IPath relativePath = getProjectRelativePath();
+		LinkedList/*<Filter>*/currentIncludeFilters = new LinkedList/*<FilterDescription>*/();
+		LinkedList/*<Filter>*/currentExcludeFilters = new LinkedList/*<FilterDescription>*/();
+		LinkedList/*<FilterDescription>*/filters = null;
+		
+		boolean firstSegment = true;
+		do {
+			if (!firstSegment)
+				relativePath = relativePath.removeLastSegments(1);
+			filters = description.getFilter(relativePath);
+			if (filters != null) {
+				for (Iterator it = filters.iterator(); it.hasNext();) {
+					FilterDescription desc = (FilterDescription) it.next();
+					if (firstSegment || desc.isInheritable()) {
 						Filter filter = new Filter(project, desc);
 						if (filter.isIncludeOnly()) {
 							if (filter.isFirst())
@@ -2101,39 +2109,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 						}
 					}
 				}
-				// verify inherited filters
-				while (relativePath.segmentCount() > 0) {
-					relativePath = relativePath.removeLastSegments(1);
-					filters = project.internalGetDescription().getFilter(relativePath);
-					if (filters != null) {
-						Iterator/*FilterDescription*/it = filters.iterator();
-						while (it.hasNext()) {
-							FilterDescription desc = (FilterDescription) it.next();
-							if (desc.isInheritable()) {
-								Filter filter = new Filter(project, desc);
-								if (filter.isIncludeOnly()) {
-									if (filter.isFirst())
-										currentIncludeFilters.addFirst(filter);
-									else
-										currentIncludeFilters.addLast(filter);
-								} else {
-									if (filter.isFirst())
-										currentExcludeFilters.addFirst(filter);
-									else
-										currentExcludeFilters.addLast(filter);
-								}
-							}
-						}
-					}
-				}
 			}
-			if ((currentIncludeFilters.size() > 0) || (currentExcludeFilters.size() > 0)) {
-				try {
-					list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, (IContainer) this, list);
-				} catch (CoreException e) {
-					if (throwExeception)
-						throw e;
-				}
+			firstSegment = false;
+		} while (relativePath.segmentCount() > 0);
+		
+		if ((currentIncludeFilters.size() > 0) || (currentExcludeFilters.size() > 0)) {
+			try {
+				list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, (IContainer) this, list);
+			} catch (CoreException e) {
+				if (throwException)
+					throw e;
 			}
 		}
 		return list;

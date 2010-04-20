@@ -339,7 +339,7 @@ public class UnifiedTree {
 		try {
 			final IFileStore store = node.getStore();
 			IFileInfo[] list = fileTree != null ? fileTree.getChildInfos(store) : store.childInfos(EFS.NONE, null);
-			if (list == null)
+			if (list == null || list.length == 0)
 				return NO_CHILDREN;
 			list = ((Resource) node.getResource()).filterChildren(list, false);
 			int size = list.length;
