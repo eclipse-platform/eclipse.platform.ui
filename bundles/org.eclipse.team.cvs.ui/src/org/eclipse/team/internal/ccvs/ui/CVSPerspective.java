@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoriesView;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
+
 
 public class CVSPerspective implements IPerspectiveFactory {
     
@@ -30,7 +29,7 @@ public class CVSPerspective implements IPerspectiveFactory {
 	}
 
 	/**
-	 * Defines the initial actions for a page.  
+	 * Defines the initial actions for a page.
 	 */
 	public void defineActions(IPageLayout layout) {
 
@@ -40,7 +39,7 @@ public class CVSPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file"); //$NON-NLS-1$
 
 		// Add "show views".
-		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
+		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(IHistoryView.VIEW_ID);
@@ -53,7 +52,7 @@ public class CVSPerspective implements IPerspectiveFactory {
 	}
 
 	/**
-	 * Defines the initial layout for a page.  
+	 * Defines the initial layout for a page.
 	 */
 	public void defineLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
