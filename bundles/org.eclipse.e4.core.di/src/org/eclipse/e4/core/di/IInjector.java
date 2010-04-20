@@ -25,14 +25,14 @@ public interface IInjector {
 	/**
 	 * @param object
 	 * @param objectSupplier
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void inject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param object
 	 * @param objectSupplier
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void uninject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
@@ -41,7 +41,7 @@ public interface IInjector {
 	 * @param methodName
 	 * @param objectSupplier
 	 * @return the return value of the method call, might be <code>null</code>
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
@@ -51,7 +51,7 @@ public interface IInjector {
 	 * @param defaultValue
 	 * @param objectSupplier
 	 * @return the return value of the method call, might be <code>null</code>
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
@@ -59,7 +59,7 @@ public interface IInjector {
 	 * @param clazz
 	 * @param objectSupplier
 	 * @return an instance of the specified class
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
@@ -67,20 +67,20 @@ public interface IInjector {
 	 * @param descriptor
 	 * @param objectSupplier
 	 * @return an instance of the specified class
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param clazz
 	 * @param objectSupplier
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param objectSupplier
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void disposed(AbstractObjectSupplier objectSupplier) throws InjectionException;
 
@@ -91,7 +91,7 @@ public interface IInjector {
 	/**
 	 * @param requestor
 	 * @param objectSupplier
-	 * @throws InjectionExeption if an exception occurred while performing this operation
+	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 }
