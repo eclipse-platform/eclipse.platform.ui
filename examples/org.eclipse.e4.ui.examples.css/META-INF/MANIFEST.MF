@@ -11,10 +11,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swt,
  org.w3c.css.sac,
  org.apache.commons.beanutils,
- org.apache.batik.css;bundle-version="[1.6.0,1.7.0)",
- org.apache.batik.util;bundle-version="[1.6.0,1.7.0)",
- org.apache.batik.util.gui;bundle-version="[1.6.0,1.7.0)",
- org.apache.batik.xml;bundle-version="[1.6.0,1.7.0)"
+ org.apache.batik.css;bundle-version="1.6.0",
+ org.apache.batik.util;bundle-version="1.6.0",
+ org.apache.batik.util.gui;bundle-version="1.6.0",
+ org.apache.batik.xml;bundle-version="1.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.examples.css.editor
