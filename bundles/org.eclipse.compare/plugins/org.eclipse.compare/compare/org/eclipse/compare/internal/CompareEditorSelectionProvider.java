@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,25 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.TextViewer;
+
 
 /**
  * A selection provider for view parts with more that one viewer. Tracks the
@@ -199,7 +205,41 @@ public class CompareEditorSelectionProvider implements IPostSelectionProvider {
 
 	public void setSelection(ISelection selection, boolean reveal) {
 		if (fViewerInFocus != null) {
+			if (reveal && !isSelectionInsideVisibleRegion(fViewerInFocus, selection))
+				resetVisibleRegion();
 			fViewerInFocus.setSelection(selection, reveal);
 		}
 	}
+
+	/**
+	 * Resets the visible region for all text viewers of this selection provider.
+	 * 
+	 * @since 3.6
+	 */
+	private void resetVisibleRegion() {
+		if (fViewers == null)
+			return;
+
+		for (int i= 0; i < fViewers.length; i++)
+			fViewers[i].setVisibleRegion(0, fViewers[i].getDocument().getLength());
+	}
+
+	/**
+	 * Tells whether the given selection is inside the text viewer's visible region.
+	 * 
+	 * @param textViewer the text viewer
+	 * @param selection the selection
+	 * @return <code>true</code> if the selection is inside the text viewer's visible region
+	 * @since 3.6
+	 */
+	private static boolean isSelectionInsideVisibleRegion(TextViewer textViewer, ISelection selection) {
+		if (!(selection instanceof ITextSelection))
+			return false;
+
+		ITextSelection textSelection= (ITextSelection)selection;
+		IRegion visibleRegion= textViewer.getVisibleRegion();
+
+		return textSelection.getOffset() >= visibleRegion.getOffset() && textSelection.getOffset() + textSelection.getLength() <= visibleRegion.getOffset() + visibleRegion.getLength();
+	}
+
 }
