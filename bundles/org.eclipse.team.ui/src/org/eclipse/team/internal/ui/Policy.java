@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
-
-
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
+
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -24,12 +23,13 @@ public class Policy {
 	//debug constants
 	public static boolean DEBUG_SYNC_MODELS = false;
 	public static boolean DEBUG_HISTORY = false;
+	public static boolean DEBUG_DND = false;
     
     private static String ACTION_BUNDLE = "org.eclipse.team.internal.ui.actions.actions"; //$NON-NLS-1$
     private static ResourceBundle actionBundle = null;
 
     /*
-     * Returns a resource bundle, creating one if it none is available. 
+     * Returns a resource bundle, creating one if it none is available.
      */
     public static ResourceBundle getActionBundle() {
         // thread safety
@@ -44,6 +44,7 @@ public class Policy {
 		if (TeamUIPlugin.getPlugin().isDebugging()) {
 			DEBUG_SYNC_MODELS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/syncmodels"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_HISTORY = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/history"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_DND = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/dnd"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -57,7 +58,7 @@ public class Policy {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-	}	
+	}
 	
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)

@@ -8,3 +8,6 @@ org.eclipse.team.ui/syncmodels=false
 
 # Shows history debugging information
 org.eclipse.team.ui/history=false
+
+# Shows DnD related debugging information
+org.eclipse.team.ui/dnd=false

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 
@@ -40,7 +39,7 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 
 		// Add "show views".
 		layout.addShowViewShortcut(ISynchronizeView.VIEW_ID);
-		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
+		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
