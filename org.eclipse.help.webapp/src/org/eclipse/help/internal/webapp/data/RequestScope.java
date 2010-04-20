@@ -125,13 +125,14 @@ public class RequestScope {
 					scopeStr+=ScopeRegistry.SCOPE_AND;
 			}
 		}
-		saveScope(scopeStr, response);
+		CookieUtil.deleteObsoleteCookies(request, response);
+		saveScope(scopeStr, request, response);
 	}
 	
-	public static void saveScope(String scope, HttpServletResponse response) {
+	public static void saveScope(String scope, HttpServletRequest request, HttpServletResponse response) {
 		if (HelpSystem.isShared()) {
 			if (response != null) {	
-				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, URLCoder.compactEncode(scope), response);
+				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, URLCoder.compactEncode(scope), request, response);
 			}
 		} else {
 			InstanceScope instanceScope = new InstanceScope();

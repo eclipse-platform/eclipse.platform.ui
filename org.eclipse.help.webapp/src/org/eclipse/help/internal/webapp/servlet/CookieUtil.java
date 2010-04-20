@@ -11,6 +11,8 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.servlet.http.*;
 
@@ -50,23 +52,73 @@ public class CookieUtil {
 		return ret;
 	}
 	public static void setCookieValue(String name, String value,
-			HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setMaxAge(COOKIE_LIFE);
-		cookie.setPath("/"); //$NON-NLS-1$
+		cookie.setPath(getCookiePath(request)); 
 		response.addCookie(cookie);
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out
 					.println("CookieUtil.setCookieValue(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
+	protected static String getCookiePath(HttpServletRequest request) {
+		String path = request.getContextPath() + '/';
+		return path;
+	}
 
-	public static void deleteCookie(String name, HttpServletResponse response) {
+	public static void deleteCookie(String name, HttpServletRequest request, HttpServletResponse response) {
+		deleteCookieUsingPath(name, response, getCookiePath(request));
+	}
+	
+	protected static void deleteCookieUsingPath(String name,
+			HttpServletResponse response, String cookiePath) {
 		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
-		cookie.setPath("/"); //$NON-NLS-1$
+		cookie.setPath(cookiePath); 
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
+	
+	public static void deleteObsoleteCookies(HttpServletRequest request, HttpServletResponse response) {
+		Cookie[] cookies = request.getCookies();
+		HashSet cookiesToKeep= new HashSet();
+		HashSet cookiesToDelete = new HashSet();
+		if (cookies != null) {
+			for (int i = 0; i < cookies.length; i++) {
+				    String name = cookies[i].getName();
+				    if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
+				    	cookiesToDelete.add(name);
+				    }
+					cookiesToKeep.add(name); {				
+				}
+			}
+
+			for (Iterator iter = cookiesToDelete.iterator(); iter.hasNext();) {
+				String name = (String) iter.next();
+				deleteCookieUsingPath(name, response, request.getContextPath() + "/advanced/"); //$NON-NLS-1$
+				deleteCookieUsingPath(name, response, "/"); //$NON-NLS-1$
+			}
+		}
+	}
+
+	/*
+	 * Is this one of the cookies that was used before Eclipse 3.6 of the 
+	 * form wset_nn
+	 */
+	private static boolean isObsoleteCookie(String name) {
+		final String WSET_PREFIX = "wset"; //$NON-NLS-1$
+		if (!name.startsWith(WSET_PREFIX)) {
+			return false;
+		}
+		for (int i = WSET_PREFIX.length(); i < name.length(); i++) {
+			char suffixChar = name.charAt(i);
+			if (suffixChar < '0' || suffixChar > '9') {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Saves string in multiple browser cookies. Cookies can store limited
 	 * length string. This method will attemt to split string among multiple
@@ -92,20 +144,20 @@ public class CookieUtil {
 			if (i == 1) {
 				setCookieValue(name + "1", //$NON-NLS-1$
 						len + "<" + data.substring(0, MAX_COOKIE_PAYLOAD), //$NON-NLS-1$
-						response);
+						request, response);
 			} else {
 				setCookieValue(name + i, data.substring(MAX_COOKIE_PAYLOAD
-						* (i - 1), MAX_COOKIE_PAYLOAD * i), response);
+						* (i - 1), MAX_COOKIE_PAYLOAD * i), request, response);
 			}
 		}
 		if (len % MAX_COOKIE_PAYLOAD > 0) {
 			if (n == 0) {
 				setCookieValue(name + "1", //$NON-NLS-1$
 						len + "<" + data.substring(0, len), //$NON-NLS-1$
-						response);
+						request, response);
 			} else {
 				setCookieValue(name + (n + 1), data.substring(
-						MAX_COOKIE_PAYLOAD * n, len), response);
+						MAX_COOKIE_PAYLOAD * n, len), request, response);
 			}
 		}
 
@@ -116,7 +168,7 @@ public class CookieUtil {
 				continue;
 			}
 			if (getCookieValue(name + i, request) != null) {
-				deleteCookie(name + i, response);
+				deleteCookie(name + i, request, response);
 			} else {
 				break;
 			}

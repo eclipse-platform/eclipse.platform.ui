@@ -41,7 +41,7 @@ public class CookiesData extends RequestData {
 		}
 		boolean isSynchToc = Platform.getPreferencesService().getBoolean
 		    (HelpBasePlugin.PLUGIN_ID, "advanced.syncDefault", false, null); //$NON-NLS-1$
-		CookieUtil.setCookieValue("synchToc", Boolean.toString(isSynchToc), response); //$NON-NLS-1$
+		CookieUtil.setCookieValue("synchToc", Boolean.toString(isSynchToc), request, response); //$NON-NLS-1$
 		return isSynchToc; 
     }
 
