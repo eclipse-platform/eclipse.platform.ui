@@ -75,6 +75,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_PIPELINE = "org.eclipse.ui.tests.navigator.testPipeline";
 	public static final String TEST_CONTENT_WITH = "org.eclipse.ui.tests.navigator.testContentWith";
 	public static final String TEST_CONTENT_NO_CHILDREN = "org.eclipse.ui.tests.navigator.testContentNoChildren";
+	public static final String TEST_CONTENT_EMPTY = "org.eclipse.ui.tests.navigator.testContentEmpty";
 
 	public static final String TEST_CONTENT_RESOURCE_UNSORTED = "org.eclipse.ui.tests.navigator.resourceContent.unsorted";
 

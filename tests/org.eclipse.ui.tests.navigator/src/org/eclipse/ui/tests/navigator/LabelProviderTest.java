@@ -188,9 +188,11 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 	/**
 	 * E{low} overrides D{low} overrides B{normal} overrides A F{high} overrides
-	 * C{low} overrides A G{normal} overrides C{low} B branch has higher
-	 * priority than C's, and G higher than G, so order should be B branch (E -
-	 * D - B) then C branches (F - G - C) then A
+	 * C{low} overrides A G{normal} overrides C{low}.
+	 * 
+	 * F is the highest priority and not overridden, so it's first.
+	 * B is next, but is overridden by E and D. So we have FEDB. Then A is processed
+	 * which is overridden by B and C which is overridden by B, so we have FEDBGCA.
 	 */
 	public void testOverrideChain() throws Exception {
 		final String[] EXTENSIONS = new String[] { TEST_CONTENT_TRACKING_LABEL + ".A",
@@ -215,13 +217,12 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// Give time for both and expect both to have happened.
 		DisplayHelper.sleep(200);
 
-		final String EXPECTED = "EDBFGCA";
+		final String EXPECTED = "FEDBGCA";
 		if (false)
 			System.out.println("Map: " + TrackingLabelProvider.styledTextQueries);
 		String queries = (String) TrackingLabelProvider.styledTextQueries.get(_project);
 		// This can happen multiple times depending on when the decorating label
-		// provider
-		// runs, so just make sure the sequence is right
+		// provider runs, so just make sure the sequence is right
 		assertTrue("Wrong query order for text", queries.startsWith(EXPECTED));
 	}
 
@@ -342,6 +343,27 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// But we get the text from the overridden label provider
 		if (!rootItems[0].getText().equals("p1"))
 			fail("Wrong text: " + rootItems[0].getText());
+	}
+
+	// Bug 307132 label provider priority not respected
+	public void testLabelProviderPriority() throws Exception {
+		
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+		// Just two different ones, they don't override, the label provider
+		// should be associated with the higher priority extension that
+		// contributed the object.
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+
+		refreshViewer();
+
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+
+		//DisplayHelper.sleep(10000000);
+
+		// The empty content provider provides the label at a higher priority
+		// than the resource content provider
+		assertEquals(TestLabelProviderCyan.instance.image, rootItems[0].getImage(0));
 	}
 
 }

@@ -454,17 +454,19 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		LinkedHashSet contributors = new LinkedHashSet();
 		INavigatorContentDescriptor sourceDescriptor = getSourceOfContribution(anElement);
 		
-		if (sourceDescriptor != null) {
-			findOverridingLabelExtensions(anElement, sourceDescriptor, contributors);
-		}
-		
 		// This is a TreeSet sorted ascending
 		Set possibleChildDescriptors = findDescriptorsWithPossibleChild(anElement, false);
+
+		// Add the source so that it gets sorted into the right place
+		if (sourceDescriptor != null) {
+			possibleChildDescriptors.add(sourceDescriptor);
+		}
+
 		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
 			NavigatorContentDescriptor ncd = (NavigatorContentDescriptor) iter.next();
 			findOverridingLabelExtensions(anElement, ncd, contributors);
 		}
-
+		
 		return contributors;
 	}
 

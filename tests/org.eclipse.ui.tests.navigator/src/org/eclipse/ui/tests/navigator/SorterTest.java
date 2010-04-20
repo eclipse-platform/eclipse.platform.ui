@@ -121,11 +121,13 @@ public class SorterTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		TreeItem[] childItems;
 
+		//DisplayHelper.sleep(100000000);
+		
 		// Backwards
 		assertEquals("p2", items[0].getText());
 		assertEquals("p1", items[1].getText());
 		assertEquals("Test", items[2].getText());
-		assertEquals("file6.txt", items[0].getItems()[0].getText());
+		assertEquals("Bluefile6.txt", items[0].getItems()[0].getText());
 		assertEquals("f2", items[1].getItems()[0].getText());
 
 		_contentService.getActivationService().deactivateExtensions(
@@ -158,7 +160,7 @@ public class SorterTest extends NavigatorTestBase {
 		assertEquals("p2", items[0].getText());
 		assertEquals("p1", items[1].getText());
 		assertEquals("Test", items[2].getText());
-		assertEquals("file6.txt", items[0].getItems()[0].getText());
+		assertEquals("Bluefile6.txt", items[0].getItems()[0].getText());
 		assertEquals("f2", items[1].getItems()[0].getText());
 
 		// And override again
