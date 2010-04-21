@@ -80,6 +80,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -2130,8 +2131,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public boolean restart() {
-		// FIXME compat restart
-		E4Util.unsupported("restart"); //$NON-NLS-1$
+		returnCode = PlatformUI.RETURN_RESTART;
+		IPresentationEngine engine = (IPresentationEngine) application.getContext().get(
+				IPresentationEngine.SERVICE_NAME);
+		engine.stop();
 		return true;
 	}
 
@@ -2381,7 +2384,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				// the event loop
 				// runEventLoop(handler, display);
 			}
-
+			returnCode = PlatformUI.RETURN_OK;
 		} catch (final Exception e) {
 			if (!display.isDisposed()) {
 				handler.handleException(e);
