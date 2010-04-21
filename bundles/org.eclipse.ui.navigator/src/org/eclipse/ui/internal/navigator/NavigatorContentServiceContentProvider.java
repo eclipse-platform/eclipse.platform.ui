@@ -627,7 +627,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				piplineContentProvider = (IPipelinedTreeContentProvider) overridingExtensions[i].internalGetContentProvider();
 				suggestedOverriddenParent = piplineContentProvider.getPipelinedParent(anElement, lastValidParent);
 
-				if (suggestedOverriddenParent != null)
+				if (suggestedOverriddenParent != null && !suggestedOverriddenParent.equals(aSuggestedParent))
 					lastValidParent = suggestedOverriddenParent;
 
 				// should never return null

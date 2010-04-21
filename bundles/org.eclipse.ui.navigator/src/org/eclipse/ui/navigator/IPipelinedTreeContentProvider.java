@@ -66,7 +66,9 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *            The object being queried for a parent.
 	 * @param aSuggestedParent
 	 *            The parent already suggested from upstream extensions.
-	 * @return The intended parent from this pipelined content provider.
+	 * @return The intended parent from this pipelined content provider. If you
+	 *         wish to not influence the parent, then return the
+	 *         aSuggestedParent value.
 	 */
 	Object getPipelinedParent(Object anObject, Object aSuggestedParent);
 
