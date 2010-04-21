@@ -304,6 +304,11 @@ public class ModeledPageLayout implements IPageLayout {
 		// }
 
 		MPartStack stack = createStack(stackId, visible);
+		MElementContainer<?> parent = refModel.getParent();
+		if (parent instanceof MPartStack) {
+			// we don't want to put a stack in a stack
+			refModel = parent;
+		}
 		insert(stack, refModel, plRelToSwt(relationship), ratio);
 
 		return stack;
