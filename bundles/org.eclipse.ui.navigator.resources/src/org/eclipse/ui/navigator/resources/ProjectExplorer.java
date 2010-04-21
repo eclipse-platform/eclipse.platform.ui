@@ -260,9 +260,11 @@ public final class ProjectExplorer extends CommonNavigator {
 			if (found != null)
 				return found;
 			IWorkbenchAdapter wba = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
-			found = wba.getParent(original);
-			if (found != null)
-				return convertElement(found);
+			if (wba != null) {
+				found = wba.getParent(original);
+				if (found != null)
+					return convertElement(found);
+			}
 		}
 		return original;
 	}	
