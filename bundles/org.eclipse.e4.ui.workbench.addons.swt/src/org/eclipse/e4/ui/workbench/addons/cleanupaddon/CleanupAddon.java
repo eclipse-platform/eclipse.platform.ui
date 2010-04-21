@@ -39,7 +39,9 @@ public class CleanupAddon {
 				if (display != null) {
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
-							if (container.getChildren().size() == 0) {
+							if (container.getChildren().size() == 0
+									&& !container.getTags().contains("EditorStack")) { //$NON-NLS-1$
+								System.out.println("Remove: " + container.toString()); //$NON-NLS-1$
 								container.setToBeRendered(false);
 								container.getParent().getChildren().remove(container);
 							}
