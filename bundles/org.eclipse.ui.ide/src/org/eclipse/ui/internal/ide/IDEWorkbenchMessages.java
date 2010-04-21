@@ -659,6 +659,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourceEditor_unableToFindCommonPathSegments;
 	public static String LinkedResourceEditor_convertAbsolutePathLocations;	
 	public static String LinkedResourceEditor_descriptionBlock;
+	public static String LinkedResourceEditor_convertTitle;
+	public static String LinkedResourceEditor_convertMessage;
 	
 	// ==============================================================================
 	// Editors

@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -194,7 +196,13 @@ public class LinkedResourceEditor {
         variableLabel.setLayoutData(data);
         variableLabel.setFont(font);
 
-		fTree = new TreeViewer(pageComponent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		Composite treeComposite = new Composite(pageComponent, SWT.NONE);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		treeComposite.setLayoutData(data);
+
+		fTree = new TreeViewer(treeComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -212,17 +220,21 @@ public class LinkedResourceEditor {
 		fTree.setLabelProvider(new LabelProvider());
 		fTree.setInput(this);
 
-		TreeColumn column = new TreeColumn(fTree.getTree(), SWT.LEFT, NAME_COLUMN);
-		column.setText(IDEWorkbenchMessages.LinkedResourceEditor_resourceName);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setWidth(170);
+		TreeColumn nameColumn = new TreeColumn(fTree.getTree(), SWT.LEFT, NAME_COLUMN);
+		nameColumn.setText(IDEWorkbenchMessages.LinkedResourceEditor_resourceName);
+		nameColumn.setResizable(true);
+		nameColumn.setMoveable(false);
 
-		column = new TreeColumn(fTree.getTree(), SWT.LEFT, LOCATION_COLUMN);
-		column.setText(IDEWorkbenchMessages.LinkedResourceEditor_location);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setWidth(260);
+		TreeColumn locationColumn = new TreeColumn(fTree.getTree(), SWT.LEFT, LOCATION_COLUMN);
+		locationColumn.setText(IDEWorkbenchMessages.LinkedResourceEditor_location);
+		locationColumn.setResizable(true);
+		locationColumn.setMoveable(false);
+
+		TreeColumnLayout tableLayout = new TreeColumnLayout();
+		treeComposite.setLayout( tableLayout );
+
+		tableLayout.setColumnData(nameColumn, new ColumnWeightData(170));
+		tableLayout.setColumnData(locationColumn, new ColumnWeightData(260));
 
 		fTree.getTree().setFont(font);
 		fTree.getTree().setHeaderVisible(true);
@@ -267,15 +279,16 @@ public class LinkedResourceEditor {
 
 		public String getColumnText(Object obj, int index) {
 			if (obj instanceof IResource) {
+				IResource resource = (IResource) obj;
 				if (index == NAME_COLUMN)
-					return ((IResource) obj).getName();
+					return resource.getName();
 				else if (index == PATH_COLUMN)
-					return ((IResource) obj).getParent()
+					return resource.getParent()
 							.getProjectRelativePath().toPortableString();
 				else {
-					IPath rawLocation = ((IResource) obj).getRawLocation();
+					IPath rawLocation = resource.getRawLocation();
 					if (rawLocation != null)
-						return rawLocation.toOSString();
+				    	return resource.getPathVariableManager().convertToUserEditableFormat(rawLocation.toOSString(), true);
 				}
 			} else if ((obj instanceof String) && index == 0)
 				return (String) obj;
@@ -494,13 +507,17 @@ public class LinkedResourceEditor {
 	}
 
 	private void convertLocation() {
-		ArrayList/* <IResource> */resources = new ArrayList/* <IResource> */();
-		IResource[] selectedResources = getSelectedResource();
-		resources.addAll(Arrays.asList(selectedResources));
-		if (areFixed(selectedResources))
-			convertToAbsolute(resources, selectedResources);
-		else
-			convertToRelative(resources, selectedResources);
+		if (MessageDialog.openConfirm(fConvertAbsoluteButton.getShell(), 
+				IDEWorkbenchMessages.LinkedResourceEditor_convertTitle, 
+				IDEWorkbenchMessages.LinkedResourceEditor_convertMessage)) {
+			ArrayList/* <IResource> */resources = new ArrayList/* <IResource> */();
+			IResource[] selectedResources = getSelectedResource();
+			resources.addAll(Arrays.asList(selectedResources));
+			if (areFixed(selectedResources))
+				convertToAbsolute(resources, selectedResources);
+			else
+				convertToRelative(resources, selectedResources);
+		}
 	}
 
 	private void convertToAbsolute(ArrayList/* <IResource> */resources,
