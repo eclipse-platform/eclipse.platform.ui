@@ -149,13 +149,7 @@ public class URIUtilTest extends FileSystemTest {
 
 	public void testBug291323_doubleDotLocationPath() {
 		URI aUri = URIUtil.toURI("..");
-		URI bUri = null;
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			bUri = URIUtil.toURI(""); // resolved to "C:/"
-		} else {
-			bUri = URIUtil.toURI("/");
-		}
-
+		URI bUri = URIUtil.toURI("");
 		assertEquals("1.0", URIUtil.toPath(bUri).toString(), URIUtil.toPath(aUri).toString());
 	}
 }
