@@ -75,7 +75,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		l = new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
 		viewer = new TableViewer(container);
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new LabelProviderImpl());
@@ -132,7 +132,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 	
 	protected abstract Command createStoreCommand( EditingDomain editingDomain, MCommand command);
 	
-	private class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
+	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 		
 		public void update(final ViewerCell cell) {
 			MCommand cmd = (MCommand) cell.getElement();

@@ -197,7 +197,7 @@ public class ControlFactory {
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 
-		l = new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		final TableViewer viewer = new TableViewer(parent);
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.setLabelProvider(new LabelProvider() {

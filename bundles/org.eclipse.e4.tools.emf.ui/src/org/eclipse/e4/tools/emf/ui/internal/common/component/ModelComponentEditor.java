@@ -148,7 +148,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 		gd.horizontalSpan=2;
 		t.setLayoutData(gd);
 
-		l = new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		ListViewer viewer = new ListViewer(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;

@@ -71,7 +71,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 
-	private class Struct {
+	private static class Struct {
 		private final String label;
 		private final EClass eClass;
 		private final boolean separator;

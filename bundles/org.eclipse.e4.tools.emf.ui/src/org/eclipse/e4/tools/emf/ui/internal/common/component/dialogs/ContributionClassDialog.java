@@ -90,7 +90,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		l = new Label(container,SWT.NONE);
+		new Label(container,SWT.NONE);
 		
 		viewer = new TableViewer(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -173,7 +173,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		return null;
 	}
 	
-	private class ContributionResultHandlerImpl implements ContributionResultHandler {
+	private static class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
 		private IObservableList list;
 		

@@ -478,7 +478,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 		return null;
 	}
 
-	private class ObservableFactoryImpl implements IObservableFactory {
+	private static class ObservableFactoryImpl implements IObservableFactory {
 		private IEMFListProperty prop = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 		
 		public IObservable createObservable(Object target) {
@@ -489,7 +489,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 		}
 	}
 	
-	private class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
+	private static class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 		
 	}
 }
