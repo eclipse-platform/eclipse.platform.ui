@@ -40,8 +40,6 @@ import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DnDManager;
-import org.eclipse.e4.workbench.ui.renderers.swt.dnd.DragHost;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -118,9 +116,11 @@ public class WBWRenderer extends SWTPartRenderer {
 			MUIElement parent = activePart.getParent();
 			if (parent instanceof MPartStack) {
 				parent.getTags().remove("active"); //$NON-NLS-1$
-				setCSSInfo(parent, parent.getWidget());
+				if (parent.getWidget() != null)
+					setCSSInfo(parent, parent.getWidget());
 			} else {
-				setCSSInfo(activePart, activePart.getWidget());
+				if (activePart.getWidget() != null)
+					setCSSInfo(activePart, activePart.getWidget());
 			}
 		}
 
@@ -312,7 +312,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		final Shell wbwShell;
 		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		} else if (wbwModel.getTags().contains(DragHost.DragHostId)) {
+		} else if (wbwModel.getTags().contains("dragHost")) { //$NON-NLS-1$
 			wbwShell = new Shell(parentShell, SWT.BORDER);
 			wbwShell.setAlpha(110);
 		} else {
@@ -348,11 +348,6 @@ public class WBWRenderer extends SWTPartRenderer {
 		wbwShell.setImage(getImage(wbwModel));
 		// TODO: This should be added to the model, see bug 308494
 		wbwShell.setImages(Window.getDefaultImages());
-
-		// Install the drag and drop handler on all regular windows
-		if (!wbwModel.getTags().contains(DragHost.DragHostId)) {
-			new DnDManager(wbwModel);
-		}
 
 		return newWidget;
 	}

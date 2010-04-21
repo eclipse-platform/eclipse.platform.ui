@@ -314,8 +314,13 @@ public class StackRenderer extends LazyStackRenderer {
 		cti.setText(getLabel(itemPart, itemPart.getLabel()));
 		cti.setImage(getImage(itemPart));
 		cti.setToolTipText(itemPart.getTooltip());
-		if (part.getWidget() != null)
-			cti.setControl((Control) part.getWidget());
+		if (part.getWidget() != null) {
+			// The part might have a widget but may not yet have been placed
+			// under this stack, check this
+			Control ctrl = (Control) part.getWidget();
+			if (ctrl.getParent() == ctf)
+				cti.setControl((Control) part.getWidget());
+		}
 	}
 
 	private int calcIndexFor(MElementContainer<MUIElement> stack,
@@ -469,8 +474,12 @@ public class StackRenderer extends LazyStackRenderer {
 
 		CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element);
-
-		if (element.getWidget() == null) {
+		if (cti == null) {
+			createTab(element.getParent(), element);
+			cti = findItemForPart(element);
+		}
+		Control ctrl = (Control) element.getWidget();
+		if (element.getWidget() == null || ctrl.getParent() != ctf) {
 			Control tabCtrl = (Control) renderer.createGui(element);
 			cti.setControl(tabCtrl);
 		} else if (cti.getControl() == null) {

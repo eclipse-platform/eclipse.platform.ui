@@ -33,24 +33,22 @@ abstract class DragAgent {
 	private DragHost dragHost = null;
 
 	/**
-	 * Return the element that your agent would start to drag given the current
-	 * cursor info.
+	 * Return the element that your agent would start to drag given the current cursor info.
 	 * 
 	 * @param info
 	 *            Information about which model element the cursor is over
 	 * 
-	 * @return The element that this agent would drag or null if the agent is
-	 *         not appropriate for the given info
+	 * @return The element that this agent would drag or null if the agent is not appropriate for
+	 *         the given info
 	 */
 	public abstract MUIElement getElementToDrag(CursorInfo info);
 
 	/**
-	 * Determine if a drag can be started on the given info. This allows a
-	 * subclass to restrict the ability of an agent to initiate a drag operation
-	 * (i.e. in a 'fixed' perspective...).
+	 * Determine if a drag can be started on the given info. This allows a subclass to restrict the
+	 * ability of an agent to initiate a drag operation (i.e. in a 'fixed' perspective...).
 	 * 
-	 * The default implementation is to allow dragging if the agent can
-	 * determine an element to drag.
+	 * The default implementation is to allow dragging if the agent can determine an element to
+	 * drag.
 	 * 
 	 * @param info
 	 *            Information about which model element the cursor is over
@@ -78,28 +76,27 @@ abstract class DragAgent {
 	}
 
 	/**
-	 * Cancel the drag operation. The default implementation will return the
-	 * dragElement to its original location in the model.
+	 * Cancel the drag operation. The default implementation will return the dragElement to its
+	 * original location in the model.
 	 */
 	public void cancelDrag() {
 		removeDragFeedback();
 
-		MElementContainer<MUIElement> curParent = dragElement.getParent();
-		int curIndex = -1;
-		if (curParent != null)
-			curIndex = curParent.getChildren().indexOf(dragElement);
-
-		if (curParent != originalParent || curIndex != originalIndex) {
-			if (curParent != null) {
-				curParent.getChildren().remove(dragElement);
-			}
-			originalParent.getChildren().add(originalIndex, curParent);
-		}
+		// MElementContainer<MUIElement> curParent = dragElement.getParent();
+		// int curIndex = -1;
+		// if (curParent != null)
+		// curIndex = curParent.getChildren().indexOf(dragElement);
+		//
+		// if (curParent != originalParent || curIndex != originalIndex) {
+		// if (curParent != null) {
+		// curParent.getChildren().remove(dragElement);
+		// }
+		// originalParent.getChildren().add(originalIndex, curParent);
+		// }
 	}
 
 	/**
-	 * Restore the DragAgent to a state where it will be ready to start a new
-	 * drag
+	 * Restore the DragAgent to a state where it will be ready to start a new drag
 	 */
 	public void dragFinished() {
 		dragElement = null;
@@ -108,9 +105,8 @@ abstract class DragAgent {
 	}
 
 	/**
-	 * Initialize the drag feedback. The default implementation will 'host' the
-	 * drag element in a semi-transparent window that will track with the
-	 * cursor.
+	 * Initialize the drag feedback. The default implementation will 'host' the drag element in a
+	 * semi-transparent window that will track with the cursor.
 	 */
 	public void createDragFeedback() {
 		dragHost = new DragHost(dragElement);
@@ -125,8 +121,7 @@ abstract class DragAgent {
 	}
 
 	/**
-	 * Track the drag feedback. This is called during a drag operation when the
-	 * mouse moves.
+	 * Track the drag feedback. This is called during a drag operation when the mouse moves.
 	 * 
 	 * @param cursorInfo
 	 */

@@ -30,8 +30,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.swt.handlers;x-internal:=tr
  org.eclipse.e4.ui.workbench.swt.internal;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.internal.parts;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.modeling,
- org.eclipse.e4.ui.workbench.swt.util,
- org.eclipse.e4.ui.workbench.trim
+ org.eclipse.e4.ui.workbench.swt.util
 Bundle-Vendor: Eclipse.org
 Import-Package: javax.inject;version="1.0.0",
  org.apache.batik.css.engine;version="1.6.0",
