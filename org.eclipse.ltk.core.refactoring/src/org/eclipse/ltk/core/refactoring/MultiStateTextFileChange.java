@@ -64,6 +64,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
+import org.eclipse.ltk.internal.core.refactoring.Lock;
 import org.eclipse.ltk.internal.core.refactoring.MultiStateUndoChange;
 import org.eclipse.ltk.internal.core.refactoring.NonDeletingPositionUpdater;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;

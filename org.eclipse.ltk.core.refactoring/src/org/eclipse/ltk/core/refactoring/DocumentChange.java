@@ -24,6 +24,7 @@ import org.eclipse.text.edits.UndoEdit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.ltk.internal.core.refactoring.Lock;
 import org.eclipse.ltk.internal.core.refactoring.TextChanges;
 import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
 

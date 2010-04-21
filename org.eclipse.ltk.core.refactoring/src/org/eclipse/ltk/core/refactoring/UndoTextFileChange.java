@@ -36,6 +36,7 @@ import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
+import org.eclipse.ltk.internal.core.refactoring.Lock;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
