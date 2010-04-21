@@ -279,6 +279,7 @@ public class TeamUIMessages extends NLS {
 	public static String SyncViewerPreferencePage_44;
 	public static String SyncViewerPreferencePage_45;
 	public static String SyncViewerPreferencePage_46;
+	public static String SyncViewerPreferencePage_47;
 
 	public static String TeamAction_internal;
 	public static String TextPreferencePage_add;

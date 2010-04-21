@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,6 +146,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.MAKE_FILE_WRITTABLE_IF_CONTEXT_MISSING, false);
 		store.setDefault(IPreferenceIds.REUSE_OPEN_COMPARE_EDITOR, true);
 		store.setDefault(IPreferenceIds.RUN_IMPORT_IN_BACKGROUND, false);
+		store.setDefault(IPreferenceIds.APPLY_PATCH_IN_SYNCHRONIZE_VIEW, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT, IPreferenceIds.COMPRESSED_LAYOUT);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);

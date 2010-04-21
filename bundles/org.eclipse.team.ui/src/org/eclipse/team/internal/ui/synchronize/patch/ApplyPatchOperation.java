@@ -18,22 +18,14 @@ import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.PatchReader;
-import org.eclipse.compare.internal.patch.FilePatch;
-import org.eclipse.compare.internal.patch.PatchWizard;
-import org.eclipse.compare.internal.patch.PatchWizardDialog;
-import org.eclipse.compare.internal.patch.Utilities;
+import org.eclipse.compare.internal.patch.*;
 import org.eclipse.compare.patch.IFilePatch;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
 
@@ -163,14 +155,10 @@ public class ApplyPatchOperation implements Runnable {
 
 	private PatchWizard createPatchWizard(IStorage patch, IResource target,
 			CompareConfiguration configuration) {
-		if (configuration != null) {
-			IPreferenceStore ps = configuration.getPreferenceStore();
-			if (ps != null) {
-				if (ps.getBoolean(ComparePreferencePage.APPLY_PATCH_IN_SYNCHRONIZE_VIEW))
-					return new ApplyPatchSynchronizationWizard(patch, target,
-							configuration);
-			}
-		}
+		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(
+				IPreferenceIds.APPLY_PATCH_IN_SYNCHRONIZE_VIEW))
+			return new ApplyPatchSynchronizationWizard(patch, target,
+					configuration);
 		return new PatchWizard(patch, target, configuration);
 	}
 
@@ -249,5 +237,4 @@ public class ApplyPatchOperation implements Runnable {
 		}
 	}
 
-	
 }

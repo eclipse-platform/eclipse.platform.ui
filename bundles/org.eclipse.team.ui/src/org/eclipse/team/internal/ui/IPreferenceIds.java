@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,12 @@ public interface IPreferenceIds {
 	 * Preference to enable the import of a project set to be run in the background 
 	 */
 	public static final String RUN_IMPORT_IN_BACKGROUND= PREFIX + "run_import_in_background_"; //$NON-NLS-1$
-	
+
+	/*
+	 * Preference to enable synchronizing with a patch via Apply Patch action
+	 */
+	public static final String APPLY_PATCH_IN_SYNCHRONIZE_VIEW = PREFIX + "apply_patch_in_sychronize_view"; //$NON-NLS-1$
+
 	/*
 	 * Preference to manage the perspective used to synchronize.
 	 */

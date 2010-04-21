@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,8 +94,14 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 				RUN_IMPORT_IN_BACKGROUND, 
 		        TeamUIMessages.SyncViewerPreferencePage_46, 
 				BooleanFieldEditor.DEFAULT, 
-				getFieldEditorParent()));		
-		
+				getFieldEditorParent()));
+
+		addField(new BooleanFieldEditor(
+				APPLY_PATCH_IN_SYNCHRONIZE_VIEW, 
+		        TeamUIMessages.SyncViewerPreferencePage_47, 
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
+
 		if (isIncludeDefaultLayout()) {
 		    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
 		            TeamUIMessages.SyncViewerPreferencePage_0, 3,  
