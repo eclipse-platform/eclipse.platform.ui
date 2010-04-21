@@ -201,8 +201,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		}
 
 		// alwaysOverwrite = false;
-		if (aDropAdapter.getCurrentTarget() == null
-				|| aDropTargetEvent.data == null) {
+		if (aTarget == null || aDropTargetEvent.data == null) {
 			return Status.CANCEL_STATUS;
 		}
 		IStatus status = null;
@@ -238,8 +237,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			}
 		}
 		openError(status);
-		IContainer target = getActualTarget((IResource) aDropAdapter
-				.getCurrentTarget());
+		IContainer target = getActualTarget((IResource) aTarget);
 		if (target != null && target.isAccessible()) {
 			try {
 				target.refreshLocal(IResource.DEPTH_ONE, null);
