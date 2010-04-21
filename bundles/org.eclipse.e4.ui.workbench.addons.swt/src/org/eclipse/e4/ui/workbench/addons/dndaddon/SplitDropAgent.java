@@ -80,9 +80,13 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean drop(MUIElement dragElement, CursorInfo info) {
-		MPart relTo = (MPart) info.curElement;
+		MUIElement relTo = info.curElement;
 		Control ctrl = (Control) relTo.getWidget();
 		int where = whereToDrop(ctrl, info.cursorPos);
+
+		MUIElement relParent = relTo.getParent();
+		if (relParent instanceof MPartStack)
+			relTo = relParent;
 
 		if (dragElement.getParent() != null) {
 			dragElement.getParent().getChildren().remove(dragElement);
