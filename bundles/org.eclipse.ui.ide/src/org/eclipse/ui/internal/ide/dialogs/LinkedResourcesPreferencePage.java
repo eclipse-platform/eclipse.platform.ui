@@ -46,6 +46,8 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
     private Label topLabel;
 
+    public static String PREF_ID = "org.eclipse.ui.preferencePages.LinkedResources"; //$NON-NLS-1$
+    
     private PathVariablesGroup pathVariablesGroup;
 
 	private ResourceDragAndDropEditor dragAndDropHandlingEditor;

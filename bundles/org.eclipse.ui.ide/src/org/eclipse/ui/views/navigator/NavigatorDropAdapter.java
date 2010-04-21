@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -39,6 +40,8 @@ import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -79,11 +82,62 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         if (FileTransfer.getInstance().isSupportedType(event.currentDataType)
                 && event.detail == DND.DROP_DEFAULT) {
             // default to copy when dragging from outside Eclipse. Fixes bug 16308.
-            event.detail = DND.DROP_COPY;
-        }
+        	// Now delegates this behavior to the ImportTypeDialog.  See bug 302441
+        	IContainer destination = getCurrentContainerTarget();
+        	if (destination != null)
+               	event.detail = getDefaultDropMask(destination);
+        	else
+        		event.detail = DND.DROP_NONE;
+          }
         super.dragEnter(event);
     }
 
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	public void dragOperationChanged(DropTargetEvent event) {
+		super.dragOperationChanged(event);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	public void dragOver(DropTargetEvent event) {
+        if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+        	IContainer destination = getCurrentContainerTarget();
+        	if (destination != null)
+               	event.detail = getDefaultDropMask(destination);
+        	else
+        		event.detail = DND.DROP_NONE;
+          }
+        super.dragOver(event);
+    }
+
+	private static int getDefaultDropMask(IContainer target) {
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		
+		String mode = store.getString(target.isVirtual() ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE:IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
+		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY))
+			return DND.DROP_COPY;
+		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK))
+			return DND.DROP_LINK; 
+		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER))
+			return DND.DROP_LINK; 
+		if (target.isVirtual())
+			return DND.DROP_LINK;
+		return DND.DROP_COPY;
+	}
+
+	private IContainer getCurrentContainerTarget() {
+    	Object object = getCurrentTarget();
+    	if ((object != null) &&
+            (object instanceof IResource) && 
+            ((IResource) object).isAccessible()) {
+            return getActualTarget((IResource) object);
+    	}
+    	return null;
+    }
     /**
      * Returns an error status with the given info.
      */
@@ -450,8 +504,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         }
         if (FileTransfer.getInstance().isSupportedType(transferType)
                 && (lastValidOperation != DND.DROP_COPY)
+                && (lastValidOperation != DND.DROP_MOVE)
                 && (lastValidOperation != DND.DROP_LINK)) {
-            // only allow copying and linking when dragging from outside Eclipse
             return false;
         }
         if (super.validateDrop(target, dragOperation, transferType)) {

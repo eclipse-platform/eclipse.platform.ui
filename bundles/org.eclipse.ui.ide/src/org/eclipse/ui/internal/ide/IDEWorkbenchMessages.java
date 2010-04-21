@@ -788,7 +788,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ImportTypeDialog_importElementsAsTooltipSet;
 	public static String ImportTypeDialog_editVariables;
 	public static String ImportTypeDialog_alwaysPerformThisOperation;
-	public static String ImportTypeDialog_alwaysUseLocationWhenLinkingFiles;
+	public static String ImportTypeDialog_configureSettings;
 
 	// ==============================================================================
 	// Editor Framework

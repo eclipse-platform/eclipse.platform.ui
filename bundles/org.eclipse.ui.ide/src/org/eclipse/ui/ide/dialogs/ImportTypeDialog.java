@@ -22,6 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -32,13 +33,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage;
 import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -80,9 +84,6 @@ public class ImportTypeDialog extends TrayDialog {
 	 */
 	public final static int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
 	
-	private Button alwaysPerformThisOperation = null;
-
-
 	private Button copyButton = null;
 
 	private int currentSelection;
@@ -240,19 +241,19 @@ public class ImportTypeDialog extends TrayDialog {
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT))
 			return super.open();
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY) && hasFlag(IMPORT_COPY)) {
-			this.currentSelection = IMPORT_COPY;
+			currentSelection = IMPORT_COPY;
 			return Window.OK;
 		}
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY) && hasFlag(IMPORT_MOVE)) {
-			this.currentSelection = IMPORT_MOVE;
+			currentSelection = IMPORT_MOVE;
 			return Window.OK;
 		}
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK) && hasFlag(IMPORT_LINK)) {
-			this.currentSelection = IMPORT_LINK;
+			currentSelection = IMPORT_LINK;
 			return Window.OK;
 		}
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER) && hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS)) {
-			this.currentSelection = IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
+			currentSelection = IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
 			return Window.OK;
 		}
 
@@ -331,22 +332,6 @@ public class ImportTypeDialog extends TrayDialog {
 
 			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 			store.putValue(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, Boolean.toString(variable != null));
-			if (alwaysPerformThisOperation.getSelection()) {
-				String mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT;
-				switch(currentSelection) {
-				case IMPORT_COPY:
-				case IMPORT_MOVE:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY;
-					break;
-				case IMPORT_LINK:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK;
-					break;
-				case IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
-					mode = IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER;
-					break;
-				}
-				store.putValue(targetIsVirtual? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE:IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, mode);
-			}
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -466,14 +451,30 @@ public class ImportTypeDialog extends TrayDialog {
 			currentSelection = IMPORT_LINK;
 			parent.getShell().setText(IDEWorkbenchMessages.ImportTypeDialog_titleFilesLinking);
 		}
-		alwaysPerformThisOperation = new Button(parent, SWT.CHECK);
-		alwaysPerformThisOperation.setText(linkIsOnlyChoice? IDEWorkbenchMessages.ImportTypeDialog_alwaysUseLocationWhenLinkingFiles: IDEWorkbenchMessages.ImportTypeDialog_alwaysPerformThisOperation);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		alwaysPerformThisOperation.setLayoutData(gridData);
-
+		createLinkControl(parent);
 		refreshSelection();
 		return composite;
+	}
+
+	private Control createLinkControl(Composite composite) {
+		Link link= new Link(composite, SWT.WRAP | SWT.RIGHT);
+		link.setText(IDEWorkbenchMessages.ImportTypeDialog_configureSettings);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openSettingsPage();
+			}
+		});
+		GridData gridData= new GridData(GridData.FILL, GridData.CENTER, true, false);
+		gridData.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		link.setLayoutData(gridData);
+		link.setFont(composite.getFont());
+
+		return link;
+	}
+
+	protected void openSettingsPage() {
+		String prefID = LinkedResourcesPreferencePage.PREF_ID;
+		PreferencesUtil.createPreferenceDialogOn(getShell(), prefID, new String[] {prefID}, null).open();
 	}
 
 	protected Control createMessageArea(Composite parent) {
@@ -567,7 +568,7 @@ public class ImportTypeDialog extends TrayDialog {
 			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
 		return mask;
 	}
-
+	
 	private class AlignedCompositeImageDescriptor extends CompositeImageDescriptor {
 
 		private int SPACE = 4;
