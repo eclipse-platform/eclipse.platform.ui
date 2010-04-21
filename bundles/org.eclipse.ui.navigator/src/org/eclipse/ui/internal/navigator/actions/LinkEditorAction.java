@@ -57,6 +57,9 @@ public class LinkEditorAction extends Action implements
 
 	private final LinkHelperService linkService;
 
+	private boolean ignoreSelectionChanged;
+	private boolean ignoreEditorActivation;
+	
 	private UIJob activateEditorJob = new UIJob(
 			CommonNavigatorMessages.Link_With_Editor_Job_) {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -66,13 +69,25 @@ public class LinkEditorAction extends Action implements
 				if (selection != null && !selection.isEmpty()
 						&& selection instanceof IStructuredSelection) {
 
-					IStructuredSelection sSelection = (IStructuredSelection) selection;
+					final IStructuredSelection sSelection = (IStructuredSelection) selection;
 					if (sSelection.size() == 1) {
-						ILinkHelper[] helpers = linkService
+						final ILinkHelper[] helpers = linkService
 								.getLinkHelpersFor(sSelection.getFirstElement());
 						if (helpers.length > 0) {
-							helpers[0].activateEditor(commonNavigator.getSite()
-									.getPage(), sSelection);
+							ignoreEditorActivation = true;
+							SafeRunner.run(new ISafeRunnable() {
+								public void run() throws Exception {
+									helpers[0].activateEditor(commonNavigator.getSite()
+											.getPage(), sSelection);
+								}
+
+								public void handleException(Throwable e) {
+									String msg = e.getMessage() != null ? e.getMessage()
+											: e.toString();
+									NavigatorPlugin.logError(0, msg, e);
+								}
+							});
+							ignoreEditorActivation = false;
 						}
 					}
 				}
@@ -98,7 +113,9 @@ public class LinkEditorAction extends Action implements
 								IStructuredSelection newSelection = linkService
 										.getSelectionFor(input);
 								if (!newSelection.isEmpty()) {
+									ignoreSelectionChanged = true;
 									commonNavigator.selectReveal(newSelection);
+									ignoreSelectionChanged = false;
 								}
 							}
 						}
@@ -146,13 +163,13 @@ public class LinkEditorAction extends Action implements
 		partListener = new IPartListener() {
 
 			public void partActivated(IWorkbenchPart part) {
-				if (part instanceof IEditorPart) {
+				if (part instanceof IEditorPart && !ignoreEditorActivation) {
 					updateSelectionJob.schedule(BRIEF_DELAY);
 				}
 			}
 
 			public void partBroughtToTop(IWorkbenchPart part) {
-				if (part instanceof IEditorPart) {
+				if (part instanceof IEditorPart && !ignoreEditorActivation) {
 					updateSelectionJob.schedule(BRIEF_DELAY);
 				}
 			}
@@ -202,7 +219,7 @@ public class LinkEditorAction extends Action implements
 	 * @see org.eclipse.jface.viewers.ISelectionChangedList
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (commonNavigator.isLinkingEnabled() && commonNavigator == commonNavigator.getSite().getPage().getActivePart()) {
+		if (commonNavigator.isLinkingEnabled() && !ignoreSelectionChanged) {
 			activateEditor();
 		}
 	}

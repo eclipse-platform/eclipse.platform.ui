@@ -68,6 +68,12 @@
             allowMultiple="false"
             class="org.eclipse.ui.navigator.CommonNavigator"
             name="Initial Activation View"/>
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.resources.ProjectExplorer"
+            id="org.eclipse.ui.tests.navigator.TestLinkHelperView"
+            name="Test Link Helper Viewer">
+      </view>
             
    </extension>
 
@@ -201,6 +207,30 @@
             <contentExtension pattern="org.eclipse.ui.tests.navigator.testInitialActivation*"/>
          </includes>
       </viewerContentBinding>
+
+      <viewer
+            viewerId="org.eclipse.ui.tests.navigator.TestLinkHelperView">
+      </viewer>
+
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.TestLinkHelperView">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContentHasChildren"/>            
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.linkHelper"/> 
+            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+         </includes>
+      </viewerContentBinding>
+
+      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestLinkHelperView">
+         <includes>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.activityTest1"/>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.activityProviderTest"/>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
+         </includes>
+      </viewerActionBinding>
 
    </extension>
 
@@ -1496,6 +1526,23 @@
             </command>
          </menu>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.linkHelper">
+      <linkHelper
+            class="org.eclipse.ui.tests.navigator.extension.TestLinkHelper"
+            id="org.eclipse.ui.tests.navigator.linkHelper">
+         <editorInputEnablement>
+            <instanceof
+                  value="org.eclipse.ui.IFileEditorInput">
+            </instanceof>
+         </editorInputEnablement>
+         <selectionEnablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+         </selectionEnablement>
+      </linkHelper>
    </extension>
 
 

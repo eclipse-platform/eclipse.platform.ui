@@ -61,6 +61,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";
 	public static final String TEST_VIEWER_FILTER = "org.eclipse.ui.tests.navigator.FilterTestView";
 	public static final String TEST_VIEWER_INITIAL_ACTIVATION = "org.eclipse.ui.tests.navigator.InitialActivationView";
+	public static final String TEST_VIEWER_LINK_HELPER = "org.eclipse.ui.tests.navigator.TestLinkHelperView";
 
 	public static final String TEST_VIEW_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestView";
 

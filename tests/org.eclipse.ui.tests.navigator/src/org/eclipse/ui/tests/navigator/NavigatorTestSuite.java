@@ -49,6 +49,7 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(CdtTest.class));
 		addTest(new TestSuite(M12Tests.class));
 		addTest(new TestSuite(FirstClassM1Tests.class));
+		addTest(new TestSuite(LinkHelperTest.class));
 		//addTest(new TestSuite(DnDTest.class));
 		// Does not pass on all platforms see bug 264449
 		//addTest(new TestSuite(PerformanceTest.class));
