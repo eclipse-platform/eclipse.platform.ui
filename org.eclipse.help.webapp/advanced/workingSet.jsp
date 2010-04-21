@@ -20,7 +20,7 @@
 %>
 
 
-<html>
+<html lang="<%=ServletResources.getString("locale", request)%>">
 <head>
 <title><%=ServletResources.getString(data.isEditMode()?"EditWorkingSet":"NewWorkingSet", request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

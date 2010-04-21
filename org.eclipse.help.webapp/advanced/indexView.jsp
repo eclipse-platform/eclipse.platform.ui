@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2005, 2009 Intel Corporation and others.
+ Copyright (c) 2005, 2010 Intel Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
      IBM Corporation - 166695 [Webapp] Index View truncates button if large fonts are used
      IBM Corporation 2006, refactored index view into a single frame
      IBM Corporation 2009, css changes
+     IBM Corporation 2010, added lang to html tag
 --%>
 <%@ include file="fheader.jsp"%>
 
@@ -19,7 +20,7 @@
 	WebappPreferences prefs = requestData.getPrefs();
 %>
 
-<html>
+<html lang="<%=ServletResources.getString("locale", request)%>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 

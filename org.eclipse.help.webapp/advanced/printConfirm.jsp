@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2009 IBM Corporation and others.
+ Copyright (c) 2009, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@
 	String notice = ServletResources.getString("topicNumExceeded", args, request);
 %>
 
-<html>
+<html lang="<%=ServletResources.getString("locale", request)%>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
