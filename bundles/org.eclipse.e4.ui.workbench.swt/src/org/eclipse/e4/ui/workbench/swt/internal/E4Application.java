@@ -30,6 +30,7 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -106,14 +107,16 @@ public class E4Application implements IApplication {
 
 		IEclipseContext appContext = createDefaultContext();
 
+		// Get the factory to create DI instances with
+		IContributionFactory factory = (IContributionFactory) appContext
+				.get(IContributionFactory.class.getName());
+
 		// Install the life-cycle manager for this session if there's one
 		// defined
 		String lifeCycleURI = getArgValue(E4Workbench.LIFE_CYCLE_URI_ARG,
 				applicationContext);
 		Object lcManager = null;
 		if (lifeCycleURI != null) {
-			IContributionFactory factory = (IContributionFactory) appContext
-					.get(IContributionFactory.class.getName());
 			lcManager = factory.create(lifeCycleURI, appContext);
 			if (lcManager != null) {
 				// Let the manager manipulate the appContext if desired
@@ -121,11 +124,16 @@ public class E4Application implements IApplication {
 						null);
 			}
 		}
-
 		// Create the app model and its context
 		MApplication appModel = loadApplicationModel(applicationContext,
 				appContext);
 		appModel.setContext(appContext);
+
+		// Create the addons
+		for (MContribution addon : appModel.getAddons()) {
+			Object obj = factory.create(addon.getContributionURI(), appContext);
+			addon.setObject(obj);
+		}
 
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
@@ -141,8 +149,6 @@ public class E4Application implements IApplication {
 
 		// let the life cycle manager add to the model
 		if (lcManager != null) {
-			IContributionFactory factory = (IContributionFactory) appContext
-					.get(IContributionFactory.class.getName());
 			factory.call(lcManager, null, "processAdditions", appContext, null);
 			factory.call(lcManager, null, "processRemovals", appContext, null);
 		}
