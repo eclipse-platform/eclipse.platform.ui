@@ -13,7 +13,8 @@ package org.eclipse.e4.tools.emf.ui.internal;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages {
-
+	public static String AbstractCommandSelectionDialog_Label_CommandId;
+	
 	public static String ApplicationEditor_Label;
 	public static String ApplicationEditor_Description;
 	public static String ApplicationEditor_Id;
@@ -299,7 +300,10 @@ public class Messages {
 	public static String AddonsEditor_ClassURI;
 	public static String AddonsEditor_Find;
 	
-	
+	public static String ContributionClassDialog_DialogMessage;
+	public static String ContributionClassDialog_DialogTitle;
+	public static String ContributionClassDialog_Label_Classname;
+	public static String ContributionClassDialog_ShellTitle;	
 	
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

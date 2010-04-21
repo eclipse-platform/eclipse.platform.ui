@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MModelComponent;
@@ -70,7 +71,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText("Command-Id");
+		l.setText(Messages.AbstractCommandSelectionDialog_Label_CommandId);
 
 		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -142,10 +143,10 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 				styledString.append(cmd.getCommandName());
 			}
 			if( cmd.getDescription() != null ) {
-				styledString.append(" - " + cmd.getDescription(),StyledString.DECORATIONS_STYLER);
+				styledString.append(" - " + cmd.getDescription(),StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 			if( cmd.getElementId() != null ) {
-				styledString.append(" - " + cmd.getElementId(),StyledString.DECORATIONS_STYLER);
+				styledString.append(" - " + cmd.getElementId(),StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 			cell.setText(styledString.getString());
 			cell.setStyleRanges(styledString.getStyleRanges());
@@ -157,17 +158,17 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 
 		public String getText(Object element) {
 			MCommand command = (MCommand) element;
-			String s = "";
+			String s = ""; //$NON-NLS-1$
 			if( command.getCommandName() != null ) {
 				s += command.getCommandName();
 			}
 			
 			if( command.getDescription() != null ) {
-				s += " " + command.getDescription();
+				s += " " + command.getDescription(); //$NON-NLS-1$
 			}
 			
 			if( command.getElementId() != null ) {
-				s += " " + command.getElementId();
+				s += " " + command.getElementId(); //$NON-NLS-1$
 			}
 			
 			return s;

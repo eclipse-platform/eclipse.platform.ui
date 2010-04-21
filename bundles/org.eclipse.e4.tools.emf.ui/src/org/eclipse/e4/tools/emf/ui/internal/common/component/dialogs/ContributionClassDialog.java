@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -67,9 +68,9 @@ public class ContributionClassDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		
-		getShell().setText("Find Contribution Class");
-		setTitle("Find Contribution Class");
-		setMessage("Enter the name of the contributing class");
+		getShell().setText(Messages.ContributionClassDialog_ShellTitle);
+		setTitle(Messages.ContributionClassDialog_DialogTitle);
+		setMessage(Messages.ContributionClassDialog_DialogMessage);
 		
 		getShell().addDisposeListener(new DisposeListener() {
 			
@@ -78,14 +79,14 @@ public class ContributionClassDialog extends TitleAreaDialog {
 			}
 		});
 		
-		javaClassImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.gif"));
+		javaClassImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
 		
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2,false));
 		
 		Label l = new Label(container, SWT.NONE);
-		l.setText("Classname");
+		l.setText(Messages.ContributionClassDialog_Label_Classname);
 		
 		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -103,12 +104,12 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				StyledString styledString = new StyledString(data.className, null);
 				
 				if( data.bundleName != null ) {
-					styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER);
+					styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
 				
 				if( data.sourceType != null ) {
-					styledString.append(" - ", StyledString.DECORATIONS_STYLER);
-					styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER);
+					styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+					styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER); //$NON-NLS-1$
 				}
 				
 				if( data.iconPath == null ) {
@@ -154,7 +155,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if( ! s.isEmpty() ) {
 			ContributionData cd = (ContributionData) s.getFirstElement();
-			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className;
+			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
 			Command cmd = SetCommand.create(editingDomain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, uri);
 			if( cmd.canExecute() ) {
 				editingDomain.getCommandStack().execute(cmd);
