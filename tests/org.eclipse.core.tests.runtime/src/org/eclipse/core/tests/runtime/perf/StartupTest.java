@@ -15,7 +15,7 @@ import org.eclipse.test.performance.*;
 
 public class StartupTest extends TestCase {
 
-	static private final String explanation = "Performance decrease caused by a change to how the tests are installed. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=294094 for details.";
+	static private final String EXPLANATION = "Performance decrease caused by a change to how the tests are installed. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=294094 for details.";
 
 	public static Test suite() {
 		return new TestSuite(StartupTest.class);
@@ -33,7 +33,7 @@ public class StartupTest extends TestCase {
 			Performance performance = Performance.getDefault();
 			//TODO remove from global summary due to bug 294094. This should be re-enabled in 3.7.
 			//			performance.tagAsGlobalSummary(meter, "Core Headless Startup", Dimension.ELAPSED_PROCESS);
-			performance.setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, explanation);
+			performance.setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, EXPLANATION);
 			String reportOption = System.getProperty("eclipseTest.ReportResults");
 			boolean bReport = (reportOption == null) ? true : !("false".equalsIgnoreCase(reportOption));
 			if (bReport)
