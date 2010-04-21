@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer, Wind River
+ *       bug 261031 [CommonNavigator] IPipelinedContentProvider getParent() returning the suggested parent is not ignored
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
