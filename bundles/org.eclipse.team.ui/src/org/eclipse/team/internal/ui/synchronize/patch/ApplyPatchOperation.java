@@ -37,6 +37,13 @@ import org.eclipse.ui.ide.IDE;
  * user can also supply a title and image to override the default ones provided by the Apply Patch Wizard.
  * Note that the Apply Patch Wizard does not require any particular set of inputs, and in the absence of
  * any user supplied values, it will work in default mode.
+ * <p>
+ * This is copy of {@link org.eclipse.compare.patch.ApplyPatchOperation} which additionally honors
+ * the preference whether to show the patch in a wizard or in the Synchronize view.
+ * </p>
+ * <p>
+ * FIXME: This class will be removed with the fix for https://bugs.eclipse.org/309803
+ * </p>
  * 
  * @since 3.3
  *
