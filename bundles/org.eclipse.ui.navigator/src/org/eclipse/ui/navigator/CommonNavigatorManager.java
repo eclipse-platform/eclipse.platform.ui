@@ -54,9 +54,6 @@ import org.eclipse.ui.progress.UIJob;
  */
 public final class CommonNavigatorManager implements ISelectionChangedListener {
 
-	// delay for updating the action bars (in ms)
-	private static final long DELAY = 200;
-
 	private final CommonNavigator commonNavigator;
 
 	private final INavigatorContentService contentService;
@@ -309,7 +306,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
 				+ "-end"));//$NON-NLS-1$
 		
-		updateActionBars.schedule(DELAY);
+		updateActionBars.schedule(NavigatorPlugin.ACTION_BAR_DELAY);
 		
 	}
 

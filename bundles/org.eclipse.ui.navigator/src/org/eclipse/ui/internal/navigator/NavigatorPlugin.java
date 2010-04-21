@@ -44,6 +44,18 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	
 	private static final int LOG_DELAY = 100;
 	
+	/**
+	 * The delay before updating the action bars. Must be shorter than the
+	 * LINK_HELPER_DELAY to make sure the linking works after the boot.
+	 */
+	public static final int ACTION_BAR_DELAY = 100;
+
+	/**
+	 * The delay before responding to a selection/activation event in processing
+	 * for linking with the editor.
+	 */
+	public static final int LINK_HELPER_DELAY = ACTION_BAR_DELAY + 20;
+
 	private static class LogJob extends Job { 		
 		
 		

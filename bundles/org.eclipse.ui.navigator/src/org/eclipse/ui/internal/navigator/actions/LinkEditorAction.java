@@ -47,8 +47,6 @@ import org.eclipse.ui.progress.UIJob;
 public class LinkEditorAction extends Action implements
 		ISelectionChangedListener, IPropertyListener {
 
-	private static final long BRIEF_DELAY = 100;
-
 	private IPartListener partListener;
 
 	private final CommonNavigator commonNavigator;
@@ -164,13 +162,13 @@ public class LinkEditorAction extends Action implements
 
 			public void partActivated(IWorkbenchPart part) {
 				if (part instanceof IEditorPart && !ignoreEditorActivation) {
-					updateSelectionJob.schedule(BRIEF_DELAY);
+					updateSelectionJob.schedule(NavigatorPlugin.LINK_HELPER_DELAY);
 				}
 			}
 
 			public void partBroughtToTop(IWorkbenchPart part) {
 				if (part instanceof IEditorPart && !ignoreEditorActivation) {
-					updateSelectionJob.schedule(BRIEF_DELAY);
+					updateSelectionJob.schedule(NavigatorPlugin.LINK_HELPER_DELAY);
 				}
 			}
 
@@ -235,7 +233,7 @@ public class LinkEditorAction extends Action implements
 			 * Create and schedule a UI Job to activate the editor in a valid
 			 * Display thread
 			 */
-			activateEditorJob.schedule(BRIEF_DELAY);
+			activateEditorJob.schedule(NavigatorPlugin.LINK_HELPER_DELAY);
 		}
 	}
 
@@ -260,7 +258,7 @@ public class LinkEditorAction extends Action implements
 
 		if (toEnableLinking) {
 
-			updateSelectionJob.schedule(BRIEF_DELAY);
+			updateSelectionJob.schedule(NavigatorPlugin.LINK_HELPER_DELAY);
 
 			commonViewer.addPostSelectionChangedListener(this);
 			commonNavigator.getSite().getPage().addPartListener(partListener);
