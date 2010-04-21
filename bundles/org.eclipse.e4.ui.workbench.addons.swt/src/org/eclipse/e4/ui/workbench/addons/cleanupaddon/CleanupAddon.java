@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -31,10 +32,19 @@ public class CleanupAddon {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) changedObj;
-				if (container.getChildren().size() == 0) {
-					container.setToBeRendered(false);
-					container.getParent().getChildren().remove(container);
+				final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) changedObj;
+				Display display = Display.getCurrent();
+
+				// Stall the removal to handle cases where the container is only transiently empty
+				if (display != null) {
+					Display.getCurrent().asyncExec(new Runnable() {
+						public void run() {
+							if (container.getChildren().size() == 0) {
+								container.setToBeRendered(false);
+								container.getParent().getChildren().remove(container);
+							}
+						}
+					});
 				}
 			}
 		}
