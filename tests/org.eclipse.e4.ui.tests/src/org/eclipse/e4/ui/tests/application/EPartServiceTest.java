@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
@@ -1476,6 +1477,102 @@ public class EPartServiceTest extends TestCase {
 
 	public void testShowPart_Id_Unrendered_ACTIVATE() {
 		testShowPart_Id_Unrendered(PartState.ACTIVATE);
+	}
+
+	private void testShowPart_Id_Unrendered2(EPartService.PartState partState) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setToBeRendered(true);
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setToBeRendered(false);
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setElementId("partId");
+		part.setToBeRendered(false);
+		partStack.getChildren().add(part);
+		partStack.setSelectedElement(part);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart shownPart = partService.showPart("partId", partState);
+
+		assertEquals(1, partStack.getChildren().size());
+		assertEquals(part, partStack.getChildren().get(0));
+		assertEquals(part, shownPart);
+		assertTrue("A shown part should be rendered", part.isToBeRendered());
+	}
+
+	public void testShowPart_Id_Unrendered_CREATE2() {
+		testShowPart_Id_Unrendered2(PartState.CREATE);
+	}
+
+	public void testShowPart_Id_Unrendered_VISIBLE2() {
+		testShowPart_Id_Unrendered2(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Id_Unrendered_ACTIVATE2() {
+		testShowPart_Id_Unrendered2(PartState.ACTIVATE);
+	}
+
+	private void testShowPart_Id_Unrendered3(EPartService.PartState partState) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setToBeRendered(true);
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		partSashContainer.setToBeRendered(false);
+		window.getChildren().add(partSashContainer);
+		window.setSelectedElement(partSashContainer);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setToBeRendered(false);
+		partSashContainer.getChildren().add(partStack);
+		partSashContainer.setSelectedElement(partStack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setElementId("partId");
+		part.setToBeRendered(false);
+		partStack.getChildren().add(part);
+		partStack.setSelectedElement(part);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart shownPart = partService.showPart("partId", partState);
+
+		assertEquals(1, partStack.getChildren().size());
+		assertEquals(part, partStack.getChildren().get(0));
+		assertEquals(part, shownPart);
+		assertTrue("A shown part should be rendered", part.isToBeRendered());
+	}
+
+	public void testShowPart_Id_Unrendered_CREATE3() {
+		testShowPart_Id_Unrendered3(PartState.CREATE);
+	}
+
+	public void testShowPart_Id_Unrendered_VISIBLE3() {
+		testShowPart_Id_Unrendered3(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Id_Unrendered_ACTIVATE3() {
+		testShowPart_Id_Unrendered3(PartState.ACTIVATE);
 	}
 
 	private void testShowPart_Id_PartAlreadyShown(PartState partState) {
