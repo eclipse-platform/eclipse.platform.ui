@@ -991,6 +991,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (project.isAccessible()) {
 				Set rules = new HashSet();
 				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
+				boolean hasNullBuildRule = false;
 				for (int i = 0; i < commands.length; i++) {
 					BuildCommand command = (BuildCommand) commands[i];
 					try {
@@ -999,6 +1000,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 							ISchedulingRule builderRule = builder.getRule();
 							if (builderRule != null)
 								rules.add(builderRule);
+							else 
+								hasNullBuildRule = true;
 						}
 					} catch (CoreException e) {
 						status.add(e.getStatus());
@@ -1006,7 +1009,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				}
 				if (rules.isEmpty())
 					return null;
-				return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+				// Bug 306824 - Builders returning a null rule can't work safely if other builders require a non-null rule
+				// Be pessimistic and fall back to the default build rule (workspace root) in this case.
+				if (!hasNullBuildRule)
+					return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
 			}
 		} else {
 			// Returns the derived resources for the specified builderName
