@@ -432,6 +432,7 @@ public class ImportTypeDialog extends TrayDialog {
 			
 			Composite variableGroup = new Composite(composite, 0);
 			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gridData.horizontalIndent = linkIsOnlyChoice ? 0:22;
 			variableGroup.setLayoutData(gridData);
 
 			layout = new GridLayout();
