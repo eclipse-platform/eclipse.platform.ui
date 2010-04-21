@@ -519,7 +519,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourcesPreference_dragAndDropVirtualFolderHandlingMessage;
 	public static String LinkedResourcesPreference_link;
 	public static String linkedResourcesPreference_copy;
+	public static String LinkedResourcesPreference_promptVirtual;
 	public static String LinkedResourcesPreference_linkAndVirtualFolder;
+	public static String LinkedResourcesPreference_linkVirtual;
+	public static String linkedResourcesPreference_copyVirtual;
+	public static String LinkedResourcesPreference_linkAndVirtualFolderVirtual;
 
 	// The following six keys are marked as unused by the NLS search, but they are indirectly used
 	// and should be removed.

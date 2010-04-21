@@ -142,9 +142,9 @@ public class ResourceDragAndDropEditor {
 		virtualFolderPref = new PreferenceGroup(IDEWorkbenchMessages.LinkedResourcesPreference_dragAndDropVirtualFolderHandlingMessage,
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE,
 				new String[] {
-				IDEWorkbenchMessages.Prompt,
-				IDEWorkbenchMessages.LinkedResourcesPreference_link, 
-				IDEWorkbenchMessages.LinkedResourcesPreference_linkAndVirtualFolder },
+				IDEWorkbenchMessages.LinkedResourcesPreference_promptVirtual,
+				IDEWorkbenchMessages.LinkedResourcesPreference_linkVirtual, 
+				IDEWorkbenchMessages.LinkedResourcesPreference_linkAndVirtualFolderVirtual },
 				new String[] {IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT,
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK,
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER});
