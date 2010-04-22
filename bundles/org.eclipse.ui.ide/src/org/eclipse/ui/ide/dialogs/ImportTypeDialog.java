@@ -17,16 +17,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,7 +31,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -44,8 +39,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage;
 import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
-import org.eclipse.ui.internal.ide.misc.OverlayIcon;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Dialog to let the user customise how files and resources are created in a project 
@@ -87,25 +80,23 @@ public class ImportTypeDialog extends TrayDialog {
 	private Button copyButton = null;
 
 	private int currentSelection;
-	private Image fileImage;
-
-	private Image folderAndFileImage;
 
 	private Button linkButton = null;
-
-	private Image linkedFileImage;
-
-	private Image linkedFolderAndFileImage;
 
 	private Button moveButton = null;
 
 	private int operationMask;
+
 	private String preferredVariable;
+	
 	private IResource receivingResource = null;
+	
 	private Button shadowCopyButton = null;
+	
 	private boolean targetIsVirtual;
+	
 	private String variable = null;
-	private Image virtualFolderAndFileImage;
+	
 	private RelativePathVariableGroup relativePathVariableGroup;
 	
 	/**
@@ -164,38 +155,6 @@ public class ImportTypeDialog extends TrayDialog {
 			else
 				currentSelection = IMPORT_MOVE;
 		}
-		ImageDescriptor fileDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-                ISharedImages.IMG_OBJ_FILE);
-		ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-                ISharedImages.IMG_OBJ_FOLDER);
-
-		ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
-		linkedResourceOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-		"$nl$/icons/full/ovr16/link_ovr.gif")}; //$NON-NLS-1$
-		
-		CompositeImageDescriptor linkedFileDescriptor = new OverlayIcon(fileDescriptor, linkedResourceOverlayMap, new Point(16, 16)); 
-
-		CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor, linkedResourceOverlayMap, new Point(16, 16)); 
-
-		ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
-		virtualFolderOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-			"$nl$/icons/full/ovr16/virt_ovr.gif")}; //$NON-NLS-1$
-		CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor, virtualFolderOverlayMap, new Point(16, 16)); 
-
-		fileImage = fileDescriptor.createImage();
-		
-		linkedFileImage = linkedFileDescriptor.createImage();
-
-		CompositeImageDescriptor desc = new AlignedCompositeImageDescriptor(fileDescriptor, folderDescriptor);
-		folderAndFileImage = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(linkedFileDescriptor, virtualFolderDescriptor);
-		virtualFolderAndFileImage = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(linkedFileDescriptor, linkedFolderDescriptor);
-		linkedFolderAndFileImage = desc.createImage();
 		
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE))
@@ -206,11 +165,6 @@ public class ImportTypeDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
 	 */
 	public boolean close() {
-		fileImage.dispose();
-		linkedFileImage.dispose();
-		folderAndFileImage.dispose();
-		virtualFolderAndFileImage.dispose();
-		linkedFolderAndFileImage.dispose();
 		return super.close();
 	}
 	
@@ -353,7 +307,7 @@ public class ImportTypeDialog extends TrayDialog {
 		Composite composite = new Composite(parent, 0);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
  		composite.setLayoutData(gridData);
-
+ 		composite.setFont(parent.getFont());
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -384,8 +338,7 @@ public class ImportTypeDialog extends TrayDialog {
 			copyButton.setLayoutData(gridData);
 			copyButton.setData(new Integer(IMPORT_COPY));
 			copyButton.addSelectionListener(listener);
-			if (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK))
-				copyButton.setImage(hasFlag(IMPORT_FILES_ONLY) ? fileImage:folderAndFileImage);
+			copyButton.setFont(parent.getFont());
 		}
 		
 		if (hasFlag(IMPORT_MOVE)) {
@@ -395,6 +348,7 @@ public class ImportTypeDialog extends TrayDialog {
 			moveButton.setLayoutData(gridData);
 			moveButton.setData(new Integer(IMPORT_MOVE));
 			moveButton.addSelectionListener(listener);
+			moveButton.setFont(parent.getFont());
 		}
 
 		if (hasFlag(IMPORT_LINK) && !linkIsOnlyChoice) {
@@ -404,7 +358,7 @@ public class ImportTypeDialog extends TrayDialog {
 			linkButton.setLayoutData(gridData);
 			linkButton.setData(new Integer(IMPORT_LINK));
 			linkButton.addSelectionListener(listener);
-			linkButton.setImage(hasFlag(IMPORT_FILES_ONLY) ? linkedFileImage:linkedFolderAndFileImage);
+			linkButton.setFont(parent.getFont());
 		}
 
 		if (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS) && !hasFlag(IMPORT_FILES_ONLY)) {
@@ -414,7 +368,7 @@ public class ImportTypeDialog extends TrayDialog {
 			shadowCopyButton.setLayoutData(gridData);
 			shadowCopyButton.setData(new Integer(IMPORT_VIRTUAL_FOLDERS_AND_LINKS));
 			shadowCopyButton.addSelectionListener(listener);
-			shadowCopyButton.setImage(virtualFolderAndFileImage);
+			shadowCopyButton.setFont(parent.getFont());
 		}
 
 		if (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK)) {
@@ -434,6 +388,7 @@ public class ImportTypeDialog extends TrayDialog {
 			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gridData.horizontalIndent = linkIsOnlyChoice ? 0:22;
 			variableGroup.setLayoutData(gridData);
+			variableGroup.setFont(parent.getFont());
 
 			layout = new GridLayout();
 			layout.numColumns = 2;
@@ -482,7 +437,7 @@ public class ImportTypeDialog extends TrayDialog {
 		Composite composite = new Composite(parent, 0);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
  		composite.setLayoutData(gridData);
-
+		composite.setFont(parent.getFont());
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -496,6 +451,7 @@ public class ImportTypeDialog extends TrayDialog {
 		// create message
 		if (message != null) {
 			Label messageLabel = new Label(composite, SWT.WRAP);
+			messageLabel.setFont(parent.getFont());
 			messageLabel.setText(message);
 			gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			messageLabel.setLayoutData(gridData);
@@ -568,32 +524,5 @@ public class ImportTypeDialog extends TrayDialog {
 		if (areOnlyFiles(names))
 			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
 		return mask;
-	}
-	
-	private class AlignedCompositeImageDescriptor extends CompositeImageDescriptor {
-
-		private int SPACE = 4;
-		
-		ImageDescriptor first, second;
-		AlignedCompositeImageDescriptor(ImageDescriptor first, ImageDescriptor second) {
-			this.first = first;
-			this.second = second;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-		 */
-		protected void drawCompositeImage(int width, int height) {
-            drawImage(first.getImageData(), 0, 0);
-            drawImage(second.getImageData(), first.getImageData().width + SPACE, 0);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-		 */
-		protected Point getSize() {
-			return new Point(first.getImageData().width + second.getImageData().width + SPACE, 
-					Math.max(first.getImageData().height, second.getImageData().height));
-		}
-		
 	}
 }
