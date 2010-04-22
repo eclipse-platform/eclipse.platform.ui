@@ -384,9 +384,23 @@ public class ImportTypeDialog extends TrayDialog {
 				}
 			});
 			
+			int groupIndent = 0;
+			
+			if (!linkIsOnlyChoice) {
+				Button tmp = new Button(composite, SWT.CHECK);
+				tmp.setText("."); //$NON-NLS-1$
+				groupIndent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				tmp.dispose();
+				
+				Label tmpLabel = new Label(composite, SWT.NONE);
+				tmpLabel.setText("."); //$NON-NLS-1$
+				groupIndent -= tmpLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				tmpLabel.dispose();
+			}
+			
 			Composite variableGroup = new Composite(composite, 0);
 			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gridData.horizontalIndent = linkIsOnlyChoice ? 0:22;
+			gridData.horizontalIndent = groupIndent;
 			variableGroup.setLayoutData(gridData);
 			variableGroup.setFont(parent.getFont());
 
