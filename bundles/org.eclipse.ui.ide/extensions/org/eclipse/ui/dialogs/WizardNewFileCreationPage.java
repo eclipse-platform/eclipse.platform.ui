@@ -376,26 +376,28 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		if (linkTargetPath != null) {
 			URI resolvedPath = newFileHandle.getPathVariableManager().resolveURI(linkTargetPath);
 			try {
-				IFileStore store = EFS.getStore(resolvedPath);
-				if (!store.fetchInfo().exists()) {
-					MessageDialog dlg = new MessageDialog(getContainer().getShell(),
-							IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle,
-							null, 
-							NLS.bind(
-									IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion, linkTargetPath),
-							MessageDialog.QUESTION_WITH_CANCEL,
-							new String[] { IDialogConstants.YES_LABEL,
-				                    IDialogConstants.NO_LABEL,
-				                    IDialogConstants.CANCEL_LABEL },
-							0);
-					int result = dlg.open();
-					if (result == Window.OK) {
-						store.getParent().mkdir(0, new NullProgressMonitor());
-						OutputStream stream = store.openOutputStream(0, new NullProgressMonitor());
-						stream.close();
+				if (resolvedPath.getScheme() != null && resolvedPath.getSchemeSpecificPart() != null) {
+					IFileStore store = EFS.getStore(resolvedPath);
+					if (!store.fetchInfo().exists()) {
+						MessageDialog dlg = new MessageDialog(getContainer().getShell(),
+								IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle,
+								null, 
+								NLS.bind(
+										IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion, linkTargetPath),
+								MessageDialog.QUESTION_WITH_CANCEL,
+								new String[] { IDialogConstants.YES_LABEL,
+					                    IDialogConstants.NO_LABEL,
+					                    IDialogConstants.CANCEL_LABEL },
+								0);
+						int result = dlg.open();
+						if (result == Window.OK) {
+							store.getParent().mkdir(0, new NullProgressMonitor());
+							OutputStream stream = store.openOutputStream(0, new NullProgressMonitor());
+							stream.close();
+						}
+						if (result == 2)
+							return null;
 					}
-					if (result == 2)
-						return null;
 				}
 			} catch (CoreException e) {
 				MessageDialog
