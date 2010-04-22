@@ -359,7 +359,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @return a scheduling rule which is contained in the workspace root rule or <code>null</code>
 	 * @since 3.5
 	 * @see #getRule(int, Map)
-	 * @deprecated clients should override {@link #getRule(int, Map)} instead.
+	 * @deprecated clients should call and override {@link #getRule(int, Map)} instead.
 	 */
 	public ISchedulingRule getRule() {
 		return ResourcesPlugin.getWorkspace().getRoot();
