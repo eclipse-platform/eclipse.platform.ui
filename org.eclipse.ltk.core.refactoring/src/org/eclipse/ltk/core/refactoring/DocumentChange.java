@@ -116,7 +116,7 @@ public class DocumentChange extends TextChange {
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
 		
 		ITextFileBuffer fileBuffer= fileBufferManager.getTextFileBuffer(document);
-		if (! fileBuffer.isSynchronizationContextRequested()) {
+		if (fileBuffer == null || ! fileBuffer.isSynchronizationContextRequested()) {
 			return super.performEdits(document);
 		}
 		
