@@ -13,6 +13,8 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -403,33 +405,28 @@ public class CreateLinkedResourceGroup {
 	public URI getLinkTargetURI() {
 		if (!createLink)
 			return null;
-		// resolve path variable if we have a relative path
-		IPath linkTargetPath = new Path(linkTarget);
-		if (!linkTargetPath.isAbsolute()) {
-			IPathVariableManager pathVariableManager;
-
-			if (updatableResourceName.getResource() != null)
-				pathVariableManager = updatableResourceName.getResource().getPathVariableManager();
-			else
-				pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-
-			URI path = URIUtil.toURI(linkTargetPath);
-				URI resolved = pathVariableManager.resolveURI(path);
-				if (path != resolved) {
-					// we know this is a path variable, but return unresolved
-					// path so resource will be created with variable intact
-					return path;
-			}
+		// linkTarget can contain either:
+		//  1) a URI, ex: 								foo://bar/file.txt
+		//  2) A path, ex: 								c:\foo\bar\file.txt
+		//  3) A path variable relative path, ex:		VAR\foo\bar\file.txt
+		URI uri;
+		try {
+			uri = new URI(linkTarget);
+		}catch(URISyntaxException e) {
+			uri = convertToURI(linkTarget);
 		}
-
-		FileSystemConfiguration configuration = getSelectedConfiguration();
-		if (configuration == null) {
-			return URIUtil.toURI(linkTarget);
-		}
-		// validate non-local file system location
-		return configuration.getContributor().getURI(linkTarget);
+		return uri;
 	}
 
+	private URI convertToURI(String string) {
+		FileSystemConfiguration configuration = getSelectedConfiguration();
+		if (configuration == null) {
+			return URIUtil.toURI(string);
+		}
+		// validate non-local file system location
+		return configuration.getContributor().getURI(string);
+	}
+	
 	/**
 	 * Opens a file or directory browser depending on the link type.
 	 */
@@ -567,19 +564,29 @@ public class CreateLinkedResourceGroup {
 		else
 			pathVariableManager = ResourcesPlugin
 									.getWorkspace().getPathVariableManager();
-		IPath path = new Path(linkTarget);
-		URI uri = URIUtil.toURI(path);
+		boolean isURL = true;
+		URI uri;
+		try {
+			uri = new URI(linkTarget);
+		}catch(URISyntaxException e) {
+			isURL = false;
+			uri = convertToURI(linkTarget);
+		}
 		URI resolvedURI = pathVariableManager.resolveURI(uri);
-		IPath resolvedPath = URIUtil.toPath(resolvedURI);
+		String resolvedString;
+		if (isURL)
+			resolvedString = resolvedURI.toString(); 
+		else
+			resolvedString = URIUtil.toPath(resolvedURI).toOSString();
 		
-		if (path.equals(resolvedPath)) {
+		if (linkTarget.equals(resolvedString)) {
 			resolvedPathLabelText.setVisible(false);
 			resolvedPathLabelData.setVisible(false);
 		} else {
 			resolvedPathLabelText.setVisible(true);
 			resolvedPathLabelData.setVisible(true);
 		}
-		resolvedPathLabelData.setText(resolvedPath.toOSString());
+		resolvedPathLabelData.setText(resolvedString);
 	}
 
 	/**
