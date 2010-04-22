@@ -64,11 +64,11 @@ public class ViewRegistry implements IViewRegistry {
 					descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 				}
 
+				descriptor.getTags().add("View"); //$NON-NLS-1$
 				descriptor.setCloseable(true);
 				descriptor.setAllowMultiple(Boolean.parseBoolean(element
 						.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
-				descriptor
-						.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
+				descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
 
 				String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (iconURI != null) {

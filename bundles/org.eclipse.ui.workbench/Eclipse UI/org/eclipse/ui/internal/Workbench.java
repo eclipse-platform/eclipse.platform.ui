@@ -1522,6 +1522,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		
 		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
+		descriptor.getTags().add("Editor"); //$NON-NLS-1$
 		descriptor.setCloseable(true);
 		descriptor.setAllowMultiple(true);
 		descriptor.setElementId("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
