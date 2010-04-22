@@ -534,6 +534,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					workbench.close();
 					e4app.saveModel();
 					e4Workbench.close();
+					returnCode[0] = workbench.returnCode;
 				}
 			}
 		});
