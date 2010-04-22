@@ -399,6 +399,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>
+	 * @noreference This method is not intended to be referenced by clients.
 	 * 
 	 * @param trigger the type of build being triggered. Valid values include
 	 * <ul>
