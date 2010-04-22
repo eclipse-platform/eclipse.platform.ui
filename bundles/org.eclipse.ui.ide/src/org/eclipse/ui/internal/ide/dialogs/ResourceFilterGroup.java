@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -39,10 +41,8 @@ import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -52,7 +52,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.TreeColumnLayout;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
@@ -124,6 +123,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.FileInfoAttributesMatcher;
+import org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -146,38 +146,21 @@ public class ResourceFilterGroup {
 	private LabelProvider labelProvider;
 	private Font boldFont;
 	private Font plainFont;
-	private Image checkIcon = null;
 	private Image fileIcon = null;
 	private Image folderIcon = null;
 	private Image fileFolderIcon = null;
 	private Image includeIcon = null;
 	private Image excludeIcon = null;
 	private Image inheritableIcon = null;
-	private Image fileAloneIcon = null;
-	private Image folderAloneIcon = null;
-	private Image fileFolderAloneIcon = null;
-	private Image fileInheritableIcon = null;
-	private Image folderInheritableIcon = null;
-	private Image fileFolderInheritableIcon = null;
 	private boolean tableViewCellEditorAdequatlyUsable = false;
 	private Shell shell;
 	private IContainer nonExistantResource = getNonExistantResource();
 	private IContainer resource = nonExistantResource;
 
-	// this is a work-around for the TreeView widget that does not draw the text according to each row's image width 
-	private String textPrefix = new String();
-	
 	/**
 	 * 
 	 */
 	public ResourceFilterGroup() {
-		ImageDescriptor descriptor = AbstractUIPlugin
-				.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
-						"$nl$/icons/full/obj16/header_complete.gif"); //$NON-NLS-1$
-		if (descriptor != null)
-			checkIcon = descriptor.createImage();
-		
-		
 		ImageDescriptor fileIconDescriptor = AbstractUIPlugin
 		.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/obj16/fileType_filter.gif"); //$NON-NLS-1$
@@ -196,7 +179,7 @@ public class ResourceFilterGroup {
 		if (fileFolderIconDescriptor != null)
 			fileFolderIcon = fileFolderIconDescriptor.createImage();
 		
-		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/obj16/includeMode_filter.gif"); //$NON-NLS-1$
 		if (descriptor != null)
@@ -213,58 +196,6 @@ public class ResourceFilterGroup {
 				"$nl$/icons/full/obj16/inheritable_filter.gif"); //$NON-NLS-1$
 		if (inheritableIconDescriptor != null)
 			inheritableIcon = inheritableIconDescriptor.createImage();
-
-		CompositeImageDescriptor desc = new AlignedCompositeImageDescriptor(null, fileIconDescriptor);
-		fileAloneIcon = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(null, folderIconDescriptor);
-		folderAloneIcon = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(null, fileFolderIconDescriptor);
-		fileFolderAloneIcon = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(inheritableIconDescriptor, fileIconDescriptor);
-		fileInheritableIcon = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(inheritableIconDescriptor, folderIconDescriptor);
-		folderInheritableIcon = desc.createImage();
-
-		desc = new AlignedCompositeImageDescriptor(inheritableIconDescriptor, fileFolderIconDescriptor);
-		fileFolderInheritableIcon = desc.createImage();
-	}
-
-	private static int AlignedCompositeImageDescriptor_SPACE = 4;
-
-	private class AlignedCompositeImageDescriptor extends CompositeImageDescriptor {
-
-		
-		ImageDescriptor first, second;
-		AlignedCompositeImageDescriptor(ImageDescriptor first, ImageDescriptor second) {
-			this.first = first;
-			this.second = second;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-		 */
-		protected void drawCompositeImage(int width, int height) {
-			if (first != null) {
-				drawImage(first.getImageData(), 0, 0);
-				drawImage(second.getImageData(), first.getImageData().width + AlignedCompositeImageDescriptor_SPACE, 0);
-			}
-			else
-				drawImage(second.getImageData(), second.getImageData().width + AlignedCompositeImageDescriptor_SPACE, 0);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-		 */
-		protected Point getSize() {
-			if (first != null)
-				return new Point(first.getImageData().width + second.getImageData().width + AlignedCompositeImageDescriptor_SPACE, 
-					Math.max(first.getImageData().height, second.getImageData().height));
-			return new Point(second.getImageData().width * 2 + AlignedCompositeImageDescriptor_SPACE, second.getImageData().height);
-		}
-		
 	}
 
 	Image getImage(String string, int i) {
@@ -304,8 +235,11 @@ public class ResourceFilterGroup {
 			try {
 				IResourceFilterDescription[] tmp = resource.getFilters();
 				children = new LinkedList();
-				for (int i = 0; i < tmp.length; i++)
-					addChild(new FilterCopy(UIResourceFilterDescription.wrap(tmp[i])));
+				for (int i = 0; i < tmp.length; i++) {
+					FilterCopy copy = new FilterCopy(UIResourceFilterDescription.wrap(tmp[i]));
+					copy = convertLegacyMatchers(copy);
+					addChild(copy);
+				}
 			} catch (CoreException e) {
 				ErrorDialog.openError(shell, NLS.bind(
 						IDEWorkbenchMessages.InternalError, null), e
@@ -420,8 +354,11 @@ public class ResourceFilterGroup {
 	class TreeContentProvider implements ITreeContentProvider {
 		
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement == filters)
-				return new Object[] {includeOnlyGroup, excludeAllGroup};
+			if (parentElement == filters) {
+				if (filters.getChildren().length > 0)
+					return new Object[] {includeOnlyGroup, excludeAllGroup};
+				return new Object[0];
+			}
 			if (parentElement instanceof String) {
 				ArrayList list = new ArrayList();
 				int mask = parentElement.equals(includeOnlyGroup) ? IResourceFilterDescription.INCLUDE_ONLY:
@@ -487,9 +424,9 @@ public class ResourceFilterGroup {
 					textStyle.font= plainFont;
 				}
 			};
-			ICustomFilterArgumentUI ui = new MultiMatcherCustomFilterArgumentUI(null, null);
+			ICustomFilterArgumentUI ui = new MultiMatcherCustomFilterArgumentUI(null, null, null);
 			customfilterArgumentMap.put(ui.getID(), ui);
-			ui = new DefaultCustomFilterArgumentUI(null, null);
+			ui = new DefaultCustomFilterArgumentUI(null, null, null);
 			customfilterArgumentMap.put(ui.getID(), ui);
 		}
 
@@ -535,35 +472,22 @@ public class ResourceFilterGroup {
 			else {
 				filter = (FilterCopy) element;
 	
-				if (column.equals(FilterTypeUtil.ID)) {
-					String id = filter.getId();
-					IFilterMatcherDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
-					if (descriptor != null)
-						cell.setText(descriptor.getName());
-				}
-				if (!isPartialFilter(filter)) {
-					if (column.equals(FilterTypeUtil.INHERITABLE)) {
-						Object condition = FilterTypeUtil.getValue(filter, FilterTypeUtil.INHERITABLE);
-						cell.setImage(((Boolean) condition).booleanValue() ? checkIcon: null);
-					}
-				}
 				if (column.equals(FilterTypeUtil.MODE)) {
-					StyledString styledString = new StyledString(textPrefix, fPlainStyler);
-					styledString.append(getStyleColumnText(filter));
+					StyledString styledString = getStyleColumnText(filter);
+					if (!isPartialFilter(filter)) {
+						Object isInheritable = FilterTypeUtil.getValue(filter, FilterTypeUtil.INHERITABLE);
+						if (((Boolean)isInheritable).booleanValue())
+							styledString.append("   " + IDEWorkbenchMessages.ResourceFilterPage_recursive); //$NON-NLS-1$
+						
+					}
 					cell.setText(styledString.toString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 
 					if (!isPartialFilter(filter)) {
-						Image[] images = { fileAloneIcon, folderAloneIcon, fileFolderAloneIcon };
-						Image[] inheritableImages = {fileInheritableIcon, folderInheritableIcon, fileFolderInheritableIcon};
+						Image[] images = { fileIcon, folderIcon, fileFolderIcon };
 
 						Object index = FilterTypeUtil.getValue(filter, FilterTypeUtil.TARGET);
-						Object isInheritable = FilterTypeUtil.getValue(filter, FilterTypeUtil.INHERITABLE);
-						int intValue = ((Integer)index).intValue();
-						if (((Boolean)isInheritable).booleanValue())
-							cell.setImage(inheritableImages[intValue]);
-						else
-							cell.setImage(images[intValue]);
+						cell.setImage(images[((Integer) index).intValue()]);
 					}
 				}
 			}
@@ -691,17 +615,6 @@ public class ResourceFilterGroup {
 	}
 
 	private void createViewerGroup(Composite parent) {
-		
-		GC gc = new GC(parent);
-		gc.setFont(plainFont);
-		String whiteSpace = " "; //$NON-NLS-1$
-		textPrefix = whiteSpace;
-		int width = inheritableIcon.getImageData().width + AlignedCompositeImageDescriptor_SPACE;
-		while (gc.stringExtent(textPrefix).x < width) {
-			textPrefix += whiteSpace;
-		}
-		gc.dispose();
-
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.grabExcessHorizontalSpace = true;
@@ -904,8 +817,27 @@ public class ResourceFilterGroup {
 		}
 	}
 
+	private void handleAdd(boolean createGroupOnly) {
+		Object selectedObject = null;
+		ISelection selection = filterView.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = ((IStructuredSelection) selection);
+			selectedObject = structuredSelection.getFirstElement();
+		}
+		handleAdd(selectedObject, createGroupOnly);
+	}
+	
 	private void handleAdd(Object selection, boolean createGroupOnly) {
-		if (selection instanceof FilterCopy) {
+		if (selection == null) {
+			FilterCopy newFilter = new FilterCopy();
+			FilterEditDialog dialog = new FilterEditDialog(resource, ResourceFilterGroup.this, shell,
+					newFilter, createGroupOnly, true);
+			if (dialog.open() == Window.OK) {
+				addToTopLevelFilters(newFilter);
+				refreshAndSelect(newFilter);
+			}
+		}
+		else if (selection instanceof FilterCopy) {
 			FilterCopy filter = (FilterCopy) selection;
 			if (filter.getChildrenLimit() > 0) {
 				FilterCopy newFilter = new FilterCopy();
@@ -918,8 +850,17 @@ public class ResourceFilterGroup {
 					refreshAndSelect(newFilter);
 				}
 			}
+			else {
+				FilterCopy newFilter = new FilterCopy();
+				FilterEditDialog dialog = new FilterEditDialog(resource, ResourceFilterGroup.this, shell,
+						newFilter, createGroupOnly, true);
+				if (dialog.open() == Window.OK) {
+					addToTopLevelFilters(newFilter);
+					refreshAndSelect(newFilter);
+				}
+			}
 		}
-		if (selection instanceof String) {
+		else if (selection instanceof String) {
 			FilterCopy newFilter = new FilterCopy();
 			FilterTypeUtil.setValue(newFilter, FilterTypeUtil.MODE, 
 					new Integer(selection.equals(includeOnlyGroup) ? 0:1));
@@ -939,7 +880,7 @@ public class ResourceFilterGroup {
 
 	private boolean isAddEnabled(Object selection) {
 		if (selection == null)
-			return false;
+			return true;
 		if (selection instanceof FilterCopy) {
 			FilterCopy filter = (FilterCopy) selection;
 			return filter.getChildrenLimit() > 0;
@@ -1130,8 +1071,6 @@ public class ResourceFilterGroup {
 			IStructuredSelection structuredSelection = null;
 			if (selection instanceof IStructuredSelection)
 				structuredSelection = ((IStructuredSelection) selection);
-			addButton.setEnabled(isAddEnabled(structuredSelection != null ? structuredSelection.getFirstElement():null));
-			addGroupButton.setEnabled(isAddEnabled(structuredSelection != null ? structuredSelection.getFirstElement():null));
 			removeButton.setEnabled(structuredSelection != null
 					&& structuredSelection.size() > 0 && !(structuredSelection.getFirstElement() instanceof String));
 			editButton.setEnabled(structuredSelection != null
@@ -1156,22 +1095,15 @@ public class ResourceFilterGroup {
 		return filters.isLast((FilterCopy) o);
 	}
 
-	private void handleAdd(boolean createGroupOnly) {
-		ISelection selection = filterView.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = ((IStructuredSelection) selection);
-			if (!structuredSelection.isEmpty())
-				handleAdd(structuredSelection.getFirstElement(), createGroupOnly);
-		}
-	}
-
 	private boolean handleEdit() {
 		ISelection selection = filterView.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			Object firstElement = ((IStructuredSelection) selection)
 					.getFirstElement();
-			if (firstElement instanceof String)
-				return false;
+			if (firstElement instanceof String) {
+				handleAdd(firstElement, false);
+				return true;
+			}
 			if (firstElement instanceof FilterCopy) {
 				FilterCopy filter = (FilterCopy) firstElement;
 				FilterCopy copy = new FilterCopy(filter);
@@ -1337,9 +1269,10 @@ public class ResourceFilterGroup {
 	}
 
 	private void disposeIcons() {
-		Field[] fields = getClass().getFields();
+		Field[] fields = getClass().getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].getClass().equals(Image.class)) {
+			Class cls = fields[i].getType();
+			if (cls.equals(Image.class)) {
 				Image img;
 				try {
 					img = (Image) fields[i].get(this);
@@ -1553,6 +1486,11 @@ class FilterTypeUtil {
 		sortDescriptors(descriptors);
 		LinkedList names = new LinkedList();
 		for (int i = 0; i < descriptors.length; i++) {
+			// remove legacy filters
+			if (descriptors[i].getId().equals(DefaultCustomFilterArgumentUI.REGEX_FILTER_ID))
+				continue;
+			if (descriptors[i].getId().equals(StringFileInfoMatcher.ID))
+				continue;
 			boolean isGroup = descriptors[i].getArgumentType().equals(
 					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHER)
 					|| descriptors[i].getArgumentType().equals(
@@ -1623,6 +1561,22 @@ class FilterCopy extends UIResourceFilterDescription {
 	public FilterCopy(UIResourceFilterDescription filter) {
 		internalCopy(filter);
 		original = filter;
+	}
+
+	protected FilterCopy convertLegacyMatchers(FilterCopy copy) {
+		if (copy.getId().equals(DefaultCustomFilterArgumentUI.REGEX_FILTER_ID) ||
+				copy.getId().equals(StringFileInfoMatcher.ID)) {
+			String pattern = (String) copy.getArguments();
+			FileInfoAttributesMatcher.Argument argument = new FileInfoAttributesMatcher.Argument();
+			argument.key = FileInfoAttributesMatcher.KEY_NAME;
+			argument.operator = FileInfoAttributesMatcher.OPERATOR_MATCHES;
+			argument.pattern = pattern;
+			argument.regularExpression = copy.getId().equals(DefaultCustomFilterArgumentUI.REGEX_FILTER_ID);
+			String encodedArgument = FileInfoAttributesMatcher.encodeArguments(argument);
+			FilterTypeUtil.setValue(copy, FilterTypeUtil.ID, FileInfoAttributesMatcher.ID);
+			FilterTypeUtil.setValue(copy, FilterTypeUtil.ARGUMENTS, encodedArgument);
+		}
+		return copy;
 	}
 
 	public void removeAll() {
@@ -1917,7 +1871,8 @@ class FilterEditDialog extends TrayDialog {
 	protected Button filesAndFoldersButton;
 	protected Combo idCombo;
 	protected Composite idComposite;
-	protected Button idButton;
+	protected Button includeButton;
+	protected Button excludeButton;
 	protected Composite argumentComposite;
 	protected Button inherited;
 	protected FilterTypeUtil util;
@@ -1932,7 +1887,7 @@ class FilterEditDialog extends TrayDialog {
 		public void create(Composite argumentComposite, Font font) {}
 		public void dispose() {}
 		public void selectionChanged() {}
-		public void validate() {}
+		public String validate() {return null;}
 		public StyledString formatStyledText(FilterCopy filter,
 				Styler fPlainStyler, Styler fBoldStyler) {return null;}
 	};
@@ -1944,6 +1899,7 @@ class FilterEditDialog extends TrayDialog {
 	 * @param parentShell
 	 * @param filter
 	 * @param createGroupOnly 
+	 * @param creatingNewFilter 
 	 */
 	public FilterEditDialog(IResource resource, ResourceFilterGroup filterGroup, Shell parentShell, FilterCopy filter, boolean createGroupOnly, boolean creatingNewFilter) {
 		super(parentShell);
@@ -1953,9 +1909,9 @@ class FilterEditDialog extends TrayDialog {
 		this.filter = filter;
 		this.createGroupOnly = createGroupOnly;
 		util = new FilterTypeUtil();
-		ICustomFilterArgumentUI ui = new MultiMatcherCustomFilterArgumentUI(parentShell, filter);
+		ICustomFilterArgumentUI ui = new MultiMatcherCustomFilterArgumentUI(this, parentShell, filter);
 		customfilterArgumentMap.put(ui.getID(), ui);
-		ui = new DefaultCustomFilterArgumentUI(parentShell, filter);
+		ui = new DefaultCustomFilterArgumentUI(this, parentShell, filter);
 		customfilterArgumentMap.put(ui.getID(), ui);
 	}
 
@@ -2001,10 +1957,11 @@ class FilterEditDialog extends TrayDialog {
 			topComposite.setLayoutData(data);
 			topComposite.setFont(font);
 
+			createModeArea(font, topComposite);
+
 			createTargetArea(font, topComposite);
 			
 			createIdArea(font, topComposite);
-			createInheritableArea(font, topComposite);
 		}
 		else {
 			layout.marginHeight = convertHorizontalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -2081,12 +2038,14 @@ class FilterEditDialog extends TrayDialog {
 
 		GridData data;
 		inherited = new Button(inheritableComposite, SWT.CHECK);
+		String label;
+		label = IDEWorkbenchMessages.ResourceFilterPage_applyRecursivelyToFolderStructure;
+		
 		inherited
 				.setText(NLS
 						.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_applyRecursivelyToFolderStructure,
-								null));
-		inherited.setImage(filterGroup.getImage(FilterTypeUtil.MODE, 2));
+								label,
+								resource.getName()));
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.horizontalSpan = 1;
 		inherited.setLayoutData(data);
@@ -2101,10 +2060,40 @@ class FilterEditDialog extends TrayDialog {
 				FilterTypeUtil.INHERITABLE)).booleanValue()));
 	}
 
-	/**
-	 * @param font
-	 * @param composite
-	 */
+	private void createModeArea(Font font, Composite composite) {
+		GridData data;
+		Composite modeComposite = createGroup(font, composite, NLS.bind(
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
+				null), true, true, 1);
+		String[] modes = FilterTypeUtil.getModes();
+		includeButton = new Button(modeComposite, SWT.RADIO);
+		includeButton.setText(modes[0]);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		includeButton.setLayoutData(data);
+		includeButton.setFont(font);
+		includeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
+						new Integer(0));
+			}
+		});
+		includeButton.setSelection(((Integer) FilterTypeUtil.getValue(
+				filter, FilterTypeUtil.MODE)).intValue() == 0);
+		excludeButton = new Button(modeComposite, SWT.RADIO);
+		excludeButton.setText(modes[1]);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		excludeButton.setLayoutData(data);
+		excludeButton.setFont(font);
+		excludeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
+						new Integer(1));
+			}
+		});
+		excludeButton.setSelection(((Integer) FilterTypeUtil.getValue(
+				filter, FilterTypeUtil.MODE)).intValue() == 1);
+	}
+
 	private void createIdArea(Font font, Composite composite) {
 		if (createGroupOnly) {
 			idComposite = createGroup(font, composite, new String(),
@@ -2114,39 +2103,20 @@ class FilterEditDialog extends TrayDialog {
 			idCombo.setLayoutData(data);
 		}
 		else {
-			Composite superIdComposite = createGroup(font, composite, new String(),
-					true, false, 1);
-			GridLayout layout = (GridLayout) superIdComposite.getLayout();
-			layout.marginBottom = 0;
-			layout.marginTop = 0;
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.verticalSpacing = 0;
-			layout.marginLeft = 0;
-			superIdComposite.setLayout(layout);
-			
-			Composite labelComposite = createGroup(font, superIdComposite, new String(),
-					true, false, 2);
-			
-			layout = (GridLayout) labelComposite.getLayout();
-			layout.marginBottom = 0;
-			layout.marginLeft = 0;
-			layout.marginTop = 0;
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.verticalSpacing = 0;
-			labelComposite.setLayout(layout);
+			String [] matchers = FilterTypeUtil.getFilterNames(createGroupOnly);
+			boolean hasMoreThanOneMatcher = matchers.length > 1;
 
-			Label label = new Label(labelComposite, SWT.NONE);
-			label.setText(NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_condition, null));
-			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			label.setFont(font);
+			if (hasMoreThanOneMatcher) {
+				createMatcherCombo(composite, font);
+				GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+				idCombo.setLayoutData(data);
+			}
 
-			createMatcherCombo(labelComposite, font);
-
-			idComposite = createGroup(font, superIdComposite, new String(),
+			idComposite = createGroup(font, composite, 
+					hasMoreThanOneMatcher ? IDEWorkbenchMessages.ResourceFilterPage_details: matchers[0],
 					true, true, 1);
-			layout = (GridLayout) idComposite.getLayout();
+
+			GridLayout layout = (GridLayout) idComposite.getLayout();
 			layout.marginBottom = 0;
 			layout.marginTop = 0;
 			layout.marginWidth = 0;
@@ -2173,6 +2143,13 @@ class FilterEditDialog extends TrayDialog {
 					filter.setArguments(new String());
 				setupPatternLine();
 				currentCustomFilterArgumentUI.selectionChanged();
+				getShell().layout(true);
+				Point size = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point shellSize = getShell().getSize();
+				size.x = Math.max(size.x, shellSize.x);
+				size.y = Math.max(size.y, shellSize.y);
+				getShell().setSize(size);
+				getShell().redraw();
 			}
 		});
 		idCombo.select(0);
@@ -2203,8 +2180,6 @@ class FilterEditDialog extends TrayDialog {
 			currentCustomFilterArgumentUI.dispose();
 			currentCustomFilterArgumentUI = customFilterArgumentUI;
 			currentCustomFilterArgumentUI.create(argumentComposite, font);
-			getShell().layout(true);
-			getShell().redraw();
 		}
 	}
 
@@ -2261,26 +2236,23 @@ class FilterEditDialog extends TrayDialog {
 	private void createTargetArea(Font font, Composite composite) {
 		GridData data;
 		Composite targetComposite = createGroup(font, composite, 
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_columnFilterTarget, null), false, true, 3);
+				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_columnFilterTarget, null), false, true, 1);
 		
 		String[] targets = FilterTypeUtil.getTargets();
 		filesButton = new Button(targetComposite, SWT.RADIO);
 		filesButton.setText(targets[0]);
-		filesButton.setImage(filterGroup.getImage(FilterTypeUtil.TARGET, 0));
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		filesButton.setLayoutData(data);
 		filesButton.setFont(font);
 
 		foldersButton = new Button(targetComposite, SWT.RADIO);
 		foldersButton.setText(targets[1]);
-		foldersButton.setImage(filterGroup.getImage(FilterTypeUtil.TARGET, 1));
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		foldersButton.setLayoutData(data);
 		foldersButton.setFont(font);
 
 		filesAndFoldersButton = new Button(targetComposite, SWT.RADIO);
 		filesAndFoldersButton.setText(targets[2]);
-		filesAndFoldersButton.setImage(filterGroup.getImage(FilterTypeUtil.TARGET, 2));
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		filesAndFoldersButton.setLayoutData(data);
 		filesAndFoldersButton.setFont(font);
@@ -2309,6 +2281,7 @@ class FilterEditDialog extends TrayDialog {
 				FilterTypeUtil.TARGET)).intValue() == 1);
 		filesAndFoldersButton.setSelection(((Integer) FilterTypeUtil.getValue(
 				filter, FilterTypeUtil.TARGET)).intValue() == 2);
+		createInheritableArea(font, targetComposite);
 	}
 
 	protected Control createContents(Composite parent) {
@@ -2318,6 +2291,14 @@ class FilterEditDialog extends TrayDialog {
 		return control;
 	}
 
+	public void updateFinishControls() {
+		if (getButton(OK) != null) {
+			if (currentCustomFilterArgumentUI != null)
+				getButton(OK).setEnabled(currentCustomFilterArgumentUI.validate() == null);
+			else
+				getButton(OK).setEnabled(true);
+		}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2328,19 +2309,17 @@ class FilterEditDialog extends TrayDialog {
 	}
 
 	protected void configureShell(Shell newShell) {
-		Integer index = (Integer) FilterTypeUtil.getValue(filter, FilterTypeUtil.MODE);
 		String title = null;
 		if (creatingNewFilter) {
-			if (index.intValue() == 0)
-				title = IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleIncludeOnly;
+			if (resource.getType() == IResource.PROJECT)
+				title = NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleProject, resource.getName());
 			else
-				title = IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleExcludeAll;
+				title = NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleFolder, resource.getName());
 		}
 		else
 			title = IDEWorkbenchMessages.ResourceFilterPage_editFilterDialogTitle;
 		newShell.setText(title);
 		super.configureShell(newShell);
-		newShell.setImage(filterGroup.getImage(FilterTypeUtil.MODE, index.intValue()));
 	}
 
 	private void initialize() {
@@ -2372,6 +2351,18 @@ class FilterEditDialog extends TrayDialog {
 
 		super.okPressed();
 	}
+
+	public int getVerticalDLUsToPixel(int flag) {
+		return convertVerticalDLUsToPixels(flag);
+	}
+
+	public IResource getResource() {
+		return resource;
+	}
+
+	public int getHorizontalDLUsToPixel(int flag) {
+		return convertHorizontalDLUsToPixels(flag);
+	}
 }
 
 interface ICustomFilterArgumentUI {
@@ -2391,10 +2382,10 @@ interface ICustomFilterArgumentUI {
 			Styler fBoldStyler);
 
 	/**
-	 * @throws CoreException 
+	 * @return null if there's no issue
 	 * 
 	 */
-	void validate() throws CoreException;
+	String validate();
 
 	/**
 	 * 
@@ -2429,19 +2420,27 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	protected Combo multiKey;
 	protected Combo multiOperator;
 	protected Composite multiArgumentComposite;
+	protected Composite conditionComposite;
+	protected Composite descriptionComposite;
 	protected Composite stringArgumentComposite;
+	protected Composite stringTextArgumentComposite;
 	protected Composite attributeStringArgumentComposite;
 	protected Class intiantiatedKeyOperatorType = null;
 	protected TreeMap/* <String, String>*/ valueCache = new TreeMap();
 	protected boolean initializationComplete = false;
+	protected FilterEditDialog dialog;
+	protected Label dummyLabel1;
+	protected Label dummyLabel2;
 	
 	/**
+	 * @param dialog 
 	 * @param parentShell
 	 * @param filter
 	 */
-	public MultiMatcherCustomFilterArgumentUI(Shell parentShell,
+	public MultiMatcherCustomFilterArgumentUI(FilterEditDialog dialog, Shell parentShell,
 			FilterCopy filter) {
 		this.shell = parentShell;
+		this.dialog = dialog;
 		this.filter = filter;
 	}
 
@@ -2456,7 +2455,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#dispose()
 	 */
 	public void dispose() {
-		Widget list[] = new Widget[] {multiKey, multiOperator, multiArgumentComposite, stringArgumentComposite, arguments, argumentsLabel, argumentsCaseSensitive, argumentsRegularExpresion, attributeStringArgumentComposite, description};
+		Widget list[] = new Widget[] {multiKey, multiOperator, multiArgumentComposite, stringArgumentComposite, stringTextArgumentComposite, arguments, argumentsLabel, argumentsCaseSensitive, argumentsRegularExpresion, attributeStringArgumentComposite, description, conditionComposite, descriptionComposite, dummyLabel1, dummyLabel2};
 		for (int i = 0; i < list.length; i++) {
 			if (list[i] != null) {
 				list[i].dispose();
@@ -2470,10 +2469,15 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		fContentAssistField = null;
 		intiantiatedKeyOperatorType = null;
 		stringArgumentComposite = null;
+		stringTextArgumentComposite = null;
 		argumentsCaseSensitive = null;
 		argumentsRegularExpresion = null;
 		attributeStringArgumentComposite = null;
 		description = null;
+		conditionComposite = null;
+		descriptionComposite = null;
+		dummyLabel1 = null;
+		dummyLabel2 = null;
 		initializationComplete = false;
 	}
 
@@ -2483,15 +2487,41 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	public void create(Composite argumentComposite, Font font) {
 		shell = argumentComposite.getShell();
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 1;
 		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
 		argumentComposite.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		argumentComposite.setLayoutData(data);
 		argumentComposite.setFont(font);
-		createCustomArgumentsArea(font, argumentComposite);
-		argumentComposite.layout(true);
-		createDescriptionArea(font, argumentComposite);
+		
+		conditionComposite = new Composite(argumentComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		conditionComposite.setLayout(layout);
+		conditionComposite.setFont(font);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		conditionComposite.setLayoutData(data);
+
+		createCustomArgumentsArea(font, conditionComposite);
+		
+		descriptionComposite = new Composite(argumentComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginWidth = dialog.getHorizontalDLUsToPixel(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = dialog.getVerticalDLUsToPixel(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = 0;
+		descriptionComposite.setLayout(layout);
+		descriptionComposite.setFont(font);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		descriptionComposite.setLayoutData(data);
+		
+		createDescriptionArea(font, descriptionComposite);
 		initializationComplete = true;
 	}
 	
@@ -2503,39 +2533,66 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		GridData data;
 		description = new Label(composite, SWT.LEFT | SWT.WRAP);
 		data = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
-		data.widthHint = 300;
-		data.heightHint = 40;
 		data.horizontalSpan = 3;
 		description.setLayoutData(data);
 		description.setFont(font);
-		setupDescriptionText();
+		setupDescriptionText(null);
 	}
 
-	private void setupDescriptionText() {
+	private void setupDescriptionText(String errorString) {
 		if (description != null) {
-			String selectedKey = MultiMatcherLocalization.getMultiMatcherKey(multiKey.getText());
-			String selectedOperator = MultiMatcherLocalization.getMultiMatcherKey(multiOperator.getText());
-			Class selectedKeyOperatorType = FileInfoAttributesMatcher.getTypeForKey(selectedKey, selectedOperator);
-			description.setText(new String());
-			if (selectedKeyOperatorType.equals(String.class)) {
-				if (!argumentsRegularExpresion.getSelection())
+			if (errorString != null) {
+				// take only the first line of the error string
+				BufferedReader reader = new BufferedReader(new StringReader(errorString));
+				try {
+					String tmp = reader.readLine();
+					if (tmp != null)
+						errorString = tmp;
+				} catch (IOException e) {
+				}
+
+				description.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_RED));
+				description.setText(errorString);
+			} else {
+				description.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				String selectedKey = MultiMatcherLocalization.getMultiMatcherKey(multiKey.getText());
+				String selectedOperator = MultiMatcherLocalization.getMultiMatcherKey(multiOperator.getText());
+				Class selectedKeyOperatorType = FileInfoAttributesMatcher.getTypeForKey(selectedKey, selectedOperator);
+				description.setText(new String());
+				if (selectedKeyOperatorType.equals(String.class)) {
+					if (!argumentsRegularExpresion.getSelection())
+						description.setText(NLS.bind(
+								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_Matcher, null));
+				}
+				if (selectedKeyOperatorType.equals(Integer.class)) {
+					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
+						description.setText(NLS.bind(
+								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_TimeInterval, null));
+					else
 					description.setText(NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_Matcher, null));
+							IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_FileLength, null));
+				}
 			}
-			if (selectedKeyOperatorType.equals(Integer.class)) {
-				if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
-					description.setText(NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_TimeInterval, null));
-				else
-				description.setText(NLS.bind(
-						IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_FileLength, null));
-			}
+			shell.layout(true, true);
 		}
 	}
 	
 	private void createCustomArgumentsArea(Font font, Composite composite) {
 		GridData data;
-		multiKey = new Combo(composite, SWT.READ_ONLY);
+
+		multiArgumentComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginWidth = dialog.getHorizontalDLUsToPixel(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.horizontalSpacing = dialog.getHorizontalDLUsToPixel(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginTop = dialog.getVerticalDLUsToPixel(IDialogConstants.VERTICAL_SPACING);
+		layout.marginHeight = 0;
+		multiArgumentComposite.setLayout(layout);
+		multiArgumentComposite.setFont(font);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		multiArgumentComposite.setLayoutData(data);
+		
+		multiKey = new Combo(multiArgumentComposite, SWT.READ_ONLY);
 		multiKey.setItems(getMultiMatcherKeys());
 		data = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		multiKey.setLayoutData(data);
@@ -2547,7 +2604,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			}
 		});
 
-		multiOperator = new Combo(composite, SWT.READ_ONLY);
+		multiOperator = new Combo(multiArgumentComposite, SWT.READ_ONLY);
 		data = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		multiOperator.setLayoutData(data);
 		multiOperator.setFont(font);
@@ -2558,20 +2615,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			}
 		});
 		
-		multiArgumentComposite = new Composite(composite, SWT.NONE);
-		
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		layout.marginBottom = 0;
-		layout.marginHeight = 0;
-		multiArgumentComposite.setLayout(layout);
-		data = new GridData(SWT.FILL, SWT.TOP, true, true);
-		multiArgumentComposite.setLayoutData(data);
-		multiArgumentComposite.setFont(font);
-
 		FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
 		String local = MultiMatcherLocalization.getLocalMultiMatcherKey(argument.key);
 		int index = multiKey.indexOf(local);
@@ -2632,6 +2675,14 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				argumentsCaseSensitive.dispose();
 				argumentsCaseSensitive = null;
 			}
+			if (dummyLabel1 != null) {
+				dummyLabel1.dispose();
+				dummyLabel1 = null;
+			}
+			if (dummyLabel2 != null) {
+				dummyLabel2.dispose();
+				dummyLabel2 = null;
+			}
 			fContentAssistField = null;
 			FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
 			valueCache.put(intiantiatedKeyOperatorType.getName(), argument.pattern);
@@ -2641,56 +2692,58 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			filter.setArguments(FileInfoAttributesMatcher.encodeArguments(argument));
 		}
 		if (selectedKeyOperatorType.equals(String.class)) {
+	
+			arguments = new Text(multiArgumentComposite, SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			data.widthHint = 150;
+			arguments.setLayoutData(data);
+			arguments.setFont(multiArgumentComposite.getFont());
+			arguments.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validateInputText();
+				}
+			});
+
+			dummyLabel1 = new Label(multiArgumentComposite, SWT.NONE);
+			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			dummyLabel1.setText(new String());
+			data.horizontalSpan = 1;
+			dummyLabel1.setLayoutData(data);
+
+			dummyLabel2 = new Label(multiArgumentComposite, SWT.NONE);
+			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			dummyLabel2.setText(new String());
+			data.horizontalSpan = 1;
+			dummyLabel2.setLayoutData(data);
+
 			stringArgumentComposite = new Composite(multiArgumentComposite, SWT.NONE);
 			
-			GridData data;
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
-			layout.marginWidth = 4;
-			layout.horizontalSpacing = 4;
-			layout.verticalSpacing = 0;
-			layout.marginBottom = 0;
+			layout.marginWidth = 0;
+			layout.marginTop = dialog.getVerticalDLUsToPixel(IDialogConstants.VERTICAL_SPACING) / 2;
 			layout.marginHeight = 0;
+			layout.marginBottom = 0;
 			stringArgumentComposite.setLayout(layout);
-			data = new GridData(SWT.FILL, SWT.TOP, true, true);
+			data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+			data.horizontalSpan = 1;
 			stringArgumentComposite.setLayoutData(data);
 			stringArgumentComposite.setFont(multiArgumentComposite.getFont());
 
-			arguments = new Text(stringArgumentComposite, SWT.SINGLE | SWT.BORDER);
-			data = new GridData(SWT.FILL, SWT.TOP, true, false);
-			data.minimumWidth = 100;
-			arguments.setLayoutData(data);
-			arguments.setFont(stringArgumentComposite.getFont());
-	
-			attributeStringArgumentComposite = new Composite(stringArgumentComposite, SWT.NONE);
-			
-			layout = new GridLayout();
-			layout.numColumns = 1;
-			layout.marginWidth = 0;
-			layout.horizontalSpacing = 4;
-			layout.verticalSpacing = 0;
-			layout.marginBottom = 0;
-			layout.marginHeight = 0;
-			attributeStringArgumentComposite.setLayout(layout);
-			data = new GridData(SWT.FILL, SWT.TOP, false, true);
-			attributeStringArgumentComposite.setLayoutData(data);
-			attributeStringArgumentComposite.setFont(stringArgumentComposite.getFont());
-
-			argumentsCaseSensitive = new Button(attributeStringArgumentComposite, SWT.CHECK);
+			argumentsCaseSensitive = new Button(stringArgumentComposite, SWT.CHECK);
 			argumentsCaseSensitive.setText(NLS.bind(
 					IDEWorkbenchMessages.ResourceFilterPage_caseSensitive, null));
-			data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-			data.minimumWidth = 100;
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			argumentsCaseSensitive.setLayoutData(data);
-			argumentsCaseSensitive.setFont(stringArgumentComposite.getFont());
+			argumentsCaseSensitive.setFont(multiArgumentComposite.getFont());
 
-			argumentsRegularExpresion = new Button(attributeStringArgumentComposite, SWT.CHECK);
+			argumentsRegularExpresion = new Button(stringArgumentComposite, SWT.CHECK);
 			argumentsRegularExpresion.setText(NLS.bind(
 					IDEWorkbenchMessages.ResourceFilterPage_regularExpression, null));
-			data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			data.minimumWidth = 100;
 			argumentsRegularExpresion.setLayoutData(data);
-			argumentsRegularExpresion.setFont(stringArgumentComposite.getFont());
+			argumentsRegularExpresion.setFont(multiArgumentComposite.getFont());
 
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
@@ -2707,7 +2760,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			});
 			argumentsRegularExpresion.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					setupDescriptionText();
+					setupDescriptionText(null);
 					storeMultiSelection();
 					if (fContentAssistField != null)
 						fContentAssistField.setEnabled(argumentsRegularExpresion.getSelection());
@@ -2732,10 +2785,15 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		if (selectedKeyOperatorType.equals(Integer.class)) {
 			GridData data;
 			arguments = new Text(multiArgumentComposite, SWT.SINGLE | SWT.BORDER);
-			data = new GridData(SWT.FILL, SWT.TOP, true, false);
-			data.minimumWidth = 100;
+			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
+			arguments.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validateInputText();
+				}
+			});
 
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
@@ -2754,7 +2812,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		if (selectedKeyOperatorType.equals(Date.class)) {
 			GridData data;
 			argumentsDate = new DateTime(multiArgumentComposite, SWT.DATE | SWT.MEDIUM);
-			data = new GridData(SWT.FILL, SWT.TOP, true, false);
+			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			argumentsDate.setLayoutData(data);
 			argumentsDate.setFont(multiArgumentComposite.getFont());
 			argumentsDate.addSelectionListener(new SelectionAdapter() {
@@ -2799,19 +2857,22 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 					argumentsBoolean.select(Boolean.valueOf(argument.pattern).booleanValue() ? 0:1);
 			}
 		}
-		multiArgumentComposite.layout(true);
 		intiantiatedKeyOperatorType = selectedKeyOperatorType;
 		
 		if (fContentAssistField != null)
 			fContentAssistField.setEnabled(isUsingRegularExpression);
 
-		shell.layout(true);
+		shell.layout(true, true);
 		if (initializationComplete) {
 			Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			shell.setSize(size);
+			Point shellSize = shell.getSize();
+			size.x = Math.max(size.x, shellSize.x);
+			size.y = Math.max(size.y, shellSize.y);
+			if ((size.x > shellSize.x) || (size.y > shellSize.y))
+				shell.setSize(size);
 		}
 		shell.redraw();
-		setupDescriptionText();
+		setupDescriptionText(null);
 	}
 
 	private String[] timeIntervalPrefixes = {"s", "m", "h", "d"};    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
@@ -2957,13 +3018,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	public void selectionChanged() {
 	}
 
-	/**
-	 * @throws CoreException  
-	 */
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#verifyData()
-	 */
-	public void validate() throws CoreException {
+	void validateInputText() {
+		setupDescriptionText(validate());
+		dialog.updateFinishControls();
+	}
+
+	public String validate() {
+		String message = null;
 		if (intiantiatedKeyOperatorType != null) {
 			String selectedKey = MultiMatcherLocalization.getMultiMatcherKey(multiKey.getText());
 			String selectedOperator = MultiMatcherLocalization.getMultiMatcherKey(multiOperator.getText());
@@ -2975,22 +3036,40 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			if (intiantiatedKeyOperatorType.equals(Date.class) && argumentsDate != null) {
 			}
 			if (intiantiatedKeyOperatorType.equals(String.class) && arguments != null) {
+				argument.pattern = arguments.getText();
+				if (argumentsRegularExpresion != null)
+					argument.regularExpression = argumentsRegularExpresion.getSelection();
+				if (argumentsCaseSensitive != null)
+					argument.caseSensitive = argumentsCaseSensitive.getSelection();
+				String encodedArgument = FileInfoAttributesMatcher.encodeArguments(argument);
+				FilterCopy copy = new FilterCopy(filter);
+				FilterTypeUtil.setValue(copy, FilterTypeUtil.ARGUMENTS, encodedArgument);
+
+				IFilterMatcherDescriptor desc = dialog.getResource().getWorkspace().getFilterMatcherDescriptor(copy.getId());
+				if (desc != null) {
+					try {
+						AbstractFileInfoMatcher matcher = ((FilterDescriptor) desc).createFilter();
+						matcher.initialize(dialog.getResource().getProject(), copy.getArguments());
+					} catch (CoreException e) {
+							message = e.getMessage();
+					}
+				}
 			}
 			if (intiantiatedKeyOperatorType.equals(Integer.class) && arguments != null) {
 				if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED)) {
 					try {
 						convertFromEditableTimeInterval(arguments.getText());
 					} catch (NumberFormatException e) {
-						throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_InvalidTimeInterval, arguments.getText()), e));
+						message = NLS.bind(
+								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_InvalidTimeInterval, arguments.getText());
 					}
 				}
 				else {
 					try {
 						convertFromEditableLength(arguments.getText());
 					} catch (NumberFormatException e) {
-						throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_InvalidFileLength, arguments.getText()), e));
+						message = NLS.bind(
+								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_InvalidFileLength, arguments.getText());
 					}
 				}
 			}
@@ -2998,6 +3077,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				
 			}
 		}
+		return message;	
 	}
 
 	/* (non-Javadoc)
@@ -3037,21 +3117,24 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
-	Shell shell;
-	FilterCopy filter;
+	protected Shell shell;
+	protected FilterCopy filter;
 	protected Text arguments;
 	protected Label argumentsLabel;
 	protected Label description;
 	protected ContentAssistCommandAdapter fContentAssistField;
+	protected FilterEditDialog dialog;
 
-	private static final String REGEX_FILTER_ID = "org.eclipse.core.resources.regexFilterMatcher"; //$NON-NLS-1$
+	public static final String REGEX_FILTER_ID = "org.eclipse.core.resources.regexFilterMatcher"; //$NON-NLS-1$
 
 	/**
+	 * @param dialog 
 	 * @param parentShell
 	 * @param filter
 	 */
-	public DefaultCustomFilterArgumentUI(Shell parentShell, FilterCopy filter) {
+	public DefaultCustomFilterArgumentUI(FilterEditDialog dialog, Shell parentShell, FilterCopy filter) {
 		this.shell = parentShell;
+		this.dialog = dialog;
 		this.filter = filter;
 	}
 
@@ -3085,7 +3168,7 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		shell = argumentComposite.getShell();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginWidth = 0;
+		layout.marginWidth = dialog.getVerticalDLUsToPixel(IDialogConstants.HORIZONTAL_MARGIN);
 		argumentComposite.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		argumentComposite.setLayoutData(data);
@@ -3182,14 +3265,8 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		description.setFont(font);
 	}
 
-	/**
-	 * @throws CoreException  
-	 */
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#verifyData()
-	 */
-	public void validate() throws CoreException {
-		// nothing
+	public String validate(){
+		return null;
 	}
 
 	/* (non-Javadoc)

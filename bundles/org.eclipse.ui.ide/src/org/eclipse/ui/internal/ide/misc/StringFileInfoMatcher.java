@@ -23,6 +23,10 @@ import org.eclipse.ui.internal.ide.StringMatcher;
  */
 public class StringFileInfoMatcher extends AbstractFileInfoMatcher {
 
+	/**
+	 */
+	public static String ID = "org.eclipse.ui.ide.patternFilterMatcher"; //$NON-NLS-1$
+	
 	StringMatcher matcher = null;
 	/**
 	 * Creates a new factory for this filter type.

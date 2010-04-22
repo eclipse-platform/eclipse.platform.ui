@@ -61,7 +61,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceFilterPage_columnFilterTarget;
 	public static String ResourceFilterPage_columnFilterPattern;
 	public static String ResourceFilterPage_applyRecursivelyToFolderStructure;
-	public static String ResourceFilterPage_condition;
+	public static String ResourceFilterPage_recursive;
+	public static String ResourceFilterPage_details;
 	public static String ResourceFilterPage_caseSensitive;
 	public static String ResourceFilterPage_regularExpression;
 	public static String ResourceFilterPage_multiMatcher_Matcher;
@@ -77,8 +78,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceFilterPage_files;
 	public static String ResourceFilterPage_folders;
 	public static String ResourceFilterPage_editFilterDialogTitle;
-	public static String ResourceFilterPage_newFilterDialogTitleIncludeOnly;
-	public static String ResourceFilterPage_newFilterDialogTitleExcludeAll;
+	public static String ResourceFilterPage_newFilterDialogTitleFolder;
+	public static String ResourceFilterPage_newFilterDialogTitleProject;
 	public static String ResourceFilterPage_addSubFilterActionLabel;
 	public static String ResourceFilterPage_addSubFilterGroupActionLabel;
 	public static String ResourceFilterPage_removeFilterActionLabel;
