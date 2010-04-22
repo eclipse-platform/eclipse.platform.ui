@@ -67,7 +67,8 @@ public class ThemeEngine implements IThemeEngine {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				if (ce.getName().equals("theme")) {
 					registerTheme(ce.getAttribute("id"), ce
-							.getAttribute("label"), ce
+							.getAttribute("label"), "platform:/plugin/"
+							+ ce.getContributor().getName() + "/" + ce
 							.getAttribute("basestylesheeturi"));
 				}
 			}
@@ -188,7 +189,7 @@ public class ThemeEngine implements IThemeEngine {
 
 			for (IResourceLocator l : getResourceLocators(theme.getId())) {
 				engine.getResourcesLocatorManager()
-						.unregisterResourceLocator(l);
+						.registerResourceLocator(l);
 			}
 
 			for (String stylesheet : getAllStyles(theme.getId())) {
@@ -221,6 +222,7 @@ public class ThemeEngine implements IThemeEngine {
 				try {
 					s.setRedraw(false);
 					s.reskin(SWT.ALL);
+					applyStyles(s, true);
 				} catch(Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
