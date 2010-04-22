@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -59,7 +60,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	private Text fArgumentText;
 	private String fArgumentValue;
 	private Button fEditVariablesButton;
-	private Button fHideNonApplicableButton;
+	private Button fShowAllButton;
+	private Label fShowAllDescription;
 
 	/** 
 	 * Base class for custom variable filters. Clients may extend this class
@@ -164,6 +166,16 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		});		
 	}
 	
+	private void updateDescription() {
+		if((fShowAllDescription != null) && !fShowAllDescription.isDisposed()) {
+			if(fShowAllSelected) {
+				fShowAllDescription.setText(StringSubstitutionMessages.StringVariableSelectionDialog_11);
+			} else {
+				fShowAllDescription.setText(StringSubstitutionMessages.StringVariableSelectionDialog_10);
+			}
+		}
+	}
+
 	protected void setListElements(Object[] elements) {
 		ArrayList filtered = new ArrayList();
 		filtered.addAll(Arrays.asList(elements));
@@ -180,9 +192,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 					}
 				}
 			}
-		}
-		if((fHideNonApplicableButton != null) && !fHideNonApplicableButton.isDisposed()) {
-			fHideNonApplicableButton.setEnabled(!fShowAllSelected || (elements.length == filtered.size()));
 		}
 		super.setListElements(filtered.toArray());
 	}
@@ -215,14 +224,31 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		
 		Composite btnContainer = SWTFactory.createComposite(container, parent.getFont(), 3, 2, GridData.FILL_HORIZONTAL, 0, 0);
-		if (!fFilters.isEmpty()) {
-			fHideNonApplicableButton = SWTFactory.createCheckButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_9, null, !fShowAllSelected, 1);
-			fHideNonApplicableButton.setEnabled(!fFilters.isEmpty());
-			fHideNonApplicableButton.addSelectionListener(new SelectionAdapter() {
+		boolean bNeedShowAll = false;
+		if(!fFilters.isEmpty()) {
+			Object[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+			for (int i = 0;(i < elements.length) && !bNeedShowAll; i++) {
+				if(elements[i] instanceof IDynamicVariable) {
+					for (int j = 0; (j < fFilters.size()) && !bNeedShowAll; j++) {
+						VariableFilter filter = (VariableFilter)fFilters.get(j);
+						if(filter.isFiltered((IDynamicVariable)elements[i])) {
+							bNeedShowAll = true;
+						}
+					}
+				}
+			}
+		}
+		if (bNeedShowAll) {
+			fShowAllDescription = SWTFactory.createLabel(btnContainer, "", 3); //$NON-NLS-1$
+			updateDescription();
+			fShowAllButton = SWTFactory.createCheckButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_9, null, fShowAllSelected, 1);
+			fShowAllButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					fShowAllSelected = !fHideNonApplicableButton.getSelection();
+					fShowAllSelected = fShowAllButton.getSelection();
+					updateDescription();
 					updateElements();
 				}
+
 			});
 			SWTFactory.createHorizontalSpacer(btnContainer, 1);
 		} else {
