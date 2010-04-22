@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	private Map fAttributes = null;
 	private boolean fTerminated = false;
 	private boolean fCancelled = false;
+	// progress monitor to delegate or null if none
+	private IProgressMonitor fMonitor;
 	
 	public AntProcess(String label, ILaunch launch, Map attributes) {
 		fLabel = label;
@@ -124,18 +126,27 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 	 */
 	public void beginTask(String name, int totalWork) {
+		if (fMonitor != null) {
+			fMonitor.beginTask(name, totalWork);
+		}
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
+		if (fMonitor != null) {
+			fMonitor.done();
+		}
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double work) {
+		if (fMonitor != null) {
+			fMonitor.internalWorked(work);
+		}
 	}
 
 	/**
@@ -150,23 +161,44 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	 */
 	public void setCanceled(boolean value) {
 		fCancelled = value;
+		if (fMonitor != null) {
+			fMonitor.setCanceled(value);
+		}
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
 	public void setTaskName(String name) {
+		if (fMonitor != null) {
+			fMonitor.setTaskName(name);
+		}
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
 	public void subTask(String name) {
+		if (fMonitor != null) {
+			fMonitor.subTask(name);
+		}
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
+		if (fMonitor != null) {
+			fMonitor.worked(work);
+		}
+	}
+	
+	/**
+	 * Sets a progress monitor to delegate to or <code>null</code> if none.
+	 * 
+	 * @param monitor delegate monitor or <code>null</code>
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		fMonitor = monitor;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		boolean isSeparateJRE = AntLaunchingUtil
 				.isSeparateJREAntBuild(configuration);
 
-		if (ExternalToolsCoreUtil.isAsynchronousBuild(configuration)) {
+		if (AntLaunchingUtil.isLaunchInBackground(configuration)) {
 			monitor.beginTask(MessageFormat.format(
 				AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1,
 						new String[] { configuration.getName() }), 10);
@@ -290,7 +290,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 				launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine);
 		boolean debug = fMode.equals(ILaunchManager.DEBUG_MODE);
-		if (debug || ExternalToolsCoreUtil.isAsynchronousBuild(configuration)) {
+		if (debug || AntLaunchingUtil.isLaunchInBackground(configuration)) {
 			final AntRunner finalRunner = runner;
 			Runnable r = new Runnable() {
 				public void run() {
@@ -317,6 +317,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		} else {
 			// execute the build
 			try {
+				process.setProgressMonitor(monitor);
 				runner.run(monitor);
 			} catch (CoreException e) {
 				process.terminated();
@@ -654,7 +655,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			setProcessAttributes(processes[i], idStamp, null);
 		}
 
-		if (ExternalToolsCoreUtil.isAsynchronousBuild(copy)) {
+		if (AntLaunchingUtil.isLaunchInBackground(copy)) {
 			// refresh resources after process finishes
 			if (configuration.getAttribute(RefreshUtil.ATTR_REFRESH_SCOPE, (String)null) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(

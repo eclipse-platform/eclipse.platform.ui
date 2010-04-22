@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -520,5 +520,22 @@ public final class AntLaunchingUtil {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the given configuration should be launched in the background.
+	 * When unspecified, the default value for an Ant launch configuration is <code>true</code>.
+	 * 
+	 * @param configuration the configuration
+	 * @return whether the configuration is configured to launch in the background
+	 */
+	public static boolean isLaunchInBackground(ILaunchConfiguration configuration) {
+		boolean launchInBackground= true;
+		try {
+			launchInBackground= configuration.getAttribute(IExternalToolConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+		} catch (CoreException ce) {
+			AntLaunching.log(ce);
+		}
+		return launchInBackground;
 	}
 }
