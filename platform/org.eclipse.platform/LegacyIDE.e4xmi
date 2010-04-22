@@ -786,4 +786,6 @@
   <commands xmi:id="org.eclipse.ltk.ui.refactoring.commands.renameResource" elementId="org.eclipse.ltk.ui.refactoring.commands.renameResource" commandName="Rename Resource" description="Rename the selected resource and notify LTK participants."/>
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.show.outline" elementId="org.eclipse.jdt.ui.edit.text.java.show.outline" commandName="Quick Outline" description="Show the quick outline for the editor input"/>
   <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
+  <addons xmi:id="_XwQYkE2EEd-DfN2vYY4Lew" elementId="Cleanup Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"/>
+  <addons xmi:id="_bqcWME2EEd-DfN2vYY4Lew" elementId="DnD Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
 </application:Application>
