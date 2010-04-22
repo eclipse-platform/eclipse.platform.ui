@@ -111,6 +111,7 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
         
         Composite variableComposite = new Composite(tabFolder, 0);
         variableComposite.setLayout(new GridLayout());
+        variableComposite.setFont(font);
 
         topLabel = new Label(variableComposite, SWT.NONE);
         topLabel.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_description);
@@ -129,6 +130,7 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 
         Composite linkedResourceComposite = new Composite(tabFolder, 0);
         linkedResourceComposite.setLayout(new GridLayout());
+        linkedResourceComposite.setFont(font);
 
         linkedResourceEditor.createContents(linkedResourceComposite);
 

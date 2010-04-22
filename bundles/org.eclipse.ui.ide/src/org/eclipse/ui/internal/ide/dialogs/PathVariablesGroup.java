@@ -279,6 +279,7 @@ public class PathVariablesGroup {
             }
         });
         
+        variableTable.getTable().setFont(font);
 		ColumnViewerToolTipSupport.enableFor(variableTable, ToolTip.NO_RECREATE);
 
 		TableViewerColumn nameColumn = new TableViewerColumn(variableTable, SWT.NONE);
