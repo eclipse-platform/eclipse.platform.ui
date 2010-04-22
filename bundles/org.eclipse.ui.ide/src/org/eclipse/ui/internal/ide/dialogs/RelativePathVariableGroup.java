@@ -78,8 +78,8 @@ public class RelativePathVariableGroup {
 	}
 
 	/**
-	 * @param composite
-	 * @return
+	 * @param variableGroup 
+	 * @return the control
 	 */
 	public Control createContents(Composite variableGroup) {
 		shell = variableGroup.getShell();
@@ -87,6 +87,7 @@ public class RelativePathVariableGroup {
 		variableCheckbox = new Button(variableGroup, SWT.CHECK);
 		variableCheckbox.setText(label != null? label:IDEWorkbenchMessages.ImportTypeDialog_importElementsAs);
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		variableCheckbox.setFont(variableGroup.getFont());
 		variableCheckbox.setLayoutData(gridData);
 		variableCheckbox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -113,6 +114,7 @@ public class RelativePathVariableGroup {
 		variableCombo = new Combo(variableGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING); // GridData.FILL_HORIZONTAL);
 		variableCombo.setLayoutData(gridData);
+		variableCombo.setFont(variableGroup.getFont());
 		variableCombo.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1))

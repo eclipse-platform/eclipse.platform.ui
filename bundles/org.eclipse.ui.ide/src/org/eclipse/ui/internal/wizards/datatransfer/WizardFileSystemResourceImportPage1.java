@@ -44,6 +44,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,6 +60,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
@@ -270,35 +274,39 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         overwriteExistingResourcesCheckbox.setFont(optionsGroup.getFont());
         overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
 
-		Composite radioGroup = new Composite(optionsGroup, 0);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		radioGroup.setFont(optionsGroup.getFont());
-		radioGroup.setLayoutData(gridData);
-
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		layout.marginLeft= 0;
-		layout.marginRight= 0;
-		layout.marginTop= 0;
-		layout.marginBottom= 0;
-		radioGroup.setLayout(layout);
-
-        // create selection only radio
-        createOnlySelectedButton = new Button(radioGroup, SWT.RADIO);
-        createOnlySelectedButton.setFont(optionsGroup.getFont());
-        createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
-        createOnlySelectedButton.setSelection(true);
-
         // create containers radio
-        createContainerStructureButton = new Button(radioGroup, SWT.RADIO);
+        createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
         createContainerStructureButton.setFont(optionsGroup.getFont());
         createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
         createContainerStructureButton.setSelection(false);
 
+        // create selection only radio
+        createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
+        createOnlySelectedButton.setFont(optionsGroup.getFont());
+        createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
+        createOnlySelectedButton.setSelection(true);
+
+   		ExpandableComposite excomposite= new ExpandableComposite(optionsGroup, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		excomposite.setText(DataTransferMessages.FileImport_advanced);
+		excomposite.setExpanded(false);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		excomposite.setFont(optionsGroup.getFont());
+		excomposite.setLayoutData(gridData);
+		excomposite.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				Point idealSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point actualSize = getShell().getSize();
+				if (idealSize.y > actualSize.y)
+					getShell().setSize(actualSize.x, idealSize.y);
+			}
+		});
+
+		Composite clientComposite= new Composite(excomposite, SWT.NONE);
+		excomposite.setClient(clientComposite);
+		clientComposite.setLayout(new GridLayout(1, false));
+   		
         // create linked resource check
-        copyIntoWorkspaceButton = new Button(optionsGroup, SWT.CHECK);
+        copyIntoWorkspaceButton = new Button(clientComposite, SWT.CHECK);
         copyIntoWorkspaceButton.setFont(optionsGroup.getFont());
         copyIntoWorkspaceButton.setText(DataTransferMessages.FileImport_copyIntoWorkspace);
         copyIntoWorkspaceButton.setToolTipText(DataTransferMessages.FileImport_copyIntoWorkspaceTooltip);
@@ -310,12 +318,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         	}
         });
 
-        Button tmp = new Button(optionsGroup, SWT.CHECK);
+        Button tmp = new Button(clientComposite, SWT.CHECK);
         int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         tmp.dispose();
         
         // create virtual folders check
-        createVirtualFoldersButton = new Button(optionsGroup, SWT.CHECK);
+        createVirtualFoldersButton = new Button(clientComposite, SWT.CHECK);
         createVirtualFoldersButton.setFont(optionsGroup.getFont());
         createVirtualFoldersButton.setText(DataTransferMessages.FileImport_createVirtualFolders);
         createVirtualFoldersButton.setToolTipText(DataTransferMessages.FileImport_createVirtualFoldersTooltip);
@@ -331,13 +339,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		gridData.horizontalIndent = indent;
 		createVirtualFoldersButton.setLayoutData(gridData);
 
-		Composite relativeGroup = new Composite(optionsGroup, 0);
+		Composite relativeGroup = new Composite(clientComposite, 0);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalIndent = indent;
 		relativeGroup.setFont(optionsGroup.getFont());
 		relativeGroup.setLayoutData(gridData);
 
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
