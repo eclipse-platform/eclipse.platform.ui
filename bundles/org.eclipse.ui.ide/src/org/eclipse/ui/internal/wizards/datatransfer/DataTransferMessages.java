@@ -54,7 +54,10 @@ public class DataTransferMessages extends NLS {
 	public static String FileImport_createComplete;
 	public static String FileImport_createSelectedFolders;
 	public static String FileImport_createVirtualFolders;
-	public static String FileImport_createLinkedFiles;
+	public static String FileImport_importElementsAs;
+	public static String FileImport_createVirtualFoldersTooltip;
+	public static String FileImport_copyIntoWorkspace;
+	public static String FileImport_copyIntoWorkspaceTooltip;
 	public static String FileImport_noneSelected;
 	public static String FileImport_invalidSource;
 	public static String FileImport_sourceEmpty;

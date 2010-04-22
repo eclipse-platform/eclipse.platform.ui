@@ -519,6 +519,43 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
+     *	Returns a flat list of all of the leaf elements.
+     *
+     *	@return all of the leaf elements.
+     */
+    public List getAllListItems() {
+
+        final ArrayList returnValue = new ArrayList();
+
+        IElementFilter passThroughFilter = new IElementFilter() {
+
+            public void filterElements(Collection elements,
+                    IProgressMonitor monitor) {
+                returnValue.addAll(elements);
+            }
+
+            public void filterElements(Object[] elements,
+                    IProgressMonitor monitor) {
+                for (int i = 0; i < elements.length; i++) {
+                    returnValue.add(elements[i]);
+                }
+            }
+        };
+
+        try {
+            Object[] children = treeContentProvider.getChildren(root);
+            for (int i = 0; i < children.length; ++i) {
+                findAllSelectedListElements(children[i], null, true, passThroughFilter,
+                        null);
+            }
+        } catch (InterruptedException exception) {
+            return new ArrayList();
+        }
+        return returnValue;
+
+    }
+
+    /**
      *	Returns a list of all of the items that are white checked.
      * 	Any folders that are white checked are added and then any files
      *  from white checked folders are added. 

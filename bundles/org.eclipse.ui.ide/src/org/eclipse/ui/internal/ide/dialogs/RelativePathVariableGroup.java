@@ -47,6 +47,8 @@ public class RelativePathVariableGroup {
 	
 	private IModel content;
 	
+	private String label;
+	
 	public interface IModel {
 		/**
 		 * @return
@@ -69,7 +71,12 @@ public class RelativePathVariableGroup {
 	public RelativePathVariableGroup(IModel content) {
 		this.content = content;
 	}
-	
+
+	public RelativePathVariableGroup(IModel content, String label) {
+		this.content = content;
+		this.label = label;
+	}
+
 	/**
 	 * @param composite
 	 * @return
@@ -78,7 +85,7 @@ public class RelativePathVariableGroup {
 		shell = variableGroup.getShell();
 
 		variableCheckbox = new Button(variableGroup, SWT.CHECK);
-		variableCheckbox.setText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAs);
+		variableCheckbox.setText(label != null? label:IDEWorkbenchMessages.ImportTypeDialog_importElementsAs);
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		variableCheckbox.setLayoutData(gridData);
 		variableCheckbox.addSelectionListener(new SelectionListener() {

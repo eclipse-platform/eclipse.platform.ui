@@ -968,16 +968,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
     }
 
     /**
-     * Set Whether links will be created instead of files 
-     * 
-     * @param linkFilesOnly
-     * @since 3.6
-     */
-    public void setCreateLinkFilesOnly(boolean linkFilesOnly) {
-        createLinkFilesOnly = linkFilesOnly;
-    }
-
-    /**
      * Set a variable relative to which the links are created
      * 
      * @param variable

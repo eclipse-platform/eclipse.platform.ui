@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected Button createVirtualFoldersButton;
 
-    protected Button createLinkedFileButton;
+    protected Button copyIntoWorkspaceButton;
     
     protected RelativePathVariableGroup relativePathVariableGroup;
     
@@ -110,7 +111,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     private final static String STORE_CREATE_VIRTUAL_FOLDERS_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID";//$NON-NLS-1$
 
-    private final static String STORE_CREATE_LINKED_RESOURCES_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_LINKED_RESOURCES_ID";//$NON-NLS-1$
+    private final static String STORE_COPY_INTO_WORKSPACE_ID = "WizardFileSystemResourceImportPage1.STORE_COPY_INTO_WORKSPACE_ID";//$NON-NLS-1$
 
     private final static String STORE_PATH_VARIABLE_SELECTED_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID";//$NON-NLS-1$
 
@@ -296,33 +297,43 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
         createContainerStructureButton.setSelection(false);
 
+        // create linked resource check
+        copyIntoWorkspaceButton = new Button(optionsGroup, SWT.CHECK);
+        copyIntoWorkspaceButton.setFont(optionsGroup.getFont());
+        copyIntoWorkspaceButton.setText(DataTransferMessages.FileImport_copyIntoWorkspace);
+        copyIntoWorkspaceButton.setToolTipText(DataTransferMessages.FileImport_copyIntoWorkspaceTooltip);
+        copyIntoWorkspaceButton.setSelection(true);
+        
+        copyIntoWorkspaceButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		updateWidgetEnablements();
+        	}
+        });
+
+        Button tmp = new Button(optionsGroup, SWT.CHECK);
+        int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        tmp.dispose();
+        
         // create virtual folders check
         createVirtualFoldersButton = new Button(optionsGroup, SWT.CHECK);
         createVirtualFoldersButton.setFont(optionsGroup.getFont());
         createVirtualFoldersButton.setText(DataTransferMessages.FileImport_createVirtualFolders);
+        createVirtualFoldersButton.setToolTipText(DataTransferMessages.FileImport_createVirtualFoldersTooltip);
         createVirtualFoldersButton.setSelection(false);
 
         createVirtualFoldersButton.addSelectionListener(new SelectionAdapter() {
         	public void widgetSelected(SelectionEvent e) {
-        		setupRelativePathVariableEnablement();
+        		updateWidgetEnablements();
         	}
         });
+		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.horizontalSpan = 2;
+		gridData.horizontalIndent = indent;
+		createVirtualFoldersButton.setLayoutData(gridData);
 
-        // create linked resource check
-        createLinkedFileButton = new Button(optionsGroup, SWT.CHECK);
-        createLinkedFileButton.setFont(optionsGroup.getFont());
-        createLinkedFileButton.setText(DataTransferMessages.FileImport_createLinkedFiles);
-        createLinkedFileButton.setSelection(false);
-        
-        createLinkedFileButton.addSelectionListener(new SelectionAdapter() {
-        	public void widgetSelected(SelectionEvent e) {
-        		setupRelativePathVariableEnablement();
-        	}
-        });
-        
 		Composite relativeGroup = new Composite(optionsGroup, 0);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.horizontalIndent = 12;
+		gridData.horizontalIndent = indent;
 		relativeGroup.setFont(optionsGroup.getFont());
 		relativeGroup.setLayoutData(gridData);
 
@@ -337,8 +348,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		relativeGroup.setLayout(layout);
-
-		relativePathVariableGroup = new RelativePathVariableGroup(new RelativePathVariableGroup.IModel() {
+        
+        relativePathVariableGroup = new RelativePathVariableGroup(new RelativePathVariableGroup.IModel() {
 			public IResource getResource() {
 				IPath path = getContainerFullPath();
 				if (path != null)
@@ -351,30 +362,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			public String getVariable() {
 				return pathVariable;
 			}
-        });
+        }, DataTransferMessages.FileImport_importElementsAs
+        );
         relativePathVariableGroup.createContents(relativeGroup);
         
         
-    	setupRelativePathVariableEnablement();
+        updateWidgetEnablements();
 		relativePathVariableGroup.setSelection(true);
     }
-
-	/**
-	 * 
-	 */
-	private void setupRelativePathVariableEnablement() {
-		IPath path = getContainerFullPath();
-    	if (path != null && relativePathVariableGroup != null) {
-			IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			if (target != null && target.isVirtual()) {
-				createLinkedFileButton.setSelection(true);
-				createVirtualFoldersButton.setSelection(true);
-			}
-    	}
-		if (createVirtualFoldersButton.getSelection())
-			createLinkedFileButton.setSelection(true);
-		relativePathVariableGroup.setEnabled(createLinkedFileButton.getSelection());
-	}
 
     /**
      *	Create the group for creating the root directory
@@ -760,7 +755,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      *  Import the resources with extensions as specified by the user
      */
     protected boolean importResources(List fileSystemObjects) {
-        ImportOperation operation = new ImportOperation(getContainerFullPath(),
+        ImportOperation operation;
+        
+        boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() && 
+        											createOnlySelectedButton.getSelection() &&
+        											(copyIntoWorkspaceButton.getSelection() == false) &&
+        											(createVirtualFoldersButton.getSelection() == false);
+		
+        if (shouldImportTopLevelFoldersRecursively)
+            operation = new ImportOperation(getContainerFullPath(),
+                    getSourceDirectory(), fileSystemStructureProvider,
+                    this, Arrays.asList(new File[] {getSourceDirectory()}));
+        else
+        	operation = new ImportOperation(getContainerFullPath(),
                 getSourceDirectory(), fileSystemStructureProvider,
                 this, fileSystemObjects);
 
@@ -781,7 +788,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 					relativePathVariableGroup.selectVariable(preferedVariable);
 			}
     	}
-    	setupRelativePathVariableEnablement();
+    	updateWidgetEnablements();
     }
 
    	/**
@@ -792,12 +799,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 .getSelection());
         op.setOverwriteResources(overwriteExistingResourcesCheckbox
                 .getSelection());
-        op.setVirtualFolders(createVirtualFoldersButton
-                .getSelection());
-        op.setCreateLinkFilesOnly(createLinkedFileButton
-                .getSelection());
-        if (relativePathVariableGroup.getSelection())
-        	op.setRelativeVariable(pathVariable);
+        if (copyIntoWorkspaceButton.getSelection() == false) {
+        	op.setCreateLinks(true);
+	        op.setVirtualFolders(createVirtualFoldersButton
+	                .getSelection());
+	        if (relativePathVariableGroup.getSelection())
+	        	op.setRelativeVariable(pathVariable);
+        }
     }
 
     /**
@@ -877,16 +885,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             createVirtualFoldersButton.setSelection(createVirtualFolders);
 
             boolean createLinkedResources = settings
-    				.getBoolean(STORE_CREATE_LINKED_RESOURCES_ID);
-            createLinkedFileButton.setSelection(createLinkedResources);
+    				.getBoolean(STORE_COPY_INTO_WORKSPACE_ID);
+            copyIntoWorkspaceButton.setSelection(createLinkedResources);
 
             boolean pathVariableSelected = settings
 					.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
             relativePathVariableGroup.setSelection(pathVariableSelected);
 
             pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
-        	relativePathVariableGroup.selectVariable(pathVariable);
-        	setupRelativePathVariableEnablement();
+            if (pathVariable != null)
+            	relativePathVariableGroup.selectVariable(pathVariable);
+        	updateWidgetEnablements();
         }
     }
 
@@ -916,8 +925,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
             		createVirtualFoldersButton.getSelection());
 
-            settings.put(STORE_CREATE_LINKED_RESOURCES_ID,
-            		createLinkedFileButton.getSelection());
+            settings.put(STORE_COPY_INTO_WORKSPACE_ID,
+            		copyIntoWorkspaceButton.getSelection());
 
             settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
             		relativePathVariableGroup.getSelection());
@@ -1100,8 +1109,36 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected void updateWidgetEnablements() {
         super.updateWidgetEnablements();
         enableButtonGroup(ensureSourceIsValid());
+
+    	if (copyIntoWorkspaceButton != null) {
+			IPath path = getContainerFullPath();
+	    	if (path != null && relativePathVariableGroup != null) {
+				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (target != null && target.isVirtual()) {
+					copyIntoWorkspaceButton.setSelection(false);
+					createVirtualFoldersButton.setSelection(true);
+				}
+	    	}
+			relativePathVariableGroup.setEnabled(!copyIntoWorkspaceButton.getSelection());
+			createVirtualFoldersButton.setEnabled(!copyIntoWorkspaceButton.getSelection());
+	
+			if ((!selectionGroup.getAllCheckedListItems().isEmpty() && !allItemsAreChecked()) ||
+				(createOnlySelectedButton.getSelection() == false)) {
+	        	createVirtualFoldersButton.setSelection(true);
+			}
+    	}
     }
 
+    private boolean allItemsAreChecked() {
+		List checkedItems = selectionGroup.getAllCheckedListItems();
+		if (!checkedItems.isEmpty()) {
+			List allItems = selectionGroup.getAllListItems();
+        	if (checkedItems.size() == allItems.size())
+        		return true;
+        }
+		return false;
+    }
+    
     /**
      *	Answer a boolean indicating whether self's source specification
      *	widgets currently all contain valid values.
