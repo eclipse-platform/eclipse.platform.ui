@@ -17,10 +17,12 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -81,7 +83,13 @@ public class CommandElement extends QuickAccessElement {
 		return null;
 	}
 
-	public String getLabel() {
+	/**
+	 * Returns a formatted string describes this command.
+	 * 
+	 * @return a description of the command of this element
+	 * @since 3.6
+	 */
+	public String getCommand() {
 		final StringBuffer label = new StringBuffer();
 
 		try {
@@ -95,11 +103,16 @@ public class CommandElement extends QuickAccessElement {
 			label.append(command.toString());
 		}
 
-		String binding = getQualifier();
-		if (binding != null) {
-			label.append(' ').append(binding);
-		}
 		return label.toString();
+	}
+
+	public String getLabel() {
+		String command = getCommand();
+		String binding = getBinding();
+		if (binding != null) {
+			return NLS.bind(CommandMessages.Tooltip_Accelerator, command, binding);
+		}
+		return command;
 	}
 
 	/**
@@ -110,13 +123,13 @@ public class CommandElement extends QuickAccessElement {
 	 *         <code>null</code>
 	 * @since 3.6
 	 */
-	public String getQualifier() {
+	public String getBinding() {
 		BindingService service = (BindingService) PlatformUI.getWorkbench().getService(
 				IBindingService.class);
 		TriggerSequence[] triggerSeq = service.getBindingManager()
 				.getActiveBindingsDisregardingContextFor(command);
 		if (triggerSeq != null && triggerSeq.length > 0) {
-			return '(' + triggerSeq[0].format() + ')';
+			return triggerSeq[0].format();
 		}
 		return null;
 	}

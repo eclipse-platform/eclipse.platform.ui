@@ -35,14 +35,8 @@ public abstract class QuickAccessElement {
 
 	/**
 	 * Returns the label to be displayed to the user.
-	 * <p>
-	 * Starting from 3.6, if this element's qualifier string is not
-	 * <code>null</code>, the string <b>must</b> be included as an ending suffix
-	 * to this label.
-	 * </p>
 	 * 
 	 * @return the label
-	 * @see #getQualifier()
 	 */
 	public abstract String getLabel();
 
@@ -73,20 +67,6 @@ public abstract class QuickAccessElement {
 	 */
 	public String getSortLabel() {
 		return getLabel();
-	}
-
-	/**
-	 * Returns qualifier information about this element. <code>null</code> may
-	 * be returned if there is no qualifier information for this element. This
-	 * information <b>must</b> included at the end of this element's label.
-	 * 
-	 * @return this element's qualifier information, or <code>null</code> if it
-	 *         has none
-	 * @see #getLabel()
-	 * @since 3.6
-	 */
-	public String getQualifier() {
-		return null;
 	}
 
 	/**

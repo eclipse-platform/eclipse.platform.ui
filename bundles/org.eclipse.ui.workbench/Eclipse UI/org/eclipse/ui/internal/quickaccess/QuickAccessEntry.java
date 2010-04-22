@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -21,11 +22,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.DeviceResourceException;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -138,21 +139,23 @@ class QuickAccessEntry {
 			break;
 		case 1:
 			String label = element.getLabel();
-			String qualifier = element.getQualifier();
-			if (qualifier != null) {
-				// this element has a qualifier, we need to style it
-				Color qualifierColor = JFaceResources.getColorRegistry().get(
-						JFacePreferences.QUALIFIER_COLOR);
-				TextStyle qualifierStyle = new TextStyle(boldStyle);
-				// we don't want the bold font
-				qualifierStyle.font = null;
-				qualifierStyle.foreground = qualifierColor;
-				// qualifiers are spec'd to be at the end of an element's label
-				textLayout.setStyle(qualifierStyle, label.length() - qualifier.length(), label.length());
+			if (element instanceof CommandElement) {
+				CommandElement commandElement = (CommandElement) element;
+				String binding = commandElement.getBinding();
+				if (binding != null) {
+					StyledString styledString = StyledCellLabelProvider.styleDecoratedString(label,
+							StyledString.QUALIFIER_STYLER, new StyledString(commandElement
+									.getCommand()));
+					StyleRange[] styleRanges = styledString.getStyleRanges();
+					for (int i = 0; i < styleRanges.length; i++) {
+						textLayout.setStyle(styleRanges[i], styleRanges[i].start,
+								styleRanges[i].start + styleRanges[i].length);
+					}
+				}
 			}
 			Image image = getImage(element, resourceManager);
 			event.gc.drawImage(image, event.x + 1, event.y + 1);
-			textLayout.setText(element.getLabel());
+			textLayout.setText(label);
 			if (boldStyle != null) {
 				for (int i = 0; i < elementMatchRegions.length; i++) {
 					int[] matchRegion = elementMatchRegions[i];
