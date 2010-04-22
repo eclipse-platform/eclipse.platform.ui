@@ -401,13 +401,13 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * </p>
 	 * @noreference This method is not intended to be referenced by clients.
 	 * 
-	 * @param trigger the type of build being triggered. Valid values include
+	 * @param kind the kind of build being requested. Valid values include:
 	 * <ul>
 	 * <li>{@link #FULL_BUILD} - indicates a full build.</li>
-	 * <li>{@link #INCREMENTAL_BUILD}- indicates an incremental build.</li>
+	 * <li>{@link #INCREMENTAL_BUILD} - indicates an incremental build.</li>
 	 * <li>{@link #AUTO_BUILD} - indicates an automatically triggered
 	 * incremental build (autobuilding on).</li>
-	 * <li>{@link #CLEAN_BUILD} - indicates a clean build
+	 * <li>{@link #CLEAN_BUILD} - indicates a clean request.</li>
 	 * </ul>
 	 * @param args a table of builder-specific arguments keyed by argument name
 	 * (key type: <code>String</code>, value type: <code>String</code>);
@@ -418,7 +418,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 
 	 * @since 3.6
 	 */
-	public ISchedulingRule getRule(int trigger, Map args) {
+	public ISchedulingRule getRule(int kind, Map args) {
 		return getRule();
 	}
 }
