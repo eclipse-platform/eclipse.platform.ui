@@ -940,18 +940,25 @@ public class FilteredResourcesSelectionDialog extends
 				filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
 				if ("*".equals(filenamePattern)) //$NON-NLS-1$
 					filenamePattern= "**"; //$NON-NLS-1$
-				patternMatcher.setPattern(filenamePattern);
+				
 				if (sep > 0) {
+					if (filenamePattern.length() == 0) // relative patterns don't need a file name
+						filenamePattern= "**"; //$NON-NLS-1$
+						
 					String containerPattern = stringPattern.substring(0, sep);
-					if (!containerPattern.startsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
-						containerPattern = IPath.SEPARATOR + containerPattern;
-					this.containerPattern= new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
-					this.containerPattern.setPattern(containerPattern);
+					
 					if (searchContainer != null) {
 						relativeContainerPattern = new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 						relativeContainerPattern.setPattern(searchContainer.getFullPath().append(containerPattern).toString());
 					}
+					
+					if (!containerPattern.startsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
+						containerPattern = IPath.SEPARATOR + containerPattern;
+					this.containerPattern= new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
+					this.containerPattern.setPattern(containerPattern);
 				}
+				patternMatcher.setPattern(filenamePattern);
+				
 			} else {
 				filenamePattern= stringPattern;
 			}
