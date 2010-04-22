@@ -32,7 +32,9 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 public class ThemeEngine implements IThemeEngine {
@@ -40,6 +42,7 @@ public class ThemeEngine implements IThemeEngine {
 
 	private CSSEngine engine;
 	private ITheme currentTheme;
+	private Display display;
 
 	private List<String> globalStyles = new ArrayList<String>();
 
@@ -48,42 +51,50 @@ public class ThemeEngine implements IThemeEngine {
 
 	public ThemeEngine(Display display) {
 		this.engine = new CSSSWTEngineImpl(display);
+		this.display = display;
 		this.engine.setErrorHandler(new CSSErrorHandler() {
-			
+
 			public void error(Exception e) {
-				//TODO Use the logger
+				// TODO Use the logger
 				e.printStackTrace();
 			}
 		});
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
-		
-		for( IExtension e : extPoint.getExtensions() ) {
-			for( IConfigurationElement ce : e.getConfigurationElements() ) {
-				if( ce.getName().equals("theme") ) {
-					registerTheme(ce.getAttribute("id"), ce.getAttribute("label"), ce.getAttribute("basestylesheeturi"));
+		IExtensionPoint extPoint = registry
+				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
+
+		for (IExtension e : extPoint.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				if (ce.getName().equals("theme")) {
+					registerTheme(ce.getAttribute("id"), ce
+							.getAttribute("label"), ce
+							.getAttribute("basestylesheeturi"));
 				}
 			}
 		}
-		
-		for( IExtension e : extPoint.getExtensions() ) {
-			for( IConfigurationElement ce : e.getConfigurationElements() ) {
-				if( ce.getName().equals("stylesheet") ) {
+
+		for (IExtension e : extPoint.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				if (ce.getName().equals("stylesheet")) {
 					IConfigurationElement[] cces = ce.getChildren("themeid");
-					if( cces.length == 0 ) {
-						registerStylsheet("platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("uri"));
+					if (cces.length == 0) {
+						registerStylsheet("platform:/plugin/"
+								+ ce.getContributor().getName() + "/"
+								+ ce.getAttribute("uri"));
 					} else {
 						String[] themes = new String[cces.length];
-						for( int i = 0; i < cces.length; i++ ) {
+						for (int i = 0; i < cces.length; i++) {
 							themes[i] = cces[i].getAttribute("refid");
 						}
-						String uri = "platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("uri");
+						String uri = "platform:/plugin/"
+								+ ce.getContributor().getName() + "/"
+								+ ce.getAttribute("uri");
 						registerStylsheet(uri, themes);
 					}
 				}
 			}
 		}
-		
+
 		display.setData("org.eclipse.e4.ui.css.core.engine", engine);
 	}
 
@@ -98,7 +109,7 @@ public class ThemeEngine implements IThemeEngine {
 		Theme theme = new Theme(id, label);
 		themes.add(theme);
 		registerStyle(id, basestylesheetURI);
-		
+
 		return theme;
 	}
 
@@ -152,17 +163,17 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	public void setTheme(String themeId) {
-		for( Theme t : themes ) {
-			if( t.getId().equals(themeId) ) {
+		for (Theme t : themes) {
+			if (t.getId().equals(themeId)) {
 				setTheme(t);
 				break;
 			}
 		}
 	}
-	
+
 	public void setTheme(ITheme theme) {
 		Assert.isNotNull(theme, "The theme must not be null");
-		
+
 		if (this.currentTheme != theme) {
 			if (currentTheme != null) {
 				for (IResourceLocator l : getResourceLocators(currentTheme
@@ -202,6 +213,19 @@ public class ThemeEngine implements IThemeEngine {
 							e.printStackTrace();
 						}
 					}
+				}
+			}
+			
+			Shell[] shells = display.getShells();
+			for (Shell s : shells) {
+				try {
+					s.setRedraw(false);
+					s.reskin(SWT.ALL);
+				} catch(Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					s.setRedraw(true);
 				}
 			}
 		}
