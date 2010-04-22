@@ -60,6 +60,7 @@ public class CSSStylingSupport {
 				"org.eclipse.e4.ui.workbench.swt.theme.default",
 				"Default Theme", cssURI);
 		engine.setTheme(theme);
+		appContext.set(IThemeEngine.class.getName(), engine);
 
 		// try {
 		// URL url = FileLocator.resolve(new URL(cssURI.toString()));
