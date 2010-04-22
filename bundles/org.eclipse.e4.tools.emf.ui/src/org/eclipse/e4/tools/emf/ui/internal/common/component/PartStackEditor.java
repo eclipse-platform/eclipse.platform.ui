@@ -27,6 +27,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUiFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -272,8 +274,8 @@ public class PartStackEditor extends AbstractComponentEditor {
 				}
 			});
 			childrenDropDown.setInput(new EClass[] {
-					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-					BasicPackageImpl.Literals.PART_STACK,
+//					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+//					BasicPackageImpl.Literals.PART_STACK,
 					BasicPackageImpl.Literals.PART,
 					BasicPackageImpl.Literals.INPUT_PART
 			});
