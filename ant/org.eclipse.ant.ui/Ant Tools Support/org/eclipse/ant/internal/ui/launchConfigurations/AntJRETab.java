@@ -18,6 +18,7 @@ import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -106,7 +107,9 @@ public class AntJRETab extends JavaJRETab {
 		} else {
 			super.performApply(configuration);
 			IVMInstall vm = fJREBlock.getJRE();
-			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, (vm == null ? false : vm.equals(getDefaultVMInstall(configuration))));
+			IPath path = fJREBlock.getPath();
+			String id = JavaRuntime.getExecutionEnvironmentId(path);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, ((vm == null || id != null) ? false : vm.equals(getDefaultVMInstall(configuration))));
 			applySeparateVMAttributes(configuration);
 			fVMArgumentsBlock.performApply(configuration);
 			fWorkingDirectoryBlock.performApply(configuration);
@@ -215,8 +218,8 @@ public class AntJRETab extends JavaJRETab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
 		if (defaultVMInstall != null) {
-			config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, true);
-			//setDefaultVMInstallAttributes(defaultVMInstall, config);
+			config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			setDefaultVMInstallAttributes(defaultVMInstall, config);
 			applySeparateVMAttributes(config);
 		}
 		
@@ -244,6 +247,13 @@ public class AntJRETab extends JavaJRETab {
 		}
 	}
 
+	private void setDefaultVMInstallAttributes(IVMInstall defaultVMInstall, ILaunchConfigurationWorkingCopy config) {
+		String vmName = defaultVMInstall.getName();
+		String vmTypeID = defaultVMInstall.getVMInstallType().getId();
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
