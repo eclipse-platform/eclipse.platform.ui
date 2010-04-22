@@ -22,6 +22,9 @@ import org.osgi.framework.ServiceReference;
 /*
  * ATTENTION WHEN RENAMING, REMOVING, ... you need to update 3.x org.eclipse.ui.workbench/Eclipse UI/org/eclipse/ui/internal/Workbench.java
  */
+/**
+ * This class allows 3.x code to bootstrap the themes engine with having a real dependency on it
+ */
 public class BootstrapTheme3x {
 	private static final String DEFAULT_THEME = "org.eclipse.e4.ui.workbench.swt.theme.default";
 	
