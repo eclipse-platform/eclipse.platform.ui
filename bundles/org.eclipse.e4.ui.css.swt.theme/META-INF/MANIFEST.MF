@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
 Service-Component: OSGI-INF/thememanager.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.e4.ui.css.swt.theme
+Import-Package: org.osgi.framework;version="1.5.0"
