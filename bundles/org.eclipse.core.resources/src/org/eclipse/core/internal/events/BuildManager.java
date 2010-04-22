@@ -998,7 +998,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					try {
 						IncrementalProjectBuilder builder = getBuilder(project, command, i, status);
 						if (builder != null) {
-							ISchedulingRule builderRule = builder.getRule();
+							ISchedulingRule builderRule = builder.getRule(trigger, args);
 							if (builderRule != null)
 								rules.add(builderRule);
 							else 

@@ -232,7 +232,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * </p>
 	 * <p>
 	 * The delta does not include changes made while this builder is running.
-	 * If {@link #getRule()} is overridden to return a scheduling rule other than 
+	 * If {@link #getRule(int, Map)} is overridden to return a scheduling rule other than 
 	 * the workspace root, changes performed in other threads during the build
 	 * will not appear in the resource delta.
 	 * </p>
