@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,24 +140,15 @@ function highlightWordInText(aWord, textNode){
 			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
 			spanNode.setAttribute("name","resultofMatch");
-			if(isSafari){
-				if (defaultHighlight == true) {
-					spanNode.style.color="#000000";
-					spanNode.style.background="#FFFF66";
-				} else {
-					spanNode.style.color=null;
-					spanNode.style.background=null;
-				}
-			}else{
-				if ((defaultHighlight == false) && !document.styleSheets) {
-					if (isIE) spanNode.setAttribute("className",null);
-					else spanNode.setAttribute("class",null);
-				}
-				else {
-					if (isIE) spanNode.setAttribute("className","resultofText");
-					else spanNode.setAttribute("class","resultofText");
-				}
+
+			if ((defaultHighlight == false) && !document.styleSheets) {
+				if (isIE) spanNode.setAttribute("className",null);
+				else spanNode.setAttribute("class",null);
+			} else {
+				if (isIE) spanNode.setAttribute("className","resultofText");
+				else spanNode.setAttribute("class","resultofText");
 			}
+
 			replacementNode.appendChild(spanNode);
 			if(!firstNodeHighlighted){
 			firstNodeToBeHighlighted=spanNode;
@@ -261,24 +252,7 @@ function toggleHighlight() {
 
 function setHighlight(current) {
 	currentHighlight = (current==true);
-	if (isSafari) {
-		var color;
-		var backgnd;
-		if (currentHighlight) {
-			color = "#000000";
-			backgnd = "#FFFF66";
-		}
-		else {
-			color = null;
-			backgnd = null;
-		}
-		var elements = document.getElementsByName("resultofMatch");
-		for (var i = 0; i<elements.length; i++){
-			elements[i].style.color=color;
-			elements[i].style.backgroundColor= backgnd;
-		}
-	}
-	else if (document.styleSheets){
+    if (document.styleSheets){
 		var text;
 		if (currentHighlight) {
 			text = "COLOR: #000000; BACKGROUND-COLOR: #FFFF66;";
