@@ -358,6 +358,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
+
+		createProgressIndicator((Shell) model.getWidget());
 	}
 
 	public static String getId(IConfigurationElement element) {
@@ -1261,8 +1263,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	void createProgressIndicator(Shell shell) {
 		if (getWindowConfigurer().getShowProgressIndicator()) {
+			TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
+			Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
+			trimComposite.setLayout(new FillLayout());
+
 			progressRegion = new ProgressRegion();
-			progressRegion.createContents(shell, this);
+			progressRegion.createContents(trimComposite, this);
 		}
 
 	}
