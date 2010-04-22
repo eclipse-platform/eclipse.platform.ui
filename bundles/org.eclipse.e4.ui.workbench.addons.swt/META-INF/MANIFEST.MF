@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Swt
+Bundle-Name: Workbench SWT Addons (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.addons.swt
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.9.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.e4.ui.model.workbench;bundle-version="0.9.1",
