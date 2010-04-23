@@ -66,7 +66,6 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 		final String carbonDelete = "\u2326"; //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.DEL_NAME, carbonDelete);
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.DELETE_NAME, carbonDelete);
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.SPACE_NAME, "\u2423"); //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.ALT_NAME, "\u2325"); //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.COMMAND_NAME, "\u2318"); //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.CTRL_NAME, "\u2303"); //$NON-NLS-1$
