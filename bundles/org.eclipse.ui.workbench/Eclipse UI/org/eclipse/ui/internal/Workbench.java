@@ -531,7 +531,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 					returnCode[0] = workbench.runUI();
 					// run the e4 event loop and instantiate ... well, stuff
 					e4Workbench.createAndRunUI(e4Workbench.getApplication());
-					workbench.close();
 					e4app.saveModel();
 					e4Workbench.close();
 					returnCode[0] = workbench.returnCode;
@@ -988,6 +987,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (isClosing || force) {
 					// isClosing = windowManager.close();
 					E4Util.unsupported("Need to close since no windowManager"); //$NON-NLS-1$
+					for (IWorkbenchWindow window : getWorkbenchWindows()) {
+						((WorkbenchWindow) window).close(false);
+					}
 				}
 			}
 		});
@@ -1069,6 +1071,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// For more details, see [Bug 57384] [RCP] Main window not active on
 		// startup
 		if (Display.getCurrent() == null || !initializationDone) {
+			return null;
+		}
+
+		// the source providers try to update again during shutdown
+		if (isClosing) {
 			return null;
 		}
 
@@ -1459,10 +1466,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 					if (UIEvents.EventTypes.REMOVE.equals(event
 							.getProperty(UIEvents.EventTags.TYPE))) {
 						MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-						IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
-								IWorkbenchWindow.class.getName());
-						if (wwindow != null) {
-							fireWindowClosed(wwindow);
+						IEclipseContext windowContext = window.getContext();
+						if (windowContext != null) {
+							IWorkbenchWindow wwindow = (IWorkbenchWindow) windowContext
+									.get(IWorkbenchWindow.class.getName());
+							if (wwindow != null) {
+								fireWindowClosed(wwindow);
+							}
 						}
 					}
 				}

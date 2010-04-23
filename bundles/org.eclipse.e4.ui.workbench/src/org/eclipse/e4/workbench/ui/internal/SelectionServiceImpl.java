@@ -77,7 +77,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	@PreDestroy
 	void preDestroy() {
 		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != context) {
+		if (rootContext != null && rootContext != context) {
 			if (!genericListeners.isEmpty()) {
 				ESelectionService selectionService = (ESelectionService) rootContext
 						.get(ESelectionService.class.getName());
@@ -251,14 +251,17 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * .ISelectionListener)
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != context) {
-			ESelectionService selectionService = (ESelectionService) rootContext
-					.get(ESelectionService.class.getName());
-			selectionService.removeSelectionListener(listener);
-		}
+		// we may have been destroyed already, see bug 310113
+		if (context != null) {
+			IEclipseContext rootContext = serviceRoot.getContext();
+			if (rootContext != context) {
+				ESelectionService selectionService = (ESelectionService) rootContext
+						.get(ESelectionService.class.getName());
+				selectionService.removeSelectionListener(listener);
+			}
 
-		genericListeners.remove(listener);
+			genericListeners.remove(listener);
+		}
 	}
 
 	/*
@@ -290,18 +293,19 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * org.eclipse.e4.ui.selection.ISelectionListener)
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
-		if (serviceRoot == null)
-			return;
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != context) {
-			ESelectionService selectionService = (ESelectionService) rootContext
-					.get(ESelectionService.class.getName());
-			selectionService.removeSelectionListener(partId, listener);
-		}
+		// we may have been destroyed already, see bug 310113
+		if (serviceRoot != null && context != null) {
+			IEclipseContext rootContext = serviceRoot.getContext();
+			if (rootContext != context) {
+				ESelectionService selectionService = (ESelectionService) rootContext
+						.get(ESelectionService.class.getName());
+				selectionService.removeSelectionListener(partId, listener);
+			}
 
-		Set<ISelectionListener> listeners = targetedListeners.get(partId);
-		if (listeners != null) {
-			listeners.remove(listener);
+			Set<ISelectionListener> listeners = targetedListeners.get(partId);
+			if (listeners != null) {
+				listeners.remove(listener);
+			}
 		}
 	}
 

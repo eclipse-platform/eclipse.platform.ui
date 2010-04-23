@@ -16,8 +16,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.Event;
@@ -32,7 +32,12 @@ public class CleanupAddon {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) changedObj;
+				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
+				if (container instanceof MApplication) {
+					// the application should not be unrendered
+					return;
+				}
+
 				Display display = Display.getCurrent();
 
 				// Stall the removal to handle cases where the container is only transiently empty

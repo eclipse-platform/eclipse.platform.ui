@@ -35,12 +35,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
@@ -335,6 +338,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		});
 
+		windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
+			public boolean close(MWindow window) {
+				return WorkbenchWindow.this.close();
+			}
+		});
+
 		try {
 			page = new WorkbenchPage(this, input);
 		} catch (WorkbenchException e) {
@@ -618,7 +627,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * 
 	 * Assumes that busy cursor is active.
 	 */
-	private boolean busyClose() {
+	private boolean busyClose(boolean remove) {
 		// Whether the window was actually closed or not
 		boolean windowClosed = false;
 
@@ -639,7 +648,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				windowClosed = workbench.close();
 			} else {
 				if (okToClose()) {
-					windowClosed = hardClose();
+					windowClosed = hardClose(remove);
 				}
 			}
 		} finally {
@@ -661,17 +670,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return (Shell) model.getWidget();
 	}
 
+	public boolean close(final boolean remove) {
+		final boolean[] ret = new boolean[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				ret[0] = busyClose(remove);
+			}
+		});
+		return ret[0];
+	}
+
 	/**
 	 * @see IWorkbenchWindow
 	 */
 	public boolean close() {
-		final boolean[] ret = new boolean[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				ret[0] = busyClose();
-			}
-		});
-		return ret[0];
+		return close(true);
 	}
 
 	protected boolean isClosing() {
@@ -884,8 +897,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
+	 * 
+	 * @param remove <code>true</code> if this window should be removed from the application model
 	 */
-	private boolean hardClose() {
+	private boolean hardClose(boolean remove) {
 		try {
 			// clear some lables
 			// Remove the handler submissions. Bug 64024.
@@ -906,16 +921,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
 
-			MElementContainer<MUIElement> parent = model.getParent();
-			model.getParent().getChildren().remove(model);
-			if (parent.getSelectedElement() == model) {
-				if (!parent.getChildren().isEmpty()) {
-					parent.setSelectedElement(parent.getChildren().get(0));
-				}
-			}
-			engine.removeGui(model);
-			fireWindowClosed();
-
 			// time to wipe our our populate
 			IMenuService menuService = (IMenuService) workbench.getService(IMenuService.class);
 			menuService.releaseContributions(((ContributionManager) getActionBars()
@@ -931,7 +936,25 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
 
+			model.getContext().set(IContextConstants.ACTIVE_CHILD, null);
+			for (MWindowElement windowElement : model.getChildren()) {
+				engine.removeGui(windowElement);
+			}
+			MWindow window = model;
+			engine.removeGui(model);
 
+			MElementContainer<MUIElement> parent = window.getParent();
+			if (parent.getSelectedElement() == window) {
+				if (!parent.getChildren().isEmpty()) {
+					parent.setSelectedElement(parent.getChildren().get(0));
+				}
+			}
+
+			if (remove) {
+				window.getParent().getChildren().remove(window);
+			}
+
+			fireWindowClosed();
 		} finally {
 
 			try {

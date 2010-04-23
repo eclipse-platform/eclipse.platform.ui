@@ -25,7 +25,6 @@ import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -37,6 +36,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -336,6 +336,14 @@ public class WBWRenderer extends SWTPartRenderer {
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);
 		localContext.set(E4Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
+		localContext.set(IWindowCloseHandler.class.getName(),
+				new IWindowCloseHandler() {
+					public boolean close(MWindow window) {
+						EPartService partService = (EPartService) window
+								.getContext().get(EPartService.class.getName());
+						return partService.saveAll(true);
+					}
+				});
 		localContext.set(IShellProvider.class.getName(), new IShellProvider() {
 			public Shell getShell() {
 				return wbwShell;
@@ -385,11 +393,12 @@ public class WBWRenderer extends SWTPartRenderer {
 
 			shell.addShellListener(new ShellAdapter() {
 				public void shellClosed(ShellEvent e) {
-					MContext context = (MContext) e.widget.getData(OWNING_ME);
-					EPartService partService = (EPartService) context
-							.getContext().get(EPartService.class.getName());
-					if (partService != null) {
-						e.doit = partService.saveAll(true);
+					MWindow window = (MWindow) e.widget.getData(OWNING_ME);
+					IWindowCloseHandler closeHandler = (IWindowCloseHandler) window
+							.getContext().get(
+									IWindowCloseHandler.class.getName());
+					if (closeHandler != null) {
+						e.doit = closeHandler.close(window);
 					}
 				}
 			});
