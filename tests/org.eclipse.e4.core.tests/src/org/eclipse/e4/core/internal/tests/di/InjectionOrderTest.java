@@ -23,10 +23,15 @@ import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 
 public class InjectionOrderTest extends TestCase {
+	
+	public interface ITestObject {
+		
+	}
 
 	static public class InjectUnsatisfied {
+
 		@Inject
-		Object object;
+		ITestObject object;
 		
 		static public int count = 0;
 

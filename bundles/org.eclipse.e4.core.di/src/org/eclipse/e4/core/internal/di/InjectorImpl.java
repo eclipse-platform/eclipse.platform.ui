@@ -384,11 +384,34 @@ public class InjectorImpl implements IInjector {
 			if (descriptors[i] == null)
 				continue; // already resolved
 			IBinding binding = findBinding(descriptors[i]);
-			if (binding != null)
+			if (binding != null) {
 				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier);
+				if (actualArgs[i] != NOT_A_VALUE)
+					descriptors[i] = null; // mark as used
+			}
 		}
 
-		// 5) post process
+		// 5) create simple classes (implied bindings) - unless we uninject or optional
+		if (!fillNulls && !requestor.isOptional()) {
+			for (int i = 0; i < actualArgs.length; i++) {
+				if (descriptors[i] == null)
+					continue; // already resolved
+				if (descriptors[i].isOptional())
+					continue;
+				Object result = null;
+				try {
+					result = internalMake(descriptors[i].getElementClass(), objectSupplier);
+				} catch (InjectionException e) {
+					// ignore
+				}
+				if (result != null && result != NOT_A_VALUE) {
+					actualArgs[i] = result;
+					descriptors[i] = null; // mark as used
+				}
+			}
+		}
+
+		// 6) post process
 		descriptors = requestor.getDependentObjects(); // reset nulled out values
 		for (int i = 0; i < descriptors.length; i++) {
 			// check that values are of a correct type
@@ -449,7 +472,7 @@ public class InjectorImpl implements IInjector {
 		// order: superclass, fields, methods
 		if (objectsClass != null) {
 			Class<?> superClass = objectsClass.getSuperclass();
-			if (!superClass.getName().equals(JAVA_OBJECT)) {
+			if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
 				classHierarchy.add(objectsClass);
 				processClass(userObject, objectSupplier, superClass, classHierarchy, processStatic, track, normalOrder, requestors);
 				classHierarchy.remove(objectsClass);
