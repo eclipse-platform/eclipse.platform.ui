@@ -2603,9 +2603,21 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				storeMultiSelection();
 			}
 		});
+		
+		// calculate max combo width
+		ArrayList allOperators = new ArrayList();
+		String[] keys = getMultiMatcherKeys();
+		for (int i = 0; i < keys.length; i++) {
+			allOperators.addAll(Arrays.asList(getLocalOperatorsForKey(MultiMatcherLocalization.getMultiMatcherKey(keys[i]))));
+		}
+		Combo tmp = new Combo(multiArgumentComposite, SWT.READ_ONLY);
+		tmp.setItems((String []) allOperators.toArray(new String[0]));
+		int maxWidth = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		tmp.dispose();
 
 		multiOperator = new Combo(multiArgumentComposite, SWT.READ_ONLY);
 		data = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		data.widthHint = maxWidth;
 		multiOperator.setLayoutData(data);
 		multiOperator.setFont(font);
 		multiOperator.addSelectionListener(new SelectionAdapter() {
@@ -2691,11 +2703,17 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				argument.pattern = new String();
 			filter.setArguments(FileInfoAttributesMatcher.encodeArguments(argument));
 		}
+		// We remove '6' from the height, otherwise it will be 6 pixels larger than the hint
+		// (tested on Windows XP) If we set the heightHint to 21, it ends up being 27 high.
+		// Why, I haven't figured out.  So instead we set the height hint to 21-6.
+		int textHeightHint = multiOperator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y - 6;
+
 		if (selectedKeyOperatorType.equals(String.class)) {
 	
 			arguments = new Text(multiArgumentComposite, SWT.SINGLE | SWT.BORDER);
 			GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			data.widthHint = 150;
+			data.heightHint = textHeightHint;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
 			arguments.addModifyListener(new ModifyListener() {
@@ -2786,6 +2804,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			GridData data;
 			arguments = new Text(multiArgumentComposite, SWT.SINGLE | SWT.BORDER);
 			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			data.heightHint = textHeightHint;
 			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
@@ -2811,7 +2830,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		}
 		if (selectedKeyOperatorType.equals(Date.class)) {
 			GridData data;
-			argumentsDate = new DateTime(multiArgumentComposite, SWT.DATE | SWT.MEDIUM);
+			argumentsDate = new DateTime(multiArgumentComposite, SWT.DATE | SWT.MEDIUM | SWT.BORDER);
 			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			argumentsDate.setLayoutData(data);
 			argumentsDate.setFont(multiArgumentComposite.getFont());
@@ -3316,5 +3335,4 @@ class MultiMatcherLocalization {
 		}
 		return null;
 	}
-	
 }
