@@ -15,7 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * Quit (close the workbench).
