@@ -51,6 +51,8 @@ public class CSSStylingSupport {
 					"Default Theme", cssURI);
 			engine.setTheme(theme);
 		}
+		// TODO Should we create an empty default theme?
+
 		appContext.set(IThemeEngine.class.getName(), engine);
 
 		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {

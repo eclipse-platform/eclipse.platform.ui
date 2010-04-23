@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
@@ -452,25 +451,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return (AbstractPartRenderer) element.getRenderer();
 	}
 
-	/*
-	 * For use when there is no real styling engine present. Has no behaviour
-	 * but conforms to IStylingEngine API.
-	 * 
-	 * @param appContext
-	 */
-	private static void initializeNullStyling(IEclipseContext appContext) {
-		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
-			public void setClassname(Object widget, String classname) {
-			}
-
-			public void setId(Object widget, String id) {
-			}
-
-			public void style(Object widget) {
-			}
-		});
-	}
-
 	public Object run(final MApplicationElement uiRoot,
 			final IEclipseContext runContext) {
 		final Display display = Display.getDefault();
@@ -478,14 +458,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			public void run() {
 				String cssURI = (String) runContext
 						.get(E4Workbench.CSS_URI_ARG);
-				if (cssURI != null) {
-					String cssResourcesURI = (String) runContext
-							.get(E4Workbench.CSS_RESOURCE_URI_ARG);
-					CSSStylingSupport.initializeStyling(display, cssURI,
-							cssResourcesURI, runContext);
-				} else {
-					initializeNullStyling(runContext);
-				}
+				String cssResourcesURI = (String) runContext
+						.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+				CSSStylingSupport.initializeStyling(display, cssURI,
+						cssResourcesURI, runContext);
 
 				// Register an SWT resource handler
 				runContext.set(IResourceUtiltities.class.getName(),
