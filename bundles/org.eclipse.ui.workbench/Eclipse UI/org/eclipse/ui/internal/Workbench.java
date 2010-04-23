@@ -1724,10 +1724,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 						"Invalid command: " + cmd, null); //$NON-NLS-1$
 				continue;
 			}
-			if (existingIds.contains(cmdId)) {
-				// these were added back above.
-				continue;
-			}
 			cmd.setHandler(allHandlers);
 
 			// must match definition in CommandServiceImpl
