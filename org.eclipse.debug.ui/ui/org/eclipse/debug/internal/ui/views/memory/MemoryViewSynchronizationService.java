@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Justin Kong (IBM) -  Bug 258890 -  [Memory View] MemoryViewSynchronizationService not implementing addPropertyChangeListener() correctly
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -189,14 +190,7 @@ public class MemoryViewSynchronizationService implements
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener, java.lang.String[])
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties) {
-		
-		PropertyListener propertylistener = new PropertyListener(listener, properties);
-		
-		if (!fPropertyListeners.contains(propertylistener))
-		{
-			fPropertyListeners.put(listener, propertylistener);
-		}
-
+		fPropertyListeners.put(listener, new PropertyListener(listener, properties));
 	}
 
 	/* (non-Javadoc)
