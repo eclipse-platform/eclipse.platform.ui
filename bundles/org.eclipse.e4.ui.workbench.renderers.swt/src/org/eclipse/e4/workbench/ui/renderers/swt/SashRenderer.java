@@ -381,20 +381,48 @@ public class SashRenderer extends SWTPartRenderer {
 		int[] newWeights = getModelWeights(psc);
 
 		// Put the new weights in the map first
-		weightsMap.put(sf, newWeights);
-		sf.layout();
 		if (newWeights.length > 0)
 			sf.setWeights(newWeights);
+		sf.layout();
+		weightsMap.put(sf, newWeights);
+		curWeights = sf.getWeights();
 	}
 
 	/**
 	 * @param psc
 	 */
 	private void synchModelToSash(SashForm sf) {
-		int[] w = sf.getWeights();
+		// Calculate the total amount of 'containerData' weights for the visible
+		// components
 		MUIElement[] elements = SashRenderer.getModelElements(sf);
-		for (int i = 0; i < w.length; i++) {
-			elements[i].setContainerData(Integer.toString(w[i]));
+		if (elements.length == 0)
+			return;
+
+		int totalModelWeight = 0;
+		for (MUIElement element : elements) {
+			totalModelWeight += getWeight(element);
 		}
+
+		int[] w = sf.getWeights();
+		int totalSashWeight = 0;
+		for (int weight : w) {
+			totalSashWeight += weight;
+		}
+
+		// Ensure that the new containerData weights add up to what they used to
+		double ratio = (double) totalModelWeight / totalSashWeight;
+		int totalAdded = 0;
+		for (int i = 0; i < w.length; i++) {
+			int newWeight = (int) (w[i] * ratio);
+
+			// The last element will use up all the leftover 'weight' to avoid
+			// roundoff errors
+			if (i == (w.length - 1))
+				newWeight = totalModelWeight - totalAdded;
+			elements[i].setContainerData(Integer.toString(newWeight));
+			totalAdded += newWeight;
+		}
+		System.out
+				.println("Model Weights changed: " + totalModelWeight + " " + totalAdded); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
