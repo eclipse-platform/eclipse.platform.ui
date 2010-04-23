@@ -18,10 +18,18 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
+	public static boolean _throw;
+	
+	public static void resetTest() {
+		_throw = false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return NO_CHILDREN;
 	}
 
@@ -29,6 +37,8 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return null;
 	}
 
@@ -36,6 +46,8 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return false;
 	}
 
@@ -43,6 +55,8 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return NO_CHILDREN;
 	}
 

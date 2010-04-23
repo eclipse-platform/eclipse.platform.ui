@@ -39,6 +39,7 @@ import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
+import org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestSorterData;
 import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
@@ -169,6 +170,7 @@ public class NavigatorTestBase extends TestCase {
 		TestSorterResource.resetTest();
 		TestLabelProvider.resetTest();
 		TestDragAssistant.resetTest();
+		TestEmptyContentProvider.resetTest();
 
 		if (_initTestData) {
 			clearAll();

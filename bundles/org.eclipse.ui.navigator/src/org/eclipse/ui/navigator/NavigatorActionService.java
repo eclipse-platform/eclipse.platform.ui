@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
@@ -34,7 +33,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
 import org.eclipse.ui.internal.navigator.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.CommonActionExtensionSite;
@@ -208,20 +207,21 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	/**
 	 * @param aMenu
 	 */
-	private void addCommonActionProviderMenu(IMenuManager aMenu) {
-
-		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager.getInstance().findRelevantActionDescriptors(contentService, getContext());
+	private void addCommonActionProviderMenu(final IMenuManager aMenu) {
+		final CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
+				.getInstance().findRelevantActionDescriptors(contentService, getContext());
 		if (providerDescriptors.length > 0) {
 			for (int i = 0; i < providerDescriptors.length; i++) {
-				try {
-					if (!filterActionProvider(providerDescriptors[i])) {
-						CommonActionProvider provider = getActionProviderInstance(providerDescriptors[i]);
-						provider.setContext(getContext());
-						provider.fillContextMenu(aMenu);
+				final CommonActionProviderDescriptor providerDescriptorLocal = providerDescriptors[i];
+				SafeRunner.run(new NavigatorSafeRunnable() {
+					public void run() throws Exception {
+						if (!filterActionProvider(providerDescriptorLocal)) {
+							CommonActionProvider provider = getActionProviderInstance(providerDescriptorLocal);
+							provider.setContext(getContext());
+							provider.fillContextMenu(aMenu);
+						}
 					}
-				} catch (Throwable t) {
-					NavigatorPlugin.logError(0, t.getMessage(), t);
-				}
+				});
 			}
 		}
 	}
@@ -235,7 +235,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	 *            The action bars in use by the current view site.
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
-	public void fillActionBars(IActionBars theActionBars) {
+	public void fillActionBars(final IActionBars theActionBars) {
 		Assert.isTrue(!disposed);
 
 		theActionBars.clearGlobalActionHandlers();
@@ -244,21 +244,23 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			context = new ActionContext(StructuredSelection.EMPTY);
 		}
 
-		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager.getInstance().findRelevantActionDescriptors(contentService, context);
+		final CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
+				.getInstance().findRelevantActionDescriptors(contentService, context);
 		if (providerDescriptors.length > 0) {
-			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
-				try {
-					if (!filterActionProvider(providerDescriptors[i])) {
-						provider = getActionProviderInstance(providerDescriptors[i]);
-						provider.setContext(context);
-						provider.fillActionBars(theActionBars);
-						provider.updateActionBars();
+				final CommonActionProviderDescriptor providerDesciptorLocal = providerDescriptors[i];
+				final ActionContext actionContextLocal = context;
+				SafeRunner.run(new NavigatorSafeRunnable() {
+					public void run() throws Exception {
+						if (!filterActionProvider(providerDesciptorLocal)) {
+							CommonActionProvider provider = null;
+							provider = getActionProviderInstance(providerDesciptorLocal);
+							provider.setContext(actionContextLocal);
+							provider.fillActionBars(theActionBars);
+							provider.updateActionBars();
+						}
 					}
-
-				} catch (RuntimeException e) {
-					NavigatorPlugin.logError(0, e.getMessage(), e);
-				}
+				});
 			}
 		}
 		theActionBars.updateActionBars();
@@ -293,20 +295,15 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		memento = aMemento;
 
 		synchronized (actionProviderInstances) {
-			for (Iterator actionProviderIterator = actionProviderInstances.values().iterator(); actionProviderIterator.hasNext();) {
-				final CommonActionProvider provider = (CommonActionProvider) actionProviderIterator.next();
-				ISafeRunnable runnable = new ISafeRunnable() {
+			for (Iterator actionProviderIterator = actionProviderInstances.values().iterator(); actionProviderIterator
+					.hasNext();) {
+				final CommonActionProvider provider = (CommonActionProvider) actionProviderIterator
+						.next();
+				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
 						provider.restoreState(memento);
 					}
-
-					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, "Could not restore state for action provider " + provider.getClass(), exception); //$NON-NLS-1$
-
-					}
-				};
-				SafeRunner.run(runnable);
-
+				});
 			}
 		}
 	}
@@ -337,40 +334,47 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public CommonActionProvider getActionProviderInstance(
-			CommonActionProviderDescriptor aProviderDescriptor) {
+			final CommonActionProviderDescriptor aProviderDescriptor) {
 		CommonActionProvider provider = null;
-		try {
-			provider = (CommonActionProvider) actionProviderInstances
-					.get(aProviderDescriptor);
-			if (provider != null) {
-				return provider;
-			}
-			synchronized (actionProviderInstances) {
-				provider = (CommonActionProvider) actionProviderInstances
-						.get(aProviderDescriptor);
-				if (provider == null) {
-					provider = aProviderDescriptor.createActionProvider();
-					if (provider != null) {
-						actionProviderInstances.put(aProviderDescriptor, provider);
-						initialize(aProviderDescriptor.getId(), aProviderDescriptor.getPluginId(), provider);
-					} else {
-						actionProviderInstances.put(aProviderDescriptor,
-								(provider = SkeletonActionProvider.INSTANCE));
+		provider = (CommonActionProvider) actionProviderInstances.get(aProviderDescriptor);
+		if (provider != null) {
+			return provider;
+		}
+		synchronized (actionProviderInstances) {
+			provider = (CommonActionProvider) actionProviderInstances.get(aProviderDescriptor);
+			if (provider == null) {
+				final CommonActionProvider[] retProvider = new CommonActionProvider[1];
+				SafeRunner.run(new NavigatorSafeRunnable() {
+					public void run() throws Exception {
+						retProvider[0] = aProviderDescriptor.createActionProvider();
+						if (retProvider[0] != null) {
+							initialize(aProviderDescriptor.getId(), aProviderDescriptor
+									.getPluginId(), retProvider[0]);
+						}
 					}
-				}
+				});
+				// This could happen in the exception case
+				if (retProvider[0] == null)
+					retProvider[0] = SkeletonActionProvider.INSTANCE;
+				actionProviderInstances.put(aProviderDescriptor, retProvider[0]);
+				provider = retProvider[0];
 			}
-		} catch(Throwable t) {
-			NavigatorPlugin.logError(0, t.getMessage(), t);
 		}
 		return provider;
 	}
 
-	private void initialize(String id, String pluginId, CommonActionProvider anActionProvider) {
+	private void initialize(final String id, final String pluginId,
+			final CommonActionProvider anActionProvider) {
 		if (anActionProvider != null && anActionProvider != SkeletonActionProvider.INSTANCE) {
-			ICommonActionExtensionSite configuration = new CommonActionExtensionSite(id, pluginId, commonViewerSite, contentService, structuredViewer);
-			anActionProvider.init(configuration);
-			anActionProvider.restoreState(memento);
-			anActionProvider.setContext(new ActionContext(StructuredSelection.EMPTY));
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				public void run() throws Exception {
+					ICommonActionExtensionSite configuration = new CommonActionExtensionSite(id,
+							pluginId, commonViewerSite, contentService, structuredViewer);
+					anActionProvider.init(configuration);
+					anActionProvider.restoreState(memento);
+					anActionProvider.setContext(new ActionContext(StructuredSelection.EMPTY));
+				}
+			});
 		}
 	}
 }

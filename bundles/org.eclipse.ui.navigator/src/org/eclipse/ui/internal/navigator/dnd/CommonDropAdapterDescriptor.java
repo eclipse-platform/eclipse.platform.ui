@@ -14,11 +14,12 @@ package org.eclipse.ui.internal.navigator.dnd;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -97,15 +98,15 @@ public final class CommonDropAdapterDescriptor implements
 	 *         descriptor or {@link SkeletonCommonDropAssistant}.
 	 */
 	public CommonDropAdapterAssistant createDropAssistant() {
-
-		try {
-			return (CommonDropAdapterAssistant) element
-					.createExecutableExtension(ATT_CLASS);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		} catch (RuntimeException re) {
-			NavigatorPlugin.logError(0, re.getMessage(), re);
-		}
+		final CommonDropAdapterAssistant[] retValue = new CommonDropAdapterAssistant[1];
+		SafeRunner.run(new NavigatorSafeRunnable(element) {
+			public void run() throws Exception {
+				retValue[0] = (CommonDropAdapterAssistant) element
+						.createExecutableExtension(ATT_CLASS);
+			}
+		});
+		if (retValue[0] != null)
+			return retValue[0];
 		return SkeletonCommonDropAssistant.INSTANCE;
 	}
 

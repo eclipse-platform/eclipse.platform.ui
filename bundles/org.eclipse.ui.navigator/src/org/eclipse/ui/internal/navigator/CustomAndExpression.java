@@ -21,7 +21,6 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 
 /**
@@ -47,10 +46,7 @@ public class CustomAndExpression extends Expression {
 		final IConfigurationElement[] children = element.getChildren();
 		if (children.length == 0)
 			return;
-		SafeRunner.run(new ISafeRunnable() {
-			public void handleException(Throwable exception) {
-			}
-
+		SafeRunner.run(new NavigatorSafeRunnable() {
 			public void run() throws Exception {
 				fExpressions = new ArrayList();
 				for (int i = 0; i < children.length; i++) {

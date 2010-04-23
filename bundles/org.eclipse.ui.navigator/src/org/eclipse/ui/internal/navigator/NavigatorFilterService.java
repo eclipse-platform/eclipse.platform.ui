@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -64,32 +65,28 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	}
 
 	private synchronized void restoreFilterActivation() {
+		SafeRunner.run(new NavigatorSafeRunnable() {
+			public void run() throws Exception {
+				IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 
-		try {
-			IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
+				if (prefs.get(getFilterActivationPreferenceKey(), null) != null) {
+					String activatedFiltersPreferenceValue = prefs.get(
+							getFilterActivationPreferenceKey(), null);
+					String[] activeFilterIds = activatedFiltersPreferenceValue.split(DELIM);
+					for (int i = 0; i < activeFilterIds.length; i++) {
+						activeFilters.add(activeFilterIds[i]);
+					}
 
-			if (prefs.get(getFilterActivationPreferenceKey(), null) != null) {
-				String activatedFiltersPreferenceValue = prefs
-						.get(getFilterActivationPreferenceKey(), null);
-				String[] activeFilterIds = activatedFiltersPreferenceValue
-						.split(DELIM);
-				for (int i = 0; i < activeFilterIds.length; i++) {
-					activeFilters.add(activeFilterIds[i]);
-				}
-
-			} else {
-				ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
-				for (int i = 0; i < visibleFilterDescriptors.length; i++) {
-					if (visibleFilterDescriptors[i].isActiveByDefault()) {
-						activeFilters.add(visibleFilterDescriptors[i].getId());
+				} else {
+					ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
+					for (int i = 0; i < visibleFilterDescriptors.length; i++) {
+						if (visibleFilterDescriptors[i].isActiveByDefault()) {
+							activeFilters.add(visibleFilterDescriptors[i].getId());
+						}
 					}
 				}
 			}
-
-		} catch (RuntimeException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-
+		});
 	}
 
 	/*

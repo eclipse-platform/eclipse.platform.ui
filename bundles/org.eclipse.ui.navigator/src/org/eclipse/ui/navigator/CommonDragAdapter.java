@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -24,7 +25,7 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction;
 import org.eclipse.ui.part.PluginTransfer;
@@ -113,59 +114,60 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	 * 
 	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
-	public void dragStart(DragSourceEvent event) {
+	public void dragStart(final DragSourceEvent event) {
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDragAdapter.dragStart (begin): " + event); //$NON-NLS-1$
 		}
-		try {
-			// Workaround for 1GEUS9V
-			DragSource dragSource = (DragSource) event.widget;
-			if (Policy.DEBUG_DND) {
-				System.out.println("CommonDragAdapter.dragStart source: " + dragSource); //$NON-NLS-1$
-			}
-			Control control = dragSource.getControl();
-			if (control == control.getDisplay().getFocusControl()) {
-				ISelection selection = provider.getSelection();
-				assistantsToUse.clear();
-				
-				if (!selection.isEmpty()) {
-					LocalSelectionTransfer.getTransfer().setSelection(selection);
+		SafeRunner.run(new NavigatorSafeRunnable() {
+			public void run() throws Exception {
+				DragSource dragSource = (DragSource) event.widget;
+				if (Policy.DEBUG_DND) {
+					System.out.println("CommonDragAdapter.dragStart source: " + dragSource); //$NON-NLS-1$
+				}
+				Control control = dragSource.getControl();
+				if (control == control.getDisplay().getFocusControl()) {
+					ISelection selection = provider.getSelection();
+					assistantsToUse.clear();
 
-					boolean doIt = false;
-					INavigatorDnDService dndService = contentService.getDnDService();
-					CommonDragAdapterAssistant[] assistants = dndService.getCommonDragAssistants();
-					if (assistants.length == 0)
-						doIt = true;
-					for (int i = 0; i < assistants.length; i++) {
-						if (Policy.DEBUG_DND) {
-							System.out.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
-						}
-						event.doit = true;
-						assistants[i].dragStart(event, (IStructuredSelection) selection);
-						doIt |= event.doit;
-						if (event.doit) {
+					if (!selection.isEmpty()) {
+						LocalSelectionTransfer.getTransfer().setSelection(selection);
+
+						boolean doIt = false;
+						INavigatorDnDService dndService = contentService.getDnDService();
+						CommonDragAdapterAssistant[] assistants = dndService
+								.getCommonDragAssistants();
+						if (assistants.length == 0)
+							doIt = true;
+						for (int i = 0; i < assistants.length; i++) {
 							if (Policy.DEBUG_DND) {
-								System.out.println("CommonDragAdapter.dragStart assistant - event.doit == true"); //$NON-NLS-1$
+								System.out
+										.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
 							}
-							assistantsToUse.add(assistants[i]);
+							event.doit = true;
+							assistants[i].dragStart(event, (IStructuredSelection) selection);
+							doIt |= event.doit;
+							if (event.doit) {
+								if (Policy.DEBUG_DND) {
+									System.out
+											.println("CommonDragAdapter.dragStart assistant - event.doit == true"); //$NON-NLS-1$
+								}
+								assistantsToUse.add(assistants[i]);
+							}
 						}
+
+						event.doit = doIt;
+					} else {
+						event.doit = false;
 					}
-					
-					event.doit = doIt;
 				} else {
 					event.doit = false;
 				}
-			} else {
-				event.doit = false;
 			}
-		} catch (RuntimeException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
+		});
 
 		if (Policy.DEBUG_DND) {
-			System.out
-					.println("CommonDragAdapter.dragStart (end): doit=" + event.doit); //$NON-NLS-1$
-	}
+			System.out.println("CommonDragAdapter.dragStart (end): doit=" + event.doit); //$NON-NLS-1$
+		}
 	}
 
 	/*
@@ -173,9 +175,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	 * 
 	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
-	public void dragSetData(DragSourceEvent event) {
+	public void dragSetData(final DragSourceEvent event) {
 
-		ISelection selection = LocalSelectionTransfer.getTransfer()
+		final ISelection selection = LocalSelectionTransfer.getTransfer()
 				.getSelection();
 
 		if (Policy.DEBUG_DND) {
@@ -205,7 +207,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 			}
 
 			for (int i = 0, len = assistantsToUse.size(); i < len; i++) {
-				CommonDragAdapterAssistant assistant = (CommonDragAdapterAssistant) assistantsToUse.get(i); 
+				final CommonDragAdapterAssistant assistant = (CommonDragAdapterAssistant) assistantsToUse.get(i); 
 				if (Policy.DEBUG_DND) {
 					System.out
 							.println("CommonDragAdapter.dragSetData assistant: " + assistant); //$NON-NLS-1$
@@ -213,28 +215,28 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 				Transfer[] supportedTransferTypes = assistant
 						.getSupportedTransferTypes();
+				final boolean[] getOut = new boolean[1];
 				for (int j = 0; j < supportedTransferTypes.length; j++) {
-					if (supportedTransferTypes[j]
-							.isSupportedType(event.dataType)) {
-						try {
-							if (Policy.DEBUG_DND) {
-								System.out
-										.println("CommonDragAdapter.dragSetData supported xfer type"); //$NON-NLS-1$
-							}
-							if(assistant.setDragData(event,
-									(IStructuredSelection) selection)) {
+					if (supportedTransferTypes[j].isSupportedType(event.dataType)) {
+						SafeRunner.run(new NavigatorSafeRunnable() {
+							public void run() throws Exception {
 								if (Policy.DEBUG_DND) {
 									System.out
-											.println("CommonDragAdapter.dragSetData set data " + event.data); //$NON-NLS-1$
+											.println("CommonDragAdapter.dragSetData supported xfer type"); //$NON-NLS-1$
 								}
-								setDataAssistant = assistant;
-								return;
+								if (assistant.setDragData(event, (IStructuredSelection) selection)) {
+									if (Policy.DEBUG_DND) {
+										System.out
+												.println("CommonDragAdapter.dragSetData set data " + event.data); //$NON-NLS-1$
+									}
+									setDataAssistant = assistant;
+									getOut[0] = true;
+								}
 							}
-						} catch (RuntimeException re) {
-							NavigatorPlugin.logError(0, re.getMessage(), re);
-						}
+						});
+						if (getOut[0])
+							return;
 					}
-
 				}
 			}
 

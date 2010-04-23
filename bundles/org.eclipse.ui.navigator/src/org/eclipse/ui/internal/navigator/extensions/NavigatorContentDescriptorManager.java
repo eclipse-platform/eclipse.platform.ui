@@ -23,11 +23,12 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
@@ -512,16 +513,13 @@ public class NavigatorContentDescriptorManager {
 			computeOverrides();
 		}
 
-		protected boolean readElement(IConfigurationElement anElement) {
+		protected boolean readElement(final IConfigurationElement anElement) {
 			if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
-				try {
-					addNavigatorContentDescriptor(new NavigatorContentDescriptor(
-							anElement));
-
-				} catch (WorkbenchException e) {
-					// log an error since its not safe to open a dialog here
-					NavigatorPlugin.log(e.getStatus());
-				}
+				SafeRunner.run(new NavigatorSafeRunnable(anElement) {
+					public void run() throws Exception {
+						addNavigatorContentDescriptor(new NavigatorContentDescriptor(anElement));
+					}
+				});
 			}
 			return super.readElement(anElement);
 		}

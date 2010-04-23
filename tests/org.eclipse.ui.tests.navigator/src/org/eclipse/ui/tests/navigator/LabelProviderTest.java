@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlank;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan;
@@ -364,6 +365,20 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// The empty content provider provides the label at a higher priority
 		// than the resource content provider
 		assertEquals(TestLabelProviderCyan.instance.image, rootItems[0].getImage(0));
+	}
+
+	// Bug 189986 add SafeRunner for everything
+	public void testLabelProviderThrow() throws Exception {
+		
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+
+		TestLabelProvider._throw = true;
+		TestEmptyContentProvider._throw = true;
+		
+		refreshViewer();
+		// Have to look at the log to see a bunch of stuff thrown
 	}
 
 }

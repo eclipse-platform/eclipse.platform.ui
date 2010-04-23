@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.navigator.actions;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ILinkHelper;
@@ -73,16 +73,10 @@ public class LinkEditorAction extends Action implements
 								.getLinkHelpersFor(sSelection.getFirstElement());
 						if (helpers.length > 0) {
 							ignoreEditorActivation = true;
-							SafeRunner.run(new ISafeRunnable() {
+							SafeRunner.run(new NavigatorSafeRunnable() {
 								public void run() throws Exception {
 									helpers[0].activateEditor(commonNavigator.getSite()
 											.getPage(), sSelection);
-								}
-
-								public void handleException(Throwable e) {
-									String msg = e.getMessage() != null ? e.getMessage()
-											: e.toString();
-									NavigatorPlugin.logError(0, msg, e);
 								}
 							});
 							ignoreEditorActivation = false;
@@ -99,8 +93,7 @@ public class LinkEditorAction extends Action implements
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
 			if (!commonNavigator.getCommonViewer().getControl().isDisposed()) {
-				SafeRunner.run(new ISafeRunnable() {
-
+				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
 						IWorkbenchPage page = commonNavigator.getSite()
 								.getPage();
@@ -118,14 +111,7 @@ public class LinkEditorAction extends Action implements
 							}
 						}
 					}
-
-					public void handleException(Throwable e) {
-						String msg = e.getMessage() != null ? e.getMessage()
-								: e.toString();
-						NavigatorPlugin.logError(0, msg, e);
-					}
 				});
-
 			}
 
 			return Status.OK_STATUS;

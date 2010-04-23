@@ -352,6 +352,13 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
+	 * @return the configuration element
+	 */
+	public IConfigurationElement getConfigElement() {
+		return configElement;
+	}
+	
+	/**
 	 * The content provider could be an instance of
 	 * {@link ICommonContentProvider}, but only {@link ITreeContentProvider} is
 	 * required.

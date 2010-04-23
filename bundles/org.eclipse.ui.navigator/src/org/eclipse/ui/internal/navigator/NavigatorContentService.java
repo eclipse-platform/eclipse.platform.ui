@@ -29,7 +29,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -844,25 +843,23 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public void onExtensionActivation(String aViewerId,
 			String[] aNavigatorExtensionId, boolean toEnable) {
 		synchronized (this) {
-			try {
-				NavigatorContentDescriptor key;
-				NavigatorContentExtension extension;
-				for (Iterator iter = contentExtensions.keySet().iterator(); iter
-						.hasNext();) {
-					key = (NavigatorContentDescriptor) iter.next();
-					INavigatorActivationService activation = getActivationService();
-					if (!activation.isNavigatorExtensionActive(key.getId())) {
-						extension = (NavigatorContentExtension) contentExtensions
-								.get(key);
-						iter.remove();
-						extension.dispose();
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				public void run() throws Exception {
+					NavigatorContentDescriptor key;
+					NavigatorContentExtension extension;
+					for (Iterator iter = contentExtensions.keySet().iterator(); iter
+							.hasNext();) {
+						key = (NavigatorContentDescriptor) iter.next();
+						INavigatorActivationService activation = getActivationService();
+						if (!activation.isNavigatorExtensionActive(key.getId())) {
+							extension = (NavigatorContentExtension) contentExtensions
+									.get(key);
+							iter.remove();
+							extension.dispose();
+						}
 					}
 				}
-			} catch (RuntimeException e) {
-				String msg = e.getMessage() != null ? e.getMessage() : e
-						.toString();
-				NavigatorPlugin.logError(0, msg, e);
-			}
+			});
 		}
 		if (structuredViewerManager != null) {
 			structuredViewerManager.resetViewerData();
@@ -972,30 +969,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void restoreState(final IMemento aMemento) {
 		synchronized (this) {
-			List runnables = new ArrayList();
-			for (Iterator extensionItr = getExtensions().iterator(); extensionItr
-					.hasNext();) {
+			for (Iterator extensionItr = getExtensions().iterator(); extensionItr.hasNext();) {
 				final NavigatorContentExtension element = (NavigatorContentExtension) extensionItr
 						.next();
-				ISafeRunnable runnable = new ISafeRunnable() {
+				SafeRunner.run(new NavigatorSafeRunnable(((NavigatorContentDescriptor) element
+						.getDescriptor()).getConfigElement()) {
 					public void run() throws Exception {
 						element.restoreState(aMemento);
-
 					}
-
-					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0,
-								"Could not restore state for Common Navigator content extension" //$NON-NLS-1$
-										+ element.getId(), exception);
-
-					}
-				};
-				runnables.add(runnable);
-			}
-			for (Iterator iterator = runnables.iterator(); iterator.hasNext();) {
-				ISafeRunnable runnable = (ISafeRunnable) iterator.next();
-				SafeRunner.run(runnable);
-
+				});
 			}
 		}
 	}
@@ -1007,13 +989,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * org.eclipse.ui.internal.navigator.INavigatorContentService#saveState(
 	 * org.eclipse.ui.IMemento)
 	 */
-	public void saveState(IMemento aMemento) {
+	public void saveState(final IMemento aMemento) {
 		synchronized (this) {
-			for (Iterator extensionItr = getExtensions().iterator(); extensionItr
-					.hasNext();) {
-				NavigatorContentExtension element = (NavigatorContentExtension) extensionItr
+			for (Iterator extensionItr = getExtensions().iterator(); extensionItr.hasNext();) {
+				final NavigatorContentExtension element = (NavigatorContentExtension) extensionItr
 						.next();
-				element.saveState(aMemento);
+				SafeRunner.run(new NavigatorSafeRunnable(((NavigatorContentDescriptor) element
+						.getDescriptor()).getConfigElement()) {
+					public void run() throws Exception {
+						element.saveState(aMemento);
+					}
+				});
 			}
 		}
 	}
@@ -1178,29 +1164,33 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return "ContentService[" + viewerDescriptor.getViewerId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	private void notifyListeners(NavigatorContentExtension aDescriptorInstance) {
+	private void notifyListeners(final NavigatorContentExtension aDescriptorInstance) {
 
 		if (listeners.size() == 0) {
 			return;
 		}
-		INavigatorContentServiceListener listener = null;
-		List failedListeners = null;
-		for (Iterator listenersItr = listeners.iterator(); listenersItr
-				.hasNext();) {
-			try {
-				listener = (INavigatorContentServiceListener) listenersItr
-						.next();
-				listener.onLoad(aDescriptorInstance);
-			} catch (RuntimeException re) {
-				if (failedListeners == null) {
-					failedListeners = new ArrayList();
+
+		final List failedListeners = new ArrayList();
+
+		for (Iterator listenersItr = listeners.iterator(); listenersItr.hasNext();) {
+			final INavigatorContentServiceListener listener = (INavigatorContentServiceListener) listenersItr
+					.next();
+			SafeRunner.run(new NavigatorSafeRunnable() {
+
+				public void run() throws Exception {
+					listener.onLoad(aDescriptorInstance);
 				}
-				failedListeners.add(listener);
-			}
+
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					failedListeners.add(listener);
+				}
+			});
 		}
-		if (failedListeners != null) {
+
+		if (failedListeners.size() > 0) {
 			listeners.removeAll(failedListeners);
-		}
+		}		
 	}
 
 	private ITreeContentProvider[] extractContentProviders(

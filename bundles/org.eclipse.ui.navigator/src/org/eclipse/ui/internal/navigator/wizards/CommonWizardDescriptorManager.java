@@ -19,20 +19,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  */
 public class CommonWizardDescriptorManager {
@@ -180,40 +174,39 @@ public class CommonWizardDescriptorManager {
 	}
   
 	private class CommonWizardRegistry extends NavigatorContentRegistryReader {
- 
 
-		protected boolean readElement(IConfigurationElement anElement) {
+		protected boolean readElement(final IConfigurationElement anElement) {
+			final boolean[] retValue = new boolean[1];
+
 			if (TAG_COMMON_WIZARD.equals(anElement.getName())) {
-				try {
-					addCommonWizardDescriptor(new CommonWizardDescriptor(
-							anElement));
-				} catch (WorkbenchException e) {
-					// log an error since its not safe to open a dialog here
-					NavigatorPlugin
-							.logError(0, e.getMessage(), e);
-					return false;
-				}
-				return true;
-			} if(TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
-				
+				SafeRunner.run(new NavigatorSafeRunnable(anElement) {
+					public void run() throws Exception {
+						addCommonWizardDescriptor(new CommonWizardDescriptor(anElement));
+						retValue[0] = true;
+					}
+				});
+				return retValue[0];
+			}
+			if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
 				IConfigurationElement[] commonWizards = anElement.getChildren(TAG_COMMON_WIZARD);
-				
-				String contentExtensionId = anElement.getAttribute(ATT_ID);
+				final String contentExtensionId = anElement.getAttribute(ATT_ID);
 				for (int i = 0; i < commonWizards.length; i++) {
-					try {
-						addCommonWizardDescriptor(new CommonWizardDescriptor(
-									commonWizards[i], contentExtensionId));
-					} catch (WorkbenchException e) {
-						// log an error since its not safe to open a dialog here
-						NavigatorPlugin
-								.logError(0, e.getMessage(), e);
-						return false;
-					}					
+					final IConfigurationElement element = commonWizards[i];
+					retValue[0] = false;
+					SafeRunner.run(new NavigatorSafeRunnable(element) {
+						public void run() throws Exception {
+							addCommonWizardDescriptor(new CommonWizardDescriptor(element,
+									contentExtensionId));
+							retValue[0] = true;
+						}
+					});
+					if (!retValue[0])
+						break;
 				}
-				return true;
+				return retValue[0];
 			}
 			return super.readElement(anElement);
 		}
 	}
-	 
+
 }

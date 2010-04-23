@@ -46,7 +46,10 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	public boolean _blank;
 	public boolean _null;
 
+	public static boolean _throw;
+	
 	public static void resetTest() {
+		_throw = false;
 	}
 
 	static {
@@ -77,6 +80,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public Image getImage(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		if (element instanceof TestExtensionTreeData)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_ELEMENT);
@@ -84,6 +89,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getText(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		if (_blank)
 			return "";
 		if (_null)
@@ -100,6 +107,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getDescription(Object anElement) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		if (anElement instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) anElement;
 			return "TestItem: " + data.getName();
@@ -108,22 +117,32 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public void restoreState(IMemento aMemento) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 
 	}
 
 	public void saveState(IMemento aMemento) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 
 	}
 
 	public Color getForeground(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return toForegroundColor(getTestColor());
 	}
 
 	public Color getBackground(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		return getTestColor();
 	}
 
 	public Font getFont(Object element) {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
 			if (data.getParent() != null
@@ -134,6 +153,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public void dispose() {
+		if (_throw)
+			throw new RuntimeException("Throwing...");
 		boldFont = null;
 	}
 

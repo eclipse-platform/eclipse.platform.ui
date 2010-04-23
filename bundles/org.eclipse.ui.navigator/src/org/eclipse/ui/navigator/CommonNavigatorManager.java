@@ -14,7 +14,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -40,6 +39,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -84,27 +84,13 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		}
 		  
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-
-			SafeRunner.run(new ISafeRunnable() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-				 */
+			SafeRunner.run(new NavigatorSafeRunnable() {
 				public void run() throws Exception {
 					if(commonNavigator.getCommonViewer().getInput() != null) {
 						IStructuredSelection selection = new StructuredSelection(commonNavigator.getCommonViewer().getInput());
 						actionService.setContext(new ActionContext(selection));
 						actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
 					}
-				}
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-				 */
-				public void handleException(Throwable exception) {
-					NavigatorPlugin.logError(0, exception.getMessage(), exception);
 				}
 			});
 			return Status.OK_STATUS;

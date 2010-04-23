@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.navigator.extensions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewerInternals;
 import org.eclipse.jface.viewers.Viewer;
@@ -20,7 +21,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.Policy;
 
 /**
@@ -168,18 +169,17 @@ public class StructuredViewerManager {
 	 * @param aContentProvider
 	 * @return True if all is well.
 	 */
-	public boolean initialize(IStructuredContentProvider aContentProvider) {
-		boolean result = true;
-		try {
-			if (aContentProvider != null) {
-				aContentProvider.inputChanged(viewer, cachedOldInput,
-						cachedNewInput);
+	public boolean initialize(final IStructuredContentProvider aContentProvider) {
+		final boolean[] result = new boolean[1];
+		SafeRunner.run(new NavigatorSafeRunnable() {
+			public void run() throws Exception {
+				if (aContentProvider != null) {
+					aContentProvider.inputChanged(viewer, cachedOldInput, cachedNewInput);
+				}
+				result[0] = true;
 			}
-		} catch (RuntimeException e) {
-			NavigatorPlugin.logError(0, e.toString(), e);
-			result = false;
-		}
-		return result;
+		});
+		return result[0];
 	}
 
 	/**
@@ -198,15 +198,16 @@ public class StructuredViewerManager {
 			public void run() {
 				if (localViewer.getControl().isDisposed())
 					return;
-				try {
-					localViewer.getControl().setRedraw(false);
-					localViewer.refresh();
-				} catch (RuntimeException e) {
-					NavigatorPlugin.logError(0, e.toString(), e);
-				} finally {
-					localViewer.getControl().setRedraw(true);
-				}
-
+				SafeRunner.run(new NavigatorSafeRunnable() {
+					public void run() throws Exception {
+						localViewer.getControl().setRedraw(false);
+						localViewer.refresh();
+					}
+					public void handleException(Throwable e) {
+						super.handleException(e);
+						localViewer.getControl().setRedraw(true);
+					}
+				});
 			}
 		});
 

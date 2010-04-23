@@ -15,8 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,7 +23,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -124,29 +122,33 @@ public class NavigatorContentExtension implements IMementoAware,
 			return contentProvider;
 		}
 		synchronized (this) {
-			try {
-				if (contentProvider == null) {
-					ITreeContentProvider treeContentProvider = descriptor
-							.createContentProvider();
-					if (treeContentProvider != null) {
-						contentProvider = new SafeDelegateTreeContentProvider(
-								treeContentProvider);
-						contentProvider.init(new CommonContentExtensionSite(
-								getId(), contentService, appliedMemento));
-						viewerManager.initialize(contentProvider);
-					} else {
-						contentProvider = new SafeDelegateTreeContentProvider(SkeletonTreeContentProvider.INSTANCE);
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				public void run() throws Exception {
+					if (contentProvider == null) {
+						ITreeContentProvider treeContentProvider = descriptor
+								.createContentProvider();
+						if (treeContentProvider != null) {
+							contentProvider = new SafeDelegateTreeContentProvider(
+									treeContentProvider);
+							contentProvider.init(new CommonContentExtensionSite(getId(),
+									contentService, appliedMemento));
+							viewerManager.initialize(contentProvider);
+						} else {
+							contentProvider = new SafeDelegateTreeContentProvider(
+									SkeletonTreeContentProvider.INSTANCE);
+						}
 					}
 				}
-			} catch (CoreException e) {
-				contentProviderInitializationFailed = true;
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				contentProviderInitializationFailed = true;
-				e.printStackTrace();
-			}
+
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					contentProviderInitializationFailed = true;
+				}
+			});
+
 			if (contentProviderInitializationFailed) {
-				contentProvider = new SafeDelegateTreeContentProvider(SkeletonTreeContentProvider.INSTANCE);
+				contentProvider = new SafeDelegateTreeContentProvider(
+						SkeletonTreeContentProvider.INSTANCE);
 			}
 		}
 		return contentProvider;
@@ -164,33 +166,29 @@ public class NavigatorContentExtension implements IMementoAware,
 			return labelProvider;
 		}
 		synchronized (this) {
-			try {
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				public void run() throws Exception {
+					if (labelProvider == null) {
+						ILabelProvider tempLabelProvider = descriptor.createLabelProvider();
 
-				if (labelProvider == null) {
-					ILabelProvider tempLabelProvider = descriptor
-							.createLabelProvider();
+						if (tempLabelProvider instanceof ICommonLabelProvider) {
+							labelProvider = (ICommonLabelProvider) tempLabelProvider;
+							labelProvider.init(new CommonContentExtensionSite(getId(),
+									contentService, appliedMemento));
+						} else {
+							labelProvider = new SafeDelegateCommonLabelProvider(tempLabelProvider);
+						}
 
-					if (tempLabelProvider instanceof ICommonLabelProvider) {
-						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-						labelProvider.init(new CommonContentExtensionSite(
-								getId(), contentService, appliedMemento));
-					} else {
-						labelProvider = new SafeDelegateCommonLabelProvider(
-								tempLabelProvider);
+						labelProvider.addListener((ILabelProviderListener) contentService
+								.createCommonLabelProvider());
 					}
-
-					labelProvider
-							.addListener((ILabelProviderListener) contentService
-									.createCommonLabelProvider());
 				}
-			} catch (CoreException e) {
-				labelProviderInitializationFailed = true;
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				labelProviderInitializationFailed = true;
-				e.printStackTrace();
-			}
 
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					labelProviderInitializationFailed = true;
+				}
+			});
 			if (labelProviderInitializationFailed) {
 				labelProvider = SkeletonLabelProvider.INSTANCE;
 			}
@@ -206,33 +204,16 @@ public class NavigatorContentExtension implements IMementoAware,
 		try {
 			synchronized (this) {
 
-				SafeRunner.run(new ISafeRunnable() {
-
-					public void handleException(Throwable exception) {
-						String msg = exception.getMessage() != null ? exception
-								.getMessage() : exception.toString();
-						NavigatorPlugin.logError(0, msg, exception);
-
-					}
-
+				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
 						if (contentProvider != null) {
 							contentProvider.dispose();
 						}
 
 					}
-
 				});
 
-				SafeRunner.run(new ISafeRunnable() {
-
-					public void handleException(Throwable exception) {
-						String msg = exception.getMessage() != null ? exception
-								.getMessage() : exception.toString();
-						NavigatorPlugin.logError(0, msg, exception);
-
-					}
-
+				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
 						if (labelProvider != null) {
 							labelProvider
@@ -240,9 +221,7 @@ public class NavigatorContentExtension implements IMementoAware,
 											.createCommonLabelProvider());
 							labelProvider.dispose();
 						}
-
 					}
-
 				});
 
 			}

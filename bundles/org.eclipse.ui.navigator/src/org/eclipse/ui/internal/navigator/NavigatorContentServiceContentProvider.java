@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -124,41 +125,52 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	
 	private static final boolean ELEMENTS = true;
 
-	private Object[] internalGetChildren(Object aParentElement, Object aParentElementOrPath, Set enabledExtensions, boolean elements) {
+	private Object[] internalGetChildren(final Object aParentElement,
+			final Object aParentElementOrPath, final Set enabledExtensions, final boolean elements) {
 		if (enabledExtensions.size() == 0) {
 			return NO_CHILDREN;
 		}
-		ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);
-		Set finalSet = new LinkedHashSet();
+		final Set finalSet = new LinkedHashSet();
+		final ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);
 
-		Object[] contributedChildren = null;
-		NavigatorContentExtension foundExtension;
-		NavigatorContentExtension[] overridingExtensions;
-		for (Iterator itr = enabledExtensions.iterator(); itr.hasNext();) {
-			foundExtension = (NavigatorContentExtension) itr.next();
-			try {
+		for (final Iterator itr = enabledExtensions.iterator(); itr.hasNext();) {
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				NavigatorContentExtension foundExtension = (NavigatorContentExtension) itr.next();
+				Object[] contributedChildren = null;
+				NavigatorContentExtension[] overridingExtensions;
 
-				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), enabledExtensions)) {
-					if (elements)
-						contributedChildren = foundExtension.internalGetContentProvider().getElements(aParentElementOrPath);
-					else
-						contributedChildren = foundExtension.internalGetContentProvider().getChildren(aParentElementOrPath);
-					overridingExtensions = foundExtension.getOverridingExtensionsForTriggerPoint(aParentElement);
-					INavigatorContentDescriptor foundDescriptor = foundExtension.getDescriptor();
-					localSet.setContributor(foundDescriptor, foundDescriptor);
-					localSet.setContents(contributedChildren);
+				public void run() throws Exception {
+					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
+							enabledExtensions)) {
+						if (elements)
+							contributedChildren = foundExtension.internalGetContentProvider()
+									.getElements(aParentElementOrPath);
+						else
+							contributedChildren = foundExtension.internalGetContentProvider()
+									.getChildren(aParentElementOrPath);
+						overridingExtensions = foundExtension
+								.getOverridingExtensionsForTriggerPoint(aParentElement);
+						INavigatorContentDescriptor foundDescriptor = foundExtension
+								.getDescriptor();
+						localSet.setContributor(foundDescriptor, foundDescriptor);
+						localSet.setContents(contributedChildren);
 
-					if (overridingExtensions.length > 0) {
-						pipelineChildren(aParentElement, overridingExtensions, foundDescriptor, localSet, elements);
+						if (overridingExtensions.length > 0) {
+							pipelineChildren(aParentElement, overridingExtensions, foundDescriptor,
+									localSet, elements);
+						}
+						finalSet.addAll(localSet);
 					}
-					finalSet.addAll(localSet);
 				}
-			} catch (Throwable e) {
-				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
-						new Object[] { foundExtension.getDescriptor().getId(), aParentElement }), e);
 
-			}
-		}
+				public void handleException(Throwable e) {
+					NavigatorPlugin.logError(0, NLS.bind(
+							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
+									foundExtension.getDescriptor().getId(), aParentElement }), e);
+				}
+			});
+		}		
+
 		return finalSet.toArray();
 	}
 
@@ -264,34 +276,40 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return false;
 	}
 
-	public Object getParent(Object anElement) {
-		Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+	public Object getParent(final Object anElement) {
+		final Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+		final Object[] parent = new Object[1];
 
-		Object parent;
-		NavigatorContentExtension foundExtension;
-		NavigatorContentExtension[] overridingExtensions;
 		for (Iterator itr = extensions.iterator(); itr.hasNext();) {
-			foundExtension = (NavigatorContentExtension) itr.next();
-			try {
+			final NavigatorContentExtension foundExtension = (NavigatorContentExtension) itr.next();
 
-				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), extensions)) {
-					parent = foundExtension.internalGetContentProvider().getParent(anElement);
-					overridingExtensions = foundExtension.getOverridingExtensionsForPossibleChild(anElement);
-					if (overridingExtensions.length > 0) {
-						parent = pipelineParent(anElement, overridingExtensions, parent);
-					}
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				NavigatorContentExtension[] overridingExtensions;
 
-					if (parent != null) {
-						return parent;
+				public void run() throws Exception {
+					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), extensions)) {
+						parent[0] = foundExtension.internalGetContentProvider()
+								.getParent(anElement);
+						overridingExtensions = foundExtension
+								.getOverridingExtensionsForPossibleChild(anElement);
+						if (overridingExtensions.length > 0) {
+							parent[0] = pipelineParent(anElement, overridingExtensions, parent);
+						}
+
+						if (parent[0] != null) {
+							return;
+						}
 					}
 				}
-			} catch (Throwable e) {
-				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
-						new Object[] { foundExtension.getDescriptor().getId(), anElement }), e);
-			}
-		}
 
-		return null;
+				public void handleException(Throwable e) {
+					NavigatorPlugin.logError(0, NLS.bind(
+							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
+									foundExtension.getDescriptor().getId(), anElement }), e);
+				}
+			});
+		}
+		return parent[0];
 	}
 
 	public TreePath[] getParents(Object anElement) {
@@ -301,7 +319,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		for (Iterator iter = compilers.iterator(); iter.hasNext();) {
 			TreePathCompiler c = (TreePathCompiler) iter.next();
 			paths.add(c.createParentPath());
-
 		}
 		return (TreePath[]) paths.toArray(new TreePath[paths.size()]);
 
@@ -353,40 +370,50 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 *  For pipelined calls, we simply ask the pipelined content provider about the children
 	 *  and they can override this as they would in the case where they are providing the objects.
 	 */
-	public boolean hasChildren(Object anElementOrPath) {
-		Object anElement = internalAsElement(anElementOrPath);
-		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
+	public boolean hasChildren(final Object anElementOrPath) {
+		final Object anElement = internalAsElement(anElementOrPath);
+		final Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
+		final boolean suggestedHasChildren[] = new boolean[1];
 
-		NavigatorContentExtension ext;
-		boolean suggestedHasChildren = false;
-		for (Iterator itr = enabledExtensions.iterator(); itr.hasNext();) {
-			ext = (NavigatorContentExtension) itr.next();
+		for (final Iterator itr = enabledExtensions.iterator(); itr.hasNext();) {
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				NavigatorContentExtension ext;
 
-			if (!ext.isLoaded() && !enforceHasChildren)
-				return true;
+				public void run() throws Exception {
+					ext = (NavigatorContentExtension) itr.next();
 
-			NavigatorContentExtension[] overridingExtensions;
-			if (!isOverridingExtensionInSet(ext.getDescriptor(), enabledExtensions)) {
-				try {
-					SafeDelegateTreeContentProvider cp = ext.internalGetContentProvider();
-					suggestedHasChildren |= callNormalHasChildren(anElementOrPath, anElement, cp);
-					overridingExtensions = ext.getOverridingExtensionsForTriggerPoint(anElement);
-
-					if (overridingExtensions.length > 0) {
-						suggestedHasChildren = pipelineHasChildren(anElementOrPath, anElement, overridingExtensions,
-								suggestedHasChildren);
+					if (!ext.isLoaded() && !enforceHasChildren) {
+						suggestedHasChildren[0] = true;
+						return;
 					}
-					if (suggestedHasChildren)
-						return true;
 
-				} catch (Throwable e) {
+					NavigatorContentExtension[] overridingExtensions;
+					if (!isOverridingExtensionInSet(ext.getDescriptor(), enabledExtensions)) {
+						SafeDelegateTreeContentProvider cp = ext.internalGetContentProvider();
+						suggestedHasChildren[0] |= callNormalHasChildren(anElementOrPath,
+								anElement, cp);
+						overridingExtensions = ext
+								.getOverridingExtensionsForTriggerPoint(anElement);
+
+						if (overridingExtensions.length > 0) {
+							suggestedHasChildren[0] = pipelineHasChildren(anElementOrPath,
+									anElement, overridingExtensions, suggestedHasChildren[0]);
+						}
+						if (suggestedHasChildren[0]) {
+							return;
+
+						}
+					}
+				}
+
+				public void handleException(Throwable e) {
 					NavigatorPlugin.logError(0, NLS.bind(
 							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
 									ext.getDescriptor().getId(), anElementOrPath }), e);
 				}
-			}
+			});
 		}
-		return suggestedHasChildren;
+		return suggestedHasChildren[0];
 	}
 
 	public boolean hasChildren(TreePath path) {
@@ -575,40 +602,47 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 
 	}
 
-	private Set findParents(Object anElement) {
+	private Set findParents(final Object anElement) {
+		final Set descriptors = contentService.findDescriptorsWithPossibleChild(anElement, false);
+		final Set parents = new LinkedHashSet();
 
-		Set descriptors = contentService.findDescriptorsWithPossibleChild(anElement, false);
-		Set parents = new LinkedHashSet();
-		NavigatorContentDescriptor foundDescriptor;
-		NavigatorContentExtension foundExtension;
-		Object parent = null;
-		for (Iterator itr = descriptors.iterator(); itr.hasNext();) {
-			foundDescriptor = (NavigatorContentDescriptor) itr.next();
-			foundExtension = contentService.getExtension(foundDescriptor);
-			try {
-				if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
-					if (foundExtension.internalGetContentProvider().isTreePath()) {
-						TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension
-								.internalGetContentProvider()).getParents(anElement);
+		for (final Iterator itr = descriptors.iterator(); itr.hasNext();) {
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				NavigatorContentDescriptor foundDescriptor;
+				NavigatorContentExtension foundExtension;
+				Object parent = null;
 
-						for (int i = 0; i < parentTreePaths.length; i++) {
+				public void run() throws Exception {
+					foundDescriptor = (NavigatorContentDescriptor) itr.next();
+					foundExtension = contentService.getExtension(foundDescriptor);
 
-							parent = parentTreePaths[i].getLastSegment();
+					if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
+						if (foundExtension.internalGetContentProvider().isTreePath()) {
+							TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension
+									.internalGetContentProvider()).getParents(anElement);
+
+							for (int i = 0; i < parentTreePaths.length; i++) {
+
+								parent = parentTreePaths[i].getLastSegment();
+								if ((parent = findParent(foundExtension, anElement, parent)) != null)
+									parents.add(parent);
+							}
+
+						} else {
+							parent = foundExtension.internalGetContentProvider().getParent(
+									anElement);
 							if ((parent = findParent(foundExtension, anElement, parent)) != null)
 								parents.add(parent);
 						}
-
-					} else {
-						parent = foundExtension.internalGetContentProvider().getParent(anElement);
-						if ((parent = findParent(foundExtension, anElement, parent)) != null)
-							parents.add(parent);
 					}
 				}
 
-			} catch (Throwable e) {
-				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
-						new Object[] { foundExtension.getDescriptor().getId(), anElement }), e);
-			}
+				public void handleException(Throwable e) {
+					NavigatorPlugin.logError(0, NLS.bind(
+							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
+									foundExtension.getDescriptor().getId(), anElement }), e);
+				}
+			});
 		}
 
 		return parents;

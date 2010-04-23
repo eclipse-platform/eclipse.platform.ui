@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.navigator.extensions;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
 
 /**
@@ -43,14 +43,15 @@ public final class CommonDragAssistantDescriptor implements IViewerExtPtConstant
 	 */
 	public CommonDragAdapterAssistant createDragAssistant() {
 
-		try {
-			return (CommonDragAdapterAssistant) element
-					.createExecutableExtension(ATT_CLASS);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		} catch (RuntimeException re) {
-			NavigatorPlugin.logError(0, re.getMessage(), re);
-		}
+		final CommonDragAdapterAssistant[] da = new CommonDragAdapterAssistant[1];
+
+		SafeRunner.run(new NavigatorSafeRunnable(element) {
+			public void run() throws Exception {
+				da[0] = (CommonDragAdapterAssistant) element.createExecutableExtension(ATT_CLASS);
+			}
+		});
+		if (da[0] != null)
+			return da[0];
 		return SkeletonCommonDragAssistant.INSTANCE;
 
 	}

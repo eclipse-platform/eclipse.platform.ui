@@ -26,10 +26,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -189,22 +190,18 @@ public class CommonActionProviderDescriptor implements
 		if (hasLoadingFailed) {
 			return SkeletonActionProvider.INSTANCE;
 		}
-		CommonActionProvider provider = null;
-		try {
-			provider = (CommonActionProvider) configurationElement
-					.createExecutableExtension(ATT_CLASS);
-		} catch (CoreException exception) {
-			NavigatorPlugin.log(exception.getStatus());
-			hasLoadingFailed = true;
-			provider = SkeletonActionProvider.INSTANCE;
-		} catch (Exception e) {
-			NavigatorPlugin.log(new Status(IStatus.ERROR,
-					NavigatorPlugin.PLUGIN_ID, 0, e.getMessage(), e));
-			hasLoadingFailed = true;
-			provider = SkeletonActionProvider.INSTANCE;
-		}
+		final CommonActionProvider[] provider = new CommonActionProvider[1];
+		SafeRunner.run(new NavigatorSafeRunnable(configurationElement) {
+			public void run() throws Exception {
+				provider[0] = (CommonActionProvider) configurationElement
+						.createExecutableExtension(ATT_CLASS);
+			}
+		});
 
-		return provider;
+		if (provider[0] != null)
+			return provider[0];
+		hasLoadingFailed = true;
+		return SkeletonActionProvider.INSTANCE;
 	}
 
 	/**

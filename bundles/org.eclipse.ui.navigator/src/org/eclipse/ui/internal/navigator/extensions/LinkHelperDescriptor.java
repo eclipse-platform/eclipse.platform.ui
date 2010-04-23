@@ -16,9 +16,11 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.navigator.ILinkHelper;
 
 /**
@@ -92,13 +94,15 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 	public ILinkHelper createLinkHelper() {
 		if (hasLinkHelperFailedCreation)
 			return SkeletonLinkHelper.INSTANCE;
-		try {
-			return (ILinkHelper) configElement
-					.createExecutableExtension(ATT_CLASS);
-		} catch (Throwable t) {
-			hasLinkHelperFailedCreation = true;
-			NavigatorPlugin.logError(0, t.getMessage(), t);
-		}
+		final ILinkHelper[] helper = new ILinkHelper[1];
+		SafeRunner.run(new NavigatorSafeRunnable(configElement) {
+			public void run() throws Exception {
+				helper[0] = (ILinkHelper) configElement.createExecutableExtension(ATT_CLASS);
+			}
+		});
+		if (helper[0] != null)
+			return helper[0];
+		hasLinkHelperFailedCreation = true;
 		return SkeletonLinkHelper.INSTANCE;
 	}
 

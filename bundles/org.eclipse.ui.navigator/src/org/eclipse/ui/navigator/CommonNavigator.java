@@ -14,6 +14,7 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PerformanceStats;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -41,6 +42,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -515,13 +517,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	protected void initListeners(TreeViewer viewer) {
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			public void doubleClick(DoubleClickEvent event) {
-				try {
-					handleDoubleClick(event);
-				} catch (RuntimeException re) {
-					re.printStackTrace();
-				}
+			public void doubleClick(final DoubleClickEvent event) {
+				SafeRunner.run(new NavigatorSafeRunnable() {
+					public void run() throws Exception {
+						handleDoubleClick(event);
+					}
+				});
 			}
 		});
 	}

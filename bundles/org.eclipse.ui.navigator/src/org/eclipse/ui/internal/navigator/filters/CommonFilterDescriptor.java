@@ -12,12 +12,13 @@
 package org.eclipse.ui.internal.navigator.filters;
 
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 
@@ -98,32 +99,33 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	 *         filter.
 	 */
 	public ViewerFilter createFilter() {
-		try {
+		final ViewerFilter[] filter = new ViewerFilter[1];
 
-			if (filterExpression != null) {
+		SafeRunner.run(new NavigatorSafeRunnable() {
+			public void run() throws Exception {
+				if (filterExpression != null) {
+					if (element.getAttribute(ATT_CLASS) != null) {
+						NavigatorPlugin
+								.log(
+										IStatus.WARNING,
+										0,
+										"A \"commonFilter\" was specified in " + //$NON-NLS-1$
+												element.getDeclaringExtension()
+														.getNamespaceIdentifier()
+												+ " which specifies a \"class\" attribute and an Core Expression.\n" + //$NON-NLS-1$
+												"Only the Core Expression will be respected.", //$NON-NLS-1$
+										null);
+					}
 
-				if (element.getAttribute(ATT_CLASS) != null) {
-					NavigatorPlugin
-							.log(
-									IStatus.WARNING,
-									0,
-									"A \"commonFilter\" was specified in " + //$NON-NLS-1$
-											element.getDeclaringExtension().getNamespaceIdentifier()
-											+ " which specifies a \"class\" attribute and an Core Expression.\n" + //$NON-NLS-1$
-											"Only the Core Expression will be respected.", //$NON-NLS-1$
-									null);
-				} 
-
-				return new CoreExpressionFilter(filterExpression);
+					filter[0] = new CoreExpressionFilter(filterExpression);
+					return;
+				}
+				filter[0] = (ViewerFilter) element.createExecutableExtension(ATT_CLASS);
 			}
+		});
 
-			return (ViewerFilter) element.createExecutableExtension(ATT_CLASS);
-		} catch (RuntimeException re) {
-			NavigatorPlugin.logError(0, re.getMessage(), re);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-
+		if (filter[0] != null)
+			return filter[0];
 		return SkeletonViewerFilter.INSTANCE;
 	}
 

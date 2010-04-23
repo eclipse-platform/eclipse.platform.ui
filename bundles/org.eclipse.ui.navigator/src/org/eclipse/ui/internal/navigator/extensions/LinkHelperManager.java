@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,18 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  * 
  */
@@ -131,15 +126,16 @@ public class LinkHelperManager {
 			super(NavigatorPlugin.PLUGIN_ID, LINK_HELPER);
 		}
 
-		public boolean readElement(IConfigurationElement element) {
+		public boolean readElement(final IConfigurationElement element) {
 			if (LINK_HELPER.equals(element.getName())) {
-				try {
-					getDescriptors().add(new LinkHelperDescriptor(element));
-				} catch (Throwable e) {
-					String msg = e.getMessage() != null ? e.getMessage() : e.toString();
-					NavigatorPlugin.logError(0, msg, e);
-				}
-				return true;
+				final boolean retValue[] = new boolean[1];
+				SafeRunner.run(new NavigatorSafeRunnable(element) {
+					public void run() throws Exception {
+						getDescriptors().add(new LinkHelperDescriptor(element));
+						retValue[0] = true;
+					}
+				});
+				return retValue[0];
 			}
 			return false;
 		}
