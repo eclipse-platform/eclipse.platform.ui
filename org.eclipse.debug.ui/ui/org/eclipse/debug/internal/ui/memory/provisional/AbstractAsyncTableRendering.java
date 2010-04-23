@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Teodor Madan (Freescale) -  Bug 292360 -  [Memory View] platform renderings do not implement correctly IMemoryRendering#getControl
  *     Teodor Madan (Freescale) -  Bug 292426 -  [Memory View] platform renderings cannot be repositioned from non-UI thread through calls to IRepositionableMemoryRendering#goToAddress 
+ *     Teodor Madan (Freescale) & Jeremiah Swan (IBM) - Bug 300036 -  [Memory View] NPE in AbstractAsyncTableRendering#getSelectedAddress on rendering creation
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.memory.provisional;
@@ -551,6 +552,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
 	 */
 	public void resetRendering() throws DebugException {
+		if (!fIsCreated)
+			return;
+
 		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
 
 		fTableViewer.setSelection(baseAddress);
@@ -2059,6 +2063,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @return the currently selected address in this rendering
 	 */
 	public BigInteger getSelectedAddress() {
+		if (!fIsCreated)
+			return null;
+		
 		Object key = fTableViewer.getSelectionKey();
 		
 		if (key != null && key instanceof BigInteger)
@@ -2206,6 +2213,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Update labels in the memory rendering.
 	 */
 	public void refresh() {
+		if (!fIsCreated)
+			return;
+
 		fTableViewer.refresh();
 	}
 
@@ -2214,6 +2224,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Resize column to the preferred size.
 	 */
 	public void resizeColumnsToPreferredSize() {
+		if (!fIsCreated)
+			return;
+
 		fTableViewer.resizeColumnsToPreferredSize();
 		if (!fIsShowAddressColumn)
 		{
@@ -2235,6 +2248,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void updateLabels()
 	{
+		if (!fIsCreated)
+			return;
+
 		UIJob job = new UIJob("updateLabels"){ //$NON-NLS-1$
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
