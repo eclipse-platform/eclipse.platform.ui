@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	private Composite fCanvas;
 	protected String fLabel;
 	
+	private volatile boolean fIsDisposed = false;
+
 	public AbstractMemoryViewPane(IViewPart parent)
 	{
 		super();
@@ -277,34 +279,43 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			Object source = events[i].getSource();
 			if (events[i].getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) 
 			{
+				if (isDisposed())
+					return;
+
 				//When a memory block retrieval terminates, it and its
 				//tab folders should be removed from our map.
-				IMemoryBlockRetrieval ret = (IMemoryBlockRetrieval)source;
+				final IMemoryBlockRetrieval ret = (IMemoryBlockRetrieval)source;
 				if (ret != null) 
 				{
-					final Integer key = MemoryViewUtil.getHashCode(ret);
-					final Object folder = fTabFolderForDebugView.get(key);
-					if (folder != null && folder != fEmptyTabFolder &&  (!((CTabFolder)folder).isDisposed())) 
-					{
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if (isDisposed())
+								return;
+
+							Integer key = MemoryViewUtil.getHashCode(ret);
+							Object folder = fTabFolderForDebugView.get(key);
+
+							if (folder != null && folder != fEmptyTabFolder)
+							{
 								//remove the tab folder , and all contained tab items
 								disposeOfFolder((CTabFolder) folder);
-								if (fTabFolderForDebugView != null)
-									fTabFolderForDebugView.remove(key);
+								fTabFolderForDebugView.remove(key);
 							}
-						});
-					}
+						}
+					});
 				}
 			}
 		}
-
 	}
 
 
 
 	public void dispose()
 	{
+		if (isDisposed())
+			return;
+		fIsDisposed = true;
+
 		removeListeners();
 		
 		// dispose empty folders
@@ -312,20 +323,16 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		// dispose all other folders
 		try {
-			
-			if (fTabFolderForDebugView != null) {
-				Enumeration enumeration = fTabFolderForDebugView.elements();
-				
-				while (enumeration.hasMoreElements())
-				{
-					CTabFolder tabFolder = (CTabFolder)enumeration.nextElement();
-					disposeOfFolder(tabFolder);
-				}
-				
-				// set to null so that clean up is only done once
-				fTabFolderForDebugView.clear();
-				fTabFolderForDebugView = null;
+			Enumeration enumeration = fTabFolderForDebugView.elements();
+
+			while (enumeration.hasMoreElements())
+			{
+				CTabFolder tabFolder = (CTabFolder)enumeration.nextElement();
+				disposeOfFolder(tabFolder);
 			}
+
+			// Clear the table as all CTabFolder's have been dipose()d
+			fTabFolderForDebugView.clear();
 		} catch (Exception e) {		
 			
 			DebugUIPlugin.logErrorMessage("Exception occurred when the Memory View is disposed."); //$NON-NLS-1$
@@ -396,6 +403,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		return fLabel;
 	}
 	
+	protected boolean isDisposed()
+	{
+		return fIsDisposed;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */

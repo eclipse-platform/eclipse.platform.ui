@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,8 +85,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	private boolean fCanAddRendering = true;
 	private boolean fCanRemoveRendering = true;
-
-	private boolean fIsDisposed = false;
 	
 	/**
 	 * @param parent is the view hosting this view pane
@@ -248,7 +246,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-		if (fIsDisposed)
+		if (isDisposed())
 			return;
 		
 		// do not schedule job if any of these conditions are true
@@ -898,8 +896,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}
 	
 	public void dispose() {
-		fIsDisposed = true;
-		
 		super.dispose();
 		
 		fTabFolderForMemoryBlock.clear();
@@ -1134,10 +1130,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 	}
 	
-	private boolean isDisposed()
-	{
-		return fIsDisposed;
-	}
+
 	
 	public void showCreateRenderingTab()
 	{
