@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 
+
 /**
  * Implements drop behaviour for drag and drop operations
  * that land on the resource navigator.
@@ -53,8 +54,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-public class NavigatorDropAdapter extends PluginDropAdapter implements
-        IOverwriteQuery {
+public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 
     /**
      * A flag indicating that overwrites should always occur.
@@ -121,9 +121,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY))
 			return DND.DROP_COPY;
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK))
-			return DND.DROP_LINK; 
+			return DND.DROP_LINK;
 		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER))
-			return DND.DROP_LINK; 
+			return DND.DROP_LINK;
 		if (target.isVirtual())
 			return DND.DROP_LINK;
 		return DND.DROP_COPY;
@@ -132,7 +132,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 	private IContainer getCurrentContainerTarget() {
     	Object object = getCurrentTarget();
     	if ((object != null) &&
-            (object instanceof IResource) && 
+            (object instanceof IResource) &&
             ((IResource) object).isAccessible()) {
             return getActualTarget((IResource) object);
     	}
@@ -155,7 +155,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 
     /**
      * Returns the actual target of the drop, given the resource
-     * under the mouse.  If the mouse target is a file, then the drop actually 
+     * under the mouse.  If the mouse target is a file, then the drop actually
      * occurs in its parent.  If the drop location is before or after the
      * mouse target and feedback is enabled, the target is also the parent.
      */
@@ -319,41 +319,16 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         mergeStatus(problems, validateTarget(getCurrentTarget(),
                 getCurrentTransfer()));
 
+		final int currentOperation= getCurrentOperation();
         final IContainer target = getActualTarget((IResource) getCurrentTarget());
         final String[] names = (String[]) data;
-        // Run the import operation asynchronously. 
-        // Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+        // Run the import operation asynchronously.
+        // Otherwise the drag source (e.g., Windows Explorer) will be blocked
         // while the operation executes. Fixes bug 16478.
         Display.getCurrent().asyncExec(new Runnable() {
             public void run() {
                 getShell().forceActive();
-                CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
-                        getShell());
-				// if the target is a group and all sources are files, then automatically create links
-				int type;
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), getCurrentOperation(), names, target);
-				dialog.setResource(target);
-				if (dialog.open() == Window.OK)
-					type = dialog.getSelection();
-				else
-					type = ImportTypeDialog.IMPORT_NONE;
-				switch(type) {
-					case ImportTypeDialog.IMPORT_COPY:
-						operation.copyFiles(names, target);
-						break;
-					case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
-						if (dialog.getVariable() != null)
-							operation.setRelativeVariable(dialog.getVariable());
-						operation.createVirtualFoldersAndLinks(names, target);
-						break;
-					case ImportTypeDialog.IMPORT_LINK:
-						if (dialog.getVariable() != null)
-							operation.setRelativeVariable(dialog.getVariable());
-						operation.linkFiles(names, target);
-						break;
-					case ImportTypeDialog.IMPORT_NONE:
-						break;
-				}
+				new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
             }
         });
         return problems;
@@ -439,7 +414,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 					shouldLinkAutomatically = false;
 					break;
 				}
-			}		
+			}
 		}
 		
 		if (shouldLinkAutomatically) {
@@ -551,7 +526,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 						message = operation.validateDestination(destination, selectedResources);
 						if (message == null)
 							lastValidOperation = DND.DROP_COPY;
-					}                
+					}
                 }
             }
         } // file import?

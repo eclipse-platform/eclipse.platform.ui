@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -40,11 +39,12 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage;
 import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 
+
 /**
- * Dialog to let the user customise how files and resources are created in a project 
+ * Dialog to let the user customise how files and resources are created in a project
  * hierarchy after the user drag and drop items on a workspace container.
  * 
- * Files and folders can be created either by copying the source objects, creating 
+ * Files and folders can be created either by copying the source objects, creating
  * linked resources, and/or creating virtual folders.
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.6
@@ -86,15 +86,9 @@ public class ImportTypeDialog extends TrayDialog {
 	private Button moveButton = null;
 
 	private int operationMask;
-
 	private String preferredVariable;
-	
 	private IResource receivingResource = null;
-	
 	private Button shadowCopyButton = null;
-	
-	private boolean targetIsVirtual;
-	
 	private String variable = null;
 	
 	private RelativePathVariableGroup relativePathVariableGroup;
@@ -114,11 +108,11 @@ public class ImportTypeDialog extends TrayDialog {
 	 */
 	public ImportTypeDialog(Shell shell, int dropOperation,
 			IResource[] sources, IContainer target) {
-		this(shell, selectAppropriateMask(dropOperation, sources, target), RelativePathVariableGroup.getPreferredVariable(sources, target), target.isVirtual());
+		this(shell, selectAppropriateMask(dropOperation, sources, target), RelativePathVariableGroup.getPreferredVariable(sources, target));
 	}
 	
 	/**
-	 * Creates the Import Type Dialog when files are dragged and dropped from the 
+	 * Creates the Import Type Dialog when files are dragged and dropped from the
 	 * operating system's shell (Windows Explorer on Windows Platform, for example).
 	 * 
 	 * @param shell
@@ -131,19 +125,18 @@ public class ImportTypeDialog extends TrayDialog {
 	 * 		The target container onto which the files were dropped
 	 */
 	public ImportTypeDialog(Shell shell, int dropOperation, String[] names, IContainer target) {
-		this(shell, selectAppropriateMask(dropOperation, names, target), RelativePathVariableGroup.getPreferredVariable(names, target), target.isVirtual());
+		this(shell, selectAppropriateMask(dropOperation, names, target), RelativePathVariableGroup.getPreferredVariable(names, target));
 	}
 	
 	/**
 	 * @param parentShell
 	 * @param operationMask
 	 */
-	private ImportTypeDialog(Shell parentShell, int operationMask, String preferredVariable, boolean targetIsVirtual) {
+	private ImportTypeDialog(Shell parentShell, int operationMask, String preferredVariable) {
 		super(parentShell);
 		
 		this.preferredVariable = preferredVariable;
 		this.operationMask = operationMask;
-		this.targetIsVirtual = targetIsVirtual;
 		currentSelection = 0;
 		String tmp = readContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE);
 		if (tmp.length() > 0)
@@ -155,7 +148,7 @@ public class ImportTypeDialog extends TrayDialog {
 			else
 				currentSelection = IMPORT_MOVE;
 		}
-		
+
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE))
 			variable = preferredVariable;
@@ -177,41 +170,11 @@ public class ImportTypeDialog extends TrayDialog {
 	}
 	
 	/**
-	 * Get the selected variable if the selection is either IMPORT_VIRTUAL_FOLDERS_AND_LINKS or IMPORT_LINK 
+	 * Get the selected variable if the selection is either IMPORT_VIRTUAL_FOLDERS_AND_LINKS or IMPORT_LINK
 	 * @return The currently selected variable, or AUTOMATIC or ABSOLUTE_PATH
 	 */
 	public String getVariable() {
 		return variable;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.MessageDialog#open()
-	 */
-	public int open() {
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		
-		String mode = store.getString(targetIsVirtual? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE:IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
-
-		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT))
-			return super.open();
-		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY) && hasFlag(IMPORT_COPY)) {
-			currentSelection = IMPORT_COPY;
-			return Window.OK;
-		}
-		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY) && hasFlag(IMPORT_MOVE)) {
-			currentSelection = IMPORT_MOVE;
-			return Window.OK;
-		}
-		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK) && hasFlag(IMPORT_LINK)) {
-			currentSelection = IMPORT_LINK;
-			return Window.OK;
-		}
-		if (mode.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER) && hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS)) {
-			currentSelection = IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
-			return Window.OK;
-		}
-
-		return super.open();
 	}
 	
 	/** Set the project that is the destination of the import operation
@@ -308,6 +271,7 @@ public class ImportTypeDialog extends TrayDialog {
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
  		composite.setLayoutData(gridData);
  		composite.setFont(parent.getFont());
+
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -452,6 +416,7 @@ public class ImportTypeDialog extends TrayDialog {
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
  		composite.setLayoutData(gridData);
 		composite.setFont(parent.getFont());
+
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;

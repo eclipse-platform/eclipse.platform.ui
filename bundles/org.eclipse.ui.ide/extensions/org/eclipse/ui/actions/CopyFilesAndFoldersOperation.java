@@ -48,16 +48,20 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
 import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
 import org.eclipse.ui.ide.undo.CopyResourcesOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -67,6 +71,7 @@ import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 import com.ibm.icu.text.MessageFormat;
+
 
 /**
  * Perform the copy of file and folder resources from the clipboard when paste
@@ -739,15 +744,75 @@ public class CopyFilesAndFoldersOperation {
 	}
 
 	/**
-	 * Copies the given files and folders to the destination. The current Thread
-	 * is halted while the resources are copied using a
-	 * WorkspaceModifyOperation. This method should be called from the UI
-	 * Thread.
+	 * Depending on the 'Linked Resources' preferences it copies the given files and folders to the
+	 * destination or creates links or shows a dialog that lets the user choose. The current thread
+	 * is halted while the resources are copied using a {@link WorkspaceModifyOperation}. This
+	 * method should be called from the UI Thread.
 	 * 
-	 * @param fileNames
-	 *            names of the files to copy
-	 * @param destination
-	 *            destination to which files will be copied
+	 * @param fileNames names of the files to copy
+	 * @param destination destination to which files will be copied
+	 * @param dropOperation the drop operation ({@link DND#DROP_NONE}, {@link DND#DROP_MOVE}
+	 *            {@link DND#DROP_COPY}, {@link DND#DROP_LINK}, {@link DND#DROP_DEFAULT})
+	 * @see WorkspaceModifyOperation
+	 * @see Display#getThread()
+	 * @see Thread#currentThread()
+	 * @since 3.6
+	 */
+	public void copyOrLinkFiles(final String[] fileNames, IContainer destination, int dropOperation) {
+		IPreferenceStore store= IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean targetIsVirtual= destination.isVirtual();
+		String dndPreference= store.getString(targetIsVirtual ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE : IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
+
+		int mode= ImportTypeDialog.IMPORT_NONE;
+		String variable= null;
+
+		if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
+			ImportTypeDialog dialog= new ImportTypeDialog(messageShell, dropOperation, fileNames, destination);
+			dialog.setResource(destination);
+			if (dialog.open() == Window.OK) {
+				mode= dialog.getSelection();
+				variable= dialog.getVariable();
+			}
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY) && hasFlag(dropOperation, ImportTypeDialog.IMPORT_COPY)) {
+			mode= ImportTypeDialog.IMPORT_COPY;
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK) && hasFlag(dropOperation, ImportTypeDialog.IMPORT_LINK | ImportTypeDialog.IMPORT_COPY)) {
+			mode= ImportTypeDialog.IMPORT_LINK;
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER) && hasFlag(dropOperation, ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)) {
+			mode= ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
+		}
+
+		switch (mode) {
+			case ImportTypeDialog.IMPORT_COPY:
+				copyFiles(fileNames, destination);
+				break;
+			case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
+				if (variable != null)
+					setRelativeVariable(variable);
+				createVirtualFoldersAndLinks(fileNames, destination);
+				break;
+			case ImportTypeDialog.IMPORT_LINK:
+				if (variable != null)
+					setRelativeVariable(variable);
+				linkFiles(fileNames, destination);
+				break;
+			case ImportTypeDialog.IMPORT_NONE:
+				break;
+		}
+
+	}
+
+	private boolean hasFlag(int operationMask, int flag) {
+		return (operationMask & flag) != 0;
+	}
+
+
+	/**
+	 * Copies the given files and folders to the destination. The current Thread is halted while the
+	 * resources are copied using a WorkspaceModifyOperation. This method should be called from the
+	 * UI Thread.
+	 * 
+	 * @param fileNames names of the files to copy
+	 * @param destination destination to which files will be copied
 	 * @see WorkspaceModifyOperation
 	 * @see Display#getThread()
 	 * @see Thread#currentThread()

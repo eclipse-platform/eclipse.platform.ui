@@ -8,19 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.navigator.resources;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +28,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -35,20 +43,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
-import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringContribution;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
-import org.eclipse.ltk.ui.refactoring.RefactoringUI;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
@@ -61,8 +56,18 @@ import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
 
+import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
+import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
+
+
 /**
- *  
+ * 
  * Clients may reference this class in the <b>dropAssistant</b> element of a
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  * 
@@ -73,7 +78,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * 
  * @since 3.2
  * 
- */ 
+ */
 public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	private static final IResource[] NO_RESOURCES = new IResource[0];
@@ -346,7 +351,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return getSelectedResources((IStructuredSelection)selection);
-		} 
+		}
 		return NO_RESOURCES;
 	}
 
@@ -549,13 +554,13 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	/**
 	 * Performs a drop using the FileTransfer transfer type.
 	 */
-	private IStatus performFileDrop(CommonDropAdapter anAdapter, Object data) {
-		final CommonDropAdapter finalAdapter = anAdapter;
+	private IStatus performFileDrop(final CommonDropAdapter anAdapter, Object data) {
+		final int currentOperation = anAdapter.getCurrentOperation();
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0,
 				WorkbenchNavigatorMessages.DropAdapter_problemImporting, null);
 		mergeStatus(problems,
 				validateTarget(anAdapter.getCurrentTarget(), anAdapter
-						.getCurrentTransfer(), anAdapter.getCurrentOperation()));
+						.getCurrentTransfer(), currentOperation));
 
 		final IContainer target = getActualTarget((IResource) anAdapter
 				.getCurrentTarget());
@@ -566,33 +571,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
 				getShell().forceActive();
-				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
-				// if the target is a virtual folder and all sources are files, then
-				// automatically create links
-				int type;
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), finalAdapter.getCurrentOperation(), names, target);
-				dialog.setResource(target);
-				if (dialog.open() == Window.OK)
-					type = dialog.getSelection();
-				else
-					type = ImportTypeDialog.IMPORT_NONE;
-				switch (type) {
-				case ImportTypeDialog.IMPORT_COPY:
-					operation.copyFiles(names, target);
-					break;
-				case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
-					if (dialog.getVariable() != null)
-						operation.setRelativeVariable(dialog.getVariable());
-					operation.createVirtualFoldersAndLinks(names, target);
-					break;
-				case ImportTypeDialog.IMPORT_LINK:
-					if (dialog.getVariable() != null)
-						operation.setRelativeVariable(dialog.getVariable());
-					operation.linkFiles(names, target);
-					break;
-				case ImportTypeDialog.IMPORT_NONE:
-					break;
-				}
+				new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
 			}
 		});
 		return problems;
