@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.internal.text.ResizableShellSupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
@@ -95,7 +94,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/** Listener for shell activation and deactivation. */
 	private Listener fShellListener;
 	/** All focus listeners registered to this information control. */
-	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/** Size constraints, x is the maxWidth and y is the maxHeight, or <code>null</code> if not set. */
 	private Point fSizeConstraints;
@@ -171,7 +170,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if ((shellStyle & SWT.NO_TRIM) != 0)
 			shellStyle&= ~(SWT.NO_TRIM | SWT.SHELL_TRIM); // make sure we get the OS border but no other trims
 
-		fResizable= (shellStyle & SWT.RESIZE) != 0; // on GTK, Shell removes SWT.RESIZE if SWT.ON_TOP is set
+		fResizable= (shellStyle & SWT.RESIZE) != 0;
 		fShell= new Shell(parentShell, shellStyle);
 		Display display= fShell.getDisplay();
 		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
@@ -191,10 +190,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
 		
-		if (fResizable) {
-			ResizableShellSupport.makeResizable(fShell);
-		}
-
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
@@ -580,12 +575,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (fStatusComposite != null)
 			trim.height+= fStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 
-		if (fResizable) {
-			GridLayout shellLayout= (GridLayout) fShell.getLayout();
-			int w= shellLayout.marginWidth;
-			int h= shellLayout.marginHeight;
-			Geometry.expand(trim, w, w, h, h);
-		}
 		return trim;
 	}
 

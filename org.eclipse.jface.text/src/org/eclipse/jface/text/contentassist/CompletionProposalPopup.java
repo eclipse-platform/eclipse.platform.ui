@@ -63,7 +63,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
-import org.eclipse.jface.internal.text.ResizableShellSupport;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
@@ -119,7 +118,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		static final int SELECT_PREVIOUS= 2;
 
 
-		private int fOperationCode;
+		private final int fOperationCode;
 
 		/**
 		 * Creates a new selection handler.
@@ -263,7 +262,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	private final class CommandKeyListener extends KeyAdapter {
-		private KeySequence fCommandSequence;
+		private final KeySequence fCommandSequence;
 
 		private CommandKeyListener(KeySequence keySequence) {
 			fCommandSequence= keySequence;
@@ -288,11 +287,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** The associated text viewer. */
 	private ITextViewer fViewer;
 	/** The associated content assistant. */
-	private ContentAssistant fContentAssistant;
+	private final ContentAssistant fContentAssistant;
 	/** The used additional info controller. */
-	private AdditionalInfoController fAdditionalInfoController;
+	private final AdditionalInfoController fAdditionalInfoController;
 	/** The closing strategy for this completion proposal popup. */
-	private PopupCloser fPopupCloser= new PopupCloser();
+	private final PopupCloser fPopupCloser= new PopupCloser();
 	/** The popup shell. */
 	private Shell fProposalShell;
 	/** The proposal table. */
@@ -302,7 +301,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** The key listener to control navigation. */
 	private ProposalSelectionListener fKeyListener;
 	/** List of document events used for filtering proposals. */
-	private List fDocumentEvents= new ArrayList();
+	private final List fDocumentEvents= new ArrayList();
 	/** Listener filling the document event queue. */
 	private IDocumentListener fDocumentListener;
 	/** The filter list of proposals. */
@@ -331,7 +330,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @since 3.0
 	 */
-	private ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
+	private final ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
 	/**
 	 * Remembers the size for this completion proposal popup.
 	 * @since 3.0
@@ -602,7 +601,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 		layout.marginHeight= 0;
 		layout.verticalSpacing= 1;
 		fProposalShell.setLayout(layout);
-		ResizableShellSupport.makeResizable(fProposalShell);
 
 		if (fContentAssistant.isStatusLineVisible()) {
 			createMessageText();
