@@ -39,45 +39,19 @@ public class CSSStylingSupport {
 		IThemeManager mgr = (IThemeManager) context.getService(ref);
 		final IThemeEngine engine = mgr.getEngineForDisplay(display);
 
-		// // Instantiate SWT CSS Engine
-		// final CSSEngine engine = new CSSNebulaEngineImpl(display, true);
-		// engine.setErrorHandler(new CSSErrorHandler() {
-		// public void error(Exception e) {
-		// e.printStackTrace();
-		// }
-		// });
-
-		// display.setData("org.eclipse.e4.ui.css.core.engine", engine);
-
 		// Create the OSGi resource locator
 		if (resourceURI != null) {
 			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
 					.toString()));
 		}
 
-		// Lookup the style sheet
-		ITheme theme = engine.registerTheme(
-				"org.eclipse.e4.ui.workbench.swt.theme.default",
-				"Default Theme", cssURI);
-		engine.setTheme(theme);
+		if (cssURI != null) {
+			// Lookup the style sheet
+			ITheme theme = engine.registerTheme(IThemeEngine.DEFAULT_THEME_ID,
+					"Default Theme", cssURI);
+			engine.setTheme(theme);
+		}
 		appContext.set(IThemeEngine.class.getName(), engine);
-
-		// try {
-		// URL url = FileLocator.resolve(new URL(cssURI.toString()));
-		//			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
-		//
-		//			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
-		//
-		// InputStream stream = url.openStream();
-		// engine.parseStyleSheet(stream);
-		// stream.close();
-		// } catch (MalformedURLException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
 
 		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 			public void setClassname(Object widget, String classname) {
