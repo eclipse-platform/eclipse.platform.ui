@@ -692,4 +692,32 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
+	public <T> T get(Class<T> clazz) {
+		return clazz.cast(get(clazz.getName()));
+	}
+
+	public boolean containsKey(Class<?> clazz) {
+		return containsKey(clazz.getName());
+	}
+
+	public void set(Class<?> clazz, Object value) {
+		set(clazz.getName(), value);
+	}
+
+	public void remove(Class<?> clazz) {
+		remove(clazz.getName());
+	}
+
+	public <T> T getLocal(Class<T> clazz) {
+		return clazz.cast(getLocal(clazz.getName()));
+	}
+
+	public void modify(Class<?> clazz, Object value) {
+		modify(clazz.getName(), value);
+	}
+
+	public void declareModifiable(Class<?> clazz) {
+		declareModifiable(clazz.getName());
+	}
+
 }

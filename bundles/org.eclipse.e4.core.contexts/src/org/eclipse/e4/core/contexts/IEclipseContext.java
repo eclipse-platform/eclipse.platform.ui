@@ -26,7 +26,12 @@ package org.eclipse.e4.core.contexts;
  * clients need not be concerned with. The content of parent contexts cannot be modified by a child
  * context.
  * </p>
- * 
+ * <p>
+ * Like maps, values are stored in the context based on keys. Two types of keys can be used: strings 
+ * and classes. When classes are used to access objects in the context, keys are calculated based on 
+ * the class name, so the value stored for the class {@link java.lang.String} can be retrieved 
+ * using the key value of "java.lang.String". 
+ * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -34,26 +39,20 @@ public interface IEclipseContext {
 
 	/**
 	 * Returns whether this context or a parent has a value stored for the given name.
-	 * 
-	 * @param name
-	 *            The name being queried
-	 * @return <code>true</code> if this context has computed a value for the given name, and
+	 * @param name the name being queried
+	 * @return <code>true</code> if this context has a value for the given name, and
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean containsKey(String name);
 
 	/**
-	 * Returns whether this context or a parent has a value stored for the given name.
-	 * 
-	 * @param name
-	 *            The name being queried
-	 * @param localOnly
-	 *            if <code>true</code> only local values will be considered; otherwise values the
-	 *            parent contexts will be included
-	 * @return <code>true</code> if this context has computed a value for the given name, and
+	 * Returns whether this context or a parent has a value stored for the given class.
+	 * @param clazz the class being queried
+	 * @return <code>true</code> if this context has a value for the given class, and
 	 *         <code>false</code> otherwise.
+	 * @see #containsKey(String)
 	 */
-	public boolean containsKey(String name, boolean localOnly);
+	public boolean containsKey(Class<?> clazz);
 
 	/**
 	 * Returns the context value associated with the given name. Returns <code>null</code> if no
@@ -63,13 +62,20 @@ public interface IEclipseContext {
 	 * If the value associated with this name is an {@link IContextFunction}, this method will
 	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with zero arguments.
 	 * </p>
-	 * 
-	 * @param name
-	 *            The name of the value to return
-	 * @return An object corresponding to the given name, or <code>null</code>
+	 * @param name the name of the value to return
+	 * @return an object corresponding to the given name, or <code>null</code>
 	 */
 	public Object get(String name);
 
+	/**
+	 * Returns the context value associated with the given class.
+	 * @param clazz the class that needs to be found in the context
+	 * @return an object corresponding to the given class, or <code>null</code>
+	 * @see #get(String)
+	 */
+	public <T> T get(Class<T> clazz);
+
+	// TODO this method will be removed
 	/**
 	 * Returns the context value associated with the given name, or <code>null</code> if no such
 	 * value is defined or computable by this context.
@@ -78,10 +84,8 @@ public interface IEclipseContext {
 	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with the provided
 	 * arguments.
 	 * </p>
-	 * 
-	 * @param name
-	 *            The name of the value to return
-	 * @return An object corresponding to the given name, or <code>null</code>
+	 * @param name the name of the value to return
+	 * @return an object corresponding to the given name, or <code>null</code>
 	 */
 	public Object get(String name, Object[] arguments);
 
@@ -96,11 +100,22 @@ public interface IEclipseContext {
 	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with the provided
 	 * arguments.
 	 * </p>
-	 * @param name
-	 *            The name of the value to return
-	 * @return An object corresponding to the given name, or <code>null</code>
+	 * @param name the name of the value to return
+	 * @return an object corresponding to the given name, or <code>null</code>
 	 */
 	public Object getLocal(String name);
+
+	/**
+	 * Returns the context value associated with the given class in this context, or <code>null</code> if 
+	 * no such value is defined in this context.
+	 * <p>
+	 * This method does not search for the value on other elements on the context tree.
+	 * </p>
+	 * @param clazz The class of the value to return
+	 * @return An object corresponding to the given class, or <code>null</code>
+	 * @see #getLocal(String)
+	 */
+	public <T> T getLocal(Class<T> clazz);
 
 	/**
 	 * Removes the given name and any corresponding value from this context.
@@ -109,12 +124,18 @@ public interface IEclipseContext {
 	 * {@link #get(String)} with the same name will return a non-null result, due to a value being
 	 * stored in a parent context.
 	 * </p>
-	 * 
-	 * @param name
-	 *            The name to remove
+	 * @param name the name to remove
 	 */
 	public void remove(String name);
 
+	/**
+	 * Removes the value for the given class from this context.
+	 * @param clazz The class to remove
+	 * @see #remove(String)
+	 */
+	public void remove(Class<?> clazz);
+
+	// TODO this method will be removed
 	/**
 	 * Executes a runnable within this context. If the runnable accesses any values in this context
 	 * during its execution, the runnable will be executed again after any of those values change.
@@ -160,14 +181,19 @@ public interface IEclipseContext {
 	 * {@link #get(String)} with the same name will return a non-null result, due to a value being
 	 * stored in a parent context.
 	 * </p>
-	 * 
-	 * @param name
-	 *            The name to store a value for
-	 * @param value
-	 *            The value to be stored, or a {@link ContextFunction} that can return the stored
-	 *            value.
+	 * @param name the name to store a value for
+	 * @param value the value to be stored, or a {@link ContextFunction} that can return 
+	 * the stored value.
 	 */
 	public void set(String name, Object value);
+
+	/**
+	 * Sets a value to be associated with a given class in this context. 
+	 * @param clazz The class to store a value for
+	 * @param value The value to be stored, or a {@link ContextFunction} that can return the stored value.
+	 * @see #set(String, Object)
+	 */
+	public void set(Class<?> clazz, Object value);
 
 	/**
 	 * Modifies the value to be associated with the given name.
@@ -181,25 +207,35 @@ public interface IEclipseContext {
 	 * contexts on the parent chain have a value set for the name, the value will be set in this
 	 * context.
 	 * </p>
-	 * 
-	 * @param name
-	 *            The name to store a value for
-	 * @param value
-	 *            The value to be stored, or a {@link ContextFunction} that can return the stored
-	 *            value.
-	 * @throws IllegalArgumentException
-	 *             if the variable has not been declared as modifiable
+	 * @param name the name to store a value for
+	 * @param value the value to be stored, or a {@link ContextFunction} that can return the stored value.
+	 * @throws IllegalArgumentException if the variable has not been declared as modifiable
 	 */
 	public void modify(String name, Object value);
 
 	/**
+	 * Modifies the value to be associated with the given class.
+	 * @param clazz The class to store a value for
+	 * @param value The value to be stored, or a {@link ContextFunction} that can return the stored value.
+	 * @throws IllegalArgumentException if the variable has not been declared as modifiable
+	 * @see #modify(String, Object)
+	 */
+	public void modify(Class<?> clazz, Object value);
+
+	/**
 	 * Declares the named value as modifiable by descendants of this context. If the value does not
 	 * exist in this context, a <code>null</code> value added for the name.
-	 * 
-	 * @param name
-	 *            the name to be declared as modifiable by descendants
+	 * @param name the name to be declared as modifiable by descendants
 	 */
 	public void declareModifiable(String name);
+
+	/**
+	 * Declares the value for the class as modifiable by descendants of this context. 
+	 * If the value does not exist in this context, a <code>null</code> value added for the class.
+	 * @param clazz the class to be declared as modifiable by descendants
+	 * @see #declareModifiable(String)
+	 */
+	public void declareModifiable(Class<?> clazz);
 
 	/**
 	 * Process waiting updates for listeners that support batch notifications.

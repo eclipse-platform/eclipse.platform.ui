@@ -76,9 +76,10 @@ public class EclipseContextTest extends TestCase {
 	}
 
 	public void testContainsKeyLocal() {
-		IEclipseContext contextGlobal = EclipseContextFactory.create();
+		EclipseContext contextGlobal = (EclipseContext) EclipseContextFactory.create();
 		contextGlobal.set("global", new Object());
-		IEclipseContext contextLocal = EclipseContextFactory.create(contextGlobal, null);
+		EclipseContext contextLocal = (EclipseContext) EclipseContextFactory.create(contextGlobal,
+				null);
 		contextLocal.set("local", new Object());
 
 		assertTrue("1.0", contextLocal.containsKey("local", true));
@@ -298,7 +299,7 @@ public class EclipseContextTest extends TestCase {
 	public void testModify() {
 		IEclipseContext grandParent = EclipseContextFactory.create();
 		IEclipseContext parent = EclipseContextFactory.create(grandParent, null);
-		IEclipseContext child = EclipseContextFactory.create(parent, null);
+		EclipseContext child = (EclipseContext) EclipseContextFactory.create(parent, null);
 
 		child.set("a", "a1");
 		parent.set("b", "b2");
@@ -334,7 +335,7 @@ public class EclipseContextTest extends TestCase {
 		grandParent.modify("c", "cNew");
 		assertTrue(grandParent.containsKey("c"));
 		assertEquals("cNew", grandParent.get("c"));
-		assertFalse(parent.containsKey("c", true /* localOnly */));
+		assertFalse(((EclipseContext) parent).containsKey("c", true /* localOnly */));
 		assertFalse(child.containsKey("c", true /* localOnly */));
 		assertTrue(child.containsKey("c", false /* localOnly */));
 

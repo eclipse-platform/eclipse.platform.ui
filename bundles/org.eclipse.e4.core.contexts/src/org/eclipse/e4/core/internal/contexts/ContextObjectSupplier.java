@@ -184,11 +184,11 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {
-		String key = ContextObjectSupplier.class.getName();
-		if (context.containsKey(key, true))
-			return (ContextObjectSupplier) context.get(key);
+		ContextObjectSupplier supplier = context.getLocal(ContextObjectSupplier.class);
+		if (supplier != null)
+			return supplier;
 		ContextObjectSupplier objectSupplier = new ContextObjectSupplier(context, injector);
-		context.set(key, objectSupplier);
+		context.set(ContextObjectSupplier.class, objectSupplier);
 		return objectSupplier;
 	}
 
