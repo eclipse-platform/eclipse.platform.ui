@@ -16,6 +16,8 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.swt.widgets.Widget;
 
 public interface IThemeEngine {
+	public static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.workbench.swt.theme.default";
+	
 	public ITheme registerTheme(String id, String label, String basestylesheetURI);
 
 	public void registerStylsheet(String uri, String... themes);

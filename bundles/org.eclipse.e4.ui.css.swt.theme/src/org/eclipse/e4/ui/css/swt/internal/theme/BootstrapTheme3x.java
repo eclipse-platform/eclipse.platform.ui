@@ -26,8 +26,6 @@ import org.osgi.framework.ServiceReference;
  * This class allows 3.x code to bootstrap the themes engine with having a real dependency on it
  */
 public class BootstrapTheme3x {
-	private static final String DEFAULT_THEME = "org.eclipse.e4.ui.workbench.swt.theme.default";
-	
 	public BootstrapTheme3x(Display display) {
 		this(display, null);
 	}
@@ -39,7 +37,7 @@ public class BootstrapTheme3x {
 				.getName());
 		IThemeManager mgr = (IThemeManager) context.getService(ref);
 		final IThemeEngine engine = mgr.getEngineForDisplay(display);
-		ITheme theme = engine.registerTheme(DEFAULT_THEME,"Default Theme", "platform:/plugin/org.eclipse.e4.ui.css.swt.theme/css/dummy.css");
+		ITheme theme = engine.registerTheme(IThemeEngine.DEFAULT_THEME_ID, "Default Theme", "platform:/plugin/org.eclipse.e4.ui.css.swt.theme/css/dummy.css");
 		if( themeId == null ) {
 			engine.setTheme(theme);
 		} else {
