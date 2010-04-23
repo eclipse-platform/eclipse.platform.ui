@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,48 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) Bug306824 add call-backs for getRule/build
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.*;
 import junit.framework.Assert;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * An abstract builder that is designed to be extended for testing purposes.
  */
 public abstract class TestBuilder extends IncrementalProjectBuilder {
+
+	/**
+	 * A test specific call-back which can be ticked on #getRule(...) & #build(...)
+	 */
+	public static class BuilderRuleCallback {
+		public BuilderRuleCallback() {
+		}
+
+		/**
+		 * Fetch the scheduling rule for the build
+		 */
+		public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			return ResourcesPlugin.getWorkspace().getRoot();
+		}
+
+		/**
+		 * Build call-back
+		 */
+		public IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+			return new IProject[0];
+		}
+	}
+
+	/**
+	 * Build rule getter
+	 */
+	volatile BuilderRuleCallback ruleCallBack;
+
 	/**
 	 * Build command parameters.
 	 */
@@ -70,7 +99,26 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		arguments = args == null ? new HashMap(1) : args;
 		logPluginLifecycleEvent(getBuildId());
-		return new IProject[0];
+		if (ruleCallBack == null)
+			return new IProject[0];
+		return ruleCallBack.build(kind, args, monitor);
+	}
+
+	/**
+	 * Allow overriding the default scheduling rule
+	 * @see IncrementalProjectBuilder#getRule(int, Map)
+	 */
+	public ISchedulingRule getRule(int trigger, Map args) {
+		if (ruleCallBack == null)
+			return super.getRule(trigger, args);
+		return ruleCallBack.getRule(name, this, trigger, args);
+	}
+
+	/**
+	 * @param callback callback to be used for fetching rules
+	 */
+	public void setRuleCallback(BuilderRuleCallback callback) {
+		ruleCallBack = callback;
 	}
 
 	/**
@@ -125,6 +173,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	public void reset() {
 		expectedEvents.clear();
 		actualEvents.clear();
+		ruleCallBack = null;
 	}
 
 	/**
