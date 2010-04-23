@@ -145,8 +145,11 @@ function highlightWordInText(aWord, textNode){
 				if (isIE) spanNode.setAttribute("className",null);
 				else spanNode.setAttribute("class",null);
 			} else {
-				if (isIE) spanNode.setAttribute("className","resultofText");
-				else spanNode.setAttribute("class","resultofText");
+				if (isIE) {
+				    spanNode.className ="resultofText";
+				} else {
+				    spanNode.setAttribute("class","resultofText");
+				}
 			}
 
 			replacementNode.appendChild(spanNode);
