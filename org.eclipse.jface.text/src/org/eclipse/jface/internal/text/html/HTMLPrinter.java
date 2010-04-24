@@ -220,7 +220,7 @@ public class HTMLPrinter {
 	}
 
 	public static void addPageEpilog(StringBuffer buffer) {
-		buffer.append("</font></body></html>"); //$NON-NLS-1$
+		buffer.append("</body></html>"); //$NON-NLS-1$
 	}
 
 	public static void startBulletList(StringBuffer buffer) {
