@@ -126,7 +126,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	
 	/** Verifies that interceptRemove is called in the right sequence */
 	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
-	public void XXXtestInterceptRemove() throws CoreException
+	public void testInterceptRemove() throws CoreException
 	{
 		_initContent();
 		_testInterceptRemove();
@@ -134,7 +134,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	
 	/** Verifies that interceptRemove is called in the right sequence */
 	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
-	public void XXXtestInterceptRemoveWithLabel() throws CoreException
+	public void testInterceptRemoveWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
 		_testInterceptRemove();
@@ -162,7 +162,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	
 	/** Verifies that interceptRefresh or interceptUpdate is called in the right sequence */
 	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
-	public void XXXtestInterceptRefreshOnChildTypeChange() throws CoreException
+	public void testInterceptRefreshOnChildTypeChange() throws CoreException
 	{
 		_initContent();
 		_testInterceptRefreshOnChildTypeChange();
@@ -170,7 +170,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	
 	/** Verifies that interceptRefresh or interceptUpdate is called in the right sequence */
 	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
-	public void XXXtestInterceptRefreshOnChildTypeChangeWithLabel() throws CoreException
+	public void testInterceptRefreshOnChildTypeChangeWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
 		_testInterceptRefreshOnChildTypeChange();
@@ -196,4 +196,40 @@ public class PipelineChainTest extends NavigatorTestBase {
 	}
 
 
+	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
+	public void testInterceptUpdate() throws CoreException
+	{
+		_initContent();
+		_testInterceptUpdate();
+	}
+	
+	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
+	public void testInterceptUpdateWithLabel() throws CoreException
+	{
+		_initContentWithLabel();
+		_testInterceptUpdate();
+	}
+	
+	private void _testInterceptUpdate() throws CoreException {
+		final String NEW_FOLDER_1 = "newFolder1";
+		
+
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+		// Make sure p1 children are visible
+		_expand(rootItems);
+				
+		IFolder newFolder1 = _p1.getFolder(NEW_FOLDER_1);
+		if (! newFolder1.exists()) {
+			newFolder1.create(true, true, new NullProgressMonitor());
+		}
+		
+		TestPipelineProvider.reset();
+		newFolder1.move(newFolder1.getFullPath().removeLastSegments(1).append("newFolderRenamed"), true, null);
+		
+		assertEquals("Wrong query sequence for interceptUpdate", "ACGFBDE", 
+				TestPipelineProvider.REMOVES.get(newFolder1));
+	}
+	
+	
+	
 }

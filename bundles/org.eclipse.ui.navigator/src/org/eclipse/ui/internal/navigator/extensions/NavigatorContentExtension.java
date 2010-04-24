@@ -332,35 +332,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	 */
 	public NavigatorContentExtension[] getOverridingExtensionsForTriggerPoint(
 			Object anElement) {
-		if (!descriptor.hasOverridingExtensions()) {
-			return NO_EXTENSIONS;
-		}
-
-		NavigatorContentDescriptor overridingDescriptor;
-		Set overridingExtensions = new LinkedHashSet();
-		for (Iterator contentDescriptorsItr = descriptor
-				.getOverriddingExtensions().iterator(); contentDescriptorsItr
-				.hasNext();) {
-			overridingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
-					.next();
-
-			if (contentService.isActive(overridingDescriptor.getId())
-					&& contentService.isVisible(overridingDescriptor.getId())
-					&& overridingDescriptor.isTriggerPoint(anElement)) {
-				overridingExtensions.add(contentService
-						.getExtension(overridingDescriptor));
-			}
-		}
-		if (overridingExtensions.size() == 0) {
-			return NO_EXTENSIONS;
-		}
-		if (Policy.DEBUG_EXTENSION_SETUP) {
-			System.out.println(this +  " overriding: "+//$NON-NLS-1$
-					"(trigger pt: " + anElement + "): " + overridingExtensions); //$NON-NLS-1$//$NON-NLS-2$
-		}
-		return (NavigatorContentExtension[]) overridingExtensions
-				.toArray(new NavigatorContentExtension[overridingExtensions
-						.size()]);
+		return getOverridingExtensions(anElement, TRIGGER_POINT);
 	}
 
 	/**
@@ -371,35 +343,55 @@ public class NavigatorContentExtension implements IMementoAware,
 	 */
 	public NavigatorContentExtension[] getOverridingExtensionsForPossibleChild(
 			Object anElement) {
+		return getOverridingExtensions(anElement, !TRIGGER_POINT);
+	}
+
+	/**
+	 * 
+	 * @return Returns the overridingExtensions.
+	 */
+	public NavigatorContentExtension[] getOverridingExtensions() {
+		return getOverridingExtensions(null, !TRIGGER_POINT);
+	}
+
+	private static final boolean TRIGGER_POINT = true;
+	
+	/**
+	 * @param anElement
+	 *            The element for the query.
+	 * @return Returns the overridingExtensions.
+	 */
+	private NavigatorContentExtension[] getOverridingExtensions(Object anElement,
+			boolean triggerPoint) {
 		if (!descriptor.hasOverridingExtensions()) {
 			return NO_EXTENSIONS;
 		}
 
 		NavigatorContentDescriptor overridingDescriptor;
 		Set overridingExtensions = new LinkedHashSet();
-		for (Iterator contentDescriptorsItr = descriptor
-				.getOverriddingExtensions().iterator(); contentDescriptorsItr
+		for (Iterator contentDescriptorsItr = descriptor.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
-			overridingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
-					.next();
+			overridingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
 
 			if (contentService.isActive(overridingDescriptor.getId())
 					&& contentService.isVisible(overridingDescriptor.getId())
-					&& overridingDescriptor.isPossibleChild(anElement)) {
-				overridingExtensions.add(contentService
-						.getExtension(overridingDescriptor));
+					&& (anElement == null || (triggerPoint ? overridingDescriptor
+							.isTriggerPoint(anElement) : overridingDescriptor
+							.isPossibleChild(anElement)))) {
+				overridingExtensions.add(contentService.getExtension(overridingDescriptor));
 			}
 		}
 		if (overridingExtensions.size() == 0) {
 			return NO_EXTENSIONS;
 		}
 		if (Policy.DEBUG_EXTENSION_SETUP) {
-			System.out.println(this +  " overriding: "+//$NON-NLS-1$
-					"(poss child: " + anElement + "): " + overridingExtensions); //$NON-NLS-1$//$NON-NLS-2$
+			System.out
+					.println(this
+							+ " overriding: " + //$NON-NLS-1$
+							(triggerPoint ? "(trigger pt: " : "(poss child: ") + anElement + "): " + overridingExtensions); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return (NavigatorContentExtension[]) overridingExtensions
-				.toArray(new NavigatorContentExtension[overridingExtensions
-						.size()]);
+				.toArray(new NavigatorContentExtension[overridingExtensions.size()]);
 	}
 
 	/*

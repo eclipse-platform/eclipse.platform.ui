@@ -173,17 +173,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			final NavigatorContentExtension overrideableExtension) {
 
 		final Set overridingExtensions = new LinkedHashSet();
-		for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
-			Object element = (Object) iter.next();
-			if (element instanceof TreePath) {
-				overridingExtensions.addAll(Arrays.asList(overrideableExtension
-						.getOverridingExtensionsForPossibleChild(((TreePath) element)
-								.getLastSegment())));
-			} else {
-				overridingExtensions.addAll(Arrays.asList(overrideableExtension
-						.getOverridingExtensionsForPossibleChild(element)));
-			}
-		}
+		overridingExtensions.addAll(Arrays.asList(overrideableExtension
+				.getOverridingExtensions()));
 
 		for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr
 				.hasNext();) {
@@ -254,10 +245,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 
 		final boolean[] intercepted = new boolean[1];
 
-		final NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension
-				.getOverridingExtensionsForPossibleChild(refreshable);
-		for (int i = 0; i < overridingExtensionsForPossibleChild.length; i++) {
-			final NavigatorContentExtension nceLocal = overridingExtensionsForPossibleChild[i];
+		final NavigatorContentExtension[] overridingExtensions = overrideableExtension
+				.getOverridingExtensions();
+		for (int i = 0; i < overridingExtensions.length; i++) {
+			final NavigatorContentExtension nceLocal = overridingExtensions[i];
 			if (nceLocal.internalGetContentProvider().isPipelined()) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
@@ -326,11 +317,11 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			final PipelinedViewerUpdate anUpdateSynchronization, final Object refreshable) {
 
 		final boolean[] intercepted = new boolean[1];
-		final NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension
-				.getOverridingExtensionsForPossibleChild(refreshable);
-		for (int i = 0; i < overridingExtensionsForPossibleChild.length; i++) {
-			if (overridingExtensionsForPossibleChild[i].internalGetContentProvider().isPipelined()) {
-				final NavigatorContentExtension nceLocal = overridingExtensionsForPossibleChild[i];
+		final NavigatorContentExtension[] overridingExtensions = overrideableExtension
+				.getOverridingExtensions();
+		for (int i = 0; i < overridingExtensions.length; i++) {
+			if (overridingExtensions[i].internalGetContentProvider().isPipelined()) {
+				final NavigatorContentExtension nceLocal = overridingExtensions[i];
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					public void run() throws Exception {
 						intercepted[0] |= ((IPipelinedTreeContentProvider) nceLocal
