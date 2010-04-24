@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -179,6 +180,7 @@ import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
@@ -198,6 +200,7 @@ import org.eclipse.ui.testing.ContributionInfo;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
@@ -2422,6 +2425,21 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// prime the splash nice and early
 		if (createSplash)
 			createSplashWrapper();
+
+		// activate styling if available
+		Bundle stylingBundle = Platform.getBundle("org.eclipse.e4.ui.css.swt.theme"); //$NON-NLS-1$
+		if (BundleUtility.isReady(stylingBundle)) {
+			try {
+				Class c = stylingBundle
+						.loadClass("org.eclipse.e4.ui.css.swt.internal.theme.BootstrapTheme3x"); //$NON-NLS-1$
+				Constructor constructor = c.getConstructor(new Class[] { Display.class });
+				constructor.newInstance(new Object[] { display });
+			} catch (Exception ex) {
+				WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING,
+						"Could not start styling support.", //$NON-NLS-1$
+						ex));
+			}
+		}
 
 		// ModalContext should not spin the event loop (there is no UI yet to
 		// block)
