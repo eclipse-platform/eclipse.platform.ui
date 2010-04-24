@@ -10,6 +10,7 @@
  *     Francis Upton - <francisu@ieee.org> - 
  *     		Fix for Bug 217777 [Workbench] Workbench event loop does not terminate if Display is closed
  *     Tasktop Technologies -  Bug 304716 -  [UX] [Progress] Show Eclipse startup progress in the Eclipse icon on the Windows 7 Task Bar
+ *     Tom Schindl -  Bug 310153 -  Allow people to use CSS in 3.x plugins
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
