@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import java.io.ByteArrayInputStream;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -96,8 +98,15 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.add(_project, newData);
 		_viewer.setExpandedState(newData, true);
 
-		_viewer.add(newData, _project.getFile("AddedFile1.txt"));
-		_viewer.add(newData, _project.getFile("AddedFile2.txt"));
+		IFile file;
+
+		file = _project.getFile("AddedFile1.txt");
+		file.create(new ByteArrayInputStream(new byte[]{}), true, null);
+		_viewer.add(newData, file);
+
+		file = _project.getFile("AddedFile2.txt");
+		file.create(new ByteArrayInputStream(new byte[]{}), true, null);
+		_viewer.add(newData, file);
 	}
 
 	// Bug 141724 Allow sorting to be overridden
@@ -239,7 +248,6 @@ public class SorterTest extends NavigatorTestBase {
 		assertEquals("BlueChild1", addedParent.getItem(1).getText());
 		assertEquals("BlueAddedFile1.txt", addedParent.getItem(2).getText());
 		assertEquals("BlueAddedFile2.txt", addedParent.getItem(3).getText());
-
 	}
 
 	public void testSorterContentAddOverride() throws Exception {
