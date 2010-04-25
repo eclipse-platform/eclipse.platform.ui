@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -42,21 +44,22 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private static final String TAG_CURRENT_WORKING_SET_NAME = "currentWorkingSetName"; //$NON-NLS-1$
 
+	private static final String WORKING_SET_FILTER_ID = "org.eclipse.ui.navigator.resources.filters.workingSet"; //$NON-NLS-1$
+	
 	private boolean contributedToViewMenu = false;
 
 	private CommonViewer viewer;
 
 	private INavigatorContentService contentService;
 
+	private NavigatorFilterService filterService;
+	
 	private WorkingSetFilterActionGroup workingSetActionGroup;
 	private WorkingSetRootModeActionGroup workingSetRootModeActionGroup;
 
 	private Object originalViewerInput = ResourcesPlugin.getWorkspace().getRoot();
 
 	private IExtensionStateModel extensionStateModel;
-
-	private final ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
-	private boolean filterAdded;
 
 	private boolean emptyWorkingSet;
 	private IWorkingSet workingSet;
@@ -73,13 +76,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 		private boolean listening = false;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org
-		 * .eclipse.jface.util.PropertyChangeEvent)
-		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			Object newValue = event.getNewValue();
@@ -96,7 +92,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					// act as if the working set has been made null
 					if (!emptyWorkingSet) {
 						emptyWorkingSet = true;
-						workingSetFilter.setWorkingSet(null);
+						setWorkingSetFilter(null);
 						newLabel = null;
 					}
 				} else {
@@ -104,7 +100,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					// Restore it.
 					if (emptyWorkingSet) {
 						emptyWorkingSet = false;
-						workingSetFilter.setWorkingSet(workingSet);
+						setWorkingSetFilter(workingSet);
 						newLabel = workingSet.getLabel();
 					}
 				}
@@ -209,16 +205,10 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	};
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator
-	 * .ICommonActionExtensionSite)
-	 */
 	public void init(ICommonActionExtensionSite aSite) {
 		viewer = (CommonViewer) aSite.getStructuredViewer();
 		contentService = aSite.getContentService();
+		filterService = (NavigatorFilterService) contentService.getFilterService();
 
 		extensionStateModel = contentService.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 
@@ -260,6 +250,24 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 	}
 
+	private void setWorkingSetFilter(IWorkingSet workingSet) {
+		ResourceWorkingSetFilter workingSetFilter = null;
+		ViewerFilter[] filters = viewer.getFilters();
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i] instanceof ResourceWorkingSetFilter) {
+				workingSetFilter = (ResourceWorkingSetFilter) filters[i];
+				break;
+			}
+		}
+		if (workingSetFilter == null) {
+			filterService.addActiveFilterIds(new String[] { WORKING_SET_FILTER_ID });
+			filterService.updateViewer();
+			setWorkingSetFilter(workingSet);
+			return;
+		}
+		workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
+	}
+
 	/**
 	 * Set current active working set.
 	 * 
@@ -270,8 +278,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		this.workingSet = workingSet;
 		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() && workingSet.isEmpty();
 
-		workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
-
         ignoreFilterChangeEvents = true;
         try {
         	workingSetActionGroup.setWorkingSet(workingSet);
@@ -280,20 +286,15 @@ public class WorkingSetActionProvider extends CommonActionProvider {
        	}		
 		
 		if (viewer != null) {
+			setWorkingSetFilter(workingSet);
 			if (workingSet == null || emptyWorkingSet
 					|| !extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS)) {
 				if (viewer.getInput() != originalViewerInput) {
 					viewer.setInput(originalViewerInput);
-				}
-				if (!filterAdded) {
-					viewer.addFilter(workingSetFilter);
-					filterAdded = true;
 				} else {
 					viewer.refresh();
 				}
 			} else {
-				viewer.removeFilter(workingSetFilter);
-				filterAdded = false;
 				if (!workingSet.isAggregateWorkingSet()) {
 					IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 					viewer.setInput(workingSetManager.createAggregateWorkingSet(
@@ -305,42 +306,34 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.navigator.CommonActionProvider#restoreState(org.eclipse
-	 * .ui.IMemento)
-	 */
-	public void restoreState(IMemento aMemento) {
+	public void restoreState(final IMemento aMemento) {
 		super.restoreState(aMemento);
 
-		boolean showWorkingSets = true;
-		if (aMemento != null) {
-			Integer showWorkingSetsInt = aMemento.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
-			showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
-			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
-					showWorkingSets);
-			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
+		// Need to run this async to avoid being reentered when processing a selection change
+		viewer.getControl().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				boolean showWorkingSets = true;
+				if (aMemento != null) {
+					Integer showWorkingSetsInt = aMemento
+							.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
+					showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
+					extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+							showWorkingSets);
+					workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 
-			String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
-			initWorkingSetFilter(lastWorkingSetName);
-		} else {
-			showWorkingSets = false;
+					String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
+					initWorkingSetFilter(lastWorkingSetName);
+				} else {
+					showWorkingSets = false;
 
-			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
-					showWorkingSets);
-			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
-		}
+					extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+							showWorkingSets);
+					workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
+				}
+			}
+		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.navigator.CommonActionProvider#saveState(org.eclipse.ui
-	 * .IMemento)
-	 */
 	public void saveState(IMemento aMemento) {
 		super.saveState(aMemento);
 
@@ -356,13 +349,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars
-	 * )
-	 */
 	public void fillActionBars(IActionBars actionBars) {
 		if (!contributedToViewMenu) {
 			try {
@@ -377,11 +363,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
-	 */
 	public void dispose() {
 		super.dispose();
 		workingSetActionGroup.dispose();

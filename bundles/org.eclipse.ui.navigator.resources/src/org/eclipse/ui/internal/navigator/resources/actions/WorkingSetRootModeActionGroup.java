@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,31 +113,21 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-		// Can happen if called here before we get the first call 
-		// to setShowTopLevelWorkingSets().  See bug 275197.
-		if (actions == null)
+		if (hasContributedToViewMenu)
 			return;
-		synchronized (this) {
-			if (!hasContributedToViewMenu) {
-				contributeToViewMenu(actionBars.getMenuManager()); 
-				hasContributedToViewMenu = true;
-			}
-		}
-	}
-
-	private void contributeToViewMenu(IMenuManager viewMenu) {
-
 		IMenuManager topLevelSubMenu = new MenuManager(
 				WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Top_Level_Element_);
 		addActions(topLevelSubMenu);
-		viewMenu.insertBefore(IWorkbenchActionConstants.MB_ADDITIONS,
-				topLevelSubMenu);
+		actionBars.getMenuManager().insertBefore(IWorkbenchActionConstants.MB_ADDITIONS, topLevelSubMenu);
+		hasContributedToViewMenu = true;
 	}
 
 	/**
 	 * Adds the actions to the given menu manager.
 	 */
 	protected void addActions(IMenuManager viewMenu) {
+		if (actions == null)
+			actions = createActions();
 
 		viewMenu.add(new Separator());
 		items = new MenuItem[actions.length];
@@ -211,14 +201,10 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * @param showTopLevelWorkingSets
 	 */
 	public void setShowTopLevelWorkingSets(boolean showTopLevelWorkingSets) {
-		if (actions == null) {
+		if (actions == null) 
 			actions = createActions();
-			setActions(actions, showTopLevelWorkingSets ? 1 /*
-															 * Show Top Level
-															 * Working Sets
-															 */
-					: 0);
-		}
+
+		currentSelection = showTopLevelWorkingSets ? 1 : 0;
 		workingSetsAction.setChecked(showTopLevelWorkingSets);
 		projectsAction.setChecked(!showTopLevelWorkingSets);
 
@@ -233,21 +219,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 					WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
 					showTopLevelWorkingSets);
 		}
-
-	}
-
-	/**
-	 * Configure the actions that are displayed in the menu by this ActionGroup.
-	 * 
-	 * @param theActions
-	 *            An array of possible actions.
-	 * @param selected
-	 *            The index of the "enabled" action.
-	 */
-	private void setActions(IAction[] theActions, int selected) {
-		actions = theActions;
-		currentSelection = selected;
-
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2010 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.WorkingSet;
@@ -224,4 +226,45 @@ public class WorkingSetTest extends NavigatorTestBase {
 				_commonNavigator.getWorkingSetLabel());
 	}
 
+	// bug 262096 [CommonNavigator] Changing *any* filter breaks working sets filter
+	public void testWorkingSetFilter() throws Exception {
+
+		_contentService.bindExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+
+		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
+				new IAdaptable[] { _p1 });
+
+		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
+				.getActionProvider(_contentService, _actionService,
+						WorkingSetActionProvider.class);
+		IPropertyChangeListener l = provider.getFilterChangeListener();
+		PropertyChangeEvent event = new PropertyChangeEvent(this,
+				WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null,
+				workingSet);
+		l.propertyChange(event);
+
+		ViewerFilter vf[];
+		vf = _viewer.getFilters();
+		boolean found = false;
+		for (int i = 0; i < vf.length; i++) {
+			if (vf[i] instanceof ResourceWorkingSetFilter)
+				found = true;
+		}
+		assertTrue(found);
+		
+		_contentService.getFilterService().activateFilterIdsAndUpdateViewer(
+				new String[] { TEST_FILTER_P1, TEST_FILTER_P2 });
+		
+		vf = _viewer.getFilters();
+		found = false;
+		for (int i = 0; i < vf.length; i++) {
+			if (vf[i] instanceof ResourceWorkingSetFilter)
+				found = true;
+		}
+		assertTrue("Working set filter is gone, oh my!", found);
+	}
+	
+	
 }

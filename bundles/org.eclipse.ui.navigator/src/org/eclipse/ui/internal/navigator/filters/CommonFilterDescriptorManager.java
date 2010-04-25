@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@
 package org.eclipse.ui.internal.navigator.filters;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
@@ -31,7 +31,8 @@ public class CommonFilterDescriptorManager {
 
 	private static final CommonFilterDescriptor[] NO_FILTER_DESCRIPTORS = new CommonFilterDescriptor[0];
 
-	private final Set filters = new HashSet();
+	// K(ID) V(CommonFilterDescriptor)
+	private final Map filters = new HashMap();
 
 	/**
 	 * 
@@ -48,17 +49,36 @@ public class CommonFilterDescriptorManager {
 
 	/**
 	 * 
+	 */
+	public static final boolean FOR_UI = true;
+	
+	/**
+	 * 
 	 * @param contentService
 	 *            A content service to filter the visible filters.
 	 * @return The set of filters that are 'visible' to the given viewer
 	 *         descriptor.
 	 */
 	public CommonFilterDescriptor[] findVisibleFilters(INavigatorContentService contentService) {
+		return findVisibleFilters(contentService, !FOR_UI);
+	}
+
+	/**
+	 * 
+	 * @param contentService
+	 *            A content service to filter the visible filters.
+	 * @param forUI true if only filters visible to the UI are desired
+	 * @return The set of filters that are 'visible' to the given viewer
+	 *         descriptor.
+	 */
+	public CommonFilterDescriptor[] findVisibleFilters(INavigatorContentService contentService, boolean forUI) {
 
 		List visibleFilters = new ArrayList();
 		CommonFilterDescriptor descriptor;
-		for (Iterator filtersItr = filters.iterator(); filtersItr.hasNext();) {
-			descriptor = (CommonFilterDescriptor) filtersItr.next();
+		for (Iterator filtersItr = filters.entrySet().iterator(); filtersItr.hasNext();) {
+			descriptor = (CommonFilterDescriptor) ((Map.Entry)filtersItr.next()).getValue();
+			if (forUI && !descriptor.isVisibleInUi())
+				continue;
 			if (contentService.isVisible(descriptor.getId())) {
 				visibleFilters.add(descriptor);
 			}
@@ -71,11 +91,19 @@ public class CommonFilterDescriptorManager {
 	}
 
 	/**
+	 * @param id
+	 * @return the CommonFilterDescriptor, if found
+	 */
+	public CommonFilterDescriptor getFilterById(String id) {
+		return (CommonFilterDescriptor) filters.get(id);
+	}
+	
+	/**
 	 * @param aDescriptor
 	 *            A non-null descriptor
 	 */
 	private void addCommonFilter(CommonFilterDescriptor aDescriptor) {
-		filters.add(aDescriptor);
+		filters.put(aDescriptor.getId(), aDescriptor);
 	}
 
 	private class CommonFilterDescriptorRegistry extends

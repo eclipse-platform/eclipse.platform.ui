@@ -289,6 +289,15 @@
 	        </and>
          </filterExpression>
       </commonFilter>
+      <commonFilter
+            id="org.eclipse.ui.navigator.resources.filters.workingSet"
+            name="%filters.workingSet.name"
+            description="%filters.workingSet.description" 
+            class="org.eclipse.ui.ResourceWorkingSetFilter" 
+            activeByDefault="false"
+            visibleInUI="false"
+           >
+      </commonFilter>
       <actionProvider
             class="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider"
             id="org.eclipse.ui.navigator.resources.WorkingSetActions">

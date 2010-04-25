@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.navigator.filters;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.INavigatorFilterService;
 
 /**
  * 
@@ -46,8 +46,8 @@ public class CommonFilterContentProvider implements IStructuredContentProvider {
 	 */
 	public Object[] getElements(Object inputElement) {
 		if(contentService != null) {
-			INavigatorFilterService filterService = contentService.getFilterService();
-			return filterService.getVisibleFilterDescriptors();
+			NavigatorFilterService filterService = (NavigatorFilterService) contentService.getFilterService();
+			return filterService.getVisibleFilterDescriptorsForUI();
 		}
 		return NO_ELEMENTS ;
 		

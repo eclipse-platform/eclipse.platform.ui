@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,8 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	public void persistFilterActivationState() {
 
 		synchronized (activeFilters) {
+			CommonFilterDescriptorManager dm = CommonFilterDescriptorManager
+			.getInstance();
 
 			/*
 			 * by creating a StringBuffer with DELIM, we ensure the string is
@@ -105,14 +107,16 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			StringBuffer activatedFiltersPreferenceValue = new StringBuffer(DELIM);
 
 			for (Iterator activeItr = activeFilters.iterator(); activeItr.hasNext();) {
-				activatedFiltersPreferenceValue.append(activeItr.next().toString()).append(DELIM);
+				String id = activeItr.next().toString();
+				if (!dm.getFilterById(id).isVisibleInUi())
+					continue;
+				activatedFiltersPreferenceValue.append(id).append(DELIM);
 			}
 
 			IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 			prefs.put(getFilterActivationPreferenceKey(), activatedFiltersPreferenceValue.toString());
 			NavigatorContentService.flushPreferences(prefs);
 		}
-
 	}
 	
 	/**
@@ -192,6 +196,14 @@ public class NavigatorFilterService implements INavigatorFilterService {
 				contentService);
 	}
 
+	/**
+	 * @return the visible filter descriptors for the UI
+	 */
+	public ICommonFilterDescriptor[] getVisibleFilterDescriptorsForUI() {
+		return CommonFilterDescriptorManager.getInstance().findVisibleFilters(
+				contentService, CommonFilterDescriptorManager.FOR_UI);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -218,66 +230,62 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	
 	public void activateFilterIdsAndUpdateViewer(String[] filterIdsToActivate) {
 		boolean updateFilterActivation = false;
-		
-		StructuredViewer commonViewer = (StructuredViewer) contentService.getViewer();
-		
+
 		// we sort the array in order to use Array.binarySearch();
 		Arrays.sort(filterIdsToActivate);
+		CommonFilterDescriptor[] visibleFilterDescriptors = (CommonFilterDescriptor[]) getVisibleFilterDescriptors();
+
+		int indexofFilterIdToBeActivated;
+
+		List nonUiVisible = null;
 		
-		try {
-			commonViewer.getControl().setRedraw(false);
+		/* is there a delta? */
+		for (int i = 0; i < visibleFilterDescriptors.length; i++) {
+			indexofFilterIdToBeActivated = Arrays.binarySearch(filterIdsToActivate,
+					visibleFilterDescriptors[i].getId());
+			/*
+			 * Either we have a filter that should be active that isn't XOR a
+			 * filter that shouldn't be active that is currently
+			 */
+			if (indexofFilterIdToBeActivated >= 0 ^ isActive(visibleFilterDescriptors[i].getId())) {
+				updateFilterActivation = true;
+			}
+			
+			// We don't turn of non-UI visible filters here, they have to be manipulated explicitly
+			if (!visibleFilterDescriptors[i].isVisibleInUi()) {
+				if (nonUiVisible == null)
+					nonUiVisible = new ArrayList();
+				nonUiVisible.add(visibleFilterDescriptors[i].getId());
+			}
+		}
 
-			INavigatorFilterService filterService = contentService
-					.getFilterService();
-
-				ICommonFilterDescriptor[] visibleFilterDescriptors = filterService
-						.getVisibleFilterDescriptors();
-
-				int indexofFilterIdToBeActivated;
-
-				/* is there a delta? */
-				for (int i = 0; i < visibleFilterDescriptors.length
-						&& !updateFilterActivation; i++) {
-					indexofFilterIdToBeActivated = Arrays.binarySearch(
-							filterIdsToActivate, visibleFilterDescriptors[i]
-									.getId());
-
-					/*
-					 * Either we have a filter that should be active that isn't
-					 * XOR a filter that shouldn't be active that is currently
-					 */
-					if (indexofFilterIdToBeActivated >= 0
-							^ filterService
-									.isActive(visibleFilterDescriptors[i]
-											.getId())) {
-						updateFilterActivation = true;
-					}
-				}
-
-				/* If so, update */
-				if (updateFilterActivation) {
-
-					filterService.setActiveFilterIds(filterIdsToActivate);
-					filterService.persistFilterActivationState();
-
-					commonViewer.resetFilters();
-
-					ViewerFilter[] visibleFilters = filterService
-							.getVisibleFilters(true);
-					for (int i = 0; i < visibleFilters.length; i++) {
-						commonViewer.addFilter(visibleFilters[i]);
-					}
-
-					// the action providers may no longer be enabled, so we
-					// reset the selection.
-					commonViewer.setSelection(StructuredSelection.EMPTY);
-				}
-
-		} finally {
-			commonViewer.getControl().setRedraw(true);
+		/* If so, update */
+		if (updateFilterActivation) {
+			if (nonUiVisible != null) {
+				for (int i = 0; i < filterIdsToActivate.length; i++)
+					nonUiVisible.add(filterIdsToActivate[i]);
+				filterIdsToActivate = (String[]) nonUiVisible.toArray(new String[]{});
+			}
+			
+			setActiveFilterIds(filterIdsToActivate);
+			persistFilterActivationState();
+			updateViewer();
 		}
 	}
 
+	/**
+	 * Updates the viewer filters to match the active filters.
+	 */
+	public void updateViewer() {
+		StructuredViewer commonViewer = (StructuredViewer) contentService.getViewer();
+
+		ViewerFilter[] visibleFilters =	getVisibleFilters(true);
+		commonViewer.setFilters(visibleFilters);
+		// the action providers may no longer be enabled, so we
+		// reset the selection.
+		commonViewer.setSelection(StructuredSelection.EMPTY);
+	}		
+		
 	/**
 	 * Activate the given array without disabling all other filters.
 	 * 

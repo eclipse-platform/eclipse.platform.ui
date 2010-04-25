@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,9 @@ public interface INavigatorContentExtPtConstants {
 
 	/** */
 	String ATT_ACTIVE_BY_DEFAULT = "activeByDefault"; //$NON-NLS-1$
+
+	/** */
+	String ATT_VISIBLE_IN_UI = "visibleInUI"; //$NON-NLS-1$
 
 	/** */
 	String ATT_SORT_ONLY = "sortOnly"; //$NON-NLS-1$

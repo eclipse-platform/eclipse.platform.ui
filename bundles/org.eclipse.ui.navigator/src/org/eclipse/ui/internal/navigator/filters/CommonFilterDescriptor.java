@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	private Expression filterExpression;
 
 	private String id;
-
+	
 	protected CommonFilterDescriptor(IConfigurationElement anElement) {
 
 		element = anElement;
@@ -90,6 +90,17 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	public boolean isActiveByDefault() {
 		return Boolean.valueOf(element.getAttribute(ATT_ACTIVE_BY_DEFAULT))
 				.booleanValue();
+	}
+
+	/**
+	 * 
+	 * @return Indicates the filter should be shown in the UI.
+	 */
+	public boolean isVisibleInUi() {
+		String attr = element.getAttribute(ATT_VISIBLE_IN_UI);
+		if (attr == null)
+			return true;
+		return Boolean.valueOf(attr).booleanValue();
 	}
 
 	/**
