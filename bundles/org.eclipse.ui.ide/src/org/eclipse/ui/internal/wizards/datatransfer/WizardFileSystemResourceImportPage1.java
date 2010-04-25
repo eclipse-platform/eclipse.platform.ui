@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
@@ -70,6 +68,7 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+
 
 /**
  *	Page 1 of the base resource import-from-file-system Wizard
@@ -89,6 +88,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected Button copyIntoWorkspaceButton;
     
+	protected Button advancedButton;
+
     protected RelativePathVariableGroup relativePathVariableGroup;
     
     protected String pathVariable;
@@ -133,6 +134,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected static final String SOURCE_EMPTY_MESSAGE = DataTransferMessages.FileImport_sourceEmpty;
 
+	private Composite linkedResourceComposite;
+
+	/**
+	 * Height of the "advanced" linked resource group. Set when the advanced group is first made
+	 * visible.
+	 */
+	private int linkedResourceGroupHeight= -1;
+
+	private Composite linkedResourceParent;
+
+
     /**
      *	Creates an instance of this class
      */
@@ -162,14 +174,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * including button presses and registers
      * default buttons with its shell.
      * The button id is stored as the buttons client data.
-     * Note that the parent's layout is assumed to be a GridLayout and 
+     * Note that the parent's layout is assumed to be a GridLayout and
      * the number of columns in this layout is incremented.
      * Subclasses may override.
      * </p>
      *
      * @param parent the parent composite
      * @param id the id of the button (see
-     *  <code>IDialogConstants.*_ID</code> constants 
+     *  <code>IDialogConstants.*_ID</code> constants
      *  for standard dialog button ids)
      * @param label the label from the button
      * @param defaultButton <code>true</code> if the button is to be the
@@ -286,28 +298,34 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
         createOnlySelectedButton.setSelection(true);
 
-   		ExpandableComposite excomposite= new ExpandableComposite(optionsGroup, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
-		excomposite.setText(DataTransferMessages.FileImport_advanced);
-		excomposite.setExpanded(false);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		excomposite.setFont(optionsGroup.getFont());
-		excomposite.setLayoutData(gridData);
-		excomposite.addExpansionListener(new ExpansionAdapter() {
-			public void expansionStateChanged(ExpansionEvent e) {
-				Point idealSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point actualSize = getShell().getSize();
-				if (idealSize.y > actualSize.y)
-					getShell().setSize(actualSize.x, idealSize.y);
+		linkedResourceParent= optionsGroup;
+		advancedButton= new Button(optionsGroup, SWT.PUSH);
+		advancedButton.setFont(optionsGroup.getFont());
+		advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
+		GridData data= setButtonLayoutData(advancedButton);
+		data.horizontalAlignment= GridData.BEGINNING;
+		advancedButton.setLayoutData(data);
+		advancedButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAdvancedButtonSelect();
 			}
 		});
+		updateWidgetEnablements();
+	}
 
-		Composite clientComposite= new Composite(excomposite, SWT.NONE);
-		excomposite.setClient(clientComposite);
-		clientComposite.setLayout(new GridLayout(1, false));
-   		
+	private Composite createAdvancedSection(Composite parent) {
+		Composite linkedResourceComposite= new Composite(parent, SWT.NONE);
+		linkedResourceComposite.setFont(parent.getFont());
+		linkedResourceComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		linkedResourceComposite.setLayout(layout);
+
+
         // create linked resource check
-        copyIntoWorkspaceButton = new Button(clientComposite, SWT.CHECK);
-        copyIntoWorkspaceButton.setFont(optionsGroup.getFont());
+		copyIntoWorkspaceButton= new Button(linkedResourceComposite, SWT.CHECK);
+		copyIntoWorkspaceButton.setFont(parent.getFont());
         copyIntoWorkspaceButton.setText(DataTransferMessages.FileImport_copyIntoWorkspace);
         copyIntoWorkspaceButton.setToolTipText(DataTransferMessages.FileImport_copyIntoWorkspaceTooltip);
         copyIntoWorkspaceButton.setSelection(true);
@@ -318,13 +336,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         	}
         });
 
-        Button tmp = new Button(clientComposite, SWT.CHECK);
+		Button tmp= new Button(linkedResourceComposite, SWT.CHECK);
         int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         tmp.dispose();
         
         // create virtual folders check
-        createVirtualFoldersButton = new Button(clientComposite, SWT.CHECK);
-        createVirtualFoldersButton.setFont(optionsGroup.getFont());
+		createVirtualFoldersButton= new Button(linkedResourceComposite, SWT.CHECK);
+		createVirtualFoldersButton.setFont(parent.getFont());
         createVirtualFoldersButton.setText(DataTransferMessages.FileImport_createVirtualFolders);
         createVirtualFoldersButton.setToolTipText(DataTransferMessages.FileImport_createVirtualFoldersTooltip);
         createVirtualFoldersButton.setSelection(false);
@@ -334,18 +352,18 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         		updateWidgetEnablements();
         	}
         });
-		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalSpan = 2;
 		gridData.horizontalIndent = indent;
 		createVirtualFoldersButton.setLayoutData(gridData);
 
-		Composite relativeGroup = new Composite(clientComposite, 0);
+		Composite relativeGroup= new Composite(linkedResourceComposite, 0);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalIndent = indent;
-		relativeGroup.setFont(optionsGroup.getFont());
+		relativeGroup.setFont(parent.getFont());
 		relativeGroup.setLayoutData(gridData);
 
-		GridLayout layout = new GridLayout();
+		layout= new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
@@ -356,7 +374,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		relativeGroup.setLayout(layout);
-        
+
         relativePathVariableGroup = new RelativePathVariableGroup(new RelativePathVariableGroup.IModel() {
 			public IResource getResource() {
 				IPath path = getContainerFullPath();
@@ -377,7 +395,38 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         
         updateWidgetEnablements();
 		relativePathVariableGroup.setSelection(true);
+
+		return linkedResourceComposite;
+
     }
+
+	/**
+	 * Shows/hides the advanced option widgets.
+	 * 
+	 * @since 3.6
+	 */
+	private void handleAdvancedButtonSelect() {
+		Shell shell= getShell();
+		Point shellSize= shell.getSize();
+		Composite composite= (Composite)getControl();
+
+		if (linkedResourceComposite != null) {
+			linkedResourceComposite.dispose();
+			linkedResourceComposite= null;
+			composite.layout();
+			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
+			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
+		} else {
+			linkedResourceComposite= createAdvancedSection(linkedResourceParent);
+			if (linkedResourceGroupHeight == -1) {
+				Point groupSize= linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				linkedResourceGroupHeight= groupSize.y;
+			}
+			shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
+			composite.layout();
+			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
+		}
+	}
 
     /**
      *	Create the group for creating the root directory
@@ -589,7 +638,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     }
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only files as children.
      */
     protected ITreeContentProvider getFileProvider() {
@@ -623,7 +672,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     }
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only folders as children.
      */
     protected ITreeContentProvider getFolderProvider() {
@@ -765,7 +814,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected boolean importResources(List fileSystemObjects) {
         ImportOperation operation;
         
-        boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() && 
+        boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() &&
         											createOnlySelectedButton.getSelection() &&
         											(copyIntoWorkspaceButton.getSelection() == false) &&
         											(createVirtualFoldersButton.getSelection() == false);
@@ -821,7 +870,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * has been specified for export by the user.
      *
      * @param extension the resource name
-     * @return <code>true</code> if the resource name is suitable for export based 
+     * @return <code>true</code> if the resource name is suitable for export based
      *   upon its extension
      */
     protected boolean isExportableExtension(String extension) {
@@ -879,7 +928,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				sourceNameField.add(sourceNames[i]);
 			}
 
-            // radio buttons and checkboxes	
+            // radio buttons and checkboxes
             overwriteExistingResourcesCheckbox.setSelection(settings
                     .getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
 
@@ -923,7 +972,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             sourceNames = addToHistory(sourceNames, getSourceDirectoryName());
             settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
 
-            // radio buttons and checkboxes	
+            // radio buttons and checkboxes
             settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
                     overwriteExistingResourcesCheckbox.getSelection());
 
@@ -1078,13 +1127,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             //Got interrupted. Do nothing.
             return;
         }
-        // make sure that all paint operations caused by closing the progress 
-        // dialog get flushed, otherwise extra pixels will remain on the screen until 
+        // make sure that all paint operations caused by closing the progress
+        // dialog get flushed, otherwise extra pixels will remain on the screen until
         // updateSelections is completed
         getShell().update();
         // The updateSelections method accesses SWT widgets so cannot be executed
         // as part of the above progress dialog operation since the operation forks
-        // a new process.	
+        // a new process.
         if (selectionMap != null) {
             updateSelections(selectionMap);
         }
@@ -1197,8 +1246,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         if (destinationLocation != null) {
             return destinationLocation.isPrefixOf(sourcePath);
         }
-        // null destination location is handled in 
-        // WizardResourceImportPage 
+        // null destination location is handled in
+        // WizardResourceImportPage
         return false;
     }
 
