@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.navigator;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -55,9 +56,6 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		contentService = aContentService;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.HashSet#add(java.lang.Object)
-	 */
 	public boolean add(Object o) { 
 		if (contributor != null) {
 			contentService.rememberContribution(contributor, firstClassContributor, o);
@@ -65,12 +63,17 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		return super.add(o);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.HashSet#remove(java.lang.Object)
-	 */
 	public boolean remove(Object o) { 
 		contentService.forgetContribution(o);
 		return super.remove(o);
+	}
+
+	
+	public void clear() { 
+		Iterator it = iterator();
+		while (it.hasNext())
+			contentService.forgetContribution(it.next());
+		super.clear();
 	}
 
 	/**

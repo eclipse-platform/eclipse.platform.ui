@@ -71,6 +71,10 @@ public final class PipelinedShapeModification {
 
 	/**
 	 * 
+	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
+	 * the Set returned from this method as it will not correctly maintain the state 
+	 * of the Set.
+	 * 
 	 * @return The current set of children. Clients may add or remove elements
 	 *         directly to this set.
 	 */

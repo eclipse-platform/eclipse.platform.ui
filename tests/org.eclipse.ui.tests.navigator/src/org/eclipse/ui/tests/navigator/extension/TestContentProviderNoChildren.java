@@ -63,6 +63,7 @@ public class TestContentProviderNoChildren implements IPipelinedTreeContentProvi
 	}
 
 	public void getPipelinedElements(Object anInput, Set theCurrentElements) {
+		theCurrentElements.clear();
 	}
 
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
