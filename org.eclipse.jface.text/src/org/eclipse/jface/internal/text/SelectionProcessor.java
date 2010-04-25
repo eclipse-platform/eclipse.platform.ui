@@ -402,7 +402,7 @@ public final class SelectionProcessor {
 			for (int offset= 0; offset < lineLength; offset++) {
 				if (startColumn == -1 && visual >= visualStartColumn)
 					startColumn= offset;
-				if (visual == visualEndColumn) {
+				if (visual >= visualEndColumn) {
 					endColumn= offset;
 					break;
 				}
