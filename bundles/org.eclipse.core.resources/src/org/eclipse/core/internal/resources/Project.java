@@ -10,10 +10,9 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ * Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-import org.eclipse.core.runtime.IPath;
 
 import java.net.URI;
 import java.util.*;
@@ -28,6 +27,26 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
 public class Project extends Container implements IProject {
+
+	/**
+	 * Option constant (value 2) indicating that the snapshot location shall be
+	 * persisted with the project for autoloading the snapshot when the project
+	 * is imported in another workspace.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This constant has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * work or that it will remain the same. Please do not use this API without
+	 * consulting with the Platform Core team.
+	 * </p>
+	 * @see #saveSnapshot(int, URI, IProgressMonitor)
+	 * @since 3.6
+	 */
+	public static final int SNAPSHOT_SET_AUTOLOAD = 2;
+	
+	/**
+	 * Force loading project snapshot even when project is open
+	 */
+	private static final int SNAPSHOT_FORCE_LOAD = 2;
 
 	protected Project(IPath path, Workspace container) {
 		super(path, container);
@@ -63,6 +82,8 @@ public class Project extends Container implements IProject {
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 		ProjectDescription current = internalGetDescription();
 		current.setComment(description.getComment());
+		current.setSnapshotLocationURI(description.getSnapshotLocationURI());
+		
 		// set the build order before setting the references or the natures
 		current.setBuildSpec(description.getBuildSpec(true));
 
@@ -201,6 +222,7 @@ public class Project extends Container implements IProject {
 			IProjectDescription desc = getDescription();
 			desc.setName(projectName);
 			desc.setLocation(null);
+			((ProjectDescription)desc).setSnapshotLocationURI(null);
 			internalCopy(desc, updateFlags, monitor);
 		} else {
 			// will fail since we're trying to copy a project to a non-project
@@ -831,10 +853,16 @@ public class Project extends Container implements IProject {
 			IProgressMonitor monitor) throws CoreException {
 		if ((options & SNAPSHOT_TREE) != 0) {
 			// load a snapshot of refresh information when project is opened
-			if (isOpen()) {
+			if (isOpen() && ((options & SNAPSHOT_FORCE_LOAD)==0)) {
 				String message = Messages.resources_projectMustNotBeOpen;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				throw new CoreException(status);
+			}
+			// ensure that path variables are resolved: only ws accessible while project is closed
+			snapshotLocation = workspace.getPathVariableManager().resolveURI(snapshotLocation);
+			if (!snapshotLocation.isAbsolute()) {
+				String message = NLS.bind(Messages.projRead_badSnapshotLocation, snapshotLocation.toString());
+				throw new CoreException(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, message, null));
 			}
 			// copy the snapshot from the URI into the project metadata
 			IPath snapshotPath = workspace.getMetaArea().getRefreshLocationFor(this);
@@ -842,6 +870,7 @@ public class Project extends Container implements IProject {
 			EFS.getStore(snapshotLocation).copy(snapshotFileStore, EFS.OVERWRITE, monitor);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
@@ -930,6 +959,29 @@ public class Project extends Container implements IProject {
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
 				boolean used = info.isSet(M_USED);
+				boolean snapshotLoaded = false;
+				if (!used && !workspace.getMetaArea().getRefreshLocationFor(this).toFile().exists()) {
+					//auto-load a refresh snapshot if it is set
+					final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);
+					if (hasSavedDescription) {
+						ProjectDescription updatedDesc = info.getDescription();
+						if (updatedDesc != null) {
+							URI autoloadURI = updatedDesc.getSnapshotLocationURI();
+							if (autoloadURI != null) {
+								try {
+									autoloadURI = getPathVariableManager().resolveURI(autoloadURI);
+									loadSnapshot(SNAPSHOT_TREE | SNAPSHOT_FORCE_LOAD, autoloadURI, 
+											Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+									snapshotLoaded = true;
+								} catch(CoreException ce) {
+									//Log non-existing autoload snapshot as warning only
+									String msgerr = NLS.bind(Messages.projRead_cannotReadSnapshot, getName(), ce.getLocalizedMessage());
+									Policy.log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, msgerr));
+								}
+							}
+						}
+					}
+				}
 				boolean minorIssuesDuringRestore = false;
 				if (used) {
 					minorIssuesDuringRestore = workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -940,7 +992,7 @@ public class Project extends Container implements IProject {
 					if (!result.isOK())
 						throw new CoreException(result);
 					workspace.updateModificationStamp(info);
-					monitor.worked(Policy.opWork * 20 / 100);
+					monitor.worked(Policy.opWork * (snapshotLoaded ? 15 : 20) / 100);
 				}
 				startup();
 				//request a refresh if the project is new and has unknown members on disk
@@ -1073,24 +1125,37 @@ public class Project extends Container implements IProject {
 	 */
 	public void saveSnapshot(int options, URI snapshotLocation,
 			IProgressMonitor monitor) throws CoreException {
-		if ((options & SNAPSHOT_TREE) != 0) {
-			// write a snapshot of refresh information
-			monitor = Policy.monitorFor(monitor);
-			try {
-				String msg = NLS.bind(Messages.resources_copying, getName());
-				monitor.beginTask(msg, Policy.totalWork);
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+			URI resolvedSnapshotLocation = getPathVariableManager().resolveURI(snapshotLocation);
+			if (resolvedSnapshotLocation!=null && !resolvedSnapshotLocation.isAbsolute()) {
+				String message = NLS.bind(Messages.projRead_badSnapshotLocation, resolvedSnapshotLocation.toString());
+				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, message, null));
+			}
+			if ((options & SNAPSHOT_TREE) != 0) {
+				// write a snapshot of refresh information
 				try {
-					IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+					IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2);
 					workspace.getSaveManager().saveRefreshSnapshot(
-							this, snapshotLocation, sub);
-					monitor.worked(Policy.opWork / 2);
+							this, resolvedSnapshotLocation, sub);
 				} catch (OperationCanceledException e) {
 					//workspace.getWorkManager().operationCanceled();
 					throw e;
 				}
-			} finally {
-				monitor.done();
 			}
+			if ((options & SNAPSHOT_SET_AUTOLOAD) != 0) {
+				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2);
+				//Make absolute URI inside the project relative
+				if (snapshotLocation.isAbsolute()) {
+					snapshotLocation = getPathVariableManager().convertToRelative(snapshotLocation, false, null);
+				}
+				IProjectDescription desc= getDescription();
+				((ProjectDescription)desc).setSnapshotLocationURI(snapshotLocation);
+				setDescription(desc, IResource.KEEP_HISTORY | IResource.AVOID_NATURE_CONFIG, sub);
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 	

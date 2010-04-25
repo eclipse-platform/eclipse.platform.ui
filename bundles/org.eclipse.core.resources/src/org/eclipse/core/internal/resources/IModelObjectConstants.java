@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ * Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -53,4 +54,5 @@ public interface IModelObjectConstants {
 	public static final String MATCHER = "matcher"; //$NON-NLS-1$
 	public static final String VARIABLE = "variable"; //$NON-NLS-1$
 	public static final String VARIABLE_LIST = "variableList"; //$NON-NLS-1$
+	public static final String SNAPSHOT_LOCATION = "snapshotLocation"; //$NON-NLS-1$
 }

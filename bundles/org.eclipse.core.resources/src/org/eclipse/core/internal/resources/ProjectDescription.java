@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ * Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -18,8 +19,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
 	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
@@ -63,6 +63,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected URI location = null;
 	protected String[] natures = EMPTY_STRING_ARRAY;
 	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
+	protected URI snapshotLocation= null;
 
 	public ProjectDescription() {
 		super();
@@ -257,6 +258,25 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return makeCopy ? (IProject[]) staticRefs.clone() : staticRefs;
 	}
 
+	/** 
+	 * Returns the URI to load a resource snapshot from.
+	 * May return <code>null</code> if no snapshot is set.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This constant has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * work or that it will remain the same. Please do not use this API without
+	 * consulting with the Platform Core team.
+	 * </p>
+	 * @return the snapshot location URI,
+	 *   or <code>null</code>.
+	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
+	 * @see #setSnapshotLocationURI(URI)
+	 * @since 3.6
+	 */
+	public URI getSnapshotLocationURI() {
+		return snapshotLocation;
+	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#hasNature(String)
 	 */
@@ -312,10 +332,18 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if ((variableDescriptions != null) && !variableDescriptions.equals(otherVariables))
 			return true;
 
-		HashMap otherLinks = description.getLinks();
-		if (linkDescriptions == null)
-			return otherLinks != null;
-		return !linkDescriptions.equals(otherLinks);
+		final HashMap otherLinks = description.getLinks();
+		if (linkDescriptions != otherLinks) { 
+			if (linkDescriptions == null || !linkDescriptions.equals(otherLinks))
+				return true;
+		}
+		
+		final URI otherSnapshotLoc= description.getSnapshotLocationURI();
+		if (snapshotLocation != otherSnapshotLoc) {
+			if (snapshotLocation == null || !snapshotLocation.equals(otherSnapshotLoc))
+				return true;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -565,6 +593,25 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		Assert.isLegal(value != null);
 		staticRefs = copyAndRemoveDuplicates(value);
 		cachedRefs = null;
+	}
+
+	/**
+	 * Sets the location URI for a project snapshot that may be
+	 * loaded automatically when the project is created in a workspace.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * work or that it will remain the same. Please do not use this API without
+	 * consulting with the Platform Core team.
+	 * </p>
+	 * @param snapshotLocation the location URI or
+	 *    <code>null</code> to clear the setting 
+	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
+	 * @see #getSnapshotLocationURI()
+	 * @since 3.6 
+	 */
+	public void setSnapshotLocationURI(URI snapshotLocation) {
+		this.snapshotLocation = snapshotLocation;
 	}
 
 	public URI getGroupLocationURI(IPath projectRelativePath) {

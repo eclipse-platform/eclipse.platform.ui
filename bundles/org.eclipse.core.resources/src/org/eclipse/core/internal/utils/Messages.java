@@ -10,6 +10,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ * Martin Oberhuber (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -130,6 +131,8 @@ public class Messages extends NLS {
 	public static String projRead_badLinkType;
 	public static String projRead_badLinkType2;
 	public static String projRead_badLocation;
+	public static String projRead_badSnapshotLocation;
+	public static String projRead_cannotReadSnapshot;
 	public static String projRead_emptyFilterName;
 	public static String projRead_emptyLinkName;
 	public static String projRead_emptyVariableName;

@@ -9,15 +9,20 @@
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - adapted from FileSystemResourceManagerTest
  * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
+ * Martin Oberhuber (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.InputStream;
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.internal.resources.ProjectDescription;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 /**
  * Tests API for save/load refresh snapshots introduced in 3.6M6 (bug 301563):
@@ -230,6 +235,94 @@ public class ProjectSnapshotTest extends ResourceTest {
 		project = getWorkspace().getRoot().getProject("p3");
 		project.create(null);
 		project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+		project.open(IResource.NONE, null);
+
+		// verify that the resources are thought to exist in this project
+		IFile file = project.getFile("file");
+		IFolder folder = project.getFolder("folder");
+		IFolder subfolder = folder.getFolder("subfolder");
+		IFile subfile = folder.getFile("subfile");
+		assertTrue("1.1", file.exists());
+		assertTrue("1.2", folder.exists());
+		assertTrue("1.3", subfolder.exists());
+		assertTrue("1.4", subfile.exists());
+	}
+
+	public void testAutoLoadInvalidURI() throws Throwable {
+		// create project with invalid snapshot autoload location
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IProjectDescription description = getWorkspace().newProjectDescription(project.getName());
+		((ProjectDescription) description).setSnapshotLocationURI(URI.create("./relative/uri.zip"));
+		project.create(description, null);
+		ensureExistsInFileSystem(project.getFolder("foo"));
+		assertFalse("1.0", project.getFolder("foo").exists());
+		// expect to see warning logged, but project open successfully and refresh
+		project.open(null);
+		assertTrue("1.1", project.isOpen());
+		assertTrue("1.2", project.getFolder("foo").exists());
+		boolean errorReported = false;
+		try {
+			project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, URI.create("NON_EXISTING/foo/bar.zip"), null);
+		} catch (CoreException ce) {
+			errorReported = true;
+		}
+		assertTrue("1.4", errorReported);
+	}
+
+	public void testAutoLoadMissingSnapshot() throws Throwable {
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IProjectDescription description = getWorkspace().newProjectDescription(project.getName());
+		// create project with non-existing snapshot autoload location
+		((ProjectDescription) description).setSnapshotLocationURI(getTempStore().toURI());
+		project.create(description, null);
+		ensureExistsInFileSystem(project.getFile("foo"));
+		assertFalse("1.0", project.getFile("foo").exists());
+		project.open(null);
+		// expect warning logged but project open and refreshed
+		assertTrue("1.1", project.isOpen());
+		assertTrue("1.2", project.getFile("foo").exists());
+	}
+
+	/*
+	 * Create project and populate with resources. Specify
+	 * snapshot location in project description.
+	 * Import the project from a different location, with different name.
+	 * All resources must be marked as "exists" in the resource tree for 
+	 * the new, renamed project.
+	 */
+	public void testAutoLoadWithRename() throws Throwable {
+		// create project p0 outside the workspace
+		IFileStore tempStore = getTempStore();
+		tempStore.mkdir(EFS.NONE, null);
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IProjectDescription description = getWorkspace().newProjectDescription(project.getName());
+		description.setLocationURI(tempStore.getChild("project").toURI());
+		project.create(description, null);
+		project.open(null);
+
+		// add files and folders to project and refresh to ensure resources in tree
+		populateProject(project);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		// specify snapshot location relative to project, and store in project description
+		URI snapshotLocation = tempStore.getChild("project-index.zip").toURI();
+		snapshotLocation = project.getPathVariableManager().convertToRelative(snapshotLocation, true, null);
+		project.saveSnapshot(IProject.SNAPSHOT_TREE | Project.SNAPSHOT_SET_AUTOLOAD, snapshotLocation, null);
+
+		// copy the project to a new temp store, close and delete original project
+		IFileStore newProjectStore = tempStore.getChild("pnew");
+		newProjectStore.mkdir(EFS.NONE, null);
+		EFS.getStore(project.getLocationURI()).getChild(".project").copy(newProjectStore.getChild(".project"), EFS.NONE, null);
+		project.close(null);
+		project.delete(true, false, null);
+
+		// import the project from new location and using a different name; must auto-load snapshot
+		InputStream is = newProjectStore.getChild(".project").openInputStream(EFS.NONE, null);
+		description = getWorkspace().loadProjectDescription(is);
+		is.close();
+		description.setLocationURI(newProjectStore.toURI());
+		project = getWorkspace().getRoot().getProject(description.getName() + "-mybranch");
+		project.create(description, null);
 		project.open(IResource.NONE, null);
 
 		// verify that the resources are thought to exist in this project

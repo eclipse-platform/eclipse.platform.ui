@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ * Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -68,6 +69,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_VARIABLE_NAME = 33;
 	protected static final int S_VARIABLE_VALUE = 34;
 
+	protected static final int S_SNAPSHOT_LOCATION = 35;
+	
 	/**
 	 * Singleton sax parser factory
 	 */
@@ -405,6 +408,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 			case S_VARIABLE_VALUE :
 				endVariableValue(elementName);
+				break;
+			case S_SNAPSHOT_LOCATION :
+				endSnapshotLocation(elementName);
 				break;
 		}
 		charBuffer.setLength(0);
@@ -803,6 +809,20 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		projectDescription.setReferencedProjects(projects);
 	}
 
+	private void endSnapshotLocation(String elementName) {
+		if (elementName.equals(SNAPSHOT_LOCATION)) {
+			String location = charBuffer.toString().trim();
+			try {
+				projectDescription.setSnapshotLocationURI(new URI(location));
+			} catch (URISyntaxException e) {
+				String msg = NLS.bind(Messages.projRead_badSnapshotLocation, location);
+				problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, e));
+			}
+			state = S_PROJECT_DESC;
+		}
+	}
+
+	
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
@@ -885,6 +905,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_VARIABLE_LIST;
 			return;
 		}
+		if (elementName.equals(SNAPSHOT_LOCATION)) {
+			state = S_SNAPSHOT_LOCATION;
+			return;
+		}	
 	}
 
 	public ProjectDescription read(InputSource input) {
