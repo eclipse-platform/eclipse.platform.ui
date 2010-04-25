@@ -7,13 +7,16 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 246103)
+ *     Ovidio Mallo - bug 301774
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
@@ -53,4 +56,27 @@ public class JavaBeanPropertyObservableMapTest extends
 		assertEquals("new", tracker.event.diff.getNewValue("key"));
 	}
 
+	/**
+	 * Makes sure that the map set on the Bean model after changing the
+	 * observable map is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedBeanMapIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableMap observable = BeansObservables.observeMap(bean, "map");
+
+		observable.put(new Object(), new Object());
+		bean.getMap().clear();
+	}
+
+	/**
+	 * Makes sure that the map set on the Pojo model after changing the
+	 * observable map is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedPojoMapIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableMap observable = PojoObservables.observeMap(bean, "map");
+
+		observable.put(new Object(), new Object());
+		bean.getMap().clear();
+	}
 }

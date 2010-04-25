@@ -8,10 +8,12 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  *     Matthew Hall - bugs 195222, 247997, 265561
+ *     Ovidio Mallo - bug 301774
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -86,7 +88,8 @@ public abstract class SimpleSetProperty extends SetProperty {
 	}
 
 	protected void doUpdateSet(Object source, SetDiff diff) {
-		Set set = diff.simulateOn(doGetSet(source));
+		Set set = new HashSet(doGetSet(source));
+		diff.applyTo(set);
 		doSetSet(source, set, diff);
 	}
 

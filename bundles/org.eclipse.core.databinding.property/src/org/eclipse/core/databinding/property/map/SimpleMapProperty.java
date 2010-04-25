@@ -8,10 +8,12 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  *     Matthew Hall - bugs 195222, 247997, 265561
+ *     Ovidio Mallo - bug 301774
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -87,7 +89,8 @@ public abstract class SimpleMapProperty extends MapProperty {
 	}
 
 	protected void doUpdateMap(Object source, MapDiff diff) {
-		Map map = diff.simulateOn(doGetMap(source));
+		Map map = new HashMap(doGetMap(source));
+		diff.applyTo(map);
 		doSetMap(source, map, diff);
 	}
 

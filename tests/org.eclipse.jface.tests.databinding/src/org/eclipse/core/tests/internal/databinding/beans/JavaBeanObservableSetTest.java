@@ -8,12 +8,13 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688
- *     Ovidio Mallo - bug 247741
+ *     Ovidio Mallo - bugs 247741, 301774
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -173,6 +174,30 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
 				.singleton("element"));
+	}
+
+	/**
+	 * Makes sure that the set set on the Bean model after changing the
+	 * observable set is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedBeanSetIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableSet observable = BeansObservables.observeSet(bean, "set");
+
+		observable.add(new Object());
+		bean.getSet().clear();
+	}
+
+	/**
+	 * Makes sure that the set set on the Pojo model after changing the
+	 * observable set is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedPojoSetIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableSet observable = PojoObservables.observeSet(bean, "set");
+
+		observable.add(new Object());
+		bean.getSet().clear();
 	}
 
 	private static void assertDiff(SetDiff diff, Set oldSet, Set newSet) {

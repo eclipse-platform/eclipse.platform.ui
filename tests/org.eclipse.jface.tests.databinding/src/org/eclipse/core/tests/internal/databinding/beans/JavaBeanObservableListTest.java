@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688
+ *     Ovidio Mallo - bug 301774
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -558,6 +559,30 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.EMPTY_LIST, Collections
 				.singletonList("element"));
+	}
+
+	/**
+	 * Makes sure that the list set on the Bean model after changing the
+	 * observable list is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedBeanListIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableList observable = BeansObservables.observeList(bean, "list");
+
+		observable.add(new Object());
+		bean.getList().clear();
+	}
+
+	/**
+	 * Makes sure that the list set on the Pojo model after changing the
+	 * observable list is modifiable (see bugs 285307 and 301774).
+	 */
+	public void testUpdatedPojoListIsModifiable() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableList observable = PojoObservables.observeList(bean, "list");
+
+		observable.add(new Object());
+		bean.getList().clear();
 	}
 
 	private static void assertDiff(ListDiff diff, List oldList, List newList) {

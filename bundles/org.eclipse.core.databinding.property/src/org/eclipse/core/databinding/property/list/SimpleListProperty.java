@@ -8,10 +8,12 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 247997, 265561
+ *     Ovidio Mallo - bug 301774
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -87,7 +89,8 @@ public abstract class SimpleListProperty extends ListProperty {
 	}
 
 	protected void doUpdateList(Object source, ListDiff diff) {
-		List list = diff.simulateOn(doGetList(source));
+		List list = new ArrayList(doGetList(source));
+		diff.applyTo(list);
 		doSetList(source, list, diff);
 	}
 
