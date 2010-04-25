@@ -62,6 +62,8 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private IWorkingSet workingSet;
 
 	private IPropertyChangeListener topLevelModeListener;
+	
+	private boolean ignoreFilterChangeEvents;
 
 	/**
 	 * Provides a smart listener to monitor changes to the Working Set Manager.
@@ -138,6 +140,10 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private IPropertyChangeListener filterChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
+			
+			if (ignoreFilterChangeEvents)
+				return;
+			
 			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
 			setWorkingSet(newWorkingSet);
@@ -185,7 +191,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 						if (savedWorkingSet != null) {
 							setWorkingSet(savedWorkingSet);
-							workingSetActionGroup.setWorkingSet(savedWorkingSet);
 						}
 						managerChangeListener.listen();
 
@@ -194,7 +199,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 						setWorkingSet(null);
 						viewer.getCommonNavigator().setWorkingSetLabel(null);
 						managerChangeListener.ignore();
-						workingSetActionGroup.setWorkingSet(null);
 						workingSetRootModeActionGroup.setShowTopLevelWorkingSets(false);
 						extensionStateModel.removePropertyChangeListener(topLevelModeListener);
 
@@ -234,7 +238,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 
 		contentService.getActivationService().addExtensionActivationListener(activationListener);
-
 	}
 
 	/**
@@ -253,9 +256,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 
 		if (workingSet != null) {
-			workingSetFilter.setWorkingSet(workingSet);
-			internalSetWorkingSet(workingSet);
-			workingSetActionGroup.setWorkingSet(workingSet);
+			setWorkingSet(workingSet);
 		}
 	}
 
@@ -266,10 +267,18 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	 *            working set to be activated, may be <code>null</code>
 	 */
 	protected void setWorkingSet(IWorkingSet workingSet) {
-		internalSetWorkingSet(workingSet);
+		this.workingSet = workingSet;
+		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() && workingSet.isEmpty();
 
 		workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
 
+        ignoreFilterChangeEvents = true;
+        try {
+        	workingSetActionGroup.setWorkingSet(workingSet);
+        } finally {
+        	ignoreFilterChangeEvents = false;
+       	}		
+		
 		if (viewer != null) {
 			if (workingSet == null || emptyWorkingSet
 					|| !extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS)) {
@@ -294,11 +303,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				}
 			}
 		}
-	}
-
-	private void internalSetWorkingSet(IWorkingSet workingSet) {
-		this.workingSet = workingSet;
-		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() && workingSet.isEmpty();
 	}
 
 	/*
