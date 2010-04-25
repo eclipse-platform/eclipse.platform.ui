@@ -745,6 +745,16 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 	
 	/**
+	 * Used only for the tests
+	 * @return the size of the contribution memory
+	 */
+	public int getContributionMemorySize() {
+		synchronized (this) {
+			return contributionMemory.size();
+		}
+	}
+	
+	/**
 	 * 
 	 * @param element
 	 *            The element contributed by the descriptor to be returned

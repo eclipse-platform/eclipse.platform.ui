@@ -46,6 +46,14 @@ public class StructuredViewerInternals {
 		 * @param item
 		 */
 		void disassociate(Item item);
+		
+		/**
+		 * Called when an element has been filtered out.
+		 * 
+		 * @since 3.6
+		 * @param element 
+		 */
+		void filteredOut(Object element);
 	}
 
 	/**

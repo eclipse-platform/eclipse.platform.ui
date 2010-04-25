@@ -730,6 +730,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				}
 				if (add) {
 					filtered.add(elements[i]);
+				} else {
+					if (associateListener != null)
+						associateListener.filteredOut(elements[i]);
 				}
 			}
 			return filtered.toArray();
@@ -894,12 +897,39 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (filters != null) {
 			for (Iterator iter = filters.iterator(); iter.hasNext();) {
 				ViewerFilter f = (ViewerFilter) iter.next();
-				result = f.filter(this, parent, result);
+				Object[] filteredResult = f.filter(this, parent, result);
+				if (associateListener != null && filteredResult.length != result.length) {
+					notifyFilteredOut(result, filteredResult);
+				}
+				result = filteredResult;
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Notifies an AssociateListener of the elements that have been filtered out.
+	 * 
+	 * @param rawResult 
+	 * @param filteredResult  
+	 */
+	private void notifyFilteredOut(Object[] rawResult, Object[] filteredResult) {
+		int rawIndex = 0;
+		int filteredIndex = 0;
+		for (; filteredIndex < filteredResult.length; ) {
+			if (rawResult[rawIndex] != filteredResult[filteredIndex]) {
+				associateListener.filteredOut(rawResult[rawIndex++]);
+				continue;
+			}
+			rawIndex++;
+			filteredIndex++;
+		}
+		for (; rawIndex < rawResult.length; rawIndex++) {
+			associateListener.filteredOut(rawResult[rawIndex]);
+		}
+	}
+	
+	
 	/**
 	 * Returns this viewer's filters.
 	 * 

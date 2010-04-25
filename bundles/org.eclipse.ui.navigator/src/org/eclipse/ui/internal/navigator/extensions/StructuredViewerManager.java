@@ -95,6 +95,15 @@ public class StructuredViewerManager {
 					viewerDataMap.remove(item.getData());
 				}
 			}
+
+			public void filteredOut(Object element) {
+				contentService.forgetContribution(element);
+				synchronized (viewerDataMap) {
+					if (Policy.DEBUG_VIEWER_MAP)
+						System.out.println("filteredOut: object: " + element); //$NON-NLS-1$
+					viewerDataMap.remove(element);
+				}
+			}
 		}
 		protected static void hookAssociateListener(StructuredViewer v, Map viewerDataMap, NavigatorContentService contentService) {
 			StructuredViewerInternals.setAssociateListener(v, new Listener(contentService, viewerDataMap));

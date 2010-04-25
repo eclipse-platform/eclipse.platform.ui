@@ -626,21 +626,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
-	 */
-	protected Object[] getFilteredChildren(Object parentElementOrTreePath) {
-		Object[] result = getRawChildren(parentElementOrTreePath);
-		ViewerFilter[] filters = getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			ViewerFilter filter = filters[i];
-			result = filter.filter(this, parentElementOrTreePath, result);
-		}
-		return result;
-	}
-
 	/**
 	 * Adds the given child element to this viewer as a child of the given
 	 * parent element. If this viewer does not have a sorter, the element is
