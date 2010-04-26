@@ -81,6 +81,19 @@ public class ProjectSnapshotTest extends ResourceTest {
 	}
 
 	/*
+	 * Trying to save a null Snapshot throws CoreException.
+	 */
+	public void testSaveNullSnapshot() throws Throwable {
+		boolean exceptionThrown = false;
+		try {
+			projects[0].saveSnapshot(IProject.SNAPSHOT_TREE, null, null);
+		} catch (CoreException ce) {
+			exceptionThrown = true;
+		}
+		assertTrue("1.0", exceptionThrown);
+	}
+
+	/*
 	 * Create project and populate with resources. Save snapshot.
 	 * Delete project (also delete resources on disk). Import project
 	 * with snapshot. All resources must be marked as "exists" in the
@@ -343,7 +356,10 @@ public class ProjectSnapshotTest extends ResourceTest {
 		long stamp = projectFile.getModificationStamp();
 
 		// set empty snapshot while already empty -> no change of .project file
-		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		//project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		ProjectDescription desc = (ProjectDescription) project.getDescription();
+		desc.setSnapshotLocationURI(null);
+		project.setDescription(desc, null);
 		assertEquals("1.0", stamp, projectFile.getModificationStamp());
 
 		// set or reset a snapshot -> .project file changed, unless setting to same existing URI 
@@ -353,7 +369,11 @@ public class ProjectSnapshotTest extends ResourceTest {
 		assertFalse("2.1", stamp == stamp2);
 		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, tempURI, null);
 		assertEquals("2.2", stamp2, projectFile.getModificationStamp());
-		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+
+		//project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		desc = (ProjectDescription) project.getDescription();
+		desc.setSnapshotLocationURI(null);
+		project.setDescription(desc, null);
 		assertNull("3.0", ((ProjectDescription) project.getDescription()).getSnapshotLocationURI());
 		assertFalse("3.1", stamp2 == projectFile.getModificationStamp());
 
@@ -361,7 +381,7 @@ public class ProjectSnapshotTest extends ResourceTest {
 		project.close(null);
 		boolean exceptionThrown = false;
 		try {
-			project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+			project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, tempURI, null);
 		} catch (CoreException e) {
 			exceptionThrown = true;
 		}

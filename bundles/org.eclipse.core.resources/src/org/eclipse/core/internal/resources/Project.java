@@ -1128,9 +1128,12 @@ public class Project extends Container implements IProject {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+			//Project must be open such that variables can be resolved
+			checkAccessible(getFlags(getResourceInfo(false, false)));
+			//URI must not be null and must not refer to undefined path variables
 			URI resolvedSnapshotLocation = getPathVariableManager().resolveURI(snapshotLocation);
-			if (resolvedSnapshotLocation!=null && !resolvedSnapshotLocation.isAbsolute()) {
-				String message = NLS.bind(Messages.projRead_badSnapshotLocation, resolvedSnapshotLocation.toString());
+			if (resolvedSnapshotLocation==null || !resolvedSnapshotLocation.isAbsolute()) {
+				String message = NLS.bind(Messages.projRead_badSnapshotLocation, resolvedSnapshotLocation);
 				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, message, null));
 			}
 			if ((options & SNAPSHOT_TREE) != 0) {
