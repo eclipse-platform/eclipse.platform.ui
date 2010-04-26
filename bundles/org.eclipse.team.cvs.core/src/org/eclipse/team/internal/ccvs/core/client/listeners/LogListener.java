@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,9 +163,10 @@ public class LogListener extends CommandOutputListener {
     			// get the author name
     			int endOfAuthorIndex = line.indexOf(';', endOfDateIndex + 1);
     			author = internAndCopyString(line.substring(endOfDateIndex + 11, endOfAuthorIndex));
-    
+
     			// get the file state (because this revision might be "dead")
-    			fileState = internAndCopyString(line.substring(endOfAuthorIndex + 10, line.indexOf(';', endOfAuthorIndex + 1)));
+    			int endOfStateIndex = line.indexOf(';', endOfAuthorIndex + 1) < 0 ? line.length() : line.indexOf(';', endOfAuthorIndex + 1);
+    			fileState = internAndCopyString(line.substring(endOfAuthorIndex + 10, endOfStateIndex));
     			comment = new StringBuffer();
     			state = COMMENT;
     			break;
