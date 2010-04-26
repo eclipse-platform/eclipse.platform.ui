@@ -22,6 +22,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
@@ -194,6 +195,7 @@ public abstract class CompatibilityPart {
 		eventBroker.unsubscribe(widgetSetHandler);
 	}
 
+	@Persist
 	void doSave(@Optional IProgressMonitor monitor) {
 		monitor = SubMonitor.convert(monitor);
 		if (wrapped instanceof ISaveablePart) {
