@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.di.annotations.Execute;
 
 public class InvokeTest extends TestCase {
 
@@ -22,7 +23,8 @@ public class InvokeTest extends TestCase {
 	 */
 	static class TestSuperclass {
 		public int saveCount = 0;
-		void doSave() {
+		@Execute
+		void something() {
 			saveCount++;
 		}
 	}
@@ -38,7 +40,7 @@ public class InvokeTest extends TestCase {
 	 */
 	public void testSuperclassMethods() {
 		TestSubclass editor = new TestSubclass();
-		ContextInjectionFactory.invoke(editor, "doSave", EclipseContextFactory
+		ContextInjectionFactory.invoke(editor, Execute.class, EclipseContextFactory
 				.create());
 		assertEquals(1, editor.saveCount);
 	}

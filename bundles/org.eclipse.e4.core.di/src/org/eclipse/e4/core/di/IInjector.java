@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import java.lang.annotation.Annotation;
+
 /**
  * Describes externally-visible injector functionality.
  * <p>
@@ -38,22 +40,22 @@ public interface IInjector {
 
 	/**
 	 * @param object
-	 * @param methodName
+	 * @param qualifier
 	 * @param objectSupplier
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param object
-	 * @param methodName
+	 * @param qualifier
 	 * @param defaultValue
 	 * @param objectSupplier
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param clazz

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
+import java.lang.annotation.Annotation;
 import javax.inject.Scope;
 import javax.inject.Singleton;
 import org.eclipse.e4.core.di.AbstractObjectSupplier;
@@ -77,29 +78,29 @@ final public class ContextInjectionFactory {
 	 * Call a method, injecting the parameters from the context.
 	 * 
 	 * @param object The object to perform injection on
-	 * @param methodName The method to call
+	 * @param qualifier the annotation tagging method to be called
 	 * @param context The context to obtain injected values from
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context) throws InjectionException {
+	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
-		return injector.invoke(object, methodName, supplier);
+		return injector.invoke(object, qualifier, supplier);
 	}
 
 	/**
 	 * Call a method, injecting the parameters from the context.
 	 * 
 	 * @param object The object to perform injection on
-	 * @param methodName The method to call
+	 * @param qualifier the annotation tagging method to be called
 	 * @param context The context to obtain injected values from
 	 * @param defaultValue A value to be returned if the method cannot be called, might be <code>null</code>
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, String methodName, IEclipseContext context, Object defaultValue) throws InjectionException {
+	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context, Object defaultValue) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
-		return injector.invoke(object, methodName, defaultValue, supplier);
+		return injector.invoke(object, qualifier, defaultValue, supplier);
 	}
 
 	/**

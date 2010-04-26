@@ -140,22 +140,22 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
-	public Object invoke(Object object, String methodName, AbstractObjectSupplier objectSupplier) {
-		Object result = invokeUsingClass(object, object.getClass(), methodName, IInjector.NOT_A_VALUE, objectSupplier);
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, AbstractObjectSupplier objectSupplier) {
+		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier);
 		if (result == IInjector.NOT_A_VALUE)
 			throw new InjectionException("Unable to find matching method to invoke"); //$NON-NLS-1$
 		return result;
 	}
 
-	public Object invoke(Object object, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) {
-		return invokeUsingClass(object, object.getClass(), methodName, defaultValue, objectSupplier);
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) {
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier);
 	}
 
-	private Object invokeUsingClass(Object userObject, Class<?> currentClass, String methodName, Object defaultValue, AbstractObjectSupplier objectSupplier) {
+	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) {
 		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
-			if (!method.getName().equals(methodName))
+			if (method.getAnnotation(qualifier) == null)
 				continue;
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, true);
 
@@ -170,7 +170,7 @@ public class InjectorImpl implements IInjector {
 		if (superClass == null)
 			return defaultValue;
 
-		return invokeUsingClass(userObject, superClass, methodName, defaultValue, objectSupplier);
+		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier);
 	}
 
 	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) {

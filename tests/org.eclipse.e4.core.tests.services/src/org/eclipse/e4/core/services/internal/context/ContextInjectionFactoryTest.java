@@ -11,13 +11,12 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
-import java.lang.reflect.InvocationTargetException;
-import junit.framework.TestCase;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 
 public class ContextInjectionFactoryTest extends TestCase {
 
@@ -27,10 +26,12 @@ public class ContextInjectionFactoryTest extends TestCase {
 
 		private int executedWithParams = 0;
 
+		@Execute
 		public void execute() {
 			executed++;
 		}
 
+		@CanExecute
 		public void executeWithParams(String string) {
 			executedWithParams++;
 		}
@@ -64,7 +65,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 	}
 
 	public void testInvoke() throws Exception {
-		ContextInjectionFactory.invoke(testObject, "execute", context, null);
+		ContextInjectionFactory.invoke(testObject, Execute.class, context, null);
 
 		assertEquals(1, testObject.getExecuted());
 		assertEquals(0, testObject.getExecutedWithParams());
@@ -73,7 +74,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 	public void testInvokeWithParameters() throws Exception {
 		context.set(String.class.getName(), "");
 
-		ContextInjectionFactory.invoke(testObject, "executeWithParams", context, null);
+		ContextInjectionFactory.invoke(testObject, CanExecute.class, context, null);
 
 		assertEquals(0, testObject.getExecuted());
 		assertEquals(1, testObject.getExecutedWithParams());
@@ -82,8 +83,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 	/**
 	 * If no other constructors are available, the default constructor should be used
 	 */
-	public void testConstructorInjectionBasic() throws InvocationTargetException,
-			InstantiationException {
+	public void testConstructorInjectionBasic() {
 		IEclipseContext context = EclipseContextFactory.create();
 		// add an extra argument for the inner class constructors
 		context.set(ContextInjectionFactoryTest.class.getName(), this);
