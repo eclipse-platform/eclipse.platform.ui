@@ -190,8 +190,11 @@ public class CommonWizardDescriptorManager {
 			if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
 				IConfigurationElement[] commonWizards = anElement.getChildren(TAG_COMMON_WIZARD);
 				final String contentExtensionId = anElement.getAttribute(ATT_ID);
+				// In case there are none
+				retValue[0] = true;
 				for (int i = 0; i < commonWizards.length; i++) {
 					final IConfigurationElement element = commonWizards[i];
+					// Assume it did not work
 					retValue[0] = false;
 					SafeRunner.run(new NavigatorSafeRunnable(element) {
 						public void run() throws Exception {
