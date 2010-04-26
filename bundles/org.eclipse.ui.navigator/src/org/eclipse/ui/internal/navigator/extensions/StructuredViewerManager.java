@@ -212,11 +212,8 @@ public class StructuredViewerManager {
 						localViewer.getControl().setRedraw(false);
 						localViewer.refresh();
 					}
-					public void handleException(Throwable e) {
-						super.handleException(e);
-						localViewer.getControl().setRedraw(true);
-					}
 				});
+				localViewer.getControl().setRedraw(true);
 			}
 		});
 
