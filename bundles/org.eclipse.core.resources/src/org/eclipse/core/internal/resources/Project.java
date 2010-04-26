@@ -43,11 +43,6 @@ public class Project extends Container implements IProject {
 	 */
 	public static final int SNAPSHOT_SET_AUTOLOAD = 2;
 	
-	/**
-	 * Force loading project snapshot even when project is open
-	 */
-	private static final int SNAPSHOT_FORCE_LOAD = 2;
-
 	protected Project(IPath path, Workspace container) {
 		super(path, container);
 	}
@@ -851,13 +846,25 @@ public class Project extends Container implements IProject {
 	 */
 	public void loadSnapshot(int options, URI snapshotLocation,
 			IProgressMonitor monitor) throws CoreException {
+		// load a snapshot of refresh information when project is opened
+		if (isOpen()) {
+			String message = Messages.resources_projectMustNotBeOpen;
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+			throw new CoreException(status);
+		}
+		internalLoadSnapshot(options, snapshotLocation, monitor);
+	}
+	
+	/**
+	 * Loads a snapshot of project meta-data from the given location URI.
+	 * Like {@link IProject#loadSnapshot(int, URI, IProgressMonitor)} but can be
+	 * called when the project is open.
+	 * 
+	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor) 
+	 */
+	public void internalLoadSnapshot(int options, URI snapshotLocation,
+			IProgressMonitor monitor) throws CoreException {
 		if ((options & SNAPSHOT_TREE) != 0) {
-			// load a snapshot of refresh information when project is opened
-			if (isOpen() && ((options & SNAPSHOT_FORCE_LOAD)==0)) {
-				String message = Messages.resources_projectMustNotBeOpen;
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-				throw new CoreException(status);
-			}
 			// ensure that path variables are resolved: only ws accessible while project is closed
 			snapshotLocation = workspace.getPathVariableManager().resolveURI(snapshotLocation);
 			if (!snapshotLocation.isAbsolute()) {
@@ -970,7 +977,7 @@ public class Project extends Container implements IProject {
 							if (autoloadURI != null) {
 								try {
 									autoloadURI = getPathVariableManager().resolveURI(autoloadURI);
-									loadSnapshot(SNAPSHOT_TREE | SNAPSHOT_FORCE_LOAD, autoloadURI, 
+									internalLoadSnapshot(SNAPSHOT_TREE, autoloadURI, 
 											Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 									snapshotLoaded = true;
 								} catch(CoreException ce) {
