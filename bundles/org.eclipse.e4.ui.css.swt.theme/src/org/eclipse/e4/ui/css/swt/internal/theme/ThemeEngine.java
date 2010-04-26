@@ -50,7 +50,7 @@ public class ThemeEngine implements IThemeEngine {
 	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<String, List<IResourceLocator>>();
 
 	public ThemeEngine(Display display) {
-		this.engine = new CSSSWTEngineImpl(display);
+		this.engine = new CSSSWTEngineImpl(display, true);
 		this.display = display;
 		this.engine.setErrorHandler(new CSSErrorHandler() {
 

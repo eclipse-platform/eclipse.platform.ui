@@ -39,6 +39,9 @@ public class CSSStylingSupport {
 		IThemeManager mgr = (IThemeManager) context.getService(ref);
 		final IThemeEngine engine = mgr.getEngineForDisplay(display);
 
+		// Store the app context
+		display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
+
 		// Create the OSGi resource locator
 		if (resourceURI != null) {
 			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
