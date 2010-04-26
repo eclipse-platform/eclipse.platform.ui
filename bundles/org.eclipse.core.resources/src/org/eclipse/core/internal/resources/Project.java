@@ -1147,8 +1147,8 @@ public class Project extends Container implements IProject {
 			if ((options & SNAPSHOT_SET_AUTOLOAD) != 0) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2);
 				//Make absolute URI inside the project relative
-				if (snapshotLocation.isAbsolute()) {
-					snapshotLocation = getPathVariableManager().convertToRelative(snapshotLocation, false, null);
+				if (snapshotLocation!=null && snapshotLocation.isAbsolute()) {
+					snapshotLocation = getPathVariableManager().convertToRelative(snapshotLocation, false, "PROJECT_LOC"); //$NON-NLS-1$
 				}
 				IProjectDescription desc= getDescription();
 				((ProjectDescription)desc).setSnapshotLocationURI(snapshotLocation);

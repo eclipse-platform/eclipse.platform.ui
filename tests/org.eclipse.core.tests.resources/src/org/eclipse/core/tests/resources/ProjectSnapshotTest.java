@@ -336,4 +336,36 @@ public class ProjectSnapshotTest extends ResourceTest {
 		assertTrue("1.4", subfile.exists());
 	}
 
+	public void testResetAutoLoadSnapshot() throws Throwable {
+		IProject project = projects[0];
+		URI tempURI = getTempStore().toURI();
+		IFile projectFile = project.getFile(".project");
+		long stamp = projectFile.getModificationStamp();
+
+		// set empty snapshot while already empty -> no change of .project file
+		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		assertEquals("1.0", stamp, projectFile.getModificationStamp());
+
+		// set or reset a snapshot -> .project file changed, unless setting to same existing URI 
+		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, tempURI, null);
+		assertEquals("2.0", tempURI, ((ProjectDescription) project.getDescription()).getSnapshotLocationURI());
+		long stamp2 = projectFile.getModificationStamp();
+		assertFalse("2.1", stamp == stamp2);
+		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, tempURI, null);
+		assertEquals("2.2", stamp2, projectFile.getModificationStamp());
+		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		assertNull("3.0", ((ProjectDescription) project.getDescription()).getSnapshotLocationURI());
+		assertFalse("3.1", stamp2 == projectFile.getModificationStamp());
+
+		// setting snapshot while project is closed is forbidden
+		project.close(null);
+		boolean exceptionThrown = false;
+		try {
+			project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, null, null);
+		} catch (CoreException e) {
+			exceptionThrown = true;
+		}
+		assertTrue("4.0", exceptionThrown);
+	}
+
 }
