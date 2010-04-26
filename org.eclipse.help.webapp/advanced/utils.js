@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,7 +159,13 @@ function getCookie(name) {
 function setCookie(name, value) {
 	var date = new Date();
 	date.setTime(date.getTime()+(365*24*60*60*1000));
-	document.cookie = name + "=" + value + "; expires=" + date.toGMTString() + ";path=/";
+	var path = window.location.pathname;
+	var cookiePath = "/help/";
+	var slash = path.indexOf('/', 1);
+	if(slash > 0) {
+	   cookiePath = path.substr(0, slash + 1); 
+	}			
+	document.cookie = name + "=" + value + "; expires=" + date.toGMTString() + ";path=" + cookiePath;
 }
 
 function setCSSRule(selector, property, value) {
