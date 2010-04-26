@@ -18,13 +18,13 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 
 /**
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
-	static final String METHOD_EXECUTE = "execute"; //$NON-NLS-1$
-	static final String METHOD_CAN_EXECUTE = "canExecute"; //$NON-NLS-1$
 	final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
 	final static String HANDLER_LOOKUP = "org.eclipse.e4.core.commands.EHandlerLookup"; //$NON-NLS-1$
@@ -78,7 +78,7 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 		addParmsToContext(command);
-		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE,
+		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
 				context, Boolean.TRUE));
 		return result.booleanValue();
 	}
@@ -107,11 +107,11 @@ public class HandlerServiceImpl implements EHandlerService {
 		}
 		addParmsToContext(command);
 
-		Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
-				Boolean.TRUE);
+		Object rc = ContextInjectionFactory
+				.invoke(handler, CanExecute.class, context, Boolean.TRUE);
 		if (Boolean.FALSE.equals(rc))
 			return null;
-		return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
+		return ContextInjectionFactory.invoke(handler, Execute.class, context, null);
 	}
 
 	@Inject

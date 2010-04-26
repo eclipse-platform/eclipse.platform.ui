@@ -20,6 +20,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -30,9 +31,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.e4.workbench.modeling.ISelectionListener;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
@@ -579,6 +580,7 @@ public class ESelectionServiceTest extends TestCase {
 	static class UseSelectionHandler {
 		public Object selection;
 
+		@Execute
 		public void execute(
 				@Optional @Named(ESelectionService.SELECTION) Object s) {
 			selection = s;
@@ -642,40 +644,46 @@ public class ESelectionServiceTest extends TestCase {
 		UseSelectionHandler handler = new UseSelectionHandler();
 		assertNull(handler.selection);
 
-		ContextInjectionFactory.invoke(handler, "execute", applicationContext,
+		ContextInjectionFactory.invoke(handler, Execute.class,
+				applicationContext, null);
+		assertEquals(selection, handler.selection);
+		handler.selection = null;
+
+		ContextInjectionFactory.invoke(handler, Execute.class, windowContext,
 				null);
 		assertEquals(selection, handler.selection);
 		handler.selection = null;
 
-		ContextInjectionFactory.invoke(handler, "execute", windowContext, null);
+		ContextInjectionFactory.invoke(handler, Execute.class, partContextA,
+				null);
 		assertEquals(selection, handler.selection);
 		handler.selection = null;
 
-		ContextInjectionFactory.invoke(handler, "execute", partContextA, null);
-		assertEquals(selection, handler.selection);
-		handler.selection = null;
-
-		ContextInjectionFactory.invoke(handler, "execute", partContextB, null);
+		ContextInjectionFactory.invoke(handler, Execute.class, partContextB,
+				null);
 		assertNull(handler.selection);
 
 		EPartService partService = (EPartService) windowContext
 				.get(EPartService.class.getName());
 		partService.activate(partB);
 
-		ContextInjectionFactory.invoke(handler, "execute", applicationContext,
+		ContextInjectionFactory.invoke(handler, Execute.class,
+				applicationContext, null);
+		assertNull(handler.selection);
+		handler.selection = null;
+
+		ContextInjectionFactory.invoke(handler, Execute.class, windowContext,
 				null);
 		assertNull(handler.selection);
 		handler.selection = null;
 
-		ContextInjectionFactory.invoke(handler, "execute", windowContext, null);
-		assertNull(handler.selection);
-		handler.selection = null;
-
-		ContextInjectionFactory.invoke(handler, "execute", partContextA, null);
+		ContextInjectionFactory.invoke(handler, Execute.class, partContextA,
+				null);
 		assertEquals(selection, handler.selection);
 		handler.selection = null;
 
-		ContextInjectionFactory.invoke(handler, "execute", partContextB, null);
+		ContextInjectionFactory.invoke(handler, Execute.class, partContextB,
+				null);
 		assertNull(handler.selection);
 	}
 

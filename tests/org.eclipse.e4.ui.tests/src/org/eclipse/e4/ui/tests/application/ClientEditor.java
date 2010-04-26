@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests.application;
 import javax.inject.Inject;
 
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.workbench.ui.Persist;
 
 public class ClientEditor {
 
@@ -28,6 +29,7 @@ public class ClientEditor {
 		this.throwException = throwException;
 	}
 
+	@Persist
 	void doSave() {
 		saveCalled = true;
 		if (throwException) {

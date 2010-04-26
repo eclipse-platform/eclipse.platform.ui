@@ -13,6 +13,7 @@ package org.eclipse.e4.workbench;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MContribution;
 
@@ -57,7 +58,7 @@ public class ContributionUtils {
 			MContribution contrib, IEclipseContext context) {
 		context.set(MContribution.class.getName(), contrib);
 		Object implementation = getInstance(factory, contrib, context);
-		ContextInjectionFactory.invoke(implementation, "execute", context); //$NON-NLS-1$
+		ContextInjectionFactory.invoke(implementation, Execute.class, context);
 		context.remove(MContribution.class.getName());
 	}
 

@@ -47,6 +47,7 @@ import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -577,7 +578,7 @@ public class PartServiceImpl implements EPartService {
 
 		Object client = part.getObject();
 		try {
-			ContextInjectionFactory.invoke(client, "doSave", part.getContext()); //$NON-NLS-1$
+			ContextInjectionFactory.invoke(client, Persist.class, part.getContext());
 		} catch (InjectionException e) {
 			Throwable throwable = e.getCause();
 			if (throwable == null) {

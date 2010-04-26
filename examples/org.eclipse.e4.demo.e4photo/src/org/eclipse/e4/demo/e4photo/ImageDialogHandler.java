@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.core.di.annotations.Execute;
+
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -128,6 +130,7 @@ public class ImageDialogHandler {
 		}
 	}
 	
+	@Execute
 	public void execute(Shell shell, MApplication app, IPresentationEngine renderer) {
 		ImageDialog dlg = new ImageDialog(shell, app, renderer);
 		dlg.open();

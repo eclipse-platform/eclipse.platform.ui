@@ -13,6 +13,7 @@ package org.eclipse.e4.demo.e4photo;
 import javax.inject.Named;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -26,6 +27,7 @@ public class AddNoteHandler {
 	// causes rendering engine to "reuse" the same part.
 	static int editors = 0;
 	
+	@Execute
 	public void execute(IWorkbench workbench, @Named(IServiceConstants.SELECTION) IResource selection, EPartService partService) {
 		System.out.println("AddNoteHandler called " + selection.toString());
 		// add an editor next to the Exif tab

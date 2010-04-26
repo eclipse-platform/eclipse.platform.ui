@@ -13,6 +13,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
@@ -48,11 +50,13 @@ public class KeyDispatcherTest extends TestCase {
 		public boolean q1;
 		public boolean q2;
 
+		@CanExecute
 		public boolean canExecute() {
 			q1 = true;
 			return true;
 		}
 
+		@Execute
 		public Object execute() {
 			q2 = true;
 			if (q1) {

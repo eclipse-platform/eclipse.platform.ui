@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -69,6 +70,7 @@ public class DetailsView {
 		return true;
 	}
 
+	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) throws IOException,
 			InterruptedException {
 		if (monitor == null) {

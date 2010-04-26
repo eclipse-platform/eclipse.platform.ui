@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.core.di.annotations.Execute;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -21,6 +23,7 @@ public class NewProjectHandler {
 
 	private int counter;
 
+	@Execute
 	public void execute(IWorkspace workspace, IProgressMonitor monitor) {
 
 		String projectName = "Album " + (++counter);

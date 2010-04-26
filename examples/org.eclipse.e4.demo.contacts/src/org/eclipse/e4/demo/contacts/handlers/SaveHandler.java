@@ -19,22 +19,27 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
 public class SaveHandler {
 
+	@CanExecute
 	public boolean canExecute(EPartService partService) {
 		MPart details = partService.findPart("DetailsView");
 		return details.isDirty();
 	}
 
+	@Execute
 	public void execute(
 			IEclipseContext context, @Optional IStylingEngine engine,
 			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell,
@@ -54,7 +59,7 @@ public class SaveHandler {
 				pmContext.set(IProgressMonitor.class.getName(), monitor);
 				MPart details = partService.findPart("DetailsView");
 				Object clientObject = details.getObject();
-				ContextInjectionFactory.invoke(clientObject, "doSave", //$NON-NLS-1$
+				ContextInjectionFactory.invoke(clientObject, Persist.class,
 						pmContext, null);
 			}
 		});

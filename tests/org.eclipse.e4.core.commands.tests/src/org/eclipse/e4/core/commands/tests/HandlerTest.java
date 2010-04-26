@@ -11,6 +11,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 
 public class HandlerTest extends TestCase {
 
@@ -23,11 +25,13 @@ public class HandlerTest extends TestCase {
 		public boolean q1;
 		public boolean q2;
 
+		@CanExecute
 		public boolean canExecute() {
 			q1 = true;
 			return true;
 		}
 
+		@Execute
 		public Object execute() {
 			q2 = true;
 			if (q1) {
@@ -190,20 +194,24 @@ public class HandlerTest extends TestCase {
 	}
 
 	static class HandlerWithInfo {
+		@CanExecute
 		public boolean canExecute(Info h) {
 			return h.name.equals("Hello");
 		}
 
+		@Execute
 		public Object execute(Info h) {
 			return h.name.equals("Hello") ? h : null;
 		}
 	}
 
 	static class HandlerWithAnnotations {
+		@CanExecute
 		public boolean canExecute(@Named(ACTIVE_INFO_ID) Info h) {
 			return h.name.equals("Hello");
 		}
 
+		@Execute
 		public Object execute(@Named(ACTIVE_INFO_ID) Info h) {
 			return h.name.equals("Hello") ? h : null;
 		}

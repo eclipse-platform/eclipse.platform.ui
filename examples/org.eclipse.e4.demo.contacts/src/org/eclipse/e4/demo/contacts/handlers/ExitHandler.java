@@ -12,9 +12,11 @@
 
 package org.eclipse.e4.demo.contacts.handlers;
 
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 
 public class ExitHandler {
+	@Execute
 	public void execute(IWorkbench workbench) {
 		workbench.close();
 	}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.workbench.ui.Persist;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -74,6 +76,7 @@ public class NoteEditor {
 		return true;
 	}
 	
+	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) {
 		writeNote(text.getText());
 		dirtyable.setDirty(false);

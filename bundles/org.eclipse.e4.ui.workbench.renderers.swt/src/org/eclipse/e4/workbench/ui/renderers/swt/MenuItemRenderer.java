@@ -19,6 +19,7 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -221,7 +222,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					}
 					lclContext.set(MItem.class.getName(), item);
 					ContextInjectionFactory.invoke(contrib.getObject(),
-							"execute", lclContext); //$NON-NLS-1$
+							Execute.class, lclContext);
 					lclContext.remove(MItem.class.getName());
 				}
 

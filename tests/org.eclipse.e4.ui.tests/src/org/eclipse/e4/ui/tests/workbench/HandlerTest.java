@@ -21,6 +21,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 
 /**
@@ -40,10 +42,12 @@ public class HandlerTest extends TestCase {
 			rc = ret;
 		}
 
+		@CanExecute
 		public boolean canExecute() {
 			return canRun;
 		}
 
+		@Execute
 		public Object execute() {
 			ran = true;
 			return rc;
