@@ -97,7 +97,7 @@ public interface IEclipseContext {
 	 * </p>
 	 * <p>
 	 * If the value associated with this name is an {@link IContextFunction}, this method will
-	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with the provided
+	 * evaluate {@link IContextFunction#compute(IEclipseContext, Object[])} with zero
 	 * arguments.
 	 * </p>
 	 * @param name the name of the value to return
