@@ -413,6 +413,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		if (linkedResourceComposite != null) {
 			linkedResourceComposite.dispose();
 			linkedResourceComposite= null;
+			copyIntoWorkspaceButton = null;
+			createVirtualFoldersButton = null;
+			relativePathVariableGroup = null;
 			composite.layout();
 			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
