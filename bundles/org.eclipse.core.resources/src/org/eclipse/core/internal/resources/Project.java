@@ -8,9 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
- * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
- * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
- * Markus Schorn (Wind River) - [306575] Save snapshot location with project
+ *     Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
+ *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -844,9 +844,8 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
 	 */
-	public void loadSnapshot(int options, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException {
-		// load a snapshot of refresh information when project is opened
+	public void loadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
+		// load a snapshot of refresh information when project is not opened
 		if (isOpen()) {
 			String message = Messages.resources_projectMustNotBeOpen;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
@@ -862,8 +861,7 @@ public class Project extends Container implements IProject {
 	 * 
 	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor) 
 	 */
-	public void internalLoadSnapshot(int options, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException {
+	private void internalLoadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		if ((options & SNAPSHOT_TREE) != 0) {
 			// ensure that path variables are resolved: only ws accessible while project is closed
 			snapshotLocation = workspace.getPathVariableManager().resolveURI(snapshotLocation);
@@ -977,10 +975,9 @@ public class Project extends Container implements IProject {
 							if (autoloadURI != null) {
 								try {
 									autoloadURI = getPathVariableManager().resolveURI(autoloadURI);
-									internalLoadSnapshot(SNAPSHOT_TREE, autoloadURI, 
-											Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+									internalLoadSnapshot(SNAPSHOT_TREE, autoloadURI, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 									snapshotLoaded = true;
-								} catch(CoreException ce) {
+								} catch (CoreException ce) {
 									//Log non-existing autoload snapshot as warning only
 									String msgerr = NLS.bind(Messages.projRead_cannotReadSnapshot, getName(), ce.getLocalizedMessage());
 									Policy.log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, msgerr));
@@ -1130,8 +1127,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor)
 	 */
-	public void saveSnapshot(int options, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException {
+	public void saveSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
@@ -1139,7 +1135,7 @@ public class Project extends Container implements IProject {
 			checkAccessible(getFlags(getResourceInfo(false, false)));
 			//URI must not be null and must not refer to undefined path variables
 			URI resolvedSnapshotLocation = getPathVariableManager().resolveURI(snapshotLocation);
-			if (resolvedSnapshotLocation==null || !resolvedSnapshotLocation.isAbsolute()) {
+			if (resolvedSnapshotLocation == null || !resolvedSnapshotLocation.isAbsolute()) {
 				String message = NLS.bind(Messages.projRead_badSnapshotLocation, resolvedSnapshotLocation);
 				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, message, null));
 			}
@@ -1147,8 +1143,7 @@ public class Project extends Container implements IProject {
 				// write a snapshot of refresh information
 				try {
 					IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2);
-					workspace.getSaveManager().saveRefreshSnapshot(
-							this, resolvedSnapshotLocation, sub);
+					workspace.getSaveManager().saveRefreshSnapshot(this, resolvedSnapshotLocation, sub);
 				} catch (OperationCanceledException e) {
 					//workspace.getWorkManager().operationCanceled();
 					throw e;
@@ -1157,11 +1152,11 @@ public class Project extends Container implements IProject {
 			if ((options & SNAPSHOT_SET_AUTOLOAD) != 0) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2);
 				//Make absolute URI inside the project relative
-				if (snapshotLocation!=null && snapshotLocation.isAbsolute()) {
+				if (snapshotLocation != null && snapshotLocation.isAbsolute()) {
 					snapshotLocation = getPathVariableManager().convertToRelative(snapshotLocation, false, "PROJECT_LOC"); //$NON-NLS-1$
 				}
-				IProjectDescription desc= getDescription();
-				((ProjectDescription)desc).setSnapshotLocationURI(snapshotLocation);
+				IProjectDescription desc = getDescription();
+				((ProjectDescription) desc).setSnapshotLocationURI(snapshotLocation);
 				setDescription(desc, IResource.KEEP_HISTORY | IResource.AVOID_NATURE_CONFIG, sub);
 			}
 		} finally {
