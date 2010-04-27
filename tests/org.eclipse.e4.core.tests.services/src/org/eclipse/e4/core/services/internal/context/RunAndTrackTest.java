@@ -11,20 +11,16 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
-import org.eclipse.e4.core.di.IDisposable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.tests.services.TestActivator;
 
 /**
@@ -61,9 +57,8 @@ public class RunAndTrackTest extends TestCase {
 	private List createdContexts = new ArrayList();
 
 	private IEclipseContext createContext(IEclipseContext parentContext, String level) {
-		IEclipseContext childContext = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext childContext = parentContext.createChild(level);
 		createdContexts.add(childContext);
-		childContext.set(IContextConstants.DEBUG_STRING, level);
 		return childContext;
 	}
 

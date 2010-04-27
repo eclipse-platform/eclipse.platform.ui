@@ -74,7 +74,7 @@ public class DisposeClassLinkTest extends TestCase {
 
 	public void testDisposeParent() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
@@ -86,7 +86,7 @@ public class DisposeClassLinkTest extends TestCase {
 
 	public void testInject() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 		Test test = new Test();
 		ContextInjectionFactory.inject(test, context);
 
@@ -97,7 +97,7 @@ public class DisposeClassLinkTest extends TestCase {
 
 	public void testDisposeParentFirst() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 		Test test = new Test();
 		ContextInjectionFactory.inject(test, context);
 

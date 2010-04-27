@@ -33,7 +33,14 @@ import org.eclipse.e4.core.di.IDisposable;
  * This implementation assumes that all contexts are of the class EclipseContext. The external
  * methods of it are exposed via IEclipseContext.
  */
-public class EclipseContext implements IEclipseContext, IDisposable {
+public class EclipseContext implements IEclipseContext {
+
+	/**
+	 * A context key (value "debugString") identifying a value to use in debug statements for a
+	 * context. A computed value can be used to embed more complex information in debug statements.
+	 */
+	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
+
 	static class LookupKey {
 		Object[] arguments;
 		String name;
@@ -560,7 +567,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * Returns a string representation of this context for debugging purposes only.
 	 */
 	public String toString() {
-		Object debugString = localValues.get(IContextConstants.DEBUG_STRING);
+		Object debugString = localValues.get(DEBUG_STRING);
 		return debugString instanceof String ? ((String) debugString) : "Anonymous Context"; //$NON-NLS-1$
 	}
 
@@ -720,4 +727,13 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		declareModifiable(clazz.getName());
 	}
 
+	public IEclipseContext createChild() {
+		return new EclipseContext(this, null); // strategies are not inherited
+	}
+
+	public IEclipseContext createChild(String name) {
+		IEclipseContext result = createChild();
+		result.set(DEBUG_STRING, name);
+		return result;
+	}
 }

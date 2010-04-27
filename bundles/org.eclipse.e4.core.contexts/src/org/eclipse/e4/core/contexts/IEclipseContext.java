@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.contexts;
 
+import org.eclipse.e4.core.di.IDisposable;
+
 /**
  * A context is used to isolate application code from its dependencies on an application framework
  * or container. This helps avoid building in dependencies on a specific framework that inhibit
@@ -35,7 +37,7 @@ package org.eclipse.e4.core.contexts;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IEclipseContext {
+public interface IEclipseContext extends IDisposable {
 
 	/**
 	 * Returns whether this context or a parent has a value stored for the given name.
@@ -241,4 +243,17 @@ public interface IEclipseContext {
 	 * Process waiting updates for listeners that support batch notifications.
 	 */
 	public void processWaiting();
+
+	/**
+	 * Creates a new context using this context as a parent.
+	 * @return a new child context
+	 */
+	public IEclipseContext createChild();
+
+	/**
+	 * Creates a new named context using this context as a parent.
+	 * @param name the name to identify this context
+	 * @return a new child context
+	 */
+	public IEclipseContext createChild(String name);
 }

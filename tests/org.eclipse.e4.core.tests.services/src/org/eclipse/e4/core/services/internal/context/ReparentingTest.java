@@ -11,19 +11,15 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.contexts.IContextConstants;
-
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
 
 /**
  * Test for changing a context's parent.
@@ -46,10 +42,8 @@ public class ReparentingTest extends TestCase {
 	 * longer have the function.
 	 */
 	public void testContextFunctionInParentRemove() {
-		IEclipseContext parent = EclipseContextFactory.create();
-		parent.set(IContextConstants.DEBUG_STRING, "parent");
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
-		child.set(IContextConstants.DEBUG_STRING, "child");
+		IEclipseContext parent = EclipseContextFactory.create("parent");
+		final IEclipseContext child = parent.createChild("child");
 		parent.set("sum", new AddContextFunction());
 		parent.set("x", new Integer(3));
 		parent.set("y", new Integer(3));
@@ -69,7 +63,7 @@ public class ReparentingTest extends TestCase {
 	public void testContextFunctionInParentAdd() {
 		// setup
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		child.set("x", new Integer(1));
 		child.set("y", new Integer(1));
 		assertEquals(null, parent.get("sum"));
@@ -103,7 +97,7 @@ public class ReparentingTest extends TestCase {
 
 	public void testContextFunctionParentBecomeNull() {
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		parent.set("x", new Integer(3));
 		parent.set("y", new Integer(3));
 		child.set("sum", new AddContextFunction());
@@ -115,7 +109,7 @@ public class ReparentingTest extends TestCase {
 
 	public void testContextFunctionSwitchParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		parent.set("x", new Integer(3));
 		parent.set("y", new Integer(3));
 		child.set("sum", new AddContextFunction());
@@ -152,7 +146,7 @@ public class ReparentingTest extends TestCase {
 	public void testRunAndTrackParentBecomeNull() {
 		final String[] value = new String[1];
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
 		child.runAndTrack(new IRunAndTrack() {
 			public boolean notify(ContextChangeEvent event) {
@@ -168,7 +162,7 @@ public class ReparentingTest extends TestCase {
 	public void testRunAndTrackSwitchParent() {
 		final String[] value = new String[1];
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
 		child.runAndTrack(new IRunAndTrack() {
 			public boolean notify(ContextChangeEvent event) {
@@ -197,7 +191,7 @@ public class ReparentingTest extends TestCase {
 		newParent.set("String", "newField");
 		newParent.set(String.class.getName(), "new");
 		newParent.set(Float.class.getName(), new Float(34.5));
-		IEclipseContext child = EclipseContextFactory.create(oldParent, null);
+		IEclipseContext child = oldParent.createChild();
 
 		ObjectSuperClass object = new ObjectSuperClass();
 		ContextInjectionFactory.inject(object, child);
@@ -220,9 +214,9 @@ public class ReparentingTest extends TestCase {
 		grandpa.set(String.class.getName(), "s");
 		grandpa.set(Float.class.getName(), new Float(12.3));
 
-		IEclipseContext oldParent = EclipseContextFactory.create(grandpa, null);
-		IEclipseContext newParent = EclipseContextFactory.create(grandpa, null);
-		IEclipseContext child = EclipseContextFactory.create(oldParent, null);
+		IEclipseContext oldParent = grandpa.createChild();
+		IEclipseContext newParent = grandpa.createChild();
+		IEclipseContext child = oldParent.createChild();
 
 		ObjectSuperClass object = new ObjectSuperClass();
 		ContextInjectionFactory.inject(object, child);

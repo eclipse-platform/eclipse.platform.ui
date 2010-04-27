@@ -33,7 +33,7 @@ public class ContextDynamicTest extends TestCase {
 
 	public void testReplaceFunctionWithStaticValue() {
 		IEclipseContext parent = EclipseContextFactory.create();
-		IEclipseContext context = EclipseContextFactory.create(parent, null);
+		IEclipseContext context = parent.createChild();
 		assertNull(context.getLocal("bar"));
 		context.set("bar", "baz1");
 		context.set("bar", new IContextFunction() {
@@ -126,7 +126,7 @@ public class ContextDynamicTest extends TestCase {
 		parentContext.set(Double.class.getName(), testDouble);
 		parentContext.set(Float.class.getName(), testFloat);
 		parentContext.set(Character.class.getName(), testChar);
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);

@@ -13,7 +13,6 @@ package org.eclipse.e4.core.contexts;
 
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 import org.eclipse.e4.core.internal.contexts.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
@@ -27,29 +26,21 @@ import org.osgi.framework.BundleContext;
 public final class EclipseContextFactory {
 
 	/**
-	 * Creates and returns a new empty context with no parent, using the default context strategy.
-	 * 
-	 * @return A new empty context with no parent context.
+	 * Creates and returns a new empty context.
+	 * @return A new empty context.
 	 */
 	static public IEclipseContext create() {
-		return create(null, null);
+		return new EclipseContext(null, null);
 	}
 
 	/**
-	 * Creates and returns a new empty context with the given parent and strategy.
-	 * 
-	 * @param parent
-	 *            The context parent to delegate lookup of values not defined in the returned
-	 *            context.
-	 * @param strategy
-	 *            The context strategy to use in this context. Pass <code>null</code>
-	 *            to indicate that default strategy should be used. 
-	 * @return A new empty context with the given parent and strategy
+	 * Creates and returns a new empty context.
+	 * @return A new empty context.
 	 */
-	static public IEclipseContext create(IEclipseContext parent, IEclipseContextStrategy strategy) {
-		EclipseContext eclipseContext = new EclipseContext(parent, strategy);
-		eclipseContext.set(IEclipseContext.class.getName(), eclipseContext);
-		return eclipseContext;
+	static public IEclipseContext create(String name) {
+		IEclipseContext result = create();
+		result.set(EclipseContext.DEBUG_STRING, name);
+		return result;
 	}
 
 	private static WeakHashMap<BundleContext, IEclipseContext> serviceContexts = new WeakHashMap<BundleContext, IEclipseContext>();
@@ -66,8 +57,8 @@ public final class EclipseContextFactory {
 		synchronized (serviceContexts) {
 			IEclipseContext result = serviceContexts.get(bundleContext);
 			if (result == null) {
-				result = create(null, new OSGiContextStrategy(bundleContext));
-				result.set(IContextConstants.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+				result = new EclipseContext(null, new OSGiContextStrategy(bundleContext));
+				result.set(EclipseContext.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
 				serviceContexts.put(bundleContext, result);
 			}
 			return result;

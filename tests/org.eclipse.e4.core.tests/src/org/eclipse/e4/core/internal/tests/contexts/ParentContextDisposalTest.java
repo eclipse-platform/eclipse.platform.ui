@@ -44,7 +44,7 @@ public class ParentContextDisposalTest extends TestCase {
 
 	public void testParentContextDisposal() {
 		IEclipseContext context = EclipseContextFactory.create();
-		IEclipseContext child = EclipseContextFactory.create(context, null);
+		IEclipseContext child = context.createChild();
 		child.set("o", new Object());
 
 		Target target = (Target) ContextInjectionFactory.make(Target.class, child);

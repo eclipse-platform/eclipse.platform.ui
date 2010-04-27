@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
-
 /**
  * This class contains various constants used by the context API.
  * 
@@ -18,20 +17,6 @@ package org.eclipse.e4.core.contexts;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IContextConstants {
-	/**
-	 * Default prefix for the fields and methods to be injected (value "inject__").
-	 * <p>
-	 * For example, if the context has an object under the name "log", the object will be injected
-	 * into the field named "inject__log".
-	 * </p>
-	 */
-	public static final String INJECTION_PREFIX = "inject__"; //$NON-NLS-1$
-
-	/**
-	 * A context key (value "debugString") identifying a value to use in debug statements for a
-	 * context. A computed value can be used to embed more complex information in debug statements.
-	 */
-	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
 
 	/**
 	 * A context key (value "parentContext") identifying the parent context, which can be retrieved

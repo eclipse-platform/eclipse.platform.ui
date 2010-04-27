@@ -164,7 +164,7 @@ public class ContextInjectionTest extends TestCase {
 		parentContext.set(String.class.getName(), testString);
 
 		// create child context
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 		context.set(Double.class.getName(), testDouble);
 		context.set(Float.class.getName(), testFloat);
 		context.set(Character.class.getName(), testChar);

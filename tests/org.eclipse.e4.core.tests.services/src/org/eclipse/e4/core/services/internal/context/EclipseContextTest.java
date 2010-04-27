@@ -14,7 +14,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
@@ -51,10 +50,8 @@ public class EclipseContextTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.parentContext = EclipseContextFactory.create();
-		this.parentContext.set(IContextConstants.DEBUG_STRING, getName() + "-parent");
-		this.context = EclipseContextFactory.create(parentContext, null);
-		context.set(IContextConstants.DEBUG_STRING, getName());
+		parentContext = EclipseContextFactory.create(getName() + "-parent");
+		context = parentContext.createChild(getName());
 		runCounter = 0;
 	}
 
@@ -78,8 +75,7 @@ public class EclipseContextTest extends TestCase {
 	public void testContainsKeyLocal() {
 		EclipseContext contextGlobal = (EclipseContext) EclipseContextFactory.create();
 		contextGlobal.set("global", new Object());
-		EclipseContext contextLocal = (EclipseContext) EclipseContextFactory.create(contextGlobal,
-				null);
+		EclipseContext contextLocal = (EclipseContext) contextGlobal.createChild();
 		contextLocal.set("local", new Object());
 
 		assertTrue("1.0", contextLocal.containsKey("local", true));
@@ -147,7 +143,7 @@ public class EclipseContextTest extends TestCase {
 	 */
 	public void testContextFunctionInParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		final IEclipseContext child = parent.createChild();
 		parent.set("sum", new AddContextFunction());
 		parent.set("x", new Integer(3));
 		parent.set("y", new Integer(3));
@@ -261,12 +257,10 @@ public class EclipseContextTest extends TestCase {
 	}
 
 	public void testRunAndTrackMultipleValues() {
-		IEclipseContext parent = EclipseContextFactory.create();
-		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
+		final IEclipseContext child = parent.createChild("ChildContext");
 		parent.set("parentValue", "x");
-		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
 		child.set("childValue", "x");
-		child.set(IContextConstants.DEBUG_STRING, "ChildContext");
 		IRunAndTrack runnable = new IRunAndTrack() {
 			public boolean notify(ContextChangeEvent event) {
 				runCounter++;
@@ -298,8 +292,8 @@ public class EclipseContextTest extends TestCase {
 
 	public void testModify() {
 		IEclipseContext grandParent = EclipseContextFactory.create();
-		IEclipseContext parent = EclipseContextFactory.create(grandParent, null);
-		EclipseContext child = (EclipseContext) EclipseContextFactory.create(parent, null);
+		IEclipseContext parent = grandParent.createChild();
+		EclipseContext child = (EclipseContext) parent.createChild();
 
 		child.set("a", "a1");
 		parent.set("b", "b2");
@@ -378,13 +372,11 @@ public class EclipseContextTest extends TestCase {
 	}
 
 	public void testRemoveValueComputationOnDispose() {
-		IEclipseContext parent = EclipseContextFactory.create();
-		IEclipseContext child = EclipseContextFactory.create(parent, null);
+		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
+		IEclipseContext child = parent.createChild("ChildContext");
 		parent.set("x", new Integer(1));
 		parent.set("y", new Integer(1));
 		parent.set("sum", new AddContextFunction());
-		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
-		child.set(IContextConstants.DEBUG_STRING, "ChildContext");
 
 		child.get("sum");
 		assertEquals(1, TestHelper.getListeners(parent).size());

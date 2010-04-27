@@ -11,17 +11,6 @@
 
 package org.eclipse.e4.core.tests.performance;
 
-import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
-
-import org.eclipse.e4.core.internal.contexts.osgi.OSGiContextStrategy;
-
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -29,6 +18,11 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.tests.services.TestActivator;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -58,11 +52,8 @@ public class ContextPerformanceTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.parentContext = EclipseContextFactory.create(null, new OSGiContextStrategy(
-				TestActivator.bundleContext));
-		this.parentContext.set(IContextConstants.DEBUG_STRING, getName() + "-parent");
-		this.context = EclipseContextFactory.create(parentContext, null);
-		context.set(IContextConstants.DEBUG_STRING, getName());
+		parentContext = EclipseContextFactory.getServiceContext(TestActivator.bundleContext);
+		context = parentContext.createChild(getName());
 
 		// add some values to the contexts
 		for (int i = 0; i < 100; i++) {

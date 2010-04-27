@@ -55,7 +55,7 @@ public class ComplexDisposalTest extends TestCase {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		parentContext.set(Test.class.getName(), new TestFunction());
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 
 		Test test = (Test) context.get(Test.class.getName());
 
@@ -69,7 +69,7 @@ public class ComplexDisposalTest extends TestCase {
 	public void testV() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
 
@@ -83,7 +83,7 @@ public class ComplexDisposalTest extends TestCase {
 	public void testW() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		IEclipseContext context = parentContext.createChild();
 
 		Test test = new Test();
 		ContextInjectionFactory.inject(test, context);
