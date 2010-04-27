@@ -29,7 +29,7 @@ public class SnippetSetup  {
 		Assert.isNotNull(osgiContext);
 
 		// Now create a child context that represents Eclipse/e4 services
-		context = EclipseContextFactory.create(osgiContext, null);
+		context = osgiContext.createChild();
 		Assert.isNotNull(context);
 		
 		// Set up the e4 services into the context
