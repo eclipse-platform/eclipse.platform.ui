@@ -292,13 +292,25 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
         createContainerStructureButton.setSelection(false);
 
+        createContainerStructureButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		updateWidgetEnablements();
+        	}
+        });
+
         // create selection only radio
         createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
         createOnlySelectedButton.setFont(optionsGroup.getFont());
         createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
         createOnlySelectedButton.setSelection(true);
 
-		linkedResourceParent= optionsGroup;
+        createOnlySelectedButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		updateWidgetEnablements();
+        	}
+        });
+
+        linkedResourceParent= optionsGroup;
 		advancedButton= new Button(optionsGroup, SWT.PUSH);
 		advancedButton.setFont(optionsGroup.getFont());
 		advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
