@@ -816,8 +816,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         
         boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() &&
         											createOnlySelectedButton.getSelection() &&
-        											(copyIntoWorkspaceButton.getSelection() == false) &&
-        											(createVirtualFoldersButton.getSelection() == false);
+        											(copyIntoWorkspaceButton != null && copyIntoWorkspaceButton.getSelection() == false) &&
+        											(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
 		
         if (shouldImportTopLevelFoldersRecursively)
             operation = new ImportOperation(getContainerFullPath(),
@@ -856,7 +856,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 .getSelection());
         op.setOverwriteResources(overwriteExistingResourcesCheckbox
                 .getSelection());
-        if (copyIntoWorkspaceButton.getSelection() == false) {
+        if (copyIntoWorkspaceButton != null && copyIntoWorkspaceButton.getSelection() == false) {
         	op.setCreateLinks(true);
 	        op.setVirtualFolders(createVirtualFoldersButton
 	                .getSelection());
@@ -937,21 +937,23 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             createContainerStructureButton.setSelection(createStructure);
             createOnlySelectedButton.setSelection(!createStructure);
 
-            boolean createVirtualFolders = settings
-            		.getBoolean(STORE_CREATE_VIRTUAL_FOLDERS_ID);
-            createVirtualFoldersButton.setSelection(createVirtualFolders);
-
-            boolean createLinkedResources = settings
-    				.getBoolean(STORE_COPY_INTO_WORKSPACE_ID);
-            copyIntoWorkspaceButton.setSelection(createLinkedResources);
-
-            boolean pathVariableSelected = settings
-					.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
-            relativePathVariableGroup.setSelection(pathVariableSelected);
-
-            pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
-            if (pathVariable != null)
-            	relativePathVariableGroup.selectVariable(pathVariable);
+            if (createVirtualFoldersButton != null) {
+	            boolean createVirtualFolders = settings
+	            		.getBoolean(STORE_CREATE_VIRTUAL_FOLDERS_ID);
+	            createVirtualFoldersButton.setSelection(createVirtualFolders);
+	
+	            boolean createLinkedResources = settings
+	    				.getBoolean(STORE_COPY_INTO_WORKSPACE_ID);
+	            copyIntoWorkspaceButton.setSelection(createLinkedResources);
+	
+	            boolean pathVariableSelected = settings
+						.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
+	            relativePathVariableGroup.setSelection(pathVariableSelected);
+	
+	            pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
+	            if (pathVariable != null)
+	            	relativePathVariableGroup.selectVariable(pathVariable);
+            }
         	updateWidgetEnablements();
         }
     }
@@ -979,17 +981,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             settings.put(STORE_CREATE_CONTAINER_STRUCTURE_ID,
                     createContainerStructureButton.getSelection());
 
-            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
-            		createVirtualFoldersButton.getSelection());
-
-            settings.put(STORE_COPY_INTO_WORKSPACE_ID,
-            		copyIntoWorkspaceButton.getSelection());
-
-            settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
-            		relativePathVariableGroup.getSelection());
-
-            settings.put(STORE_PATH_VARIABLE_NAME_ID,
-            		pathVariable);
+            if (createVirtualFoldersButton != null) {
+	            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
+	            		createVirtualFoldersButton.getSelection());
+	
+	            settings.put(STORE_COPY_INTO_WORKSPACE_ID,
+	            		copyIntoWorkspaceButton.getSelection());
+	
+	            settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
+	            		relativePathVariableGroup.getSelection());
+	
+	            settings.put(STORE_PATH_VARIABLE_NAME_ID,
+	            		pathVariable);
+            }
         }
     }
 
