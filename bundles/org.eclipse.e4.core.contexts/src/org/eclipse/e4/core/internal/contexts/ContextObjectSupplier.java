@@ -47,8 +47,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
 						result[i] = context;
 						context.get(IContextConstants.PARENT); // creates pseudo-link
-					}
-					if (context.containsKey(keys[i]))
+					} else if (context.containsKey(keys[i]))
 						result[i] = context.get(keys[i]);
 					else
 						result[i] = IInjector.NOT_A_VALUE; // TBD make sure this still creates
