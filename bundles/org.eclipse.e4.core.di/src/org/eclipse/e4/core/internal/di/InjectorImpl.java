@@ -152,17 +152,17 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, AbstractObjectSupplier objectSupplier) {
-		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier);
+		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, true);
 		if (result == IInjector.NOT_A_VALUE)
 			throw new InjectionException("Unable to find matching method to invoke"); //$NON-NLS-1$
 		return result;
 	}
 
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) {
-		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier);
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, false);
 	}
 
-	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) {
+	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier, boolean throwUnresolved) {
 		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
@@ -172,8 +172,11 @@ public class InjectorImpl implements IInjector {
 
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
-			if (unresolved != -1)
-				reportUnresolvedArgument(requestor, unresolved);
+			if (unresolved != -1) {
+				if (throwUnresolved)
+					reportUnresolvedArgument(requestor, unresolved);
+				continue;
+			}
 			requestor.setResolvedArgs(actualArgs);
 			return requestor.execute();
 		}
@@ -181,7 +184,7 @@ public class InjectorImpl implements IInjector {
 		if (superClass == null)
 			return defaultValue;
 
-		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier);
+		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, throwUnresolved);
 	}
 
 	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
