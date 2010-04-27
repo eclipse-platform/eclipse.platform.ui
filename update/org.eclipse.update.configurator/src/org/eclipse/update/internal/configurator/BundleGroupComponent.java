@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,12 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 public class BundleGroupComponent implements IBundleGroupProvider {
 
 	public IBundleGroup[] getBundleGroups() {
-		return ConfigurationActivator.getConfigurator().getBundleGroups();
+		ConfigurationActivator activator = ConfigurationActivator.getConfigurator();
+		if (activator.bundleGroupProviderSR != null)
+			// we manually registered the group in the activator; return no groups
+			// the manually registered service will handle the groups we know about
+			return new IBundleGroup[0];
+		return activator.getBundleGroups();
 	}
 
 	public String getName() {
