@@ -12,6 +12,7 @@ package org.eclipse.e4.core.internal.contexts;
 
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.AbstractObjectSupplier;
@@ -20,6 +21,8 @@ import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.IRequestor;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
+
+	final static protected String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 
 	static private class ContextInjectionListener implements IRunAndTrackObject {
 
@@ -41,6 +44,10 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				for (int i = 0; i < keys.length; i++) {
 					if (keys[i] == null)
 						continue;
+					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
+						result[i] = context;
+						context.get(IContextConstants.PARENT); // creates pseudo-link
+					}
 					if (context.containsKey(keys[i]))
 						result[i] = context.get(keys[i]);
 					else
@@ -120,7 +127,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 	}
 
-	final static private String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 	final private IEclipseContext context;
 
 	public ContextObjectSupplier(IEclipseContext context, IInjector injector) {
@@ -149,10 +155,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 		for (int i = 0; i < descriptors.length; i++) {
 			keys[i] = (descriptors[i] == null) ? null : getKey(descriptors[i]);
-			if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
-				result[i] = context;
-				keys[i] = null;
-			}
 		}
 
 		if (requestor != null && requestor.shouldTrack()) { // only track if requested
@@ -162,7 +164,9 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			for (int i = 0; i < descriptors.length; i++) {
 				if (keys[i] == null)
 					continue;
-				if (context.containsKey(keys[i]))
+				if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
+					result[i] = context;
+				else if (context.containsKey(keys[i]))
 					result[i] = context.get(keys[i]);
 				else
 					result[i] = IInjector.NOT_A_VALUE;

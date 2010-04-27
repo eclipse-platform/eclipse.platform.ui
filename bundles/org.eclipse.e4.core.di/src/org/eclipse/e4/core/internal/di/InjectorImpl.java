@@ -61,7 +61,18 @@ public class InjectorImpl implements IInjector {
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
 		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, true /* normal order */, requestors);
-		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
+
+		// if we are not establishing any links to the injected object (nothing to inject,
+		// or constructor only), create a pseudo-link to track supplier's disposal
+		boolean haveLink = false;
+		for (Requestor requestor : requestors) {
+			if (requestor.shouldTrack())
+				haveLink = true;
+		}
+		if (!haveLink)
+			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, object, true, false, true));
+
+		// Then ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
 		resolveRequestorArgs(requestors, objectSupplier, false);
 
 		// Call requestors in order
