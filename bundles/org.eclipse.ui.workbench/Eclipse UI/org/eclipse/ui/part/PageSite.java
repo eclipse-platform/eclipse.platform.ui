@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -98,8 +96,7 @@ public class PageSite implements IPageSite, INestable {
 						// TODO compat: not tsure what this should do
 					}
 				});
-		e4Context = EclipseContextFactory.create(((PartSite) parentViewSite).getContext(), null);
-		e4Context.set(IContextConstants.DEBUG_STRING, "PageSite"); //$NON-NLS-1$
+		e4Context = ((PartSite) parentViewSite).getContext().createChild("PageSite"); //$NON-NLS-1$
 		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
 	}

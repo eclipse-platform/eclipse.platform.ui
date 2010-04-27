@@ -5,9 +5,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 public class DefineCommandsTest extends TestCase {
 
@@ -36,8 +34,7 @@ public class DefineCommandsTest extends TestCase {
 	}
 
 	public void testCreateWithSecondContexts() throws Exception {
-		IEclipseContext localContext = EclipseContextFactory.create(
-				workbenchContext, null);
+		IEclipseContext localContext = workbenchContext.createChild();
 		ECommandService cs = (ECommandService) localContext
 				.get(ECommandService.class.getName());
 		assertNotNull(cs);
@@ -56,7 +53,7 @@ public class DefineCommandsTest extends TestCase {
 	}
 
 	public void testCreateWithTwoContexts() throws Exception {
-		IEclipseContext localContext = TestUtil.createContext(workbenchContext, "Level1");
+		IEclipseContext localContext = workbenchContext.createChild("Level1");
 		ECommandService cs = (ECommandService) localContext
 				.get(ECommandService.class.getName());
 		assertNotNull(cs);
@@ -80,20 +77,12 @@ public class DefineCommandsTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		workbenchContext = createWorkbenchContext(TestActivator.getDefault()
-				.getGlobalContext());
+		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
+		workbenchContext = globalContext.createChild("workbenchContext");
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (workbenchContext instanceof IDisposable) {
-			((IDisposable) workbenchContext).dispose();
-		}
-		workbenchContext = null;
-	}
-
-	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
-		IEclipseContext wb = TestUtil.createContext(globalContext, "workbenchContext");
-		return wb;
+		workbenchContext.dispose();
 	}
 }

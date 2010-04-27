@@ -103,17 +103,11 @@ public class KeyDispatcherTest extends TestCase {
 				ID_WINDOW);
 	}
 
-	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
-		IEclipseContext wb = TestUtil.createContext(globalContext,
-				"workbenchContext");
-		return wb;
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		display = new Display();
-		workbenchContext = createWorkbenchContext(Activator.getDefault()
-				.getGlobalContext());
+		IEclipseContext globalContext = Activator.getDefault().getGlobalContext(); 
+		workbenchContext = globalContext.createChild("workbenchContext");
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);

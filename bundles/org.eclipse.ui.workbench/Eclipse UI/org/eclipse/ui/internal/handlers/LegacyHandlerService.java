@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -298,8 +297,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.ui.handlers.IHandlerService#createContextSnapshot(boolean)
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
-		return new LegacyEvalContext(EclipseContextFactory.create(getFocusContext(PlatformUI
-				.getWorkbench().getDisplay()), null));
+		return new LegacyEvalContext(getFocusContext(PlatformUI.getWorkbench().getDisplay())
+				.createChild());
 	}
 
 	/*

@@ -18,7 +18,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
@@ -113,7 +112,7 @@ public class HandlerTest extends TestCase {
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
@@ -155,7 +154,7 @@ public class HandlerTest extends TestCase {
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
@@ -184,7 +183,7 @@ public class HandlerTest extends TestCase {
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
@@ -193,7 +192,7 @@ public class HandlerTest extends TestCase {
 		windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
 		assertEquals(windowRC, service.executeHandler(helpCommand));
 
-		IEclipseContext dialog = createContext(appContext, "dialogContext");
+		IEclipseContext dialog = appContext.createChild("dialogContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, dialog);
 		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
 
@@ -213,7 +212,7 @@ public class HandlerTest extends TestCase {
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
@@ -223,7 +222,7 @@ public class HandlerTest extends TestCase {
 		assertEquals(windowRC, service.executeHandler(helpCommand));
 		assertEquals(windowRC, windowService.executeHandler(helpCommand));
 
-		IEclipseContext dialog = createContext(appContext, "dialogContext");
+		IEclipseContext dialog = appContext.createChild("dialogContext");
 		EHandlerService dialogService = (EHandlerService) dialog
 				.get(EHandlerService.class.getName());
 		assertEquals(HELP_COMMAND_ID, dialogService.executeHandler(helpCommand));
@@ -240,11 +239,4 @@ public class HandlerTest extends TestCase {
 				category, null);
 	}
 
-	private IEclipseContext createContext(IEclipseContext parentContext,
-			String level) {
-		IEclipseContext appContext = EclipseContextFactory.create(
-				parentContext, null);
-		appContext.set(IContextConstants.DEBUG_STRING, level);
-		return appContext;
-	}
 }

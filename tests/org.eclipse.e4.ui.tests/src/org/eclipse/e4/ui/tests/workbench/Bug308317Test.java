@@ -17,7 +17,6 @@ import javax.inject.Named;
 import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
@@ -83,18 +82,15 @@ public class Bug308317Test extends TestCase {
 		stackB.getChildren().add(partB);
 		stackB.setSelectedElement(partB);
 
-		IEclipseContext windowContext = EclipseContextFactory.create(
-				appContext, null);
+		IEclipseContext windowContext = appContext.createChild();
 		windowContext.set(MWindow.class.getName(), window);
 		window.setContext(windowContext);
 
-		IEclipseContext partContextA = EclipseContextFactory.create(
-				windowContext, null);
+		IEclipseContext partContextA = windowContext.createChild();
 		partContextA.set(MPart.class.getName(), partA);
 		partA.setContext(partContextA);
 
-		IEclipseContext partContextB = EclipseContextFactory.create(
-				windowContext, null);
+		IEclipseContext partContextB = windowContext.createChild();
 		partContextB.set(MPart.class.getName(), partB);
 		partB.setContext(partContextB);
 

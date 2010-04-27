@@ -21,7 +21,6 @@ import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -148,10 +147,9 @@ public class E4Workbench implements IWorkbench {
 				.trace(
 						Policy.DEBUG_CONTEXTS,
 						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
-		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext, null);
+		final IEclipseContext mainContext = applicationContext.createChild("WorkbenchContext"); //$NON-NLS-1$
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.make(WorkbenchLogger.class,
 				mainContext));
-		mainContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
@@ -269,8 +267,7 @@ public class E4Workbench implements IWorkbench {
 		if (contextModel.getContext() != null) {
 			context = contextModel.getContext();
 		} else {
-			context = EclipseContextFactory.create(parentContext, null);
-			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + contextModel + ')'); //$NON-NLS-1$
+			context = parentContext.createChild("PartContext(" + contextModel + ')'); //$NON-NLS-1$
 		}
 
 		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$

@@ -20,11 +20,8 @@ import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.internal.contexts.ISchedulerStrategy;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
@@ -49,19 +46,13 @@ public abstract class HeadlessStartupTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		applicationContext = createApplicationContext();
-		applicationContext.set(IContextConstants.DEBUG_STRING,
-				"Application Context"); //$NON-NLS-1$
-
 		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-
-		if (applicationContext instanceof IDisposable) {
-			((IDisposable) applicationContext).dispose();
-		}
+		applicationContext.dispose();
 
 		// if (osgiContext instanceof IDisposable) {
 		// ((IDisposable) osgiContext).dispose();
@@ -86,7 +77,8 @@ public abstract class HeadlessStartupTest extends TestCase {
 			IEclipseContext osgiContext) {
 		assertNotNull(osgiContext);
 
-		final IEclipseContext appContext = createContext(osgiContext, null);
+		final IEclipseContext appContext = osgiContext
+				.createChild("Application Context");
 
 		appContext.set(IEclipseContext.class.getName(), appContext);
 
@@ -150,12 +142,5 @@ public abstract class HeadlessStartupTest extends TestCase {
 		});
 
 		return appContext;
-	}
-
-	private IEclipseContext createContext(IEclipseContext parent,
-			IEclipseContextStrategy strategy) {
-		IEclipseContext eclipseContext = EclipseContextFactory.create(parent,
-				strategy);
-		return eclipseContext;
 	}
 }

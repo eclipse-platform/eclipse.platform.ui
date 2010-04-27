@@ -68,13 +68,13 @@ public class Bug308220Test extends TestCase {
 		}, null);
 
 		// create two contexts
-		IEclipseContext windowA = EclipseContextFactory.create(app, null);
-		IEclipseContext windowB = EclipseContextFactory.create(app, null);
+		IEclipseContext windowA = app.createChild();
+		IEclipseContext windowB = app.createChild();
 
 		Object o1 = new Object();
 		Object o2 = new Object();
 
-		IEclipseContext part = EclipseContextFactory.create(windowA, null);
+		IEclipseContext part = windowA.createChild();
 		// set the active part as some object
 		part.set(Object.class.getName(), o1);
 		// construct the active chain

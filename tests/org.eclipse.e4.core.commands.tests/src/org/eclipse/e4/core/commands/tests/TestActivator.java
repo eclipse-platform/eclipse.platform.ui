@@ -23,7 +23,7 @@ public class TestActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		plugin = this;
 		serviceContext = EclipseContextFactory.getServiceContext(context);
-		appContext = EclipseContextFactory.create(serviceContext, null);
+		appContext = serviceContext.createChild();
 		addLogService(appContext);
 	}
 

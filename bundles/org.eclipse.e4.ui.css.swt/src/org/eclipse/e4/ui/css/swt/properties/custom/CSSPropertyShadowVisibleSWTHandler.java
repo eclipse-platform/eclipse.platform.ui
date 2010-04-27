@@ -26,7 +26,7 @@ public class CSSPropertyShadowVisibleSWTHandler extends AbstractCSSPropertySWTHa
 		Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
 		if (appContext != null && appContext instanceof IEclipseContext) {
 			IEclipseContext context = (IEclipseContext) appContext;
-			IEclipseContext childContext = EclipseContextFactory.create(context, null);
+			IEclipseContext childContext = context.createChild();
 			childContext.set("shadowVisible", new Boolean(shadowVisible));
 			ContextInjectionFactory.inject(renderer, childContext); 
 		}

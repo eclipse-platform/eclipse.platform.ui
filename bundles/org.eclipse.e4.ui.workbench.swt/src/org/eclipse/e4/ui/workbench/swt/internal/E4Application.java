@@ -19,11 +19,9 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.internal.contexts.IEclipseContextStrategy;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -217,18 +215,12 @@ public class E4Application implements IApplication {
 	}
 
 	public static IEclipseContext createDefaultContext() {
-		return createDefaultContext(null);
-	}
-
-	public static IEclipseContext createDefaultContext(
-			IEclipseContextStrategy strategy) {
 		// FROM: WorkbenchApplication
 		// parent of the global workbench context is an OSGi service
 		// context that can provide OSGi services
 		IEclipseContext serviceContext = E4Workbench.getServiceContext();
-		final IEclipseContext appContext = EclipseContextFactory.create(
-				serviceContext, strategy);
-		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchAppContext"); //$NON-NLS-1$
+		final IEclipseContext appContext = serviceContext
+				.createChild("WorkbenchContext"); //$NON-NLS-1$
 
 		// FROM: Workbench#createWorkbenchContext
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
@@ -242,8 +234,6 @@ public class E4Application implements IApplication {
 				WorkbenchLogger.class, appContext));
 		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
 				EclipseAdapter.class, appContext));
-
-		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());

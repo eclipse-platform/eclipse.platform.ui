@@ -78,11 +78,9 @@ public class Bug299755Test extends TestCase {
 		windowContext.declareModifiable(IServiceConstants.SELECTION);
 
 		// create an "out" part context
-		IEclipseContext outContext = EclipseContextFactory.create(
-				windowContext, null);
+		IEclipseContext outContext = windowContext.createChild();
 		// create an "in" part context
-		IEclipseContext inContext = EclipseContextFactory.create(windowContext,
-				null);
+		IEclipseContext inContext = windowContext.createChild();
 
 		Out out = (Out) ContextInjectionFactory.make(Out.class, outContext);
 		In in = (In) ContextInjectionFactory.make(In.class, inContext);

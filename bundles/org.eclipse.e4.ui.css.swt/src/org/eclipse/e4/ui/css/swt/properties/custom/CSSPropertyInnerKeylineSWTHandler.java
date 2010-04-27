@@ -30,7 +30,7 @@ public class CSSPropertyInnerKeylineSWTHandler extends AbstractCSSPropertySWTHan
 			Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
 			if (appContext != null && appContext instanceof IEclipseContext) {
 				IEclipseContext context = (IEclipseContext) appContext;
-				IEclipseContext childContext = EclipseContextFactory.create(context, null);
+				IEclipseContext childContext = context.createChild();
 				childContext.set("innerKeyline", newColor);
 				ContextInjectionFactory.inject(renderer, childContext); 
 			} else {

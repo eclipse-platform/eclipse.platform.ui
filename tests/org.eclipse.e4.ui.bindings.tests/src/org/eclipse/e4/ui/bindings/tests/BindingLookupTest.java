@@ -1,6 +1,5 @@
 package org.eclipse.e4.ui.bindings.tests;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,12 +43,6 @@ public class BindingLookupTest extends TestCase {
 
 	private IEclipseContext workbenchContext;
 
-	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
-		IEclipseContext wb = TestUtil.createContext(globalContext,
-				"workbenchContext");
-		return wb;
-	}
-
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
@@ -60,8 +53,8 @@ public class BindingLookupTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		workbenchContext = createWorkbenchContext(Activator.getDefault()
-				.getGlobalContext());
+		IEclipseContext globalContext = Activator.getDefault().getGlobalContext(); 
+		workbenchContext = globalContext.createChild("workbenchContext");
 		defineCommands(workbenchContext);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
@@ -141,7 +134,7 @@ public class BindingLookupTest extends TestCase {
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
@@ -169,7 +162,7 @@ public class BindingLookupTest extends TestCase {
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
@@ -179,7 +172,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db = createDefaultBinding(bs1, seq, cmd1, ID_WINDOW);
 		bs1.activateBinding(db);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
 		es2.activateContext(ID_DIALOG);
 
@@ -203,7 +196,7 @@ public class BindingLookupTest extends TestCase {
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
@@ -213,7 +206,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db = createDefaultBinding(bs1, seq, cmd1, ID_WINDOW);
 		bs1.activateBinding(db);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
 		es2.activateContext(ID_DIALOG);
 
@@ -304,7 +297,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db2 = createDefaultBinding(bs, seq2, cmd, ID_DIALOG_AND_WINDOW);
 		bs.activateBinding(db2);
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
@@ -328,7 +321,7 @@ public class BindingLookupTest extends TestCase {
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
@@ -338,7 +331,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db = createDefaultBinding(bs1, seq, cmd1, ID_WINDOW);
 		bs1.activateBinding(db);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
 		es2.activateContext(ID_DIALOG);
 
@@ -390,7 +383,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db2 = createDefaultBinding(wBS, seq2, cmd, ID_DIALOG_AND_WINDOW);
 		wBS.activateBinding(db2);
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
@@ -420,7 +413,7 @@ public class BindingLookupTest extends TestCase {
 		Binding db2 = createDefaultBinding(wBS, seq2, cmd, ID_DIALOG_AND_WINDOW);
 		wBS.activateBinding(db2);
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
@@ -448,7 +441,7 @@ public class BindingLookupTest extends TestCase {
 				ID_DIALOG_AND_WINDOW);
 		wBS.activateBinding(wbBind);
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());

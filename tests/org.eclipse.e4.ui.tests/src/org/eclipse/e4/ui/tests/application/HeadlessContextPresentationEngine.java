@@ -142,13 +142,14 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				return null;
 			}
 
+			String contextName = element.getClass().getInterfaces()[0]
+					.getName()
+					+ " eclipse context"; //$NON-NLS-1$
 			final IEclipseContext parentContext = getParentContext(element);
-			final IEclipseContext createdContext = EclipseContextFactory
-					.create(parentContext, null);
+			final IEclipseContext createdContext = (parentContext != null) ? parentContext
+					.createChild(contextName)
+					: EclipseContextFactory.create(contextName);
 
-			createdContext.set(IContextConstants.DEBUG_STRING, element
-					.getClass().getInterfaces()[0].getName()
-					+ " eclipse context"); //$NON-NLS-1$
 			populateModelInterfaces(mcontext, createdContext, element
 					.getClass().getInterfaces());
 

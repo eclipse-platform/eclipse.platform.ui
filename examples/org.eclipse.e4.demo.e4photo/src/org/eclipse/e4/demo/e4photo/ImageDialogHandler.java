@@ -44,7 +44,7 @@ public class ImageDialogHandler {
 
 			theRenderer = renderer;
 			
-			dlgContext = EclipseContextFactory.create(app.getContext(), null);
+			dlgContext = app.getContext().createChild();
 
 			// 'adopt' the app's 'INPUT' (used to support selection, we should 
 			// replace this with a viable strategy to support 'local' selection

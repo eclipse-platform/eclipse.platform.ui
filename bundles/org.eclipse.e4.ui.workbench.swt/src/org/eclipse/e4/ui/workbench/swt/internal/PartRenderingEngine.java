@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
@@ -262,8 +261,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (ctxt.getContext() == null) {
 				IEclipseContext parentContext = element.getParent() == null ? appContext
 						: getContext(element.getParent());
-				IEclipseContext lclContext = EclipseContextFactory.create(
-						parentContext, null);
+				IEclipseContext lclContext = parentContext.createChild();
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
 				ctxt.setContext(lclContext);

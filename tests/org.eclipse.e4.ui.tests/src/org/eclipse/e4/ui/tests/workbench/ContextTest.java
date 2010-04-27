@@ -12,8 +12,8 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
+
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.EContextService;
@@ -49,7 +49,7 @@ public class ContextTest extends TestCase {
 				.get(EContextService.class.getName());
 		assertEquals(0, cs.getActiveContextIds().size());
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 
 		EContextService windowService = (EContextService) window
@@ -73,7 +73,7 @@ public class ContextTest extends TestCase {
 				.get(EContextService.class.getName());
 		assertEquals(0, cs.getActiveContextIds().size());
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 
 		EContextService windowService = (EContextService) window
@@ -105,11 +105,11 @@ public class ContextTest extends TestCase {
 		EContextService cs = (EContextService) appContext
 				.get(EContextService.class.getName());
 
-		IEclipseContext window = createContext(appContext, "windowContext");
+		IEclipseContext window = appContext.createChild("windowContext");
 		EContextService windowService = (EContextService) window
 				.get(EContextService.class.getName());
 
-		IEclipseContext dialog = createContext(appContext, "dialogContext");
+		IEclipseContext dialog = appContext.createChild("dialogContext");
 		appContext.set(IContextConstants.ACTIVE_CHILD, dialog);
 
 		EContextService dialogService = (EContextService) dialog
@@ -199,14 +199,6 @@ public class ContextTest extends TestCase {
 		d.define("Dialog", null, DIALOG_AND_WINDOW_ID);
 		Context w = cs.getContext(WINDOW_ID);
 		w.define("Window", null, DIALOG_AND_WINDOW_ID);
-	}
-
-	private IEclipseContext createContext(IEclipseContext parentContext,
-			String level) {
-		IEclipseContext appContext = EclipseContextFactory.create(
-				parentContext, null);
-		appContext.set(IContextConstants.DEBUG_STRING, level);
-		return appContext;
 	}
 
 }

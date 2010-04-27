@@ -27,7 +27,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 				Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
 				if (appContext != null && appContext instanceof IEclipseContext) {
 					IEclipseContext context = (IEclipseContext) appContext;
-					IEclipseContext childContext = EclipseContextFactory.create(context, null);
+					IEclipseContext childContext = context.createChild();
 					childContext.set(CTabFolder.class.getName(), control);
 					IContributionFactory factory = (IContributionFactory) context.get(IContributionFactory.class.getName());
 					Object rend = factory.create(rendURL, childContext);

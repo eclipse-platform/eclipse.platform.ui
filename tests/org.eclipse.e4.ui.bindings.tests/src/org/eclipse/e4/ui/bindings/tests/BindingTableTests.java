@@ -72,8 +72,8 @@ public class BindingTableTests extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		if (loadedBindings == null) {
-			workbenchContext = createWorkbenchContext(Activator.getDefault()
-					.getGlobalContext());
+			IEclipseContext globalContext = Activator.getDefault().getGlobalContext();
+			workbenchContext = globalContext.createChild("workbenchContext");
 			loadedBindings = new ArrayList<Binding>();
 			contextManager = new ContextManager();
 			ContextSet.setComparator(new ContextSet.CComp(contextManager));
@@ -371,12 +371,6 @@ public class BindingTableTests extends TestCase {
 			}
 		}
 		return null;
-	}
-
-	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
-		IEclipseContext wb = TestUtil.createContext(globalContext,
-				"workbenchContext");
-		return wb;
 	}
 
 	private void assertContextSet(ContextSet set, String[] contextIds) {

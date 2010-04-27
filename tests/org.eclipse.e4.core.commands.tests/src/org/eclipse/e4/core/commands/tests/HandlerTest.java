@@ -10,7 +10,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 
@@ -77,7 +76,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testActiveHandlerExecuteWorkbench() throws Exception {
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
@@ -99,14 +98,14 @@ public class HandlerTest extends TestCase {
 		EHandlerService wHS = (EHandlerService) workbenchContext
 				.get(EHandlerService.class.getName());
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
 				.getName());
 		CallHandler handler2 = new CallHandler();
@@ -128,14 +127,14 @@ public class HandlerTest extends TestCase {
 		EHandlerService wHS = (EHandlerService) workbenchContext
 				.get(EHandlerService.class.getName());
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
 				.getName());
 		CallHandler handler2 = new CallHandler();
@@ -162,14 +161,14 @@ public class HandlerTest extends TestCase {
 		EHandlerService wHS = (EHandlerService) workbenchContext
 				.get(EHandlerService.class.getName());
 
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		IEclipseContext c1 = workbenchContext.createChild("c1");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
-		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
 				.getName());
 		CallHandler handler2 = new CallHandler();
@@ -266,17 +265,14 @@ public class HandlerTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		workbenchContext = createWorkbenchContext(TestActivator.getDefault()
-				.getGlobalContext());
+		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
+		workbenchContext = globalContext.createChild("workbenchContext");
 		defineCommands(workbenchContext);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (workbenchContext instanceof IDisposable) {
-			((IDisposable) workbenchContext).dispose();
-		}
-		workbenchContext = null;
+		workbenchContext.dispose();
 	}
 
 	private void defineCommands(IEclipseContext context) {
@@ -285,11 +281,5 @@ public class HandlerTest extends TestCase {
 		Category category = cs.defineCategory(TEST_CAT1, "CAT1", null);
 		cs.defineCommand(TEST_ID1, "ID1", null, category, null);
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);
-	}
-
-	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
-		IEclipseContext wb = TestUtil.createContext(globalContext,
-				"workbenchContext");
-		return wb;
 	}
 }
