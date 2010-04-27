@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     mark.melvin@onsemi.com - bug 288997 [CommonNavigator] Double-clicking an adapted resource in 
+ *        Common Navigator does not open underlying IFile
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
@@ -57,7 +59,6 @@ public class OpenActionProvider extends CommonActionProvider {
 
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 				.getSelection();
-
 		openFileAction.selectionChanged(selection);
 		if (openFileAction.isEnabled()) {
 			aMenu.insertAfter(ICommonMenuConstants.GROUP_OPEN, openFileAction);
