@@ -624,7 +624,14 @@ public class FastViewManager {
 			secondaryId = idParts[1];
 		
 		List fvs = getFastViews(id);
-		if (fvs.isEmpty()) {
+
+		// Check for 'durable' folders
+		boolean isDurable = false;
+		if (perspective.getDesc() != null) {
+			isDurable = page.window.getWindowAdvisor().isDurableFolder(
+				perspective.getDesc().getId(), id);
+		}
+		if (fvs.isEmpty() && isDurable) {
 			// We are dealing with a durable view stack that is currently empty, so execute special logic to restore it from the minimized state
             LayoutPart part = perspective.getPresentation().findPart(id, null);	
             if (part instanceof ContainerPlaceholder) {
