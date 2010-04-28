@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.AbstractCompareInput;
@@ -159,7 +160,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 			String leftLabel = getFileRevisionLabel(getLeftRevision());
 			cc.setLeftLabel(leftLabel);
 		} else if (getResource(input) != null) {
-			String label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ input.getLeft().getName() });
+			String label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ TextProcessor.process(input.getLeft().getName())});
 			cc.setLeftLabel(label);
 		}
 		if (getRightRevision() != null) {
@@ -173,7 +174,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		if (fileObject instanceof LocalFileRevision){
 			IFileState state = ((LocalFileRevision) fileObject).getState();
 			if (state != null) {
-				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_localRevision, new Object[]{element.getName(), element.getTimestamp()});
+				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_localRevision, new Object[]{TextProcessor.process(element.getName()), element.getTimestamp()});
 			} 
 		} else {
 			return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), element.getContentIdentifier(), element.getAuthor()});
