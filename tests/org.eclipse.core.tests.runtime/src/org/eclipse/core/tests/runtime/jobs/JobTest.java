@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,8 +29,16 @@ public class JobTest extends AbstractJobTest {
 	protected Job shortJob;
 	private FussyProgressProvider progressProvider;
 
+	public JobTest(String name) {
+		super(name);
+	}
+
 	public static Test suite() {
 		return new TestSuite(JobTest.class);
+		//		TestSuite suite = new TestSuite();
+		//		for (int i = 0; i < 1000; i++)
+		//			suite.addTest(new JobTest("testSetProgressGroup"));
+		//		return suite;
 	}
 
 	//see bug #43591
@@ -1011,8 +1019,8 @@ public class JobTest extends AbstractJobTest {
 		assertTrue("1.0", timeout < 100);
 		assertEquals("1.1", REPEATS, count[0]);
 	} /*
-	 * Schedule a simple job that repeats several times from within the run method.
-	 */
+		* Schedule a simple job that repeats several times from within the run method.
+		*/
 
 	public void testRescheduleRepeatWithDelay() {
 		final int[] count = new int[] {0};
@@ -1161,26 +1169,39 @@ public class JobTest extends AbstractJobTest {
 	 * Tests the API methods Job.setProgressGroup
 	 */
 	public void testSetProgressGroup() {
+		final TestBarrier barrier = new TestBarrier();
+		Job job = new Job("testSetProgressGroup") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				return Status.OK_STATUS;
+			}
+		};
 		//null group
 		try {
-			longJob.setProgressGroup(null, 5);
+			job.setProgressGroup(null, 5);
 			fail("1.0");
 		} catch (RuntimeException e) {
 			//should fail
 		}
 		IProgressMonitor group = Job.getJobManager().createProgressGroup();
 		group.beginTask("Group task name", 10);
-		longJob.setProgressGroup(group, 5);
+		job.setProgressGroup(group, 5);
 
 		//ignore changes to group while waiting or running
-		longJob.schedule(100);
-		longJob.setProgressGroup(group, 0);
-		waitForState(longJob, Job.RUNNING);
-		longJob.setProgressGroup(group, 0);
+		job.schedule(100);
+		job.setProgressGroup(group, 0);
+		//wait until job starts and try to set the progress group
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+		job.setProgressGroup(group, 0);
 
 		//ensure cancelation still works
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
+		job.cancel();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		waitForState(job, Job.NONE);
+		assertEquals("1.0", IStatus.CANCEL, job.getResult().getSeverity());
 		group.done();
 	}
 
