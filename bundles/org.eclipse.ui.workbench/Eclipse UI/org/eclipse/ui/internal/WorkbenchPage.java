@@ -1906,23 +1906,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * boolean)
 	 */
 	public boolean saveSaveable(ISaveablePart saveable, boolean confirm, boolean closing) {
-		Collection<MPart> parts = partService.getParts();
-		for (MPart part : parts) {
-			Object client = part.getObject();
-			if (client instanceof CompatibilityPart) {
-				if (((CompatibilityPart) client).getPart() == saveable) {
-					if (saveable.isDirty()) {
-						if (closing) {
-							if (saveable.isSaveOnCloseNeeded()) {
-								return partService.savePart(part, confirm);
-							}
-						} else {
-							return partService.savePart(part, confirm);
-						}
+		MPart part = findPart((IWorkbenchPart) saveable);
+		if (part != null) {
+			if (saveable.isDirty()) {
+				if (closing) {
+					if (saveable.isSaveOnCloseNeeded()) {
+						return partService.savePart(part, confirm);
 					}
-					return true;
+				} else {
+					return partService.savePart(part, confirm);
 				}
 			}
+			return true;
 		}
 		return false;
 	}
