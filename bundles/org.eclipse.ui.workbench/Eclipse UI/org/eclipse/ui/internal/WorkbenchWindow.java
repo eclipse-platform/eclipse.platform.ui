@@ -921,6 +921,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
 
+			fireWindowClosed();
+
 			// time to wipe our our populate
 			IMenuService menuService = (IMenuService) workbench.getService(IMenuService.class);
 			menuService.releaseContributions(((ContributionManager) getActionBars()
@@ -953,8 +955,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (remove) {
 				window.getParent().getChildren().remove(window);
 			}
-
-			fireWindowClosed();
 		} finally {
 
 			try {
