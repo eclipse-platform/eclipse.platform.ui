@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -47,11 +49,13 @@ public class ContextInjectionTest extends TestCase {
 
 			public TestData value;
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void contextSet(IEclipseContext context) {
 				contextSetCalled++;
 			}
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(TestData arg) {
 				setMethodCalled++;
@@ -85,11 +89,13 @@ public class ContextInjectionTest extends TestCase {
 
 			public TestData value;
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void contextSet() {
 				contextSetCalled++;
 			}
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(TestData arg) {
 				setMethodCalled++;
@@ -133,7 +139,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.String);
+		assertEquals(testString, userObject.injectedString);
 		assertEquals(testInt, userObject.getInt());
 		// assertEquals(context, userObject.context);
 
@@ -173,7 +179,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.String);
+		assertEquals(testString, userObject.injectedString);
 		assertEquals(testInt, userObject.getInt());
 		// assertEquals(context, userObject.context);
 

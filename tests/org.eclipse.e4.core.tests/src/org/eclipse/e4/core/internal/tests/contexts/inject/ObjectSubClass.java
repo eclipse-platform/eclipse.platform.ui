@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 
 /**
  * Test class to check injection mechanism into classes with inheritance
@@ -65,5 +68,23 @@ public class ObjectSubClass extends ObjectSuperClass {
 
 	public int getOverriddenCount() {
 		return setOverriddenCalled;
+	}
+
+	@PostConstruct
+	public void subPostConstruct() {
+		postConstructSetObjectCalled = setObjectCalled;
+		postConstructSetStringCalled = setStringCalled;
+		postConstructSetOverriddenCalled = setOverriddenCalled;
+		subPostConstructCount++;
+	}
+
+	@PreDestroy
+	public void subPreDestroy() {
+		subPreDestroyCount++;
+	}
+
+	@PreDestroy
+	public void overriddenPreDestroy() {
+		overriddenPreDestroyCount++;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
 import junit.framework.Test;
@@ -69,6 +69,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 				disposeInvoked = true;
 			}
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(String arg) {
 				methodValue = arg;
@@ -101,6 +102,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			Integer Field;
 			Object methodValue;
 
+			@SuppressWarnings("unused")
 			public void destroy() {
 				destroyInvoked = true;
 			}
@@ -109,6 +111,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 				disposeInvoked = true;
 			}
 
+			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(String arg) {
 				methodValue = arg;

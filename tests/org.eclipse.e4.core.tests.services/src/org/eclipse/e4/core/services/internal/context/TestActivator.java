@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.tests.services;
+package org.eclipse.e4.core.services.internal.context;
 
 import org.osgi.framework.BundleContext;
 

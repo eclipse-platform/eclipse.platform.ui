@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.e4.core.di,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: javax.inject;version="1.0.0"
 Export-Package: org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.internal.contexts;x-internal:=true,
+ org.eclipse.e4.core.internal.contexts;x-friends:="org.eclipse.e4.core.tests",
  org.eclipse.e4.core.internal.contexts.osgi;x-internal:=true

@@ -8,28 +8,30 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 
 /**
  * Test class to check injection mechanism
  */
-public class ObjectBasic implements IDisposable {
+public class ObjectBasic {
 
 	// Injected directly
 	@Inject
-	public String String;
+	public String injectedString;
 	@Inject
-	private Integer Integer;
+	private Integer injectedInteger;
 
 	// Injected indirectly
 	public Double d;
 	public Float f;
 	public Character c;
-	protected IEclipseContext context;
+	public IEclipseContext context;
 
 	// Test status
 	public boolean finalized = false;
@@ -42,31 +44,34 @@ public class ObjectBasic implements IDisposable {
 	}
 
 	@Inject
-	public void ObjectViaMethod(Double d) {
+	public void objectViaMethod(Double d) {
 		setMethodCalled++;
 		this.d = d;
 	}
 
 	@Inject
-	public void Arguments(Float f, Character c) {
+	public void arguments(Float f, Character c) {
 		setMethodCalled2++;
 		this.f = f;
 		this.c = c;
 	}
 
-	@Inject
-	public void contextSet(IEclipseContext context) {
+	@PostConstruct
+	public void postCreate(IEclipseContext context) {
 		this.context = context;
 		finalized = true;
 	}
 
-	public void dispose() {
+	@PreDestroy
+	public void dispose(IEclipseContext context) {
+		if (this.context != context)
+			throw new IllegalArgumentException("Unexpected context");
 		this.context = null;
 		disposed = true;
 	}
 
 	public Integer getInt() {
-		return Integer;
+		return injectedInteger;
 	}
 
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;

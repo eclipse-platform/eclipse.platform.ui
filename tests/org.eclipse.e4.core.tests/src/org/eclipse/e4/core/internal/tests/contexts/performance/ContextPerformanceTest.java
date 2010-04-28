@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.core.tests.performance;
+package org.eclipse.e4.core.internal.tests.contexts.performance;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -23,7 +24,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.tests.services.TestActivator;
+import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 
@@ -52,7 +53,7 @@ public class ContextPerformanceTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		parentContext = EclipseContextFactory.getServiceContext(TestActivator.bundleContext);
+		parentContext = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		context = parentContext.createChild(getName());
 
 		// add some values to the contexts

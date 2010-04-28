@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts;
 
 import junit.framework.TestCase;
+
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -18,7 +19,6 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.TestHelper;
 
 public class EclipseContextTest extends TestCase {
@@ -70,23 +70,6 @@ public class EclipseContextTest extends TestCase {
 
 		context.remove("separator");
 		assertFalse("4.0", context.containsKey("separator"));
-	}
-
-	public void testContainsKeyLocal() {
-		EclipseContext contextGlobal = (EclipseContext) EclipseContextFactory.create();
-		contextGlobal.set("global", new Object());
-		EclipseContext contextLocal = (EclipseContext) contextGlobal.createChild();
-		contextLocal.set("local", new Object());
-
-		assertTrue("1.0", contextLocal.containsKey("local", true));
-		assertTrue("1.1", contextLocal.containsKey("local", false));
-		assertFalse("1.2", contextLocal.containsKey("global", true));
-		assertTrue("1.3", contextLocal.containsKey("global", false));
-
-		assertFalse("2.0", contextGlobal.containsKey("local", true));
-		assertFalse("2.1", contextGlobal.containsKey("local", false));
-		assertTrue("2.2", contextGlobal.containsKey("global", true));
-		assertTrue("2.3", contextGlobal.containsKey("global", false));
 	}
 
 	public void testFunctions() {
@@ -293,7 +276,7 @@ public class EclipseContextTest extends TestCase {
 	public void testModify() {
 		IEclipseContext grandParent = EclipseContextFactory.create();
 		IEclipseContext parent = grandParent.createChild();
-		EclipseContext child = (EclipseContext) parent.createChild();
+		IEclipseContext child = parent.createChild();
 
 		child.set("a", "a1");
 		parent.set("b", "b2");
@@ -307,7 +290,7 @@ public class EclipseContextTest extends TestCase {
 		assertNull(grandParent.get("b"));
 		assertEquals("b2", parent.get("b"));
 		assertEquals("b2", child.get("b"));
-		assertFalse(child.containsKey("b", true /* localOnly */));
+		assertNull(child.getLocal("b"));
 
 		// modify value on the middle node via its child
 		child.modify("b", "abc");
@@ -315,7 +298,7 @@ public class EclipseContextTest extends TestCase {
 		assertFalse(grandParent.containsKey("b"));
 		assertEquals("abc", parent.get("b"));
 		assertEquals("abc", child.get("b"));
-		assertFalse(child.containsKey("b", true /* localOnly */));
+		assertNull(child.getLocal("b"));
 
 		// modifying non-exist values adds it to the context
 		child.modify("d", "123");
@@ -329,9 +312,9 @@ public class EclipseContextTest extends TestCase {
 		grandParent.modify("c", "cNew");
 		assertTrue(grandParent.containsKey("c"));
 		assertEquals("cNew", grandParent.get("c"));
-		assertFalse(((EclipseContext) parent).containsKey("c", true /* localOnly */));
-		assertFalse(child.containsKey("c", true /* localOnly */));
-		assertTrue(child.containsKey("c", false /* localOnly */));
+		assertNull(parent.getLocal("c"));
+		assertNull(child.getLocal("c"));
+		assertTrue(child.containsKey("c"));
 
 		// edge condition: modify value in the leaf node
 		child.modify("a", "aNew");
@@ -380,7 +363,7 @@ public class EclipseContextTest extends TestCase {
 
 		child.get("sum");
 		assertEquals(1, TestHelper.getListeners(parent).size());
-		((EclipseContext) child).dispose();
+		child.dispose();
 		assertEquals(0, TestHelper.getListeners(parent).size());
 	}
 }

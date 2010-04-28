@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.core.internal.tests.contexts;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
 import javax.inject.Named;

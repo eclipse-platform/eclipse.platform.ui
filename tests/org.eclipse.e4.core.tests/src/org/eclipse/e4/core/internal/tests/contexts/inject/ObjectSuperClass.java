@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
 
 /**
  * Test class to check injection mechanism into classes with inheritance
@@ -65,6 +67,23 @@ public class ObjectSuperClass {
 	public void StringViaMethod(String string) {
 		myString = string;
 		setStringCalled++;
+	}
+	
+	@PostConstruct
+	public void superPostConstruct() {
+		// record setter invocation counts at time of post construct invocation
+		postConstructSetStringCalled = setStringCalled;
+		superPostConstructCount++;
+	}
+
+	@PreDestroy
+	public void superPreDestroy() {
+		superPreDestroyCount++;
+	}
+
+	@PreDestroy()
+	public void overriddenPreDestroy() {
+		//
 	}
 
 }

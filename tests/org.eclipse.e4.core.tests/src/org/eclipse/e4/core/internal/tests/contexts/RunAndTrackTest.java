@@ -9,19 +9,21 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.core.services.internal.context;
+package org.eclipse.e4.core.internal.tests.contexts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.core.tests.services.TestActivator;
+import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 
 /**
  * Tests for {@link org.eclipse.e4.core.services.context.IRunAndTrack}.
@@ -54,7 +56,7 @@ public class RunAndTrackTest extends TestCase {
 
 	static final String INTERNAL_LOCAL_PART = "localPart";
 
-	private List createdContexts = new ArrayList();
+	private List<IEclipseContext> createdContexts = new ArrayList<IEclipseContext>();
 
 	private IEclipseContext createContext(IEclipseContext parentContext, String level) {
 		IEclipseContext childContext = parentContext.createChild(level);
@@ -64,7 +66,7 @@ public class RunAndTrackTest extends TestCase {
 
 	private IEclipseContext getGlobalContext() {
 		IEclipseContext serviceContext = EclipseContextFactory
-				.getServiceContext(TestActivator.bundleContext);
+				.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		// global initialization and setup, usually done by workbench
 		IEclipseContext appContext = createContext(serviceContext, "globalContext");
 
@@ -90,8 +92,8 @@ public class RunAndTrackTest extends TestCase {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		for (Iterator i = createdContexts.iterator(); i.hasNext();) {
-			IDisposable context = (IDisposable) i.next();
+		for (Iterator<IEclipseContext> i = createdContexts.iterator(); i.hasNext();) {
+			IEclipseContext context = i.next();
 			context.dispose();
 		}
 		createdContexts.clear();

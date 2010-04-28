@@ -14,8 +14,24 @@ package org.eclipse.e4.core.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.e4.core.internal.tests.contexts.ComplexDisposalTest;
-import org.eclipse.e4.core.internal.tests.contexts.ParentContextDisposalTest;
+import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
+import org.eclipse.e4.core.internal.tests.contexts.EclipseContextTest;
+import org.eclipse.e4.core.internal.tests.contexts.ReparentingTest;
+import org.eclipse.e4.core.internal.tests.contexts.RunAndTrackTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.AnnotationsInjectionTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.Bug304585Test;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ComplexDisposalTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionDisposeTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionFactoryTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.DisposingReferencedContextTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ExtraDependenciesTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.GroupedUpdatesTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.InjectionUpdateTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ParentContextDisposalTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.TestConstructorInjection;
 import org.eclipse.e4.core.internal.tests.di.AtInjectTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
@@ -40,8 +56,28 @@ public class CoreTestSuite extends TestSuite {
 		addTest(AtInjectTest.suite());
 		
 		// Contexts
+		addTestSuite(EclipseContextTest.class);
+		addTestSuite(ContextInjectionTest.class);
+		addTestSuite(ContextInjectionDisposeTest.class);
+		addTestSuite(ContextInjectionFactoryTest.class);
+		addTestSuite(ContextDynamicTest.class);
+		addTestSuite(ReparentingTest.class);
+		addTestSuite(RunAndTrackTest.class);
 		addTestSuite(ParentContextDisposalTest.class);
 		addTestSuite(ComplexDisposalTest.class);
 		addTestSuite(DisposeClassLinkTest.class);
+		
+		// Contexts injection
+		addTestSuite(AnnotationsInjectionTest.class);
+		addTestSuite(TestConstructorInjection.class);
+		addTestSuite(ServiceContextTest.class);
+		addTestSuite(ProviderInjectionTest.class);
+		addTestSuite(InjectionUpdateTest.class);
+		addTestSuite(DisposingReferencedContextTest.class);
+		addTestSuite(InjectionOrderTest.class);
+		addTestSuite(GroupedUpdatesTest.class);
+		addTestSuite(Bug304585Test.class);
+		addTestSuite(ExtraDependenciesTest.class);
+		
 	}
 }
