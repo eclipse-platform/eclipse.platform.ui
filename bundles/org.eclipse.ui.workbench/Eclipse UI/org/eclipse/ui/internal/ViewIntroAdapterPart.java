@@ -203,7 +203,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			window.setCoolBarVisible(coolbarVisible);
 			window.setPerspectiveBarVisible(persBarVisible);
 		} else {
-			layout = !window.getCoolBarVisible() || !window.getPerspectiveBarVisible();
+			layout = window.getCoolBarVisible() || window.getPerspectiveBarVisible();
 			window.setCoolBarVisible(false);
 			window.setPerspectiveBarVisible(false);
 		}
