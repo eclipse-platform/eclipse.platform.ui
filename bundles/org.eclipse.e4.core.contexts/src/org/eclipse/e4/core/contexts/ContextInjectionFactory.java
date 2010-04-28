@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
 import java.lang.annotation.Annotation;
 import javax.inject.Scope;
 import javax.inject.Singleton;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.InjectorFactory;

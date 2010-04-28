@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.annotations.Optional;
 
 /**

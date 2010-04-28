@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -17,10 +23,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.extensions.EventTopic;

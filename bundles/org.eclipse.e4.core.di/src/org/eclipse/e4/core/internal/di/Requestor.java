@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import java.lang.ref.WeakReference;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

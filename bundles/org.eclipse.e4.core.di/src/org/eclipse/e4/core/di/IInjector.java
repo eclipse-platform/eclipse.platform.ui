@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import java.lang.annotation.Annotation;
 
 /**

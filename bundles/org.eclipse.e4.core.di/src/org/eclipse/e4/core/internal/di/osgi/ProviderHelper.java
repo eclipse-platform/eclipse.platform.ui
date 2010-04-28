@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di.osgi;
 
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
 import org.osgi.framework.*;
 
 public class ProviderHelper {

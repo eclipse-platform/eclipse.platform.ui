@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
 

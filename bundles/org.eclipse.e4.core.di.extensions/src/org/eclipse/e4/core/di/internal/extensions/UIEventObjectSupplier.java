@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.extensions.UIEventTopic;
 import org.eclipse.swt.widgets.Display;

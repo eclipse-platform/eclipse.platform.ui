@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 
 public class ConstructorRequestor extends Requestor {
 
@@ -40,7 +41,7 @@ public class ConstructorRequestor extends Requestor {
 		InjectionProperties[] properties = annotationSupport.getInjectParamsProperties(constructor);
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			descriptors[i] = ObjectDescriptorFactory.make(parameterTypes[i], properties[i].getQualifiers());
+			descriptors[i] = new ObjectDescriptor(parameterTypes[i], properties[i].getQualifiers());
 		}
 		return descriptors;
 	}

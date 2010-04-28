@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +25,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.extensions.Preferences;
 import org.osgi.framework.FrameworkUtil;
 

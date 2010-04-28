@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
 import javax.inject.Provider;
 import org.eclipse.e4.core.di.*;
 

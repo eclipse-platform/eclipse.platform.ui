@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
+import org.eclipse.e4.core.di.suppliers.IRequestor;
+
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -30,14 +36,10 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import org.eclipse.e4.core.di.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.IBinding;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.IObjectDescriptor;
-import org.eclipse.e4.core.di.IRequestor;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.ObjectDescriptorFactory;
 import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 
 /**
@@ -188,7 +190,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
-		IObjectDescriptor descriptor = ObjectDescriptorFactory.make(clazz, null);
+		IObjectDescriptor descriptor = new ObjectDescriptor(clazz, null);
 		return make(descriptor, objectSupplier);
 	}
 

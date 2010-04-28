@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.di;
+package org.eclipse.e4.core.di.suppliers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

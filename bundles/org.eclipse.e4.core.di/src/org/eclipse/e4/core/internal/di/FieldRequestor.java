@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+
 import java.lang.reflect.Field;
-import org.eclipse.e4.core.di.*;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.InjectionException;
 
 public class FieldRequestor extends Requestor {
 
@@ -30,7 +35,7 @@ public class FieldRequestor extends Requestor {
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
 		InjectionProperties properties = annotationSupport.getInjectProperties(field);
-		IObjectDescriptor objectDescriptor = ObjectDescriptorFactory.make(field.getGenericType(), properties.getQualifiers());
+		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), properties.getQualifiers());
 		return new IObjectDescriptor[] {objectDescriptor};
 	}
 

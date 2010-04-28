@@ -8,7 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.di;
+package org.eclipse.e4.core.di.suppliers;
+
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.InjectionException;
 
 // TBD this is really a "feedback" object. 
 /**
