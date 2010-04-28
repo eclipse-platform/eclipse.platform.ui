@@ -591,7 +591,7 @@ public class Perspective {
             if (activeFastView == ref) {
 				setActiveFastView(null);
 			}
-            if (pane != null) {
+			if (pane != null && pane.getControl() != null) {
 				pane.getControl().setEnabled(true);
 			}
             
