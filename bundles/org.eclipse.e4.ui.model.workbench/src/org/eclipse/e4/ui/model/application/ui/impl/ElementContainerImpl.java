@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -22,6 +23,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
@@ -87,14 +89,42 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public List<T> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this, UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+			EClassifier classifier = ModelUtils.getTypeArgument(eClass(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
+			final Class<?> clazz;
+			
+			if( classifier != null && classifier.getInstanceClass() != null ) {
+				clazz = classifier.getInstanceClass();
+			} else {
+				clazz = null;
+			}
+			
+			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this, UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				protected boolean isInstance(Object object) {
+					return super.isInstance(object) && (clazz == null || clazz.isInstance(object));
+				}
+
+				protected T validate(int index, T object) {
+					if( isInstance(object) ) {
+						return object;
+					} else {
+						throw new IllegalArgumentException("The added object '"+object+"' is not assignable to '"+clazz.getName()+"'");
+					}
+				}
+			};
 		}
 		return children;
 	}
+	
 
 	/**
 	 * <!-- begin-user-doc -->
