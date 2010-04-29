@@ -1,5 +1,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -8,16 +9,17 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.emf.ui.internal.common.commands.AddAddonCommand;
+import org.eclipse.e4.tools.emf.ui.internal.common.commands.RemoveAddonCommand;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -39,9 +41,21 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
 	
+	private List<Action> actions = new ArrayList<Action>();
+	
+	//FIXME We need to plug this stuff into the command frameworks
+	private AddAddonCommand addAddonCommand = new AddAddonCommand();
+	private RemoveAddonCommand removeAddonCommand = new RemoveAddonCommand();
+	
 	public VApplicationAddons(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
+		actions.add(new Action("Add Addon") {
+			@Override
+			public void run() {
+				handleAddAddon();
+			}
+		});
 	}
 
 	@Override
@@ -165,13 +179,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MAddon command = MApplicationFactory.INSTANCE.createAddon();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__ADDONS, command);
-					
-					if( cmd.canExecute() ) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(command);
-					}
+					handleAddAddon();
 				}
 			});
 
@@ -183,11 +191,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> commands = ((IStructuredSelection)viewer.getSelection()).toList();
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__ADDONS, commands);
-						if( cmd.canExecute() ) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
+						handleRemoveAddons(((IStructuredSelection)viewer.getSelection()).toList());
 					}
 				}
 			});
@@ -195,11 +199,25 @@ public class VApplicationAddons extends AbstractComponentEditor {
 		
 		return parent;
 	}
-
+	
+	private void handleAddAddon() {
+		addAddonCommand.execute(getEditingDomain(), (MApplication) getMaster().getValue());
+	}
+	
+	private void handleRemoveAddons(List<MAddon> addons) {
+		removeAddonCommand.execute(getEditingDomain(), addons);
+	}
+	
 	@Override
 	public IObservableList getChildList(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }
