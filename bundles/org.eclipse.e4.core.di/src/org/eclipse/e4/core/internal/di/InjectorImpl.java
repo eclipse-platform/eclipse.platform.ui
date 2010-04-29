@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -33,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -40,6 +35,11 @@ import org.eclipse.e4.core.di.IBinding;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
+import org.eclipse.e4.core.di.annotations.PreDestroy;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 
 /**
@@ -48,9 +48,6 @@ import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 public class InjectorImpl implements IInjector {
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
-	// XXX remove
-	// plug-in class that gets replaced in Java 1.5+
-	final private static AnnotationsSupport annotationSupport = new AnnotationsSupport();
 
 	// TBD thread safety
 	//private Map<String, AbstractObjectSupplier> extendedSuppliers = new HashMap<String, AbstractObjectSupplier>();
@@ -72,7 +69,7 @@ public class InjectorImpl implements IInjector {
 				haveLink = true;
 		}
 		if (!haveLink)
-			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, object, true, false, true));
+			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, object, true));
 
 		// Then ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
 		resolveRequestorArgs(requestors, objectSupplier, false);
@@ -170,7 +167,7 @@ public class InjectorImpl implements IInjector {
 			Method method = methods[j];
 			if (method.getAnnotation(qualifier) == null)
 				continue;
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, true);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
 
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
@@ -233,8 +230,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			// unless this is the default constructor, it has to be tagged
-			InjectionProperties cProps = annotationSupport.getInjectProperties(constructor);
-			if (!cProps.shouldInject() && constructor.getParameterTypes().length != 0)
+			if (!constructor.isAnnotationPresent(Inject.class) && constructor.getParameterTypes().length != 0)
 				continue;
 
 			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier);
@@ -312,11 +308,11 @@ public class InjectorImpl implements IInjector {
 			Method method = methods[i];
 			if (method.getParameterTypes().length > 0) // TBD why?
 				continue;
-			if (!annotationSupport.isPreDestory(method))
+			if (!method.isAnnotationPresent(PreDestroy.class))
 				continue;
 			if (!isOverridden(method, classHierarchy)) {
 				// TBD optional @PreDestory? might make sense if we allow args on those methods
-				MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, false);
+				MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
 				requestor.execute();
 			}
 		}
@@ -512,14 +508,9 @@ public class InjectorImpl implements IInjector {
 			Field field = fields[i];
 			if (Modifier.isStatic(field.getModifiers()) != processStatic)
 				continue;
-
-			// XXX limit to "should inject"
-			InjectionProperties properties = annotationSupport.getInjectProperties(field);
-			// XXX this will be removed on 1.4/1.5 merge
-			if (!properties.shouldInject())
+			if (!field.isAnnotationPresent(Inject.class))
 				continue;
-
-			requestors.add(new FieldRequestor(field, this, objectSupplier, userObject, track, properties.groupUpdates(), properties.isOptional()));
+			requestors.add(new FieldRequestor(field, this, objectSupplier, userObject, track));
 		}
 	}
 
@@ -534,12 +525,9 @@ public class InjectorImpl implements IInjector {
 				continue; // process in the subclass
 			if (Modifier.isStatic(method.getModifiers()) != processStatic)
 				continue;
-
-			InjectionProperties properties = annotationSupport.getInjectProperties(method);
-			if (!properties.shouldInject())
+			if (!method.isAnnotationPresent(Inject.class))
 				continue;
-
-			requestors.add(new MethodRequestor(method, this, objectSupplier, userObject, track, properties.groupUpdates(), properties.isOptional()));
+			requestors.add(new MethodRequestor(method, this, objectSupplier, userObject, track));
 		}
 	}
 
@@ -594,7 +582,7 @@ public class InjectorImpl implements IInjector {
 			if (isOverridden(method, classHierarchy))
 				continue;
 
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false, false, false);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1)
@@ -609,7 +597,7 @@ public class InjectorImpl implements IInjector {
 	 * class comment of ContextInjectionFactory.
 	 */
 	private boolean isPostConstruct(Method method) {
-		return annotationSupport.isPostConstruct(method);
+		return method.isAnnotationPresent(PostConstruct.class);
 	}
 
 	/**

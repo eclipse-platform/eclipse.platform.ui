@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import java.lang.ref.WeakReference;
+import java.lang.reflect.AccessibleObject;
 import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.annotations.GroupUpdates;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -34,13 +34,9 @@ abstract public class Requestor implements IRequestor {
 
 	protected Object[] actualArgs;
 
-	// plug-in class that gets replaced in Java 1.5+
-	// TBD this will be merged-in; replace with an utility class
-	final protected AnnotationsSupport annotationSupport = new AnnotationsSupport();
-
 	public abstract IObjectDescriptor[] getDependentObjects();
 
-	public Requestor(IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean isOptional) {
+	public Requestor(AccessibleObject reflectionObject, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
 		if (requestingObject != null)
@@ -48,8 +44,8 @@ abstract public class Requestor implements IRequestor {
 		else
 			objectRef = null;
 		this.track = track;
-		this.groupUpdates = groupUpdates;
-		this.isOptional = isOptional;
+		groupUpdates = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(GroupUpdates.class);
+		isOptional = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(Optional.class);
 	}
 
 	public IInjector getInjector() {

@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
 import java.lang.reflect.Field;
 import javax.inject.Named;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 /**
  * This requestor is used to establish a link between the object supplier
@@ -34,8 +32,8 @@ public class ClassRequestor extends Requestor {
 
 	private String clazzName;
 
-	public ClassRequestor(Class<?> clazz, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean optional) {
-		super(injector, primarySupplier, requestingObject, track, groupUpdates, optional);
+	public ClassRequestor(Class<?> clazz, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+		super(null, injector, primarySupplier, requestingObject, track);
 		if (clazz != null)
 			clazzName = clazz.getSimpleName();
 	}
@@ -57,8 +55,7 @@ public class ClassRequestor extends Requestor {
 			e.printStackTrace(); // tested - not going to happen
 			return null;
 		}
-		InjectionProperties properties = annotationSupport.getInjectProperties(field);
-		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), properties.getQualifiers());
+		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), field.getAnnotations());
 		return new IObjectDescriptor[] {objectDescriptor};
 	}
 

@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 public class ConstructorRequestor extends Requestor {
 
@@ -26,7 +25,7 @@ public class ConstructorRequestor extends Requestor {
 
 	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, AbstractObjectSupplier primarySupplier) {
 		// TBD make an integer update types? 0 - static , 1 - normal, 2 - grouped?
-		super(injector, primarySupplier, null, false /* do not track */, false /* N/A: no updates */, false /* mandatory */);
+		super(null, injector, primarySupplier, null, false /* do not track */);
 		this.constructor = constructor;
 	}
 
@@ -36,12 +35,21 @@ public class ConstructorRequestor extends Requestor {
 
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
-		// Class[] parameterTypes = constructor.getParameterTypes();
-		Type[] parameterTypes = constructor.getGenericParameterTypes();
-		InjectionProperties[] properties = annotationSupport.getInjectParamsProperties(constructor);
-		IObjectDescriptor[] descriptors = new IObjectDescriptor[properties.length];
-		for (int i = 0; i < properties.length; i++) {
-			descriptors[i] = new ObjectDescriptor(parameterTypes[i], properties[i].getQualifiers());
+		Annotation[][] annotations = constructor.getParameterAnnotations();
+		Type[] logicalParams = constructor.getGenericParameterTypes();
+		// JDK bug: different methods see / don't see generated args for nested classes
+		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5087240
+		Class<?>[] compilerParams = constructor.getParameterTypes();
+		if (compilerParams.length > logicalParams.length) {
+			Type[] tmp = new Type[compilerParams.length];
+			System.arraycopy(compilerParams, 0, tmp, 0, compilerParams.length - logicalParams.length);
+			System.arraycopy(logicalParams, 0, tmp, compilerParams.length - logicalParams.length, logicalParams.length);
+			logicalParams = tmp;
+		}
+
+		IObjectDescriptor[] descriptors = new IObjectDescriptor[logicalParams.length];
+		for (int i = 0; i < logicalParams.length; i++) {
+			descriptors[i] = new ObjectDescriptor(logicalParams[i], annotations[i]);
 		}
 		return descriptors;
 	}

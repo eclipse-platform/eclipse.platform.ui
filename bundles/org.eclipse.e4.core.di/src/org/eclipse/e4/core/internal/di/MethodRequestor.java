@@ -10,22 +10,21 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 public class MethodRequestor extends Requestor {
 
 	final private Method method;
 
-	public MethodRequestor(Method method, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean optional) {
-		super(injector, primarySupplier, requestingObject, track, groupUpdates, optional);
+	public MethodRequestor(Method method, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+		super(method, injector, primarySupplier, requestingObject, track);
 		this.method = method;
 	}
 
@@ -36,11 +35,10 @@ public class MethodRequestor extends Requestor {
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
 		Type[] parameterTypes = method.getGenericParameterTypes();
-		// TBD make getInjectParamProperties produce ObjectDescriptors
-		InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
-		IObjectDescriptor[] descriptors = new IObjectDescriptor[properties.length];
-		for (int i = 0; i < properties.length; i++) {
-			descriptors[i] = new ObjectDescriptor(parameterTypes[i], properties[i].getQualifiers());
+		Annotation[][] annotations = method.getParameterAnnotations();
+		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
+		for (int i = 0; i < parameterTypes.length; i++) {
+			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);
 		}
 		return descriptors;
 	}

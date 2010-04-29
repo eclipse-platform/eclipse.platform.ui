@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
 import java.lang.reflect.Field;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 public class FieldRequestor extends Requestor {
 
 	final private Field field;
 
-	public FieldRequestor(Field field, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track, boolean groupUpdates, boolean optional) {
-		super(injector, primarySupplier, requestingObject, track, groupUpdates, optional);
+	public FieldRequestor(Field field, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+		super(field, injector, primarySupplier, requestingObject, track);
 		this.field = field;
 	}
 
@@ -34,8 +32,7 @@ public class FieldRequestor extends Requestor {
 
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
-		InjectionProperties properties = annotationSupport.getInjectProperties(field);
-		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), properties.getQualifiers());
+		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), field.getAnnotations());
 		return new IObjectDescriptor[] {objectDescriptor};
 	}
 

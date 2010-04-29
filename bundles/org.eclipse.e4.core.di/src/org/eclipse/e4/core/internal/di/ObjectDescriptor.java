@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Qualifier;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 /**
  * NOTE: This is a preliminary form; this API will change.
@@ -27,9 +29,9 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	final private Type desiredType;
 	final private Annotation[] annotations;
 
-	public ObjectDescriptor(Type desiredType, Annotation[] annotations) {
+	public ObjectDescriptor(Type desiredType, Annotation[] allAnnotations) {
 		this.desiredType = desiredType;
-		this.annotations = annotations;
+		this.annotations = (allAnnotations == null) ? null : calcQualifiers(allAnnotations);
 	}
 
 	// TBD rename getDesiredClass()
@@ -102,6 +104,22 @@ public class ObjectDescriptor implements IObjectDescriptor {
 			buffer.append(']');
 		}
 		return buffer.toString();
+	}
+
+	private Annotation[] calcQualifiers(Annotation[] allAnnotations) {
+		if (allAnnotations.length == 0)
+			return null;
+		Annotation[] result;
+		List<Annotation> qualifiers = new ArrayList<Annotation>();
+		for (Annotation annotation : allAnnotations) {
+			if (annotation.annotationType().isAnnotationPresent(Qualifier.class))
+				qualifiers.add(annotation);
+		}
+		if (qualifiers.isEmpty())
+			return null;
+		result = new Annotation[qualifiers.size()];
+		qualifiers.toArray(result);
+		return result;
 	}
 
 }
