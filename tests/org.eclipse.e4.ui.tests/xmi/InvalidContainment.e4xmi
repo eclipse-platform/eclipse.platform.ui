@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
+    xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore http://www.eclipse.org/ui/2010/UIModel/application/ui/basic ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/basic">
+  <children xsi:type="basic:Window" elementId="window1">
+    <children xsi:type="basic:PartStack" elementId="window1.partstack1">
+      <children xsi:type="basic:PartSashContainer" elementId="window1.partstack1.partsashcontainer1"/>
+      <children xsi:type="basic:Part" elementId="window1.partstack1.part1"/>
+      <children xsi:type="basic:PartSashContainer" elementId="window1.partstack1.partsashcontainer2"/>
+      <children xsi:type="basic:InputPart" elementId="window1.partstack1.inputpart1"/>
+    </children>
+    <children xsi:type="basic:PartStack" elementId="window1.partstack2">
+      <children xsi:type="basic:Part" elementId="window1.partstack2.part1"/>
+    </children>
+  </children>
+</application:Application>

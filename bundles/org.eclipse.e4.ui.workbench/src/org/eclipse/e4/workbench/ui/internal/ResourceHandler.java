@@ -118,7 +118,7 @@ public class ResourceHandler {
 
 	public Resource loadRestoredModel() {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "Restoring workbench: " + restoreLocation, null); //$NON-NLS-1$
-		resource = resourceSetImpl.getResource(restoreLocation, true);
+		resource = loadResource(restoreLocation);
 		return resource;
 	}
 
@@ -126,7 +126,7 @@ public class ResourceHandler {
 		Activator.trace(Policy.DEBUG_WORKBENCH,
 				"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
 		if (RESTORE_VIA_DELTAS) {
-			resource = new ResourceSetImpl().getResource(applicationDefinitionInstance, true);
+			resource = loadResource(applicationDefinitionInstance);
 		} else {
 			resource = new E4XMIResource();
 			MApplication theApp = loadDefaultModel(applicationDefinitionInstance);
@@ -137,9 +137,23 @@ public class ResourceHandler {
 	}
 
 	private MApplication loadDefaultModel(URI defaultModelPath) {
-		Resource resource = new ResourceSetImpl().getResource(defaultModelPath, true);
+		Resource resource = loadResource(defaultModelPath);
 		MApplication app = (MApplication) resource.getContents().get(0);
 		return app;
+	}
+
+	// Ensures that even models with error are loaded!
+	private Resource loadResource(URI uri) {
+		Resource resource;
+		try {
+			resource = resourceSetImpl.getResource(uri, true);
+		} catch (Exception e) {
+			// TODO We could use diagnostics for better analyzing the error
+			logger.error(e);
+			resource = resourceSetImpl.getResource(uri, false);
+		}
+
+		return resource;
 	}
 
 	public void save() throws IOException {

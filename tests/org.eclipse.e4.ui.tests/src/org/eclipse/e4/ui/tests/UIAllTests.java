@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.tests.application.Bug299755Test;
 import org.eclipse.e4.ui.tests.application.Bug308220Test;
+import org.eclipse.e4.ui.tests.application.ModelRobustnessTest;
+import org.eclipse.e4.ui.tests.application.ResourceHandlerTest;
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
@@ -54,5 +56,7 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(ContextTest.class);
 		addTest(ModelReconcilerTestSuite.suite());
 		addTestSuite(Bug308317Test.class);
+		addTestSuite(ModelRobustnessTest.class);
+		addTestSuite(ResourceHandlerTest.class);
 	}
 }
