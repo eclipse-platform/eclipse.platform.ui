@@ -46,7 +46,6 @@ public class TestConstructorInjection extends TestCase {
 			defaultConstructorCalled = true;
 		}
 
-		@Inject
 		public TestConstructorObject(Integer i, String s) {
 			constructorIntStrCalled = true;
 			this.i = i;
