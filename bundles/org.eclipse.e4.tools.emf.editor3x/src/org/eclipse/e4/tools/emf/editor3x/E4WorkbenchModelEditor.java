@@ -23,6 +23,8 @@ import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.swt.SWT;
@@ -35,6 +37,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 @SuppressWarnings("restriction")
 public class E4WorkbenchModelEditor extends EditorPart {
@@ -67,36 +72,6 @@ public class E4WorkbenchModelEditor extends EditorPart {
 
 	}
 
-	private void setupCss(Display display) {
-		CSSEngine engine = (CSSEngine) display
-				.getData("org.eclipse.e4.ui.css.core.engine");
-
-		if (engine == null) {
-			engine = new CSSSWTEngineImpl(display, true);
-			engine.setErrorHandler(new CSSErrorHandler() {
-				public void error(Exception e) {
-					e.printStackTrace();
-				}
-			});
-			display.setData("org.eclipse.e4.ui.css.core.engine", engine);
-
-			try {
-				URL url = FileLocator.resolve(new URL(CSS_URI.toString()));
-				display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
-
-				InputStream stream = url.openStream();
-				engine.parseStyleSheet(stream);
-				stream.close();
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-	}
-
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
@@ -122,7 +97,6 @@ public class E4WorkbenchModelEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		setupCss(parent.getDisplay());
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -142,6 +116,15 @@ public class E4WorkbenchModelEditor extends EditorPart {
 		}
 
 		makeActions();
+		Bundle b = FrameworkUtil.getBundle(E4WorkbenchModelEditor.class);
+		if( b != null ) {
+			ServiceReference ref = b.getBundleContext().getServiceReference(IThemeManager.class.getName());
+			if( ref != null ) {
+				IThemeManager mgr = (IThemeManager) b.getBundleContext().getService(ref);
+				IThemeEngine engine = mgr.getEngineForDisplay(parent.getDisplay());
+				engine.applyStyles(parent, true);
+			}			
+		}
 	}
 
 	private void makeActions() {

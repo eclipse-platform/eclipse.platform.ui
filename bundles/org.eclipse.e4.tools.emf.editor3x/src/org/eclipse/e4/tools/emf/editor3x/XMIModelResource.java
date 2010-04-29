@@ -109,6 +109,7 @@ public class XMIModelResource implements IModelResource {
 			fireCommandStackChanged();
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 
 		return Status.OK_STATUS;

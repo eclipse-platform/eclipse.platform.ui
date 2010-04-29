@@ -74,7 +74,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 				// Accept search results from the JDT SearchEngine
 				String cName = new String(simpleTypeName);
 				String pName = new String(packageName);
-				String label = cName + " - " + pName; //$NON-NLS-1$
+//				String label = cName + " - " + pName; //$NON-NLS-1$
 				String content = pName + "." + cName; //$NON-NLS-1$
 				
 //				System.err.println("Found: " + label + " => " + pName + " => " + path);
@@ -86,9 +86,10 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 					IFile f = project.getFile("/META-INF/MANIFEST.MF");
 					
 					if( f != null && f.exists() ) {
+						BufferedReader r = null;
 						try {
 							InputStream s = f.getContents();
-							BufferedReader r = new BufferedReader(new InputStreamReader(s));
+							r = new BufferedReader(new InputStreamReader(s));
 							String line;
 							while( (line = r.readLine()) != null ) {
 								if( line.startsWith("Bundle-SymbolicName:") ) {
@@ -106,6 +107,13 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+						} finally {
+							try {
+								r.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
 				}
