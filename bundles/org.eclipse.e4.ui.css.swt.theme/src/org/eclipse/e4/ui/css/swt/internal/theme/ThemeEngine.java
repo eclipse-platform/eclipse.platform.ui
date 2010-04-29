@@ -36,6 +36,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public class ThemeEngine implements IThemeEngine {
 	private List<Theme> themes = new ArrayList<Theme>();
@@ -64,7 +66,7 @@ public class ThemeEngine implements IThemeEngine {
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
 
 		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
+			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
 				if (ce.getName().equals("theme")) {
 					registerTheme(ce.getAttribute("id"), ce
 							.getAttribute("label"), "platform:/plugin/"
@@ -162,6 +164,37 @@ public class ThemeEngine implements IThemeEngine {
 
 		return s;
 	}
+	
+	 /**
+     * Get all elements that have os/ws attributes that best match the current 
+     * platform.
+     * 
+     * @param elements the elements to check
+     * @return the best matches, if any
+     */
+    private IConfigurationElement[] getPlatformMatches(
+            IConfigurationElement[] elements) {
+        Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
+		String osname = bundle.getBundleContext().getProperty("osgi.os");
+        String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
+        ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
+        for (int i = 0; i < elements.length; i++) {
+            IConfigurationElement element = elements[i];
+            String elementOs = element.getAttribute("os");
+            String elementWs = element.getAttribute("ws");
+            if (osname != null && osname.equalsIgnoreCase(elementOs)) {
+                if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+                	//best match
+                    matchingElements.add(element);
+                    continue;
+                }
+                matchingElements.add(element);
+            } else if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+            	matchingElements.add(element);
+            }
+        }
+        return (IConfigurationElement[]) matchingElements.toArray(new IConfigurationElement[matchingElements.size()]);
+    }
 
 	public void setTheme(String themeId) {
 		for (Theme t : themes) {
