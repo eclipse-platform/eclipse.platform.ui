@@ -538,13 +538,13 @@ class MarkerFieldFilterGroup {
 
 		String scopeValue = element.getAttribute(ATTRIBUTE_SCOPE);
 
-		if (scopeValue.equals(ATTRIBUTE_ON_SELECTED_ONLY))
+		if (ATTRIBUTE_ON_SELECTED_ONLY.equals(scopeValue))
 			return ON_SELECTED_ONLY;
 
-		if (scopeValue.equals(ATTRIBUTE_ON_SELECTED_AND_CHILDREN))
+		if (ATTRIBUTE_ON_SELECTED_AND_CHILDREN.equals(scopeValue))
 			return ON_SELECTED_AND_CHILDREN;
 
-		if (scopeValue.equals(ATTRIBUTE_ON_ANY_IN_SAME_CONTAINER))
+		if (ATTRIBUTE_ON_ANY_IN_SAME_CONTAINER.equals(scopeValue))
 			return ON_ANY_IN_SAME_CONTAINER;
 
 		return ON_ANY;
