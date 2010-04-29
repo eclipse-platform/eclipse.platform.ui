@@ -812,7 +812,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// Close all editors.
 			for (IEditorReference editorRef : editorRefs) {
 				MPart model = ((EditorReference) editorRef).getModel();
-				if (!(hidePart(model, save, confirm))) {
+				// saving should've been handled earlier above
+				if (!(hidePart(model, false, confirm))) {
 					return false;
 				}
 			}
