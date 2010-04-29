@@ -11,19 +11,12 @@
 package org.eclipse.e4.core.internal.di;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Qualifier;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
-/**
- * NOTE: This is a preliminary form; this API will change.
- * 
- * @noextend This class is not intended to be subclassed by clients.
- */
 public class ObjectDescriptor implements IObjectDescriptor {
 
 	final private Type desiredType;
@@ -31,26 +24,11 @@ public class ObjectDescriptor implements IObjectDescriptor {
 
 	public ObjectDescriptor(Type desiredType, Annotation[] allAnnotations) {
 		this.desiredType = desiredType;
-		this.annotations = (allAnnotations == null) ? null : calcQualifiers(allAnnotations);
+		this.annotations = (allAnnotations == null) ? null : qualifiers(allAnnotations);
 	}
 
-	// TBD rename getDesiredClass()
-	public Class<?> getElementClass() {
-		if (desiredType instanceof Class<?>)
-			return (Class<?>) desiredType;
-		if (desiredType instanceof ParameterizedType)
-			return (Class<?>) ((ParameterizedType) desiredType).getRawType(); // XXX this is wrong;
-																				// might be
-																				// Param<T<T2>>
-		return null;
-	}
-
-	public Type getElementType() {
+	public Type getDesiredType() {
 		return desiredType;
-	}
-
-	public boolean isOptional() {
-		return hasQualifier(Optional.class);
 	}
 
 	public boolean hasQualifier(Class<? extends Annotation> clazz) {
@@ -72,14 +50,14 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	/**
 	 * Returns null if qualifier is not present
 	 */
-	public Object getQualifier(Class<? extends Annotation> clazz) {
+	public <T extends Annotation> T getQualifier(Class<T> clazz) {
 		if (clazz == null)
 			return null;
 		if (annotations == null)
 			return null;
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(clazz))
-				return annotation;
+				return clazz.cast(annotation);
 		}
 		return null;
 	}
@@ -106,7 +84,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 		return buffer.toString();
 	}
 
-	private Annotation[] calcQualifiers(Annotation[] allAnnotations) {
+	private Annotation[] qualifiers(Annotation[] allAnnotations) {
 		if (allAnnotations.length == 0)
 			return null;
 		Annotation[] result;

@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
+import java.lang.reflect.Type;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 
 public class ContextObjectSupplier extends AbstractObjectSupplier {
 
@@ -179,13 +177,12 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 	private String getKey(IObjectDescriptor descriptor) {
 		if (descriptor.hasQualifier(Named.class)) {
-			Object namedAnnotation = descriptor.getQualifier(Named.class);
-			String key = ((Named) namedAnnotation).value();
-			return key;
+			Named namedAnnotation = descriptor.getQualifier(Named.class);
+			return namedAnnotation.value();
 		}
-		Class<?> elementClass = descriptor.getElementClass();
-		if (elementClass != null)
-			return elementClass.getName();
+		Type elementType = descriptor.getDesiredType();
+		if (elementType instanceof Class<?>)
+			return ((Class<?>) elementType).getName();
 		return null;
 	}
 

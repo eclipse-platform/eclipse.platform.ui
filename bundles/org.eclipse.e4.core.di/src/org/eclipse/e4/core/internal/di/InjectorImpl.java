@@ -35,6 +35,7 @@ import org.eclipse.e4.core.di.IBinding;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
@@ -194,7 +195,7 @@ public class InjectorImpl implements IInjector {
 	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) {
 		IBinding binding = findBinding(descriptor);
 		if (binding == null) {
-			Class<?> desiredClass = descriptor.getElementClass();
+			Class<?> desiredClass = getDesiredClass(descriptor.getDesiredType());
 			return internalMake(desiredClass, objectSupplier);
 		}
 		return internalMake(binding.getImplementationClass(), objectSupplier);
@@ -357,7 +358,7 @@ public class InjectorImpl implements IInjector {
 
 		// 1) check if we have a Provider<T>
 		for (int i = 0; i < actualArgs.length; i++) {
-			Class<?> providerClass = getProviderType(descriptors[i].getElementType());
+			Class<?> providerClass = getProviderType(descriptors[i].getDesiredType());
 			if (providerClass == null)
 				continue;
 			actualArgs[i] = new ProviderImpl<Class<?>>(descriptors[i], this, objectSupplier);
@@ -408,11 +409,11 @@ public class InjectorImpl implements IInjector {
 			for (int i = 0; i < actualArgs.length; i++) {
 				if (descriptors[i] == null)
 					continue; // already resolved
-				if (descriptors[i].isOptional())
+				if (descriptors[i].hasQualifier(Optional.class))
 					continue;
 				Object result = null;
 				try {
-					result = internalMake(descriptors[i].getElementClass(), objectSupplier);
+					result = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier);
 				} catch (InjectionException e) {
 					// ignore
 				}
@@ -428,12 +429,12 @@ public class InjectorImpl implements IInjector {
 		for (int i = 0; i < descriptors.length; i++) {
 			// check that values are of a correct type
 			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE) {
-				Class<?> descriptorsClass = descriptors[i].getElementClass();
+				Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
 				if (!descriptorsClass.isAssignableFrom(actualArgs[i].getClass()))
 					actualArgs[i] = IInjector.NOT_A_VALUE;
 			}
 			// replace optional unresolved values with null
-			if (descriptors[i].isOptional() && actualArgs[i] == IInjector.NOT_A_VALUE)
+			if (actualArgs[i] == IInjector.NOT_A_VALUE && descriptors[i].hasQualifier(Optional.class))
 				actualArgs[i] = null;
 			else if (fillNulls && actualArgs[i] == IInjector.NOT_A_VALUE)
 				actualArgs[i] = null;
@@ -577,7 +578,7 @@ public class InjectorImpl implements IInjector {
 		Method[] methods = objectClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if (!isPostConstruct(method))
+			if (!method.isAnnotationPresent(PostConstruct.class))
 				continue;
 			if (isOverridden(method, classHierarchy))
 				continue;
@@ -592,12 +593,15 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
-	/**
-	 * Returns whether the given method is a post-construction process method, as defined by the
-	 * class comment of ContextInjectionFactory.
-	 */
-	private boolean isPostConstruct(Method method) {
-		return method.isAnnotationPresent(PostConstruct.class);
+	private Class<?> getDesiredClass(Type desiredType) {
+		if (desiredType instanceof Class<?>)
+			return (Class<?>) desiredType;
+		if (desiredType instanceof ParameterizedType) {
+			Type rawType = ((ParameterizedType) desiredType).getRawType();
+			if (rawType instanceof Class<?>)
+				return (Class<?>) rawType;
+		}
+		return null;
 	}
 
 	/**
@@ -607,10 +611,7 @@ public class InjectorImpl implements IInjector {
 		if (!(type instanceof ParameterizedType))
 			return null;
 		Type rawType = ((ParameterizedType) type).getRawType();
-		if (!(rawType instanceof Class<?>))
-			return null;
-		boolean isProvider = ((Class<?>) rawType).equals(Provider.class);
-		if (!isProvider)
+		if (!Provider.class.equals(rawType))
 			return null;
 		Type[] actualTypes = ((ParameterizedType) type).getActualTypeArguments();
 		if (actualTypes.length != 1)
@@ -648,17 +649,17 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private IBinding findBinding(IObjectDescriptor descriptor) {
-		Class<?> desiredClass = getProviderType(descriptor.getElementType());
+		Class<?> desiredClass = getProviderType(descriptor.getDesiredType());
 		if (desiredClass == null)
-			desiredClass = descriptor.getElementClass();
+			desiredClass = getDesiredClass(descriptor.getDesiredType());
 		synchronized (bindings) {
 			if (!bindings.containsKey(desiredClass))
 				return null;
 			Set<IBinding> collection = bindings.get(desiredClass);
 			String desiredQualifierName = null;
 			if (descriptor.hasQualifier(Named.class)) {
-				Object namedAnnotation = descriptor.getQualifier(Named.class);
-				desiredQualifierName = ((Named) namedAnnotation).value();
+				Named namedAnnotation = descriptor.getQualifier(Named.class);
+				desiredQualifierName = namedAnnotation.value();
 			} else {
 				Annotation[] annotations = descriptor.getQualifiers();
 				if (annotations != null) {
@@ -688,4 +689,5 @@ public class InjectorImpl implements IInjector {
 			return false;
 		return str1.equals(str2);
 	}
+
 }

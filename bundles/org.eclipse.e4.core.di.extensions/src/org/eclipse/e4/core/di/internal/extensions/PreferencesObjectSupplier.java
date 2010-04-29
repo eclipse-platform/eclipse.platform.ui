@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +21,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.Preferences;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.FrameworkUtil;
 
 public class PreferencesObjectSupplier extends AbstractObjectSupplier {
@@ -64,15 +61,15 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 	private String getKey(IObjectDescriptor descriptor) {
 		if (descriptor == null)
 			return null;
-		Object qualifier = descriptor.getQualifier(Preferences.class);
-		return ((Preferences) qualifier).value();
+		Preferences qualifier = descriptor.getQualifier(Preferences.class);
+		return qualifier.value();
 	}
 
 	private String getNodePath(IObjectDescriptor descriptor, Object requestingObject) {
 		if (descriptor == null)
 			return null;
-		Object qualifier = descriptor.getQualifier(Preferences.class);
-		String nodePath = ((Preferences) qualifier).nodePath();
+		Preferences qualifier = descriptor.getQualifier(Preferences.class);
+		String nodePath = qualifier.nodePath();
 
 		if (nodePath == null || nodePath.length() == 0) {
 			if (requestingObject == null)

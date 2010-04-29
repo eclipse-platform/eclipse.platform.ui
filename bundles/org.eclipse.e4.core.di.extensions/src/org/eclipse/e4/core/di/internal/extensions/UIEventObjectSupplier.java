@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.extensions.UIEventTopic;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.EventHandler;
 
@@ -53,8 +51,8 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 	protected String getTopic(IObjectDescriptor descriptor) {
 		if (descriptor == null)
 			return null;
-		Object qualifier = descriptor.getQualifier(UIEventTopic.class);
-		return ((UIEventTopic) qualifier).value();
+		UIEventTopic qualifier = descriptor.getQualifier(UIEventTopic.class);
+		return qualifier.value();
 	}
 
 }

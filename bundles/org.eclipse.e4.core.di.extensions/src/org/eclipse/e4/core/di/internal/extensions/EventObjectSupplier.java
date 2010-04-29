@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -28,6 +22,9 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -190,8 +187,8 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 	protected String getTopic(IObjectDescriptor descriptor) {
 		if (descriptor == null)
 			return null;
-		Object qualifier = descriptor.getQualifier(EventTopic.class);
-		return ((EventTopic) qualifier).value();
+		EventTopic qualifier = descriptor.getQualifier(EventTopic.class);
+		return qualifier.value();
 	}
 
 	@Override
