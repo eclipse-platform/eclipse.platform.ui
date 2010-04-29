@@ -179,8 +179,9 @@ class MarkerFieldFilterGroup {
 					fieldFilter.initialize(values);
 			}
 		}
-		fieldFilters = new MarkerFieldFilter[filters.size()];
-		filters.toArray(fieldFilters);
+		MarkerFieldFilter[] newFilters = new MarkerFieldFilter[filters.size()];
+		filters.toArray(newFilters);
+		fieldFilters = newFilters;
 	}
 
 	/**
