@@ -8,6 +8,16 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
+import org.eclipse.swt.custom.CTabFolderRenderer;
+
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
+import org.eclipse.swt.custom.CTabItem;
+
+import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+
 import java.util.Iterator;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -30,24 +40,24 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 		if (!(control instanceof CTabFolder)) return;
 		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class, control.getDisplay());
-
-			Color[] colors = new Color[grad.getRGBs().size()];
-			int i = 0;
-			for (Iterator iterator = grad.getRGBs().iterator(); iterator.hasNext();) {
-				RGB rgb = (RGB) iterator.next();
-				Color tempColor = new Color(control.getDisplay(), rgb);
-				colors[i++] = tempColor;
-			}
-			int[] percents = new int[grad.getPercents().size()];
-			i = 0;
-			for (Iterator iterator = grad.getPercents().iterator(); iterator.hasNext();) {
-				percents [i++] = ((Integer) iterator.next()).intValue();
-			}
+			CTabFolder folder = ((CTabFolder) control);
+			Color[] colors = CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine);
+			int[] percents = CSSSWTColorHelper.getPercents(grad);
+			folder.setBackground(colors, percents, true);
 			
-			((CTabFolder) control).setBackground(colors, percents, true);
-			
-			for (int j = 0; j < colors.length; j++) {
-				//colors[j].dispose();
+			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
+			Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
+			if (appContext != null && appContext instanceof IEclipseContext) {
+				IEclipseContext context = (IEclipseContext) appContext;
+				IEclipseContext childContext = context.createChild();
+				if (pseudo != null && pseudo.equals("selected")) {
+					childContext.set("activeToolbarColors", colors);
+					childContext.set("activeToolbarPercents", percents);
+				} else {
+					childContext.set("inactiveToolbarColors", colors);
+					childContext.set("inactiveToolbarPercents", percents);
+				}
+				ContextInjectionFactory.inject(renderer, childContext); 
 			}
 		}
 	}
