@@ -19,11 +19,9 @@ import org.atinject.tck.auto.Convertible;
 import org.atinject.tck.auto.Drivers;
 import org.atinject.tck.auto.DriversSeat;
 import org.atinject.tck.auto.Engine;
-import org.atinject.tck.auto.FuelTank;
 import org.atinject.tck.auto.Seat;
 import org.atinject.tck.auto.Tire;
 import org.atinject.tck.auto.V8Engine;
-import org.atinject.tck.auto.accessories.Cupholder;
 import org.atinject.tck.auto.accessories.SpareTire;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectorFactory;
@@ -32,28 +30,12 @@ public class AtInjectTest extends TestSuite {
 
 	public static Test suite() {
 		IInjector injector = InjectorFactory.getInjector();
-
-		// TCK description:
 		injector.addBinding(Car.class).implementedBy(Convertible.class);
 		injector.addBinding(Seat.class).named(Drivers.class.getName()).implementedBy(DriversSeat.class);
 		injector.addBinding(Engine.class).implementedBy(V8Engine.class);
 		injector.addBinding(Tire.class).named("spare").implementedBy(SpareTire.class);
 
-		injector.addBinding(Cupholder.class);
-		injector.addBinding(Tire.class);
-		injector.addBinding(FuelTank.class);
-
-		// missing: - TBD - should those bindings be added automatically?
-		injector.addBinding(SpareTire.class);
-		injector.addBinding(Seat.class);
-		injector.addBinding(DriversSeat.class);
-
-		// statics
-		injector.injectStatic(Convertible.class, null);
-		injector.injectStatic(Tire.class, null);
-		injector.injectStatic(SpareTire.class, null);
-
-		Car car = (Car) injector.make(Car.class, null);
+		Car car = injector.make(Car.class, null);
 		return Tck.testsFor(car, true, true);
 	}
 }

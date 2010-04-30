@@ -54,6 +54,7 @@ public class InjectorImpl implements IInjector {
 	//private Map<String, AbstractObjectSupplier> extendedSuppliers = new HashMap<String, AbstractObjectSupplier>();
 
 	private Map<AbstractObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<AbstractObjectSupplier, List<WeakReference<?>>>();
+	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
 	private Map<Class<?>, Set<IBinding>> bindings = new HashMap<Class<?>, Set<IBinding>>();
 
@@ -251,23 +252,6 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
-	}
-
-	public void injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
-		// TBD add processing on a null object
-		Object object = make(clazz, objectSupplier);
-
-		// TBD this is copy/paste from as invoke() with static = true.
-		// Two stages: first, go and collect {requestor, descriptor[] }
-		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, objectSupplier, true /* static */, true /* track */, true /* normal order */, requestors);
-		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, objectSupplier, false);
-
-		// Call requestors in order
-		for (Requestor requestor : requestors) {
-			requestor.execute();
-		}
 	}
 
 	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) {
@@ -490,45 +474,78 @@ public class InjectorImpl implements IInjector {
 				classHierarchy.remove(objectsClass);
 			}
 		}
+		boolean injectedStaticFields;
+		boolean injectedStaticMethods;
 		if (normalOrder) {
-			processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
-			processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
+			injectedStaticFields = processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
+			injectedStaticMethods = processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
 		} else {
-			processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
-			processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
+			injectedStaticMethods = processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
+			injectedStaticFields = processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
+		}
+		if (injectedStaticFields || injectedStaticMethods)
+			rememberInjectedStatic(objectsClass);
+	}
+
+	private boolean hasInjectedStatic(Class<?> objectsClass) {
+		synchronized (injectedClasses) {
+			for (WeakReference<Class<?>> ref : injectedClasses) {
+				Class<?> injectedClass = ref.get();
+				if (injectedClass == null)
+					continue;
+				if (injectedClass == objectsClass) // use pointer comparison
+					return true;
+			}
+			return false;
+		}
+	}
+
+	private void rememberInjectedStatic(Class<?> objectsClass) {
+		synchronized (injectedClasses) {
+			injectedClasses.add(new WeakReference<Class<?>>(objectsClass));
 		}
 	}
 
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private void processFields(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, boolean processStatic, boolean track, List<Requestor> requestors) {
+	private boolean processFields(Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, boolean processStatic, boolean track, List<Requestor> requestors) {
+		boolean injectedStatic = false;
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			if (Modifier.isStatic(field.getModifiers()) != processStatic)
-				continue;
+			if (Modifier.isStatic(field.getModifiers())) {
+				if (hasInjectedStatic(objectsClass))
+					continue;
+				injectedStatic = true;
+			}
 			if (!field.isAnnotationPresent(Inject.class))
 				continue;
 			requestors.add(new FieldRequestor(field, this, objectSupplier, userObject, track));
 		}
+		return injectedStatic;
 	}
 
 	/**
 	 * Make the processor visit all declared methods on the given class.
 	 */
-	private void processMethods(final Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track, List<Requestor> requestors) {
+	private boolean processMethods(final Object userObject, AbstractObjectSupplier objectSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track, List<Requestor> requestors) {
+		boolean injectedStatic = false;
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			final Method method = methods[i];
 			if (isOverridden(method, classHierarchy))
 				continue; // process in the subclass
-			if (Modifier.isStatic(method.getModifiers()) != processStatic)
-				continue;
+			if (Modifier.isStatic(method.getModifiers())) {
+				if (hasInjectedStatic(objectsClass))
+					continue;
+				injectedStatic = true;
+			}
 			if (!method.isAnnotationPresent(Inject.class))
 				continue;
 			requestors.add(new MethodRequestor(method, this, objectSupplier, userObject, track));
 		}
+		return injectedStatic;
 	}
 
 	/**

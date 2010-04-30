@@ -77,13 +77,6 @@ public interface IInjector {
 	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
-	 * @param clazz
-	 * @param objectSupplier
-	 * @throws InjectionException if an exception occurred while performing this operation
-	 */
-	public void injectStatic(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
-
-	/**
 	 * @param objectSupplier
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
