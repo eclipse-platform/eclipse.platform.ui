@@ -1,0 +1,21 @@
+
+.MWindow {
+    background-color:  #EEF2F7 #DEEBF3 100%;
+}
+
+.MPartStack {
+    tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.workbench.ui.renderers.swt.CTabRendering');
+    unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+    outer-keyline-color: #FFFFFF;
+	inner-keyline-color: #FFFFFF;
+}
+
+.MTrimBar  {
+    background-image:  url(./winXPOlive.PNG);	
+}
+
+.MPartStack.active {
+	unselected-tabs-color: #E6E3C3 #EDEACA #FFFFFF 100% 100%;
+    outer-keyline-color: #BFCDA4;
+	inner-keyline-color: #FFFFFF;
+}

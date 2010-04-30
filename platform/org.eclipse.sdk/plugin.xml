@@ -42,7 +42,7 @@
 		  </property>
 		  <property
 				name="applicationCSS"
-				value="platform:/plugin/org.eclipse.platform/css/default.css">
+				value="org.eclipse.e4.ui.css.theme.e4_default.xpblue">
 		  </property>
 		  <property
 				name="applicationCSSResources"
@@ -325,5 +325,12 @@
       		</param>
       </engine>
     </extension>
+    
+    <extension
+          id="blort"
+          name="test"
+          point="org.eclipse.core.resources.builders">
+    </extension>
+    
 
 </plugin>

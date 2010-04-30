@@ -42,7 +42,7 @@
 		  </property>
 		  <property
 				name="applicationCSS"
-				value="platform:/plugin/org.eclipse.platform/css/default.css">
+				value="org.eclipse.e4.ui.css.theme.e4_default.xpblue">
 		  </property>
 		  <property
 				name="applicationCSSResources"
@@ -124,5 +124,20 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/e4_default_winxp_blu.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default.xpblue"
+            label="e4DefaultWinXPBlue"
+            os="win32">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_winxp_olv.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default.xpolive"
+            label="e4DefaultWinXPOlive"
+            os="win32">
+      </theme>
+      </extension>
 
 </plugin>
