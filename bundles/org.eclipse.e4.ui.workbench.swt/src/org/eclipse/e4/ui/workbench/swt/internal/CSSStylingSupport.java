@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.workbench.swt.internal;
 //import java.io.InputStream;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
-import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -44,15 +43,14 @@ public class CSSStylingSupport {
 
 		// Create the OSGi resource locator
 		if (resourceURI != null) {
+			//TODO: Should this be set through an extension as well?
 			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
 					.toString()));
 		}
 
 		if (cssURI != null) {
-			// Lookup the style sheet
-			ITheme theme = engine.registerTheme(IThemeEngine.DEFAULT_THEME_ID,
-					"Default Theme", cssURI);
-			engine.setTheme(theme);
+			// TODO: Change cssURI property to cssTheme
+			engine.setTheme(cssURI);
 		}
 		// TODO Should we create an empty default theme?
 
