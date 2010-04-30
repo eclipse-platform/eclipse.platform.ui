@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -22,7 +24,6 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -33,9 +34,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
+
+	Map<String, Image> imageMap = new HashMap<String, Image>();
 
 	public void processContents(MElementContainer<MUIElement> container) {
 		// EMF gives us null lists if empty
@@ -155,12 +159,15 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		IEclipseContext localContext = context;
 		String iconURI = element.getIconURI();
 		if (iconURI != null && iconURI.length() > 0) {
-			ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
-					.get(IResourceUtiltities.class.getName());
-			ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI
-					.createURI(iconURI));
-			if (desc != null)
-				return desc.createImage();
+			Image image = imageMap.get(iconURI);
+			if (image == null) {
+				ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
+						.get(IResourceUtiltities.class.getName());
+				image = resUtils.imageDescriptorFromURI(URI.createURI(iconURI))
+						.createImage();
+				imageMap.put(iconURI, image);
+			}
+			return image;
 		}
 		return null;
 	}
@@ -237,5 +244,24 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	@Override
 	public void childRendered(MElementContainer<MUIElement> parentElement,
 			MUIElement element) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer#init(org
+	 * .eclipse.e4.core.contexts.IEclipseContext)
+	 */
+	@Override
+	public void init(IEclipseContext context) {
+		super.init(context);
+		Display.getCurrent().disposeExec(new Runnable() {
+			public void run() {
+				for (Image image : imageMap.values()) {
+					image.dispose();
+				}
+			}
+		});
 	}
 }
