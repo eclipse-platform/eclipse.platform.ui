@@ -176,6 +176,8 @@ public class ThemeEngine implements IThemeEngine {
             IConfigurationElement[] elements) {
         Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
+		//TODO: Need to differentiate win32 versions
+		//System.getProperty("os.name");
         String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
         ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
         for (int i = 0; i < elements.length; i++) {
