@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
-import org.eclipse.e4.core.di.suppliers.IRequestor;
-
 import java.lang.annotation.Annotation;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.IRequestor;
 
 /**
  * Describes externally-visible injector functionality.
@@ -69,7 +66,7 @@ public interface IInjector {
 	 * @return an instance of the specified class
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public <T> T make(Class<T> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param descriptor

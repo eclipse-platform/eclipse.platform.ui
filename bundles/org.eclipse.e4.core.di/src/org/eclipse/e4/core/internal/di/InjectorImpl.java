@@ -82,9 +82,8 @@ public class InjectorImpl implements IInjector {
 		}
 		rememberInjectedObject(object, objectSupplier);
 
-		// TBD current tests assume that @PostConstruct methods will be
-		// called after injection; however, name implies that it is only
-		// called when the object is constructed. Fix this after the 1.4/1.5 merge.
+		// We call @PostConstruct after injection. This means that is is called 
+		// as a part of both #make() and #inject().
 		processPostConstruct(object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
 	}
 
@@ -187,9 +186,9 @@ public class InjectorImpl implements IInjector {
 		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, throwUnresolved);
 	}
 
-	public Object make(Class<?> clazz, AbstractObjectSupplier objectSupplier) {
+	public <T> T make(Class<T> clazz, AbstractObjectSupplier objectSupplier) {
 		IObjectDescriptor descriptor = new ObjectDescriptor(clazz, null);
-		return make(descriptor, objectSupplier);
+		return clazz.cast(make(descriptor, objectSupplier));
 	}
 
 	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
 import java.lang.annotation.Annotation;
 import javax.inject.Scope;
 import javax.inject.Singleton;
@@ -20,6 +18,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
@@ -127,7 +126,7 @@ final public class ContextInjectionFactory {
 	 * @see Scope
 	 * @see Singleton
 	 */
-	static public Object make(Class<?> clazz, final IEclipseContext context) throws InjectionException {
+	static public <T> T make(Class<T> clazz, IEclipseContext context) throws InjectionException {
 		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
 	}
