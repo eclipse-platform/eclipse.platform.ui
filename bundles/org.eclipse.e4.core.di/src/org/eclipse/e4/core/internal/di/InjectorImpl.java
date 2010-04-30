@@ -254,10 +254,10 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
 	}
 
-	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) {
+	public void resolveArguments(IRequestor requestor) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		list.add((Requestor) requestor);
-		resolveRequestorArgs(list, objectSupplier, true);
+		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), true);
 	}
 
 	public void disposed(AbstractObjectSupplier objectSupplier) {
@@ -350,7 +350,7 @@ public class InjectorImpl implements IInjector {
 
 		// 2) use the primary supplier
 		if (objectSupplier != null) {
-			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor);
+			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor, requestor.shouldTrack(), requestor.shouldGroupUpdates());
 			for (int i = 0; i < actualArgs.length; i++) {
 				if (descriptors[i] == null)
 					continue; // already resolved
@@ -368,7 +368,7 @@ public class InjectorImpl implements IInjector {
 			AbstractObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i]);
 			if (extendedSupplier == null)
 				continue;
-			Object result = extendedSupplier.get(descriptors[i], requestor);
+			Object result = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack(), requestor.shouldGroupUpdates());
 			if (result != NOT_A_VALUE) {
 				actualArgs[i] = result;
 				descriptors[i] = null; // mark as used

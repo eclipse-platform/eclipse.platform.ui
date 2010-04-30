@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
-import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.extensions.UIEventTopic;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -29,18 +28,15 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 		}
 
 		public void handleEvent(org.osgi.service.event.Event event) {
-			IInjector requestorInjector = requestor.getInjector();
-			if (requestorInjector != null) {
-				Object data = event.getProperty(EventUtils.DATA);
-				addCurrentEvent(event.getTopic(), data);
-				requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
-				removeCurrentEvent(event.getTopic());
-				Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-						requestor.execute();
-					}
-				});
-			}
+			Object data = event.getProperty(EventUtils.DATA);
+			addCurrentEvent(event.getTopic(), data);
+			requestor.resolveArguments();
+			removeCurrentEvent(event.getTopic());
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					requestor.execute();
+				}
+			});
 		}
 	}
 

@@ -12,7 +12,6 @@ package org.eclipse.e4.core.di;
 
 import java.lang.annotation.Annotation;
 import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.suppliers.IRequestor;
 
 /**
  * Describes externally-visible injector functionality.
@@ -67,20 +66,8 @@ public interface IInjector {
 	 */
 	public <T> T make(Class<T> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
-	/**
-	 * @param objectSupplier
-	 * @throws InjectionException if an exception occurred while performing this operation
-	 */
-	public void disposed(AbstractObjectSupplier objectSupplier) throws InjectionException;
-
 	public IBinding addBinding(Class<?> clazz);
 
 	public IBinding addBinding(IBinding binding);
 
-	/**
-	 * @param requestor
-	 * @param objectSupplier
-	 * @throws InjectionException if an exception occurred while performing this operation
-	 */
-	public void resolveArguments(IRequestor requestor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 }

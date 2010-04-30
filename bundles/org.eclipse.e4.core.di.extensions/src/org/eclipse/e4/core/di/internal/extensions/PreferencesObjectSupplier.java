@@ -35,7 +35,7 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	@Override
-	public Object get(IObjectDescriptor descriptor, final IRequestor requestor) {
+	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 		if (descriptor == null)
 			return null;
 		String key = getKey(descriptor);
@@ -43,17 +43,18 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 		if (key == null || nodePath == null || key.length() == 0 || nodePath.length() == 0)
 			return IInjector.NOT_A_VALUE;
 
-		addListener(nodePath, requestor);
+		if (track)
+			addListener(nodePath, requestor);
 		// TBD add auto-conversion depending on the descriptor's desired type
 		Object result = getPreferencesService().getString(nodePath, key, null, null);
 		return result;
 	}
 
 	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor) {
+	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group) {
 		Object[] result = new Object[descriptors.length];
 		for (int i = 0; i < descriptors.length; i++) {
-			result[i] = get(descriptors[i], requestor);
+			result[i] = get(descriptors[i], requestor, track, group);
 		}
 		return result;
 	}
@@ -84,7 +85,7 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	private void addListener(String nodePath, final IRequestor requestor) {
-		if (requestor == null || !requestor.shouldTrack())
+		if (requestor == null)
 			return;
 		synchronized (listenerCache) {
 			if (listenerCache.containsKey(nodePath)) {
@@ -97,16 +98,13 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 		final IEclipsePreferences node = new InstanceScope().getNode(nodePath);
 		node.addPreferenceChangeListener(new IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
-				if (requestor.getRequestingObject() == null) {
+				if (!requestor.isValid()) {
 					node.removePreferenceChangeListener(this);
 					return;
 				}
 
-				IInjector requestorInjector = requestor.getInjector();
-				if (requestorInjector != null) {
-					requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
-					requestor.execute();
-				}
+				requestor.resolveArguments();
+				requestor.execute();
 			}
 		});
 		synchronized (listenerCache) {

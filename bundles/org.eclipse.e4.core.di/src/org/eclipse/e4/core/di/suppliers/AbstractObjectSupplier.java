@@ -34,10 +34,18 @@ abstract public class AbstractObjectSupplier {
 	 */
 	public static final String SERVICE_CONTEXT_KEY = "dependency.injection.annotation"; //$NON-NLS-1$
 
-	abstract public Object get(IObjectDescriptor descriptor, IRequestor requestor);
+	/**
+	 * @param descriptor
+	 * @param requestor
+	 * @param track <code>true</code> if requestor needs to be updated on changes in dependent objects,
+	 * <code>false</code> otherwise
+	 * @param group <code>true</code> if requestor supports batched updates, <code>false</code> otherwise
+	 * @return object
+	 */
+	abstract public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group);
 
 	// TBD make Supplier and SupplierMulti; move bilerplate multi <-> single code into injector?
-	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor);
+	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group);
 
 	public AbstractObjectSupplier() {
 		// placeholder

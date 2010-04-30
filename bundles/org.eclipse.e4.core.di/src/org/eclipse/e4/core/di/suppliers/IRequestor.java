@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.suppliers;
 
-import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 
 /**
@@ -28,21 +27,21 @@ import org.eclipse.e4.core.di.InjectionException;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRequestor {
-	/**
-	 * Call this method to perform requestor's task. 
-	 * <p>
-	 * Call this method when a dependent value changed
-	 * <p> 
-	 * @return result of the task
-	 * @throws InjectionException if exception occurred while performing this task
-	 */
-	public Object execute() throws InjectionException;
 
 	/**
-	 * The injector that created this requestor.
-	 * @return the injector that created this requestor
+	 * Forces the requestor to resolve arguments it depends on. 
+	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public IInjector getInjector();
+	public void resolveArguments() throws InjectionException;
+
+	/**
+	 * Call this method to perform requestor's task. This method should be called
+	 * whenever the dependent value changes.
+	 * <p> 
+	 * @return result of the task
+	 * @throws InjectionException if an exception occurred while performing this task
+	 */
+	public Object execute() throws InjectionException;
 
 	/**
 	 * The injected object that initiated this request
@@ -50,23 +49,24 @@ public interface IRequestor {
 	public Object getRequestingObject();
 
 	/**
-	 * The primary object supplier used in the original injection
-	 * @return primary object supplier
+	 * Determines if this requestor is still valid. Once requestor becomes invalid, it
+	 * stays invalid. Invalid requestors can be safely removed from computations.
+	 * @return <code>true</code> if this requestor is valid, <code>false</code> otherwise
 	 */
-	public AbstractObjectSupplier getPrimarySupplier();
+	public boolean isValid();
 
 	/**
-	 * Determines if the requestor needs to be called whenever one of 
-	 * the dependent object changes.
-	 * @return <code>true</code> if requestor needs to be updated on 
-	 * changes in dependent objects, <code>false</code> otherwise
+	 * Notifies the requestor that an object supplier has been disposed of.
+	 * @param objectSupplier the object supplier being disposed of
+	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public boolean shouldTrack();
+	public void disposed(AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
-	 * Determines if requestor updates can be batches.
-	 * @return <code>true</code> if requestor supports batched updates,
-	 * <code>false</code> otherwise
+	 * Notifies the requestor that an object should be un-injected.
+	 * @param object domain object that needs to be un-injected
+	 * @param objectSupplier the object supplier being un-injected
+	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public boolean shouldGroupUpdates();
+	public void uninject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
 }

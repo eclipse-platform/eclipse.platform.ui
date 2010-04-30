@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
-
 import org.eclipse.e4.core.internal.di.InjectorImpl;
 
 /**
- * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 final public class InjectorFactory {

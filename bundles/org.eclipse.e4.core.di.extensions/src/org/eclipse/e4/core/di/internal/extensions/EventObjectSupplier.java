@@ -65,19 +65,17 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 		}
 
 		public void handleEvent(org.osgi.service.event.Event event) {
-			if (requestor.getRequestingObject() == null) {
+			if (!requestor.isValid()) {
 				unsubscribe(requestor);
 				return;
 			}
 
-			IInjector requestorInjector = requestor.getInjector();
-			if (requestorInjector != null) {
-				Object data = event.getProperty(EventUtils.DATA);
-				addCurrentEvent(event.getTopic(), data);
-				requestorInjector.resolveArguments(requestor, requestor.getPrimarySupplier());
-				removeCurrentEvent(event.getTopic());
-				requestor.execute();
-			}
+			Object data = event.getProperty(EventUtils.DATA);
+			addCurrentEvent(event.getTopic(), data);
+			requestor.resolveArguments();
+			removeCurrentEvent(event.getTopic());
+
+			requestor.execute();
 		}
 	}
 
@@ -144,7 +142,7 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	@Override
-	public Object get(IObjectDescriptor descriptor, IRequestor requestor) {
+	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 		if (descriptor == null)
 			return null;
 		String topic = getTopic(descriptor);
@@ -192,10 +190,10 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor) {
+	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group) {
 		Object[] result = new Object[descriptors.length];
 		for (int i = 0; i < descriptors.length; i++) {
-			result[i] = get(descriptors[i], requestor);
+			result[i] = get(descriptors[i], requestor, track, group);
 		}
 		return result;
 	}

@@ -88,4 +88,21 @@ abstract public class Requestor implements IRequestor {
 		this.actualArgs = actualArgs;
 	}
 
+	public boolean isValid() {
+		return (getRequestingObject() != null);
+	}
+
+	public void resolveArguments() {
+		((InjectorImpl) injector).resolveArguments(this);
+	}
+
+	public void disposed(AbstractObjectSupplier objectSupplier) {
+		((InjectorImpl) injector).disposed(objectSupplier);
+
+	}
+
+	public void uninject(Object object, AbstractObjectSupplier objectSupplier) {
+		injector.uninject(object, objectSupplier);
+	}
+
 }

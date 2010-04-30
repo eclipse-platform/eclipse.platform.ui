@@ -31,12 +31,14 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		final private String[] keys;
 		final private IRequestor requestor;
 		final private IEclipseContext context;
+		final private boolean group;
 
-		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, IRequestor requestor) {
+		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, IRequestor requestor, boolean group) {
 			this.result = result;
 			this.keys = keys;
 			this.requestor = requestor;
 			this.context = context;
+			this.group = group;
 		}
 
 		public boolean notify(ContextChangeEvent event, final IContextRecorder recorder) {
@@ -57,23 +59,22 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 				return true;
 			}
 
-			IInjector injector = requestor.getInjector();
 			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 				IEclipseContext originatingContext = event.getContext();
 				if (originatingContext == context) {
-					ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
-					injector.disposed(originatingSupplier);
+					ContextObjectSupplier originatingSupplier = originatingContext.getLocal(ContextObjectSupplier.class);
+					requestor.disposed(originatingSupplier);
 					return false;
 				}
 			} else if (event.getEventType() == ContextChangeEvent.UNINJECTED) {
 				IEclipseContext originatingContext = event.getContext();
 				if (originatingContext == context) {
-					ContextObjectSupplier originatingSupplier = getObjectSupplier(originatingContext, injector);
-					injector.uninject(event.getArguments()[0], originatingSupplier);
+					ContextObjectSupplier originatingSupplier = originatingContext.getLocal(ContextObjectSupplier.class);
+					requestor.uninject(event.getArguments()[0], originatingSupplier);
 					return false;
 				}
 			} else {
-				injector.resolveArguments(requestor, requestor.getPrimarySupplier());
+				requestor.resolveArguments();
 				if (recorder != null)
 					recorder.stopAccessRecording();
 				try {
@@ -122,7 +123,7 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 		}
 
 		public boolean batchProcess() {
-			return requestor.shouldGroupUpdates();
+			return group;
 		}
 
 	}
@@ -138,18 +139,18 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 	}
 
 	@Override
-	public Object get(IObjectDescriptor descriptor, IRequestor requestor) {
+	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 		// This method is rarely or never used on the primary supplier
 		if (descriptor == null)
 			return IInjector.NOT_A_VALUE;
-		Object[] result = get(new IObjectDescriptor[] {descriptor}, requestor);
+		Object[] result = get(new IObjectDescriptor[] {descriptor}, requestor, track, group);
 		if (result == null)
 			return null;
 		return result[0];
 	}
 
 	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, final IRequestor requestor) {
+	public Object[] get(IObjectDescriptor[] descriptors, final IRequestor requestor, boolean track, boolean group) {
 		final Object[] result = new Object[descriptors.length];
 		final String[] keys = new String[descriptors.length];
 
@@ -157,8 +158,8 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 			keys[i] = (descriptors[i] == null) ? null : getKey(descriptors[i]);
 		}
 
-		if (requestor != null && requestor.shouldTrack()) { // only track if requested
-			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor);
+		if (requestor != null && track) { // only track if requested
+			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor, group);
 			context.runAndTrack(trackable, null);
 		} else {
 			for (int i = 0; i < descriptors.length; i++) {
