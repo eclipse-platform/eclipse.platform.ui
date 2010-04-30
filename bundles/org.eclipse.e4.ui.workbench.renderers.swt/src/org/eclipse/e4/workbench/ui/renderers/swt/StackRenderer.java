@@ -236,7 +236,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TBD: need to handle this
 		// boolean showCloseAlways = element instanceof MEditorStack;
-		ctf.setUnselectedCloseVisible(false);
+		// ctf.setUnselectedCloseVisible(false);
 
 		newWidget = ctf;
 
