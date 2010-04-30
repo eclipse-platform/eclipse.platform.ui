@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
-
 import javax.inject.Provider;
-import org.eclipse.e4.core.di.*;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 
 public class ProviderImpl<T> implements Provider<T> {
 
@@ -32,7 +30,7 @@ public class ProviderImpl<T> implements Provider<T> {
 	@SuppressWarnings("unchecked")
 	public T get() {
 		try {
-			return (T) injector.make(objectDescriptor, objectProvider);
+			return (T) ((InjectorImpl) injector).make(objectDescriptor, objectProvider);
 		} catch (ClassCastException e) {
 			return null;
 		}

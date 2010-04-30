@@ -12,7 +12,6 @@ package org.eclipse.e4.core.di;
 
 import java.lang.annotation.Annotation;
 import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
-import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 
 /**
@@ -67,14 +66,6 @@ public interface IInjector {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public <T> T make(Class<T> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
-
-	/**
-	 * @param descriptor
-	 * @param objectSupplier
-	 * @return an instance of the specified class
-	 * @throws InjectionException if an exception occurred while performing this operation
-	 */
-	public Object make(IObjectDescriptor descriptor, AbstractObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param objectSupplier
