@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.suppliers;
 
-
-
 import org.osgi.framework.BundleContext;
 
 /**

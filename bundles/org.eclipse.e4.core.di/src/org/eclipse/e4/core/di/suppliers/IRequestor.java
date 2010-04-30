@@ -13,16 +13,36 @@ package org.eclipse.e4.core.di.suppliers;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 
-// TBD this is really a "feedback" object. 
 /**
+ * Requestor represents an atomary operation performed during the injection.
+ * Injecting a field, or calling an injected method are examples of such
+ * operations.
+ * <p>
+ * When an injector is asked to do a task, it splits work into a set of
+ * requestors. Requestors are passed to relevant object suppliers so that 
+ * requestors can be executed when values in the supplier change. (For instance,
+ * an object supplier that provided the value for the injected field, is expected
+ * to execute requestor again when it detects change in the injected value).
+ * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRequestor {
+	/**
+	 * Call this method to perform requestor's task. 
+	 * <p>
+	 * Call this method when a dependent value changed
+	 * <p> 
+	 * @return result of the task
+	 * @throws InjectionException if exception occurred while performing this task
+	 */
+	public Object execute() throws InjectionException;
 
+	/**
+	 * The injector that created this requestor.
+	 * @return the injector that created this requestor
+	 */
 	public IInjector getInjector();
-
-	public AbstractObjectSupplier getPrimarySupplier();
 
 	/**
 	 * The injected object that initiated this request
@@ -30,11 +50,23 @@ public interface IRequestor {
 	public Object getRequestingObject();
 
 	/**
-	 * Determines if the requestor wants to be called whenever one of the dependent object changes.
+	 * The primary object supplier used in the original injection
+	 * @return primary object supplier
+	 */
+	public AbstractObjectSupplier getPrimarySupplier();
+
+	/**
+	 * Determines if the requestor needs to be called whenever one of 
+	 * the dependent object changes.
+	 * @return <code>true</code> if requestor needs to be updated on 
+	 * changes in dependent objects, <code>false</code> otherwise
 	 */
 	public boolean shouldTrack();
 
+	/**
+	 * Determines if requestor updates can be batches.
+	 * @return <code>true</code> if requestor supports batched updates,
+	 * <code>false</code> otherwise
+	 */
 	public boolean shouldGroupUpdates();
-
-	public abstract Object execute() throws InjectionException;
 }

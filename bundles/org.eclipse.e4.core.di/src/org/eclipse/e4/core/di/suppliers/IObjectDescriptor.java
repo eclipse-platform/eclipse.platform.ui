@@ -50,9 +50,6 @@ public interface IObjectDescriptor {
 	public <T extends Annotation> T getQualifier(Class<T> clazz);
 
 	/**
-	 * @return null if there are no qualifiers
-	 */
-	/**
 	 * Returns qualifiers specified for this object descriptor, or <code>null</code>.
 	 * @return qualifiers for this descriptor, or <code>null</code> if there are 
 	 * no qualifiers specified
