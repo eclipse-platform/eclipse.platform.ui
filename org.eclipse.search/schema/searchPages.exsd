@@ -138,7 +138,7 @@ page comes first
             <annotation>
                <documentation>
                   a comma separated list with file extensions on which the search page can operate. Each extension must also include a weight (0 meaning lowest weight) which enables the search infrastructure to find the best fitting page. The weight is separated from the extension by a colon. If a search page can search all possible resources then &quot;*&quot; can be used.
-&lt;br&gt;&lt;b&gt;Note:&lt;/b&gt; This only applies if there is no &lt;code&gt;org.eclipse.search.ui.ISearchPageScoreComputer&lt;/code&gt; adapter for the selected element.
+&lt;br&gt;&lt;b&gt;Note:&lt;/b&gt; If there is an &lt;code&gt;org.eclipse.search.ui.ISearchPageScoreComputer&lt;/code&gt; adapter for the selected element which returns a higher weight, then this higher weight will be used.
                </documentation>
             </annotation>
          </attribute>

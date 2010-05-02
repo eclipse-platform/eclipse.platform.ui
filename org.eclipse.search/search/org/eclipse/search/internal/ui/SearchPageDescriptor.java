@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,16 +311,20 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 */
 	public int computeScore(Object element) {
 		if (element instanceof IAdaptable) {
+			int score= ISearchPageScoreComputer.UNKNOWN;
+
 			ISearchPageScoreComputer tester= (ISearchPageScoreComputer)((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
 			if (tester != null)
-				return tester.computeScore(getId(), element);
+				score= tester.computeScore(getId(), element);
 
 			IResource resource= (IResource)((IAdaptable)element).getAdapter(IResource.class);
 			if (resource != null && resource.getType() == IResource.FILE) {
 				String extension= ((IFile)resource).getFileExtension();
 				if (extension != null)
-					return getScoreForFileExtension(extension);
+					score= Math.max(score, getScoreForFileExtension(extension));
 			}
+			if (score != ISearchPageScoreComputer.UNKNOWN)
+				return score;
 		}
 		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN)
 			return fWildcardScore;
@@ -338,10 +342,8 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 			if (extension.equals(p.extension))
 				return p.score;
 		}
-		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN)
-			return fWildcardScore;
 
-		return ISearchPageScoreComputer.LOWEST;
+		return ISearchPageScoreComputer.UNKNOWN;
 	}
 
 	private void readExtensionScorePairs() {
