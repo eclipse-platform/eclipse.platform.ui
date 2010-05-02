@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public class CTabRendering extends CTabFolderRenderer {
@@ -40,6 +41,8 @@ public class CTabRendering extends CTabFolderRenderer {
 	static final int INTERNAL_SPACING = 4;
 
 	static final String E4_SHADOW_IMAGE = "org.eclipse.e4.renderer.shadow_image"; //$NON-NLS-1$
+	static final String E4_TOOLBAR_ACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_active_image"; //$NON-NLS-1$
+	static final String E4_TOOLBAR_INACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_inactive_image"; //$NON-NLS-1$
 
 	static int[] shape;
 
@@ -765,12 +768,17 @@ public class CTabRendering extends CTabFolderRenderer {
 			0x18f9f9f9, 0x14fafafa, 0x0ffbfbfb, 0x0cfcfcfc, 0x09fdfdfd,
 			0x06fdfdfd, };
 
-	Image shadowImage;
+	Image shadowImage, toolbarActiveImage, toolbarInactiveImage;
 
 	int cornerSize = 14;
 
 	boolean shadowEnabled = true;
 	Color outerKeyline, innerKeyline;
+	Color[] activeToolbar;
+	int[] activePercents;
+	Color[] inactiveToolbar;
+	int[] inactivePercents;
+	boolean active;
 
 	@Inject
 	public CTabRendering(CTabFolder parent) {
@@ -855,8 +863,17 @@ public class CTabRendering extends CTabFolderRenderer {
 					state &= ~SWT.BACKGROUND;
 					super.draw(part, state, bounds, gc);
 				} else {
-					state &= ~SWT.BACKGROUND;
-					super.draw(part, state, bounds, gc);
+					drawUnselectedTab(part, gc, bounds, state);
+					if ((state & SWT.HOT) == 0 && !active) {
+						gc.setAdvanced(true);
+						gc.setAlpha(0x7f);
+						state &= ~SWT.BACKGROUND;
+						super.draw(part, state, bounds, gc);
+						gc.setAdvanced(false);
+					} else {
+						state &= ~SWT.BACKGROUND;
+						super.draw(part, state, bounds, gc);
+					}
 				}
 				return;
 			}
@@ -962,8 +979,11 @@ public class CTabRendering extends CTabFolderRenderer {
 		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2
 				* (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
 		int width = bounds.width - delta;
-		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
-				* marginHeight - (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
+		int height = Math.max(parent.getTabHeight() + INNER_KEYLINE
+				+ OUTER_KEYLINE + (shadowEnabled ? BOTTOM_DROP_WIDTH : 0),
+				bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
+						* marginHeight
+						- (shadowEnabled ? BOTTOM_DROP_WIDTH : 0));
 
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
@@ -1058,11 +1078,58 @@ public class CTabRendering extends CTabFolderRenderer {
 		Rectangle rect = null;
 		gc.setClipping(rect);
 
-		// Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
 		if (outerKeyline == null)
 			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		gc.setForeground(outerKeyline);
 		gc.drawPolyline(shape);
+	}
+
+	void drawUnselectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
+
+		if ((state & SWT.HOT) != 0) {
+			int height = bounds.height * 2;
+			int width = bounds.width;
+
+			int[] points = new int[1024];
+			int index = 0;
+			int radius = cornerSize / 2;
+			int circX = bounds.x + radius;
+			int circY = bounds.y - 1 + radius;
+
+			int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
+			System.arraycopy(ltt, 0, points, index, ltt.length);
+			index += ltt.length;
+
+			int[] lbb = drawCircle(circX, circY + height - (radius * 2),
+					radius, LEFT_BOTTOM);
+			System.arraycopy(lbb, 0, points, index, lbb.length);
+			index += lbb.length;
+
+			int[] rb = drawCircle(circX + width - (radius * 2), circY + height
+					- (radius * 2), radius, RIGHT_BOTTOM);
+			System.arraycopy(rb, 0, points, index, rb.length);
+			index += rb.length;
+
+			int[] rt = drawCircle(circX + width - (radius * 2), circY, radius,
+					RIGHT_TOP);
+			System.arraycopy(rt, 0, points, index, rt.length);
+			index += rt.length;
+			points[index++] = circX;
+			points[index++] = circY - radius;
+
+			int x = bounds.x;
+			gc.setClipping(x, bounds.y - 4, bounds.width, bounds.height + 4);
+			gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+			gc.fillPolygon(points);
+			Rectangle rect = null;
+			gc.setClipping(rect);
+
+			// Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
+			if (outerKeyline == null)
+				outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+			gc.setForeground(outerKeyline);
+			gc.drawPolyline(shape);
+		}
 	}
 
 	static int[] drawCircle(int xC, int yC, int r, int circlePart) {
@@ -1143,13 +1210,13 @@ public class CTabRendering extends CTabFolderRenderer {
 		int x = bounds.x;
 		int y = bounds.y;
 		int SIZE = shadowImage.getBounds().width / 3;
+
+		int height = Math.max(bounds.height, SIZE * 2);
+		int width = Math.max(bounds.width, SIZE * 2);
 		// top left
 		gc.drawImage(shadowImage, 0, 0, SIZE, SIZE, 0, 0, SIZE, 20);
-		int fillHeight = bounds.height - SIZE * 2;
-		int fillWidth = bounds.width + 5 - SIZE * 2;
-
-		if (fillHeight <= 0)
-			return;
+		int fillHeight = height - SIZE * 2;
+		int fillWidth = width + 5 - SIZE * 2;
 
 		int xFill = 0;
 		for (int i = SIZE; i < fillHeight; i += SIZE) {
@@ -1162,37 +1229,35 @@ public class CTabRendering extends CTabFolderRenderer {
 				+ SIZE, SIZE, fillHeight - xFill);
 
 		// bl
-		gc.drawImage(shadowImage, 0, 40, 20, 20, 0, y + bounds.height - SIZE,
-				20, 20);
+		gc.drawImage(shadowImage, 0, 40, 20, 20, 0, y + height - SIZE, 20, 20);
 		int yFill = 0;
 		for (int i = SIZE; i <= fillWidth; i += SIZE) {
 			yFill = i;
-			gc.drawImage(shadowImage, SIZE, SIZE * 2, SIZE, SIZE, i, y
-					+ bounds.height - SIZE, SIZE, SIZE);
+			gc.drawImage(shadowImage, SIZE, SIZE * 2, SIZE, SIZE, i, y + height
+					- SIZE, SIZE, SIZE);
 		}
 		// Pad the rest of the shadow
 		gc.drawImage(shadowImage, SIZE, SIZE * 2, fillWidth - yFill, SIZE,
-				yFill + SIZE, y + bounds.height - SIZE, fillWidth - yFill, SIZE);
+				yFill + SIZE, y + height - SIZE, fillWidth - yFill, SIZE);
 
 		// br
-		gc.drawImage(shadowImage, SIZE * 2, SIZE * 2, SIZE, SIZE, x
-				+ bounds.width - SIZE + 5, y + bounds.height - SIZE, SIZE, SIZE);
+		gc.drawImage(shadowImage, SIZE * 2, SIZE * 2, SIZE, SIZE, x + width
+				- SIZE + 5, y + height - SIZE, SIZE, SIZE);
 
 		// tr
-		gc.drawImage(shadowImage, SIZE * 2, 0, SIZE, SIZE, x + bounds.width
-				- SIZE + 5, y, SIZE, SIZE);
+		gc.drawImage(shadowImage, SIZE * 2, 0, SIZE, SIZE,
+				x + width - SIZE + 5, y, SIZE, SIZE);
 
 		xFill = 0;
 		for (int i = SIZE; i < fillHeight; i += SIZE) {
 			xFill = i;
-			gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, SIZE, x
-					+ bounds.width - SIZE + 5, i, SIZE, SIZE);
+			gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, SIZE, x + width
+					- SIZE + 5, i, SIZE, SIZE);
 		}
 
 		// Pad the rest of the shadow
 		gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, fillHeight - xFill, x
-				+ bounds.width - SIZE + 5, xFill + SIZE, SIZE, fillHeight
-				- xFill);
+				+ width - SIZE + 5, xFill + SIZE, SIZE, fillHeight - xFill);
 	}
 
 	void createShadow(final Display display) {
@@ -1224,6 +1289,110 @@ public class CTabRendering extends CTabFolderRenderer {
 		}
 	}
 
+	void createActiveToolbarImages(final Display display) {
+		Object active = display.getData(E4_TOOLBAR_ACTIVE_IMAGE);
+		if (active != null) {
+			toolbarActiveImage = (Image) active;
+		} else {
+			// No colors or percents set
+			if (activeToolbar == null || activePercents == null)
+				return;
+			int width = 5;
+			int height = parent.getTabHeight() + 4;
+			int x = 0;
+			int y = -4;
+			toolbarActiveImage = new Image(display, width, 30);
+			GC gc = new GC(toolbarActiveImage);
+
+			//
+			Color lastColor = activeToolbar[0];
+			if (lastColor == null)
+				lastColor = parent.getBackground();
+			int pos = 0;
+			for (int i = 0; i < activePercents.length; i++) {
+				gc.setForeground(lastColor);
+				lastColor = activeToolbar[i + 1];
+				if (lastColor == null)
+					lastColor = parent.getBackground();
+				gc.setBackground(lastColor);
+				int percentage = i > 0 ? activePercents[i]
+						- activePercents[i - 1] : activePercents[i];
+				int gradientHeight = percentage * height / 100;
+				gc.fillGradientRectangle(x, y + pos, width, gradientHeight,
+						true);
+				pos += gradientHeight;
+			}
+			if (pos < height) {
+				gc.setBackground(parent.getBackground());
+				gc.fillRectangle(x, pos, width, height - pos + 1);
+			}
+
+			gc.dispose();
+			display.setData(E4_TOOLBAR_ACTIVE_IMAGE, toolbarActiveImage);
+			display.disposeExec(new Runnable() {
+				public void run() {
+					Object obj = display.getData(E4_TOOLBAR_ACTIVE_IMAGE);
+					if (obj != null) {
+						Image tmp = (Image) obj;
+						tmp.dispose();
+						display.setData(E4_TOOLBAR_ACTIVE_IMAGE, null);
+					}
+				}
+			});
+		}
+	}
+
+	void createInactiveToolbarImages(final Display display) {
+		Object inactive = display.getData(E4_TOOLBAR_INACTIVE_IMAGE);
+		if (inactive != null) {
+			toolbarInactiveImage = (Image) inactive;
+		} else {
+			// No colors or percents set
+			if (inactiveToolbar == null || inactivePercents == null)
+				return;
+			int width = 5;
+			int height = parent.getTabHeight() + 4;
+			int x = 0;
+			int y = -4;
+			toolbarInactiveImage = new Image(display, 5, 30);
+			GC gc = new GC(toolbarInactiveImage);
+
+			Color lastColor = inactiveToolbar[0];
+			if (lastColor == null)
+				lastColor = parent.getBackground();
+			int pos = 0;
+			for (int i = 0; i < inactivePercents.length; i++) {
+				gc.setForeground(lastColor);
+				lastColor = inactiveToolbar[i + 1];
+				if (lastColor == null)
+					lastColor = parent.getBackground();
+				gc.setBackground(lastColor);
+				int percentage = i > 0 ? inactivePercents[i]
+						- inactivePercents[i - 1] : inactivePercents[i];
+				int gradientHeight = percentage * height / 100;
+				gc.fillGradientRectangle(x, y + pos, width, gradientHeight,
+						true);
+				pos += gradientHeight;
+			}
+			if (pos < height) {
+				gc.setBackground(parent.getBackground());
+				gc.fillRectangle(x, pos, width, height - pos + 1);
+			}
+			gc.dispose();
+			display.setData(E4_TOOLBAR_INACTIVE_IMAGE, toolbarInactiveImage);
+			display.disposeExec(new Runnable() {
+				public void run() {
+					Object obj = display.getData(E4_TOOLBAR_INACTIVE_IMAGE);
+					if (obj != null) {
+						Image tmp = (Image) obj;
+						tmp.dispose();
+						display.setData(E4_TOOLBAR_INACTIVE_IMAGE, null);
+					}
+				}
+			});
+		}
+	}
+
 	@Inject
 	@Optional
 	public void setCornerRadius(@Named("radius") Integer radius) {
@@ -1242,6 +1411,9 @@ public class CTabRendering extends CTabFolderRenderer {
 	@Optional
 	public void setOuterKeyline(@Named("outerKeyline") Color color) {
 		this.outerKeyline = color;
+		// TODO: HACK! Should be set based on pseudo-state.
+		setActive(!(color.getRed() == 255 && color.getGreen() == 255 && color
+				.getBlue() == 255));
 		parent.redraw();
 	}
 
@@ -1250,5 +1422,37 @@ public class CTabRendering extends CTabFolderRenderer {
 	public void setInnerKeyline(@Named("innerKeyline") Color color) {
 		this.innerKeyline = color;
 		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setActiveToolbarGradient(
+			@Named("activeToolbarColors") Color[] color,
+			@Named("activeToolbarPercents") int[] percents) {
+		activeToolbar = color;
+		activePercents = percents;
+	}
+
+	@Inject
+	@Optional
+	public void setInactiveToolbarGradient(
+			@Named("inactiveToolbarColors") Color[] color,
+			@Named("inactiveToolbarPercents") int[] percents) {
+		inactiveToolbar = color;
+		inactivePercents = percents;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+		Control topRight = parent.getTopRight();
+		if (topRight != null) {
+			if (active && toolbarActiveImage == null)
+				createActiveToolbarImages(Display.getCurrent());
+			if (!active && toolbarInactiveImage == null)
+				createInactiveToolbarImages(Display.getCurrent());
+			topRight.setBackgroundImage(active ? toolbarActiveImage
+					: toolbarInactiveImage);
+			parent.update();
+		}
 	}
 }
