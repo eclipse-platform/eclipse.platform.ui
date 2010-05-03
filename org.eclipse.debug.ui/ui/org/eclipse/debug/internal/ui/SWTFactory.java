@@ -41,7 +41,7 @@ public class SWTFactory {
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
-		button.setFont(JFaceResources.getDialogFont());
+		/*button.setFont(JFaceResources.getDialogFont());*/
 		PixelConverter converter= new PixelConverter(button);
 		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -111,7 +111,7 @@ public class SWTFactory {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTFactory.setButtonDimensionHint(button);
+		setButtonDimensionHint(button);
 		return button;	
 	}	
 
@@ -138,7 +138,7 @@ public class SWTFactory {
 		}
 		GridData gd = new GridData(fill);
 		button.setLayoutData(gd);	
-		SWTFactory.setButtonDimensionHint(button);
+		setButtonDimensionHint(button);
 		return button;	
 	}	
 	
@@ -177,7 +177,7 @@ public class SWTFactory {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTFactory.setButtonDimensionHint(button);
+		setButtonDimensionHint(button);
 		return button;	
 	}	
 	
@@ -201,7 +201,7 @@ public class SWTFactory {
 		GridData gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);	
-		SWTFactory.setButtonDimensionHint(button);
+		setButtonDimensionHint(button);
 		return button;	
 	}
 	

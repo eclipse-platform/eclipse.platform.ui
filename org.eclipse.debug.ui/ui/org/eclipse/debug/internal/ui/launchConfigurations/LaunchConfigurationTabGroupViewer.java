@@ -293,7 +293,6 @@ public class LaunchConfigurationTabGroupViewer {
 		
 		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
 		fApplyButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17, null,GridData.HORIZONTAL_ALIGN_END);
-		SWTFactory.setButtonDimensionHint(fApplyButton);
 		fApplyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
@@ -301,7 +300,6 @@ public class LaunchConfigurationTabGroupViewer {
 		});
 
 		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
-		SWTFactory.setButtonDimensionHint(fRevertButton);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
