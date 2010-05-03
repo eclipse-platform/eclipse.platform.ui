@@ -55,7 +55,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  */
 final public class ContextInjectionFactory {
 
-	final private static IInjector injector = InjectorFactory.getInjector();
+	final private static IInjector injector = InjectorFactory.getDefault();
 
 	private ContextInjectionFactory() {
 		// prevents instantiations

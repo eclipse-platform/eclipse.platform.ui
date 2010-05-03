@@ -13,18 +13,35 @@ package org.eclipse.e4.core.di;
 import org.eclipse.e4.core.internal.di.InjectorImpl;
 
 /**
+ * Use this class to obtain an instance of the dependency injector.
+ * 
+ * @noextend This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 final public class InjectorFactory {
 
 	private static IInjector injector = new InjectorImpl();
 
+	/**
+	 * Hides constructor to prevents instantiation.
+	 */
 	private InjectorFactory() {
 		// prevents instantiation
 	}
 
-	public static IInjector getInjector() {
+	/**
+	 * Returns default instance of the dependency injector.
+	 * @return default dependency injector
+	 */
+	public static IInjector getDefault() {
 		return injector;
 	}
 
+	/**
+	 * Returns a new instance of the dependency injector.
+	 * @return a new instance of the dependency injector
+	 */
+	public static IInjector makeInjector() {
+		return new InjectorImpl();
+	}
 }

@@ -18,7 +18,7 @@ import org.osgi.framework.BundleContext;
  * an injector, filling in values that primary suppliers don't know about.
  * <p> 
  * If the supplier is asked to track changes, it should notify requestor whenever any of 
- * the objects produced by the {@link #get(IObjectDescriptor[], IRequestor, boolean, boolean)} 
+ * the objects produced by the {@link #get(IObjectDescriptor, IRequestor, boolean, boolean)} 
  * method change. The supplier can do this by performing calls to the {@link IRequestor#resolveArguments()}
  * and {@link IRequestor#execute()}.
  * </p>
@@ -43,6 +43,9 @@ abstract public class ExtendedObjectSupplier {
 	 */
 	public static final String SERVICE_CONTEXT_KEY = "dependency.injection.annotation"; //$NON-NLS-1$
 
+	/**
+	 * Constructs a new instance of an extended object supplier.
+	 */
 	public ExtendedObjectSupplier() {
 		// placeholder
 	}

@@ -77,7 +77,7 @@ public class ProviderInjectionTest extends TestCase {
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(String.class.getName(), "abc");
-		IInjector injector = InjectorFactory.getInjector();
+		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(TestData.class);
 
 		TestInvokeClass userObject = new TestInvokeClass();
@@ -91,7 +91,7 @@ public class ProviderInjectionTest extends TestCase {
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(String.class.getName(), "abc");
-		IInjector injector = InjectorFactory.getInjector();
+		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(TestData.class);
 
 		TestConstructorClass userObject = (TestConstructorClass) ContextInjectionFactory.make(TestConstructorClass.class, context);

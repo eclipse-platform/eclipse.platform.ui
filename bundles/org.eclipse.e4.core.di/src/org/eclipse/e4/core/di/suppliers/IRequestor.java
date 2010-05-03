@@ -45,6 +45,7 @@ public interface IRequestor {
 
 	/**
 	 * The injected object that initiated this request
+	 * @return the object that initiated this request
 	 */
 	public Object getRequestingObject();
 

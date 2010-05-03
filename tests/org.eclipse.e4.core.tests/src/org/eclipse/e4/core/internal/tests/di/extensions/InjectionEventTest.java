@@ -110,7 +110,7 @@ public class InjectionEventTest extends TestCase {
 	
 	public void testEventInjection() throws InvocationTargetException, InstantiationException {
 		
-		IInjector injector = InjectorFactory.getInjector();
+		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(MyBinding.class);
 		
 		IEclipseContext context = EclipseContextFactory.create();
@@ -174,7 +174,7 @@ public class InjectionEventTest extends TestCase {
 	// Java does not guarantee that to happen, so, if this test starts to fail
 	// intermittently, feel free to comment it
 	public void testEventInjectionUnsubscribe() throws InvocationTargetException, InstantiationException {
-		IInjector injector = InjectorFactory.getInjector();
+		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(MyBinding.class);
 		
 		wrapSetup(); // do it in a separate method to ease GC

@@ -29,7 +29,7 @@ import org.eclipse.e4.core.di.InjectorFactory;
 public class AtInjectTest extends TestSuite {
 
 	public static Test suite() {
-		IInjector injector = InjectorFactory.getInjector();
+		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(Car.class).implementedBy(Convertible.class);
 		injector.addBinding(Seat.class).named(Drivers.class.getName()).implementedBy(DriversSeat.class);
 		injector.addBinding(Engine.class).implementedBy(V8Engine.class);
