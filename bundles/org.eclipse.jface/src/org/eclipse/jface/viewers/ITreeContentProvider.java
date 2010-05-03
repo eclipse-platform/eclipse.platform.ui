@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,18 @@ package org.eclipse.jface.viewers;
  * @see AbstractTreeViewer
  */
 public interface ITreeContentProvider extends IStructuredContentProvider {
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * <b>NOTE:</b> The returned array must not contain the given
+	 * <code>inputElement</code>, since this leads to recursion issues in
+	 * {@link AbstractTreeViewer} (see
+	 * <a href="https://bugs.eclipse.org/9262">bug 9262</a>).
+	 * </p>
+	 */
+	public Object[] getElements(Object inputElement);
+
     /**
      * Returns the child elements of the given parent element.
      * <p>
