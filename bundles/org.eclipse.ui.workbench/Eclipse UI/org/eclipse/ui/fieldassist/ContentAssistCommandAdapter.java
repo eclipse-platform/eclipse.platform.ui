@@ -13,7 +13,6 @@ package org.eclipse.ui.fieldassist;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -55,6 +54,17 @@ import org.eclipse.ui.swt.IFocusService;
  */
 public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 
+	private class ContentAssistHandler extends AbstractHandler {
+		public Object execute(ExecutionEvent event) {
+			openProposalPopup();
+			return null;
+		}
+
+		void setEnabled(boolean enabled) {
+			this.setBaseEnabled(enabled);
+		}
+	}
+
 	// ID used in the decoration registry.
 	private static final String CONTENT_ASSIST_DECORATION_ID = "org.eclipse.ui.fieldAssist.ContentAssistField"; //$NON-NLS-1$
 
@@ -76,13 +86,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	// a platform UI preference.
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY = 500;
 
-	private IHandler proposalHandler = new AbstractHandler() {
-		public Object execute(ExecutionEvent event) {
-			openProposalPopup();
-			return null;
-		}
-
-	};
+	private ContentAssistHandler proposalHandler = new ContentAssistHandler();
 	private ControlDecoration decoration;
 
 	/**
@@ -255,6 +259,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 				decoration.hide();
 			}
 		}
+		proposalHandler.setEnabled(enabled);
 	}
 
 	private void activateHandler(final Control control) {
@@ -267,8 +272,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 			final IHandlerActivation handlerActivation = hs.activateHandler(commandId,
 					proposalHandler, new Expression() {
 						public EvaluationResult evaluate(IEvaluationContext context) {
-							return context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_NAME) == control
-									&& ContentAssistCommandAdapter.this.isEnabled() ? EvaluationResult.TRUE
+							return context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_NAME) == control ? EvaluationResult.TRUE
 									: EvaluationResult.FALSE;
 						}
 
