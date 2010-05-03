@@ -443,9 +443,13 @@ public class StackRenderer extends LazyStackRenderer {
 				MPart part = (MPart) event.item
 						.getData(AbstractPartRenderer.OWNING_ME);
 
+				IEclipseContext context = part.getContext();
+				if (context == null) {
+					context = getParentWithContext(part).getContext();
+				}
+
 				// Allow closes to be 'canceled'
-				IEclipseContext partContext = part.getContext();
-				EPartService partService = (EPartService) partContext
+				EPartService partService = (EPartService) context
 						.get(EPartService.class.getName());
 				if (partService.savePart(part, true)) {
 					partService.hidePart(part);
@@ -633,8 +637,8 @@ public class StackRenderer extends LazyStackRenderer {
 			ImageData data = viewMenu.getImageData();
 			data.transparentPixel = data.getPixel(0, 0);
 
-			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
-					.getImageData());
+			viewMenuImage = new Image(d, viewMenu.getImageData(),
+					viewMenuMask.getImageData());
 			viewMenu.dispose();
 			viewMenuMask.dispose();
 		}
