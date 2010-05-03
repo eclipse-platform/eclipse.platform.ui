@@ -65,7 +65,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		context = ctx;
 		loadOptions();
 		acquireFrameworkLogService();
-		initialize();
+		try {
+			initialize();
+		} catch (Exception e) {
+			//we failed to start, so make sure Utils closes its service trackers
+			Utils.shutdown();
+			throw e;
+		}
 
 		//Short cut, if the configuration has not changed
 		if (canRunWithCachedData()) {
@@ -525,7 +531,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return configurator;
 	}
 
-	private void acquireFrameworkLogService() throws Exception {
+	private void acquireFrameworkLogService() {
 		ServiceReference logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
 		if (logServiceReference == null)
 			return;
