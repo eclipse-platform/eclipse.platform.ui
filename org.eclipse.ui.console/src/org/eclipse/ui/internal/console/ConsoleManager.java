@@ -43,6 +43,7 @@ import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -356,8 +357,8 @@ public class ConsoleManager implements IConsoleManager {
 	public void warnOfContentChange(final IConsole console) {
 		if (!fWarnQueued) {
 			fWarnQueued = true;
-			ConsolePlugin.getStandardDisplay().asyncExec(new Runnable(){
-				public void run() {
+			Job job = new UIJob(ConsolePlugin.getStandardDisplay(), ConsoleMessages.ConsoleManager_consoleContentChangeJob) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					if (window != null) {
 						IWorkbenchPage page= window.getActivePage();
@@ -369,8 +370,11 @@ public class ConsoleManager implements IConsoleManager {
 						} 
 					}	
 					fWarnQueued = false;
-				}			
-			});
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule();
 		}
 	}
 

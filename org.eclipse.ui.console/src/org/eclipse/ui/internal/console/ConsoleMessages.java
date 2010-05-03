@@ -22,6 +22,8 @@ public class ConsoleMessages extends NLS {
 
 	public static String ConsoleManager_0;
 
+	public static String ConsoleManager_consoleContentChangeJob;
+
 	public static String ConsoleView_0;
 
 	public static String PinConsoleAction_0;
