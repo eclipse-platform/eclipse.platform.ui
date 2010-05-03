@@ -48,6 +48,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
@@ -98,6 +99,8 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -150,6 +153,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		activationList.add(0, part);
 		updateActivePartSources(part);
 		updateActiveEditorSources(part);
+		updateShowInSources(part);
 
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
@@ -209,6 +213,40 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			application.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 					editor == null ? null : editor.getEditorInput());
 		}
+	}
+
+	private void updateShowInSources(MPart part) {
+		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
+		ShowInContext context = getContext(workbenchPart);
+		if (context != null) {
+			window.getContext().set(ISources.SHOW_IN_INPUT, context.getInput());
+			window.getContext().set(ISources.SHOW_IN_SELECTION, context.getSelection());
+
+			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
+				application.getContext().set(ISources.SHOW_IN_INPUT, context.getInput());
+				application.getContext().set(ISources.SHOW_IN_SELECTION, context.getSelection());
+			}
+		}
+	}
+
+	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
+		return (IShowInSource) Util.getAdapter(sourcePart, IShowInSource.class);
+	}
+
+	private ShowInContext getContext(IWorkbenchPart sourcePart) {
+		IShowInSource source = getShowInSource(sourcePart);
+		if (source != null) {
+			ShowInContext context = source.getShowInContext();
+			if (context != null) {
+				return context;
+			}
+		} else if (sourcePart instanceof IEditorPart) {
+			Object input = ((IEditorPart) sourcePart).getEditorInput();
+			ISelectionProvider sp = sourcePart.getSite().getSelectionProvider();
+			ISelection sel = sp == null ? null : sp.getSelection();
+			return new ShowInContext(input, sel);
+		}
+		return null;
 	}
 
 	private IEditorPart getEditor(MPart part) {
