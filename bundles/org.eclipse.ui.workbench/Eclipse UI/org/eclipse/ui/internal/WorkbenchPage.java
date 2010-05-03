@@ -1889,9 +1889,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		for (IViewPart view : getViews()) {
-			if (view instanceof ISaveablePart) {
-				if (!saveSaveable((ISaveablePart) view, confirm, closing)) {
+		for (IViewReference viewReference : viewReferences) {
+			IWorkbenchPart part = viewReference.getPart(false);
+			if (part instanceof ISaveablePart) {
+				if (!saveSaveable((ISaveablePart) part, confirm, closing)) {
 					return false;
 				}
 			}
