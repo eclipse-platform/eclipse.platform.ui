@@ -86,7 +86,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected Button createVirtualFoldersButton;
 
-    protected Button copyIntoWorkspaceButton;
+    protected Button createLinksInWorkspaceButton;
     
 	protected Button advancedButton;
 
@@ -116,7 +116,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     private final static String STORE_CREATE_VIRTUAL_FOLDERS_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID";//$NON-NLS-1$
 
-    private final static String STORE_COPY_INTO_WORKSPACE_ID = "WizardFileSystemResourceImportPage1.STORE_COPY_INTO_WORKSPACE_ID";//$NON-NLS-1$
+    private final static String STORE_CREATE_LINKS_IN_WORKSPACE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_LINKS_IN_WORKSPACE_ID";//$NON-NLS-1$
 
     private final static String STORE_PATH_VARIABLE_SELECTED_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID";//$NON-NLS-1$
 
@@ -336,13 +336,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 
         // create linked resource check
-		copyIntoWorkspaceButton= new Button(linkedResourceComposite, SWT.CHECK);
-		copyIntoWorkspaceButton.setFont(parent.getFont());
-        copyIntoWorkspaceButton.setText(DataTransferMessages.FileImport_copyIntoWorkspace);
-        copyIntoWorkspaceButton.setToolTipText(DataTransferMessages.FileImport_copyIntoWorkspaceTooltip);
-        copyIntoWorkspaceButton.setSelection(true);
+		createLinksInWorkspaceButton= new Button(linkedResourceComposite, SWT.CHECK);
+		createLinksInWorkspaceButton.setFont(parent.getFont());
+        createLinksInWorkspaceButton.setText(DataTransferMessages.FileImport_createLinksInWorkspace);
+        createLinksInWorkspaceButton.setSelection(false);
         
-        copyIntoWorkspaceButton.addSelectionListener(new SelectionAdapter() {
+        createLinksInWorkspaceButton.addSelectionListener(new SelectionAdapter() {
         	public void widgetSelected(SelectionEvent e) {
         		updateWidgetEnablements();
         	}
@@ -425,7 +424,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		if (linkedResourceComposite != null) {
 			linkedResourceComposite.dispose();
 			linkedResourceComposite= null;
-			copyIntoWorkspaceButton = null;
+			createLinksInWorkspaceButton = null;
 			createVirtualFoldersButton = null;
 			relativePathVariableGroup = null;
 			composite.layout();
@@ -831,7 +830,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         
         boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() &&
         											createOnlySelectedButton.getSelection() &&
-        											(copyIntoWorkspaceButton != null && copyIntoWorkspaceButton.getSelection() == false) &&
+        											(createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) &&
         											(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
 		
         if (shouldImportTopLevelFoldersRecursively)
@@ -871,7 +870,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 .getSelection());
         op.setOverwriteResources(overwriteExistingResourcesCheckbox
                 .getSelection());
-        if (copyIntoWorkspaceButton != null && copyIntoWorkspaceButton.getSelection() == false) {
+        if (createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) {
         	op.setCreateLinks(true);
 	        op.setVirtualFolders(createVirtualFoldersButton
 	                .getSelection());
@@ -958,8 +957,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	            createVirtualFoldersButton.setSelection(createVirtualFolders);
 	
 	            boolean createLinkedResources = settings
-	    				.getBoolean(STORE_COPY_INTO_WORKSPACE_ID);
-	            copyIntoWorkspaceButton.setSelection(createLinkedResources);
+	    				.getBoolean(STORE_CREATE_LINKS_IN_WORKSPACE_ID);
+	            createLinksInWorkspaceButton.setSelection(createLinkedResources);
 	
 	            boolean pathVariableSelected = settings
 						.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
@@ -1000,8 +999,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
 	            		createVirtualFoldersButton.getSelection());
 	
-	            settings.put(STORE_COPY_INTO_WORKSPACE_ID,
-	            		copyIntoWorkspaceButton.getSelection());
+	            settings.put(STORE_CREATE_LINKS_IN_WORKSPACE_ID,
+	            		createLinksInWorkspaceButton.getSelection());
 	
 	            settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
 	            		relativePathVariableGroup.getSelection());
@@ -1186,17 +1185,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         super.updateWidgetEnablements();
         enableButtonGroup(ensureSourceIsValid());
 
-    	if (copyIntoWorkspaceButton != null) {
+    	if (createLinksInWorkspaceButton != null) {
 			IPath path = getContainerFullPath();
 	    	if (path != null && relativePathVariableGroup != null) {
 				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (target != null && target.isVirtual()) {
-					copyIntoWorkspaceButton.setSelection(false);
+					createLinksInWorkspaceButton.setSelection(true);
 					createVirtualFoldersButton.setSelection(true);
 				}
 	    	}
-			relativePathVariableGroup.setEnabled(!copyIntoWorkspaceButton.getSelection());
-			createVirtualFoldersButton.setEnabled(!copyIntoWorkspaceButton.getSelection());
+			relativePathVariableGroup.setEnabled(createLinksInWorkspaceButton.getSelection());
+			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());
 	
 			if ((!selectionGroup.getAllCheckedListItems().isEmpty() && !allItemsAreChecked()) ||
 				(createOnlySelectedButton.getSelection() == false)) {
