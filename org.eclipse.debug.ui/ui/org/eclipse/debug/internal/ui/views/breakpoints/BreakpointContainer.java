@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -323,39 +323,38 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @param delta the root delta of this container
      * @see addBreakpoint
      */
-    public void removeBreakpoint(IBreakpoint breakpoint, ModelDelta rootDelta) {
+    public boolean removeBreakpoint(IBreakpoint breakpoint, ModelDelta rootDelta) {
     	boolean removed = fBreakpoints.remove(breakpoint);
     	
     	if (removed) {
     		boolean addRemoveBpDelta = getContainers().length == 0;
         	
-        	if (removed) {
-        		Iterator it = fChildContainers.iterator();
-        		while (it.hasNext()) {
-        			BreakpointContainer container = (BreakpointContainer) it.next();
-        			
-    				// if the breakpoint contains in the container and it is the only breakpoint,
-    				// than remove the container from the collection
-        			if (container.contains(breakpoint)) {
-        				ModelDelta childDelta = null;
-        				if ((!container.isDefaultContainer()) && (container.getBreakpoints().length <= 1)) {
-    	    				it.remove();
-    	    				childDelta = rootDelta.addNode(container, IModelDelta.REMOVED|IModelDelta.UNINSTALL);
-    	    				 
-    	    			} else {
-    	    				childDelta = rootDelta.addNode(container, IModelDelta.STATE);
-    	    			}
-    	    			
-        				// remove the breakpoint from the nested containers
-    	    			container.removeBreakpoint(breakpoint, childDelta);
-        			}
-        		} 
-        		
-        		if (addRemoveBpDelta) {
-        			rootDelta.addNode(breakpoint, IModelDelta.REMOVED|IModelDelta.UNINSTALL);
-        		}
-        	}
+    		Iterator it = fChildContainers.iterator();
+    		while (it.hasNext()) {
+    			BreakpointContainer container = (BreakpointContainer) it.next();
+    			
+				// if the breakpoint contains in the container and it is the only breakpoint,
+				// than remove the container from the collection
+    			if (container.contains(breakpoint)) {
+    				ModelDelta childDelta = null;
+    				if ((!container.isDefaultContainer()) && (container.getBreakpoints().length <= 1)) {
+	    				it.remove();
+	    				childDelta = rootDelta.addNode(container, IModelDelta.REMOVED|IModelDelta.UNINSTALL);
+	    				 
+	    			} else {
+	    				childDelta = rootDelta.addNode(container, IModelDelta.STATE);
+	    			}
+	    			
+    				// remove the breakpoint from the nested containers
+	    			container.removeBreakpoint(breakpoint, childDelta);
+    			}
+    		} 
+    		
+    		if (addRemoveBpDelta) {
+    			rootDelta.addNode(breakpoint, IModelDelta.REMOVED|IModelDelta.UNINSTALL);
+    		}
     	}
+    	return removed;
     } 
     
     /**

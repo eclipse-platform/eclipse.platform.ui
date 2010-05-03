@@ -346,25 +346,23 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             
             synchronized(this) {
                 Set existingBreakpoints = new HashSet(Arrays.asList(fContainer.getBreakpoints()));
-                
+
+                // Bug 310879
+                // Process breakpoints in two passes: first remove breakpoints, then add new ones.
+                // This way the breakpoint counts and indexes will be consistent in the delta.
                 for (int i = 0; i < allBreakpoints.length; ++i) {
-                    boolean contain = existingBreakpoints.contains(allBreakpoints[i]);                                  
-                        
-                    if (supportedBreakpoints[i]) {
-                        if (!contain) {
-                            fContainer.addBreakpoint(allBreakpoints[i], delta);
-                            changed = true;
-                        }
-                    } else {
-                        if (contain) {
-                            fContainer.removeBreakpoint(allBreakpoints[i], delta);
-                            changed = true;
-                        }
-                        
+                    if (!supportedBreakpoints[i] && existingBreakpoints.contains(allBreakpoints[i])) {
+                        fContainer.removeBreakpoint(allBreakpoints[i], delta);
+	                    changed = true;
                     }
-                    
                 }
-            
+                for (int i = 0; i < allBreakpoints.length; ++i) {
+                    if (supportedBreakpoints[i] && !existingBreakpoints.contains(allBreakpoints[i])) {
+	                    fContainer.addBreakpoint(allBreakpoints[i], delta);
+	                    changed = true;
+                    }
+                }
+
                 if (changed) {
                     if (DEBUG_BREAKPOINT_DELTAS) {
                         System.out.println("POST BREAKPOINT DELTA (setFilterSelection)\n"); //$NON-NLS-1$
@@ -462,22 +460,31 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             IBreakpoint[] filteredBreakpoints = filterBreakpoints(
                 fInput, getSelectionFilter(fInput, getDebugContext()), breakpoints);
             
-            synchronized (this) {
-                ModelDelta delta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
-                for (int i = 0; i < filteredBreakpoints.length; ++i) {
-                    fContainer.addBreakpoint(filteredBreakpoints[i], delta);
-                }
-                delta.setChildCount(fContainer.getChildren().length);
+            if (filteredBreakpoints.length > 0) {
+                synchronized (this) {
+                    ModelDelta delta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
+                    for (int i = 0; i < filteredBreakpoints.length; ++i) {
+                        // Avoid adding breakpoints which were already removed.  If breakpoints 
+                        // are added and removed very fast, the Breakpoint manager can issue 
+                        // breakpoint added events after breakpoint removed events!  This means 
+                        // that such breakpoints would never be removed from the view.
+                        // (Bug 289526)
+                        if (DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(filteredBreakpoints[i].getMarker()) != null) {
+                            fContainer.addBreakpoint(filteredBreakpoints[i], delta);
+                        }
+                    }
+                    delta.setChildCount(fContainer.getChildren().length);
+                    
+                    // select the breakpoint
+                    if (filteredBreakpoints.length > 0) {
+                        appendModelDeltaToElement(delta, filteredBreakpoints[0], IModelDelta.SELECT);
+                    }
                 
-                // select the breakpoint
-                if (filteredBreakpoints.length > 0) {
-                    appendModelDeltaToElement(delta, filteredBreakpoints[0], IModelDelta.SELECT);
+                    if (DEBUG_BREAKPOINT_DELTAS) {
+                        System.out.println("POST BREAKPOINT DELTA (breakpointsAddedInput)\n"); //$NON-NLS-1$
+                    }
+                    postModelChanged(delta, false); 
                 }
-            
-                if (DEBUG_BREAKPOINT_DELTAS) {
-                    System.out.println("POST BREAKPOINT DELTA (breakpointsAddedInput)\n"); //$NON-NLS-1$
-                }
-                postModelChanged(delta, false); 
             }
         }
 
@@ -488,19 +495,19 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param breakpoints the breakpoints
          */
         void breakpointsRemoved(IBreakpoint[] breakpoints) {
-            IBreakpoint[] filteredBreakpoints = filterBreakpoints(
-                fInput, getSelectionFilter(fInput, getDebugContext()), breakpoints);
-            
             synchronized (this) {
+                boolean removed = false;
                 ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
-                for (int i = 0; i < filteredBreakpoints.length; ++i) {
-                    fContainer.removeBreakpoint(filteredBreakpoints[i], delta);
+                for (int i = 0; i < breakpoints.length; ++i) {
+                    removed = fContainer.removeBreakpoint(breakpoints[i], delta) || removed;
                 }
                 
-                if (DEBUG_BREAKPOINT_DELTAS) {
-                    System.out.println("POST BREAKPOINT DELTA (breakpointsRemovedInput)\n"); //$NON-NLS-1$
+                if (removed) {
+                    if (DEBUG_BREAKPOINT_DELTAS) {
+                        System.out.println("POST BREAKPOINT DELTA (breakpointsRemovedInput)\n"); //$NON-NLS-1$
+                    }
+                    postModelChanged(delta, false); 
                 }
-                postModelChanged(delta, false); 
             }
         }
         
