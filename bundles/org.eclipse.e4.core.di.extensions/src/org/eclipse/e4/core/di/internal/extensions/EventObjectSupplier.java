@@ -22,7 +22,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.Bundle;
@@ -33,7 +33,7 @@ import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
-public class EventObjectSupplier extends AbstractObjectSupplier {
+public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	// This is a temporary code to ensure that bundle containing
 	// EventAdmin implementation is started. This code it to be removed once
@@ -187,15 +187,6 @@ public class EventObjectSupplier extends AbstractObjectSupplier {
 			return null;
 		EventTopic qualifier = descriptor.getQualifier(EventTopic.class);
 		return qualifier.value();
-	}
-
-	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group) {
-		Object[] result = new Object[descriptors.length];
-		for (int i = 0; i < descriptors.length; i++) {
-			result[i] = get(descriptors[i], requestor, track, group);
-		}
-		return result;
 	}
 
 	static private EventAdmin getEventAdmin() {

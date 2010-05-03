@@ -18,7 +18,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
@@ -70,7 +70,7 @@ final public class ContextInjectionFactory {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public void inject(Object object, IEclipseContext context) throws InjectionException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.inject(object, supplier);
 	}
 
@@ -84,7 +84,7 @@ final public class ContextInjectionFactory {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context) throws InjectionException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, qualifier, supplier);
 	}
 
@@ -99,7 +99,7 @@ final public class ContextInjectionFactory {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context, Object defaultValue) throws InjectionException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, qualifier, defaultValue, supplier);
 	}
 
@@ -127,7 +127,7 @@ final public class ContextInjectionFactory {
 	 * @see Singleton
 	 */
 	static public <T> T make(Class<T> clazz, IEclipseContext context) throws InjectionException {
-		AbstractObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
 	}
 }

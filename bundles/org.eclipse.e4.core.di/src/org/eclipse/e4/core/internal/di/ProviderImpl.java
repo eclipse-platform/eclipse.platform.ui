@@ -12,16 +12,16 @@ package org.eclipse.e4.core.internal.di;
 
 import javax.inject.Provider;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class ProviderImpl<T> implements Provider<T> {
 
-	final private AbstractObjectSupplier objectProvider;
+	final private PrimaryObjectSupplier objectProvider;
 	final private IObjectDescriptor objectDescriptor;
 	final private IInjector injector;
 
-	public ProviderImpl(IObjectDescriptor descriptor, IInjector injector, AbstractObjectSupplier provider) {
+	public ProviderImpl(IObjectDescriptor descriptor, IInjector injector, PrimaryObjectSupplier provider) {
 		objectDescriptor = descriptor;
 		objectProvider = provider;
 		this.injector = injector;

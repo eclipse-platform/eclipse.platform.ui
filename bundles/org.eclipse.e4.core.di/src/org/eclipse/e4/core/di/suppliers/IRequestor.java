@@ -60,7 +60,7 @@ public interface IRequestor {
 	 * @param objectSupplier the object supplier being disposed of
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public void disposed(AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public void disposed(PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Notifies the requestor that an object should be un-injected.
@@ -68,5 +68,5 @@ public interface IRequestor {
 	 * @param objectSupplier the object supplier being un-injected
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public void uninject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 }

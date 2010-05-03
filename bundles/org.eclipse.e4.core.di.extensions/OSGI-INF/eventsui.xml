@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.core.services.events.ui">
    <implementation class="org.eclipse.e4.core.di.internal.extensions.UIEventObjectSupplier"/>
    <service>
-      <provide interface="org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier"/>
+      <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
    </service>
    <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.UIEventTopic"/>
 </scr:component>

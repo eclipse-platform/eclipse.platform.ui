@@ -15,9 +15,9 @@ import java.lang.reflect.AccessibleObject;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -30,13 +30,13 @@ abstract public class Requestor implements IRequestor {
 	final private boolean isOptional;
 
 	final private IInjector injector;
-	final private AbstractObjectSupplier primarySupplier;
+	final private PrimaryObjectSupplier primarySupplier;
 
 	protected Object[] actualArgs;
 
 	public abstract IObjectDescriptor[] getDependentObjects();
 
-	public Requestor(AccessibleObject reflectionObject, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+	public Requestor(AccessibleObject reflectionObject, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
 		if (requestingObject != null)
@@ -52,7 +52,7 @@ abstract public class Requestor implements IRequestor {
 		return injector;
 	}
 
-	public AbstractObjectSupplier getPrimarySupplier() {
+	public PrimaryObjectSupplier getPrimarySupplier() {
 		return primarySupplier;
 	}
 
@@ -96,12 +96,12 @@ abstract public class Requestor implements IRequestor {
 		((InjectorImpl) injector).resolveArguments(this);
 	}
 
-	public void disposed(AbstractObjectSupplier objectSupplier) {
+	public void disposed(PrimaryObjectSupplier objectSupplier) {
 		((InjectorImpl) injector).disposed(objectSupplier);
 
 	}
 
-	public void uninject(Object object, AbstractObjectSupplier objectSupplier) {
+	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) {
 		injector.uninject(object, objectSupplier);
 	}
 

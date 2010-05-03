@@ -16,14 +16,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class MethodRequestor extends Requestor {
 
 	final private Method method;
 
-	public MethodRequestor(Method method, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, requestingObject, track);
 		this.method = method;
 	}

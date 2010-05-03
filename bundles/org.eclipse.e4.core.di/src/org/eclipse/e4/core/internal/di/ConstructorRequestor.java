@@ -16,14 +16,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class ConstructorRequestor extends Requestor {
 
 	final private Constructor<?> constructor;
 
-	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, AbstractObjectSupplier primarySupplier) {
+	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier) {
 		// TBD make an integer update types? 0 - static , 1 - normal, 2 - grouped?
 		super(null, injector, primarySupplier, null, false /* do not track */);
 		this.constructor = constructor;

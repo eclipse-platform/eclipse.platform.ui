@@ -17,11 +17,11 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
-public class ContextObjectSupplier extends AbstractObjectSupplier {
+public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 	final static protected String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 
@@ -136,17 +136,6 @@ public class ContextObjectSupplier extends AbstractObjectSupplier {
 
 	public IEclipseContext getContext() {
 		return context;
-	}
-
-	@Override
-	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
-		// This method is rarely or never used on the primary supplier
-		if (descriptor == null)
-			return IInjector.NOT_A_VALUE;
-		Object[] result = get(new IObjectDescriptor[] {descriptor}, requestor, track, group);
-		if (result == null)
-			return null;
-		return result[0];
 	}
 
 	@Override

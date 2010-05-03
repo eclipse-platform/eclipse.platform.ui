@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.Preferences;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.FrameworkUtil;
 
-public class PreferencesObjectSupplier extends AbstractObjectSupplier {
+public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 	private Map<String, List<IRequestor>> listenerCache = new HashMap<String, List<IRequestor>>();
 
@@ -47,15 +47,6 @@ public class PreferencesObjectSupplier extends AbstractObjectSupplier {
 			addListener(nodePath, requestor);
 		// TBD add auto-conversion depending on the descriptor's desired type
 		Object result = getPreferencesService().getString(nodePath, key, null, null);
-		return result;
-	}
-
-	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group) {
-		Object[] result = new Object[descriptors.length];
-		for (int i = 0; i < descriptors.length; i++) {
-			result[i] = get(descriptors[i], requestor, track, group);
-		}
 		return result;
 	}
 

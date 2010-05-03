@@ -13,14 +13,14 @@ package org.eclipse.e4.core.internal.di;
 import java.lang.reflect.Field;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class FieldRequestor extends Requestor {
 
 	final private Field field;
 
-	public FieldRequestor(Field field, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+	public FieldRequestor(Field field, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
 		super(field, injector, primarySupplier, requestingObject, track);
 		this.field = field;
 	}

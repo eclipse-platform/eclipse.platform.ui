@@ -15,8 +15,8 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 /**
  * This requestor is used to establish a link between the object supplier
@@ -32,7 +32,7 @@ public class ClassRequestor extends Requestor {
 
 	private String clazzName;
 
-	public ClassRequestor(Class<?> clazz, IInjector injector, AbstractObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+	public ClassRequestor(Class<?> clazz, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
 		super(null, injector, primarySupplier, requestingObject, track);
 		if (clazz != null)
 			clazzName = clazz.getSimpleName();
