@@ -11,7 +11,7 @@
 package org.eclipse.e4.core.di;
 
 import java.lang.annotation.Annotation;
-import org.eclipse.e4.core.di.suppliers.AbstractObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 /**
  * Describes externally-visible injector functionality.
@@ -30,14 +30,14 @@ public interface IInjector {
 	 * @param objectSupplier
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public void inject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param object
 	 * @param objectSupplier
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public void uninject(Object object, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param object
@@ -46,7 +46,7 @@ public interface IInjector {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, Class<? extends Annotation> qualifier, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param object
@@ -56,7 +56,7 @@ public interface IInjector {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * @param clazz
@@ -64,7 +64,7 @@ public interface IInjector {
 	 * @return an instance of the specified class
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public <T> T make(Class<T> clazz, AbstractObjectSupplier objectSupplier) throws InjectionException;
+	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	public IBinding addBinding(Class<?> clazz);
 
