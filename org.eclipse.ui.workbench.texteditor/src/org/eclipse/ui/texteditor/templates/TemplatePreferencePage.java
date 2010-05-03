@@ -1110,7 +1110,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		viewer.setEditable(false);
 		Cursor arrowCursor= viewer.getTextWidget().getDisplay().getSystemCursor(SWT.CURSOR_ARROW);
 		viewer.getTextWidget().setCursor(arrowCursor);
-		viewer.getTextWidget().setCaret(null);
+
+		// Don't set caret to 'null' as this causes https://bugs.eclipse.org/293263
+//		viewer.getTextWidget().setCaret(null);
 
 		Control control= viewer.getControl();
 		data= new GridData(GridData.FILL_BOTH);
