@@ -1802,18 +1802,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		if (matchFlags == MATCH_INPUT) {
-			IEditorPart editor = findEditor(input);
-			if (editor != null) {
-				if (editor instanceof IShowEditorInput) {
-					((IShowEditorInput) editor).showEditorInput(input);
-				}
-
-				if (activate) {
-					activate(editor);
-				}
-				return editor;
+		IEditorReference[] editorReferences = findEditors(input, editorId, matchFlags);
+		if (editorReferences.length != 0) {
+			IEditorPart editor = editorReferences[0].getEditor(true);
+			if (editor instanceof IShowEditorInput) {
+				((IShowEditorInput) editor).showEditorInput(input);
 			}
+
+			if (activate) {
+				activate(editor);
+			}
+			return editor;
 		}
 
 		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
