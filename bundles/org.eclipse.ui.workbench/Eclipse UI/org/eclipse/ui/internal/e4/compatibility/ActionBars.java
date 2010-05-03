@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import java.util.HashMap;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -30,31 +28,9 @@ public class ActionBars extends SubActionBars {
 
 	private MPart part;
 
-	private HashMap<String, IAction> actions = new HashMap<String, IAction>();
-
 	public ActionBars(final IActionBars parent, final IServiceLocator serviceLocator, MPart part) {
 		super(parent, serviceLocator);
 		this.part = part;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionBars#clearGlobalActionHandlers()
-	 */
-	public void clearGlobalActionHandlers() {
-		// TODO compat this really should be clearing registered handlers
-		actions.clear();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionBars#getGlobalActionHandler(java.lang.String)
-	 */
-	public IAction getGlobalActionHandler(String actionId) {
-		// FIXME compat getGlobalActionHandler
-		return actions.get(actionId);
 	}
 
 	/*
@@ -80,18 +56,6 @@ public class ActionBars extends SubActionBars {
 			toolbarManager = new ToolBarManager(null);
 		}
 		return toolbarManager;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionBars#setGlobalActionHandler(java.lang.String,
-	 * org.eclipse.jface.action.IAction)
-	 */
-	public void setGlobalActionHandler(String actionId, IAction handler) {
-		// FIXME compat setGlobalActionHandler: needs to actually register
-		// handlers
-		actions.put(actionId, handler);
 	}
 
 	/*
