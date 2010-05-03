@@ -35,7 +35,8 @@ import java.lang.annotation.Target;
  * the methods that modify other context values.
  */
 @Documented
-@Target({ METHOD, FIELD })
+@Target({METHOD, FIELD})
 @Retention(RUNTIME)
 public @interface GroupUpdates {
+	// intentionally left empty
 }

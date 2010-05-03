@@ -57,7 +57,7 @@ public class InjectorImpl implements IInjector {
 	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<PrimaryObjectSupplier, List<WeakReference<?>>>();
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
-	private Map<Class<?>, Set<IBinding>> bindings = new HashMap<Class<?>, Set<IBinding>>();
+	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
@@ -194,7 +194,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public Object make(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
-		IBinding binding = findBinding(descriptor);
+		Binding binding = findBinding(descriptor);
 		if (binding == null) {
 			Class<?> desiredClass = getDesiredClass(descriptor.getDesiredType());
 			return internalMake(desiredClass, objectSupplier);
@@ -380,7 +380,7 @@ public class InjectorImpl implements IInjector {
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (descriptors[i] == null)
 				continue; // already resolved
-			IBinding binding = findBinding(descriptors[i]);
+			Binding binding = findBinding(descriptors[i]);
 			if (binding != null) {
 				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier);
 				if (actualArgs[i] != NOT_A_VALUE)
@@ -643,36 +643,37 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public IBinding addBinding(IBinding binding) {
-		Class<?> clazz = binding.getDescribedClass();
+		Binding internalBinding = (Binding) binding;
+		Class<?> clazz = internalBinding.getDescribedClass();
 		synchronized (bindings) {
 			if (bindings.containsKey(clazz)) {
-				Set<IBinding> collection = bindings.get(clazz);
-				String desiredQualifierName = binding.getQualifierName();
-				for (Iterator<IBinding> i = collection.iterator(); i.hasNext();) {
-					IBinding collectionBinding = i.next();
+				Set<Binding> collection = bindings.get(clazz);
+				String desiredQualifierName = internalBinding.getQualifierName();
+				for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
+					Binding collectionBinding = i.next();
 					if (eq(collectionBinding.getQualifierName(), desiredQualifierName)) {
 						i.remove();
 						break;
 					}
 				}
-				collection.add(binding);
+				collection.add(internalBinding);
 			} else {
-				Set<IBinding> collection = new HashSet<IBinding>(1);
-				collection.add(binding);
+				Set<Binding> collection = new HashSet<Binding>(1);
+				collection.add(internalBinding);
 				bindings.put(clazz, collection);
 			}
 		}
 		return binding;
 	}
 
-	private IBinding findBinding(IObjectDescriptor descriptor) {
+	private Binding findBinding(IObjectDescriptor descriptor) {
 		Class<?> desiredClass = getProviderType(descriptor.getDesiredType());
 		if (desiredClass == null)
 			desiredClass = getDesiredClass(descriptor.getDesiredType());
 		synchronized (bindings) {
 			if (!bindings.containsKey(desiredClass))
 				return null;
-			Set<IBinding> collection = bindings.get(desiredClass);
+			Set<Binding> collection = bindings.get(desiredClass);
 			String desiredQualifierName = null;
 			if (descriptor.hasQualifier(Named.class)) {
 				Named namedAnnotation = descriptor.getQualifier(Named.class);
@@ -687,8 +688,8 @@ public class InjectorImpl implements IInjector {
 				}
 			}
 
-			for (Iterator<IBinding> i = collection.iterator(); i.hasNext();) {
-				IBinding collectionBinding = i.next();
+			for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
+				Binding collectionBinding = i.next();
 				if (eq(collectionBinding.getQualifierName(), desiredQualifierName))
 					return collectionBinding;
 			}

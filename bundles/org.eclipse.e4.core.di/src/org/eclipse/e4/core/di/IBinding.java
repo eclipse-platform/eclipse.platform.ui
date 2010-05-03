@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
-// TBD support for multiple qualifiers
 /**
  * Describes binding between object description and its implementation to be used by 
  * the dependency injection.
+ * @see IInjector#addBinding(Class)
+ * @see IInjector#addBinding(IBinding)
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IBinding {
-
-	// TBD add qualified(Qualifier qualifier);
 
 	/**
 	 * Creates a binding for the specified name.
@@ -34,14 +33,4 @@ public interface IBinding {
 	 * @return binding for the specified class
 	 */
 	public IBinding implementedBy(Class<?> clazz);
-
-	// TBD make internal
-	public Class<?> getDescribedClass();
-
-	// TBD make internal
-	public String getQualifierName();
-
-	// TBD make internal
-	public Class<?> getImplementationClass();
-
 }

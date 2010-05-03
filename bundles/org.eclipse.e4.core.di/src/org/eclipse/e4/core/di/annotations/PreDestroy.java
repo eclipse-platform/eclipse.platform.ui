@@ -15,8 +15,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( { ElementType.METHOD })
+/**
+ * Use this annotation to specify methods that dependency injector
+ * should call when the primary object supplier is disposed of. 
+ */
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PreDestroy {
-
+	// intentionally left empty
 }
