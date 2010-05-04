@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,7 +121,11 @@ public class EclipseConnector {
 			    pageNotFound = true;
 			    if (notFoundCallout != null) {
 			    	notFoundCallout.notFound(url);
-			    }				if (requiresErrorPage(lowerCaseuRL)) { 
+			    }				
+			    
+			    boolean isRTopicPath = isRTopicPath(req.getServletPath());
+			    
+			    if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) { 
 					
 			    	String errorPage;
 			    	
@@ -350,5 +354,15 @@ public class EclipseConnector {
 	
 	public static void setNotFoundCallout(INotFoundCallout callout) {
 		notFoundCallout = callout;
+	}
+	
+	public static boolean isRTopicPath(String servletPath)
+	{
+		boolean isRTopicPath=false;
+		
+		if(servletPath.equals("/rtopic")) //$NON-NLS-1$
+			isRTopicPath = true;
+		
+		return isRTopicPath;
 	}
 }
