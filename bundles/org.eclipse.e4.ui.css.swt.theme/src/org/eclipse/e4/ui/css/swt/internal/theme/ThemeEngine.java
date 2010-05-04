@@ -184,7 +184,7 @@ public class ThemeEngine implements IThemeEngine {
             IConfigurationElement element = elements[i];
             String elementOs = element.getAttribute("os");
             String elementWs = element.getAttribute("ws");
-            if (osname != null && osname.equalsIgnoreCase(elementOs)) {
+            if (osname != null && ( elementOs == null ||  elementOs.contains(osname) )) {
                 if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
                 	//best match
                     matchingElements.add(element);

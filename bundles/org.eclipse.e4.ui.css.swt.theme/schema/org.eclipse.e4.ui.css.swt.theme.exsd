@@ -106,7 +106,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="os" type="string" use="required">
+         <attribute name="os" type="string">
             <annotation>
                <documentation>
                   
