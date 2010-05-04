@@ -726,6 +726,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		// Add supertypes to classes
 		placeholderEClass.getESuperTypes().add(theBasicPackage.getPartSashContainerElement());
+		placeholderEClass.getESuperTypes().add(theBasicPackage.getStackElement());
 		EGenericType g1 = createEGenericType(theUiPackage.getElementContainer());
 		EGenericType g2 = createEGenericType(theBasicPackage.getPartSashContainerElement());
 		g1.getETypeArguments().add(g2);

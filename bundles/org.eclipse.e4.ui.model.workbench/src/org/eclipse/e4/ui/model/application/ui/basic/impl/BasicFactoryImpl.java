@@ -79,6 +79,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 			case BasicPackageImpl.WINDOW: return (EObject)createWindow();
 			case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
 			case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
+			case BasicPackageImpl.STACK_ELEMENT: return (EObject)createStackElement();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -152,6 +153,16 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public MTrimBar createTrimBar() {
 		TrimBarImpl trimBar = new TrimBarImpl();
 		return trimBar;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MStackElement createStackElement() {
+		StackElementImpl stackElement = new StackElementImpl();
+		return stackElement;
 	}
 
 	/**

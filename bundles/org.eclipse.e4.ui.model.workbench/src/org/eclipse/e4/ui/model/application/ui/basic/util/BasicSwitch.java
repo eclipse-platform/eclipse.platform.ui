@@ -120,6 +120,7 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseDirtyable(part);
 				if (result == null) result = caseBindings(part);
 				if (result == null) result = caseWindowElement(part);
+				if (result == null) result = caseStackElement(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -138,6 +139,7 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseDirtyable(inputPart);
 				if (result == null) result = caseBindings(inputPart);
 				if (result == null) result = caseWindowElement(inputPart);
+				if (result == null) result = caseStackElement(inputPart);
 				if (result == null) result = caseUIElement(inputPart);
 				if (result == null) result = caseApplicationElement(inputPart);
 				if (result == null) result = defaultCase(theEObject);
@@ -225,6 +227,14 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseElementContainer(trimBar);
 				if (result == null) result = caseUIElement(trimBar);
 				if (result == null) result = caseApplicationElement(trimBar);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BasicPackageImpl.STACK_ELEMENT: {
+				MStackElement stackElement = (MStackElement)theEObject;
+				T1 result = caseStackElement(stackElement);
+				if (result == null) result = caseUIElement(stackElement);
+				if (result == null) result = caseApplicationElement(stackElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -379,6 +389,21 @@ public class BasicSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseTrimBar(MTrimBar object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Stack Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Stack Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseStackElement(MStackElement object) {
 		return null;
 	}
 

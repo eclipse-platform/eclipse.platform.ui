@@ -41,7 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * @model
  * @generated
  */
-public interface MPart extends MContribution, MContext, MPartSashContainerElement, MUILabel, MHandlerContainer, MDirtyable, MBindings, MWindowElement {
+public interface MPart extends MContribution, MContext, MPartSashContainerElement, MUILabel, MHandlerContainer, MDirtyable, MBindings, MWindowElement, MStackElement {
 	/**
 	 * Returns the value of the '<em><b>Menus</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MMenu}.

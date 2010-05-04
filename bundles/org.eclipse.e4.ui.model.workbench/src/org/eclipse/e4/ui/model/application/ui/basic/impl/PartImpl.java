@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -1168,6 +1169,11 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
+		if (baseClass == MStackElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -1230,6 +1236,11 @@ public class PartImpl extends ContributionImpl implements MPart {
 			}
 		}
 		if (baseClass == MWindowElement.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MStackElement.class) {
 			switch (baseFeatureID) {
 				default: return -1;
 			}

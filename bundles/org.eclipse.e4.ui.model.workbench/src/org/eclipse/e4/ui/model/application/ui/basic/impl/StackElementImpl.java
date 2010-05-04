@@ -10,30 +10,28 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-import org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl;
+
+import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Part Stack</b></em>'.
+ * An implementation of the model object '<em><b>Stack Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class PartStackImpl extends GenericStackImpl<MStackElement> implements MPartStack {
+public class StackElementImpl extends UIElementImpl implements MStackElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PartStackImpl() {
+	protected StackElementImpl() {
 		super();
 	}
 
@@ -44,7 +42,7 @@ public class PartStackImpl extends GenericStackImpl<MStackElement> implements MP
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return BasicPackageImpl.Literals.PART_STACK;
+		return BasicPackageImpl.Literals.STACK_ELEMENT;
 	}
 
-} //PartStackImpl
+} //StackElementImpl

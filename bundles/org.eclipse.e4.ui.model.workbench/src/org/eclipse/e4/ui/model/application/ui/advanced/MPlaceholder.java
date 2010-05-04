@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
  * @model
  * @generated
  */
-public interface MPlaceholder extends MPartSashContainerElement {
+public interface MPlaceholder extends MPartSashContainerElement, MStackElement {
 	/**
 	 * Returns the value of the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->

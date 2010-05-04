@@ -259,7 +259,7 @@
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">
-      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//ui/Context #//ui/basic/PartSashContainerElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
+      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//ui/Context #//ui/basic/PartSashContainerElement #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement #//ui/basic/StackElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -270,7 +270,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input"/>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
-          <eTypeArguments eClassifier="#//ui/basic/Part"/>
+          <eTypeArguments eClassifier="#//ui/basic/StackElement"/>
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/basic/PartSashContainerElement"/>
         <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
@@ -291,6 +291,8 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
             eType="#//ui/basic/Window" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="sharedElements" upperBound="-1"
+            eType="#//ui/UIElement" containment="true"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/basic/WindowElement"/>
         </eGenericSuperTypes>
@@ -314,10 +316,11 @@
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="StackElement" eSuperTypes="#//ui/UIElement"/>
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
         nsPrefix="advanced">
-      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/basic/PartSashContainerElement">
+      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/basic/PartSashContainerElement #//ui/basic/StackElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement"/>
       </eClassifiers>

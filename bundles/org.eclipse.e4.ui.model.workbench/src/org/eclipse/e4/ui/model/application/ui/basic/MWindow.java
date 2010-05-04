@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -35,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWidth <em>Width</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getHeight <em>Height</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWindows <em>Windows</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getSharedElements <em>Shared Elements</em>}</li>
  * </ul>
  * </p>
  *
@@ -181,5 +183,20 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * @generated
 	 */
 	List<MWindow> getWindows();
+
+	/**
+	 * Returns the value of the '<em><b>Shared Elements</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.MUIElement}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Shared Elements</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Shared Elements</em>' containment reference list.
+	 * @model containment="true"
+	 * @generated
+	 */
+	List<MUIElement> getSharedElements();
 
 } // MWindow

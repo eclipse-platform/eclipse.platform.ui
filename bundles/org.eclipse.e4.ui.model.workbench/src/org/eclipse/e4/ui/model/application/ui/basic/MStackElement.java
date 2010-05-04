@@ -10,16 +10,16 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic;
 
-import org.eclipse.e4.ui.model.application.ui.MGenericStack;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Part Stack</b></em>'.
+ * A representation of the model object '<em><b>Stack Element</b></em>'.
  * <!-- end-user-doc -->
  *
  *
  * @model
  * @generated
  */
-public interface MPartStack extends MGenericStack<MStackElement>, MPartSashContainerElement, MWindowElement {
-} // MPartStack
+public interface MStackElement extends MUIElement {
+} // MStackElement

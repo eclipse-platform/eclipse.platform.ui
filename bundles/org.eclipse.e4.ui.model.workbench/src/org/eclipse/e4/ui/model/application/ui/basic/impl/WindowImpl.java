@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -74,6 +75,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getWidth <em>Width</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getHeight <em>Height</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getWindows <em>Windows</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getSharedElements <em>Shared Elements</em>}</li>
  * </ul>
  * </p>
  *
@@ -299,6 +301,16 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected EList<MWindow> windows;
+
+	/**
+	 * The cached value of the '{@link #getSharedElements() <em>Shared Elements</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSharedElements()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MUIElement> sharedElements;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -595,6 +607,18 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MUIElement> getSharedElements() {
+		if (sharedElements == null) {
+			sharedElements = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, BasicPackageImpl.WINDOW__SHARED_ELEMENTS);
+		}
+		return sharedElements;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -606,6 +630,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return basicSetMainMenu(null, msgs);
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
+				return ((InternalEList<?>)getSharedElements()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -647,6 +673,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return getHeight();
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return getWindows();
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
+				return getSharedElements();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -706,6 +734,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				getWindows().clear();
 				getWindows().addAll((Collection<? extends MWindow>)newValue);
 				return;
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
+				getSharedElements().clear();
+				getSharedElements().addAll((Collection<? extends MUIElement>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -760,6 +792,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				getWindows().clear();
 				return;
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
+				getSharedElements().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -800,6 +835,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return height != HEIGHT_EDEFAULT;
 			case BasicPackageImpl.WINDOW__WINDOWS:
 				return windows != null && !windows.isEmpty();
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
+				return sharedElements != null && !sharedElements.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

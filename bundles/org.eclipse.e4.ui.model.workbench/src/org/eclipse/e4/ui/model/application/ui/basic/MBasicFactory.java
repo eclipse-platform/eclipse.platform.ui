@@ -90,4 +90,13 @@ public interface MBasicFactory {
 	 */
 	MTrimBar createTrimBar();
 
+	/**
+	 * Returns a new object of class '<em>Stack Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Stack Element</em>'.
+	 * @generated
+	 */
+	MStackElement createStackElement();
+
 } //MBasicFactory
