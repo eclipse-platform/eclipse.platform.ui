@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
@@ -29,7 +28,7 @@ public class EclipseContextTest extends TestCase {
 		}
 	}
 
-	private static class ConcatFunction implements IContextFunction {
+	private static class ConcatFunction extends ContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			String separator = (String) context.get("separator");
 			StringBuffer result = new StringBuffer();
@@ -193,7 +192,7 @@ public class EclipseContextTest extends TestCase {
 		context.remove("foo");
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
-		context.set("foo", new IContextFunction() {
+		context.set("foo", new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return context.get("bar");
 			}

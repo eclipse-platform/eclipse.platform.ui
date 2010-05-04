@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -29,7 +29,7 @@ public interface ILookupStrategy extends IEclipseContextStrategy {
 	 * @param context The context in which the lookup occurred
 	 * @return The value for the given name, or <code>null</code> if no
 	 * corresponding value could be found. The value may be an
-	 * {@link IContextFunction}.
+	 * {@link ContextFunction}.
 	 */
 	public Object lookup(String name, IEclipseContext context);
 

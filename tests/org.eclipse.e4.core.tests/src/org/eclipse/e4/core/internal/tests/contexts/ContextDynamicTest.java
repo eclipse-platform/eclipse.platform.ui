@@ -14,9 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectBasic;
 
@@ -38,7 +38,7 @@ public class ContextDynamicTest extends TestCase {
 		IEclipseContext context = parent.createChild();
 		assertNull(context.getLocal("bar"));
 		context.set("bar", "baz1");
-		context.set("bar", new IContextFunction() {
+		context.set("bar", new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return "baz1";
 			}

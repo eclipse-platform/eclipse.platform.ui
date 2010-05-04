@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
-
 /**
  * The base class for all computed value implementations. Clients may subclass
  * this class. See the class comment of {@link IContextFunction} for specific
@@ -21,6 +20,13 @@ package org.eclipse.e4.core.contexts;
  * @see IContextFunction
  */
 public abstract class ContextFunction implements IContextFunction {
+
+	/**
+	 * Constructs a new instance of the context function
+	 */
+	public ContextFunction() {
+		// placeholder
+	}
 
 	/**
 	 * {@inheritDoc}

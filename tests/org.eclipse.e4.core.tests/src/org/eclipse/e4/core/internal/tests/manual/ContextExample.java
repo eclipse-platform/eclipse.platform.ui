@@ -19,7 +19,6 @@ import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
@@ -83,7 +82,7 @@ public class ContextExample {
 		}
 	}
 
-	static class ResourceSelection implements IContextFunction {
+	static class ResourceSelection extends ContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			return null;
 		}

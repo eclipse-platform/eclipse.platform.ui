@@ -16,9 +16,9 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -65,19 +65,19 @@ public class InjectionUpdateTest extends TestCase {
 	public void testPropagation() {
 		c1.set("base", "abc");
 
-		c21.set("derived1", new IContextFunction() {
+		c21.set("derived1", new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				String baseString = (String) context.get("base");
 				return baseString.charAt(0) + "_";
 			}});
 
-		c22.set("derived2", new IContextFunction() {
+		c22.set("derived2", new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				String baseString = (String) context.get("base");
 				return "_" + baseString.charAt(baseString.length() - 1);
 			}});
 
-		c1.set("calculated", new IContextFunction() {
+		c1.set("calculated", new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				IEclipseContext context21 = (IEclipseContext) context.get("c21");
 				String derived1 = (String) context21.get("derived1");
