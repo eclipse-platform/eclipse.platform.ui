@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009 Texas Instruments and others
+ * Copyright (c) 2009, 2010 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
+ *     Pawel Piech (Windriver) - Ongoing bug fixes and enhancements (Bug 311457)
  *****************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
