@@ -276,7 +276,7 @@
     </mainMenu>
   </children>
   <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" elementId="_UW9TY_r3Ed6gmo7caOxU9g" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.ExitHandler" command="e4.exit"/>
-  <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" elementId="_BESTZfr3Ed6gmo7caOxU04" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" persistedState="" command="e4.show.view"/>
+  <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" elementId="_BESTZfr3Ed6gmo7caOxU04" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" persistedState="" command="org.eclipse.ui.views.showView"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" elementId="org.eclipse.e4.ui.saveHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.handlers.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.e4.ui.saveAllHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -291,7 +291,9 @@
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYx" keySequence="CTRL+SHIFT+S" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   </bindingTables>
   <commands xmi:id="e4.exit" elementId="e4.exit" commandName="Exit" description=""/>
-  <commands xmi:id="e4.show.view" elementId="e4.show.view" commandName="Show View"/>
+  <commands xmi:id="org.eclipse.ui.views.showView" elementId="org.eclipse.ui.views.showView" commandName="Show View">
+    <parameters xmi:id="_oRr6EAFSEd-Z8rQksLwRYy" elementId="org.eclipse.ui.views.showView.viewId" name="View"/>
+  </commands>
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYw" elementId="org.eclipse.e4.ui.saveCommands" commandName="Save"/>
   <commands xmi:id="_jR5mUAFSEd-Z8rQksLwRYx" elementId="org.eclipse.e4.ui.saveAllCommands" commandName="Save All"/>
   <commands xmi:id="org.eclipse.ui.edit.text.goto.lineUp" elementId="org.eclipse.ui.edit.text.goto.lineUp" commandName="Line Up" description="Go up one line of text"/>
