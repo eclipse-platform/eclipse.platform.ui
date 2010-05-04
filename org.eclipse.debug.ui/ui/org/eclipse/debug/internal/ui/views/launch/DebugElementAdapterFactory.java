@@ -60,6 +60,7 @@ import org.eclipse.debug.internal.ui.model.elements.MemoryBlockContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.MemoryBlockLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.MemoryRetrievalContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.MemoryViewElementMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.ProcessContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupMementoProvider;
@@ -114,6 +115,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     
     private static IElementContentProvider fgCPLaunchManger = new LaunchManagerContentProvider();
     private static IElementContentProvider fgCPLaunch = new LaunchContentProvider();
+    private static IElementContentProvider fgCPProcess = new ProcessContentProvider();
     private static IElementContentProvider fgCPTarget = new DebugTargetContentProvider();
     private static IElementContentProvider fgCPThread = new ThreadContentProvider();
     private static IElementContentProvider fgCPFrame = new StackFrameContentProvider();
@@ -164,6 +166,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof ILaunch) {
                 return fgCPLaunch;
+            }
+            if (adaptableObject instanceof IProcess) {
+                return fgCPProcess;
             }
             if (adaptableObject instanceof IDebugTarget) {
             	return fgCPTarget;

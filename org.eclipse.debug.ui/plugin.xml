@@ -2345,6 +2345,9 @@ M4 = Platform-specific fourth key
                adaptableType="org.eclipse.debug.core.model.IProcess"
                class="org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory">
             <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+            </adapter>
+            <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
             </adapter>
             <adapter
