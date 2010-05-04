@@ -42,14 +42,12 @@
       <theme
             basestylesheeturi="css/dark-gradient.css"
             id="org.eclipse.e4.demo.contacts.themes.darkgradient"
-            label="Dark Gradient Theme"
-            os="win32">
+            label="Dark Gradient Theme">
       </theme>
       <theme
             basestylesheeturi="css/bright-gradient.css"
             id="org.eclipse.e4.demo.contacts.themes.brightgradient"
-            label="Bright Gradient Theme"
-            os="win32">
+            label="Bright Gradient Theme">
       </theme>
    </extension>
 </plugin>
