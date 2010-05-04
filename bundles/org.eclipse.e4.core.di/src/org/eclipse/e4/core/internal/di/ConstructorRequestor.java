@@ -24,13 +24,33 @@ public class ConstructorRequestor extends Requestor {
 	final private Constructor<?> constructor;
 
 	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier) {
-		// TBD make an integer update types? 0 - static , 1 - normal, 2 - grouped?
 		super(null, injector, primarySupplier, null, false /* do not track */);
 		this.constructor = constructor;
 	}
 
 	public Object execute() throws InjectionException {
-		return callConstructor(constructor, actualArgs);
+		Object result = null;
+		boolean wasAccessible = true;
+		if (!constructor.isAccessible()) {
+			constructor.setAccessible(true);
+			wasAccessible = false;
+		}
+		try {
+			result = constructor.newInstance(actualArgs);
+		} catch (IllegalArgumentException e) {
+			throw new InjectionException(e);
+		} catch (InstantiationException e) {
+			throw new InjectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new InjectionException(e);
+		} catch (InvocationTargetException e) {
+			Throwable originalException = e.getCause();
+			throw new InjectionException((originalException != null) ? originalException : e);
+		} finally {
+			if (!wasAccessible)
+				constructor.setAccessible(false);
+		}
+		return result;
 	}
 
 	@Override
@@ -52,31 +72,6 @@ public class ConstructorRequestor extends Requestor {
 			descriptors[i] = new ObjectDescriptor(logicalParams[i], annotations[i]);
 		}
 		return descriptors;
-	}
-
-	private Object callConstructor(Constructor<?> constructor, Object[] args) throws InjectionException {
-		Object result = null;
-		boolean wasAccessible = true;
-		if (!constructor.isAccessible()) {
-			constructor.setAccessible(true);
-			wasAccessible = false;
-		}
-		try {
-			result = constructor.newInstance(args);
-		} catch (IllegalArgumentException e) {
-			throw new InjectionException(e);
-		} catch (InstantiationException e) {
-			throw new InjectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new InjectionException(e);
-		} catch (InvocationTargetException e) {
-			Throwable originalException = e.getCause();
-			throw new InjectionException((originalException != null) ? originalException : e);
-		} finally {
-			if (!wasAccessible)
-				constructor.setAccessible(false);
-		}
-		return result;
 	}
 
 	@Override

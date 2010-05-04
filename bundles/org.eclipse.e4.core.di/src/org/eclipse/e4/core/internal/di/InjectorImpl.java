@@ -42,7 +42,6 @@ import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
-import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 
 /**
  * Reflection-based dependency injector.
@@ -50,9 +49,6 @@ import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 public class InjectorImpl implements IInjector {
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
-
-	// TBD thread safety
-	//private Map<String, AbstractObjectSupplier> extendedSuppliers = new HashMap<String, AbstractObjectSupplier>();
 
 	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<PrimaryObjectSupplier, List<WeakReference<?>>>();
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
@@ -432,7 +428,6 @@ public class InjectorImpl implements IInjector {
 		if (qualifiers == null)
 			return null;
 		for (Annotation qualifier : qualifiers) {
-			// TBD wrap in class-not-found if no OSGi
 			String key;
 			Type type = qualifier.annotationType();
 			if (type instanceof Class<?>) {
@@ -440,12 +435,15 @@ public class InjectorImpl implements IInjector {
 			} else
 				continue;
 
-			ExtendedObjectSupplier supplier = ProviderHelper.findProvider(key);
+			ExtendedObjectSupplier supplier;
+			try {
+				// use qualified name to refer to a class that might be missing
+				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key);
+			} catch (NoClassDefFoundError e) {
+				return null; // OSGi framework not present 
+			}
 			if (supplier != null)
 				return supplier;
-			// TBD use cache
-			//			if (extendedSuppliers.containsKey(qualifier))
-			//				return extendedSuppliers.get(qualifier);
 		}
 		return null;
 	}

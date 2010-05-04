@@ -29,21 +29,6 @@ public class MethodRequestor extends Requestor {
 	}
 
 	public Object execute() throws InjectionException {
-		return callMethod(method, actualArgs);
-	}
-
-	@Override
-	public IObjectDescriptor[] getDependentObjects() {
-		Type[] parameterTypes = method.getGenericParameterTypes();
-		Annotation[][] annotations = method.getParameterAnnotations();
-		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
-		for (int i = 0; i < parameterTypes.length; i++) {
-			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);
-		}
-		return descriptors;
-	}
-
-	private Object callMethod(Method method, Object[] args) throws InjectionException {
 		Object userObject = getRequestingObject();
 		if (userObject == null)
 			return null;
@@ -54,7 +39,7 @@ public class MethodRequestor extends Requestor {
 			wasAccessible = false;
 		}
 		try {
-			result = method.invoke(userObject, args);
+			result = method.invoke(userObject, actualArgs);
 		} catch (IllegalArgumentException e) {
 			throw new InjectionException(e);
 		} catch (IllegalAccessException e) {
@@ -67,6 +52,17 @@ public class MethodRequestor extends Requestor {
 				method.setAccessible(false);
 		}
 		return result;
+	}
+
+	@Override
+	public IObjectDescriptor[] getDependentObjects() {
+		Type[] parameterTypes = method.getGenericParameterTypes();
+		Annotation[][] annotations = method.getParameterAnnotations();
+		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
+		for (int i = 0; i < parameterTypes.length; i++) {
+			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);
+		}
+		return descriptors;
 	}
 
 	@Override

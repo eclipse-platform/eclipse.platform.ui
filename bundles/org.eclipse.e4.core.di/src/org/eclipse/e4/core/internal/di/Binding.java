@@ -11,9 +11,7 @@
 package org.eclipse.e4.core.internal.di;
 
 import org.eclipse.e4.core.di.IBinding;
-
 import org.eclipse.e4.core.di.IInjector;
-
 
 public class Binding implements IBinding {
 
@@ -42,9 +40,9 @@ public class Binding implements IBinding {
 		return binding;
 	}
 
-	public IBinding implementedBy(Class<?> clazz) {
+	public IBinding implementedBy(Class<?> implClazz) {
 		Binding binding = new Binding(this);
-		binding.implementationClazz = clazz;
+		binding.implementationClazz = implClazz;
 		injector.addBinding(binding);
 		return binding;
 	}
