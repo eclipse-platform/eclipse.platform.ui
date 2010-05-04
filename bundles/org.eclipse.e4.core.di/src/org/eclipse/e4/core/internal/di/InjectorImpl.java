@@ -82,7 +82,7 @@ public class InjectorImpl implements IInjector {
 
 		// We call @PostConstruct after injection. This means that is is called 
 		// as a part of both #make() and #inject().
-		processPostConstruct(object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
+		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
 	}
 
 	private void rememberInjectedObject(Object object, PrimaryObjectSupplier objectSupplier) {
@@ -271,34 +271,12 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		for (int i = 0; i < count; i++) {
-			processPreDestory(objects[i], objectSupplier, objects[i].getClass(), new ArrayList<Class<?>>(5));
+			processAnnotated(PreDestroy.class, objects[i], objects[i].getClass(), objectSupplier, new ArrayList<Class<?>>(5));
+			if (objects[i] instanceof IDisposable)
+				((IDisposable) objects[i]).dispose();
 			uninject(objects[i], objectSupplier);
 		}
 		forgetSupplier(objectSupplier);
-	}
-
-	private void processPreDestory(Object userObject, PrimaryObjectSupplier objectSupplier, Class<?> objectClass, ArrayList<Class<?>> classHierarchy) {
-		Class<?> superClass = objectClass.getSuperclass();
-		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
-			classHierarchy.add(objectClass);
-			processPreDestory(userObject, objectSupplier, superClass, classHierarchy);
-			classHierarchy.remove(objectClass);
-		}
-		Method[] methods = objectClass.getDeclaredMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (method.getParameterTypes().length > 0) // TBD why?
-				continue;
-			if (!method.isAnnotationPresent(PreDestroy.class))
-				continue;
-			if (!isOverridden(method, classHierarchy)) {
-				// TBD optional @PreDestory? might make sense if we allow args on those methods
-				MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
-				requestor.execute();
-			}
-		}
-		if (userObject instanceof IDisposable)
-			((IDisposable) userObject).dispose();
 	}
 
 	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, boolean fillNulls) {
@@ -583,31 +561,6 @@ public class InjectorImpl implements IInjector {
 		return false;
 	}
 
-	private void processPostConstruct(Object userObject, Class<?> objectClass, PrimaryObjectSupplier objectSupplier, ArrayList<Class<?>> classHierarchy) throws InjectionException {
-		Class<?> superClass = objectClass.getSuperclass();
-		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
-			classHierarchy.add(objectClass);
-			processPostConstruct(userObject, superClass, objectSupplier, classHierarchy);
-			classHierarchy.remove(objectClass);
-		}
-		Method[] methods = objectClass.getDeclaredMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (!method.isAnnotationPresent(PostConstruct.class))
-				continue;
-			if (isOverridden(method, classHierarchy))
-				continue;
-
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
-			int unresolved = unresolved(actualArgs);
-			if (unresolved != -1)
-				reportUnresolvedArgument(requestor, unresolved);
-			requestor.setResolvedArgs(actualArgs);
-			requestor.execute();
-		}
-	}
-
 	private Class<?> getDesiredClass(Type desiredType) {
 		if (desiredType instanceof Class<?>)
 			return (Class<?>) desiredType;
@@ -704,6 +657,34 @@ public class InjectorImpl implements IInjector {
 		if (str1 == null || str2 == null)
 			return false;
 		return str1.equals(str2);
+	}
+
+	private void processAnnotated(Class<? extends Annotation> annotation, Object userObject, Class<?> objectClass, PrimaryObjectSupplier objectSupplier, ArrayList<Class<?>> classHierarchy) {
+		Class<?> superClass = objectClass.getSuperclass();
+		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
+			classHierarchy.add(objectClass);
+			processAnnotated(annotation, userObject, superClass, objectSupplier, classHierarchy);
+			classHierarchy.remove(objectClass);
+		}
+		Method[] methods = objectClass.getDeclaredMethods();
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			if (!method.isAnnotationPresent(annotation))
+				continue;
+			if (isOverridden(method, classHierarchy))
+				continue;
+
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
+			int unresolved = unresolved(actualArgs);
+			if (unresolved != -1) {
+				if (method.isAnnotationPresent(Optional.class))
+					continue;
+				reportUnresolvedArgument(requestor, unresolved);
+			}
+			requestor.setResolvedArgs(actualArgs);
+			requestor.execute();
+		}
 	}
 
 }
