@@ -17,7 +17,7 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/org.eclipse.e4.demo.contacts/css/dark-gradient.css">
+               value="org.eclipse.e4.demo.contacts.themes.darkgradient">
          </property>
          <property
                name="startupForegroundColor"
@@ -36,5 +36,20 @@
                value="plugin_customization.ini">
          </property>
       </product>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/dark-gradient.css"
+            id="org.eclipse.e4.demo.contacts.themes.darkgradient"
+            label="Dark Gradient Theme"
+            os="win32">
+      </theme>
+      <theme
+            basestylesheeturi="css/bright-gradient.css"
+            id="org.eclipse.e4.demo.contacts.themes.brightgradient"
+            label="Bright Gradient Theme"
+            os="win32">
+      </theme>
    </extension>
 </plugin>

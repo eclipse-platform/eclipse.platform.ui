@@ -13,15 +13,12 @@
 package org.eclipse.e4.demo.contacts.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 
 public class DarkThemeHandler {
 
 	@Execute
-	public void execute(MApplication application) {
-		for (MWindow window : application.getChildren()) {
-			ThemeUtil.switchTheme(window, "dark-gradient.css");
-		}
+	public void execute( IThemeEngine engine) {		
+		 engine.setTheme("org.eclipse.e4.demo.contacts.themes.darkgradient");
 	}
 }
