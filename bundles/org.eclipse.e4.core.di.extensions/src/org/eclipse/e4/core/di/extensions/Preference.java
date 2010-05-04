@@ -22,9 +22,9 @@ import javax.inject.Qualifier;
  */
 @Qualifier
 @Documented
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Preferences {
+public @interface Preference {
 	String value() default ""; // key in the node
 
 	String nodePath() default "";

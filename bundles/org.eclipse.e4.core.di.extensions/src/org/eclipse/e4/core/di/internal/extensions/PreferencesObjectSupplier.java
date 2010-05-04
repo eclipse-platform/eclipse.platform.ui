@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.di.IInjector;
-import org.eclipse.e4.core.di.extensions.Preferences;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
@@ -53,14 +53,14 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 	private String getKey(IObjectDescriptor descriptor) {
 		if (descriptor == null)
 			return null;
-		Preferences qualifier = descriptor.getQualifier(Preferences.class);
+		Preference qualifier = descriptor.getQualifier(Preference.class);
 		return qualifier.value();
 	}
 
 	private String getNodePath(IObjectDescriptor descriptor, Object requestingObject) {
 		if (descriptor == null)
 			return null;
-		Preferences qualifier = descriptor.getQualifier(Preferences.class);
+		Preference qualifier = descriptor.getQualifier(Preference.class);
 		String nodePath = qualifier.nodePath();
 
 		if (nodePath == null || nodePath.length() == 0) {

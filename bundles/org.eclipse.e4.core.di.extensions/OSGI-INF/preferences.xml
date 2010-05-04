@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
    </service>
-   <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.Preferences"/>
+   <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.Preference"/>
 </scr:component>

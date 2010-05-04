@@ -22,7 +22,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.Preferences;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -43,19 +43,19 @@ public class InjectionPreferencesTest extends TestCase {
 		public String prefOptional2;
 		
 		@Inject
-		public void setPrefs(@Preferences(TEST_PREFS_KEY) String string) {
+		public void setPrefs(@Preference(TEST_PREFS_KEY) String string) {
 			counter++;
 			pref = string;
 		}
 		
 		@Inject
-		public void setPrefsNode(@Preferences(value=TEST_PREFS_KEY, nodePath=TEST_PREFS_NODE) String string) {
+		public void setPrefsNode(@Preference(value=TEST_PREFS_KEY, nodePath=TEST_PREFS_NODE) String string) {
 			counterNode++;
 			prefNode = string;
 		}
 		
 		@Inject
-		public void setOptionalPrefs(@Optional @Preferences("something") String string1, @Preferences(TEST_PREFS_KEY) String string2) {
+		public void setOptionalPrefs(@Optional @Preference("something") String string1, @Preference(TEST_PREFS_KEY) String string2) {
 			counterOptional++;
 			prefOptional1 = string1;
 			prefOptional2 = string2;

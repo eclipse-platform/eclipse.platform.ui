@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.extensions.Preferences;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -33,7 +33,7 @@ public class InjectionMixedSuppliersTest extends TestCase {
 		public String other;
 		
 		@Inject
-		public void setPrefs(@Named("testMixed") String otherString, @Preferences("injectedPrefs") String string) {
+		public void setPrefs(@Named("testMixed") String otherString, @Preference("injectedPrefs") String string) {
 			pref = string;
 			other = otherString;
 		}
