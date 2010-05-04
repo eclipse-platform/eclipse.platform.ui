@@ -75,7 +75,7 @@ public class MSaveablePartTest extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
+		MPart part = (MPart) stack.getChildren().get(0);
 
 		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem item = folder.getItem(0);

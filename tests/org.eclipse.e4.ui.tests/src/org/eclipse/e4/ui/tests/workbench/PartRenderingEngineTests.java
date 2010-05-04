@@ -69,7 +69,7 @@ public class PartRenderingEngineTests extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
+		MPart part = (MPart) stack.getChildren().get(0);
 
 		IPresentationEngine renderer = (IPresentationEngine) appContext
 				.get(IPresentationEngine.class.getName());
@@ -276,8 +276,8 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(
 				"Adding a part to a stack should not cause the stack's active child to change",
 				partA, stack.getSelectedElement());
-		assertNull("The object should not have been instantiated", partB
-				.getObject());
+		assertNull("The object should not have been instantiated",
+				partB.getObject());
 	}
 
 	public void testPartStack_SetActiveChild6Bug298797() throws Exception {
@@ -468,7 +468,7 @@ public class PartRenderingEngineTests extends TestCase {
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = stack.getChildren().get(0);
+		MPart part = (MPart) stack.getChildren().get(0);
 
 		assertNotNull(part.getWidget());
 		assertNotNull(part.getRenderer());

@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -134,7 +135,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		assertEquals(1, stack.getChildren().size());
 
-		part = stack.getChildren().get(0);
+		part = (MPart) stack.getChildren().get(0);
 		assertEquals("newPart", part.getLabel());
 	}
 
@@ -334,7 +335,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack = (MPartStack) window.getChildren().get(0);
-		part = stack.getChildren().get(0);
+		part = (MPart) stack.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -373,8 +374,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack = (MPartStack) window.getChildren().get(0);
-		part1 = stack.getChildren().get(0);
-		part2 = stack.getChildren().get(1);
+		part1 = (MPart) stack.getChildren().get(0);
+		part2 = (MPart) stack.getChildren().get(1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -421,8 +422,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		stack1 = (MPartStack) window.getChildren().get(0);
 		stack2 = (MPartStack) window.getChildren().get(1);
 
-		part1 = stack1.getChildren().get(0);
-		part2 = stack2.getChildren().get(0);
+		part1 = (MPart) stack1.getChildren().get(0);
+		part2 = (MPart) stack2.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -435,7 +436,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		assertEquals(0, stack1.getChildren().size());
 
-		List<MPart> stack2Children = stack2.getChildren();
+		List<MStackElement> stack2Children = stack2.getChildren();
 		assertEquals(2, stack2Children.size());
 		assertTrue(stack2Children.contains(part1));
 		assertTrue(stack2Children.contains(part2));
@@ -470,8 +471,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		stack = (MPartStack) window.getChildren().get(0);
 
-		part1 = stack.getChildren().get(0);
-		part2 = stack.getChildren().get(1);
+		part1 = (MPart) stack.getChildren().get(0);
+		part2 = (MPart) stack.getChildren().get(1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -833,8 +834,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		window = application.getChildren().get(0);
 		stack = (MPartStack) window.getChildren().get(0);
 
-		part1 = stack.getChildren().get(0);
-		part2 = stack.getChildren().get(1);
+		part1 = (MPart) stack.getChildren().get(0);
+		part2 = (MPart) stack.getChildren().get(1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -874,8 +875,8 @@ public abstract class ModelReconcilerElementContainerTest extends
 		window = application.getChildren().get(0);
 		stack = (MPartStack) window.getChildren().get(0);
 
-		part1 = stack.getChildren().get(0);
-		part2 = stack.getChildren().get(1);
+		part1 = (MPart) stack.getChildren().get(0);
+		part2 = (MPart) stack.getChildren().get(1);
 
 		stack.setSelectedElement(part1);
 

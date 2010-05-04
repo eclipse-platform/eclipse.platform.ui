@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -89,7 +90,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 						if (parent instanceof MPartStack) {
 							MPartStack stack = (MPartStack) parent;
-							List<MPart> children = stack.getChildren();
+							List<MStackElement> children = stack.getChildren();
 							if (children.size() == 1) {
 								stack.setSelectedElement((MPart) element);
 							}
@@ -143,12 +144,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 
 			String contextName = element.getClass().getInterfaces()[0]
-					.getName()
-					+ " eclipse context"; //$NON-NLS-1$
+					.getName() + " eclipse context"; //$NON-NLS-1$
 			final IEclipseContext parentContext = getParentContext(element);
 			final IEclipseContext createdContext = (parentContext != null) ? parentContext
-					.createChild(contextName)
-					: EclipseContextFactory.create(contextName);
+					.createChild(contextName) : EclipseContextFactory
+					.create(contextName);
 
 			populateModelInterfaces(mcontext, createdContext, element
 					.getClass().getInterfaces());
@@ -177,14 +177,14 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		if (element instanceof MPartStack) {
 			MPartStack container = (MPartStack) element;
-			MPart active = container.getSelectedElement();
+			MPart active = (MPart) container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container);
 				IEclipseContext childContext = ((MContext) active).getContext();
 				IEclipseContext parentContext = getParentContext(active);
 				parentContext.set(IContextConstants.ACTIVE_CHILD, childContext);
 			} else {
-				List<MPart> children = container.getChildren();
+				List<MStackElement> children = container.getChildren();
 				if (!children.isEmpty()) {
 					container.setSelectedElement(children.get(0));
 				}

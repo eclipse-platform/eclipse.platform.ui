@@ -439,8 +439,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack1 = (MPartStack) window.getChildren().get(0);
-		part1 = stack1.getChildren().get(0);
-		part2 = stack1.getChildren().get(1);
+		part1 = (MPart) stack1.getChildren().get(0);
+		part2 = (MPart) stack1.getChildren().get(1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -493,8 +493,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack1 = (MPartStack) window.getChildren().get(0);
-		part1 = stack1.getChildren().get(0);
-		part2 = stack1.getChildren().get(1);
+		part1 = (MPart) stack1.getChildren().get(0);
+		part2 = (MPart) stack1.getChildren().get(1);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -556,9 +556,9 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack1 = (MPartStack) window.getChildren().get(0);
-		partA = stack1.getChildren().get(0);
-		partB = stack1.getChildren().get(1);
-		partC = stack1.getChildren().get(2);
+		partA = (MPart) stack1.getChildren().get(0);
+		partB = (MPart) stack1.getChildren().get(1);
+		partC = (MPart) stack1.getChildren().get(2);
 
 		// create a new stack
 		MPartStack stack3 = BasicFactoryImpl.eINSTANCE.createPartStack();
@@ -657,9 +657,9 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack1 = (MPartStack) window.getChildren().get(0);
-		partA = stack1.getChildren().get(0);
-		partB = stack1.getChildren().get(1);
-		partC = stack1.getChildren().get(2);
+		partA = (MPart) stack1.getChildren().get(0);
+		partB = (MPart) stack1.getChildren().get(1);
+		partC = (MPart) stack1.getChildren().get(2);
 
 		// create a new stack
 		MPartStack stack3 = BasicFactoryImpl.eINSTANCE.createPartStack();
@@ -757,11 +757,11 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		stack1 = (MPartStack) window.getChildren().get(0);
-		partA = stack1.getChildren().get(0);
-		partB = stack1.getChildren().get(1);
+		partA = (MPart) stack1.getChildren().get(0);
+		partB = (MPart) stack1.getChildren().get(1);
 
 		stack2 = (MPartStack) window.getChildren().get(1);
-		partC = stack2.getChildren().get(0);
+		partC = (MPart) stack2.getChildren().get(0);
 
 		MPart partD = BasicFactoryImpl.eINSTANCE.createPart();
 		stack2.getChildren().add(partD);
@@ -826,8 +826,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		assertEquals(window1, application.getChildren().get(0));
 		assertNotNull(application.getChildren().get(1));
-		assertEquals(application.getChildren().get(1), application
-				.getSelectedElement());
+		assertEquals(application.getChildren().get(1),
+				application.getSelectedElement());
 	}
 
 	public void testElementContainer_ActiveChild_Removed() {
@@ -893,7 +893,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		window = application.getChildren().get(0);
 		partStack1 = (MPartStack) window.getChildren().get(0);
-		part1 = partStack1.getChildren().get(0);
+		part1 = (MPart) partStack1.getChildren().get(0);
 
 		partStack1.getChildren().remove(1);
 
@@ -957,9 +957,9 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partStack1 = (MPartStack) window.getChildren().get(0);
 		partStack2 = (MPartStack) window.getChildren().get(1);
 
-		part1 = partStack1.getChildren().get(0);
-		part2 = partStack1.getChildren().get(1);
-		part3 = partStack2.getChildren().get(0);
+		part1 = (MPart) partStack1.getChildren().get(0);
+		part2 = (MPart) partStack1.getChildren().get(1);
+		part3 = (MPart) partStack2.getChildren().get(0);
 
 		partStack2.getChildren().add(part2);
 
@@ -1028,9 +1028,9 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partStack1 = (MPartStack) window.getChildren().get(0);
 		partStack2 = (MPartStack) window.getChildren().get(1);
 
-		part1 = partStack1.getChildren().get(0);
-		part2 = partStack1.getChildren().get(1);
-		part3 = partStack2.getChildren().get(0);
+		part1 = (MPart) partStack1.getChildren().get(0);
+		part2 = (MPart) partStack1.getChildren().get(1);
+		part3 = (MPart) partStack2.getChildren().get(0);
 
 		partStack2.getChildren().add(part2);
 
@@ -1351,15 +1351,15 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(originalApplicationKeyBindingSequence, keyBinding
-				.getKeySequence());
-		assertEquals(originalWindowKeyBindingSequence, keyBinding2
-				.getKeySequence());
+		assertEquals(originalApplicationKeyBindingSequence,
+				keyBinding.getKeySequence());
+		assertEquals(originalWindowKeyBindingSequence,
+				keyBinding2.getKeySequence());
 
 		applyAll(deltas);
 
-		assertEquals(userApplicationKeyBindingSequence, keyBinding
-				.getKeySequence());
+		assertEquals(userApplicationKeyBindingSequence,
+				keyBinding.getKeySequence());
 		assertEquals(userWindowKeyBindingSequence, keyBinding2.getKeySequence());
 	}
 
