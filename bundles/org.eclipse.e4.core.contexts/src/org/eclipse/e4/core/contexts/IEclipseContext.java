@@ -256,4 +256,18 @@ public interface IEclipseContext extends IDisposable {
 	 * @return a new child context
 	 */
 	public IEclipseContext createChild(String name);
+
+	/**
+	 * Returns parent context, or <code>null</code> if there is no parent context.
+	 * @return the parent context, or <code>null</code>
+	 */
+	public IEclipseContext getParent();
+
+	/**
+	 * Sets parent context. Pass in <code>null</code> to indicate that this context has
+	 * no parent.
+	 * @param parentContext the new parent context, or <code>null</code> to indicate
+	 * that this context has no parent
+	 */
+	public void setParent(IEclipseContext parentContext);
 }

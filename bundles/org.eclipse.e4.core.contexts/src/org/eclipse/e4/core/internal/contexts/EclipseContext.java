@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
@@ -34,6 +33,11 @@ import org.eclipse.e4.core.di.IDisposable;
  * methods of it are exposed via IEclipseContext.
  */
 public class EclipseContext implements IEclipseContext {
+
+	/**
+	 * A context key identifying the parent context.
+	 */
+	public static final String PARENT = "parentContext"; //$NON-NLS-1$
 
 	/**
 	 * A context key (value "debugString") identifying a value to use in debug statements for a
@@ -254,7 +258,7 @@ public class EclipseContext implements IEclipseContext {
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
-		set(IContextConstants.PARENT, parent);
+		setParent(parent);
 		if (parent == null)
 			waiting = new ArrayList<Computation>();
 	}
@@ -268,7 +272,7 @@ public class EclipseContext implements IEclipseContext {
 			return true;
 		if (localOnly)
 			return false;
-		IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
+		IEclipseContext parent = getParent();
 		if (parent != null && parent.containsKey(name))
 			return true;
 		if (strategy instanceof ILookupStrategy) {
@@ -401,7 +405,7 @@ public class EclipseContext implements IEclipseContext {
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				// value computation depends on parent if function is defined in a parent
 				if (this != originatingContext)
-					valueComputation.addDependency(originatingContext, IContextConstants.PARENT);
+					valueComputation.addDependency(originatingContext, PARENT);
 				result = valueComputation.get(arguments);
 			}
 			if (DEBUG_VERBOSE) {
@@ -411,7 +415,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 		// 3. delegate to parent
 		if (!local) {
-			IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
+			IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
 			if (parent != null) {
 				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local);
 			}
@@ -501,17 +505,8 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void set(String name, Object value) {
-		if (IContextConstants.PARENT.equals(name)) {
-			// TBD make setting parent a separate operation
-			EclipseContext parentContext = (EclipseContext) localValues.get(IContextConstants.PARENT);
-			if (parentContext != null)
-				parentContext.removeChild(this);
-			List<Scheduled> scheduled = new ArrayList<Scheduled>();
-			handleReparent((EclipseContext) value, scheduled);
-			localValues.put(IContextConstants.PARENT, value);
-			if (value != null)
-				((EclipseContext) value).addChild(this);
-			processScheduled(scheduled);
+		if (PARENT.equals(name)) {
+			setParent((IEclipseContext) value);
 			return;
 		}
 		boolean containsKey = localValues.containsKey(name);
@@ -557,9 +552,22 @@ public class EclipseContext implements IEclipseContext {
 		return false;
 	}
 
-	// TBD should this method be an API?
 	public EclipseContext getParent() {
-		return (EclipseContext) localValues.get(IContextConstants.PARENT);
+		trackAccess(PARENT);
+		return (EclipseContext) localValues.get(PARENT);
+	}
+
+	public void setParent(IEclipseContext parent) {
+		EclipseContext parentContext = (EclipseContext) localValues.get(PARENT);
+		if (parentContext != null)
+			parentContext.removeChild(this);
+		List<Scheduled> scheduled = new ArrayList<Scheduled>();
+		handleReparent((EclipseContext) parent, scheduled);
+		localValues.put(PARENT, parent);
+		if (parent != null)
+			((EclipseContext) parent).addChild(this);
+		processScheduled(scheduled);
+		return;
 	}
 
 	/**

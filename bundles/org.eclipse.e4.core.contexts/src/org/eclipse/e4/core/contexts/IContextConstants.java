@@ -19,12 +19,6 @@ package org.eclipse.e4.core.contexts;
 public interface IContextConstants {
 
 	/**
-	 * A context key (value "parentContext") identifying the parent context, which can be retrieved
-	 * with {@link IEclipseContext#get(String)}.
-	 */
-	public static final String PARENT = "parentContext"; //$NON-NLS-1$
-
-	/**
 	 * A context key (value "activeChildContext") that identifies another {@link IEclipseContext}
 	 * that is a child of the context. The meaning of active is up to the application.
 	 */

@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts.osgi;
 
-import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IContextConstants;
-import org.eclipse.e4.core.contexts.IContextFunction;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
-import org.eclipse.e4.core.di.IDisposable;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.IContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -39,16 +35,14 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * <p>
  * OSGi services are looked up by service class name.
  */
-public class OSGiContextStrategy implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer,
-		IRunAndTrack {
+public class OSGiContextStrategy implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer, IRunAndTrack {
 	class ServiceData {
 		// the service name
 		String name;
 
 		ServiceTracker tracker;
 		// the contexts using this service (IEclipseContext -> null)
-		final Map<IEclipseContext, Object> users = Collections
-				.synchronizedMap(new WeakHashMap<IEclipseContext, Object>());
+		final Map<IEclipseContext, Object> users = Collections.synchronizedMap(new WeakHashMap<IEclipseContext, Object>());
 
 		ServiceData(String name) {
 			this.name = name;
@@ -69,8 +63,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	 * Maintains a cache of registered context functions, indexed by context function key.
 	 */
 	class ContextFunctionCache implements ServiceListener {
-		final Map<String, ServiceReference> functionKeys = Collections
-				.synchronizedMap(new HashMap<String, ServiceReference>());
+		final Map<String, ServiceReference> functionKeys = Collections.synchronizedMap(new HashMap<String, ServiceReference>());
 
 		public ContextFunctionCache() {
 			try {
@@ -78,8 +71,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 						+ ')';
 				bundleContext.addServiceListener(this, filter);
 				// process all services already registered
-				ServiceReference[] existing = bundleContext.getServiceReferences(
-						IContextFunction.SERVICE_NAME, null);
+				ServiceReference[] existing = bundleContext.getServiceReferences(IContextFunction.SERVICE_NAME, null);
 				if (existing != null) {
 					for (int i = 0; i < existing.length; i++)
 						add(existing[i]);
@@ -120,12 +112,12 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 
 		public void serviceChanged(ServiceEvent event) {
 			switch (event.getType()) {
-			case ServiceEvent.REGISTERED:
-				add(event.getServiceReference());
-				break;
-			case ServiceEvent.UNREGISTERING:
-				remove(event.getServiceReference());
-				break;
+				case ServiceEvent.REGISTERED :
+					add(event.getServiceReference());
+					break;
+				case ServiceEvent.UNREGISTERING :
+					remove(event.getServiceReference());
+					break;
 			}
 		}
 	}
@@ -136,8 +128,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	/**
 	 * Map of String (service name) -> ServiceData
 	 */
-	private Map<String, ServiceData> services = Collections
-			.synchronizedMap(new HashMap<String, ServiceData>());
+	private Map<String, ServiceData> services = Collections.synchronizedMap(new HashMap<String, ServiceData>());
 
 	public OSGiContextStrategy(BundleContext bc) {
 		super();
@@ -272,7 +263,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 			return false;
 		if (event.getEventType() != ContextChangeEvent.DISPOSE) {
 			// do a lookup so the listener isn't removed
-			context.get(IContextConstants.PARENT);
+			context.getParent();
 			return true;
 		}
 		synchronized (services) {

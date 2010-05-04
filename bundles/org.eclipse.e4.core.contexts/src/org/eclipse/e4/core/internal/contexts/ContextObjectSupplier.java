@@ -13,7 +13,6 @@ package org.eclipse.e4.core.internal.contexts;
 import java.lang.reflect.Type;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
@@ -49,7 +48,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 						continue;
 					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
 						result[i] = context;
-						context.get(IContextConstants.PARENT); // creates pseudo-link
+						context.getParent(); // creates pseudo-link
 					} else if (context.containsKey(keys[i]))
 						result[i] = context.get(keys[i]);
 					else
@@ -93,10 +92,10 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((context == null) ? 0 : context.hashCode());
-			result = prime * result + ((requestor == null) ? 0 : requestor.hashCode());
-			return result;
+			int hashRresult = 1;
+			hashRresult = prime * hashRresult + ((context == null) ? 0 : context.hashCode());
+			hashRresult = prime * hashRresult + ((requestor == null) ? 0 : requestor.hashCode());
+			return hashRresult;
 		}
 
 		@Override
