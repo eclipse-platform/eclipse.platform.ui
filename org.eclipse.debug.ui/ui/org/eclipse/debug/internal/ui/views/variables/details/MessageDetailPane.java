@@ -83,6 +83,10 @@ public class MessageDetailPane implements IDetailPane {
 				fLabel.setText(message);
 				fControlParent.layout(true);
 			}
+		} else if (selection == null || selection.isEmpty()) {
+			// clear the message
+			fLabel.setText(""); //$NON-NLS-1$
+			fControlParent.layout(true);
 		}
 	}
 
