@@ -10,14 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  *
  */
-public class StatusReporterCreationFunction implements IContextFunction {
+public class StatusReporterCreationFunction extends ContextFunction {
 
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		return ContextInjectionFactory.make(WorkbenchStatusReporter.class,
