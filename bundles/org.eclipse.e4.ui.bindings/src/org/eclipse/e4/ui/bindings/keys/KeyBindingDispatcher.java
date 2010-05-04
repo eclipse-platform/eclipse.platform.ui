@@ -21,6 +21,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.jface.bindings.Binding;
@@ -226,6 +227,7 @@ public class KeyBindingDispatcher {
 	private long startTime;
 
 	@Inject
+	@Optional
 	private Logger logger;
 
 	/**
@@ -263,7 +265,9 @@ public class KeyBindingDispatcher {
 			handlerService.executeHandler(parameterizedCommand);
 		} catch (final Exception e) {
 			commandHandled = false;
-			logger.error(e);
+			if (logger != null) {
+				logger.error(e);
+			}
 		}
 
 		return (commandDefined && commandHandled);
