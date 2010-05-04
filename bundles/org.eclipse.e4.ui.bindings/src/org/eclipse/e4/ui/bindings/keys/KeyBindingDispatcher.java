@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.ui.bindings.keys;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,6 +20,8 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -225,6 +225,9 @@ public class KeyBindingDispatcher {
 
 	private long startTime;
 
+	@Inject
+	private Logger logger;
+
 	/**
 	 * Performs the actual execution of the command by looking up the current handler from the
 	 * command manager. If there is a handler and it is enabled, then it tries the actual execution.
@@ -260,6 +263,7 @@ public class KeyBindingDispatcher {
 			handlerService.executeHandler(parameterizedCommand);
 		} catch (final Exception e) {
 			commandHandled = false;
+			logger.error(e);
 		}
 
 		return (commandDefined && commandHandled);
