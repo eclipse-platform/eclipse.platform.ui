@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,6 +273,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
         TreeViewer viewer = getTreeViewer();
         if (viewer != null) {
 			try {
+				viewer.getControl().setRedraw(false);
                 viewer.add(configuration.getType(), configuration);
                 // if moved, remove original now
                 if (from != null) {
@@ -284,6 +285,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
                 updateFilterLabel();
 			} 
 			catch (CoreException e) {}
+			finally {
+				viewer.getControl().setRedraw(true);
+			}
         }
     }
 

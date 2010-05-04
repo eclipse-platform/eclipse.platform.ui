@@ -1284,7 +1284,7 @@ public class LaunchConfigurationTabGroupViewer {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
-								fOriginal = ((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
+								((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
 							} 
 							catch (CoreException e) {DebugUIPlugin.log(e);}
 						}
@@ -1292,7 +1292,7 @@ public class LaunchConfigurationTabGroupViewer {
 					getLaunchConfigurationDialog().run(true, false, runnable);
 				}
 				else {
-					fOriginal = fWorkingCopy.doSave();
+					fWorkingCopy.doSave();
 				}
 			}
 			updateButtons();
