@@ -1652,7 +1652,8 @@ M4 = Platform-specific fourth key
             name="%ActionDefinition.restart.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.restart.description"
-            id="org.eclipse.debug.ui.commands.Restart">
+            id="org.eclipse.debug.ui.commands.Restart"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.RestartCommandHandler">
       </command>
       <command
             name="%ActionDefinition.suspend.name"

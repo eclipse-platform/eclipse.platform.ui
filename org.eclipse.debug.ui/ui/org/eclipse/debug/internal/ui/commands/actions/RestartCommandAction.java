@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,16 @@ import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Handler for the 
+ * Handler for the Restart action
  * 
  * @since 3.6
  */
 public class RestartCommandAction extends DebugCommandAction {
 
+    public RestartCommandAction() {
+        setActionDefinitionId("org.eclipse.debug.ui.commands.Restart"); //$NON-NLS-1$
+    }
+    
     protected Class getCommandType() {
         return IRestartHandler.class;
     }
