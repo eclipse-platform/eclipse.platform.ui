@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
-
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 abstract class Computation {
 	Map<IEclipseContext, Set<String>> dependencies = new HashMap<IEclipseContext, Set<String>>();
@@ -77,8 +75,7 @@ abstract class Computation {
 
 	private String mapToString(Map<IEclipseContext, Set<String>> map) {
 		StringBuffer result = new StringBuffer('{');
-		for (Iterator<Map.Entry<IEclipseContext, Set<String>>> it = map.entrySet().iterator(); it
-				.hasNext();) {
+		for (Iterator<Map.Entry<IEclipseContext, Set<String>>> it = map.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<IEclipseContext, Set<String>> entry = it.next();
 			result.append(entry.getKey());
 			result.append("->("); //$NON-NLS-1$
@@ -115,7 +112,7 @@ abstract class Computation {
 			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
 					+ mapToString(dependencies));
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
-			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
+			EclipseContext c = (EclipseContext) it.next();
 			Computation existingComputation = c.listeners.get(this);
 			if (existingComputation != null) {
 				// if the existing computation is equal but not identical, we need to update
@@ -147,8 +144,7 @@ abstract class Computation {
 			if (EclipseContext.DEBUG)
 				System.out.println(toString() + " no longer listening to " + context + ',' + name); //$NON-NLS-1$
 			// Bug 304859 - causes reordering of listeners
-			// ((EclipseContext) context).listeners.remove(this); // XXX
-			// IEclipseContext
+			// ((EclipseContext) context).listeners.remove(this);
 			properties.remove(name);
 			// if we no longer track any values in the context, remove dependency
 			if (properties.isEmpty())

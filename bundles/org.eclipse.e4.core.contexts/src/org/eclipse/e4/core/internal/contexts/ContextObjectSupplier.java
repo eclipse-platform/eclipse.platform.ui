@@ -53,8 +53,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					} else if (context.containsKey(keys[i]))
 						result[i] = context.get(keys[i]);
 					else
-						result[i] = IInjector.NOT_A_VALUE; // TBD make sure this still creates
-															// dependency on the key
+						result[i] = IInjector.NOT_A_VALUE;
 				}
 				return true;
 			}

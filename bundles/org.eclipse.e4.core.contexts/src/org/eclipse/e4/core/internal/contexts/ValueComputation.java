@@ -22,7 +22,7 @@ public class ValueComputation extends Computation {
 	String name;
 	boolean valid;
 	IContextFunction function;
-	EclipseContext originatingContext; // XXX IEclipseContext
+	EclipseContext originatingContext;
 	private boolean computing; // cycle detection
 
 	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext, String name, IContextFunction computedValue) {
@@ -138,8 +138,7 @@ public class ValueComputation extends Computation {
 			throw new CycleException(ex.getCycleMessage() + '\n' + this.toString());
 		} finally {
 			computing = false;
-			EclipseContext.currentComputation.set(oldComputation); // XXX
-			// IEclipseContext
+			EclipseContext.currentComputation.set(oldComputation);
 		}
 		startListening(originatingContext);
 		return cachedValue;

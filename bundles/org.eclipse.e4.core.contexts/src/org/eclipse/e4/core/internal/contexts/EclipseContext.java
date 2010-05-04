@@ -413,8 +413,7 @@ public class EclipseContext implements IEclipseContext {
 		if (!local) {
 			IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
 			if (parent != null) {
-				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local); // XXX
-				// IEclipseContext
+				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local);
 			}
 		}
 		return null;
