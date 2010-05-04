@@ -71,6 +71,7 @@ public class ActionBars extends SubActionBars {
 			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
 			getToolBarManager().update(false);
 		}
+		super.updateActionBars();
 	}
 
 }
