@@ -175,18 +175,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (workbenchPart == null) {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, null);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
+			window.getContext().set(ISources.ACTIVE_SITE_NAME, null);
 
 			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
 				application.getContext().set(ISources.ACTIVE_PART_NAME, null);
 				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
+				application.getContext().set(ISources.ACTIVE_SITE_NAME, null);
 			}
 		} else {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getElementId());
+			window.getContext().set(ISources.ACTIVE_SITE_NAME, workbenchPart.getSite());
 
 			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
 				application.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
 				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, part.getElementId());
+				application.getContext().set(ISources.ACTIVE_SITE_NAME, workbenchPart.getSite());
 			}
 		}
 
