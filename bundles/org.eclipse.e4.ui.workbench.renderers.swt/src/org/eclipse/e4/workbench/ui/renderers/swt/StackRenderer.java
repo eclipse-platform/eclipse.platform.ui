@@ -57,6 +57,8 @@ import org.osgi.service.event.EventHandler;
 
 public class StackRenderer extends LazyStackRenderer {
 
+	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
+
 	private static final String FOLDER_DISPOSED = "folderDisposed"; //$NON-NLS-1$
 
 	Image viewMenuImage;
@@ -533,9 +535,9 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 
 		MPart part = (MPart) element;
-		boolean hasMenu = part.getMenus() != null && part.getMenus().size() > 0;
+		MMenu viewMenu = getViewMenu(part);
 		boolean hasTB = part.getToolbar() != null;
-		if (!hasMenu && !hasTB)
+		if (viewMenu == null && !hasTB)
 			return null;
 
 		CTabFolder ctf = (CTabFolder) getParentWidget(part);
@@ -549,12 +551,24 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		// View menu (if any)
-		if (hasMenu) {
-			addMenuButton(part, tb, part.getMenus().get(0));
+		if (viewMenu != null) {
+			addMenuButton(part, tb, viewMenu);
 		}
 
 		tb.pack();
 		return tb;
+	}
+
+	private MMenu getViewMenu(MPart part) {
+		if (part.getMenus() == null) {
+			return null;
+		}
+		for (MMenu menu : part.getMenus()) {
+			if (menu.getTags().contains(TAG_VIEW_MENU)) {
+				return menu;
+			}
+		}
+		return null;
 	}
 
 	/**
