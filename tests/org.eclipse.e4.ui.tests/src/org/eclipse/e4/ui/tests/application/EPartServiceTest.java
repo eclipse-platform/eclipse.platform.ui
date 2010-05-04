@@ -40,9 +40,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -4527,7 +4527,7 @@ public class EPartServiceTest extends TestCase {
 		// now move the part over from the first window to the second window
 		windowService1.deactivate(part);
 		window2.getChildren().add(part);
-		part.getContext().set(IContextConstants.PARENT, window2.getContext());
+		part.getContext().setParent(window2.getContext());
 		// activate the part
 		windowService2.activate(part);
 

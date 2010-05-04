@@ -51,7 +51,7 @@ public class PartialMatchCommandLookupFunction extends ContextFunction {
 					set.add(binding);
 				}
 			}
-			current = (IEclipseContext) current.getLocal(IContextConstants.PARENT);
+			current = current.getParent();
 		}
 		return set;
 	}

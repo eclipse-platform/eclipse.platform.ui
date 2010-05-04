@@ -51,7 +51,7 @@ public class CommandSequencesLookupFunction extends ContextFunction {
 					set.add(binding.getTriggerSequence());
 				}
 			}
-			current = (IEclipseContext) current.getLocal(IContextConstants.PARENT);
+			current = current.getParent();
 		}
 		return set;
 	}

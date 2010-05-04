@@ -310,7 +310,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (element instanceof MContext) {
 					IEclipseContext ec = ((MContext) element).getContext();
 					IEclipseContext pc = getContext(element.getParent());
-					ec.set(IContextConstants.PARENT, pc);
+					ec.setParent(pc);
 				}
 
 				getRendererFor(element.getParent()).childRendered(
@@ -412,8 +412,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			MContext ctxt = (MContext) element;
 			IEclipseContext lclContext = ctxt.getContext();
 			if (lclContext != null) {
-				IEclipseContext parentContext = (IEclipseContext) lclContext
-						.get(IContextConstants.PARENT);
+				IEclipseContext parentContext = lclContext.getParent();
 				Object child = parentContext
 						.get(IContextConstants.ACTIVE_CHILD);
 				if (child == lclContext) {

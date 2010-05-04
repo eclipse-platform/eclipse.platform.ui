@@ -27,8 +27,7 @@ public class ActiveContextsFunction extends ContextFunction {
 		if (locals != null) {
 			rc.addAll(locals);
 		}
-		IEclipseContext parent = (IEclipseContext) context
-				.get(IContextConstants.PARENT);
+		IEclipseContext parent = context.getParent();
 		if (parent != null) {
 			parent.get(IServiceConstants.ACTIVE_CONTEXTS,
 					new Object[] { rc });

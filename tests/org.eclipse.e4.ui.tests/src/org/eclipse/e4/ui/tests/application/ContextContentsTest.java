@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -41,7 +40,12 @@ public class ContextContentsTest extends HeadlessStartupTest {
 	}
 
 	private void testGet_PARENT(IEclipseContext eclipseContext, boolean expected) {
-		testGet(eclipseContext, IContextConstants.PARENT, expected);
+		if (expected) {
+			assertNotNull(eclipseContext.getParent());
+		} else {
+			assertNull(eclipseContext.getParent());
+		}
+
 	}
 
 	public void testGet_PARENT() {

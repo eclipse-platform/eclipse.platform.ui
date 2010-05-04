@@ -37,8 +37,7 @@ public class CommandServiceCreationFunction extends ContextFunction {
 			IEclipseContext root = getRootContext(context);
 			manager = new CommandManager();
 			root.set(CommandManager.class.getName(), manager);
-			service = (CommandServiceImpl) ContextInjectionFactory.make(CommandServiceImpl.class,
-					root);
+			service = ContextInjectionFactory.make(CommandServiceImpl.class, root);
 		}
 		return service;
 	}
@@ -53,10 +52,10 @@ public class CommandServiceCreationFunction extends ContextFunction {
 			return current;
 		}
 		current = context;
-		IEclipseContext parent = (IEclipseContext) current.getLocal(IContextConstants.PARENT);
+		IEclipseContext parent = current.getParent();
 		while (parent != null) {
 			current = parent;
-			parent = (IEclipseContext) current.getLocal(IContextConstants.PARENT);
+			parent = current.getParent();
 		}
 		if (current != null) {
 			current.set(IContextConstants.ROOT_CONTEXT, current);
