@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 
@@ -62,6 +63,18 @@ public class ElementComparator implements Comparator {
 	 * @return
 	 */
 	private int compare(IBreakpointContainer c1, IBreakpointContainer c2) {
+	    // The "Other" breakpoint category should be listed last.
+	    // (Bug 311457).
+	    if (c1.getCategory() instanceof OtherBreakpointCategory) {
+            if (c2.getCategory() instanceof OtherBreakpointCategory) {
+                return 0;
+            }
+	        return 1;
+	    } else if (c2.getCategory() instanceof OtherBreakpointCategory) {
+	        return -1;
+	    }
+	    
+	    // Rest of categories should be listed alphabetically.
 		if (fContext != null) {
 			String name1 = fContext.getModelPresentation().getText(c1);
 			String name2 = fContext.getModelPresentation().getText(c2);
