@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
@@ -338,6 +339,7 @@ public class WindowItemProvider
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__WINDOWS);
+			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
 		}
 		return childrenFeatures;
 	}
@@ -408,6 +410,7 @@ public class WindowItemProvider
 			case BasicPackageImpl.WINDOW__HANDLERS:
 			case BasicPackageImpl.WINDOW__MAIN_MENU:
 			case BasicPackageImpl.WINDOW__WINDOWS:
+			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -449,6 +452,121 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
 				 MBasicFactory.INSTANCE.createTrimmedWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MBasicFactory.INSTANCE.createStackElement()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MApplicationFactory.INSTANCE.createApplication()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createHandledItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createToolControl()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
 	}
 
 	/**
@@ -464,6 +582,7 @@ public class WindowItemProvider
 
 		boolean qualify =
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 

@@ -177,6 +177,7 @@ public class TrimmedWindowItemProvider
 
 		boolean qualify =
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
 			childFeature == BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;

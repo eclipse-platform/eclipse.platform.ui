@@ -241,6 +241,29 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StackElementItemProvider stackElementItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStackElementAdapter() {
+		if (stackElementItemProvider == null) {
+			stackElementItemProvider = new StackElementItemProvider(this);
+		}
+
+		return stackElementItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -346,6 +369,7 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 		if (windowItemProvider != null) windowItemProvider.dispose();
 		if (trimmedWindowItemProvider != null) trimmedWindowItemProvider.dispose();
 		if (trimBarItemProvider != null) trimBarItemProvider.dispose();
+		if (stackElementItemProvider != null) stackElementItemProvider.dispose();
 	}
 
 }
