@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.compare.examples.xml"
    name="%pluginName"
-   version="3.3.100.qualifier"
+   version="3.3.200.qualifier"
    provider-name="%providerName"
    class="org.eclipse.compare.examples.xml.XMLPlugin">
 
