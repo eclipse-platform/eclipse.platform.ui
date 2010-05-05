@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 

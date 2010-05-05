@@ -15,12 +15,12 @@ import java.text.NumberFormat;
 
 import javax.inject.Inject;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.core.internal.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -139,8 +139,8 @@ public class ContextExample {
 		final IEclipseContext context = EclipseContextFactory.create();
 		context.set("price", 19.99);
 		context.set("tax", 0.05);
-		context.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		context.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				total = (Double) context.get("price") * (1.0 + (Double) context.get("tax"));
 				return true;
 			}
@@ -148,7 +148,7 @@ public class ContextExample {
 			public String toString() {
 				return "calculator";
 			}
-		}, null);
+		});
 		print(total);
 		context.set("tax", 0.07);
 		print(total);

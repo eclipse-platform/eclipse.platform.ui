@@ -15,11 +15,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectSuperClass;
 
 /**
@@ -127,12 +126,12 @@ public class ReparentingTest extends TestCase {
 	public void testRunAndTrackNullBecomesParent() {
 		final String[] value = new String[1];
 		final IEclipseContext child = EclipseContextFactory.create();
-		child.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		child.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
 			}
-		}, null);
+		});
 		assertEquals(null, value[0]);
 		IEclipseContext parent = EclipseContextFactory.create();
 		parent.set("x", "newParent");
@@ -148,12 +147,12 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
-		child.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		child.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
 			}
-		}, null);
+		});
 		assertEquals("oldParent", value[0]);
 		child.setParent(null);
 		assertNull(value[0]);
@@ -164,12 +163,12 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
-		child.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		child.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
 			}
-		}, null);
+		});
 		assertEquals("oldParent", value[0]);
 		IEclipseContext newParent = EclipseContextFactory.create();
 		newParent.set("x", "newParent");

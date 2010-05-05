@@ -77,7 +77,6 @@ public interface IEclipseContext extends IDisposable {
 	 */
 	public <T> T get(Class<T> clazz);
 
-	// TODO this method will be removed
 	/**
 	 * Returns the context value associated with the given name, or <code>null</code> if no such
 	 * value is defined or computable by this context.
@@ -137,7 +136,6 @@ public interface IEclipseContext extends IDisposable {
 	 */
 	public void remove(Class<?> clazz);
 
-	// TODO this method will be removed
 	/**
 	 * Executes a runnable within this context. If the runnable accesses any values in this context
 	 * during its execution, the runnable will be executed again after any of those values change.
@@ -165,12 +163,9 @@ public interface IEclipseContext extends IDisposable {
 	 * 
 	 * @param runnable
 	 *            The runnable to execute and register for change tracking
-	 * @param args
-	 *            Argument to be supplied to the runnable each time it executes, or
-	 *            <code>null</code> if there are no arguments to pass
-	 * @see IRunAndTrack
+	 * @see RunAndTrack
 	 */
-	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
+	public void runAndTrack(final RunAndTrack runnable);
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The value may be an

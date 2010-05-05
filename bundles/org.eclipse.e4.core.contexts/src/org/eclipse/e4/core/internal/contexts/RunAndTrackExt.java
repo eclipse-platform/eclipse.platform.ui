@@ -11,13 +11,21 @@
 
 package org.eclipse.e4.core.internal.contexts;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 
-public interface IRunAndTrackObject extends IRunAndTrack {
+abstract public class RunAndTrackExt extends RunAndTrack {
 
-	public boolean batchProcess();
-	
-	public boolean notify(ContextChangeEvent event, IContextRecorder recorder);
+	final private boolean group;
 
+	public RunAndTrackExt(boolean group) {
+		super();
+		this.group = group;
+	}
+
+	public boolean batchProcess() {
+		return group;
+	}
+
+	abstract public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments, final IContextRecorder recorder);
 }

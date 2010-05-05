@@ -12,9 +12,8 @@ package org.eclipse.e4.core.internal.contexts;
 
 import java.lang.reflect.Type;
 import javax.inject.Named;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
@@ -24,24 +23,23 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 	final static protected String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 
-	static private class ContextInjectionListener implements IRunAndTrackObject {
+	static private class ContextInjectionListener extends RunAndTrackExt {
 
 		final private Object[] result;
 		final private String[] keys;
 		final private IRequestor requestor;
 		final private IEclipseContext context;
-		final private boolean group;
 
 		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, IRequestor requestor, boolean group) {
+			super(group);
 			this.result = result;
 			this.keys = keys;
 			this.requestor = requestor;
 			this.context = context;
-			this.group = group;
 		}
 
-		public boolean notify(ContextChangeEvent event, final IContextRecorder recorder) {
-			if (event.getEventType() == ContextChangeEvent.INITIAL) {
+		public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments, final IContextRecorder recorder) {
+			if (eventType == ContextChangeEvent.INITIAL) {
 				// needs to be done inside runnable to establish dependencies
 				for (int i = 0; i < keys.length; i++) {
 					if (keys[i] == null)
@@ -57,18 +55,16 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				return true;
 			}
 
-			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
-				IEclipseContext originatingContext = event.getContext();
-				if (originatingContext == context) {
-					ContextObjectSupplier originatingSupplier = originatingContext.getLocal(ContextObjectSupplier.class);
+			if (eventType == ContextChangeEvent.DISPOSE) {
+				if (eventsContext == context) {
+					ContextObjectSupplier originatingSupplier = eventsContext.getLocal(ContextObjectSupplier.class);
 					requestor.disposed(originatingSupplier);
 					return false;
 				}
-			} else if (event.getEventType() == ContextChangeEvent.UNINJECTED) {
-				IEclipseContext originatingContext = event.getContext();
-				if (originatingContext == context) {
-					ContextObjectSupplier originatingSupplier = originatingContext.getLocal(ContextObjectSupplier.class);
-					requestor.uninject(event.getArguments()[0], originatingSupplier);
+			} else if (eventType == ContextChangeEvent.UNINJECTED) {
+				if (eventsContext == context) {
+					ContextObjectSupplier originatingSupplier = eventsContext.getLocal(ContextObjectSupplier.class);
+					requestor.uninject(extraArguments[0], originatingSupplier);
 					return false;
 				}
 			} else {
@@ -85,8 +81,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			return true;
 		}
 
-		public boolean notify(ContextChangeEvent event) {
-			return notify(event, null);
+		public boolean changed(IEclipseContext eventsContext) {
+			return true;
 		}
 
 		@Override
@@ -120,10 +116,6 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			return true;
 		}
 
-		public boolean batchProcess() {
-			return group;
-		}
-
 	}
 
 	final private IEclipseContext context;
@@ -146,8 +138,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		}
 
 		if (requestor != null && track) { // only track if requested
-			IRunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor, group);
-			context.runAndTrack(trackable, null);
+			RunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor, group);
+			context.runAndTrack(trackable);
 		} else {
 			for (int i = 0; i < descriptors.length; i++) {
 				if (keys[i] == null)

@@ -18,11 +18,10 @@ import javax.inject.Inject;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -187,15 +186,15 @@ public class ServiceContextTest extends TestCase {
 		child2.get(PrintService.SERVICE_NAME);
 		ensureUnregistered(reg1);
 		final boolean[] done = new boolean[] {false};
-		context.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		context.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				if (context.get(PrintService.SERVICE_NAME) == null) {
 						((IDisposable) child).dispose();
 					done[0] = true;
 				}
 				return true;
 			}
-		}, null);
+		});
 		reg1.unregister();
 	}
 

@@ -21,11 +21,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 
 /**
@@ -94,7 +92,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	static class TrackableComputationExt extends Computation implements IRunAndTrack, IContextRecorder {
+	static class TrackableComputationExt extends Computation implements IContextRecorder {
 
 		private ContextChangeEvent cachedEvent;
 
@@ -128,9 +126,9 @@ public class EclipseContext implements IEclipseContext {
 			return true;
 		}
 
-		private IRunAndTrack runnable;
+		private RunAndTrack runnable;
 
-		public TrackableComputationExt(IRunAndTrack runnable) {
+		public TrackableComputationExt(RunAndTrack runnable) {
 			this.runnable = runnable;
 		}
 
@@ -138,18 +136,18 @@ public class EclipseContext implements IEclipseContext {
 			int eventType = event.getEventType();
 			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
 				// process right away
-				notify(event);
+				update(event);
 			} else {
 				// schedule processing
 				scheduledList.add(new Scheduled(this, event));
 			}
 		}
 
-		public boolean notify(ContextChangeEvent event) {
+		public boolean update(ContextChangeEvent event) {
 			// is this a structural event?
 			// structural changes: INITIAL, DISPOSE, UNINJECTED are always processed right away
 			int eventType = event.getEventType();
-			if ((runnable instanceof IRunAndTrackObject) && ((IRunAndTrackObject) runnable).batchProcess()) {
+			if ((runnable instanceof RunAndTrackExt) && ((RunAndTrackExt) runnable).batchProcess()) {
 				if ((eventType == ContextChangeEvent.ADDED) || (eventType == ContextChangeEvent.REMOVED)) {
 					cachedEvent = event;
 					EclipseContext eventsContext = (EclipseContext) event.getContext();
@@ -162,23 +160,31 @@ public class EclipseContext implements IEclipseContext {
 			boolean result = true;
 			try {
 				if (cachedEvent != null) {
-					if (runnable instanceof IRunAndTrackObject)
-						result = ((IRunAndTrackObject) runnable).notify(event, this);
-					else
-						result = runnable.notify(cachedEvent);
+					if (runnable instanceof RunAndTrackExt)
+						result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
+					else {
+						if (eventType == ContextChangeEvent.DISPOSE)
+							runnable.disposed(cachedEvent.getContext());
+						else
+							result = runnable.changed(cachedEvent.getContext());
+					}
 					cachedEvent = null;
 				}
 				if (eventType != ContextChangeEvent.UPDATE) {
-					if (runnable instanceof IRunAndTrackObject)
-						result = ((IRunAndTrackObject) runnable).notify(event, this);
-					else
-						result = runnable.notify(event);
+					if (runnable instanceof RunAndTrackExt)
+						result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
+					else {
+						if (eventType == ContextChangeEvent.DISPOSE)
+							runnable.disposed(event.getContext());
+						else
+							result = runnable.changed(event.getContext());
+					}
 				}
 			} finally {
 				currentComputation.set(oldComputation);
 			}
 			EclipseContext eventsContext = (EclipseContext) event.getContext();
-			if (result)
+			if (result && eventType != ContextChangeEvent.DISPOSE)
 				startListening(eventsContext);
 			else
 				removeAll(eventsContext);
@@ -200,10 +206,10 @@ public class EclipseContext implements IEclipseContext {
 
 	static class Scheduled {
 
-		public IRunAndTrack runnable;
+		public TrackableComputationExt runnable;
 		public ContextChangeEvent event;
 
-		public Scheduled(IRunAndTrack runnable, ContextChangeEvent event) {
+		public Scheduled(TrackableComputationExt runnable, ContextChangeEvent event) {
 			this.runnable = runnable;
 			this.event = event;
 		}
@@ -345,7 +351,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		// reverse order of listeners
 		for (int i = ls.length - 1; i >= 0; i--) {
 			List<Scheduled> scheduled = new ArrayList<Scheduled>();
@@ -440,7 +446,7 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	void handleInvalid(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null, name, oldValue);
+		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(event, scheduled);
 		}
@@ -482,10 +488,10 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.INITIAL, args, null, null);
+	public void runAndTrack(final RunAndTrack runnable) {
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
-		computation.notify(event);
+		computation.update(event);
 	}
 
 	protected void processScheduled(List<Scheduled> scheduledList) {
@@ -495,7 +501,7 @@ public class EclipseContext implements IEclipseContext {
 			// don't send the same event twice
 			if (!sent.add(scheduled))
 				continue;
-			scheduled.runnable.notify(scheduled.event);
+			scheduled.runnable.update(scheduled.event);
 		}
 	}
 
@@ -606,9 +612,9 @@ public class EclipseContext implements IEclipseContext {
 		if (object == null)
 			return;
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
 		for (Computation computation : ls) {
-			((IRunAndTrack) computation).notify(event);
+			((TrackableComputationExt) computation).update(event);
 		}
 	}
 
@@ -650,10 +656,10 @@ public class EclipseContext implements IEclipseContext {
 		// create update notifications
 		Computation[] ls = waiting.toArray(new Computation[waiting.size()]);
 		waiting.clear();
-		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, ContextChangeEvent.UPDATE, null, null, null);
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UPDATE, null, null, null);
 		for (int i = 0; i < ls.length; i++) {
 			if (ls[i] instanceof TrackableComputationExt)
-				((TrackableComputationExt) ls[i]).notify(event);
+				((TrackableComputationExt) ls[i]).update(event);
 		}
 	}
 

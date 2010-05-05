@@ -60,26 +60,4 @@ public final class EclipseContextFactory {
 			return result;
 		}
 	}
-
-	/**
-	 * Creates a new context change event.
-	 * 
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @param context
-	 *            The context in which the event occurred
-	 * @param eventType
-	 *            The type of change that occurred
-	 * @param args
-	 *            The arguments that were supplied when the context listener was registered
-	 * @param name
-	 *            The name of the context value that changed
-	 * @param oldValue
-	 *            The value associated with the changed name before the change occurred. Return
-	 *            <code>null</code> if there was no previous value, or if not applicable for this
-	 *            type of event.
-	 * @return A new context change event
-	 */
-	public static ContextChangeEvent createContextEvent(IEclipseContext context, int eventType, Object[] args, String name, Object oldValue) {
-		return new ContextChangeEvent(context, eventType, args, name, oldValue);
-	}
 }

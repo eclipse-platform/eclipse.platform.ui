@@ -17,16 +17,14 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 
 /**
- * Tests for {@link org.eclipse.e4.core.services.context.IRunAndTrack}.
+ * Tests for {@link org.eclipse.e4.core.RunAndTrack.context.IRunAndTrack}.
  */
 public class RunAndTrackTest extends TestCase {
 
@@ -120,100 +118,6 @@ public class RunAndTrackTest extends TestCase {
 	}
 
 	/**
-	 * Tests that {@link org.eclipse.e4.core.services.context.ContextChangeEvent#getOldValue()}
-	 * returns the correct value for various change types.
-	 */
-	public void testContextEventOldValue() {
-		final String NAME = "Name";
-		class ContextListener implements IRunAndTrack {
-			public Object newValue;
-			public Object oldValue;
-
-			public boolean notify(ContextChangeEvent event) {
-				oldValue = event.getOldValue();
-				IEclipseContext eventsContext = event.getContext();
-				newValue = eventsContext.get(NAME);
-				return true;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set(NAME, "Value");
-		ContextListener listener = new ContextListener();
-		context.runAndTrack(listener, null);
-		assertEquals("Value", listener.newValue);
-		assertNull(listener.oldValue);
-
-		// simple value change
-		context.set(NAME, "NewValue");
-		assertEquals("Value", listener.oldValue);
-		assertEquals("NewValue", listener.newValue);
-
-		// set value to null
-		context.set(NAME, null);
-		assertEquals("NewValue", listener.oldValue);
-		assertEquals(null, listener.newValue);
-
-		// set from null to non-null
-		context.set(NAME, "Value");
-		assertEquals(null, listener.oldValue);
-		assertEquals("Value", listener.newValue);
-
-		// remove
-		context.remove(NAME);
-		assertEquals("Value", listener.oldValue);
-		assertEquals(null, listener.newValue);
-
-	}
-
-	/**
-	 * Tests that {@link org.eclipse.e4.core.services.context.ContextChangeEvent#getOldValue()}
-	 * returns the correct value for various change types.
-	 */
-	public void testContextEventType() {
-		final String NAME = "Name";
-		class ContextListener implements IRunAndTrack {
-			int eventType;
-
-			public boolean notify(ContextChangeEvent event) {
-				// must get a value so we aren't removed
-				eventType = event.getEventType();
-				IEclipseContext eventsContext = event.getContext();
-				eventsContext.get(NAME);
-				return true;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		ContextListener listener = new ContextListener();
-		context.runAndTrack(listener, null);
-		assertEquals(ContextChangeEvent.INITIAL, listener.eventType);
-
-		// add a new value
-		context.set(NAME, "Value");
-		assertEquals(ContextChangeEvent.ADDED, listener.eventType);
-
-		// simple value change
-		context.set(NAME, "NewValue");
-		assertEquals(ContextChangeEvent.ADDED, listener.eventType);
-
-		// set value to null
-		context.set(NAME, null);
-		assertEquals(ContextChangeEvent.ADDED, listener.eventType);
-
-		// set from null to non-null
-		context.set(NAME, "Value");
-		assertEquals(ContextChangeEvent.ADDED, listener.eventType);
-
-		// remove
-		context.remove(NAME);
-		assertEquals(ContextChangeEvent.REMOVED, listener.eventType);
-
-		// dispose context
-		((IDisposable) context).dispose();
-		assertEquals(ContextChangeEvent.DISPOSE, listener.eventType);
-
-	}
-
-	/**
 	 * There was a failing scenario in the legacy workbench support. This captures the hierarchy and
 	 * function (without any workbench level references). It should be updated when we figure out
 	 * the failing scenario :-)
@@ -224,8 +128,8 @@ public class RunAndTrackTest extends TestCase {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
-		windows[0].runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		windows[0].runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 				return true;
@@ -234,7 +138,7 @@ public class RunAndTrackTest extends TestCase {
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
-		}, null);
+		});
 
 		final IEclipseContext[] mainSashes = createNextLevel(windows[0], "mainSash", 2);
 		createNextLevel(mainSashes[1], "editorArea", 1);
@@ -278,8 +182,8 @@ public class RunAndTrackTest extends TestCase {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
-		windows[0].runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		windows[0].runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 				return true;
@@ -288,7 +192,7 @@ public class RunAndTrackTest extends TestCase {
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
-		}, null);
+		});
 
 		final IEclipseContext[] parts = createNextLevel(windows[0], "part", 2);
 		assertEquals("part0", workbenchContext.get(ACTIVE_PART));

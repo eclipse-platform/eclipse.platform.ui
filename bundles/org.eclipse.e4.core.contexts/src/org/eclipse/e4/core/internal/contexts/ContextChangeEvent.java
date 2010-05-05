@@ -8,8 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.contexts;
+package org.eclipse.e4.core.internal.contexts;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 
 /**
  * An event describing a change to an {@link IEclipseContext}. The following types of events are
@@ -26,14 +28,14 @@ package org.eclipse.e4.core.contexts;
  * should not write code that presumes the set of event types is closed.
  * </p>
  * 
- * @see IRunAndTrack
+ * @see RunAndTrack
  */
 public final class ContextChangeEvent {
 	/**
 	 * A change event type (value "0"), indicating that the listener receiving this event has just
 	 * been registered with a context.
 	 * 
-	 * @see IEclipseContext#runAndTrack(IRunAndTrack, Object[])
+	 * @see IEclipseContext#runAndTrack(RunAndTrack)
 	 */
 	public static final int INITIAL = 0;
 
@@ -80,8 +82,7 @@ public final class ContextChangeEvent {
 	 * @param args
 	 * @param name
 	 */
-	ContextChangeEvent(IEclipseContext context, int eventType, Object[] args, String name,
-			Object oldValue) {
+	ContextChangeEvent(IEclipseContext context, int eventType, Object[] args, String name, Object oldValue) {
 		this.context = context;
 		this.key = name;
 		this.eventType = eventType;
@@ -92,7 +93,7 @@ public final class ContextChangeEvent {
 	/**
 	 * Returns the arguments that were supplied when the listener was registered.
 	 * 
-	 * @see IEclipseContext#runAndTrack(IRunAndTrack, Object[])
+	 * @see IEclipseContext#runAndTrack(RunAndTrack)
 	 * @return the arguments that were supplied when the listener was registered.
 	 */
 	public Object[] getArguments() {

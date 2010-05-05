@@ -12,11 +12,10 @@ package org.eclipse.e4.core.internal.tests.contexts;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.TestHelper;
 
@@ -144,46 +143,15 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(11, ((Integer) child.get("sum")).intValue());
 	}
 
-	/**
-	 * Tests that listeners receive appropriate {@link ContextChangeEvent} instances that reflect
-	 * the change in the context.
-	 */
-	public void testContextEvents() {
-		final Object[] value = new Object[1];
-		final int[] eventType = new int[] { 0 };
-		IRunAndTrack runnable = new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
-				runCounter++;
-				eventType[0] = event.getEventType();
-				value[0] = context.get("foo");
-				return true;
-			}
-		};
-		context.runAndTrack(runnable, null);
-		assertEquals(1, runCounter);
-		assertEquals(ContextChangeEvent.INITIAL, eventType[0]);
-		context.set("foo", "bar");
-		assertEquals(2, runCounter);
-		assertEquals(ContextChangeEvent.ADDED, eventType[0]);
-		assertEquals("bar", value[0]);
-		context.remove("foo");
-		assertEquals(ContextChangeEvent.REMOVED, eventType[0]);
-		assertEquals(3, runCounter);
-		((IDisposable) context).dispose();
-		assertEquals(4, runCounter);
-		assertEquals(ContextChangeEvent.DISPOSE, eventType[0]);
-
-	}
-
 	public void testRunAndTrack() {
 		final Object[] value = new Object[1];
-		context.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		context.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				value[0] = context.get("foo");
 				return true;
 			}
-		}, null);
+		});
 		assertEquals(1, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", "bar");
@@ -218,16 +186,16 @@ public class EclipseContextTest extends TestCase {
 	 */
 	public void testRegisterRunAndTrackTwice() {
 		final Object[] value = new Object[1];
-		IRunAndTrack runnable = new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		RunAndTrack runnable = new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				value[0] = context.get("foo");
 				return true;
 			}
 		};
-		context.runAndTrack(runnable, null);
+		context.runAndTrack(runnable);
 		assertEquals(1, runCounter);
-		context.runAndTrack(runnable, null);
+		context.runAndTrack(runnable);
 		assertEquals(2, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", "bar");
@@ -243,8 +211,8 @@ public class EclipseContextTest extends TestCase {
 		final IEclipseContext child = parent.createChild("ChildContext");
 		parent.set("parentValue", "x");
 		child.set("childValue", "x");
-		IRunAndTrack runnable = new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		RunAndTrack runnable = new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				if (runCounter < 2) {
 					child.get("childValue");
@@ -257,7 +225,7 @@ public class EclipseContextTest extends TestCase {
 				return false;
 			}
 		};
-		child.runAndTrack(runnable, null);
+		child.runAndTrack(runnable);
 		assertEquals(1, runCounter);
 		child.set("childValue", "z");
 		assertEquals(2, runCounter);

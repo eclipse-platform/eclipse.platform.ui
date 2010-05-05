@@ -11,7 +11,6 @@
 package org.eclipse.e4.core.internal.contexts;
 
 import java.util.List;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;

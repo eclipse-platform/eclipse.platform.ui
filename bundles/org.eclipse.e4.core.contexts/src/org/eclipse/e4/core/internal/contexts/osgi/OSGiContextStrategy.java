@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 import org.osgi.framework.BundleContext;
@@ -35,7 +34,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * <p>
  * OSGi services are looked up by service class name.
  */
-public class OSGiContextStrategy implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer, IRunAndTrack {
+public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer {
 	class ServiceData {
 		// the service name
 		String name;
@@ -51,7 +50,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		public void addContext(IEclipseContext originatingContext) {
 			users.put(originatingContext, null);
 			// track this context so we can cleanup when the context is disposed
-			originatingContext.runAndTrack(OSGiContextStrategy.this, null);
+			originatingContext.runAndTrack(OSGiContextStrategy.this);
 		}
 
 		public IEclipseContext[] getUsingContexts() {
@@ -257,15 +256,16 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	 * Listen for changes on all contexts that have obtained a service from this strategy, so that
 	 * we can do appropriate cleanup of our caches when the requesting context is disposed.
 	 */
-	public boolean notify(ContextChangeEvent event) {
-		IEclipseContext context = event.getContext();
+	public boolean changed(IEclipseContext context) {
 		if (context == null)
 			return false;
-		if (event.getEventType() != ContextChangeEvent.DISPOSE) {
-			// do a lookup so the listener isn't removed
-			context.getParent();
-			return true;
-		}
+		// do a lookup so the listener isn't removed
+		context.getParent();
+		return true;
+	}
+
+	@Override
+	public void disposed(IEclipseContext context) {
 		synchronized (services) {
 			for (Iterator<ServiceData> it = services.values().iterator(); it.hasNext();) {
 				ServiceData data = it.next();
@@ -277,6 +277,6 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 				}
 			}
 		}
-		return true;
+		super.disposed(context);
 	}
 }

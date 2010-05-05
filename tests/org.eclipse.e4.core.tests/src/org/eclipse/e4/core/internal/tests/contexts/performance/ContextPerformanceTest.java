@@ -19,11 +19,10 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -123,12 +122,12 @@ public class ContextPerformanceTest extends TestCase {
 				return context.get("something");
 			}
 		});
-		context.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		context.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				context.get("somefunction");
 				return true;
 			}
-		}, null);
+		});
 		new PerformanceTestRunner() {
 			int i = 0;
 
