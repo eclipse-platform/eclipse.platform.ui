@@ -11,7 +11,6 @@
 package org.eclipse.e4.core.internal.contexts;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -19,10 +18,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * in a context. The lookup strategy is consulted by the context after
  * looking for an already defined local value, but before delegating lookup
  * to a parent context.
- * 
- * @see EclipseContextFactory#create(IEclipseContext, IEclipseContextStrategy)
  */
-public interface ILookupStrategy extends IEclipseContextStrategy {
+public interface ILookupStrategy {
 	/**
 	 * Looks up a value for the given name to be associated with the given context.
 	 * @param name The name of the context value to look up

@@ -248,7 +248,7 @@ public class EclipseContext implements IEclipseContext {
 	final Map<LookupKey, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<LookupKey, ValueComputation>());
 	final Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
-	private final IEclipseContextStrategy strategy;
+	private final ILookupStrategy strategy;
 
 	private ArrayList<String> modifiable;
 
@@ -256,7 +256,7 @@ public class EclipseContext implements IEclipseContext {
 
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
-	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
+	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
 		this.strategy = strategy;
 		setParent(parent);
 		if (parent == null)
@@ -275,8 +275,8 @@ public class EclipseContext implements IEclipseContext {
 		IEclipseContext parent = getParent();
 		if (parent != null && parent.containsKey(name))
 			return true;
-		if (strategy instanceof ILookupStrategy) {
-			if (((ILookupStrategy) strategy).containsKey(name, this))
+		if (strategy != null) {
+			if (strategy.containsKey(name, this))
 				return true;
 		}
 		return false;
@@ -353,7 +353,6 @@ public class EclipseContext implements IEclipseContext {
 			processScheduled(scheduled);
 		}
 
-		// TBD used by OSGI Context strategy - is this needed? Looks like @PreDestroy
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
 		listeners.clear();
@@ -391,8 +390,8 @@ public class EclipseContext implements IEclipseContext {
 		Object result = localValues.get(name);
 
 		// 2. try the local strategy
-		if (result == null && strategy instanceof ILookupStrategy)
-			result = ((ILookupStrategy) strategy).lookup(name, originatingContext);
+		if (result == null && strategy != null)
+			result = strategy.lookup(name, originatingContext);
 
 		// if we found something, compute the concrete value and return
 		if (result != null) {
@@ -490,17 +489,13 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	protected void processScheduled(List<Scheduled> scheduledList) {
-		boolean useScheduler = (strategy != null && strategy instanceof ISchedulerStrategy);
 		HashSet<Scheduled> sent = new HashSet<Scheduled>(scheduledList.size());
 		for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
 			Scheduled scheduled = i.next();
 			// don't send the same event twice
 			if (!sent.add(scheduled))
 				continue;
-			if (useScheduler)
-				((ISchedulerStrategy) strategy).schedule(scheduled.runnable, scheduled.event);
-			else
-				scheduled.runnable.notify(scheduled.event);
+			scheduled.runnable.notify(scheduled.event);
 		}
 	}
 

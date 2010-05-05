@@ -13,15 +13,11 @@ package org.eclipse.e4.core.contexts;
 
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 import org.eclipse.e4.core.internal.contexts.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
 
 /**
- * A factory for creating a simple context instance. Simple contexts must be filled in
- * programmatically by calling {@link IEclipseContext#set(String, Object)} to provide context
- * values, or by providing an {@link ILookupStrategy} to be used to initialize values not currently
- * defined in the context.
+ * A factory for creating context instances.
  */
 public final class EclipseContextFactory {
 
