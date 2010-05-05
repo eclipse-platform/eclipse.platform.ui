@@ -22,7 +22,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.IRunAndTrack;
-import org.eclipse.e4.core.internal.contexts.ISchedulerStrategy;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -67,10 +66,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 
 	private IEclipseContext createApplicationContext() {
 		return createApplicationContext(createOSGiContext());
-	}
-
-	protected ISchedulerStrategy getApplicationSchedulerStrategy() {
-		return null;
 	}
 
 	protected IEclipseContext createApplicationContext(
