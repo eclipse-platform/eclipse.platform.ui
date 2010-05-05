@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -384,7 +384,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchWindow window = windows[i];
 			if(window instanceof WorkbenchWindow){
-				// ((WorkbenchWindow) window).showHeapStatus(selection);
+				((WorkbenchWindow) window).showHeapStatus(selection);
 			}
 		}
 		

@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -85,6 +86,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -160,6 +162,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean shellActivated = false;
 
 	ProgressRegion progressRegion = null;
+
+	private HeapStatus heapStatus;
 
 	/**
 	 * The map of services maintained by the workbench window. These services
@@ -1296,7 +1300,48 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	}
 
+	/**
+	 * Returns whether the heap status indicator should be shown.
+	 * 
+	 * @return <code>true</code> to show the heap status indicator,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean getShowHeapStatus() {
+		return // Show if the preference is set or debug option is on
+		PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR)
+				|| Boolean
+						.valueOf(
+								Platform.getDebugOption(PlatformUI.PLUGIN_ID
+										+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+	}
 
+	void createHeapStatus(Shell shell) {
+		if (getShowHeapStatus()) {
+			TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
+			Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
+			trimComposite.setLayout(new FillLayout());
+
+			heapStatus = new HeapStatus(trimComposite, PrefUtil.getInternalPreferenceStore());
+		}
+	}
+
+	public void showHeapStatus(boolean show) {
+		if (show) {
+			if (heapStatus == null) {
+				createHeapStatus(getShell());
+
+				TrimmedPartLayout layout = (TrimmedPartLayout) getShell().getLayout();
+				Composite trimComposite = layout.getTrimComposite(getShell(), SWT.BOTTOM);
+				trimComposite.layout();
+			}
+		} else {
+			if (heapStatus != null) {
+				heapStatus.dispose();
+				heapStatus = null;
+			}
+		}
+	}
 
 	/**
 	 * Returns the unique object that applications use to configure this window.
