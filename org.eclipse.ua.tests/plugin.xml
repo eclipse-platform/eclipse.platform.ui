@@ -650,5 +650,11 @@
             id="tscope">
       </scope>
    </extension>
+   <extension
+         point="org.eclipse.help.criteriaDefinition">
+      <criteriaDefinitionProvider
+            class="org.eclipse.ua.tests.help.criteria.SampleCriteriaDefinitionProvider">
+      </criteriaDefinitionProvider>
+   </extension>
 
 </plugin>

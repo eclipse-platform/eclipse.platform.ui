@@ -31,6 +31,7 @@ public class AllCriteriaTests extends TestSuite {
 	public AllCriteriaTests() {
 		addTestSuite(ParseTocWithCriteria.class);
 		addTestSuite(CriteriaUtilitiesTest.class);
+		addTestSuite(CriteriaDefinitionTest.class);
 		addTestSuite(ParseCriteriaDefinition.class);
 		addTestSuite(TestCriteriaProvider.class);
 	}

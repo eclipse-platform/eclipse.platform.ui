@@ -21,6 +21,8 @@ import org.eclipse.ua.tests.help.other.UserCriteria;
 
 public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 
+	public static final String CONTAINS_LETTER = "containsLetter";
+
 	public ICriteria[] getCriteria(ITopic topic) {
 		return getCriteriaFromLabel(topic.getLabel());
 	}
@@ -35,16 +37,16 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 			return new UserCriteria[0];
 		}
 		if (label.toLowerCase().indexOf('t') >= 0) {
-			criteria.add( new UserCriteria("containsLetter", "t", true) );
+			criteria.add( new UserCriteria(CONTAINS_LETTER, "t", true) );
 		}
 		if (label.toLowerCase().indexOf('k') >= 0) {
-			criteria.add( new UserCriteria("containsLetter", "k", true) );
+			criteria.add( new UserCriteria(CONTAINS_LETTER, "k", true) );
 		}
 		if (label.toLowerCase().indexOf('v') >= 0) {
-			criteria.add( new UserCriteria("containsLetter", "v", true) );
+			criteria.add( new UserCriteria(CONTAINS_LETTER, "v", true) );
 		}
 		if (label.toLowerCase().indexOf('c') >= 0) {
-			criteria.add( new UserCriteria("containsLetter", "c", true) );
+			criteria.add( new UserCriteria(CONTAINS_LETTER, "c", true) );
 		}
 		return (UserCriteria[]) criteria.toArray(new UserCriteria[criteria.size()]);
 	}	

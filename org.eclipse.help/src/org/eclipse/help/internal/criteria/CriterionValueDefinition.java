@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.criteria;
 
-import org.eclipse.help.ICriterionDefinition;
 import org.eclipse.help.ICriterionValueDefinition;
 import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Element;
@@ -21,7 +20,7 @@ public class CriterionValueDefinition extends UAElement implements ICriterionVal
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	
-	public CriterionValueDefinition(ICriterionDefinition src) {
+	public CriterionValueDefinition(ICriterionValueDefinition src) {
 		super(NAME, src);
 		setId(src.getId());
 		setName(src.getName());
