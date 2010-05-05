@@ -11,7 +11,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
@@ -246,9 +245,7 @@ public class StackRenderer extends LazyStackRenderer {
 		folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
 		final IEclipseContext toplevelContext = getToplevelContext(element);
 		final Trackable updateActiveTab = new Trackable(folderContext) {
-			public boolean notify(ContextChangeEvent event) {
-				if (event.getEventType() == ContextChangeEvent.DISPOSE)
-					return false;
+			public boolean changed(IEclipseContext context) {
 				if (!participating) {
 					return true;
 				}
@@ -286,7 +283,7 @@ public class StackRenderer extends LazyStackRenderer {
 				folderContext.set(FOLDER_DISPOSED, Boolean.TRUE);
 			}
 		});
-		folderContext.runAndTrack(updateActiveTab, null);
+		folderContext.runAndTrack(updateActiveTab);
 
 		return newWidget;
 	}
@@ -651,8 +648,8 @@ public class StackRenderer extends LazyStackRenderer {
 			ImageData data = viewMenu.getImageData();
 			data.transparentPixel = data.getPixel(0, 0);
 
-			viewMenuImage = new Image(d, viewMenu.getImageData(),
-					viewMenuMask.getImageData());
+			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
+					.getImageData());
 			viewMenu.dispose();
 			viewMenuMask.dispose();
 		}

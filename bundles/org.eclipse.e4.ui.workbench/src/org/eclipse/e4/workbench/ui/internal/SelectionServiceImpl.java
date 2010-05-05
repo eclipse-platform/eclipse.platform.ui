@@ -13,13 +13,12 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.annotations.PreDestroy;
@@ -173,13 +172,11 @@ public class SelectionServiceImpl implements ESelectionService {
 	private void track(final MPart part) {
 		IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
-			context.runAndTrack(new IRunAndTrack() {
+			context.runAndTrack(new RunAndTrack() {
 				private boolean initial = true;
 
-				public boolean notify(ContextChangeEvent event) {
-					if (event.getEventType() == ContextChangeEvent.DISPOSE)
-						return false;
-					Object selection = event.getContext().get(OUT_SELECTION);
+				public boolean changed(IEclipseContext context) {
+					Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
 						if (selection == null) {
@@ -194,7 +191,7 @@ public class SelectionServiceImpl implements ESelectionService {
 					}
 					return true;
 				}
-			}, null);
+			});
 		}
 	}
 

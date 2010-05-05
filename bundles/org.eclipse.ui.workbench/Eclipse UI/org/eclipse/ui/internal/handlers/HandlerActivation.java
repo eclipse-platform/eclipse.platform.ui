@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -22,6 +18,8 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.ui.ISources;
@@ -48,7 +46,7 @@ import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
  * 
  * @since 3.1
  */
-final class HandlerActivation implements IHandlerActivation, IRunAndTrack {
+final class HandlerActivation extends RunAndTrack implements IHandlerActivation {
 	IEclipseContext context;
 	private String commandId;
 	private IHandler handler;
@@ -181,10 +179,7 @@ final class HandlerActivation implements IHandlerActivation, IRunAndTrack {
 	 * org.eclipse.e4.core.services.context.IRunAndTrack#notify(org.eclipse.
 	 * e4.core.services.context.ContextChangeEvent)
 	 */
-	public boolean notify(ContextChangeEvent event) {
-		if (event.getEventType() == ContextChangeEvent.DISPOSE) {
-			return false;
-		}
+	public boolean changed(IEclipseContext context) {
 		if (!participating) {
 			return false;
 		}

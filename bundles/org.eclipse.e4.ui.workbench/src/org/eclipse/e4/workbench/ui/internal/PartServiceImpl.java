@@ -18,11 +18,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
@@ -144,11 +143,8 @@ public class PartServiceImpl implements EPartService {
 			// couldn't find one, we'll just track the application then, it is
 			// questionable why someone would ask the application for the part
 			// service though
-			application.getContext().runAndTrack(new IRunAndTrack() {
-				public boolean notify(ContextChangeEvent event) {
-
-					IEclipseContext eventsContext = event.getContext();
-
+			application.getContext().runAndTrack(new RunAndTrack() {
+				public boolean changed(IEclipseContext eventsContext) {
 					IEclipseContext childContext = (IEclipseContext) eventsContext
 							.getLocal(IContextConstants.ACTIVE_CHILD);
 					if (childContext != null) {
@@ -157,7 +153,7 @@ public class PartServiceImpl implements EPartService {
 					}
 					return true;
 				}
-			}, null);
+			});
 		}
 	}
 

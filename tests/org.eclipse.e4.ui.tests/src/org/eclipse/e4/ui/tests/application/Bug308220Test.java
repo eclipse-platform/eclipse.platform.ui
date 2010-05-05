@@ -15,13 +15,12 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
@@ -59,13 +58,13 @@ public class Bug308220Test extends TestCase {
 			}
 		});
 
-		app.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		app.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				// remove this line to pass the test
-				event.getContext().get(IServiceConstants.ACTIVE_PART);
+				context.get(IServiceConstants.ACTIVE_PART);
 				return true;
 			}
-		}, null);
+		});
 
 		// create two contexts
 		IEclipseContext windowA = app.createChild();

@@ -62,7 +62,7 @@ public class LegacyHandlerService implements IHandlerService {
 		E4HandlerProxy handlerProxy = new E4HandlerProxy(command, handler);
 		final HandlerActivation activation = new HandlerActivation(context, cmdId, handler,
 				handlerProxy, activeWhen);
-		context.runAndTrack(activation, null);
+		context.runAndTrack(activation);
 		return activation;
 	}
 
@@ -123,7 +123,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public IHandlerActivation activateHandler(IHandlerActivation activation) {
 		HandlerActivation eActivation = (HandlerActivation) activation;
 		eActivation.participating = true;
-		eActivation.context.runAndTrack(eActivation, null);
+		eActivation.context.runAndTrack(eActivation);
 		return activation;
 	}
 

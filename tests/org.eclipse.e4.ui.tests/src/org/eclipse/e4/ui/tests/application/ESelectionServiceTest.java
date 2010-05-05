@@ -15,10 +15,9 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -801,16 +800,14 @@ public class ESelectionServiceTest extends TestCase {
 
 		// part one tracks down part three. this could just as easily be
 		// fronted by the mediator.addSelectionListener(*)
-		partContextC.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
-				if (event.getEventType() == ContextChangeEvent.DISPOSE)
-					return false;
+		partContextC.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				ESelectionService s = (ESelectionService) partContextA
 						.get(ESelectionService.class.getName());
 				partOneImpl.setOtherSelection(s.getSelection("partC"));
 				return true;
 			}
-		}, null);
+		});
 
 		assertEquals(selection, partOneImpl.input);
 		assertEquals(selection2, partOneImpl.otherSelection);

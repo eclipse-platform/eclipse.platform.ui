@@ -16,12 +16,11 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -94,9 +93,8 @@ public abstract class HeadlessStartupTest extends TestCase {
 				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
-				IEclipseContext eventsContext = event.getContext();
+		appContext.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext eventsContext) {
 				Object o = eventsContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
 					eventsContext.set(IServiceConstants.ACTIVE_PART_ID,
@@ -110,7 +108,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 				return "HeadlessStartupTest$RunAndTrack[" //$NON-NLS-1$
 						+ IServiceConstants.ACTIVE_PART_ID + ']';
 			}
-		}, null);
+		});
 		appContext.set(IServiceConstants.INPUT, new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Class<?> adapterType = null;

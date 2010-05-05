@@ -16,12 +16,11 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.e4.core.contexts.ContextChangeEvent;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -243,8 +242,8 @@ public class E4Application implements IApplication {
 				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.runAndTrack(new IRunAndTrack() {
-			public boolean notify(ContextChangeEvent event) {
+		appContext.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
 				Object o = appContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MPart) {
 					appContext.set(IServiceConstants.ACTIVE_PART_ID,
@@ -260,7 +259,7 @@ public class E4Application implements IApplication {
 			public String toString() {
 				return IServiceConstants.ACTIVE_PART_ID;
 			}
-		}, null);
+		});
 		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {

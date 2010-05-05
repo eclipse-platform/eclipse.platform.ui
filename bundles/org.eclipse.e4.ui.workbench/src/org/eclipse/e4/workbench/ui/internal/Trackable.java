@@ -12,9 +12,9 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 
-public abstract class Trackable implements IRunAndTrack {
+public abstract class Trackable extends RunAndTrack {
 	public IEclipseContext trackingContext;
 	public boolean participating = true;
 
