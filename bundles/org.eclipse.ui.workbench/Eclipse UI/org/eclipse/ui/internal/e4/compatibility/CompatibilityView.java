@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.workbench.ui.renderers.swt.StackRenderer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -82,8 +83,9 @@ public class CompatibilityView extends CompatibilityPart {
 			if (menus.size() == 0) {
 				MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 
-				// HACK!! Identifies this to the TB renderer
+				// HACK!! Identifies this to the menu renderer
 				menu.getTags().add("LegacyMenu"); //$NON-NLS-1$
+				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
 				menus.add(menu);
 			}
 		}
