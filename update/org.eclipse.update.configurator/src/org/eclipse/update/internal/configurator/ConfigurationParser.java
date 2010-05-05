@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			configURL = url;
 			this.installLocation = installLocation;
 			if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-				File inputFile = new File(url.getFile());
+				File inputFile = URIUtil.toFile(URIUtil.toURI(url));
 				if (!inputFile.exists() || !inputFile.canRead())
 					return null;
 				lastModified = inputFile.lastModified();
@@ -311,7 +311,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				ConfigurationParser parser = new ConfigurationParser();
 				Configuration sharedConfig = parser.parse(sharedURL, installLocation);
 				if (sharedConfig == null)
-					throw new Exception();
+					throw new Exception("Failed to parse shared configuration: " + sharedURL);
 				config.setLinkedConfig(sharedConfig);
 			}
 		} catch (Exception e) {
