@@ -42,7 +42,7 @@
 		  </property>
 		  <property
 				name="applicationCSS"
-				value="org.eclipse.e4.ui.css.theme.e4_default">
+				value="org.eclipse.e4.ui.css.theme.e4_default.xpblue">
 		  </property>
 		  <property
 				name="applicationCSSResources"
