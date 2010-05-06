@@ -14,7 +14,9 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -316,5 +318,72 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
 	public void testWindow_Menu_Visible_FalseFalse() {
 		testWindow_Menu_Visible(false, false);
+	}
+
+	public void testWindow_SharedElements_Add() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(0, window.getSharedElements().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(1, window.getSharedElements().size());
+		assertTrue(window.getSharedElements().get(0) instanceof MPart);
+	}
+
+	public void testWindow_SharedElements_Remove() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		System.out.println(part.getParent());
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.getSharedElements().remove(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getSharedElements().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(1, window.getSharedElements().size());
+		assertEquals(part, window.getSharedElements().get(0));
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(0, window.getSharedElements().size());
 	}
 }

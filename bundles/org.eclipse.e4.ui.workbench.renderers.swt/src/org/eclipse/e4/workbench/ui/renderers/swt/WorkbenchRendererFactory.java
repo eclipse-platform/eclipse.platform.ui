@@ -5,6 +5,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -27,6 +28,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private ToolItemRenderer toolItemRenderer;
 	private SeparatorRenderer separatorRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
+	private ElementReferenceRenderer elementRefRenderer;
 	private PerspectiveStackRenderer perspStackRenderer;
 	private PerspectiveRenderer perspRenderer;
 	private SashRenderer partSashRenderer;
@@ -74,6 +76,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(separatorRenderer);
 			}
 			return separatorRenderer;
+		} else if (uiElement instanceof MPlaceholder) {
+			if (elementRefRenderer == null) {
+				elementRefRenderer = new ElementReferenceRenderer();
+				initRenderer(elementRefRenderer);
+			}
+			return elementRefRenderer;
 		} else if (uiElement instanceof MPerspective) {
 			if (perspRenderer == null) {
 				perspRenderer = new PerspectiveRenderer();

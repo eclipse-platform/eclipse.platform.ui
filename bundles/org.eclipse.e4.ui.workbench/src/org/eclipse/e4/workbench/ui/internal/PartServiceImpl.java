@@ -239,8 +239,8 @@ public class PartServiceImpl implements EPartService {
 		IEclipseContext oldContext = oldSelectedElement.getContext();
 		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
 		if (child == oldContext) {
-			parentContext.set(IContextConstants.ACTIVE_CHILD, part == null ? null : part
-					.getContext());
+			parentContext.set(IContextConstants.ACTIVE_CHILD,
+					part == null ? null : part.getContext());
 		}
 	}
 
@@ -266,6 +266,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
+		MUIElement p = modelService.find(part.getElementId(), rootContainer);
+		if (p != null)
+			return true;
 		return isInContainer(rootContainer, part);
 	}
 

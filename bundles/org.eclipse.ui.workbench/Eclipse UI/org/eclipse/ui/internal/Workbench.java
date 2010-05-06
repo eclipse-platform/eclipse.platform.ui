@@ -84,6 +84,7 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -1636,7 +1637,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private IEclipseContext getWindowContext(MPart part) {
 		MElementContainer<?> parent = part.getParent();
 		while (!(parent instanceof MWindow)) {
-			parent = parent.getParent();
+			parent = (MElementContainer<?>) ((EObject) parent).eContainer(); // parent.getParent();
 		}
 
 		return ((MWindow) parent).getContext();

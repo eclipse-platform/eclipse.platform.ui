@@ -18,10 +18,13 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
@@ -37,6 +40,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MApplication application;
 	private EModelService modelService;
+
 	EPartService partService;
 	WorkbenchPage page;
 	private MPerspective perspModel;
@@ -52,11 +56,12 @@ public class ModeledPageLayout implements IPageLayout {
 
 	boolean createReferences;
 
-	public ModeledPageLayout(MApplication application, EModelService modelService,
+	public ModeledPageLayout(MWindow window, EModelService modelService,
 			EPartService partService,
 			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
 			boolean createReferences) {
-		this.application = application;
+		MUIElement winParent = window.getParent();
+		this.application = (MApplication) winParent;
 		this.modelService = modelService;
 		this.partService = partService;
 		this.page = page;
@@ -66,19 +71,36 @@ public class ModeledPageLayout implements IPageLayout {
 
 		this.createReferences = createReferences;
 
-		MPartSashContainer esc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
-		editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
-		// temporary HACK for bug 303982
-		editorStack.getTags().add("newtablook"); //$NON-NLS-1$
-		editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-		editorStack.getTags().add("EditorStack"); //$NON-NLS-1$
-		editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-		esc.getChildren().add(editorStack);
-		esc.setElementId(getEditorArea());
+		MPartSashContainer esc = null;
+		List<MUIElement> sharedElements = window.getSharedElements();
+		for (MUIElement element : sharedElements) {
+			if (element.getElementId().equals(getEditorArea())) {
+				esc = (MPartSashContainer) element;
+				break;
+			}
+		}
+
+		if (esc == null) {
+			esc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+			// temporary HACK for bug 303982
+			editorStack.getTags().add("newtablook"); //$NON-NLS-1$
+			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			editorStack.getTags().add("EditorStack"); //$NON-NLS-1$
+			editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			esc.getChildren().add(editorStack);
+			esc.setElementId(getEditorArea());
+
+			window.getSharedElements().add(esc);
+		}
+
+		MPlaceholder eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		eaRef.setElementId(getEditorArea());
+		eaRef.setRef(esc);
 
 		// editorArea.setName("Editor Area");
 
-		perspModel.getChildren().add(esc);
+		perspModel.getChildren().add(eaRef);
 	}
 
 	public MPerspective getModel() {

@@ -126,12 +126,6 @@ public class E4Application implements IApplication {
 				appContext);
 		appModel.setContext(appContext);
 
-		// Create the addons
-		for (MContribution addon : appModel.getAddons()) {
-			Object obj = factory.create(addon.getContributionURI(), appContext);
-			addon.setObject(obj);
-		}
-
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
 		if (!E4Workbench.getServiceContext().containsKey(
@@ -148,6 +142,12 @@ public class E4Application implements IApplication {
 		if (lcManager != null) {
 			factory.call(lcManager, null, "processAdditions", appContext, null);
 			factory.call(lcManager, null, "processRemovals", appContext, null);
+		}
+
+		// Create the addons
+		for (MContribution addon : appModel.getAddons()) {
+			Object obj = factory.create(addon.getContributionURI(), appContext);
+			addon.setObject(obj);
 		}
 
 		// Parse out parameters from both the command line and/or the product
@@ -229,10 +229,11 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
-				WorkbenchLogger.class, appContext));
-		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
-				EclipseAdapter.class, appContext));
+		appContext
+				.set(Logger.class.getName(), ContextInjectionFactory.make(
+						WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(),
+				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());

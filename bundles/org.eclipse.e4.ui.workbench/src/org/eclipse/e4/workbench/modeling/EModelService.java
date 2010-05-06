@@ -17,7 +17,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 /**
  * @since 1.0
@@ -169,8 +168,8 @@ public interface EModelService {
 	/**
 	 * Created a separate (detached) window containing the given element.
 	 * 
-	 * @param element
+	 * @param mPartSashContainerElement
 	 *            The element to detach
 	 */
-	public void detach(MWindowElement element);
+	public void detach(MPartSashContainerElement mPartSashContainerElement);
 }

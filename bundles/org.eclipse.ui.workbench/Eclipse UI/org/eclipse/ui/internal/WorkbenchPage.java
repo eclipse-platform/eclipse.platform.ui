@@ -2053,7 +2053,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
 				// use a new perspective since we're only interested in
 				// shortcuts here, see bug 305918
-				modelLayout = new ModeledPageLayout(application, modelService, partService,
+				modelLayout = new ModeledPageLayout(window, modelService, partService,
 						AdvancedFactoryImpl.eINSTANCE.createPerspective(), perspective, this, false);
 				factory.createInitialLayout(modelLayout);
 
@@ -2076,7 +2076,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		modelLayout = new ModeledPageLayout(application, modelService, partService,
+		modelLayout = new ModeledPageLayout(window, modelService, partService,
 				modelPerspective,
 				perspective, this, true);
 		factory.createInitialLayout(modelLayout);

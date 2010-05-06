@@ -224,6 +224,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return ApplicationPackageImpl.eINSTANCE.getContribution_PersistedState();
 		} else if (featureName.equals(CONTRIBUTION_URI_ATTNAME)) {
 			return ApplicationPackageImpl.eINSTANCE.getContribution_ContributionURI();
+		} else if (featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME)) {
+			return BasicPackageImpl.eINSTANCE.getWindow_SharedElements();
 		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
 			return BasicPackageImpl.eINSTANCE.getWindow_MainMenu();
 		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
@@ -1269,9 +1271,25 @@ public class XMLModelReconciler extends ModelReconciler {
 							}
 							newElement = true;
 							break;
+						} else if (change.getFeatureName().equals(WINDOW_SHAREDELEMENTS_ATTNAME)) {
+							EList<?> value = (EList<?>) change.getValue();
+							if (value.contains(reference)) {
+								return key;
+							}
+							newElement = true;
+							break;
 						}
 					}
 					break;
+				}
+
+				for (FeatureChange change : entry.getValue()) {
+					if (change.getFeatureName().equals(WINDOW_SHAREDELEMENTS_ATTNAME)) {
+						EList<?> value = (EList<?>) change.getValue();
+						if (value.contains(reference)) {
+							return key;
+						}
+					}
 				}
 			}
 
@@ -1632,7 +1650,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a BindingContainer has multiple binding tables
 				featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME) ||
 				// a TrimmedWindow has multiple trim bars
-				featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME);
+				featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME) ||
+				// a Window has multiple shared elements
+				featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

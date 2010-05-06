@@ -43,6 +43,7 @@ import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
@@ -259,8 +260,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// Assert.isTrue(ctxt.getContext() == null,
 			// "Before rendering Context should be null");
 			if (ctxt.getContext() == null) {
-				IEclipseContext parentContext = element.getParent() == null ? appContext
-						: getContext(element.getParent());
+				IEclipseContext parentContext = null;
+				if (element.getParent() == null) {
+					Object container = ((EObjectImpl) element).eContainer();
+					if (container instanceof MWindow)
+						parentContext = ((MWindow) container).getContext();
+				}
+				if (parentContext == null && element.getParent() != null) {
+					parentContext = getContext(element.getParent());
+				}
+				if (parentContext == null)
+					parentContext = appContext;
 				IEclipseContext lclContext = parentContext.createChild();
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
@@ -366,7 +376,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (uiElement instanceof MContext) {
 				return ((MContext) uiElement).getContext();
 			}
-			uiElement = uiElement.getParent();
+			uiElement = (MUIElement) ((EObjectImpl) uiElement).eContainer(); // uiElement.getParent();
 		}
 		return null;
 	}
@@ -468,8 +478,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// set up the keybinding manager
 				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
 						.make(KeyBindingDispatcher.class, runContext);
-				runContext
-						.set(KeyBindingDispatcher.class.getName(), dispatcher);
+				runContext.set(KeyBindingDispatcher.class.getName(), dispatcher);
 				org.eclipse.swt.widgets.Listener listener = dispatcher
 						.getKeyDownFilter();
 				display.addFilter(SWT.KeyDown, listener);

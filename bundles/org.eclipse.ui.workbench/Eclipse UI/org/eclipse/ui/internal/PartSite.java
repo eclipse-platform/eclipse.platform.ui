@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -24,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
@@ -167,7 +167,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		MElementContainer<?> parent = model.getParent();
 		while (!(parent instanceof MWindow)) {
-			parent = parent.getParent();
+			parent = (MElementContainer<?>) ((EObject) parent).eContainer(); // parent.getParent();
 		}
 
 		setWindow((MWindow) parent);
@@ -186,7 +186,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		initializeDefaultServices();
 	}
 
-	@Inject
+	// @Inject
 	void setWindow(MWindow window) {
 		this.window = window;
 		

@@ -12,10 +12,13 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -141,6 +144,10 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element == null || element.getWidget() == null)
 			return;
 
+		if (element instanceof MPlaceholder) {
+			element = ((MPlaceholder) element).getRef();
+		}
+
 		// Hide any floating windows
 		if (element instanceof MWindow && element.getWidget() != null) {
 			element.setVisible(false);
@@ -158,6 +165,17 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			for (MUIElement childElement : container.getChildren()) {
 				hideElementRecursive(childElement, goingHidden);
 			}
+
+			// OK, now process detached windows
+			if (element instanceof MWindow) {
+				for (MWindow w : ((MWindow) element).getWindows()) {
+					hideElementRecursive(w, goingHidden);
+				}
+			} else if (element instanceof MPerspective) {
+				for (MWindow w : ((MPerspective) element).getWindows()) {
+					hideElementRecursive(w, goingHidden);
+				}
+			}
 		}
 	}
 
@@ -166,9 +184,22 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (!element.isToBeRendered())
 			return;
 
-		if (element instanceof MPlaceholder) {
-			swap((MPlaceholder) element);
-			element = ((MPlaceholder) element).getRef();
+		if (element instanceof MPlaceholder && element.getWidget() != null) {
+			MPlaceholder ph = (MPlaceholder) element;
+			MUIElement ref = ph.getRef();
+			if (ref instanceof MContext) {
+				IEclipseContext context = ((MContext) ref).getContext();
+				IEclipseContext newParentContext = getContext(ph);
+				if (context.getParent() != newParentContext)
+					context.setParent(newParentContext);
+			}
+
+			Composite phComp = (Composite) ph.getWidget();
+			Control refCtrl = (Control) ph.getRef().getWidget();
+			refCtrl.setParent(phComp);
+			phComp.layout(new Control[] { refCtrl }, SWT.DEFER);
+
+			element = ref;
 		}
 
 		// Show any floating windows
@@ -188,10 +219,21 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				showElementRecursive(curSel, becomingVisible);
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
-			List<MUIElement> kids = new ArrayList<MUIElement>(container
-					.getChildren());
+			List<MUIElement> kids = new ArrayList<MUIElement>(
+					container.getChildren());
 			for (MUIElement childElement : kids) {
 				showElementRecursive(childElement, becomingVisible);
+			}
+
+			// OK, now process detached windows
+			if (element instanceof MWindow) {
+				for (MWindow w : ((MWindow) element).getWindows()) {
+					showElementRecursive(w, becomingVisible);
+				}
+			} else if (element instanceof MPerspective) {
+				for (MWindow w : ((MPerspective) element).getWindows()) {
+					showElementRecursive(w, becomingVisible);
+				}
 			}
 		}
 	}

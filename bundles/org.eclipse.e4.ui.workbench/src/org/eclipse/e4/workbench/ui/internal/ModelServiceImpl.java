@@ -24,6 +24,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
@@ -69,16 +71,45 @@ public class ModelServiceImpl implements EModelService {
 
 	private <T> void findElementsRecursive(MUIElement searchRoot, String id,
 			Class<? extends T> type, List<String> tagsToMatch, List<T> elements) {
+		// are *we* a match ?
 		if (match(searchRoot, id, type, tagsToMatch)) {
 			elements.add((T) searchRoot);
 		}
 
+		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
 			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
 			List<MUIElement> children = container.getChildren();
 			for (MUIElement child : children) {
 				findElementsRecursive(child, id, type, tagsToMatch, elements);
 			}
+		}
+
+		// Search Trim
+		if (searchRoot instanceof MTrimmedWindow) {
+			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
+			for (MTrimBar bar : tw.getTrimBars()) {
+				findElementsRecursive(bar, id, type, tagsToMatch, elements);
+			}
+		}
+
+		// Search Detached Windows
+		if (searchRoot instanceof MWindow) {
+			MWindow window = (MWindow) searchRoot;
+			for (MWindow dw : window.getWindows()) {
+				findElementsRecursive(dw, id, type, tagsToMatch, elements);
+			}
+		}
+		if (searchRoot instanceof MPerspective) {
+			MPerspective persp = (MPerspective) searchRoot;
+			for (MWindow dw : persp.getWindows()) {
+				findElementsRecursive(dw, id, type, tagsToMatch, elements);
+			}
+		}
+		// Search shared elements
+		if (searchRoot instanceof MPlaceholder) {
+			MPlaceholder ph = (MPlaceholder) searchRoot;
+			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements);
 		}
 	}
 
@@ -394,7 +425,7 @@ public class ModelServiceImpl implements EModelService {
 	 * org.eclipse.e4.workbench.modeling.EModelService#detach(org.eclipse.e4.ui.model.application
 	 * .MPartSashContainerElement)
 	 */
-	public void detach(MWindowElement element) {
+	public void detach(MPartSashContainerElement element) {
 		// Determine the correct parent for the new window
 		MUIElement curParent = element.getParent();
 		while (curParent != null && !(curParent instanceof MPerspective)
@@ -413,9 +444,20 @@ public class ModelServiceImpl implements EModelService {
 		newWindow.setHeight(250);
 
 		element.getParent().getChildren().remove(element);
-		newWindow.getChildren().add(element);
+		MWindowElement uiRoot = wrapElementForWindow(element);
+		newWindow.getChildren().add(uiRoot);
 
 		MElementContainer<MUIElement> windowParent = (MElementContainer<MUIElement>) curParent;
 		windowParent.getChildren().add(newWindow);
+	}
+
+	/**
+	 * @param element
+	 * @return
+	 */
+	private MWindowElement wrapElementForWindow(MPartSashContainerElement element) {
+		if (element instanceof MWindowElement)
+			return (MWindowElement) element;
+		return null;
 	}
 }

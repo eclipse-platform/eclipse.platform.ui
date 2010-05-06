@@ -147,6 +147,12 @@ public abstract class ModelReconciler {
 			.getWindow_MainMenu().getName();
 
 	/**
+	 * Attribute defined by MWindows (value is <code>sharedElements</code>).
+	 */
+	public static final String WINDOW_SHAREDELEMENTS_ATTNAME = BasicPackageImpl.eINSTANCE
+			.getWindow_SharedElements().getName();
+
+	/**
 	 * Attribute defined by MTrimmedWindows (value is <code>trimBars</code>).
 	 */
 	public static final String TRIMMEDWINDOW_TRIMBARS_ATTNAME = BasicPackageImpl.eINSTANCE

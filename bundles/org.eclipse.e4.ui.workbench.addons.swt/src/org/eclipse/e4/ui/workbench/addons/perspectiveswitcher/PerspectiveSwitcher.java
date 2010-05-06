@@ -22,7 +22,9 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -160,8 +162,9 @@ public class PerspectiveSwitcher {
 	void init(IEclipseContext context) {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
 	}
@@ -190,22 +193,46 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addSwitcher(MApplication appModel, MPerspectiveStack ps) {
-		List<MTrimBar> trimList = modelService.findElements(appModel, null, MTrimBar.class, null);
-		for (MTrimBar trim : trimList) {
-			if (trim.getSide() == SideValue.TOP) {
-				perspectiveSwitcherTB = MenuFactoryImpl.eINSTANCE.createToolBar();
-				perspectiveSwitcherTB.setElementId(PERSPECTIVE_SWITCHER_ID);
+		MTrimBar trim = getTopTrim(appModel);
+		perspectiveSwitcherTB = MenuFactoryImpl.eINSTANCE.createToolBar();
+		perspectiveSwitcherTB.setElementId(PERSPECTIVE_SWITCHER_ID);
 
-				// Create an item for each perspective that should show up
-				for (MPerspective persp : ps.getChildren()) {
-					if (persp.isToBeRendered()) {
-						MToolItem psItem = addPerspectiveItem(persp);
-						psItem.setSelected(persp == ps.getSelectedElement());
-					}
-				}
-				trim.getChildren().add(perspectiveSwitcherTB);
+		// Create an item for each perspective that should show up
+		for (MPerspective persp : ps.getChildren()) {
+			if (persp.isToBeRendered()) {
+				MToolItem psItem = addPerspectiveItem(persp);
+				psItem.setLabel(persp.getLabel());
+				psItem.setIconURI(persp.getIconURI());
+				psItem.setSelected(persp == ps.getSelectedElement());
 			}
 		}
+		trim.getChildren().add(perspectiveSwitcherTB);
+	}
+
+	/**
+	 * @param appModel
+	 * @return
+	 */
+	private MTrimBar getTopTrim(MApplication appModel) {
+		List<MTrimmedWindow> windowList = modelService.findElements(appModel, null,
+				MTrimmedWindow.class, null);
+		List<MTrimBar> trimList;
+
+		for (MTrimmedWindow tw : windowList) {
+			trimList = tw.getTrimBars();
+			for (MTrimBar trim : trimList) {
+				if (trim.getSide() == SideValue.TOP) {
+					return trim;
+				}
+			}
+		}
+
+		// None there, create one
+		MTrimmedWindow tw = (MTrimmedWindow) appModel.getChildren().get(0);
+		MTrimBar mtb = MBasicFactory.INSTANCE.createTrimBar();
+		mtb.setSide(SideValue.TOP);
+		tw.getTrimBars().add(mtb);
+		return mtb;
 	}
 
 	private MToolItem addPerspectiveItem(MPerspective persp) {
