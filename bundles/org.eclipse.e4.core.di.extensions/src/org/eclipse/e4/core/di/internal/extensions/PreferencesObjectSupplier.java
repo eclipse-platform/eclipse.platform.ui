@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,9 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.FrameworkUtil;
 
+/**
+ * Note: we do not support byte arrays in preferences at this time.
+ */
 public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 	private Map<String, List<IRequestor>> listenerCache = new HashMap<String, List<IRequestor>>();
@@ -45,9 +50,48 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 		if (track)
 			addListener(nodePath, requestor);
-		// TBD add auto-conversion depending on the descriptor's desired type
-		Object result = getPreferencesService().getString(nodePath, key, null, null);
-		return result;
+
+		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
+		if (descriptorsClass.isPrimitive()) {
+			if (descriptorsClass.equals(boolean.class))
+				return getPreferencesService().getBoolean(nodePath, key, false, null);
+			else if (descriptorsClass.equals(int.class))
+				return getPreferencesService().getInt(nodePath, key, 0, null);
+			else if (descriptorsClass.equals(double.class))
+				return getPreferencesService().getDouble(nodePath, key, 0.0d, null);
+			else if (descriptorsClass.equals(float.class))
+				return getPreferencesService().getFloat(nodePath, key, 0.0f, null);
+			else if (descriptorsClass.equals(long.class))
+				return getPreferencesService().getLong(nodePath, key, 0L, null);
+		}
+
+		if (String.class.equals(descriptorsClass))
+			return getPreferencesService().getString(nodePath, key, null, null);
+		else if (Boolean.class.equals(descriptorsClass))
+			return getPreferencesService().getBoolean(nodePath, key, false, null);
+		else if (Boolean.class.equals(descriptorsClass))
+			return getPreferencesService().getBoolean(nodePath, key, false, null);
+		else if (Integer.class.equals(descriptorsClass))
+			return getPreferencesService().getInt(nodePath, key, 0, null);
+		else if (Double.class.equals(descriptorsClass))
+			return getPreferencesService().getDouble(nodePath, key, 0.0d, null);
+		else if (Float.class.equals(descriptorsClass))
+			return getPreferencesService().getFloat(nodePath, key, 0.0f, null);
+		else if (Long.class.equals(descriptorsClass))
+			return getPreferencesService().getLong(nodePath, key, 0L, null);
+
+		return getPreferencesService().getString(nodePath, key, null, null);
+	}
+
+	private Class<?> getDesiredClass(Type desiredType) {
+		if (desiredType instanceof Class<?>)
+			return (Class<?>) desiredType;
+		if (desiredType instanceof ParameterizedType) {
+			Type rawType = ((ParameterizedType) desiredType).getRawType();
+			if (rawType instanceof Class<?>)
+				return (Class<?>) rawType;
+		}
+		return null;
 	}
 
 	private String getKey(IObjectDescriptor descriptor) {
