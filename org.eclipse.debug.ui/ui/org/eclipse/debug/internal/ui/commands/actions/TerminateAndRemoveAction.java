@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
+import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -23,8 +24,10 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -34,6 +37,17 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  */
 public class TerminateAndRemoveAction extends DebugCommandAction {
+	
+	/**
+	 * Whether the target can be terminated. The action is always enabled,
+	 * but does not always need to terminate the target first.
+	 */
+	private boolean fCanTerminate = false;
+	
+	/**
+	 * Local copy of part, possibly null
+	 */
+	private IWorkbenchPart fMyPart = null;
 
     public String getText() {
         return ActionMessages.TerminateAndRemoveAction_0;
@@ -79,18 +93,49 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.DebugCommandAction#setEnabled(boolean)
+     */
+    public void setEnabled(boolean enabled) {
+    	synchronized (this) {
+    		fCanTerminate = enabled;
+		}
+    	// action is always enabled... just depends whether terminate is required first.
+    	super.setEnabled(true);
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.DebugCommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
      */
     public void runWithEvent(Event event) {
-    	// prompt if invoked via keyboard shortcut (don't prompt when menu is used)
-    	if (event.widget instanceof Tree) {
-    		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        	if (window != null) {
-    	    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
-    				return;
-    			}
-        	}
+    	if (fCanTerminate) {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	    	if (window != null) {
+		    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
+					return;
+				}
+	    	}
+	    	super.runWithEvent(event);
+    	} else {
+    		// don't terminate, just remove
+    		// TODO: make #getContext() API in next release
+    		ISelection sel = null;
+    		if (fMyPart != null) {
+    			sel = getDebugContextService().getActiveContext(fMyPart.getSite().getId());
+    	    } else {
+    	    	sel = getDebugContextService().getActiveContext();
+    	    }
+    		if (sel instanceof IStructuredSelection) {
+                IStructuredSelection ss = (IStructuredSelection) sel;
+                postExecute(new Request(), ss.toArray());
+            }
     	}
-    	super.runWithEvent(event);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchPart)
+     */
+    public void init(IWorkbenchPart part) {
+    	super.init(part); // TODO: if #getContext() was API, this would not be needed
+    	fMyPart = part;
     }
 }
