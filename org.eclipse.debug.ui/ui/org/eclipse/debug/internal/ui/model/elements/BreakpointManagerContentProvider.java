@@ -605,8 +605,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 // if a child exist in container, than recursively search into container. And also update the organizer of
                 // of container to the one in the refContainer's child.
                 } else if (element instanceof BreakpointContainer) {
-                    int index = Arrays.asList(children).indexOf(element);  
-                    ModelDelta childDelta = containerDelta.addNode(element, index, IModelDelta.STATE, -1);
+                    ModelDelta childDelta = containerDelta.addNode(element, container.getChildIndex(element), IModelDelta.STATE, -1);
                     BreakpointContainer.copyOrganizers((BreakpointContainer) element, (BreakpointContainer) refChildren[i]);
                     newBreakpoint = insertAddedElements((BreakpointContainer) element, (BreakpointContainer) refChildren[i], childDelta);
                     childDelta.setChildCount(((BreakpointContainer) element).getChildren().length);

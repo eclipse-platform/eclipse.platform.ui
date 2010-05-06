@@ -398,6 +398,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	
     	List breakpoints = destContainer.fBreakpoints;
     	destContainerDelta.addNode(breakpoint, index/*breakpoints.indexOf(breakpoint)*/, IModelDelta.ADDED|IModelDelta.INSTALL, 0);
+    	destContainerDelta.setFlags(destContainerDelta.getFlags() | IModelDelta.EXPAND);
 
     	// add the breakpoints to the parent containers.    	
     	updateSelfAndAncestorsBreakpointCache(destContainer.getParent(), breakpoints, true);
@@ -539,6 +540,19 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
         }
         return getContainers(); 
     }    
+
+    /**
+     * Returns the index of the given child element (breakpoint or container.
+     * 
+     * @param child Child to calculate index of.
+     * @return index of child
+     */
+    public int getChildIndex(Object child) {
+        if (fChildContainers.isEmpty()) {
+            return fBreakpoints.indexOf(child);
+        }
+        return fChildContainers.indexOf(child);
+    }
     
     /**
      * Returns the containers nested in this container, possibly empty.
