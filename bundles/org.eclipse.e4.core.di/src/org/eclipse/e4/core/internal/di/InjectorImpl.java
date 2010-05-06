@@ -389,22 +389,22 @@ public class InjectorImpl implements IInjector {
 			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE) {
 				Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
 				if (descriptorsClass.isPrimitive()) { // support type autoboxing
-					if (descriptorsClass.equals(int.class))
-						descriptorsClass = Integer.class;
-					if (descriptorsClass.equals(long.class))
-						descriptorsClass = Long.class;
-					if (descriptorsClass.equals(float.class))
-						descriptorsClass = Float.class;
-					if (descriptorsClass.equals(double.class))
-						descriptorsClass = Double.class;
-					if (descriptorsClass.equals(short.class))
-						descriptorsClass = Short.class;
-					if (descriptorsClass.equals(byte.class))
-						descriptorsClass = Byte.class;
 					if (descriptorsClass.equals(boolean.class))
 						descriptorsClass = Boolean.class;
-					if (descriptorsClass.equals(char.class))
+					else if (descriptorsClass.equals(int.class))
+						descriptorsClass = Integer.class;
+					else if (descriptorsClass.equals(char.class))
 						descriptorsClass = Character.class;
+					else if (descriptorsClass.equals(float.class))
+						descriptorsClass = Float.class;
+					else if (descriptorsClass.equals(double.class))
+						descriptorsClass = Double.class;
+					else if (descriptorsClass.equals(long.class))
+						descriptorsClass = Long.class;
+					else if (descriptorsClass.equals(short.class))
+						descriptorsClass = Short.class;
+					else if (descriptorsClass.equals(byte.class))
+						descriptorsClass = Byte.class;
 				}
 				if (!descriptorsClass.isAssignableFrom(actualArgs[i].getClass()))
 					actualArgs[i] = IInjector.NOT_A_VALUE;
