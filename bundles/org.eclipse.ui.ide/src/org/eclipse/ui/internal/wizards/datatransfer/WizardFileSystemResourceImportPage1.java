@@ -311,17 +311,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         });
 
         linkedResourceParent= optionsGroup;
-		advancedButton= new Button(optionsGroup, SWT.PUSH);
-		advancedButton.setFont(optionsGroup.getFont());
-		advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
-		GridData data= setButtonLayoutData(advancedButton);
-		data.horizontalAlignment= GridData.BEGINNING;
-		advancedButton.setLayoutData(data);
-		advancedButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleAdvancedButtonSelect();
-			}
-		});
+        if (!ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
+			advancedButton= new Button(optionsGroup, SWT.PUSH);
+			advancedButton.setFont(optionsGroup.getFont());
+			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
+			GridData data= setButtonLayoutData(advancedButton);
+			data.horizontalAlignment= GridData.BEGINNING;
+			advancedButton.setLayoutData(data);
+			advancedButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleAdvancedButtonSelect();
+				}
+			});
+        }
 		updateWidgetEnablements();
 	}
 
@@ -1239,6 +1241,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
         	return false;
         }
+        IContainer container = getSpecifiedContainer();
+        if (container != null && container.isVirtual() && ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
+        	setMessage(null);
+        	setErrorMessage(DataTransferMessages.FileImport_cannotImportFilesUnderAVirtualFolder);
+			return false;
+		}
         
 		enableButtonGroup(true);
 		setErrorMessage(null);

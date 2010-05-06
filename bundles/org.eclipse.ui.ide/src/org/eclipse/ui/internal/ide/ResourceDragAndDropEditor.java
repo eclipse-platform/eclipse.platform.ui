@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class ResourceDragAndDropEditor {
 
 	class PreferenceGroup
 	{
+		Group group;
 		String preferenceKey;
 		String title;
 		String[] labels;
@@ -43,7 +44,7 @@ public class ResourceDragAndDropEditor {
 		
 		public void createControl(Composite parent) {
 			Font font = parent.getFont();
-			Group group = new Group(parent, SWT.NONE);
+			group = new Group(parent, SWT.NONE);
 			GridData data = new GridData(GridData.FILL_HORIZONTAL);
 			group.setLayoutData(data);
 			GridLayout layout = new GridLayout();
@@ -115,6 +116,18 @@ public class ResourceDragAndDropEditor {
 		public void store() {
 			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 			store.putValue(preferenceKey, getSelection());
+		}
+
+		/**
+		 * @param enableLinking
+		 */
+		public void setEnabled(boolean enableLinking) {
+			group.setEnabled(enableLinking);
+			for (int i = 0; i < labels.length; i++) {
+				if (buttons[i] != null && !buttons[i].isDisposed())
+					buttons[i].setEnabled(enableLinking);
+			}
+			
 		}
 	}
 	
@@ -188,5 +201,16 @@ public class ResourceDragAndDropEditor {
 	public void store() {
 		folderPref.store();
 		virtualFolderPref.store();
+	}
+
+	/**
+     * Sets the enabled state of the group's widgets.
+     * Does nothing if called prior to calling <code>createContents</code>.
+
+	 * @param enableLinking
+	 */
+	public void setEnabled(boolean enableLinking) {
+		folderPref.setEnabled(enableLinking);
+		virtualFolderPref.setEnabled(enableLinking);
 	}
 }

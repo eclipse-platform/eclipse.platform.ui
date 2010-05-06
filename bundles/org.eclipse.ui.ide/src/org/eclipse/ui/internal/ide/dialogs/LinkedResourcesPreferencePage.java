@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,6 +153,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		lineComposite.setLayout(gridLayout);
+		lineComposite.setFont(parent.getFont());
 
 		lineComposite.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
@@ -214,5 +215,6 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
     protected void updateWidgetState(boolean enableLinking) {
         topLabel.setEnabled(enableLinking);
         pathVariablesGroup.setEnabled(enableLinking);
+        dragAndDropHandlingEditor.setEnabled(enableLinking);
     }
 }

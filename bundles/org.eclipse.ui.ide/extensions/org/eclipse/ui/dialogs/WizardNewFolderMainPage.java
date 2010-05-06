@@ -614,6 +614,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			linkedGroupComposite = new Composite(advancedComposite, 0);
 			data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			data.horizontalIndent = indent;
+			linkedGroupComposite.setFont(advancedComposite.getFont());
 			linkedGroupComposite.setLayoutData(data);
 
 			GridLayout layout = new GridLayout();
