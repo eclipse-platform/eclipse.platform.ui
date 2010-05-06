@@ -24,10 +24,4 @@ public interface IContextConstants {
 	 */
 	public static final String ACTIVE_CHILD = "activeChildContext"; //$NON-NLS-1$
 
-	/**
-	 * A context key (value "rootContext") that identifies the root of this context chain. It does
-	 * not have to be the global root, but signifies the topmost context for the purposes of
-	 * function management and active context chains.
-	 */
-	public static final String ROOT_CONTEXT = "rootContext"; //$NON-NLS-1$
 }
