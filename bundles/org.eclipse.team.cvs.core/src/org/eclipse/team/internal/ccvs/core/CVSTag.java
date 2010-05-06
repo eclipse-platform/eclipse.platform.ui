@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,9 @@ public class CVSTag implements ITag {
 	public static final CVSTag BASE = new CVSTag("BASE", VERSION); //$NON-NLS-1$
 	
 	protected String name;
+	protected String branchNumber;
 	protected int type;
-	
+
 	private static final String DATE_TAG_NAME_FORMAT = "dd MMM yyyy HH:mm:ss Z";//$NON-NLS-1$
 	private static final SimpleDateFormat tagNameFormat = new SimpleDateFormat(DATE_TAG_NAME_FORMAT, Locale.US);
 	protected static synchronized String dateToTagName(Date date){
@@ -60,6 +61,13 @@ public class CVSTag implements ITag {
 		this.name = name;
 		this.type = type;
 	}
+
+	public CVSTag(String name, String branchNumber, int type) {		
+		this.name = name;
+		this.branchNumber = branchNumber;
+		this.type = type;
+	}
+
 	//Write a date in local date tag format
 	public CVSTag(Date date) {
 		this(dateToTagName(date), DATE);
@@ -77,6 +85,10 @@ public class CVSTag implements ITag {
 	
 	public String getName() {
 		return name;
+	}
+
+	public String getBranchNumber() {
+		return branchNumber;
 	}
 
 	public int getType() {

@@ -198,8 +198,9 @@ public class LogListener extends CommandOutputListener {
     			
     			if (tagRevision.equals(revision) ||
     				revision.equals(BRANCH_REVISION)) {
+    				String branchNumber = version.getBranchNumber();
     				int type = version.isBranch() ? CVSTag.BRANCH : CVSTag.VERSION;
-    				thisRevisionTags.add(new CVSTag(tagName, type));
+    				thisRevisionTags.add(new CVSTag(tagName, branchNumber, type));
     				if (revision.equals(BRANCH_REVISION)){
     					//also record the tag revision
     					revisionVersions.add(tagRevision);
@@ -269,6 +270,7 @@ public class LogListener extends CommandOutputListener {
     private static class VersionInfo {
 		private final boolean isBranch;
 		private String tagRevision;
+		private String branchNumber;
 		private final String tagName;
 		
     	public VersionInfo(String version, String tagName) {
@@ -285,10 +287,11 @@ public class LogListener extends CommandOutputListener {
 						lastDot = lastDot - 2;
 					}
 					tagRevision = version.substring(0, lastDot);
+					branchNumber = version.substring(lastDot+1);
 				}
 			}
     	}
-    	
+
 		public String getTagName() {
 			return this.tagName;
 		}
@@ -321,5 +324,9 @@ public class LogListener extends CommandOutputListener {
         	if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
         	return false;
         }
+
+		public String getBranchNumber() {
+			return branchNumber;
+		}
     }
 }
