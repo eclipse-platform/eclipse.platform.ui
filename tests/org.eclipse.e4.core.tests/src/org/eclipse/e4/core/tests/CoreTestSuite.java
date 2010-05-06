@@ -34,6 +34,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.TestConstructorInjection;
 import org.eclipse.e4.core.internal.tests.di.AtInjectTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
+import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
 import org.eclipse.e4.core.internal.tests.di.InvokeTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
@@ -49,12 +50,13 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectionPreferencesTest.class);
 		addTestSuite(InjectionMixedSuppliersTest.class);
 		addTestSuite(InjectionEventTest.class);
-		
+
 		// DI
 		addTestSuite(InjectionOrderTest.class);
 		addTestSuite(InvokeTest.class);
+		addTestSuite(InjectBaseTypeTest.class);
 		addTest(AtInjectTest.suite());
-		
+
 		// Contexts
 		addTestSuite(EclipseContextTest.class);
 		addTestSuite(ContextInjectionTest.class);
@@ -66,7 +68,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ParentContextDisposalTest.class);
 		addTestSuite(ComplexDisposalTest.class);
 		addTestSuite(DisposeClassLinkTest.class);
-		
+
 		// Contexts injection
 		addTestSuite(AnnotationsInjectionTest.class);
 		addTestSuite(TestConstructorInjection.class);
@@ -78,6 +80,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(GroupedUpdatesTest.class);
 		addTestSuite(Bug304585Test.class);
 		addTestSuite(ExtraDependenciesTest.class);
-		
+
 	}
 }
