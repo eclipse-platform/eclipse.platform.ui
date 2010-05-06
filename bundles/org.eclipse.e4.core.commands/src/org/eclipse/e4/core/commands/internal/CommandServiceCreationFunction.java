@@ -14,13 +14,19 @@ package org.eclipse.e4.core.commands.internal;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  *
  */
 public class CommandServiceCreationFunction extends ContextFunction {
+	/**
+	 * A context key (value "rootContext") that identifies the root of this context chain. It does
+	 * not have to be the global root, but signifies the topmost context for the purposes of
+	 * function management and active context chains.
+	 */
+	public static final String ROOT_CONTEXT = "rootContext"; //$NON-NLS-1$
+
 	private CommandManager manager = null;
 	private CommandServiceImpl service = null;
 
@@ -47,7 +53,7 @@ public class CommandServiceCreationFunction extends ContextFunction {
 	 * @return the topmost "root" context
 	 */
 	private IEclipseContext getRootContext(IEclipseContext context) {
-		IEclipseContext current = (IEclipseContext) context.get(IContextConstants.ROOT_CONTEXT);
+		IEclipseContext current = (IEclipseContext) context.get(ROOT_CONTEXT);
 		if (current != null) {
 			return current;
 		}
@@ -58,7 +64,7 @@ public class CommandServiceCreationFunction extends ContextFunction {
 			parent = current.getParent();
 		}
 		if (current != null) {
-			current.set(IContextConstants.ROOT_CONTEXT, current);
+			current.set(ROOT_CONTEXT, current);
 		}
 		return current;
 	}
