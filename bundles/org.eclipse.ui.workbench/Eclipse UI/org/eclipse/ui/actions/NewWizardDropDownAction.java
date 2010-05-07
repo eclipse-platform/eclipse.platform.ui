@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,14 @@ public class NewWizardDropDownAction extends Action implements
          */
         public void dispose() {
             if (dropDownMenuMgr != null) {
+				// remove the wizard menu before disposing the menu manager, the
+				// wizard menu is a workbench action and it should only be
+				// disposed when the workbench window itself is disposed,
+				// IMenuCreators will be disposed when the action is disposed,
+            	// we do not want this, the menu's disposal will be handled when
+				// the owning action (NewWizardDropDownAction) is disposed, see
+				// bug 309716
+				dropDownMenuMgr.remove(newWizardMenu);
                 dropDownMenuMgr.dispose();
                 dropDownMenuMgr = null;
             }
