@@ -2,9 +2,9 @@ package org.eclipse.e4.tools.emf.editor3x;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.editor3x.emf.EditUIUtil;
 import org.eclipse.e4.tools.emf.ui.common.XMIModelResource;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.ui.IEditorInput;
 
 public class XMIResourceFunction extends ContextFunction {
