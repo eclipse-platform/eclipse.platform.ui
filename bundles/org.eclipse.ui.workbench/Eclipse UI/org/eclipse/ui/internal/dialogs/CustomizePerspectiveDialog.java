@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3104,6 +3104,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private ArrayList getVisibleIDs(TreeItem root) {
+		if (root == null) {
+			return new ArrayList();
+		}
 		ArrayList ids = new ArrayList(root.getChildren().size());
 		for (Iterator i = root.getChildren().iterator(); i.hasNext();) {
 			DisplayItem object = (DisplayItem) i.next();
