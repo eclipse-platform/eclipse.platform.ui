@@ -313,9 +313,8 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					data.append(URLCoder.compactEncode(criterionName));
 					data.append('#');
 					for (Iterator iter = criterionValues.iterator(); iter.hasNext();) {
-						String value = (String) iter.next();
-						data.append(URLCoder.compactEncode(value));
-						data.append(',');
+						String value = (String) iter.next();						
+						data.append(URLCoder.compactEncode(value+','));
 					}
 				}
 			}	

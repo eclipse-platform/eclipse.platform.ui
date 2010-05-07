@@ -43,7 +43,7 @@ public class URLCoder {
 		StringBuffer buf = new StringBuffer(data.length);
 		for (int i = 0; i < data.length; i++) {
 			byte nextByte = data[i];
-			if (!encodeAllCharacters && isAlphaNumericSlashOrDot(nextByte)) {
+			if (!encodeAllCharacters && isAlphaNumericOrDot(nextByte)) {
 				buf.append((char)nextByte);
 			} else {
 				buf.append('%');
@@ -54,9 +54,9 @@ public class URLCoder {
 		return buf.toString();
 	}
 	
-	private static boolean isAlphaNumericSlashOrDot(byte b) {
-		return (b >= '0' && b <= '9') || (b >= 'a' && b < 'z') || ( b >= 'A' && b <= 'Z') 
-		   || b == '.' || b == '/';
+	private static boolean isAlphaNumericOrDot(byte b) {
+		return (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || ( b >= 'A' && b <= 'Z') 
+		   || b == '.';
 	}
 
 	private static byte[] urlDecode(String encodedURL) {

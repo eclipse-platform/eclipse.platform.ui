@@ -62,6 +62,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
 		assertTrue(resources[0].equals(toc));
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 
 	public void testIWSMWithOneTopic() throws IOException {
@@ -80,6 +82,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		Set topics = new HashSet();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
+		checkCookies(resp);
 	};
 
 	public void testIWSMWithTwoTopics() throws IOException {
@@ -102,6 +105,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
         assertTrue(topics.contains(resources[1]));
+		checkCookies(resp);
 	};
 	
 	public void testIWSMWithThreeTopics() throws IOException {
@@ -129,6 +133,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
         assertTrue(topics.contains(resources[0]));
         assertTrue(topics.contains(resources[1]));
         assertTrue(topics.contains(resources[2]));
+		checkCookies(resp);
 	};
 	
 	public void testSaveRestoreIWSMWithOneTopic() throws IOException {
@@ -153,6 +158,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		Set topics = new HashSet();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 
 	public void testSaveRestoreIWSMWithTwoTopics() throws IOException {
@@ -180,6 +187,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
         assertTrue(topics.contains(resources[1]));
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 	
 	public void testSaveRestoreIWSMWithThreeTopics() throws IOException {
@@ -211,6 +220,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
         assertTrue(topics.contains(resources[0]));
         assertTrue(topics.contains(resources[1]));
         assertTrue(topics.contains(resources[2]));
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 
 	public void testIWSMWithMultipleWsets() throws IOException {
@@ -235,6 +246,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		AdaptableHelpResource[] resourcesT4 = mgr.getWorkingSet("test4").getElements();		
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
+		checkCookies(resp);
 	};
 	
 	/**
@@ -260,6 +272,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		int length1 = cookieLength(resp1.getCookies());
 		int length2 = cookieLength(resp2.getCookies());
         assertEquals(length1 + 4, length2);
+		checkCookies(resp1);
+		checkCookies(resp2);
 	};
 	
 	private int cookieLength(Cookie[] cookies) {
@@ -298,6 +312,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		AdaptableHelpResource[] resourcesT4 = mgr2.getWorkingSet("test4").getElements();		
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 
 	public void testIWSMWithCriteria() throws IOException {
@@ -316,6 +332,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		assertEquals(1, readResources.length);
+		checkCookies(resp);
 	};
 	
 	public void testSaveRestoreIWSMWithMCriteria() throws IOException {
@@ -340,6 +357,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		assertEquals(1, readResources.length);
+		checkCookies(resp);
+		checkCookies(resp2);
 	};
 
 	public void testIWSMWithMultipleCriteria() throws IOException {
@@ -360,6 +379,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		checkResourceWithTwoChildren(readResources);
+		checkCookies(resp);
 	};
 
 	public void testSaveRestoreIWSMWithMultipleCriteria() throws IOException {
@@ -382,6 +402,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		checkResourceWithTwoChildren(readResources);
+		checkCookies(resp);
+		checkCookies(resp2);
 	}
 
 	private void checkResourceWithTwoChildren(CriterionResource[] readResources) {
@@ -414,5 +436,13 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		criteria[1].addCriterionValue("MacOS");
 		return criteria;
 	};
+	
+	private void checkCookies(MockServletResponse resp) {
+		String illegalChars = resp.getIllegalCharatersFound();
+		if (illegalChars.equals("") || illegalChars.equals("<")) {
+			return;
+	    }
+		fail("Cookie contains these illegal characters " + illegalChars + '"');
+	}
 
 }

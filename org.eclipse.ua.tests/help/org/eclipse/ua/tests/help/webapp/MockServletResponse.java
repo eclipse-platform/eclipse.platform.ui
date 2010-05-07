@@ -27,7 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MockServletResponse implements HttpServletResponse {
 	
-	List cookies = new ArrayList();
+	private List cookies = new ArrayList();
+	private String illegalCharactersFound = "";
 
 	public String getCharacterEncoding() {
 		return null;
@@ -89,6 +90,7 @@ public class MockServletResponse implements HttpServletResponse {
 	}
 
 	public void addCookie(Cookie cookie) {
+		checkForIllegalCharacters(cookie.getValue());
 		// Replace if it already exists, otherwise set
 		for (int i = 0; i < cookies.size(); i++) {
 			Cookie nextCookie = (Cookie) cookies.get(i);
@@ -101,6 +103,17 @@ public class MockServletResponse implements HttpServletResponse {
 		cookies.add(cookie);
 	}
 	
+	private void checkForIllegalCharacters(String value) {
+		// Check for illegal characters 
+		final String illegalChars = "()<>@,;:\\\"/[]?={} \t";
+		for (int i = 0; i < illegalChars.length(); i++) {
+			char ch = illegalChars.charAt(i);
+			if (value.indexOf(ch) >= 0 && illegalCharactersFound.indexOf(ch) < 0) {
+				illegalCharactersFound = illegalCharactersFound + ch;
+			}
+		}
+	}
+
 	public Cookie[] getCookies() {
 		return (Cookie[]) cookies.toArray(new Cookie[cookies.size()]);
 	}
@@ -183,6 +196,10 @@ public class MockServletResponse implements HttpServletResponse {
 	public void setStatus(int sc, String sm) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public String getIllegalCharatersFound() {
+		return illegalCharactersFound;
 	}
 	
 	
