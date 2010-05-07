@@ -13,10 +13,11 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -38,8 +39,8 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	static final String OUT_SELECTION = "output.selection"; //$NON-NLS-1$
 
-	private Set<ISelectionListener> genericListeners = new HashSet<ISelectionListener>();
-	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<String, Set<ISelectionListener>>();
+	private ListenerList genericListeners = new ListenerList();
+	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
 	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
 
 	@Inject
@@ -80,18 +81,20 @@ public class SelectionServiceImpl implements ESelectionService {
 			if (!genericListeners.isEmpty()) {
 				ESelectionService selectionService = (ESelectionService) rootContext
 						.get(ESelectionService.class.getName());
-				for (ISelectionListener listener : genericListeners) {
-					selectionService.removeSelectionListener(listener);
+				Object[] listeners = genericListeners.getListeners();
+				for (Object listener : listeners) {
+					selectionService.removeSelectionListener((ISelectionListener) listener);
 				}
 			}
 
 			if (!targetedListeners.isEmpty()) {
 				ESelectionService selectionService = (ESelectionService) rootContext
 						.get(ESelectionService.class.getName());
-				for (Entry<String, Set<ISelectionListener>> entry : targetedListeners.entrySet()) {
+				for (Entry<String, ListenerList> entry : targetedListeners.entrySet()) {
 					String partId = entry.getKey();
-					for (ISelectionListener listener : entry.getValue()) {
-						selectionService.removeSelectionListener(partId, listener);
+					for (Object listener : entry.getValue().getListeners()) {
+						selectionService.removeSelectionListener(partId,
+								(ISelectionListener) listener);
 					}
 				}
 			}
@@ -150,8 +153,8 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private void notifyListeners(MPart part, Object selection) {
-		for (ISelectionListener listener : genericListeners) {
-			listener.selectionChanged(part, selection);
+		for (Object listener : genericListeners.getListeners()) {
+			((ISelectionListener) listener).selectionChanged(part, selection);
 		}
 
 		notifyTargetedListeners(part, selection);
@@ -160,10 +163,10 @@ public class SelectionServiceImpl implements ESelectionService {
 	private void notifyTargetedListeners(MPart part, Object selection) {
 		String id = part.getElementId();
 		if (id != null) {
-			Set<ISelectionListener> listeners = targetedListeners.get(id);
-			if (listeners != null) {
-				for (ISelectionListener listener : listeners) {
-					listener.selectionChanged(part, selection);
+			ListenerList listenerList = targetedListeners.get(id);
+			if (listenerList != null) {
+				for (Object listener : listenerList.getListeners()) {
+					((ISelectionListener) listener).selectionChanged(part, selection);
 				}
 			}
 		}
@@ -275,9 +278,9 @@ public class SelectionServiceImpl implements ESelectionService {
 			selectionService.addSelectionListener(partId, listener);
 		}
 
-		Set<ISelectionListener> listeners = targetedListeners.get(partId);
+		ListenerList listeners = targetedListeners.get(partId);
 		if (listeners == null) {
-			listeners = new HashSet<ISelectionListener>();
+			listeners = new ListenerList();
 			targetedListeners.put(partId, listeners);
 		}
 		listeners.add(listener);
@@ -299,7 +302,7 @@ public class SelectionServiceImpl implements ESelectionService {
 				selectionService.removeSelectionListener(partId, listener);
 			}
 
-			Set<ISelectionListener> listeners = targetedListeners.get(partId);
+			ListenerList listeners = targetedListeners.get(partId);
 			if (listeners != null) {
 				listeners.remove(listener);
 			}
