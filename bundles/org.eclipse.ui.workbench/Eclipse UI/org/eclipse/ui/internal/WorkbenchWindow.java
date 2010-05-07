@@ -41,9 +41,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -141,6 +144,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private MWindow model;
 	@Inject
 	private IPresentationEngine engine;
+
+	@Inject
+	EModelService modelService;
+
 	private WorkbenchPage page;
 
 	private WorkbenchWindowAdvisor windowAdvisor;
@@ -1681,6 +1688,18 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				model.getContext());
 
 		ContextInjectionFactory.inject(page, model.getContext());
+		List<MPerspectiveStack> ps = modelService.findElements(model, null,
+				MPerspectiveStack.class, null);
+		if (ps.size() > 0) {
+			MPerspectiveStack stack = ps.get(0);
+			if (stack.getSelectedElement() != null) {
+				MPerspective curPersp = stack.getSelectedElement();
+				IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
+						.findPerspectiveWithId(curPersp.getElementId());
+				if (thePersp != null)
+					perspective = thePersp;
+			}
+		}
 		page.setPerspective(perspective);
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
