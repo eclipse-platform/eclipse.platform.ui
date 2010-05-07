@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor;
+package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
-import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
+import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory; 
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.util.URI;
@@ -39,7 +39,8 @@ public class XMIModelResource implements IModelResource {
 	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
 	private boolean dirty;
 
-	public XMIModelResource(String uri) {
+	
+	public XMIModelResource(URI uri) {
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
 				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 		ResourceSet resourceSet = new ResourceSetImpl();
@@ -49,6 +50,7 @@ public class XMIModelResource implements IModelResource {
 			public void commandStackChanged(EventObject event) {
 				dirty = true;
 				fireDirtyChanged();
+				fireCommandStackChanged();
 			}
 		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory,
@@ -56,7 +58,7 @@ public class XMIModelResource implements IModelResource {
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
 						new E4XMIResourceFactory());
-		resource = resourceSet.getResource(URI.createURI(uri), true);
+		resource = resourceSet.getResource(uri, true);
 	}
 
 	public IObservableList getRoot() {
@@ -82,12 +84,18 @@ public class XMIModelResource implements IModelResource {
 	}
 	
 	public boolean isDirty() {
-		return dirty;
+		return dirty && getEditingDomain().getCommandStack().canUndo();
 	}
 	
 	private void fireDirtyChanged() {
 		for( ModelListener listener : listeners ) {
 			listener.dirtyChanged();
+		}
+	}
+	
+	private void fireCommandStackChanged() {
+		for( ModelListener listener : listeners ) {
+			listener.commandStackChanged();
 		}
 	}
 	
@@ -98,6 +106,7 @@ public class XMIModelResource implements IModelResource {
 			editingDomain.getCommandStack().flush();
 			dirty = false;
 			fireDirtyChanged();
+			fireCommandStackChanged();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

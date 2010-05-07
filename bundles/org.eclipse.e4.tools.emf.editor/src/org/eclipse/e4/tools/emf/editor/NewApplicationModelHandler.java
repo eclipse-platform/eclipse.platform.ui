@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import javax.inject.Named;
 
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 @SuppressWarnings("restriction")
 public class NewApplicationModelHandler {
+	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, MApplication application, EModelService modelService) {
 		FileDialog dialog = new FileDialog(shell,SWT.SAVE);
 		String file = dialog.open();
@@ -49,7 +51,7 @@ public class NewApplicationModelHandler {
 				MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 				part.setLabel(name);
 				part.setTooltip(file);
-				part.setContributionURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.XMIFileEditor");
+				part.setContributionURI("platform:/plugin/org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
 				part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
 				part.setInputURI(filePath);
 				

@@ -108,11 +108,13 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} finally {
-							try {
-								r.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							if( r != null ) {
+								try {
+									r.close();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}								
 							}
 						}
 					}

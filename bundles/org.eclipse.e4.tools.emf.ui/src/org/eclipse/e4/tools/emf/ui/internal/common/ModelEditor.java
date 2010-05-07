@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
@@ -26,8 +28,8 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
@@ -74,6 +76,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
@@ -129,6 +132,7 @@ public class ModelEditor {
 	private TreeViewer viewer;
 	private IModelResource modelProvider;
 	private IProject project;
+//	private ESelectionService selectionService;
 
 	public ModelEditor(Composite composite, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
@@ -221,6 +225,11 @@ public class ModelEditor {
 					
 					Rectangle r = scrolling.getClientArea();
 					scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
+					
+//					if( selectionService != null ) {
+//						selectionService.setSelection(s.getFirstElement());
+//					}
+					
 				}
 			}
 		});
@@ -257,6 +266,16 @@ public class ModelEditor {
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 	}
 
+//	@Inject
+//	public void setSelectionService(ESelectionService selectionService) {
+//		this.selectionService = selectionService;
+//		if( viewer != null && ! viewer.getControl().isDisposed() ) {
+//			if( ! viewer.getSelection().isEmpty() ) {
+//				selectionService.setSelection(((IStructuredSelection)viewer.getSelection()).getFirstElement());	
+//			}
+//		}
+//	}
+	
 	private TreeViewer createTreeViewerArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
@@ -402,14 +421,12 @@ public class ModelEditor {
 		return editorMap.get(eClass);
 	}
 
-	public IStatus save() {
+	public void doSave(@Optional IProgressMonitor monitor) {
 		if (modelProvider.isSaveable()) {
-			return modelProvider.save();
+			modelProvider.save();
 		}
-
-		return Status.CANCEL_STATUS;
 	}
-	
+		
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

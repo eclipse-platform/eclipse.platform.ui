@@ -17,10 +17,21 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/org.eclipse.e4.tools.emf.editor/css/default.css">
+               value="org.eclipse.e4.tools.emf.editor.theme">
+         </property>
+         <property
+               name="applicationCSSResources"
+               value="platform:/plugin/org.eclipse.e4.tools.emf.editor/images/">
          </property>
       </product>
    </extension>
-
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/e4_default.css"
+            id="org.eclipse.e4.tools.emf.editor.theme"
+            label="Application Theme">
+      </theme>
+   </extension>
 
 </plugin>
