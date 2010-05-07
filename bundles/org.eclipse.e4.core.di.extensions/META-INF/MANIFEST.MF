@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Extensions
-Bundle-SymbolicName: org.eclipse.e4.core.di.extensions
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-SymbolicName: org.eclipse.e4.core.di.extensions;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.e4.core.di.internal.extensions.DIEActivator
 Require-Bundle: org.eclipse.osgi;bundle-version="3.6.0",
@@ -15,3 +16,4 @@ Import-Package: javax.inject;version="1.0.0"
 Service-Component: OSGI-INF/preferences.xml, OSGI-INF/events.xml, OSGI-INF/eventsui.xml
 Export-Package: org.eclipse.e4.core.di.extensions,
  org.eclipse.e4.core.di.internal.extensions;x-internal:=true
+Bundle-Localization: fragment
