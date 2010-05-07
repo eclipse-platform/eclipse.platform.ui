@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,9 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	private void openInCompare(ITypedElement left, ITypedElement right) {
 		CompareEditorInput input = createCompareEditorInput(left, right, page.getSite().getPage());
 		IWorkbenchPage workBenchPage = page.getSite().getPage();
-		IEditorPart editor = findReusableCompareEditor(input, workBenchPage);
+		IEditorPart editor = Utils.findReusableCompareEditor(input,
+				workBenchPage,
+				new Class[] { CompareFileRevisionEditorInput.class });
 		if (editor != null) {
 			IEditorInput otherInput = editor.getEditorInput();
 			if (otherInput.equals(input)) {
@@ -165,44 +167,6 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	
 	public void setCurrentFileRevision(IFileRevision fileRevision){
 		this.currentFileRevision = fileRevision;
-	}
-
-	/**
-	 * Returns an editor that can be re-used. An open compare editor that
-	 * has un-saved changes cannot be re-used.
-	 * @param input the input being opened
-	 * @param page 
-	 * @return an EditorPart or <code>null</code> if none can be found
-	 */
-	public static IEditorPart findReusableCompareEditor(
-			CompareEditorInput input, IWorkbenchPage page) {
-		IEditorReference[] editorRefs = page.getEditorReferences();
-		// first loop looking for an editor with the same input
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart part = editorRefs[i].getEditor(false);
-			if (part != null
-					&& (part.getEditorInput() instanceof CompareFileRevisionEditorInput)
-					&& part instanceof IReusableEditor
-					&& part.getEditorInput().equals(input)) {
-				return part;
-			}
-		}
-
-		// if none found and "Reuse open compare editors" preference is on use
-		// a non-dirty editor
-		if (isReuseOpenEditor()) {
-			for (int i = 0; i < editorRefs.length; i++) {
-				IEditorPart part = editorRefs[i].getEditor(false);
-				if (part != null
-						&& (part.getEditorInput() instanceof SaveableCompareEditorInput)
-						&& part instanceof IReusableEditor && !part.isDirty()) {
-					return part;
-				}
-			}
-		}
-
-		// no re-usable editor found
-		return null;
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
@@ -247,9 +211,5 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		}
 		
 		return true;
-	}
-
-	private static boolean isReuseOpenEditor() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.REUSE_OPEN_COMPARE_EDITOR);
 	}
 }

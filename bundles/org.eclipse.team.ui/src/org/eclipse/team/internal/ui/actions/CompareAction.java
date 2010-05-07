@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SaveablesCompareEditorInput;
 import org.eclipse.ui.*;
 
@@ -68,8 +70,9 @@ public class CompareAction extends TeamAction {
 		IWorkbenchPage workBenchPage = getTargetPage();
 		CompareEditorInput input = new SaveablesCompareEditorInput(ancestor,
 				left, right, workBenchPage);
-		IEditorPart editor = CompareRevisionAction.findReusableCompareEditor(
-				input, workBenchPage);
+		IEditorPart editor = Utils.findReusableCompareEditor(input,
+				workBenchPage,
+				new Class[] { CompareFileRevisionEditorInput.class });
 		if (editor != null) {
 			IEditorInput otherInput = editor.getEditorInput();
 			if (otherInput.equals(input)) {

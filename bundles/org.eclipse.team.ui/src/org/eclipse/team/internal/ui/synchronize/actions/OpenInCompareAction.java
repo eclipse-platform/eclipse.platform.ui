@@ -24,7 +24,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.patch.ApplyPatchModelCompareEditorInput;
@@ -205,7 +205,9 @@ public class OpenInCompareAction extends Action {
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, boolean reuseEditorIfPossible) {
         if (page == null || input == null) 
             return;
-        IEditorPart editor = findReusableCompareEditor(input, page);
+		IEditorPart editor = Utils.findReusableCompareEditor(input, page,
+				new Class[] { SyncInfoCompareInput.class,
+						ModelCompareEditorInput.class });
         // reuse editor only for single selection
         if(editor != null && reuseEditorIfPossible) {
         	IEditorInput otherInput = editor.getEditorInput();
@@ -221,46 +223,6 @@ public class OpenInCompareAction extends Action {
         	CompareUI.openCompareEditorOnPage(input, page);
         }
     }
-	
-	/**
-	 * Returns an editor that can be re-used. An open compare editor that has
-	 * un-saved changes cannot be re-used.
-	 * 
-	 * @param input
-	 *            the input being opened
-	 * @param page
-	 * @return an EditorPart or <code>null</code> if none can be found
-	 */
-	public static IEditorPart findReusableCompareEditor(
-			CompareEditorInput input, IWorkbenchPage page) {
-		IEditorReference[] editorRefs = page.getEditorReferences();
-		// first loop looking for an editor with the same input
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart part = editorRefs[i].getEditor(false);
-			if (part != null
-					&& (part.getEditorInput() instanceof SyncInfoCompareInput || part
-							.getEditorInput() instanceof ModelCompareEditorInput)
-					&& part instanceof IReusableEditor
-					&& part.getEditorInput().equals(input)) {
-				return part;
-			}
-		}
-		// if none found and "Reuse open compare editors" preference is on use
-		// a non-dirty editor
-		if (isReuseOpenEditor()) {
-			for (int i = 0; i < editorRefs.length; i++) {
-				IEditorPart part = editorRefs[i].getEditor(false);
-				if (part != null
-						&& (part.getEditorInput() instanceof SaveableCompareEditorInput)
-						&& part instanceof IReusableEditor && !part.isDirty()) {
-					return part;
-				}
-			}
-		}
-
-		// no re-usable editor found
-		return null;
-	}
 
 	/**
 	 * Returns an editor handle if a SyncInfoCompareInput compare editor is opened on 
@@ -316,9 +278,5 @@ public class OpenInCompareAction extends Action {
 			}
 		}
 		return null;
-	}
-	
-	private static boolean isReuseOpenEditor() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.REUSE_OPEN_COMPARE_EDITOR);
 	}
 }

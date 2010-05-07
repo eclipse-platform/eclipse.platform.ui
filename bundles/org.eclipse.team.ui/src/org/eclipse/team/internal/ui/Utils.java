@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
@@ -1174,6 +1175,51 @@ public class Utils {
 			id = descriptor.getId();
 		}
 		return id;
+	}
+	
+	/**
+	 * Returns an editor that can be re-used. An open compare editor that has
+	 * un-saved changes cannot be re-used.
+	 * 
+	 * @param input
+	 *            the input being opened
+	 * @param page
+	 * @param editorInputClasses 
+	 * @return an EditorPart or <code>null</code> if none can be found
+	 */
+	public static IEditorPart findReusableCompareEditor(
+			CompareEditorInput input, IWorkbenchPage page,
+			Class[] editorInputClasses) {
+		IEditorReference[] editorRefs = page.getEditorReferences();
+		// first loop looking for an editor with the same input
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorPart part = editorRefs[i].getEditor(false);
+			if (part != null && part instanceof IReusableEditor) {
+				for (int j = 0; j < editorInputClasses.length; j++) {
+					// check if the editor input type 
+					// complies with the types given by the caller
+					if (editorInputClasses[j].isInstance(part.getEditorInput())
+							&& part.getEditorInput().equals(input))
+						return part;
+				}
+			}
+		}
+		// if none found and "Reuse open compare editors" preference is on use
+		// a non-dirty editor
+		if (TeamUIPlugin.getPlugin().getPreferenceStore()
+				.getBoolean(IPreferenceIds.REUSE_OPEN_COMPARE_EDITOR)) {
+			for (int i = 0; i < editorRefs.length; i++) {
+				IEditorPart part = editorRefs[i].getEditor(false);
+				if (part != null
+						&& (part.getEditorInput() instanceof SaveableCompareEditorInput)
+						&& part instanceof IReusableEditor && !part.isDirty()) {
+					return part;
+				}
+			}
+		}
+
+		// no re-usable editor found
+		return null;
 	}
 	
 }
