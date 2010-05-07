@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -33,7 +35,7 @@ public class HelpCriteriaContentProvider implements ITreeContentProvider {
 		}
 		
 		public String getName() {
-			return id;
+			return HelpPlugin.getCriteriaManager().getCriterionDisplayName(id, Platform.getNL());
 		}
 
 		public Object getParent() {
@@ -70,7 +72,8 @@ public class HelpCriteriaContentProvider implements ITreeContentProvider {
 			if (id.equals(UNCATEGORIZED)) {
 				return Messages.UncategorizedCriteria;
 			}
-			return id;
+			CriterionName parentCriterion = (CriterionName) parent;
+			return HelpPlugin.getCriteriaManager().getCriterionValueDisplayName(parentCriterion.id, id, Platform.getNL());
 		}
 
 		public Object getParent() {
