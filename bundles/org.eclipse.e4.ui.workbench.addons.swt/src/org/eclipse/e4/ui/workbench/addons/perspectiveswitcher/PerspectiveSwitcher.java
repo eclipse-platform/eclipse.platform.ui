@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -114,11 +115,22 @@ public class PerspectiveSwitcher {
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			if (perspectiveSwitcherTB == null)
+			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
+
+			if (changedObj instanceof MWindow && UIEvents.EventTypes.ADD.equals(eventType)) {
+				MUIElement added = (MUIElement) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (added instanceof MPerspectiveStack) {
+					MUIElement parent = added.getParent();
+					while (!(parent instanceof MApplication))
+						parent = parent.getParent();
+					addSwitcher((MApplication) parent, (MPerspectiveStack) added);
+				}
+			}
+			if (!(changedObj instanceof MPerspectiveStack))
 				return;
 
-			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (!(changedObj instanceof MPerspectiveStack))
+			if (perspectiveSwitcherTB == null)
 				return;
 
 			MPerspectiveStack perspStack = (MPerspectiveStack) changedObj;
@@ -127,7 +139,6 @@ public class PerspectiveSwitcher {
 			if (!perspStack.isToBeRendered())
 				return;
 
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.EventTypes.ADD.equals(eventType)) {
 				MPerspective added = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 				// Adding invisible elements is a NO-OP

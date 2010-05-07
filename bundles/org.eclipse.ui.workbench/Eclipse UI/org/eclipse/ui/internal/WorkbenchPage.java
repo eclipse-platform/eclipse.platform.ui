@@ -2073,6 +2073,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective modelPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
 		// tag it with the same id
 		modelPerspective.setElementId(perspective.getId());
+		modelPerspective.setLabel(perspective.getLabel());
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
