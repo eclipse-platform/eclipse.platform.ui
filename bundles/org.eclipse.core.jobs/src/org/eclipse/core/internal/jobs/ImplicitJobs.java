@@ -100,10 +100,6 @@ class ImplicitJobs {
 				if (suspend)
 					suspendedRules.add(rule);
 			}
-			if (threadJob.isBlocked) {
-				threadJob.isBlocked = false;
-				manager.reportUnblocked(monitor);
-			}
 		}
 	}
 

@@ -282,8 +282,9 @@ class ThreadJob extends Job {
 		} finally {
 			if (interrupted)
 				Thread.currentThread().interrupt();
+			//only update the lock state if we ended up using the thread job that was given to us
+			waitEnd(threadJob, threadJob == result, monitor);
 			if (threadJob == result) {
-				waitEnd(threadJob, monitor);
 				if (waiting)
 					manager.implicitJobs.removeWaiting(threadJob);
 			}
@@ -399,16 +400,22 @@ class ThreadJob extends Job {
 	 * to proceed.
 	 * @param monitor The monitor to report unblocking to.
 	 */
-	static private void waitEnd(ThreadJob threadJob, IProgressMonitor monitor) {
-		final LockManager lockManager = manager.getLockManager();
-		final Thread currentThread = Thread.currentThread();
-		if (threadJob.isRunning()) {
-			lockManager.addLockThread(currentThread, threadJob.getRule());
-			//need to re-acquire any locks that were suspended while this thread was blocked on the rule
-			lockManager.resumeSuspendedLocks(currentThread);
-		} else {
-			//tell lock manager that this thread gave up waiting
-			lockManager.removeLockWaitThread(currentThread, threadJob.getRule());
+	static private void waitEnd(ThreadJob threadJob, boolean updateLockManager, IProgressMonitor monitor) {
+		if (updateLockManager) {
+			final LockManager lockManager = manager.getLockManager();
+			final Thread currentThread = Thread.currentThread();
+			if (threadJob.isRunning()) {
+				lockManager.addLockThread(currentThread, threadJob.getRule());
+				//need to re-acquire any locks that were suspended while this thread was blocked on the rule
+				lockManager.resumeSuspendedLocks(currentThread);
+			} else {
+				//tell lock manager that this thread gave up waiting
+				lockManager.removeLockWaitThread(currentThread, threadJob.getRule());
+			}
+		}
+		if (threadJob.isBlocked) {
+			threadJob.isBlocked = false;
+			manager.reportUnblocked(monitor);
 		}
 	}
 
