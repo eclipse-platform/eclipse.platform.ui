@@ -47,12 +47,5 @@
          </service>
       </serviceFactory>
    </extension>
-   <extension
-         point="org.eclipse.ui.services">
-      <serviceFactory
-            factoryClass="org.eclipse.e4.tools.emf.editor3x.compat.IEclipseContextServiceFactory">
-         <service></service>
-      </serviceFactory>
-   </extension>
 
 </plugin>

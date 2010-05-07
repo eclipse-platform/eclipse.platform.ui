@@ -2,17 +2,22 @@ package org.eclipse.e4.tools.emf.editor3x.compat;
 
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.tools.emf.editor3x.E4WorkbenchModelEditor;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.osgi.framework.Bundle;
@@ -49,12 +54,15 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 		setInput(input);
 		
 		IEclipseContext parentContext = (IEclipseContext) getSite().getService(IEclipseContext.class);
-		System.err.println("The parent context: " + parentContext); 
 		context = parentContext.createChild("EditPart('"+getPartName()+"')"); //$NON-NLS-1$
 		context.declareModifiable(IEditorInput.class);
 		context.declareModifiable(EditorPart.class);
 		context.set(EditorPart.class,this);
-		context.set(IEditorInput.class, input);		
+		context.set(IEditorInput.class, input);
+		
+		ISelectionProvider s = new SelectionProviderImpl();
+		context.set(ISelectionProvider.class, s);
+		site.setSelectionProvider(s);
 	}
 
 	@Override
@@ -103,6 +111,35 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 	@Override
 	public void dispose() {
 		context.dispose();
+		context = null;
 		super.dispose();
+	}
+	
+	private class SelectionProviderImpl implements ISelectionProvider {
+		private ISelection currentSelection = StructuredSelection.EMPTY;
+		
+		private ListenerList listeners = new ListenerList();
+		
+		public void setSelection(ISelection selection) {
+			currentSelection = selection;
+			SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
+			
+			for( Object l : listeners.getListeners() ) {
+				((ISelectionChangedListener)l).selectionChanged(evt);
+			}
+		}
+				
+		public void removeSelectionChangedListener(
+				ISelectionChangedListener listener) {
+			listeners.remove(listener);
+		}
+		
+		public ISelection getSelection() {
+			return currentSelection;
+		}
+		
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			listeners.add(listener);
+		}
 	}
 }
