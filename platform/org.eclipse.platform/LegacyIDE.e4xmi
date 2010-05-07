@@ -790,4 +790,5 @@
   <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
   <addons xmi:id="_XwQYkE2EEd-DfN2vYY4Lew" elementId="Cleanup Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"/>
   <addons xmi:id="_bqcWME2EEd-DfN2vYY4Lew" elementId="DnD Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
+  <addons xmi:id="_bqcEEE2EEd-DfN2vYY4Lew" elementId="Perspective Switcher Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"/>
 </application:Application>
