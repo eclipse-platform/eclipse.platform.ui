@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.tests.workbench.MSaveablePartTest;
 import org.eclipse.e4.ui.tests.workbench.MToolItemTest;
 import org.eclipse.e4.ui.tests.workbench.MWindowTest;
 import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
+import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
 
 /**
  *
@@ -45,6 +46,7 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(Bug299755Test.class);
 		addTestSuite(Bug308220Test.class);
 		addTestSuite(PartRenderingEngineTests.class);
+		addTestSuite(SashRendererTest.class);
 		addTestSuite(MMenuItemTest.class);
 		addTestSuite(MPartTest.class);
 		addTestSuite(MPartSashContainerTest.class);
