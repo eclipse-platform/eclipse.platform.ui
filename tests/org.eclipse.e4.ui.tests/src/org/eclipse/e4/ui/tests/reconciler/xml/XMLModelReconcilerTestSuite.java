@@ -38,6 +38,7 @@ public class XMLModelReconcilerTestSuite extends TestSuite {
 		addTestSuite(XMLModelReconcilerMenuTest.class);
 		addTestSuite(XMLModelReconcilerPartTest.class);
 		addTestSuite(XMLModelReconcilerPartDescriptorTest.class);
+		addTestSuite(XMLModelReconcilerPlaceholderTest.class);
 		addTestSuite(XMLModelReconcilerToolBarTest.class);
 		addTestSuite(XMLModelReconcilerTrimContainerTest.class);
 		addTestSuite(XMLModelReconcilerUIElementTest.class);

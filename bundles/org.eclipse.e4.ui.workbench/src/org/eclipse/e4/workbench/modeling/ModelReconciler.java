@@ -14,6 +14,7 @@ package org.eclipse.e4.workbench.modeling;
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -295,6 +296,12 @@ public abstract class ModelReconciler {
 	 */
 	public static final String PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
 			.getPartDescriptorContainer_Descriptors().getName();
+
+	/**
+	 * Attribute defined by MPlaceholders (value is <code>ref</code>).
+	 */
+	public static final String PLACEHOLDER_REF_NAME = AdvancedPackageImpl.eINSTANCE
+			.getPlaceholder_Ref().getName();
 
 	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements

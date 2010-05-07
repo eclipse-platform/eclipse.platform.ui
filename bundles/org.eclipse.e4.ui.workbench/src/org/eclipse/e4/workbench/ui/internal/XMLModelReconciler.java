@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -250,6 +251,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return UiPackageImpl.eINSTANCE.getContext_Properties();
 		} else if (featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
 			return BasicPackageImpl.eINSTANCE.getTrimmedWindow_TrimBars();
+		} else if (featureName.equals(PLACEHOLDER_REF_NAME)) {
+			return AdvancedPackageImpl.eINSTANCE.getPlaceholder_Ref();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -1613,7 +1616,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		// a Handler has a single reference to a command
 				featureName.equals(HANDLER_COMMAND_ATTNAME) ||
 				// a KeyBinding has a single reference to a command
-				featureName.equals(KEYBINDING_COMMAND_ATTNAME);
+				featureName.equals(KEYBINDING_COMMAND_ATTNAME) ||
+				// a Placeholder has a single reference to a ui element
+				featureName.equals(PLACEHOLDER_REF_NAME);
 	}
 
 	/**
