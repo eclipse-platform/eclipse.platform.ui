@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
@@ -1540,6 +1541,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 		});
 		
 
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				startSourceProviders();
+			}
+		});
+
 		// attempt to restore a previous workbench state
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
@@ -1727,8 +1735,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final IEvaluationService evaluationService = 
-			(IEvaluationService) serviceLocator.getService(IEvaluationService.class);
 		
 		
 
@@ -1814,48 +1820,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				menuService.readRegistry();
 			}});
 
-		/*
-		 * Phase 2 of the initialization of commands. The source providers that
-		 * the workbench provides are creating and registered with the above
-		 * services. These source providers notify the services when particular
-		 * pieces of workbench state change.
-		 */
-		final SourceProviderService sourceProviderService = new SourceProviderService(serviceLocator);
-		serviceLocator.registerService(ISourceProviderService.class,
-				sourceProviderService);
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-			public void runWithException() {
-				// this currently instantiates all players ... sigh
-				sourceProviderService.readRegistry();
-				ISourceProvider[] sp = sourceProviderService.getSourceProviders();
-				for (int i = 0; i < sp.length; i++) {
-					evaluationService.addSourceProvider(sp[i]);
-					if (!(sp[i] instanceof ActiveContextSourceProvider)) {
-						contextService.addSourceProvider(sp[i]);
-					}
-				}
-			}});
-						
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			public void runWithException() {
-				// these guys are need to provide the variables they say
-				// they source
-				actionSetSourceProvider = (ActionSetSourceProvider) sourceProviderService
-						.getSourceProvider(ISources.ACTIVE_ACTION_SETS_NAME);
-
-				FocusControlSourceProvider focusControl = (FocusControlSourceProvider) sourceProviderService
-						.getSourceProvider(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
-				serviceLocator.registerService(IFocusService.class,
-						focusControl);
-
-				menuSourceProvider = (MenuSourceProvider) sourceProviderService
-						.getSourceProvider(ISources.ACTIVE_MENU_NAME);
-			}});
+		// the source providers are now initialized in phase 3
 		
 		/*
-		 * Phase 3 of the initialization of commands. This handles the creation
+		 * Phase 2 of the initialization of commands. This handles the creation
 		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
 		 */
@@ -2331,6 +2300,60 @@ public final class Workbench extends EventManager implements IWorkbench {
 		String pref = PrefUtil.getInternalPreferenceStore().getString(
 				IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		return Util.getArrayFromList(pref, ";"); //$NON-NLS-1$
+	}
+
+	private void startSourceProviders() {
+		/*
+		 * Phase 3 of the initialization of commands. The source providers that
+		 * the workbench provides are creating and registered with the above
+		 * services. These source providers notify the services when particular
+		 * pieces of workbench state change.
+		 */
+		final IEvaluationService evaluationService = (IEvaluationService) serviceLocator
+				.getService(IEvaluationService.class);
+		final IContextService contextService = (IContextService) serviceLocator
+				.getService(IContextService.class);
+
+		final SourceProviderService sourceProviderService = new SourceProviderService(
+				serviceLocator);
+		serviceLocator.registerService(ISourceProviderService.class, sourceProviderService);
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				// this currently instantiates all players ... sigh
+				sourceProviderService.readRegistry();
+				ISourceProvider[] sp = sourceProviderService.getSourceProviders();
+				for (int i = 0; i < sp.length; i++) {
+					evaluationService.addSourceProvider(sp[i]);
+					if (!(sp[i] instanceof ActiveContextSourceProvider)) {
+						contextService.addSourceProvider(sp[i]);
+					}
+				}
+			}
+
+			public void handleException(Throwable exception) {
+				WorkbenchPlugin.log("Failed to initialize a source provider", exception); //$NON-NLS-1$
+			}
+		});
+
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				// these guys are need to provide the variables they say
+				// they source
+				actionSetSourceProvider = (ActionSetSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_ACTION_SETS_NAME);
+
+				FocusControlSourceProvider focusControl = (FocusControlSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+				serviceLocator.registerService(IFocusService.class, focusControl);
+
+				menuSourceProvider = (MenuSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_MENU_NAME);
+			}
+
+			public void handleException(Throwable exception) {
+				WorkbenchPlugin.log("Failed to initialize a source provider", exception); //$NON-NLS-1$
+			}
+		});
 	}
 
 	/*
