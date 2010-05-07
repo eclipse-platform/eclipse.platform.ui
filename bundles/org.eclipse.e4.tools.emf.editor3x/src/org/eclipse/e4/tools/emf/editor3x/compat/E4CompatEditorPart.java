@@ -37,8 +37,8 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 	
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
+		IContributionFactory factory = (IContributionFactory) context.get(IContributionFactory.class);
+		factory.call(instance, null, "doSave", context, null);
 	}
 
 	@Override
@@ -66,9 +66,14 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 	}
 
 	@Override
+	public void firePropertyChange(int propertyId) {
+		super.firePropertyChange(propertyId);
+	}
+	
+	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
+		Boolean b = (Boolean) context.get(EditorPart.class.getName()+".dirty");
+		return b != null && b;
 	}
 
 	@Override
