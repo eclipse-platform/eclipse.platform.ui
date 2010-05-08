@@ -130,7 +130,9 @@ public class FilteredResourcesSelectionDialog extends
 	 * @param container
 	 *            the container to select resources from, e.g. the workspace root
 	 * @param typesMask
-	 *            the types mask
+	 *            a mask specifying which resource types should be shown in the dialog.
+	 *            The mask should contain one or more of the resource type bit masks
+	 *            defined in {@link IResource#getType()}
 	 */
 	public FilteredResourcesSelectionDialog(Shell shell, boolean multi,
 			IContainer container, int typesMask) {
