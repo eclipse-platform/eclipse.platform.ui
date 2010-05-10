@@ -39,6 +39,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(Bug_307391.class);
 		suite.addTestSuite(MultiRuleTest.class);
 		suite.addTestSuite(Bug_311756.class);
+		suite.addTestSuite(Bug_311863.class);
 		return suite;
 	}
 }
