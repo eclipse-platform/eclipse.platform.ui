@@ -99,6 +99,7 @@ public class WindowItemProvider
 			addYPropertyDescriptor(object);
 			addWidthPropertyDescriptor(object);
 			addHeightPropertyDescriptor(object);
+			addSharedElementsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -319,6 +320,28 @@ public class WindowItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Shared Elements feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addSharedElementsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Window_sharedElements_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Window_sharedElements_feature", "_UI_Window_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 true,
+				 false,
+				 false,
+				 null,
 				 null,
 				 null));
 	}

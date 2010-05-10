@@ -88,8 +88,6 @@ public class PartItemProvider
 
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
-			addWidgetPropertyDescriptor(object);
-			addRendererPropertyDescriptor(object);
 			addToBeRenderedPropertyDescriptor(object);
 			addOnTopPropertyDescriptor(object);
 			addVisiblePropertyDescriptor(object);
@@ -140,50 +138,6 @@ public class PartItemProvider
 				 getString("_UI_Context_variables_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Context_variables_feature", "_UI_Context_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 UiPackageImpl.Literals.CONTEXT__VARIABLES,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Widget feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addWidgetPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_widget_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_widget_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Renderer feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addRendererPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_renderer_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_renderer_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__RENDERER,
 				 true,
 				 false,
 				 false,
