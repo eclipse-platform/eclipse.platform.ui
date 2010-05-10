@@ -24,6 +24,9 @@ import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
+/**
+ * Some internal methods can not be removed since they are used in products.
+ */
 public class DoNotRemoveTest extends TeamTest {
 
 	/**
