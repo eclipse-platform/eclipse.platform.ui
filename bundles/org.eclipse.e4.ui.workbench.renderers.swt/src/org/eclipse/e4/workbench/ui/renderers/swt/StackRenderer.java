@@ -128,7 +128,7 @@ public class StackRenderer extends LazyStackRenderer {
 				// is this a direct child of the stack?
 				if (element.getParent() != null
 						&& element.getParent().getRenderer() == StackRenderer.this) {
-					CTabItem cti = findItemForPart(element);
+					CTabItem cti = findItemForPart(element, element.getParent());
 					if (cti != null) {
 						updateTab(cti, part, attName, newValue);
 					}
@@ -142,7 +142,7 @@ public class StackRenderer extends LazyStackRenderer {
 				for (MPlaceholder ref : refs) {
 					MElementContainer<MUIElement> refParent = ref.getParent();
 					if (refParent.getRenderer() instanceof StackRenderer) {
-						CTabItem cti = findItemForPart(ref);
+						CTabItem cti = findItemForPart(ref, refParent);
 						if (cti != null) {
 							updateTab(cti, part, attName, newValue);
 						}
@@ -176,7 +176,7 @@ public class StackRenderer extends LazyStackRenderer {
 				MElementContainer<MUIElement> parent = part.getParent();
 				if (parent != null
 						&& parent.getRenderer() == StackRenderer.this) {
-					CTabItem cti = findItemForPart(part);
+					CTabItem cti = findItemForPart(part, parent);
 					if (cti != null) {
 						updateTab(cti, part, attName, newValue);
 					}
@@ -190,7 +190,7 @@ public class StackRenderer extends LazyStackRenderer {
 				for (MPlaceholder ref : refs) {
 					MElementContainer<MUIElement> refParent = ref.getParent();
 					if (refParent.getRenderer() instanceof StackRenderer) {
-						CTabItem cti = findItemForPart(ref);
+						CTabItem cti = findItemForPart(ref, refParent);
 						if (cti != null) {
 							updateTab(cti, part, attName, newValue);
 						}
@@ -270,7 +270,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 
-		CTabItem cti = findItemForPart(element);
+		CTabItem cti = findItemForPart(element, stack);
 		if (cti != null) {
 			if (element.getWidget() != null)
 				cti.setControl((Control) element.getWidget());
@@ -326,8 +326,11 @@ public class StackRenderer extends LazyStackRenderer {
 		createTab(parentElement, element);
 	}
 
-	private CTabItem findItemForPart(MUIElement element) {
-		MElementContainer<MUIElement> stack = element.getParent();
+	private CTabItem findItemForPart(MUIElement element,
+			MElementContainer<MUIElement> stack) {
+		if (stack == null)
+			stack = element.getParent();
+
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		if (ctf == null)
 			return null;
@@ -350,7 +353,7 @@ public class StackRenderer extends LazyStackRenderer {
 			return;
 
 		// find the 'stale' tab for this element and dispose it
-		CTabItem cti = findItemForPart(child);
+		CTabItem cti = findItemForPart(child, parentElement);
 		if (cti != null) {
 			cti.setControl(null);
 			cti.dispose();
@@ -444,10 +447,10 @@ public class StackRenderer extends LazyStackRenderer {
 		super.showTab(element);
 
 		CTabFolder ctf = (CTabFolder) getParentWidget(element);
-		CTabItem cti = findItemForPart(element);
+		CTabItem cti = findItemForPart(element, null);
 		if (cti == null) {
 			createTab(element.getParent(), element);
-			cti = findItemForPart(element);
+			cti = findItemForPart(element, element.getParent());
 		}
 		Control ctrl = (Control) element.getWidget();
 		if (element.getWidget() == null || ctrl.getParent() != ctf) {
