@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -315,6 +315,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 * Opens the currently selected link.
 		 */
 		private void openSelectedLink() {
+			if (fTable.getSelectionCount() < 1)
+				return;
+			
 			TableItem selection= fTable.getSelection()[0];
 			IHyperlink link= (IHyperlink)selection.getData();
 			fManager.hideInformationControl();
