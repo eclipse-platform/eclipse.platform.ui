@@ -99,33 +99,31 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         if (buttonId == EXTEND_ID) {
             PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
                     .getSelection()[0];
-			if (currentResource != null) {
-				FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
-						getShell(), false, variableType);
-				dialog
-						.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
-				dialog
-						.setMessage(NLS
-								.bind(
-										IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description,
-										selection.name));
-				// XXX This only works for variables that refer to local file
-				// system locations
-				IPath selectionPath = selection.path;
-				if (currentResource != null)
-					selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
-							.resolveURI(URIUtil.toURI(selectionPath)));
-	            try {
-						dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
-				} catch (CoreException e) {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
-				}
-	            if (dialog.open() == Window.OK
-	                    && pathVariablesGroup.performOk()) {
-	                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
-	                super.okPressed();
-	            }
+			FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
+					getShell(), false, variableType);
+			dialog
+					.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
+			dialog
+					.setMessage(NLS
+							.bind(
+									IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description,
+									selection.name));
+			// XXX This only works for variables that refer to local file
+			// system locations
+			IPath selectionPath = selection.path;
+			if (currentResource != null)
+				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
+						.resolveURI(URIUtil.toURI(selectionPath)));
+            try {
+					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			}
+            if (dialog.open() == Window.OK
+                    && pathVariablesGroup.performOk()) {
+                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
+                super.okPressed();
+            }
         } else {
 			super.buttonPressed(buttonId);
 		}
