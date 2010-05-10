@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**
  * @since 1.0
@@ -78,6 +79,28 @@ public interface EModelService {
 	 * @return the containing context for this element
 	 */
 	public IEclipseContext getContainingContext(MUIElement element);
+
+	/**
+	 * Ensures that the given element is visible in the UI
+	 * 
+	 * @param window
+	 *            The containing MWindow
+	 * @param element
+	 *            The element to bring to the top
+	 */
+	public void bringToTop(MWindow window, MUIElement element);
+
+	/**
+	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
+	 * given element (if any)
+	 * 
+	 * @param window
+	 *            The containing window
+	 * @param element
+	 *            The element to find the MPlaceholder for
+	 * @return the MPlaceholder or null if none is found
+	 */
+	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's

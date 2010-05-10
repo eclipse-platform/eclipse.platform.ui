@@ -298,33 +298,19 @@ public class PartServiceImpl implements EPartService {
 			return;
 		}
 
-		IEclipseContext curContext = part.getContext();
-		MContext pwc = getParentWithContext(part);
-		MUIElement curElement = part;
-		while (pwc != null) {
-			// Ensure that the UI model has the part 'on top'
-			while (curElement != pwc) {
-				MElementContainer<MUIElement> parent = curElement.getParent();
-				curElement.setToBeRendered(true);
-				if (parent.getSelectedElement() != curElement) {
-					parent.setSelectedElement(curElement);
-				}
-				curElement = parent;
-			}
-
-			if (curContext == null) {
-				curContext = part.getContext();
-			}
-
-			IEclipseContext parentContext = pwc.getContext();
-			if (parentContext != null) {
-				parentContext.set(IContextConstants.ACTIVE_CHILD, curContext);
-				curContext = parentContext;
-			}
-
-			pwc = getParentWithContext((MUIElement) pwc);
+		modelService.bringToTop(window, part);
+		IEclipseContext context = part.getContext();
+		IEclipseContext parent = context.getParent();
+		while (parent != null) {
+			parent.set(IContextConstants.ACTIVE_CHILD, context);
+			context = parent;
+			parent = parent.getParent();
 		}
 	}
+
+	@Inject
+	@Optional
+	MWindow window;
 
 	/*
 	 * (non-Javadoc)

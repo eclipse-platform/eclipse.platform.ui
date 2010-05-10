@@ -14,6 +14,7 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -21,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -31,9 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 
-/**
- *
- */
 /**
  *
  */
@@ -158,6 +157,60 @@ public class ModelServiceImpl implements EModelService {
 			curParent = curParent.getParent();
 		}
 
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#bringToTop(org.eclipse.e4.ui.model.application
+	 * .ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	public void bringToTop(MWindow window, MUIElement element) {
+		if (element instanceof MApplication)
+			return;
+
+		MUIElement parent = element.getParent();
+		if (parent == null) {
+			MPlaceholder ph = findPlaceholderFor(window, element);
+			if (ph != null) {
+				element = ph;
+				parent = element.getParent();
+			}
+		}
+
+		if (parent != null) {
+			// Force the element to be rendered
+			if (!element.isToBeRendered())
+				element.setToBeRendered(true);
+
+			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
+			bringToTop(window, parent);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#findPlaceholderFor(org.eclipse.e4.ui.model
+	 * .application.ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
+		List<MPerspectiveStack> psList = findElements(window, null, MPerspectiveStack.class, null);
+		if (psList.size() != 1)
+			return null;
+		MPerspectiveStack pStack = psList.get(0);
+		MPerspective persp = pStack.getSelectedElement();
+		if (persp == null)
+			return null;
+
+		List<MPlaceholder> phList = findElements(persp, null, MPlaceholder.class, null);
+		for (MPlaceholder ph : phList) {
+			if (ph.getRef() == element)
+				return ph;
+		}
 		return null;
 	}
 

@@ -224,7 +224,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void setEditorAreaVisible(boolean showEditorArea) {
-		editorStack.setToBeRendered(showEditorArea);
+		// editorStack.setToBeRendered(showEditorArea);
 	}
 
 	public void setEditorReuseThreshold(int openEditors) {
