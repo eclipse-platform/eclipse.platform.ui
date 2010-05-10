@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,16 +36,16 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	private final String fPartitioning;
 
 	/**
-	 * Creates a new character pair matcher that matches the specified
-	 * characters within the specified partitioning.  The specified
-	 * list of characters must have the form
-	 * <blockquote>{ <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i> }</blockquote>
-	 * For instance:
+	 * Creates a new character pair matcher that matches the specified characters within the
+	 * specified partitioning. The specified list of characters must have the form <blockquote>{
+	 * <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i>
+	 * }</blockquote> For instance:
+	 * 
 	 * <pre>
 	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
-	 * new SimpleCharacterPairMatcher(chars, ...);
+	 * new DefaultCharacterPairMatcher(chars, ...);
 	 * </pre>
-	 *
+	 * 
 	 * @param chars a list of characters
 	 * @param partitioning the partitioning to match within
 	 */
@@ -57,16 +57,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	}
 
 	/**
-	 * Creates a new character pair matcher that matches characters
-	 * within the default partitioning.  The specified list of
-	 * characters must have the form
-	 * <blockquote>{ <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i> }</blockquote>
-	 * For instance:
+	 * Creates a new character pair matcher that matches characters within the default partitioning.
+	 * The specified list of characters must have the form <blockquote>{ <i>start</i>, <i>end</i>,
+	 * <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i> }</blockquote> For instance:
+	 * 
 	 * <pre>
-	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
-	 * new SimpleCharacterPairMatcher(chars);
+	 * char[] chars= new char[] { '(', ')', '{', '}', '[', ']' };
+	 * new DefaultCharacterPairMatcher(chars);
 	 * </pre>
-	 *
+	 * 
 	 * @param chars a list of characters
 	 */
 	public DefaultCharacterPairMatcher(char[] chars) {
