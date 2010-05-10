@@ -233,13 +233,23 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
         if (fStreamsProxy instanceof StreamsProxy) {
             ((StreamsProxy)fStreamsProxy).close();
         }
+
+        
+        // Avoid calling IProcess.exitValue() inside a sync section (Bug 311813).
+        int exitValue = -1;
+        boolean running = false;
+        try {
+            exitValue = fProcess.exitValue();
+        } catch (IllegalThreadStateException ie) {
+            running = true;
+        }
+        
 		synchronized (this) {
 			fTerminated= true;
-			try {
-				fExitValue = fProcess.exitValue();
-			} catch (IllegalThreadStateException ie) {
+			if (!running) {
+			    fExitValue = exitValue;
 			}
-			fProcess= null;			
+			fProcess= null;
 		}
 		fireTerminateEvent();
 	}
