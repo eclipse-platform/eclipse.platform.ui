@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Bug 311863 Ordered Lock lost after interrupt
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -38,6 +39,18 @@ public class Semaphore {
 			wait(timeLeft);
 			timeLeft = start + delay - System.currentTimeMillis();
 		}
+	}
+
+	/**
+	 * Attempt to acquire the semaphore without waiting.
+	 * Returns true if successfully acquired, false otherwise.
+	 */
+	public synchronized boolean attempt() {
+		if (notifications > 0) {
+			notifications--;
+			return true;
+		}
+		return false;
 	}
 
 	public boolean equals(Object obj) {

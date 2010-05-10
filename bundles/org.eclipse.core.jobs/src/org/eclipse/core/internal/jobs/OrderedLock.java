@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Bug 311863 Ordered Lock lost after interrupt
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -179,14 +180,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			//remember the interrupt to throw it later
 			currentThread.interrupt();
 		}
-		if (success) {
-			depth++;
-			updateCurrentOperation();
-		} else {
-			removeFromQueue(semaphore);
-			manager.removeLockWaitThread(currentThread, this);
-		}
-		return success;
+		return updateOperationQueue(semaphore, success);
 	}
 
 	/**
@@ -301,4 +295,27 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		operations.dequeue();
 		setCurrentOperationThread(Thread.currentThread());
 	}
+
+	/**
+	 * We have finished waiting on the given semaphore. Update the operation queue according
+	 * to whether we succeeded in obtaining the lock.
+	 * 
+	 * @param semaphore The semaphore that we waited on
+	 * @param acquired <code>true</code> if we successfully acquired the semaphore, and <code>false</code> otherwise
+	 * @return whether the lock was successfully obtained
+	 */
+	private synchronized boolean updateOperationQueue(Semaphore semaphore, boolean acquired) {
+		// Bug 311863 - Semaphore may have been released concurrently, so check again before discarding it
+		if (!acquired)
+			acquired = semaphore.attempt();
+		if (acquired) {
+			depth++;
+			updateCurrentOperation();
+		} else {
+			removeFromQueue(semaphore);
+			manager.removeLockWaitThread(Thread.currentThread(), this);
+		}
+		return acquired;
+	}
+
 }
