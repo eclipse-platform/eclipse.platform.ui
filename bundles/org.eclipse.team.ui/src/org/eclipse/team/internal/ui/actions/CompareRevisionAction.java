@@ -168,6 +168,17 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	public void setCurrentFileRevision(IFileRevision fileRevision){
 		this.currentFileRevision = fileRevision;
 	}
+
+	/**
+	 * DO NOT REMOVE, used in a product.
+	 * 
+	 * @deprecated As of 3.5, replaced by
+	 *             {@link Utils#findReusableCompareEditor(CompareEditorInput, IWorkbenchPage, Class[])}
+	 */
+	public static IEditorPart findReusableCompareEditor(IWorkbenchPage workbenchPage) {
+		return Utils.findReusableCompareEditor(null, workbenchPage,
+				new Class[] { CompareFileRevisionEditorInput.class });
+	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
