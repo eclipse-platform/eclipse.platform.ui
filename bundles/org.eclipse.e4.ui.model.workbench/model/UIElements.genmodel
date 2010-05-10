@@ -108,8 +108,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/Input/inputURI"/>
       </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UIElement">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/widget"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/renderer"/>
+        <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/widget"/>
+        <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/renderer"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/toBeRendered"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/onTop"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/visible"/>
@@ -190,6 +190,7 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/width"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Window/height"/>
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/windows"/>
+          <genFeatures children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Window/sharedElements"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/TrimmedWindow" labelFeature="#//application/ui/UILabel/label">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/TrimmedWindow/trimBars"/>
@@ -198,6 +199,7 @@
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/PartSashContainerElement"/>
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/WindowElement"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/TrimBar"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/StackElement"/>
       </nestedGenPackages>
       <nestedGenPackages prefix="Advanced" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Placeholder">
