@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - added support for checkbox (Bug 286310)
+ *     Patrick Chuong (Texas Instruments) - bug fix 306768
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -211,8 +212,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			if (columnIds != null) {
 				columnId = columnIds[i];
 			}
-			update.setLabel(getLabel(elementPath, presentationContext, columnId), i);
-			update.setImageDescriptor(getImageDescriptor(elementPath, presentationContext, columnId), i);
+			update.setLabel(getLabel(elementPath, presentationContext, columnId, i), i);
+			update.setImageDescriptor(getImageDescriptor(elementPath, presentationContext, columnId, i), i);
 			update.setBackground(getBackground(elementPath, presentationContext, columnId), i);
 			update.setForeground(getForeground(elementPath, presentationContext, columnId), i);
 			update.setFontData(getFontData(elementPath, presentationContext, columnId), i);
@@ -272,6 +273,21 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
+	
+	/**
+	 * Returns the <code>ImageDescriptor</code> for the path in the given column with the current presentation
+	 * @param elementPath
+	 * @param presentationContext
+	 * @param columnId
+	 * @param columnIndex
+	 * @return image descriptor or <code>null</code>
+	 * @throws CoreException
+	 * 
+	 * @since 3.6
+	 */
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
+		return getImageDescriptor(elementPath, presentationContext, columnId);
+	}
 
 	/**
 	 * Returns the label for the path in the given column with the current presentation
@@ -282,6 +298,20 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 */
 	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;	
 
+	/**
+	 * Returns the label for the path in the given column with the current presentation.
+	 * @param elementPath
+	 * @param presentationContext
+	 * @param columnId
+	 * @param columnIndex
+	 * @return label
+	 * 
+	 * @since 3.6
+	 */
+	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
+		return getLabel(elementPath, presentationContext, columnId);
+	}
+	
 	/**
 	 * Returns the checked state for the given path.
 	 * 
