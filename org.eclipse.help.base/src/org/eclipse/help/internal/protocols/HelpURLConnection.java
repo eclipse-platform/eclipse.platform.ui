@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.protocols;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -45,6 +48,8 @@ public class HelpURLConnection extends URLConnection {
 	public final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http://"; //$NON-NLS-1$
+	
+	private static Hashtable templates = new Hashtable();
 	
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
@@ -384,11 +389,13 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return null;
 	}
-
-	private InputStream openRemoteStream(String remoteURL, String pathSuffix)  {
+	
+	private InputStream getUnverifiedStream(String remoteURL,String pathSuffix)
+	{
 		URL url;
 		InputStream in = null;
 		try {
+			
 			if(remoteURL.startsWith(PROTOCOL_HTTP))
 			{
 				url = new URL(remoteURL + pathSuffix);
@@ -400,10 +407,96 @@ public class HelpURLConnection extends URLConnection {
 				url = HttpsUtility.getHttpsURL(remoteURL + pathSuffix);
 				in = HttpsUtility.getHttpsStream(url);
 			}
+			
 		} catch (Exception e) {
 			// File not found on this server
 		}
 		return in;
+	}
+	
+
+	private InputStream openRemoteStream(String remoteURL, String pathSuffix)  {
+		InputStream in = getUnverifiedStream(remoteURL,pathSuffix);	
+
+		String errPage[] = (String[])templates.get(remoteURL);
+		if (errPage==null)
+		{
+			String error = getPageText(getUnverifiedStream(remoteURL,"/rtopic/fakeurltogetatestpage/_ACEGIKMOQ246.html")); //$NON-NLS-1$
+			if (error!=null)
+			{
+				errPage = error.split("\n"); //$NON-NLS-1$
+				templates.put(remoteURL,errPage);
+			}
+			else
+			{
+				errPage = new String[0];
+				templates.put(remoteURL,errPage);
+			}
+		}
+
+		
+		// No error page, InfoCenter is at least 3.6, so it is
+		// returning null already.
+		if (errPage.length==0)
+			return in;
+		
+		// Check to see if the URL is the error page for the 
+		// remote IC.  If so, return null.
+		if (compare(errPage,getUnverifiedStream(remoteURL,pathSuffix)))
+		{
+			try{
+				in.close();
+			}catch(Exception ex){}
+			return null;
+		}
+		return in;
+	}
+	
+	private boolean compare(String lines[],InputStream in)
+	{
+		try{
+			if (in!=null)
+			{
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				String line;
+				int count = 0;
+				
+				while ((line = br.readLine())!=null)
+				{
+					if (count>lines.length)
+						return false;
+					
+					if (!lines[count].equals(line))
+						return false;
+					count++;
+				}
+				br.close();
+				in.close();
+				return true;
+			}
+		}catch(Exception ex)
+		{}
+		return false;
+	}
+	
+	private String getPageText(InputStream in) {
+		try{
+			if (in!=null)
+			{
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				String line,result=""; //$NON-NLS-1$
+				
+				while ((line = br.readLine())!=null)
+				{
+					result+=line+'\n';
+				}
+				br.close();
+				in.close();
+				return result;
+			}
+		}catch(Exception ex){}
+		
+		return null;
 	}
 
 	private InputStream tryOpeningAllServers(String pathSuffix) {
