@@ -254,7 +254,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
             result = NavigatorDropAdapter.super.performDrop(data);
         }
         if (resources != null && resources.length > 0) {
-            if ((getCurrentOperation() == DND.DROP_COPY) || (getCurrentOperation() == DND.DROP_LINK)) {
+            if (getCurrentOperation() == DND.DROP_COPY) {
 				status = performResourceCopy(getShell(), resources);
 			} else {
 				status = performResourceMove(resources);
@@ -432,9 +432,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
             lastValidOperation = dragOperation;
         }
         if (FileTransfer.getInstance().isSupportedType(transferType)
-                && (lastValidOperation != DND.DROP_COPY)
-                && (lastValidOperation != DND.DROP_MOVE)
-                && (lastValidOperation != DND.DROP_LINK)) {
+                && (lastValidOperation != DND.DROP_COPY)) {
             return false;
         }
         if (super.validateDrop(target, dragOperation, transferType)) {
@@ -467,7 +465,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 				message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
 			} else {
                 CopyFilesAndFoldersOperation operation;
-                if ((lastValidOperation == DND.DROP_COPY) || (lastValidOperation == DND.DROP_LINK)) {
+                if (lastValidOperation == DND.DROP_COPY) {
                     operation = new CopyFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) != null) {
 						operation.setVirtualFolders(true);
