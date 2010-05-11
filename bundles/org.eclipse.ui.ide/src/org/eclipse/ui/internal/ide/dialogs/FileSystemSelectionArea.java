@@ -51,8 +51,10 @@ public class FileSystemSelectionArea {
 
 		fileSystemTitle = new Label(composite, SWT.NONE);
 		fileSystemTitle.setText(FileSystemMessages.FileSystemSelection_title);
+		fileSystemTitle.setFont(composite.getFont());
 
 		fileSystems = new ComboViewer(composite, SWT.READ_ONLY);
+		fileSystems.getControl().setFont(composite.getFont());
 
 		fileSystems.getControl().setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL

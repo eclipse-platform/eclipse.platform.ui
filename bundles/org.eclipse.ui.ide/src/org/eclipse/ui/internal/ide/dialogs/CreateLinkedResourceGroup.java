@@ -365,11 +365,13 @@ public class CreateLinkedResourceGroup {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalIndent = indent;
 		resolvedPathGroup.setLayoutData(data);
+		resolvedPathGroup.setFont(locationGroup.getFont());
 
 		resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
 		resolvedPathLabelText
 				.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_resolvedPathLabel);
 		resolvedPathLabelText.setVisible(false);
+		resolvedPathLabelText.setFont(locationGroup.getFont());
 
 		resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
