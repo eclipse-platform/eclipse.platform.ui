@@ -47,6 +47,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	private EventHandler childHandler;
 	private EventHandler activeChildHandler;
+	private EventHandler toBeRenderedHandler;
 
 	private boolean createContributions = true;
 
@@ -119,6 +120,23 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), activeChildHandler);
+
+		toBeRenderedHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				MUIElement element = (MUIElement) event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				Boolean value = (Boolean) event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (value.booleanValue()) {
+					createGui(element, element.getParent());
+				} else {
+					removeGui(element);
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
 	}
 
 	public void setCreateContributions(boolean createContributions) {
