@@ -36,11 +36,23 @@ public class UATestContentProducer implements IHelpContentProducer {
 		String title = href.substring(slash1 + 1, slash2);
 		String body = href.substring(slash2 + 1, dotHtml);
 		String result = "<head><title>";
-		result += URLCoder.decode(title);
+		result += filterNonAlpha(URLCoder.decode(title));
 		result += "</title></head><body>";
-        result +=URLCoder.decode(body);
+        result +=filterNonAlpha(URLCoder.decode(body));
 		result += "</body>";
 		return new ByteArrayInputStream(result.getBytes());
+	}
+
+	private String filterNonAlpha(String input) {
+		StringBuffer output = new StringBuffer();
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			if (c == ' ' || Character.isLetter(c)) {
+				output.append(c);
+			}
+		}
+		System.out.println("Input = " + input + "output = " + output.toString());
+		return output.toString();
 	}
 
 }
