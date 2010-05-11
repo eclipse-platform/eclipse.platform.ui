@@ -251,6 +251,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	}
 
+	private String getContextName(MUIElement element) {
+		StringBuilder builder = new StringBuilder(element.getClass()
+				.getSimpleName());
+		String elementId = element.getElementId();
+		if (elementId != null && elementId.length() != 0) {
+			builder.append(" (").append(elementId).append(") ");
+		}
+		builder.append("Context");
+		return builder.toString();
+	}
+
 	public Object createGui(MUIElement element, Object parent) {
 		if (!element.isToBeRendered())
 			return null;
@@ -271,7 +282,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 				if (parentContext == null)
 					parentContext = appContext;
-				IEclipseContext lclContext = parentContext.createChild();
+				IEclipseContext lclContext = parentContext
+						.createChild(getContextName(element));
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
 				ctxt.setContext(lclContext);
