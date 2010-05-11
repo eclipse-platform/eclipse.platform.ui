@@ -1729,15 +1729,28 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			// must match definition in CommandServiceImpl
 			appContext.set(CommandServiceImpl.CMD_ID + cmdId, cmd);
-			MCommand mcmd = CommandsFactoryImpl.eINSTANCE.createCommand();
-			mcmd.setElementId(cmdId);
+
+			MCommand mcmd = null;
+			List<MCommand> appCommands = app.getCommands();
+			for (MCommand appCommand : appCommands) {
+				if (appCommand.getElementId().equals(cmdId)) {
+					mcmd = appCommand;
+					break;
+				}
+			}
+
+			if (mcmd == null) {
+				mcmd = CommandsFactoryImpl.eINSTANCE.createCommand();
+				mcmd.setElementId(cmdId);
+				app.getCommands().add(mcmd);
+			}
+
 			try {
 				mcmd.setCommandName(cmd.getName());
 			} catch (NotDefinedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			app.getCommands().add(mcmd);
 		}
 
 		return service;
