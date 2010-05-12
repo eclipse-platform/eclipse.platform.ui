@@ -183,10 +183,11 @@ final class HandlerActivation extends RunAndTrack implements IHandlerActivation 
 		if (!participating) {
 			return false;
 		}
-		final EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
-		Object obj = HandlerServiceImpl.lookUpHandler(context, commandId);
+		final EHandlerService hs = (EHandlerService) this.context.get(EHandlerService.class
+				.getName());
+		Object obj = HandlerServiceImpl.lookUpHandler(this.context, commandId);
 
-		if (evaluate(new LegacyEvalContext(context))) {
+		if (evaluate(new LegacyEvalContext(this.context))) {
 			if (obj instanceof E4HandlerProxy) {
 				final HandlerActivation bestActivation = ((E4HandlerProxy) obj).activation;
 				final int comparison = bestActivation.compareTo(this);
