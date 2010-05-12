@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -39,15 +39,11 @@ public class ResourceFilterPage extends PropertyPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				IIDEHelpContextIds.RESOURCE_FILTER_PROPERTY_PAGE);
 
-		IContainer resource = (IContainer) getElement().getAdapter(
-				IContainer.class);
-		if (resource == null) {
-			IProject project = (IProject) getElement().getAdapter(
-					IProject.class);
-			if (project != null)
-				resource = project;
-		}
-		groupWidget.setContainer(resource);
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
+		IContainer container = resource instanceof IContainer ? (IContainer) resource
+				: null;
+		groupWidget.setContainer(container);
 
 		return groupWidget.createContents(parent);
 	}
