@@ -21,8 +21,8 @@ import java.net.URL;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
- * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
+ * This API will be deleted in a future release. See bug 311590 for details.
  */
 public interface IPlatformConfigurationFactory {
 	/**

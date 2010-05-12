@@ -26,6 +26,7 @@ import org.eclipse.update.core.*;
  * </p>
  * @since 2.0
  * @deprecated Do not use this interface
+ * This API will be deleted in a future release. See bug 311590 for details.
  */
 public interface ISessionDelta extends IAdaptable {
 

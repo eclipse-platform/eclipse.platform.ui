@@ -21,8 +21,8 @@ package org.eclipse.update.operations;
  * (repeatedly) as the API evolves.
  * </p>
  * @since 3.0
- * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
- * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
+ * This API will be deleted in a future release. See bug 311590 for details.
  */
 public interface IUninstallFeatureOperation extends IFeatureOperation {
 	public final static String UNINSTALL = "uninstall"; //$NON-NLS-1$

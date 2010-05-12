@@ -25,15 +25,15 @@ package org.eclipse.update.core.model;
  * </p>
  * @see org.eclipse.update.core.NonPluginEntry
  * @since 2.0
- * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
- * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
+ * This API will be deleted in a future release. See bug 311590 for details.
  */
 public class NonPluginEntryModel extends ContentEntryModel {
 
 	private String id = null;
 
 	/**
-	 * Creates a uninitialized non-plug-in entry model object.
+	 * Creates a uninitialised non-plug-in entry model object.
 	 * 
 	 * @since 2.0
 	 */

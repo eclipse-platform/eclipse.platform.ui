@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.*;
  * </p>
  * @see org.eclipse.update.configuration.IInstallConfiguration
  * @since 2.0
- * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
- * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
+ * This API will be deleted in a future release. See bug 311590 for details.
  */
 public interface IActivity extends IAdaptable {
 
