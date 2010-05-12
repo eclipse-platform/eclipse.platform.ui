@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -128,6 +130,13 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			return p1.getOffset() - p2.getOffset();
 		}
 	}
+
+	/**
+	 * <code>true</code> if we're on a Mac, where "new GC(canvas)" is expensive.
+	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
+	 * @since 3.6
+	 */
+	private static final boolean IS_MAC= Util.isMac();
 
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
@@ -277,7 +286,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
-					doClearPaint(event.gc);
+					doubleBufferPaint(event.gc);
 			}
 		});
 
@@ -353,7 +362,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return the created canvas
 	 */
 	private Canvas createCanvas(Composite parent) {
-		return new Canvas(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED) {
+		return new Canvas(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS) {
 			/*
 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 			 * @since 3.0
@@ -501,22 +510,42 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	}
 
 	/**
-	 * Clears the background and then paints.
+	 * Double buffer drawing.
 	 *
-	 * @param gc the GC to draw into
+	 * @param dest the GC to draw into
 	 */
-	private void doClearPaint(GC gc) {
+	private void doubleBufferPaint(GC dest) {
 
 		Point size= fCanvas.getSize();
 
-		gc.setFont(fCachedTextWidget.getFont());
-		gc.setBackground(fCanvas.getBackground());
-		gc.fillRectangle(0, 0, size.x, size.y);
+		if (size.x <= 0 || size.y <= 0)
+			return;
 
-		if (fCachedTextViewer instanceof ITextViewerExtension5)
-			doPaint1(gc);
-		else
-			doPaint(gc);
+		if (fBuffer != null) {
+			Rectangle r= fBuffer.getBounds();
+			if (r.width != size.x || r.height != size.y) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		}
+		if (fBuffer == null)
+			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+
+		GC gc= new GC(fBuffer);
+		gc.setFont(fCachedTextWidget.getFont());
+		try {
+			gc.setBackground(fCanvas.getBackground());
+			gc.fillRectangle(0, 0, size.x, size.y);
+
+			if (fCachedTextViewer instanceof ITextViewerExtension5)
+				doPaint1(gc);
+			else
+				doPaint(gc);
+		} finally {
+			gc.dispose();
+		}
+
+		dest.drawImage(fBuffer, 0, 0);
 	}
 
 	/**
@@ -787,8 +816,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	public void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			fCanvas.redraw();
-			fCanvas.update();
+			if (IS_MAC) {
+				fCanvas.redraw();
+				fCanvas.update();
+			} else {
+				GC gc= new GC(fCanvas);
+				doubleBufferPaint(gc);
+				gc.dispose();
+			}
 		}
 	}
 
