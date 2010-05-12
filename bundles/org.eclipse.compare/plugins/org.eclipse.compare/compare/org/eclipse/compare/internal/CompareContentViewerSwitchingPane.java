@@ -48,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
 public class CompareContentViewerSwitchingPane extends
 		CompareViewerSwitchingPane {
 
-	private static final String OPTIMIZED_WARNING_IMAGE_NAME = "obj16/warning_st_obj.gif"; //$NON-NLS-1$
+	private static final String OPTIMIZED_INFO_IMAGE_NAME = "obj16/message_info.gif"; //$NON-NLS-1$
 	public static final String OPTIMIZED_ALGORITHM_USED = "OPTIMIZED_ALGORITHM_USED"; //$NON-NLS-1$
 
 	private CompareEditorInput fCompareEditorInput;
@@ -135,7 +135,7 @@ public class CompareContentViewerSwitchingPane extends
 		clOptimized
 				.setToolTipText(CompareMessages.CompareContentViewerSwitchingPane_optimizedTooltip);
 		clOptimized.setImage(CompareUIPlugin.getImageDescriptor(
-				OPTIMIZED_WARNING_IMAGE_NAME).createImage());
+				OPTIMIZED_INFO_IMAGE_NAME).createImage());
 		clOptimized.setVisible(false); // hide by default
 		clOptimized.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
