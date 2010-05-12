@@ -610,7 +610,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
-	protected void createChildren(Widget widget) {
+	void createChildren(Widget widget, boolean materialize) {
 		if (contentProviderIsLazy) {
 			Object element = widget.getData();
 			if (element == null && widget instanceof TreeItem) {
@@ -632,12 +632,16 @@ public class TreeViewer extends AbstractTreeViewer {
 			// touch all children to make sure they are materialized
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].getData() == null) {
-					virtualLazyUpdateWidget(widget, i);
+					if (materialize) {
+						virtualLazyUpdateWidget(widget, i);
+					} else {
+						((TreeItem)children[i]).clearAll(true);
+					}
 				}
 			}
 			return;
 		}
-		super.createChildren(widget);
+		super.createChildren(widget, materialize);
 	}
 
 	protected void internalAdd(Widget widget, Object parentElement,
