@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
@@ -59,6 +60,7 @@ public class OpenActionProvider extends CommonActionProvider {
 
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 				.getSelection();
+
 		openFileAction.selectionChanged(selection);
 		if (openFileAction.isEnabled()) {
 			aMenu.insertAfter(ICommonMenuConstants.GROUP_OPEN, openFileAction);
@@ -72,8 +74,9 @@ public class OpenActionProvider extends CommonActionProvider {
 		}
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 				.getSelection();
-		openFileAction.selectionChanged(selection);
-		if (openFileAction.isEnabled()) {
+		if (selection.size() == 1
+				&& selection.getFirstElement() instanceof IFile) {
+			openFileAction.selectionChanged(selection);
 			theActionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
 					openFileAction);
 		}
