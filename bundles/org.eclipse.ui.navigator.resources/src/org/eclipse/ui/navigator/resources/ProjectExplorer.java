@@ -14,9 +14,6 @@ package org.eclipse.ui.navigator.resources;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IAggregateWorkingSet;
@@ -26,7 +23,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.framelist.Frame;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 import org.eclipse.ui.internal.navigator.framelist.TreeFrame;
@@ -218,55 +214,5 @@ public final class ProjectExplorer extends CommonNavigator {
 		return workingSetLabel;
 	}
 
-	/**
-	 * <p>
-	 * </p>
-	 * 
-	 * @see org.eclipse.ui.part.ISetSelectionTarget#selectReveal(org.eclipse.jface.viewers.ISelection)
-	 * @since 3.4
-	 */
-	public void selectReveal(ISelection selection) {
-		if (getCommonViewer() != null) {
-			getCommonViewer().setSelection(convertSelection(selection), true);
-		}
-	}
-
-	private ISelection convertSelection(ISelection s) {
-		if (!(s instanceof IStructuredSelection))
-			return s;
-
-		Object[] elements = ((IStructuredSelection) s).toArray();
-
-		boolean changed = false;
-		for (int i = 0; i < elements.length; i++) {
-			Object convertedElement = convertElement(elements[i]);
-			changed = changed || convertedElement != elements[i];
-			elements[i] = convertedElement;
-		}
-		if (changed)
-			return new StructuredSelection(elements);
-		return s;
-	}
-
-	private Object convertElement(Object original) {
-		NavigatorContentService ncs = (NavigatorContentService) getNavigatorContentService();
-
-		Object found = ncs.getViewerElementData(original);
-		if (found != null)
-			return original;
-		if (original instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) original;
-			found = adaptable.getAdapter(IResource.class);
-			if (found != null)
-				return found;
-			IWorkbenchAdapter wba = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
-			if (wba != null) {
-				found = wba.getParent(original);
-				if (found != null)
-					return convertElement(found);
-			}
-		}
-		return original;
-	}	
 	
 }
