@@ -948,9 +948,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void handleLaunchPressed() {
 		ILaunchConfiguration config = fTabViewer.getOriginal();
 		if (fTabViewer.isDirty() && fTabViewer.canSave()) {
-			if (fTabViewer.handleApplyPressed())
-				config = fTabViewer.getOriginal();
-			else config = null;
+			config = fTabViewer.handleApplyPressed();
 		}
 		if(config != null) {
 			close();

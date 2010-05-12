@@ -1258,16 +1258,19 @@ public class LaunchConfigurationTabGroupViewer {
 	}		
 	
 	/**
-	 * Notification that the 'Apply' button has been pressed
+	 * Notification that the 'Apply' button has been pressed.
+	 * 
+	 * @return the saved launch configuration or <code>null</code> if not saved
 	 */
-	protected boolean handleApplyPressed() {
+	protected ILaunchConfiguration handleApplyPressed() {
 		if(fOriginal != null && fOriginal.isReadOnly()) {
 			IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fOriginal.getFile()}, fViewerControl.getShell());
 			if(!status.isOK()) {
-				return false;
+				return null;
 			}
 		}
 		Exception exception = null;
+		final ILaunchConfiguration[] saved = new ILaunchConfiguration[1];
 		try {
 			// update launch config
 			fInitializingTabs = true;
@@ -1284,7 +1287,7 @@ public class LaunchConfigurationTabGroupViewer {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
-								((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
+								saved[0] = ((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
 							} 
 							catch (CoreException e) {DebugUIPlugin.log(e);}
 						}
@@ -1292,7 +1295,7 @@ public class LaunchConfigurationTabGroupViewer {
 					getLaunchConfigurationDialog().run(true, false, runnable);
 				}
 				else {
-					fWorkingCopy.doSave();
+					saved[0] = fWorkingCopy.doSave();
 				}
 			}
 			updateButtons();
@@ -1303,9 +1306,9 @@ public class LaunchConfigurationTabGroupViewer {
 		catch (InterruptedException e) {exception = e;} 
 		if(exception != null) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); // 
-			return false;
+			return null;
 		} else {
-			return true;
+			return saved[0];
 		}
 	}
 
