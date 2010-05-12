@@ -515,7 +515,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		} else if (currentReferences.isEmpty()) {
 			// currently not referencing anything, so just return what the user had exactly
 			return userReferences;
-		} else if (originalReferences.containsAll(currentReferences)
+		} else if (currentReferences.size() == originalSize
 				&& currentReferences.containsAll(originalReferences)) {
 			// since both versions contain the same thing, just use whatever the user had
 			return userReferences;
