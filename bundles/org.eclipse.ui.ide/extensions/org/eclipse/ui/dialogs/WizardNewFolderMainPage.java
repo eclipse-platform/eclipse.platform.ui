@@ -110,7 +110,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private CreateLinkedResourceGroup linkedResourceGroup;
 
 	private Composite advancedComposite;
-
+	
 	private Composite linkedResourceComposite;
 	private Composite linkedGroupComposite;
 
@@ -546,6 +546,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 		} else {
+			Point oldCompositeSize = advancedComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			
 			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 	                ISharedImages.IMG_OBJ_FOLDER);
@@ -630,7 +631,6 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				linkedResourceGroupHeight = groupSize.y;
 			}
 			linkedResourceGroup.setEnabled(false);
-			shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 
 			filterButton = new Button(advancedComposite, SWT.PUSH);
 			filterButton.setFont(advancedComposite.getFont());
@@ -646,8 +646,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			});
 
 			setupLinkedResourceTarget();
-			composite.layout();
 			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
+
+			Point newCompositeSize = advancedComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			linkedResourceGroupHeight = newCompositeSize.y - oldCompositeSize.y;
+			getShell().setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
+			composite.layout(true);
 		}
 	}
 
