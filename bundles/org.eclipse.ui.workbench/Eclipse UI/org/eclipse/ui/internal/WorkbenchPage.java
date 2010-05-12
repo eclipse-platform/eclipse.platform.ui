@@ -209,11 +209,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private void updateActiveEditorSources(MPart part) {
 		IEditorPart editor = getEditor(part);
+		window.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME,
+				editor == null ? null : editor.getSite().getId());
 		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
 		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 				editor == null ? null : editor.getEditorInput());
 
 		if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
+			application.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME,
+					editor == null ? null : editor.getSite().getId());
 			application.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
 			application.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 					editor == null ? null : editor.getEditorInput());
