@@ -60,6 +60,7 @@ public class DataTransferMessages extends NLS {
 	public static String FileImport_advanced;
 	public static String FileImport_noneSelected;
 	public static String FileImport_cannotImportFilesUnderAVirtualFolder;
+	public static String FileImport_haveToCreateLinksUnderAVirtualFolder;
 	public static String FileImport_invalidSource;
 	public static String FileImport_sourceEmpty;
 	public static String FileImport_importProblems;

@@ -1191,10 +1191,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			IPath path = getContainerFullPath();
 	    	if (path != null && relativePathVariableGroup != null) {
 				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-				if (target != null && target.isVirtual()) {
-					createLinksInWorkspaceButton.setSelection(true);
+				if (target != null && target.isVirtual())
 					createVirtualFoldersButton.setSelection(true);
-				}
 	    	}
 			relativePathVariableGroup.setEnabled(createLinksInWorkspaceButton.getSelection());
 			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());
@@ -1242,10 +1240,18 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         	return false;
         }
         IContainer container = getSpecifiedContainer();
-        if (container != null && container.isVirtual() && ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
-        	setMessage(null);
-        	setErrorMessage(DataTransferMessages.FileImport_cannotImportFilesUnderAVirtualFolder);
-			return false;
+        if (container != null && container.isVirtual()) {
+        	if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
+	        	setMessage(null);
+	        	setErrorMessage(DataTransferMessages.FileImport_cannotImportFilesUnderAVirtualFolder);
+				return false;
+        	}
+        	if (createLinksInWorkspaceButton == null || createLinksInWorkspaceButton.getSelection() == false) {
+	        	setMessage(null);
+	        	setErrorMessage(DataTransferMessages.FileImport_haveToCreateLinksUnderAVirtualFolder);
+				return false;
+        		
+        	}
 		}
         
 		enableButtonGroup(true);
