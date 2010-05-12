@@ -144,54 +144,85 @@ public class SorterTest extends NavigatorTestBase {
 		
 		refreshViewer();
 		_viewer.expandAll();
-		DisplayHelper.sleep(1000);
 
-		// Forwards
-		items = _viewer.getTree().getItems();
-		assertEquals("p2", items[1].getText());
-		assertEquals("p1", items[0].getText());
-		// Always at the end because it's not a resource
-		assertEquals("Test", items[2].getText());
-		childItems = items[1].getItems();
-		assertEquals("f1", childItems[0].getText());
-		childItems = items[0].getItems();
-		assertEquals("f1", childItems[0].getText());
+		int count = 20;
+		boolean passed = false;
+
+		while (!passed) {
+			// Forwards
+			items = _viewer.getTree().getItems();
+			assertEquals("p2", items[1].getText());
+			assertEquals("p1", items[0].getText());
+			// Always at the end because it's not a resource
+			assertEquals("Test", items[2].getText());
+			childItems = items[1].getItems();
+			if (!childItems[0].getText().equals("f1") && count-- >= 0) {
+				System.out.println("Not equal: " + childItems[0].getText() + " waiting...");
+				DisplayHelper.sleep(100);
+				continue;
+			}
+			assertEquals("f1", childItems[0].getText());
+			childItems = items[0].getItems();
+			assertEquals("f1", childItems[0].getText());
+			passed = true;
+		}
 
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
 
 		refreshViewer();
 		_viewer.expandAll();
-		DisplayHelper.sleep(1000);
 
-		// Backwards
-		items = _viewer.getTree().getItems();
-		assertEquals("p2", items[0].getText());
-		assertEquals("p1", items[1].getText());
-		assertEquals("Test", items[2].getText());
-		assertEquals("Bluefile6.txt", items[0].getItems()[0].getText());
-		assertEquals("f2", items[1].getItems()[0].getText());
+		count = 20;
+		passed = false;
 
+		while (!passed) {
+			// Backwards
+			items = _viewer.getTree().getItems();
+			assertEquals("p2", items[0].getText());
+			assertEquals("p1", items[1].getText());
+			assertEquals("Test", items[2].getText());
+			if (!items[0].getItems()[0].getText().equals("Bluefile6.txt") && count-- >= 0) {
+				System.out
+						.println("Not equal: " + items[0].getItems()[0].getText() + " waiting...");
+				DisplayHelper.sleep(100);
+				continue;
+			}
+			assertEquals("Bluefile6.txt", items[0].getItems()[0].getText());
+			assertEquals("f2", items[1].getItems()[0].getText());
+			passed = true;
+		}
 		// And override again
 		_contentService.bindExtensions(
 				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE }, false);
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE }, false);
-		
+
 		refreshViewer();
 		_viewer.expandAll();
-		DisplayHelper.sleep(1000);
 
-		// Forwards - Test in front - since the override sorter sorts differently
-		// than the resource extension sorter
-		items = _viewer.getTree().getItems();
-		assertEquals("p2", items[2].getText());
-		assertEquals("p1", items[1].getText());
-		assertEquals("Test", items[0].getText());
-		childItems = items[2].getItems();
-		assertEquals("f1", childItems[0].getText());
-		childItems = items[1].getItems();
-		assertEquals("f1", childItems[0].getText());
+		count = 20;
+		passed = false;
+
+		while (!passed) {
+			// Forwards - Test in front - since the override sorter sorts
+			// differently
+			// than the resource extension sorter
+			items = _viewer.getTree().getItems();
+			assertEquals("p2", items[2].getText());
+			assertEquals("p1", items[1].getText());
+			assertEquals("Test", items[0].getText());
+			childItems = items[2].getItems();
+			if (!childItems[0].getText().equals("f1") && count-- >= 0) {
+				System.out.println("Not equal: " + childItems[0].getText() + " waiting...");
+				DisplayHelper.sleep(100);
+				continue;
+			}
+			assertEquals("f1", childItems[0].getText());
+			childItems = items[1].getItems();
+			assertEquals("f1", childItems[0].getText());
+			passed = true;
+		}
 	}
 
 	// Here we want to make sure the sorting is done by the 
