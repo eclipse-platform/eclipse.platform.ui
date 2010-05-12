@@ -112,4 +112,27 @@ public class ContributorTrackingSet extends LinkedHashSet {
 				add(contents[i]); 
 		
 	}
+	
+	public Iterator iterator() {
+		return new Iterator() {
+
+			Iterator delegateIterator = ContributorTrackingSet.super.iterator();
+			Object current;
+
+			public boolean hasNext() {
+				return delegateIterator.hasNext();
+			}
+
+			public Object next() {
+				current = delegateIterator.next();
+				return current;
+			}
+
+			public void remove() {
+				delegateIterator.remove();
+				contentService.forgetContribution(current);
+			}
+		};
+	}
+	
 }

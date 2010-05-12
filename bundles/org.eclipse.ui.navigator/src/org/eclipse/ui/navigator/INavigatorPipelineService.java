@@ -44,13 +44,6 @@ public interface INavigatorPipelineService {
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the getChildren() of the PipelinedShapeModification it will not correctly 
-	 * maintain the state of the Set.
-	 * </b>
-	 * </p>
 	 * 
 	 * @param anAddModification
 	 *            The shape modification which contains the current suggested
@@ -78,13 +71,6 @@ public interface INavigatorPipelineService {
 	 * <b>Clients should not call any of the add, remove, refresh, or update
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
-	 * </p>
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the getChildren() of the PipelinedShapeModification it will not correctly 
-	 * maintain the state of the Set.
-	 * </b>
 	 * </p>
 	 * 
 	 * @param aRemoveModification

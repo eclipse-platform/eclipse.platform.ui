@@ -36,13 +36,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * determine how to change the shape of those children. The set of children
 	 * should be modified to contain the correct children to return to the
 	 * viewer.
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the theCurrentChildren Set as it will not correctly maintain the state
-	 * of the Set.
-	 * </b>
-	 * </p>
 	 * 
 	 * @param aParent
 	 *            A parent from the viewer
@@ -57,13 +50,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * viewer and determine how to change the shape of those children. The given
 	 * set of elements should be modified to contain the correct elements to
 	 * return to the viewer.
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the theCurrentElements Set as it will not correctly maintain the state
-	 * of the Set.
-	 * </b>
-	 * </p>
 	 * 
 	 * @param anInput
 	 *            An input from the viewer
@@ -112,13 +98,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the getChildren() of the PipelinedShapeModification it will not correctly 
-	 * maintain the state of the Set.
-	 * </b>
-	 * </p>
 	 * 
 	 * @param anAddModification
 	 *            The shape modification which contains the current suggested
@@ -152,13 +131,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * <b>Clients should not call any of the add, remove, refresh, or update
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
-	 * </p>
-	 * <p>
-	 * <b>
-	 * IMPORTANT NOTE: Do not use Iterator.remove() on an Iterator obtained from
-	 * the getChildren() of the PipelinedShapeModification it will not correctly 
-	 * maintain the state of the Set.
-	 * </b>
 	 * </p>
 	 * 
 	 * @param aRemoveModification
