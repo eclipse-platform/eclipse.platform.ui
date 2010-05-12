@@ -112,7 +112,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 
 	int result;
 	
-	// Linux implemantation
+	// Linux implementation
 
 	result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_INVALID_PATH;
 	return result;
