@@ -1285,7 +1285,8 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @deprecated it is no longer possible to override the workspace lock
 	 * behavior. This functionality is now provided in the platform API by
-	 * subclassing the {@link LockListener} class.
+	 * subclassing the {@link LockListener} class. This API will be deleted
+	 * in a future release. See bug 311240 for details.
 	 */
 	public void setWorkspaceLock(WorkspaceLock lock);
 
