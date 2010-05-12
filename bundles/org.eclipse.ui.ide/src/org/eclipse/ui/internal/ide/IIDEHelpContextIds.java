@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,6 +178,9 @@ public interface IIDEHelpContextIds {
 
     public static final String EDIT_RESOURCE_FILTER_PROPERTY_PAGE = PREFIX
     + "edit_resource_filter_property_page_context"; //$NON-NLS-1$
+    
+    public static final String EDIT_RESOURCE_FILTER_DIALOG = PREFIX
+    + "edit_resource_filter_dialog_context"; //$NON-NLS-1$
 
     public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX
             + "resource_info_property_page_context"; //$NON-NLS-1$

@@ -1,13 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -32,20 +31,21 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	private ResourceFilterGroup resourceFilterGroup;
 
 	/**
-	 * Creates a path variable selection dialog.
+	 * Creates a resource filter edit dialog.
 	 * 
 	 * @param parentShell
 	 *            the parent shell
 	 */
 	public ResourceFilterEditDialog(Shell parentShell) {
 		super(parentShell);
-		setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_title);
+		setTitle(IDEWorkbenchMessages.ResourceFilterEditDialog_title);
 		resourceFilterGroup = new ResourceFilterGroup();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/**
 	 * Set the container resource to be edited.
+	 * 
 	 * @param container
 	 */
 	public void setContainer(IContainer container) {
@@ -64,18 +64,22 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 * @see
+	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
+	 * .Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
+				IIDEHelpContextIds.EDIT_RESOURCE_FILTER_DIALOG);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
@@ -87,7 +91,9 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
@@ -113,14 +119,16 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	}
 
 	/**
-	 * @param filters the initial filters of the dialog
+	 * @param filters
+	 *            the initial filters of the dialog
 	 */
 	public void setFilters(UIResourceFilterDescription[] filters) {
 		resourceFilterGroup.setFilters(filters);
 	}
 
 	/**
-	 * @param filters the initial filters of the dialog
+	 * @param filters
+	 *            the initial filters of the dialog
 	 */
 	public void setFilters(IResourceFilterDescription[] filters) {
 		resourceFilterGroup.setFilters(filters);

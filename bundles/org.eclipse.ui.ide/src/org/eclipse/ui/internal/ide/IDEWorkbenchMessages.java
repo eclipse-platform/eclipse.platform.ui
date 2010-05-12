@@ -771,6 +771,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String PathVariablesBlock_nameColumn;
 	public static String PathVariablesBlock_valueColumn;
 
+	public static String ResourceFilterEditDialog_title;
+
 	public static String PathVariableSelectionDialog_title;
 	public static String PathVariableSelectionDialog_extendButton;
 	public static String PathVariableSelectionDialog_ExtensionDialog_title;
