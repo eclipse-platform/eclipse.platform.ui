@@ -11,10 +11,10 @@
 package org.eclipse.e4.core.di;
 
 import java.lang.annotation.Annotation;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Scope;
 import javax.inject.Singleton;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 /**
