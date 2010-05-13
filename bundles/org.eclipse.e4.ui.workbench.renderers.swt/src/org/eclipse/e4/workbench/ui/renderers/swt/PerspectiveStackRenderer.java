@@ -11,10 +11,10 @@
 
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;

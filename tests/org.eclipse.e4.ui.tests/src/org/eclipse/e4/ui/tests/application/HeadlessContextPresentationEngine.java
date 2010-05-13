@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.tests.application;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -162,11 +162,12 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 
 			String contextName = element.getClass().getInterfaces()[0]
-					.getName() + " eclipse context"; //$NON-NLS-1$
+					.getName()
+					+ " eclipse context"; //$NON-NLS-1$
 			final IEclipseContext parentContext = getParentContext(element);
 			final IEclipseContext createdContext = (parentContext != null) ? parentContext
-					.createChild(contextName) : EclipseContextFactory
-					.create(contextName);
+					.createChild(contextName)
+					: EclipseContextFactory.create(contextName);
 
 			populateModelInterfaces(mcontext, createdContext, element
 					.getClass().getInterfaces());

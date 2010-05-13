@@ -13,10 +13,9 @@ package org.eclipse.e4.demo.e4photo;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.InputStream;
-
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IContainer;
@@ -24,7 +23,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.util.JSONObject;

@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;

@@ -11,10 +11,10 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -623,8 +623,8 @@ public class StackRenderer extends LazyStackRenderer {
 			ImageData data = viewMenu.getImageData();
 			data.transparentPixel = data.getPixel(0, 0);
 
-			viewMenuImage = new Image(d, viewMenu.getImageData(),
-					viewMenuMask.getImageData());
+			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
+					.getImageData());
 			viewMenu.dispose();
 			viewMenuMask.dispose();
 		}

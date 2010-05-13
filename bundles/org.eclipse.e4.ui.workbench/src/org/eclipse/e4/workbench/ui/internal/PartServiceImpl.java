@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
@@ -24,8 +26,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -239,8 +239,8 @@ public class PartServiceImpl implements EPartService {
 		IEclipseContext oldContext = oldSelectedElement.getContext();
 		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
 		if (child == oldContext) {
-			parentContext.set(IContextConstants.ACTIVE_CHILD,
-					part == null ? null : part.getContext());
+			parentContext.set(IContextConstants.ACTIVE_CHILD, part == null ? null : part
+					.getContext());
 		}
 	}
 

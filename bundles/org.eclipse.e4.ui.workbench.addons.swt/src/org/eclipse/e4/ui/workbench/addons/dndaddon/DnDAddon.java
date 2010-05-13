@@ -11,9 +11,9 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -34,8 +34,7 @@ public class DnDAddon {
 
 	private EventHandler installHook = new EventHandler() {
 		public void handleEvent(Event event) {
-			MUIElement changedElement = (MUIElement) event
-					.getProperty(EventTags.ELEMENT);
+			MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 			if (!(changedElement instanceof MWindow))
 				return;
 
@@ -48,8 +47,7 @@ public class DnDAddon {
 
 	@PostConstruct
 	void hookListeners() {
-		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET);
+		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
 		eventBroker.subscribe(topic, null, installHook, false);
 	}
 

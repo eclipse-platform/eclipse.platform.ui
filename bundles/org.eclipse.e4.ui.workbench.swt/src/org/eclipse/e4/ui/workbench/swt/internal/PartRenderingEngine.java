@@ -11,6 +11,8 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
@@ -21,8 +23,6 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.annotations.PostConstruct;
-import org.eclipse.e4.core.di.annotations.PreDestroy;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -490,7 +490,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// set up the keybinding manager
 				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
 						.make(KeyBindingDispatcher.class, runContext);
-				runContext.set(KeyBindingDispatcher.class.getName(), dispatcher);
+				runContext
+						.set(KeyBindingDispatcher.class.getName(), dispatcher);
 				org.eclipse.swt.widgets.Listener listener = dispatcher
 						.getKeyDownFilter();
 				display.addFilter(SWT.KeyDown, listener);
