@@ -236,6 +236,12 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public void deactivateHandlers(Collection activations) {
 		Object[] array = activations.toArray();
+		// set all activations to not be participating first so that they ignore
+		// the upcoming context change events
+		for (int i = 0; i < array.length; i++) {
+			((HandlerActivation) array[i]).participating = false;
+		}
+
 		for (int i = 0; i < array.length; i++) {
 			deactivateHandler((IHandlerActivation) array[i]);
 		}
