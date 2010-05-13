@@ -255,38 +255,6 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC),
 				sizeHandler);
-
-		context.set(ISaveHandler.class.getName(), new ISaveHandler() {
-
-			public Save promptToSave(MPart dirtyPart) {
-				Shell shell = (Shell) context
-						.get(IServiceConstants.ACTIVE_SHELL);
-				Object[] elements = promptForSave(shell, Collections
-						.singleton(dirtyPart));
-				if (elements == null) {
-					return Save.CANCEL;
-				}
-				return elements.length == 0 ? Save.NO : Save.YES;
-			}
-
-			public Save[] promptToSave(Collection<MPart> dirtyParts) {
-				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
-				Shell shell = (Shell) context
-						.get(IServiceConstants.ACTIVE_SHELL);
-				Save[] response = new Save[dirtyParts.size()];
-				Object[] elements = promptForSave(shell, parts);
-				if (elements == null) {
-					Arrays.fill(response, Save.CANCEL);
-				} else {
-					Arrays.fill(response, Save.NO);
-					for (int i = 0; i < elements.length; i++) {
-						response[parts.indexOf(elements[i])] = Save.YES;
-					}
-				}
-				return response;
-			}
-
-		});
 	}
 
 	@PreDestroy
@@ -320,8 +288,8 @@ public class WBWRenderer extends SWTPartRenderer {
 					| SWT.RESIZE);
 		}
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(), wbwModel
-				.getWidth(), wbwModel.getHeight());
+		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(),
+				wbwModel.getWidth(), wbwModel.getHeight());
 
 		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
 		wbwShell.setLayout(tl);
@@ -346,6 +314,35 @@ public class WBWRenderer extends SWTPartRenderer {
 		localContext.set(IShellProvider.class.getName(), new IShellProvider() {
 			public Shell getShell() {
 				return wbwShell;
+			}
+		});
+		localContext.set(ISaveHandler.class, new ISaveHandler() {
+			public Save promptToSave(MPart dirtyPart) {
+				Shell shell = (Shell) context
+						.get(IServiceConstants.ACTIVE_SHELL);
+				Object[] elements = promptForSave(shell,
+						Collections.singleton(dirtyPart));
+				if (elements == null) {
+					return Save.CANCEL;
+				}
+				return elements.length == 0 ? Save.NO : Save.YES;
+			}
+
+			public Save[] promptToSave(Collection<MPart> dirtyParts) {
+				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
+				Shell shell = (Shell) context
+						.get(IServiceConstants.ACTIVE_SHELL);
+				Save[] response = new Save[dirtyParts.size()];
+				Object[] elements = promptForSave(shell, parts);
+				if (elements == null) {
+					Arrays.fill(response, Save.CANCEL);
+				} else {
+					Arrays.fill(response, Save.NO);
+					for (int i = 0; i < elements.length; i++) {
+						response[parts.indexOf(elements[i])] = Save.YES;
+					}
+				}
+				return response;
 			}
 		});
 
@@ -411,8 +408,8 @@ public class WBWRenderer extends SWTPartRenderer {
 							return;
 						}
 						app.setSelectedElement(w);
-						parentContext.set(IContextConstants.ACTIVE_CHILD, w
-								.getContext());
+						parentContext.set(IContextConstants.ACTIVE_CHILD,
+								w.getContext());
 					}
 				}
 			});

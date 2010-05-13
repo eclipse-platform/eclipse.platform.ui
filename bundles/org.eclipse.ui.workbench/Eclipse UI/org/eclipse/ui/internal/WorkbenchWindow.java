@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,10 +44,12 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -102,6 +105,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
@@ -352,6 +356,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
 			public boolean close(MWindow window) {
 				return WorkbenchWindow.this.close();
+			}
+		});
+
+		final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
+		windowContext.set(ISaveHandler.class, new ISaveHandler() {
+			public Save promptToSave(MPart dirtyPart) {
+				Object object = dirtyPart.getObject();
+				if (object instanceof CompatibilityEditor) {
+					IEditorPart editor = ((CompatibilityEditor) object).getEditor();
+					return SaveableHelper.savePart(editor, editor, WorkbenchWindow.this, true) ? Save.NO
+							: Save.CANCEL;
+				}
+				return defaultSaveHandler.promptToSave(dirtyPart);
+			}
+
+			public Save[] promptToSave(Collection<MPart> dirtyParts) {
+				return defaultSaveHandler.promptToSave(dirtyParts);
 			}
 		});
 
