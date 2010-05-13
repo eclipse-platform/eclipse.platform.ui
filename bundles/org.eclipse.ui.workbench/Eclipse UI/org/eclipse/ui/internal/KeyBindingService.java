@@ -219,12 +219,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 			 */
 			IHandlerService hs = (IHandlerService) ((KeyBindingService) activeService).workbenchPartSite
 					.getService(IHandlerService.class);
-			Iterator<Entry<IAction, IHandlerActivation>> i = ((KeyBindingService) activeService).actionToProxy
-					.entrySet().iterator();
-			while (i.hasNext()) {
-				Entry<IAction, IHandlerActivation> entry = i.next();
-				hs.deactivateHandler(entry.getValue());
-			}
+			hs.deactivateHandlers(((KeyBindingService) activeService).actionToProxy.values());
 		}
 
 		// Clear our reference to the active service.
