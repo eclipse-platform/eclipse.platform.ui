@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -402,7 +402,11 @@ public class File extends Resource implements IFile {
 		String name = path.segment(1);
 		// is this a project description file?
 		if (count == 2 && name.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-			((Project) getProject()).updateDescription();
+			Project project = (Project) getProject();
+			project.updateDescription();
+			// Discard stale project natures on ProjectInfo
+			ProjectInfo projectInfo = (ProjectInfo) project.getResourceInfo(false, true);
+			projectInfo.discardNatures();
 			return;
 		}
 		// check to see if we are in the .settings directory

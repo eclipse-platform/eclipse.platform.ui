@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.File;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.internal.resources.SimpleNature;
@@ -259,4 +264,85 @@ public class NatureTest extends ResourceTest {
 			manager.endRule(ws.getRoot());
 		}
 	}
+
+	public void testBug297871() {
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		Project project = (Project) ws.getRoot().getProject("Project");
+		ensureExistsInWorkspace(project, true);
+
+		java.io.File desc = null;
+		try {
+			IFileStore descStore = ((File) project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME)).getStore();
+			desc = descStore.toLocalFile(EFS.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0");
+		}
+
+		java.io.File descTmp = new java.io.File(desc.getPath() + ".tmp");
+		try {
+			copy(desc, descTmp);
+		} catch (IOException e) {
+			fail("2.0", e);
+		}
+
+		setNatures("valid ", project, new String[] {NATURE_EARTH}, false);
+
+		try {
+			assertNotNull(project.getNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		try {
+			assertTrue(project.hasNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+
+		try {
+			// Make sure enough time has past to bump file's
+			// timestamp during the copy  
+			Thread.currentThread().sleep(1000);
+		} catch (InterruptedException e) {
+			fail("5.0", e);
+		}
+
+		try {
+			copy(descTmp, desc);
+		} catch (IOException e) {
+			fail("6.0", e);
+		}
+
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+
+		try {
+			assertNull(project.getNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("8.0", e);
+		}
+
+		try {
+			assertFalse(project.hasNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("9.0", e);
+		}
+	}
+
+	private void copy(java.io.File src, java.io.File dst) throws IOException {
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+
+		byte[] buffer = new byte[1024];
+		int read;
+		while ((read = in.read(buffer)) > 0) {
+			out.write(buffer, 0, read);
+		}
+		in.close();
+		out.close();
+	}
+
 }
