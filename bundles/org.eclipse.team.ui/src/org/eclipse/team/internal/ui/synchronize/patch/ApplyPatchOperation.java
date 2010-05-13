@@ -162,13 +162,17 @@ public class ApplyPatchOperation implements Runnable {
 
 	private PatchWizard createPatchWizard(IStorage patch, IResource target,
 			CompareConfiguration configuration) {
-		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(
-				IPreferenceIds.APPLY_PATCH_IN_SYNCHRONIZE_VIEW))
+		if (isApplyPatchInSynchronizeView())
 			return new ApplyPatchSynchronizationWizard(patch, target,
 					configuration);
 		return new PatchWizard(patch, target, configuration);
 	}
 
+	protected boolean isApplyPatchInSynchronizeView() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(
+				IPreferenceIds.APPLY_PATCH_IN_SYNCHRONIZE_VIEW);
+	}
+	
 	/**
 	 * Return the parent shell to be used when the wizard is opened.
 	 * By default, the site of the part is used to get the shell.

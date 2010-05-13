@@ -541,6 +541,11 @@ public class TeamUIMessages extends NLS {
 	public static String CopyToClipboardAction_3;
 	public static String CopyToClipboardAction_4;
 
+	public static String PasteAction_1;
+	public static String PasteAction_2;
+	public static String PasteAction_3;
+	public static String PasteAction_4;
+
 	public static String FlatModelProvider_6;
 	public static String FlatModelProvider_7;
 	public static String FlatModelProvider_8;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,12 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -50,6 +52,13 @@ public class RefactorActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 		parentMenu.appendToGroup(groupId, copyAction);
+		// the paste action has been already created in the Sync view
+		IWorkbenchPart part = site.getPart();
+		if (part instanceof SynchronizeView) {
+			SynchronizeView sv = (SynchronizeView) part;
+			IAction pasteAction = sv.getPastePatchAction();
+			parentMenu.appendToGroup(groupId, pasteAction);
+		}
 		parentMenu.appendToGroup(groupId, deleteAction);
 		parentMenu.appendToGroup(groupId, moveAction);
 		parentMenu.appendToGroup(groupId, renameAction);

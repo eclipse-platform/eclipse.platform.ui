@@ -17,8 +17,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -89,8 +88,14 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	private RemoveSynchronizeParticipantAction fRemoveAllAction;
 	
 	private ToggleLinkingAction fToggleLinkingAction;
+
+	/**
+	 * Action to paste patch into the view, starting a new synchronization.
+	 */
+	private PasteAction fPastePatchAction;
 	private boolean fLinkingEnabled;
 	private OpenAndLinkWithEditorHelper fOpenAndLinkWithEditorHelper;
+
 
 	/**
 	 * Preference key to save
@@ -271,6 +276,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
 		// Pin action is hooked up to listeners, must call dispose to un-register.
 		fPinAction.dispose();
+		fPastePatchAction.dispose();
 		// Remember the last active participant
 		if(activeParticipantRef != null) {
 			rememberCurrentParticipant();
@@ -383,6 +389,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		fToggleLinkingAction = new ToggleLinkingAction(this);
 		fRemoveCurrentAction = new RemoveSynchronizeParticipantAction(this, false);
 		fRemoveAllAction = new RemoveSynchronizeParticipantAction(this, true);
+		fPastePatchAction = new PasteAction(this);
 		updateActionEnablements();
 	}
 
@@ -398,6 +405,10 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		}
 		if (fRemoveCurrentAction != null) {
 			fRemoveCurrentAction.setEnabled(getParticipant() != null);
+		}
+		if (fPastePatchAction != null) {
+			// The action is always enabled
+			fPastePatchAction.setEnabled(true); 
 		}
 	}
 
@@ -418,6 +429,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 
 		IHandlerService handlerService= (IHandlerService) this.getViewSite().getService(IHandlerService.class);
 		handlerService.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR, new ActionHandler(fToggleLinkingAction));
+		handlerService.activateHandler(ActionFactory.PASTE.getCommandId(), new ActionHandler(fPastePatchAction));
 	}
 
 	/* (non-Javadoc)
@@ -1062,5 +1074,9 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			 return showInput(input);
 		}
 		return false;
+	}
+
+	public IAction getPastePatchAction() {
+		return fPastePatchAction;
 	}
 }
