@@ -41,6 +41,45 @@ import org.eclipse.swt.widgets.Layout;
  * 
  */
 public class TrimmedPartLayout extends Layout {
+
+	/**
+	 * gutterBottom specifies the number of pixels of vertical margin that will
+	 * be placed between the bottom trim component and the bottom edge of the
+	 * client area. If there is no bottom trim component, the gutter serves as a
+	 * margin.
+	 * 
+	 * The default value is 0.
+	 */
+	public int gutterBottom = 0;
+
+	/**
+	 * gutterLeft specifies the number of pixels of horizontal margin that will
+	 * be placed between the left trim component and the left edge of the client
+	 * area. If there is no left trim component, the gutter serves as a margin.
+	 * 
+	 * The default value is 0.
+	 */
+	public int gutterLeft = 0;
+
+	/**
+	 * gutterTop specifies the number of pixels of vertical margin that will be
+	 * placed between the top trim component and the top edge of the client
+	 * area. If there is no top trim component, the gutter serves as a margin.
+	 * 
+	 * The default value is 0.
+	 */
+	public int gutterTop = 0;
+
+	/**
+	 * gutterRight specifies the number of pixels of horizontal margin that will
+	 * be placed between the right trim component and the right edge of the
+	 * client area. If there is no right trim component, the gutter serves as a
+	 * margin.
+	 * 
+	 * The default value is 0.
+	 */
+	public int gutterRight = 0;
+
 	public Composite top;
 	public Composite bottom;
 	public Composite left;
@@ -91,6 +130,9 @@ public class TrimmedPartLayout extends Layout {
 					top.setBounds(newBounds);
 				}
 			}
+			// Include the gutter whether there is a top area or not.
+			caRect.y += gutterTop;
+			caRect.height -= gutterTop;
 
 			// 'Bottom' spans the entire area
 			if (bottom != null) {
@@ -105,6 +147,7 @@ public class TrimmedPartLayout extends Layout {
 					bottom.setBounds(newBounds);
 				}
 			}
+			caRect.height -= gutterBottom;
 
 			// 'Left' spans between 'top' and 'bottom'
 			if (left != null) {
@@ -120,6 +163,8 @@ public class TrimmedPartLayout extends Layout {
 					left.setBounds(newBounds);
 				}
 			}
+			caRect.x += gutterLeft;
+			caRect.width -= gutterLeft;
 
 			// 'Right' spans between 'top' and 'bottom'
 			if (right != null) {
@@ -134,6 +179,7 @@ public class TrimmedPartLayout extends Layout {
 					right.setBounds(newBounds);
 				}
 			}
+			caRect.width -= gutterRight;
 
 			// Don't layout unless we've changed
 			if (!caRect.equals(clientArea.getBounds())) {

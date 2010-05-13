@@ -292,6 +292,12 @@ public class WBWRenderer extends SWTPartRenderer {
 				wbwModel.getWidth(), wbwModel.getHeight());
 
 		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
+		// TODO these values should come from CSS
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
+		tl.gutterTop = 12;
+		tl.gutterBottom = 2;
+		tl.gutterLeft = tl.gutterRight = 10;
+
 		wbwShell.setLayout(tl);
 		newWidget = wbwShell;
 		bindWidget(element, newWidget);
