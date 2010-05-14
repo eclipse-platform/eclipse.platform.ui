@@ -2,6 +2,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -27,7 +28,15 @@ class DragAndDropUtil {
 			return info;
 		}
 
-		info.curElement = getModelElement(curControl);
+		MUIElement curElement = getModelElement(curControl);
+		if (curElement instanceof MPlaceholder) {
+			info.curElement = ((MPlaceholder) curElement).getRef();
+			info.curElementRef = (MPlaceholder) curElement;
+		} else {
+			info.curElement = curElement;
+			info.curElementRef = null;
+		}
+
 		if (info.curElement instanceof MElementContainer<?>) {
 			Point cursorPos = display.getCursorLocation();
 			setItemElement(info, cursorPos);
@@ -47,32 +56,32 @@ class DragAndDropUtil {
 			cursorPos = display.map(null, ctf, cursorPos);
 			CTabItem curItem = ctf.getItem(cursorPos);
 			if (curItem != null) {
-				info.itemElement = (MUIElement) curItem
+				MUIElement itemElement = (MUIElement) curItem
 						.getData(AbstractPartRenderer.OWNING_ME);
-				CTabItem[] items = ctf.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (items[i] == curItem) {
-						info.itemIndex = i;
-						info.itemRect = curItem.getBounds();
-						info.itemRect = display.map(ctf, ctf.getShell(),
-								info.itemRect);
-					}
+				if (itemElement instanceof MPlaceholder) {
+					info.itemElement = ((MPlaceholder) itemElement).getRef();
+					info.itemElementRef = (MPlaceholder) itemElement;
+				} else {
+					info.itemElement = itemElement;
+					info.itemElementRef = null;
 				}
+
+				info.itemIndex = ctf.indexOf(curItem);
+				info.itemRect = curItem.getBounds();
+				info.itemRect = display.map(ctf, ctf.getShell(), info.itemRect);
 			}
 		} else if (ctrl instanceof ToolBar) {
 			ToolBar tb = (ToolBar) ctrl;
 			cursorPos = display.map(null, tb, cursorPos);
 			ToolItem curItem = tb.getItem(cursorPos);
 			if (curItem != null) {
-				info.itemElement = (MUIElement) curItem
-						.getData(AbstractPartRenderer.OWNING_ME);
+				info.itemElement = (MUIElement) curItem.getData(AbstractPartRenderer.OWNING_ME);
 				ToolItem[] items = tb.getItems();
 				for (int i = 0; i < items.length; i++) {
 					if (items[i] == curItem) {
 						info.itemIndex = i;
 						info.itemRect = curItem.getBounds();
-						info.itemRect = display.map(tb, tb.getShell(),
-								info.itemRect);
+						info.itemRect = display.map(tb, tb.getShell(), info.itemRect);
 					}
 				}
 			}
@@ -83,8 +92,7 @@ class DragAndDropUtil {
 		if (ctrl == null)
 			return null;
 
-		MUIElement element = (MUIElement) ctrl
-				.getData(AbstractPartRenderer.OWNING_ME);
+		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null)
 			return element;
 

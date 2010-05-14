@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -42,6 +43,9 @@ public class StackDropAgent extends DropAgent {
 	public boolean drop(MUIElement dragElement, CursorInfo info) {
 		MPartStack dropStack = (MPartStack) info.curElement;
 
+		if (dragElement.getCurSharedRef() != null)
+			dragElement = dragElement.getCurSharedRef();
+
 		if (dragElement.getParent() == info.curElement) {
 			CTabFolder ctf = (CTabFolder) dropStack.getWidget();
 			for (CTabItem cti : ctf.getItems()) {
@@ -57,11 +61,11 @@ public class StackDropAgent extends DropAgent {
 		}
 
 		if (info.itemIndex == -1) {
-			dropStack.getChildren().add((MPart) dragElement);
+			dropStack.getChildren().add((MStackElement) dragElement);
 		} else {
-			dropStack.getChildren().add(info.itemIndex, (MPart) dragElement);
+			dropStack.getChildren().add(info.itemIndex, (MStackElement) dragElement);
 		}
-		dropStack.setSelectedElement((MPart) dragElement);
+		dropStack.setSelectedElement((MStackElement) dragElement);
 
 		return true;
 	}
@@ -79,7 +83,8 @@ public class StackDropAgent extends DropAgent {
 		if (info.itemElement != null) {
 			if (info.curElement.getWidget() instanceof CTabFolder) {
 				for (CTabItem cti : ctf.getItems()) {
-					if (cti.getData(AbstractPartRenderer.OWNING_ME) == info.itemElement) {
+					if (cti.getData(AbstractPartRenderer.OWNING_ME) == info.itemElement
+							|| cti.getData(AbstractPartRenderer.OWNING_ME) == info.itemElementRef) {
 						Rectangle itemRect = cti.getBounds();
 						itemRect.width = 3;
 						return cti.getDisplay().map(cti.getParent(), null, itemRect);

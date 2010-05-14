@@ -1635,7 +1635,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private IEclipseContext getWindowContext(MPart part) {
-		MElementContainer<?> parent = part.getParent();
+		MElementContainer<?> parent = (MElementContainer<?>) ((EObject) part).eContainer();
 		while (!(parent instanceof MWindow)) {
 			parent = (MElementContainer<?>) ((EObject) parent).eContainer(); // parent.getParent();
 		}

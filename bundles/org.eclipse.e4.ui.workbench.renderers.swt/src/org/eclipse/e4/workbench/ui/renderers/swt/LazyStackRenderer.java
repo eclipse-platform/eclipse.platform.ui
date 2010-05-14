@@ -20,13 +20,15 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -187,12 +189,32 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MPlaceholder && element.getWidget() != null) {
 			MPlaceholder ph = (MPlaceholder) element;
 			MUIElement ref = ph.getRef();
-			phParentContext = getContext(ph);
+			ref.setCurSharedRef(ph);
+
+			phParentContext = getContext(ph.getParent());
 
 			Composite phComp = (Composite) ph.getWidget();
 			Control refCtrl = (Control) ph.getRef().getWidget();
 			refCtrl.setParent(phComp);
 			phComp.layout(new Control[] { refCtrl }, SWT.DEFER);
+
+			if (ref instanceof MPart
+					&& ph.getParent().getWidget() instanceof CTabFolder) {
+				// Reparent the existing Toolbar
+				MPart part = (MPart) ref;
+				CTabFolder ctf = (CTabFolder) ph.getParent().getWidget();
+				MToolBar tbModel = part.getToolbar();
+				if (tbModel != null && tbModel.getWidget() != null) {
+					ToolBar oldTB = (ToolBar) tbModel.getWidget();
+					if (oldTB.getParent() instanceof CTabFolder) {
+						CTabFolder oldCTF = (CTabFolder) oldTB.getParent();
+						if (oldCTF.getTopRight() == oldTB)
+							oldCTF.setTopRight(null);
+					}
+					oldTB.setParent(ctf);
+					ctf.setTopRight(oldTB);
+				}
+			}
 
 			element = ref;
 		}
@@ -236,88 +258,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			} else if (element instanceof MPerspective) {
 				for (MWindow w : ((MPerspective) element).getWindows()) {
 					showElementRecursive(w, becomingVisible, phParentContext);
-				}
-			}
-		}
-	}
-
-	public void swap(MPlaceholder placeholder) {
-		MUIElement element = placeholder.getRef();
-
-		MElementContainer<MUIElement> elementParent = element.getParent();
-		int elementIndex = elementParent.getChildren().indexOf(element);
-		MElementContainer<MUIElement> phParent = placeholder.getParent();
-		int phIndex = phParent.getChildren().indexOf(placeholder);
-
-		// Remove the two elements from their respective parents
-		elementParent.getChildren().remove(element);
-		phParent.getChildren().remove(placeholder);
-
-		// swap over the UIElement info
-		boolean onTop = element.isOnTop();
-		boolean vis = element.isVisible();
-		boolean tbr = element.isToBeRendered();
-		String cd = element.getContainerData();
-
-		element.setOnTop(placeholder.isOnTop());
-		element.setVisible(placeholder.isVisible());
-		element.setToBeRendered(placeholder.isToBeRendered());
-		element.setContainerData(placeholder.getContainerData());
-
-		placeholder.setOnTop(onTop);
-		placeholder.setVisible(vis);
-		placeholder.setToBeRendered(tbr);
-		placeholder.setContainerData(cd);
-
-		// Add the elements back into the new parents
-		elementParent.getChildren().add(elementIndex, placeholder);
-		phParent.getChildren().add(phIndex, element);
-
-		if (elementParent.getSelectedElement() == element)
-			elementParent.setSelectedElement(null);
-
-		if (phParent.getSelectedElement() == null)
-			phParent.setSelectedElement(element);
-
-		// directly manage the widget reparent if the parent exists
-		if (element.getWidget() instanceof Control) {
-			// Swap the control's layout data
-			// HACK!! for now use the placeholder's 'renderer' att to hold the
-			// value
-			Control c = (Control) element.getWidget();
-			Object phLayoutData = placeholder.getRenderer();
-			placeholder.setRenderer(c.getLayoutData());
-			c.setLayoutData(phLayoutData);
-
-			// If the new parent has already been rendered directly move the
-			// control
-			if (phParent.getWidget() instanceof Composite) {
-				AbstractPartRenderer renderer = (AbstractPartRenderer) phParent
-						.getRenderer();
-				Composite newParent = (Composite) renderer
-						.getUIContainer(element);
-				c.setParent(newParent);
-				Control[] changed = { c };
-
-				// Fix the Z-order
-				MUIElement prevElement = null;
-				for (MUIElement kid : phParent.getChildren()) {
-					if (kid == element) {
-						if (prevElement == null) {
-							c.moveAbove(null); // first one, on top
-						} else {
-							c.moveBelow((Control) prevElement.getWidget());
-						}
-					} else if (kid.getWidget() != null) {
-						prevElement = kid;
-					}
-				}
-				newParent.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
-				if (newParent instanceof CTabFolder) {
-					CTabFolder ctf = (CTabFolder) newParent;
-					if (ctf.getSelection() == null) {
-						ctf.setSelection(0);
-					}
 				}
 			}
 		}

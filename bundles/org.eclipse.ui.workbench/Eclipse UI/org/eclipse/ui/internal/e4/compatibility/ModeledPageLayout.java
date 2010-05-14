@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
@@ -140,24 +141,14 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneView(String viewId, boolean showTitle,
 			int relationship, float ratio, String refId) {
-		MPart viewModel = insertView(viewId, relationship, ratio, refId, true,
+		insertView(viewId, relationship, ratio, refId, true,
 				false);
-
-		// Set the state
-		if (viewModel != null) {
-			// viewModel.setShowTitle(showTitle);
-		}
 	}
 
 	public void addStandaloneViewPlaceholder(String viewId, int relationship,
 			float ratio, String refId, boolean showTitle) {
-		MPart viewModel = insertView(viewId, relationship, ratio, refId, false,
+		insertView(viewId, relationship, ratio, refId, false,
 				false);
-
-		// Set the state
-		if (viewModel != null) {
-			// viewModel.setShowTitle(showTitle);
-		}
 	}
 
 	public void addView(String viewId, int relationship, float ratio,
@@ -249,19 +240,21 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
-	public static MPart createViewModel(MApplication application, String id, boolean visible,
+	public static MStackElement createViewModel(MApplication application, String id,
+			boolean visible,
 			WorkbenchPage page, EPartService partService, boolean createReferences) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getElementId().equals(id)) {
-				MPart part = (MPart) partService.createPart(id);
-				part.setToBeRendered(visible);
+				MPlaceholder ph = partService.createSharedPart(id, page.getWindowModel());
+				ph.setToBeRendered(visible);
 				// there should only be view references for views that are
 				// visible to the end user, that is, the tab items are being
 				// drawn
 				if (visible && createReferences) {
+					MPart part = (MPart) (ph.getRef());
 					page.createViewReferenceForPart(part, id);
 				}
-				return part;
+				return ph;
 			}
 		}
 
@@ -277,14 +270,14 @@ public class ModeledPageLayout implements IPageLayout {
 		return newStack;
 	}
 
-	private MPart insertView(String viewId, int relationship, float ratio,
+	private MStackElement insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel instanceof MPart) {
 			refModel = refModel.getParent();
 		}
 
-		MPart viewModel = createViewModel(application, viewId, visible, page, partService,
+		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
 				createReferences);
 
 		if (withStack) {

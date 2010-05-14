@@ -432,7 +432,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         }
         
         if (legacyPart == null) {
-			if (restore) {
+			if (restore && part.getWidget() == null) {
 				// ask the renderer to create this part
 				IPresentationEngine engine = (IPresentationEngine) windowContext
 						.get(IPresentationEngine.SERVICE_NAME);

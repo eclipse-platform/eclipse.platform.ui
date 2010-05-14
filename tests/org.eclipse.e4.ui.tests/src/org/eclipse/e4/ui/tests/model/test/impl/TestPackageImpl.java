@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestPackageImpl.java,v 1.1.2.1 2010/04/16 12:24:24 tschindl Exp $
+ * $Id: TestPackageImpl.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -20,13 +20,11 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 /**
  * <!-- begin-user-doc --> An implementation of the model <b>Package</b>. <!--
  * end-user-doc -->
- * 
  * @generated
  */
 public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	private EClass testHarnessEClass = null;
@@ -52,7 +50,6 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	private static boolean isInited = false;
@@ -73,15 +70,10 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	 * @generated
 	 */
 	public static MTestPackage init() {
-		if (isInited)
-			return (MTestPackage) EPackage.Registry.INSTANCE
-					.getEPackage(MTestPackage.eNS_URI);
+		if (isInited) return (MTestPackage)EPackage.Registry.INSTANCE.getEPackage(MTestPackage.eNS_URI);
 
 		// Obtain or create and register package
-		TestPackageImpl theTestPackage = (TestPackageImpl) (EPackage.Registry.INSTANCE
-				.get(eNS_URI) instanceof TestPackageImpl ? EPackage.Registry.INSTANCE
-				.get(eNS_URI)
-				: new TestPackageImpl());
+		TestPackageImpl theTestPackage = (TestPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof TestPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new TestPackageImpl());
 
 		isInited = true;
 
@@ -97,6 +89,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		// Mark meta-data to indicate it can't be changed
 		theTestPackage.freeze();
 
+  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(MTestPackage.eNS_URI, theTestPackage);
 		return theTestPackage;
@@ -104,7 +97,6 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public EClass getTestHarness() {
@@ -113,30 +105,27 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public MTestFactory getTestFactory() {
-		return (MTestFactory) getEFactoryInstance();
+		return (MTestFactory)getEFactoryInstance();
 	}
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	private boolean isCreated = false;
 
 	/**
-	 * Creates the meta-model objects for the package. This method is guarded to
-	 * have no affect on any invocation but its first. <!-- begin-user-doc -->
+	 * Creates the meta-model objects for the package.  This method is
+	 * guarded to have no affect on any invocation but its first.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
-			return;
+		if (isCreated) return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -145,7 +134,6 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	private boolean isInitialized = false;
@@ -158,8 +146,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
-			return;
+		if (isInitialized) return;
 		isInitialized = true;
 
 		// Initialize package
@@ -168,20 +155,16 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
-				.getEPackage(ApplicationPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
-				.getEPackage(CommandsPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE
-				.getEPackage(UiPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 
 		// Create type parameters
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		EGenericType g1 = createEGenericType(theApplicationPackage
-				.getApplicationElement());
+		EGenericType g1 = createEGenericType(theApplicationPackage.getApplicationElement());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getCommand());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
@@ -203,8 +186,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness",
-				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

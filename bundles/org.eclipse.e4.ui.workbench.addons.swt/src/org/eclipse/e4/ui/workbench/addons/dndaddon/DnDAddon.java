@@ -34,7 +34,8 @@ public class DnDAddon {
 
 	private EventHandler installHook = new EventHandler() {
 		public void handleEvent(Event event) {
-			MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
+			MUIElement changedElement = (MUIElement) event
+					.getProperty(EventTags.ELEMENT);
 			if (!(changedElement instanceof MWindow))
 				return;
 
@@ -47,7 +48,8 @@ public class DnDAddon {
 
 	@PostConstruct
 	void hookListeners() {
-		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
+		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.WIDGET);
 		eventBroker.subscribe(topic, null, installHook, false);
 	}
 

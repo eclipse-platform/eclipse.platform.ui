@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
@@ -40,6 +41,8 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
+		if (dragElement.getCurSharedRef() != null)
+			dragElement = dragElement.getCurSharedRef();
 		if (info.curElement == dragElement) {
 			if (dragElement.getParent().getWidget() instanceof CTabFolder) {
 				CTabFolder ctf = (CTabFolder) dragElement.getParent().getWidget();
@@ -47,7 +50,7 @@ public class SplitDropAgent extends DropAgent {
 			}
 		}
 
-		if (dragElement instanceof MPart && info.curElement instanceof MPart)
+		if (dragElement instanceof MStackElement && info.curElement instanceof MStackElement)
 			return true;
 
 		return false;

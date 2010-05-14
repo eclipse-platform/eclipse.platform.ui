@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getContainerData <em>Container Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  * </ul>
  * </p>
  *
@@ -212,5 +214,30 @@ public interface MUIElement extends MApplicationElement {
 	 * @generated
 	 */
 	void setContainerData(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Cur Shared Ref</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Cur Shared Ref</em>' reference.
+	 * @see #setCurSharedRef(MPlaceholder)
+	 * @model transient="true"
+	 * @generated
+	 */
+	MPlaceholder getCurSharedRef();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getCurSharedRef <em>Cur Shared Ref</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Cur Shared Ref</em>' reference.
+	 * @see #getCurSharedRef()
+	 * @generated
+	 */
+	void setCurSharedRef(MPlaceholder value);
 
 } // MUIElement

@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -40,6 +41,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getContainerData <em>Container Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  * </ul>
  * </p>
  *
@@ -165,6 +167,16 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @ordered
 	 */
 	protected String containerData = CONTAINER_DATA_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getCurSharedRef() <em>Cur Shared Ref</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCurSharedRef()
+	 * @generated
+	 * @ordered
+	 */
+	protected MPlaceholder curSharedRef;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -358,6 +370,44 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MPlaceholder getCurSharedRef() {
+		if (curSharedRef != null && ((EObject)curSharedRef).eIsProxy()) {
+			InternalEObject oldCurSharedRef = (InternalEObject)curSharedRef;
+			curSharedRef = (MPlaceholder)eResolveProxy(oldCurSharedRef);
+			if (curSharedRef != oldCurSharedRef) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+			}
+		}
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MPlaceholder basicGetCurSharedRef() {
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCurSharedRef(MPlaceholder newCurSharedRef) {
+		MPlaceholder oldCurSharedRef = curSharedRef;
+		curSharedRef = newCurSharedRef;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -420,6 +470,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return getParent();
 			case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA:
 				return getContainerData();
+			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
+				if (resolve) return getCurSharedRef();
+				return basicGetCurSharedRef();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -454,6 +507,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA:
 				setContainerData((String)newValue);
 				return;
+			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -487,6 +543,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA:
 				setContainerData(CONTAINER_DATA_EDEFAULT);
 				return;
+			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -513,6 +572,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return getParent() != null;
 			case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA:
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
+			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
+				return curSharedRef != null;
 		}
 		return super.eIsSet(featureID);
 	}

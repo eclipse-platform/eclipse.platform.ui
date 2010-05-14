@@ -165,7 +165,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		this.part = part;
 		this.element = element;
 
-		MElementContainer<?> parent = model.getParent();
+		MElementContainer<?> parent = (MElementContainer<?>) ((EObject) model).eContainer();
 		while (!(parent instanceof MWindow)) {
 			parent = (MElementContainer<?>) ((EObject) parent).eContainer(); // parent.getParent();
 		}

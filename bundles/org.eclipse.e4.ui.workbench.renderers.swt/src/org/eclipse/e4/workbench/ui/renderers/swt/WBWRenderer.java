@@ -27,6 +27,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -113,7 +114,12 @@ public class WBWRenderer extends SWTPartRenderer {
 	void trackActivePart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		if (activePart != null) {
 			activePart.getTags().remove("active"); //$NON-NLS-1$
+
 			MUIElement parent = activePart.getParent();
+			if (parent == null && activePart.getCurSharedRef() != null) {
+				MPlaceholder ph = activePart.getCurSharedRef();
+				parent = ph.getParent();
+			}
 			if (parent instanceof MPartStack) {
 				parent.getTags().remove("active"); //$NON-NLS-1$
 				if (parent.getWidget() != null)
@@ -129,6 +135,10 @@ public class WBWRenderer extends SWTPartRenderer {
 		if (activePart != null) {
 			activePart.getTags().add("active"); //$NON-NLS-1$
 			MUIElement parent = activePart.getParent();
+			if (parent == null && activePart.getCurSharedRef() != null) {
+				MPlaceholder ph = activePart.getCurSharedRef();
+				parent = ph.getParent();
+			}
 			if (parent instanceof MPartStack) {
 				parent.getTags().add("active"); //$NON-NLS-1$
 				setCSSInfo(parent, parent.getWidget());

@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
@@ -78,6 +79,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getContainerData <em>Container Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
@@ -252,6 +254,16 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected String containerData = CONTAINER_DATA_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getCurSharedRef() <em>Cur Shared Ref</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCurSharedRef()
+	 * @generated
+	 * @ordered
+	 */
+	protected MPlaceholder curSharedRef;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -630,6 +642,44 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MPlaceholder getCurSharedRef() {
+		if (curSharedRef != null && ((EObject)curSharedRef).eIsProxy()) {
+			InternalEObject oldCurSharedRef = (InternalEObject)curSharedRef;
+			curSharedRef = (MPlaceholder)eResolveProxy(oldCurSharedRef);
+			if (curSharedRef != oldCurSharedRef) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicPackageImpl.PART__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+			}
+		}
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MPlaceholder basicGetCurSharedRef() {
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCurSharedRef(MPlaceholder newCurSharedRef) {
+		MPlaceholder oldCurSharedRef = curSharedRef;
+		curSharedRef = newCurSharedRef;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLabel() {
 		return label;
 	}
@@ -891,6 +941,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getParent();
 			case BasicPackageImpl.PART__CONTAINER_DATA:
 				return getContainerData();
+			case BasicPackageImpl.PART__CUR_SHARED_REF:
+				if (resolve) return getCurSharedRef();
+				return basicGetCurSharedRef();
 			case BasicPackageImpl.PART__LABEL:
 				return getLabel();
 			case BasicPackageImpl.PART__ICON_URI:
@@ -952,6 +1005,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__CONTAINER_DATA:
 				setContainerData((String)newValue);
+				return;
+			case BasicPackageImpl.PART__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)newValue);
 				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel((String)newValue);
@@ -1025,6 +1081,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case BasicPackageImpl.PART__CONTAINER_DATA:
 				setContainerData(CONTAINER_DATA_EDEFAULT);
 				return;
+			case BasicPackageImpl.PART__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)null);
+				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
@@ -1084,6 +1143,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getParent() != null;
 			case BasicPackageImpl.PART__CONTAINER_DATA:
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
+			case BasicPackageImpl.PART__CUR_SHARED_REF:
+				return curSharedRef != null;
 			case BasicPackageImpl.PART__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case BasicPackageImpl.PART__ICON_URI:
@@ -1130,6 +1191,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case BasicPackageImpl.PART__VISIBLE: return UiPackageImpl.UI_ELEMENT__VISIBLE;
 				case BasicPackageImpl.PART__PARENT: return UiPackageImpl.UI_ELEMENT__PARENT;
 				case BasicPackageImpl.PART__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
+				case BasicPackageImpl.PART__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 				default: return -1;
 			}
 		}
@@ -1201,6 +1263,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case UiPackageImpl.UI_ELEMENT__VISIBLE: return BasicPackageImpl.PART__VISIBLE;
 				case UiPackageImpl.UI_ELEMENT__PARENT: return BasicPackageImpl.PART__PARENT;
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return BasicPackageImpl.PART__CONTAINER_DATA;
+				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return BasicPackageImpl.PART__CUR_SHARED_REF;
 				default: return -1;
 			}
 		}

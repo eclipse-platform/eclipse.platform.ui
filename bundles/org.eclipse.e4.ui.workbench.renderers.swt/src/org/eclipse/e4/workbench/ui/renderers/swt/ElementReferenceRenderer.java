@@ -51,6 +51,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 	public Object createWidget(final MUIElement element, Object parent) {
 		MPlaceholder ph = (MPlaceholder) element;
 		final MUIElement ref = ph.getRef();
+		ref.setCurSharedRef(ph);
 
 		List<MPlaceholder> renderedRefs = renderedMap.get(ref);
 		if (renderedRefs == null) {
@@ -67,6 +68,10 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 			public void widgetDisposed(DisposeEvent e) {
 				List<MPlaceholder> refs = renderedMap.get(ref);
 				refs.remove(element);
+				if (refs.size() == 0) {
+					System.out.println("Last Ref closed"); //$NON-NLS-1$
+					// renderingEngine.removeGui(ref);
+				}
 			}
 		});
 

@@ -11,13 +11,16 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 class CursorInfo {
 	Point cursorPos;
 	MUIElement curElement;
+	MPlaceholder curElementRef;
 	MUIElement itemElement;
+	MPlaceholder itemElementRef;
 	int itemIndex;
 	Rectangle itemRect;
 }

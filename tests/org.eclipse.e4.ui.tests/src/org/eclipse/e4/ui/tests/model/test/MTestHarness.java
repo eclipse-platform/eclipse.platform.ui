@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestHarness.java,v 1.1.2.1 2010/04/16 12:24:24 tschindl Exp $
+ * $Id: MTestHarness.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 
@@ -20,8 +20,8 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 /**
  * <!-- begin-user-doc --> A representation of the model object '
  * <em><b>Harness</b></em>'. <!-- end-user-doc -->
- * 
- * 
+ *
+ *
  * @see org.eclipse.e4.ui.tests.model.test.MTestPackage#getTestHarness()
  * @model
  * @generated

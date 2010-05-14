@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -422,6 +423,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
+     * Allow access to the UI model that this page is managing
+     * @return the MWindow element for this page
+     */
+    public MWindow getWindowModel() {
+    	return window;
+    	
+    }
+    /**
      * Activates a part. The part will be brought to the front and given focus.
      * 
      * @param part
@@ -653,8 +662,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPart part = findPart(viewId, secondaryId);
 		if (part == null) {
-			part = partService.createPart(viewId);
-			if (part == null) {
+			MPlaceholder ph = partService.createSharedPart(viewId, window);
+			part = (MPart) ph.getRef();
+			part.setCurSharedRef(ph);
+
+			if (ph == null) {
 				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
 						viewId));
 			}

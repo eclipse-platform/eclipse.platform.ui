@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -49,7 +50,6 @@ import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -272,12 +272,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// "Before rendering Context should be null");
 			if (ctxt.getContext() == null) {
 				IEclipseContext parentContext = null;
-				if (element.getParent() == null) {
-					Object container = ((EObjectImpl) element).eContainer();
-					if (container instanceof MWindow)
-						parentContext = ((MWindow) container).getContext();
-				}
-				if (parentContext == null && element.getParent() != null) {
+				if (element.getCurSharedRef() != null) {
+					MPlaceholder ph = element.getCurSharedRef();
+					parentContext = getContext(ph.getParent());
+				} else if (parentContext == null && element.getParent() != null) {
 					parentContext = getContext(element.getParent());
 				}
 				if (parentContext == null)
@@ -300,44 +298,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 
 				E4Workbench.processHierarchy(element);
-			}
-		}
-
-		// Has this already been created? if so treat as a reparent
-		if (element.getWidget() != null) {
-			if (parent instanceof Composite
-					&& element.getWidget() instanceof Control) {
-				// Re-parent the control
-				final Composite p = (Composite) parent;
-				Control c = (Control) element.getWidget();
-				if (c.getParent() == parent)
-					return c;
-
-				c.setVisible(true);
-				c.setLayoutData(null);
-				c.setParent(p);
-				final Control[] changed = { c };
-
-				// Defer the layout in order to allow the rendering to finish
-				c.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if (p.isDisposed())
-							return;
-						p.layout(changed, SWT.CHANGED | SWT.DEFER);
-						p.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
-					}
-				});
-
-				// Re-parent the context
-				if (element instanceof MContext) {
-					IEclipseContext ec = ((MContext) element).getContext();
-					IEclipseContext pc = getContext(element.getParent());
-					ec.setParent(pc);
-				}
-
-				getRendererFor(element.getParent()).childRendered(
-						element.getParent(), element);
-				return c;
 			}
 		}
 
@@ -490,8 +450,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// set up the keybinding manager
 				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
 						.make(KeyBindingDispatcher.class, runContext);
-				runContext
-						.set(KeyBindingDispatcher.class.getName(), dispatcher);
+				runContext.set(KeyBindingDispatcher.class.getName(), dispatcher);
 				org.eclipse.swt.widgets.Listener listener = dispatcher
 						.getKeyDownFilter();
 				display.addFilter(SWT.KeyDown, listener);

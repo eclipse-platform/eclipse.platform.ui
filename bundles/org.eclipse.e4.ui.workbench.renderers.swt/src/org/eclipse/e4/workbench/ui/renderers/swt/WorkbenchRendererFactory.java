@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -34,6 +35,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private SashRenderer partSashRenderer;
 	private StackRenderer stackRenderer;
 	private TrimBarRenderer trimBarRenderer;
+	private ToolControlRenderer toolControlRenderer;
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
@@ -112,6 +114,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(trimBarRenderer);
 			}
 			return trimBarRenderer;
+		} else if (uiElement instanceof MToolControl) {
+			if (toolControlRenderer == null) {
+				toolControlRenderer = new ToolControlRenderer();
+				initRenderer(toolControlRenderer);
+			}
+			return toolControlRenderer;
 		} else if (uiElement instanceof MWindow) {
 			if (wbwRenderer == null) {
 				wbwRenderer = new WBWRenderer();

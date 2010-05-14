@@ -14,7 +14,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -419,10 +418,6 @@ public class StackRenderer extends LazyStackRenderer {
 				MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
 						: ((MPlaceholder) uiElement).getRef());
 
-				IEclipseContext partContext = part.getContext();
-				// a part may not have a context if it hasn't been rendered
-				IEclipseContext context = partContext == null ? StackRenderer.this.context
-						: partContext;
 				// Allow closes to be 'canceled'
 				EPartService partService = (EPartService) context
 						.get(EPartService.class.getName());
@@ -512,11 +507,21 @@ public class StackRenderer extends LazyStackRenderer {
 		if (viewMenu == null && !hasTB)
 			return null;
 
-		CTabFolder ctf = (CTabFolder) getParentWidget(part);
+		CTabFolder ctf = (CTabFolder) getParentWidget(uiElement);
 
 		ToolBar tb;
 		MToolBar tbModel = part.getToolbar();
 		if (tbModel != null) {
+			if (tbModel.getWidget() != null) {
+				ToolBar oldTB = (ToolBar) tbModel.getWidget();
+				if (oldTB.getParent() instanceof CTabFolder) {
+					CTabFolder oldCTF = (CTabFolder) oldTB.getParent();
+					if (oldCTF.getTopRight() == oldTB)
+						oldCTF.setTopRight(null);
+				}
+				oldTB.setParent(ctf);
+				return oldTB;
+			}
 			tb = (ToolBar) renderer.createGui(tbModel, ctf);
 		} else {
 			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
@@ -623,8 +628,8 @@ public class StackRenderer extends LazyStackRenderer {
 			ImageData data = viewMenu.getImageData();
 			data.transparentPixel = data.getPixel(0, 0);
 
-			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
-					.getImageData());
+			viewMenuImage = new Image(d, viewMenu.getImageData(),
+					viewMenuMask.getImageData());
 			viewMenu.dispose();
 			viewMenuMask.dispose();
 		}

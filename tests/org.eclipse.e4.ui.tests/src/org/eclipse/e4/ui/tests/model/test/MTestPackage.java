@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestPackage.java,v 1.1.2.1 2010/04/16 12:24:24 tschindl Exp $
+ * $Id: MTestPackage.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 
@@ -20,47 +20,43 @@ import org.eclipse.emf.ecore.EPackage;
  * <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * 
  * @see org.eclipse.e4.ui.tests.model.test.MTestFactory
  * @model kind="package"
  * @generated
  */
 public interface MTestPackage extends EPackage {
 	/**
-	 * The package name. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The package name.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
 	String eNAME = "test";
 
 	/**
-	 * The package namespace URI. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The package namespace URI.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
 	String eNS_URI = "http://www.eclipse.org/ui/2010/Test/UIModel/test";
 
 	/**
-	 * The package namespace name. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The package namespace name.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
 	String eNS_PREFIX = "test";
 
 	/**
-	 * The singleton instance of the package. <!-- begin-user-doc --> <!--
+	 * The singleton instance of the package.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
-	MTestPackage eINSTANCE = org.eclipse.e4.ui.tests.model.test.impl.TestPackageImpl
-			.init();
+	MTestPackage eINSTANCE = org.eclipse.e4.ui.tests.model.test.impl.TestPackageImpl.init();
 
 	/**
-	 * The meta object id for the '
-	 * {@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl
-	 * <em>Harness</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The meta object id for the '{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl <em>Harness</em>}' class.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl
 	 * @see org.eclipse.e4.ui.tests.model.test.impl.TestPackageImpl#getTestHarness()
 	 * @generated
@@ -104,9 +100,8 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference
-	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
@@ -230,13 +225,21 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__CONTAINER_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference
-	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CHILDREN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+	int TEST_HARNESS__CUR_SHARED_REF = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__CHILDREN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference. <!--
@@ -245,7 +248,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SELECTED_ELEMENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 17;
+	int TEST_HARNESS__SELECTED_ELEMENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute. <!--
@@ -254,7 +257,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+	int TEST_HARNESS__NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!--
@@ -263,7 +266,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VALUE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+	int TEST_HARNESS__VALUE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 20;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute. <!--
@@ -272,7 +275,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__INPUT_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+	int TEST_HARNESS__INPUT_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 21;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute. <!--
@@ -281,7 +284,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+	int TEST_HARNESS__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 22;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
@@ -290,7 +293,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+	int TEST_HARNESS__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 23;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
@@ -299,7 +302,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+	int TEST_HARNESS__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 24;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute. <!--
@@ -308,7 +311,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 24;
+	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
 	 * The number of structural features of the '<em>Harness</em>' class. <!--
@@ -317,13 +320,11 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 25;
+	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 26;
 
 	/**
-	 * Returns the meta object for class '
-	 * {@link org.eclipse.e4.ui.tests.model.test.MTestHarness <em>Harness</em>}
-	 * '. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.tests.model.test.MTestHarness <em>Harness</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Harness</em>'.
 	 * @see org.eclipse.e4.ui.tests.model.test.MTestHarness
 	 * @generated
@@ -349,7 +350,6 @@ public interface MTestPackage extends EPackage {
 	 * <li>and each data type</li>
 	 * </ul>
 	 * <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	interface Literals {

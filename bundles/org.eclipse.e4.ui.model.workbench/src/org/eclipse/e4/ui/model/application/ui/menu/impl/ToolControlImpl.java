@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.impl.ContributionImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -47,6 +48,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getContainerData <em>Container Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  * </ul>
  * </p>
  *
@@ -172,6 +174,16 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 	 * @ordered
 	 */
 	protected String containerData = CONTAINER_DATA_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getCurSharedRef() <em>Cur Shared Ref</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCurSharedRef()
+	 * @generated
+	 * @ordered
+	 */
+	protected MPlaceholder curSharedRef;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -365,6 +377,44 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MPlaceholder getCurSharedRef() {
+		if (curSharedRef != null && ((EObject)curSharedRef).eIsProxy()) {
+			InternalEObject oldCurSharedRef = (InternalEObject)curSharedRef;
+			curSharedRef = (MPlaceholder)eResolveProxy(oldCurSharedRef);
+			if (curSharedRef != oldCurSharedRef) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+			}
+		}
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MPlaceholder basicGetCurSharedRef() {
+		return curSharedRef;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCurSharedRef(MPlaceholder newCurSharedRef) {
+		MPlaceholder oldCurSharedRef = curSharedRef;
+		curSharedRef = newCurSharedRef;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF, oldCurSharedRef, curSharedRef));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -427,6 +477,9 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				return getParent();
 			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
 				return getContainerData();
+			case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF:
+				if (resolve) return getCurSharedRef();
+				return basicGetCurSharedRef();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -461,6 +514,9 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
 				setContainerData((String)newValue);
 				return;
+			case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -494,6 +550,9 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
 				setContainerData(CONTAINER_DATA_EDEFAULT);
 				return;
+			case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF:
+				setCurSharedRef((MPlaceholder)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -520,6 +579,8 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				return getParent() != null;
 			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
+			case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF:
+				return curSharedRef != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -540,6 +601,7 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				case MenuPackageImpl.TOOL_CONTROL__VISIBLE: return UiPackageImpl.UI_ELEMENT__VISIBLE;
 				case MenuPackageImpl.TOOL_CONTROL__PARENT: return UiPackageImpl.UI_ELEMENT__PARENT;
 				case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
+				case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 				default: return -1;
 			}
 		}
@@ -572,6 +634,7 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				case UiPackageImpl.UI_ELEMENT__VISIBLE: return MenuPackageImpl.TOOL_CONTROL__VISIBLE;
 				case UiPackageImpl.UI_ELEMENT__PARENT: return MenuPackageImpl.TOOL_CONTROL__PARENT;
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA;
+				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF;
 				default: return -1;
 			}
 		}
