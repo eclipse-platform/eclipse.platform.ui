@@ -14,6 +14,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -418,6 +419,10 @@ public class StackRenderer extends LazyStackRenderer {
 				MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
 						: ((MPlaceholder) uiElement).getRef());
 
+				IEclipseContext partContext = part.getContext();
+				// a part may not have a context if it hasn't been rendered
+				IEclipseContext context = partContext == null ? StackRenderer.this.context
+						: partContext;
 				// Allow closes to be 'canceled'
 				EPartService partService = (EPartService) context
 						.get(EPartService.class.getName());
