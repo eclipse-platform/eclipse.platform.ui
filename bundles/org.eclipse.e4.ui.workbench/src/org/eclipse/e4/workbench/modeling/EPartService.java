@@ -12,8 +12,10 @@ package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**
  * The part service provides clients with the functionalities of showing and hiding parts. Part
@@ -147,6 +149,18 @@ public interface EPartService {
 	 *         that match the specified id
 	 */
 	public MPart createPart(String id);
+
+	/**
+	 * Creates a new part of the given id.
+	 * 
+	 * @param id
+	 *            the identifier of the part, must not be <code>null</code>
+	 * @param sharedWindow
+	 *            the window under which a shared part reference will be created
+	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
+	 *         that match the specified id
+	 */
+	public MPlaceholder createSharedPart(String id, MWindow sharedWindow);
 
 	/**
 	 * Shows a part with the identified by the given id. In the event that there are multiple parts

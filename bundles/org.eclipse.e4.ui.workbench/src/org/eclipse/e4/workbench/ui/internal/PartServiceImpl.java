@@ -34,6 +34,8 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -58,7 +60,13 @@ public class PartServiceImpl implements EPartService {
 			// no need to do anything if we have no listeners
 			if (!listeners.isEmpty()) {
 				Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
+				if (oldSelected instanceof MPlaceholder) {
+					oldSelected = ((MPlaceholder) oldSelected).getRef();
+				}
 				Object selected = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (selected instanceof MPlaceholder) {
+					selected = ((MPlaceholder) selected).getRef();
+				}
 
 				MPart oldSelectedPart = oldSelected instanceof MPart ? (MPart) oldSelected : null;
 				MPart selectedPart = selected instanceof MPart ? (MPart) selected : null;
@@ -239,13 +247,16 @@ public class PartServiceImpl implements EPartService {
 		IEclipseContext oldContext = oldSelectedElement.getContext();
 		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
 		if (child == oldContext) {
-			parentContext.set(IContextConstants.ACTIVE_CHILD, part == null ? null : part
-					.getContext());
+			parentContext.set(IContextConstants.ACTIVE_CHILD,
+					part == null ? null : part.getContext());
 		}
 	}
 
 	public MPart findPart(String id) {
 		MApplicationElement element = modelService.find(id, rootContainer);
+		if (element instanceof MPlaceholder) {
+			element = ((MPlaceholder) element).getRef();
+		}
 		return element instanceof MPart ? (MPart) element : null;
 	}
 
@@ -294,7 +305,10 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
-		if (part == activePart || !isInContainer(part)) {
+		if (part == activePart)
+			return;
+
+		if (!isInContainer(part)) {
 			return;
 		}
 
@@ -371,6 +385,30 @@ public class PartServiceImpl implements EPartService {
 		return createPart(descriptor);
 	}
 
+	public MPlaceholder createSharedPart(String id, MWindow sharedWindow) {
+		// Do we already have the part to share?
+		MPart sharedPart = null;
+		for (MUIElement element : sharedWindow.getSharedElements()) {
+			if (element.getElementId().equals(id)) {
+				sharedPart = (MPart) element;
+				break;
+			}
+		}
+
+		if (sharedPart == null) {
+			MPartDescriptor descriptor = findDescriptor(id);
+			sharedPart = createPart(descriptor);
+			sharedWindow.getSharedElements().add(sharedPart);
+		}
+
+		// Create and return a reference to the shared part
+		MPlaceholder sharedPartRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		sharedPartRef.setElementId(sharedPart.getElementId());
+		sharedPartRef.setRef(sharedPart);
+
+		return sharedPartRef;
+	}
+
 	private MPart addPart(MPart providedPart, MPart localPart) {
 		if (providedPart == localPart && isInContainer(providedPart)) {
 			return providedPart;
@@ -380,7 +418,11 @@ public class PartServiceImpl implements EPartService {
 		if (descriptor == null) {
 			if (providedPart != localPart) {
 				MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
-				stack.getChildren().add(providedPart);
+				if (providedPart.getCurSharedRef() instanceof MPlaceholder) {
+					stack.getChildren().add(providedPart.getCurSharedRef());
+				} else {
+					stack.getChildren().add(providedPart);
+				}
 				rootContainer.getChildren().add(stack);
 			}
 		} else {
@@ -398,7 +440,14 @@ public class PartServiceImpl implements EPartService {
 					addToLastContainer(category, providedPart);
 				} else {
 					Object element = elements.get(0);
-					if (element instanceof MElementContainer<?>) {
+					if (element instanceof MPartStack) {
+						MPartStack stack = (MPartStack) element;
+						if (providedPart.getCurSharedRef() instanceof MPlaceholder) {
+							stack.getChildren().add(providedPart.getCurSharedRef());
+						} else {
+							stack.getChildren().add(providedPart);
+						}
+					} else if (element instanceof MElementContainer<?>) {
 						((MElementContainer<MPart>) element).getChildren().add(providedPart);
 					} else {
 						addToLastContainer(category, providedPart);
@@ -411,7 +460,17 @@ public class PartServiceImpl implements EPartService {
 
 	private void addToLastContainer(String category, MPart part) {
 		MElementContainer<?> lastContainer = getLastContainer();
-		((List) lastContainer.getChildren()).add(part);
+		if (lastContainer instanceof MPartStack) {
+			MPartStack stack = (MPartStack) lastContainer;
+			if (part.getCurSharedRef() instanceof MPlaceholder) {
+				stack.getChildren().add(part.getCurSharedRef());
+			} else {
+				stack.getChildren().add(part);
+			}
+		} else {
+			((List) lastContainer.getChildren()).add(part);
+		}
+
 		if (category != null) {
 			lastContainer.getTags().add(category);
 		}
