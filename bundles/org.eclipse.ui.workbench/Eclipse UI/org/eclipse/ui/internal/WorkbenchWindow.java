@@ -409,7 +409,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
 
-		createProgressIndicator((Shell) model.getWidget());
+		Shell shell = (Shell) model.getWidget();
+		createProgressIndicator(shell);
+		createHeapStatus(shell);
 	}
 
 	public static String getId(IConfigurationElement element) {
