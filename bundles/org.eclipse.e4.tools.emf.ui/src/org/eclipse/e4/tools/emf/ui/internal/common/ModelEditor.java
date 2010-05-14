@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -78,8 +77,6 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
@@ -279,10 +276,10 @@ public class ModelEditor {
 		}
 	}
 	
-	@Inject
-	public void updateSelection(@Optional @Named(IServiceConstants.SELECTION) Object selection ) {
-		System.err.println("The selection: " + selection);
-	}
+//	@Inject
+//	public void updateSelection(@Optional @Named(IServiceConstants.SELECTION) Object selection ) {
+//		System.err.println("The selection: " + selection);
+//	}
 	
 	private TreeViewer createTreeViewerArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
