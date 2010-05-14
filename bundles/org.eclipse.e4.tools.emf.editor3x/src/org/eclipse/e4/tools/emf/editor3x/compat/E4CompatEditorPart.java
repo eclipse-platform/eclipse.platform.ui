@@ -8,6 +8,7 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.tools.emf.editor3x.E4WorkbenchModelEditor;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -18,6 +19,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.osgi.framework.Bundle;
@@ -54,15 +58,21 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 		setInput(input);
 		
 		IEclipseContext parentContext = (IEclipseContext) getSite().getService(IEclipseContext.class);
-		context = parentContext.createChild("EditPart('"+getPartName()+"')"); //$NON-NLS-1$
+		
+//		System.err.println("The context" + parentContext);
+		
+		// We are in e4 Compat-Mode
+		if( parentContext.get("org.eclipse.e4.workbench.ui.IPresentationEngine") != null ) {
+			MPart p = (MPart) getSite().getService(MPart.class);
+			context = p.getContext();
+		} else {
+			context = parentContext.createChild("EditPart('"+getPartName()+"')"); //$NON-NLS-1$	
+		}
+		
 		context.declareModifiable(IEditorInput.class);
 		context.declareModifiable(EditorPart.class);
 		context.set(EditorPart.class,this);
 		context.set(IEditorInput.class, input);
-		
-		ISelectionProvider s = new SelectionProviderImpl();
-		context.set(ISelectionProvider.class, s);
-		site.setSelectionProvider(s);
 	}
 
 	@Override
@@ -84,6 +94,11 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 
 	@Override
 	public void createPartControl(Composite parent) {
+		ISelectionProvider s = new SelectionProviderImpl();
+		context.set(ISelectionProvider.class, s);
+		getSite().setSelectionProvider(s);
+
+		
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
@@ -140,10 +155,12 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 		}
 		
 		public ISelection getSelection() {
+			System.err.println("Selection: " + currentSelection);
 			return currentSelection;
 		}
 		
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			System.err.println("Adding listener: " + listener);
 			listeners.add(listener);
 		}
 	}

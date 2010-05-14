@@ -6,8 +6,6 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.modeling.ESelectionService;
-import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,10 +38,9 @@ public class IEclipseContextServiceFactory extends AbstractServiceFactory {
 		final IWorkbenchWindow window = wls.getWorkbenchWindow();
 		final IWorkbenchPartSite site = wls.getPartSite();
 
-		System.err.println("The locator: " + locator);
-		System.err.println("	Window: " + window);
-		System.err.println("	Site: " + site);
-		
+//		System.err.println("The locator: " + locator);
+//		System.err.println("	Window: " + window);
+//		System.err.println("	Site: " + site);
 		
 		Object o = parentLocator.getService(serviceInterface);
 		
