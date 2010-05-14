@@ -1,5 +1,6 @@
 package org.eclipse.e4.tools.emf.editor3x.compat;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
@@ -19,6 +20,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -71,8 +73,15 @@ public class E4CompatEditorPart extends EditorPart implements IExecutableExtensi
 		
 		context.declareModifiable(IEditorInput.class);
 		context.declareModifiable(EditorPart.class);
+		
 		context.set(EditorPart.class,this);
 		context.set(IEditorInput.class, input);
+		
+		if( input instanceof IFileEditorInput ) {
+			IFileEditorInput fInput = (IFileEditorInput)getEditorInput();
+			context.set(IProject.class, fInput.getFile().getProject());
+		}
+		
 	}
 
 	@Override
