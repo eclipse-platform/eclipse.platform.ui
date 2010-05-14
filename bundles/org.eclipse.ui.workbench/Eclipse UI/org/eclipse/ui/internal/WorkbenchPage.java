@@ -1928,23 +1928,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return saveAllEditors(confirm, false);
     }
 
-	public boolean saveAllEditors(boolean confirm, boolean closing) {
-		for (IEditorReference editorReference : getEditorReferences()) {
-			// save all restored editors
-			IEditorPart editor = editorReference.getEditor(false);
-			if (editor != null) {
-				if (!saveSaveable(editor, confirm, closing)) {
-					return false;
+	private boolean saveAllEditors(boolean confirm, boolean closing) {
+		if (closing) {
+			for (IEditorReference editorReference : getEditorReferences()) {
+				// save all restored editors
+				IEditorPart editor = editorReference.getEditor(false);
+				if (editor != null) {
+					if (!saveSaveable(editor, confirm, closing)) {
+						return false;
+					}
 				}
 			}
-		}
 
-		for (IViewReference viewReference : viewReferences) {
-			// save all restored views
-			IWorkbenchPart part = viewReference.getPart(false);
-			if (part instanceof ISaveablePart) {
-				if (!saveSaveable((ISaveablePart) part, confirm, closing)) {
-					return false;
+			for (IViewReference viewReference : viewReferences) {
+				// save all restored views
+				IWorkbenchPart part = viewReference.getPart(false);
+				if (part instanceof ISaveablePart) {
+					if (!saveSaveable((ISaveablePart) part, confirm, closing)) {
+						return false;
+					}
 				}
 			}
 		}

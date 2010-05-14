@@ -129,11 +129,11 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
             // action has been disposed
             return;
         }
-        WorkbenchPage page = (WorkbenchPage) getActivePage();
+		IWorkbenchPage page = getActivePage();
         if (page != null) {
-        	// The second parameter is true to also save saveables from non-part
-			// sources, see bug 139004.
-            page.saveAllEditors(false, true);
+			// FIXME: need to also save saveables from non-part sources, see bug
+			// 139004.
+			page.saveAllEditors(false);
             updateState();
         }
     }
