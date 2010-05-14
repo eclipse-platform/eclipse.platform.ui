@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -327,6 +327,15 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
 		String commandId = action.getActionDefinitionId();
 		if (commandId != null) {
+			for (IAction registeredAction : actionToProxy.keySet()) {
+				// we also need to unregister any other action that may have
+				// been registered with the same definition id
+				if (commandId.equals(registeredAction.getActionDefinitionId())) {
+					unregisterAction(registeredAction);
+					break;
+				}
+			}
+
 			IHandlerService hs = (IHandlerService) workbenchPartSite
 					.getService(IHandlerService.class);
 			actionToProxy.put(action, hs.activateHandler(commandId, new ActionHandler(action)));
