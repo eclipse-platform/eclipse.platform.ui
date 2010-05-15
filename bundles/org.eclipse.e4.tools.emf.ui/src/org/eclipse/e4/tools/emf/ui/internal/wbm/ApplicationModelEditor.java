@@ -13,6 +13,7 @@ package org.eclipse.e4.tools.emf.ui.internal.wbm;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
@@ -20,8 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ApplicationModelEditor extends ModelEditor {
 	@Inject
-	public ApplicationModelEditor(Composite composite,
+	public ApplicationModelEditor(Composite composite, IEclipseContext context,
 			@Optional IModelResource modelProvider, @Optional IProject project) {
-		super(composite, modelProvider, project);
+		super(composite, context, modelProvider, project);
 	}
 }

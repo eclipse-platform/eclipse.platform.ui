@@ -28,8 +28,17 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -81,6 +90,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -133,14 +143,16 @@ public class ModelEditor {
 	private IModelResource modelProvider;
 	private IProject project;
 	private ISelectionProviderService selectionService;
+	private IEclipseContext context;
 
-	public ModelEditor(Composite composite, IModelResource modelProvider, IProject project) {
+	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
+		this.context = context;
 		
 		registerDefaultEditors();
 		registerVirtualEditors();
-		
+		registerContributedEditors();
 		
 		
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
@@ -352,6 +364,24 @@ public class ModelEditor {
 
 	public void setSelection(Object element) {
 		viewer.setSelection(new StructuredSelection(element));
+	}
+	
+	private void registerContributedEditors() {
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		
+		for( IConfigurationElement el : extPoint.getConfigurationElements() ) {
+			try {
+				IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
+				EClass eClass = desc.getEClass();
+				IContributionFactory fact = context.get(IContributionFactory.class);
+				AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("platform:/plugin/"+el.getContributor().getName()+"/"+desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
+				registerEditor(eClass, editor);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void registerDefaultEditors() {

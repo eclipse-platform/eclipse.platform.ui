@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="org.eclipse.e4.tools.emf.ui.editors" name="Editors" schema="schema/org.eclipse.e4.tools.emf.ui.editors.exsd"/>
    <extension
          point="org.eclipse.e4.ui.css.swt.theme">
       <stylesheet
