@@ -34,5 +34,6 @@ Export-Package: org.eclipse.e4.tools.emf.ui.common,
  org.eclipse.e4.tools.emf.ui.internal;x-internal:=true,
  org.eclipse.e4.tools.emf.ui.internal.common;x-internal:=true,
  org.eclipse.e4.tools.emf.ui.internal.common.component;x-internal:=true,
+ org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;x-internal:=true,
  org.eclipse.e4.tools.emf.ui.internal.wbm;x-friends:="org.eclipse.e4.tools.emf.editor"
 Service-Component: OSGI-INF/contributioncollector.xml

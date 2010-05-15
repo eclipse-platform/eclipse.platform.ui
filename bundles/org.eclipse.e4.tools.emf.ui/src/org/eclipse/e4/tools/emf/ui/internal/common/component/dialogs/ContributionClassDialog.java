@@ -18,9 +18,9 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
-import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -53,15 +53,17 @@ import org.osgi.framework.ServiceReference;
 public class ContributionClassDialog extends TitleAreaDialog {
 	private IProject project;
 	private Image javaClassImage;
-	private MContribution contribution;
+	private MApplicationElement contribution;
 	private EditingDomain editingDomain;
 	private TableViewer viewer;
+	private EStructuralFeature feature;
 	
-	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MContribution contribution) {
+	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature) {
 		super(parentShell);
 		this.project = project;	
 		this.contribution = contribution;
 		this.editingDomain = editingDomain;
+		this.feature = feature;
 	}
 
 	@Override
@@ -156,7 +158,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		if( ! s.isEmpty() ) {
 			ContributionData cd = (ContributionData) s.getFirstElement();
 			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
-			Command cmd = SetCommand.create(editingDomain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, uri);
+			Command cmd = SetCommand.create(editingDomain, contribution, feature, uri);
 			if( cmd.canExecute() ) {
 				editingDomain.getCommandStack().execute(cmd);
 				super.okPressed();
