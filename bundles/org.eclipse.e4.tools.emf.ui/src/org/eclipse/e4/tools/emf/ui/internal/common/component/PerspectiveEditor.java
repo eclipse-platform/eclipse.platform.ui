@@ -191,7 +191,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PerspectiveEditor_Label);
+			l.setText(Messages.PerspectiveEditor_LabelLabel);
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);

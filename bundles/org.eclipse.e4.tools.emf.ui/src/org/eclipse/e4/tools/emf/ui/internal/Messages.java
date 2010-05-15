@@ -244,6 +244,7 @@ public class Messages {
 	public static String PerspectiveEditor_Label;
 	public static String PerspectiveEditor_Description;
 	public static String PerspectiveEditor_Id;
+	public static String PerspectiveEditor_LabelLabel;	
 	public static String PerspectiveEditor_SelectedElement;
 	public static String PerspectiveEditor_Tooltip;
 	public static String PerspectiveEditor_IconURI;
@@ -303,7 +304,9 @@ public class Messages {
 	public static String ContributionClassDialog_DialogMessage;
 	public static String ContributionClassDialog_DialogTitle;
 	public static String ContributionClassDialog_Label_Classname;
-	public static String ContributionClassDialog_ShellTitle;	
+	public static String ContributionClassDialog_ShellTitle;
+
+	
 	
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
