@@ -98,7 +98,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Commands");
+			l.setText("Descriptors");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			viewer = new TableViewer(parent);

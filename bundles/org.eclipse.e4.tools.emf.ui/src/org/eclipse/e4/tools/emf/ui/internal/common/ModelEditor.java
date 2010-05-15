@@ -30,7 +30,6 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -90,7 +89,6 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -122,15 +120,15 @@ public class ModelEditor {
 	public static final String VIRTUAL_PART = ModelEditor.class.getName() + ".VIRTUAL_PART"; //$NON-NLS-1$
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
-	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_COMMANDS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_COMP_BINDINGS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
 	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
-	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
+	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String,AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
@@ -152,8 +150,9 @@ public class ModelEditor {
 		
 		registerDefaultEditors();
 		registerVirtualEditors();
-		registerContributedEditors();
 		
+		registerContributedEditors();
+		registerContributedVirtualEditors();
 		
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -346,22 +345,42 @@ public class ModelEditor {
 
 		return viewer;
 	}
-
-	private void registerVirtualEditors() {
-		virtualEditors.put(VIRTUAL_PART_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, BasicPackageImpl.Literals.PART__MENUS));
-		virtualEditors.put(VIRTUAL_HANDLER, new VHandlerEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_BINDING_TABLE,new VBindingTableEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_COMMAND,new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS));
-		virtualEditors.put(VIRTUAL_WINDOWS, new VWindowEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_WINDOW_CONTROLS, new VWindowControlEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_PART_DESCRIPTORS, new VPartDescriptor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_MODEL_COMP_COMMANDS, new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS));
-		virtualEditors.put(VIRTUAL_MODEL_COMP_BINDINGS, new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_PARTDESCRIPTOR_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
-		virtualEditors.put(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
-		virtualEditors.put(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
+	
+	private void registerContributedVirtualEditors() {
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		
+		for( IConfigurationElement el : extPoint.getConfigurationElements() ) {
+			if( ! "virtualeditor".equals(el.getName()) ) {
+				continue;
+			}
+			
+			IContributionFactory fact = context.get(IContributionFactory.class);
+			AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("platform:/plugin/"+el.getContributor().getName()+"/"+el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			registerVirtualEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
+		}
 	}
 
+	private void registerVirtualEditors() {
+		registerVirtualEditor(VIRTUAL_PART_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, BasicPackageImpl.Literals.PART__MENUS));
+		registerVirtualEditor(VIRTUAL_HANDLER, new VHandlerEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_BINDING_TABLE,new VBindingTableEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_COMMAND,new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS));
+		registerVirtualEditor(VIRTUAL_WINDOWS, new VWindowEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS, new VWindowControlEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, new VPartDescriptor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_MODEL_COMP_COMMANDS, new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS));
+		registerVirtualEditor(VIRTUAL_MODEL_COMP_BINDINGS, new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
+		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
+	}
+
+	private void registerVirtualEditor(String id, AbstractComponentEditor editor ) {
+//		System.err.println("Registering: " + id + " => " + editor);
+		virtualEditors.put(id, editor);
+	}
+	
 	public void setSelection(Object element) {
 		viewer.setSelection(new StructuredSelection(element));
 	}
@@ -371,6 +390,10 @@ public class ModelEditor {
 		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 		
 		for( IConfigurationElement el : extPoint.getConfigurationElements() ) {
+			if( ! "editor".equals(el.getName()) ) {
+				continue;
+			}
+			
 			try {
 				IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
 				EClass eClass = desc.getEClass();
