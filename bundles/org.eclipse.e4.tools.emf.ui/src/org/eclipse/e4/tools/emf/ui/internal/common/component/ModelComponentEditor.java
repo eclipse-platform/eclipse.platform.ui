@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -231,11 +232,11 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 			}
 
 		});
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PART, MODEL_COMPONENT__CHILDREN, element, Messages.ModelComponentEditor_Parts) {
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MODEL_COMPONENT_CHILDREN, MODEL_COMPONENT__CHILDREN, element, Messages.ModelComponentEditor_UiChildren) {
 
 			@Override
 			protected boolean accepted(Object o) {
-				return o instanceof MPart;
+				return o instanceof MUIElement;
 			}
 
 		});

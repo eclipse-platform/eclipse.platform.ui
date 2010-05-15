@@ -73,6 +73,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelComponentUIEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
@@ -117,7 +118,7 @@ public class ModelEditor {
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 	
 	public static final String VIRTUAL_PART_MENU = ModelEditor.class.getName() + ".VIRTUAL_PART_MENU"; //$NON-NLS-1$
-	public static final String VIRTUAL_PART = ModelEditor.class.getName() + ".VIRTUAL_PART"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_COMPONENT_CHILDREN = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMPONENT_CHILDREN"; //$NON-NLS-1$
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
@@ -374,6 +375,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
 		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_MODEL_COMPONENT_CHILDREN, new VModelComponentUIEditor(modelProvider.getEditingDomain(), this));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor ) {

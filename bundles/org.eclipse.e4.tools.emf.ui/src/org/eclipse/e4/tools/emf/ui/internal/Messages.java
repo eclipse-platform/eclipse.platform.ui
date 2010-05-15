@@ -163,7 +163,7 @@ public class Messages {
 	public static String ModelComponentEditor_KeyBindings;
 	public static String ModelComponentEditor_Commands;
 	public static String ModelComponentEditor_Menus;
-	public static String ModelComponentEditor_Parts;
+	public static String ModelComponentEditor_UiChildren;
 	public static String ModelComponentEditor_PartDescriptors;
 	public static String ModelComponentEditor_DetailParentId;
 	
