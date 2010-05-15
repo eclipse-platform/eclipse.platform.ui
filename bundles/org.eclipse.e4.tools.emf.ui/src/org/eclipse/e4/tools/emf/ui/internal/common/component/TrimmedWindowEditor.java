@@ -2,6 +2,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -11,8 +12,8 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 public class TrimmedWindowEditor extends WindowEditor {
 	private IListProperty TRIMMED_WINDOW__TRIM_BARS = EMFProperties.list(BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS);
 	
-	public TrimmedWindowEditor(EditingDomain editingDomain) {
-		super(editingDomain);
+	public TrimmedWindowEditor(EditingDomain editingDomain, IProject project) {
+		super(editingDomain,project);
 	}
 
 	public IObservableList getChildList(Object element) {

@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
@@ -65,8 +66,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	private Image image;
 	private IModelResource resource;
 
-	public HandledMenuItemEditor(EditingDomain editingDomain, IModelResource resource) {
-		super(editingDomain);
+	public HandledMenuItemEditor(EditingDomain editingDomain, IProject project, IModelResource resource) {
+		super(editingDomain,project);
 		this.resource = resource;
 	}
 

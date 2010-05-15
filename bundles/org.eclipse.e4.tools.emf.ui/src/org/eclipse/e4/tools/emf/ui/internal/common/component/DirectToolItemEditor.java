@@ -37,11 +37,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class DirectToolItemEditor extends ToolItemEditor {
 	private Image image;
-	private IProject project;
 
 	public DirectToolItemEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
-		this.project = project;
+		super(editingDomain,project);
 	}
 
 	@Override

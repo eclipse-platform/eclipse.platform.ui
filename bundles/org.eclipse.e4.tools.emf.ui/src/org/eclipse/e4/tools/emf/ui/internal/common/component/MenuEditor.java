@@ -17,11 +17,13 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -73,6 +75,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
+	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
@@ -89,9 +92,10 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 	}
 
-	public MenuEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public MenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
+		this.project = project;
 	}
 
 	@Override
@@ -195,9 +199,16 @@ public class MenuEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.MenuItemEditor_Find);
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), project, getEditingDomain(),(MMenu) getMaster().getValue());
+					dialog.open();
+				}
+			});			
 		}
 		
 		// ------------------------------------------------------------

@@ -38,11 +38,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
 	private Image image;
-	private IProject project;
 	
 	public DirectMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain);
-		this.project = project;
+		super(editingDomain,project);
 	}
 
 	@Override

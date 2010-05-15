@@ -14,12 +14,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledToolItemCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -65,8 +65,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 	private Image image;
 	private IModelResource resource;
 
-	public HandledToolItemEditor(EditingDomain editingDomain, IModelResource resource) {
-		super(editingDomain);
+	public HandledToolItemEditor(EditingDomain editingDomain, IProject project, IModelResource resource) {
+		super(editingDomain, project);
 		this.resource = resource;
 	}
 
