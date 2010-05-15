@@ -80,7 +80,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		viewer = new TableViewer(container);
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new LabelProviderImpl());
-		viewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			
 			public void doubleClick(DoubleClickEvent event) {
