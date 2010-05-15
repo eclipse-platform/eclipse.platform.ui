@@ -95,6 +95,9 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 								if( line.startsWith("Bundle-SymbolicName:") ) {
 									int start = line.indexOf(':');
 									int end = line.indexOf(';');
+									if( end == -1 ) {
+										end = line.length();
+									}
 									ContributionData data = new ContributionData(line.substring(start+1,end).trim(), content, "Java", null);
 									handler.result(data);
 									break;
