@@ -108,22 +108,22 @@ import org.eclipse.swt.widgets.Label;
 public class ModelEditor {
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 	
-	public static final int VIRTUAL_PART_MENU = 0;
-	public static final int VIRTUAL_PART = 1;
-	public static final int VIRTUAL_HANDLER = 2;
-	public static final int VIRTUAL_BINDING_TABLE = 3;
-	public static final int VIRTUAL_COMMAND = 4;
-	public static final int VIRTUAL_WINDOWS = 5;
-	public static final int VIRTUAL_WINDOW_CONTROLS = 6;
-	public static final int VIRTUAL_PART_DESCRIPTORS = 7;
-	public static final int VIRTUAL_MODEL_COMP_COMMANDS = 8;
-	public static final int VIRTUAL_MODEL_COMP_BINDINGS = 9;
-	public static final int VIRTUAL_PARTDESCRIPTOR_MENU = 10;
-	public static final int VIRTUAL_TRIMMED_WINDOW_TRIMS = 11;
-	public static final int VIRTUAL_ADDONS = 12;
+	public static final String VIRTUAL_PART_MENU = ModelEditor.class.getName() + ".VIRTUAL_PART_MENU"; //$NON-NLS-1$
+	public static final String VIRTUAL_PART = ModelEditor.class.getName() + ".VIRTUAL_PART"; //$NON-NLS-1$
+	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
+	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_COMP_BINDINGS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
+	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
+	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
-	private AbstractComponentEditor[] virtualEditors;
+	private Map<String,AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
 	private List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
 
 	// private List<AbstractComponentEditor> editors = new
@@ -137,8 +137,12 @@ public class ModelEditor {
 	public ModelEditor(Composite composite, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
+		
 		registerDefaultEditors();
 		registerVirtualEditors();
+		
+		
+		
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
@@ -212,7 +216,7 @@ public class ModelEditor {
 						}
 					} else {
 						VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
-						AbstractComponentEditor editor = virtualEditors[entry.getId()];
+						AbstractComponentEditor editor = virtualEditors.get(entry.getId());
 						if (editor != null) {
 							textLabel.setText(editor.getLabel(entry));
 							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
@@ -246,7 +250,7 @@ public class ModelEditor {
 				if( ! s.isEmpty() ) {
 					List<Action> actions;
 					if( s.getFirstElement() instanceof VirtualEntry<?> ) {
-						actions = virtualEditors[((VirtualEntry<?>)s.getFirstElement()).getId()].getActions(s.getFirstElement());
+						actions = virtualEditors.get(((VirtualEntry<?>)s.getFirstElement()).getId()).getActions(s.getFirstElement());
 					} else {
 						EObject o = (EObject) s.getFirstElement();
 						AbstractComponentEditor editor = editorMap.get(o.eClass());
@@ -332,20 +336,18 @@ public class ModelEditor {
 	}
 
 	private void registerVirtualEditors() {
-		virtualEditors = new AbstractComponentEditor[] { new VMenuEditor(modelProvider.getEditingDomain(), this, BasicPackageImpl.Literals.PART__MENUS), // V-Menu
-				null, // V-Part
-				new VHandlerEditor(modelProvider.getEditingDomain(), this), 
-				new VBindingTableEditor(modelProvider.getEditingDomain(), this), 
-				new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS), 
-				new VWindowEditor(modelProvider.getEditingDomain(), this), 
-				new VWindowControlEditor(modelProvider.getEditingDomain(), this), 
-				new VPartDescriptor(modelProvider.getEditingDomain(), this),
-				new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS),
-				new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this),
-				new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS),
-				new VWindowTrimEditor(modelProvider.getEditingDomain(), this),
-				new VApplicationAddons(modelProvider.getEditingDomain(), this)
-		};
+		virtualEditors.put(VIRTUAL_PART_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, BasicPackageImpl.Literals.PART__MENUS));
+		virtualEditors.put(VIRTUAL_HANDLER, new VHandlerEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_BINDING_TABLE,new VBindingTableEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_COMMAND,new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS));
+		virtualEditors.put(VIRTUAL_WINDOWS, new VWindowEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_WINDOW_CONTROLS, new VWindowControlEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_PART_DESCRIPTORS, new VPartDescriptor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_MODEL_COMP_COMMANDS, new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS));
+		virtualEditors.put(VIRTUAL_MODEL_COMP_BINDINGS, new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_PARTDESCRIPTOR_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
+		virtualEditors.put(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
+		virtualEditors.put(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
 	}
 
 	public void setSelection(Object element) {

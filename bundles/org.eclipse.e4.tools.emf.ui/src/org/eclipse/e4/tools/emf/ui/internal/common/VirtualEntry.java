@@ -22,12 +22,12 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 
 public abstract class VirtualEntry<M> {
-	private int id;
+	private String id;
 	private Object originalParent;
 	private String label;
 	private IObservableList list;
 
-	public VirtualEntry(int id, IListProperty property, Object originalParent, String label) {
+	public VirtualEntry(String id, IListProperty property, Object originalParent, String label) {
 		this.id = id;
 		this.originalParent = originalParent;
 		this.label = label;
@@ -68,7 +68,7 @@ public abstract class VirtualEntry<M> {
 		return originalParent;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
