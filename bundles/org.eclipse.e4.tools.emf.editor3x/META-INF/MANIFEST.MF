@@ -25,3 +25,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.e4.ui.services;bundle-version="0.9.1"
 Service-Component: OSGI-INF/pdecontributionprovider.xml, OSGI-INF/xmiresourcecontextfunction.xml, OSGI-INF/selectionproviderfunction.xml
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.e4.tools.emf.editor3x.wizard;x-internal:=true
