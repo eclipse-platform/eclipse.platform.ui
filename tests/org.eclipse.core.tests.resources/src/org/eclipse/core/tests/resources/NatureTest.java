@@ -302,7 +302,7 @@ public class NatureTest extends ResourceTest {
 		try {
 			// Make sure enough time has past to bump file's
 			// timestamp during the copy  
-			Thread.currentThread().sleep(1000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			fail("5.0", e);
 		}
