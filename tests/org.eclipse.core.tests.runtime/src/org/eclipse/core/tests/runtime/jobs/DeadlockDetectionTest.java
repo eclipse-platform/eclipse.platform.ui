@@ -11,19 +11,19 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-
 import junit.framework.*;
-
 import org.eclipse.core.internal.jobs.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
+import org.eclipse.core.tests.harness.TestBarrier;
 
 /**
  * Tests implementation of ILock objects
  */
 public class DeadlockDetectionTest extends TestCase {
 	private final IJobManager manager = Job.getJobManager();
+
 	public DeadlockDetectionTest() {
 		super(null);
 	}
@@ -31,12 +31,12 @@ public class DeadlockDetectionTest extends TestCase {
 	public DeadlockDetectionTest(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(DeadlockDetectionTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		//		return suite;
 	}
 
 	/**
@@ -52,9 +52,9 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		}
 	}
-	
+
 	private LockManager getLockManager() {
-		return ((JobManager)manager).getLockManager();
+		return ((JobManager) manager).getLockManager();
 	}
 
 	/**
@@ -224,7 +224,8 @@ public class DeadlockDetectionTest extends TestCase {
 		assertTrue("3.0", !first.isAlive());
 		assertTrue("4.0", !second.isAlive());
 		//the underlying array has to be empty
-		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
+		if (!getLockManager().isEmpty())
+			assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
@@ -773,13 +774,13 @@ public class DeadlockDetectionTest extends TestCase {
 				status[3] = TestBarrier.STATUS_RUNNING;
 			}
 			//timeout if the two jobs don't start within a reasonable time
-			long elapsed  = System.currentTimeMillis()-waitStart;
+			long elapsed = System.currentTimeMillis() - waitStart;
 			assertTrue("Timeout waiting for job to end: " + elapsed, elapsed < 30000);
 		}
 		//wait until all jobs are done
-		for (int i = 0; i < jobs.length; i++) 
+		for (int i = 0; i < jobs.length; i++)
 			waitForCompletion(jobs[i]);
-		
+
 		for (int i = 0; i < jobs.length; i++) {
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());

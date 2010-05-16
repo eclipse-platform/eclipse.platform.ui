@@ -889,4 +889,154 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		}
 	}
+
+	public void testYieldThreadJobToBlockedConflictingJob() throws Exception {
+		final PathRule rule = new PathRule(getName());
+		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
+		final Job yieldA = new Job(getName()) {
+			protected IStatus run(IProgressMonitor monitor) {
+
+				try {
+					Job.getJobManager().beginRule(rule, monitor);
+					b.setStatus(TestBarrier.STATUS_RUNNING);
+					while (yieldRule(null) == null && !monitor.isCanceled()) {
+						//loop until yield succeeds
+					}
+				} finally {
+					Job.getJobManager().endRule(rule);
+				}
+
+				return Status.OK_STATUS;
+			}
+		};
+		Job conflicting = new Job(getName() + " Conflicting") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		conflicting.setRule(rule);
+
+		// start testing
+
+		yieldA.schedule();
+		b.waitForStatus(TestBarrier.STATUS_RUNNING);
+		conflicting.schedule();
+		try {
+			waitForCompletion(yieldA);
+			waitForCompletion(conflicting);
+		} finally {
+			//always cleanup even if we fail
+			yieldA.cancel();
+		}
+
+	}
+
+	public void testResumingThreadJobIsNotRescheduled() {
+
+		final PathRule rule = new PathRule(getName());
+		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
+		final Job yieldA = new Job(getName()) {
+			protected IStatus run(IProgressMonitor monitor) {
+
+				try {
+					Job.getJobManager().beginRule(rule, monitor);
+					b.setStatus(TestBarrier.STATUS_RUNNING);
+					while (yieldRule(null) == null) {
+						if (monitor.isCanceled())
+							return Status.CANCEL_STATUS;
+						//loop until yield succeeds
+					}
+				} finally {
+					Job.getJobManager().endRule(rule);
+				}
+
+				return Status.OK_STATUS;
+			}
+		};
+		final Job conflicting = new Job(getName() + " Conflicting") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		conflicting.setRule(rule);
+
+		final int[] count = new int[1];
+		JobChangeAdapter a = new JobChangeAdapter() {
+			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				if (event.getJob() == conflicting || event.getJob() == yieldA)
+					return;
+				count[0]++;
+			}
+		};
+		Job.getJobManager().addJobChangeListener(a);
+
+		// start testing
+
+		yieldA.schedule();
+		b.waitForStatus(TestBarrier.STATUS_RUNNING);
+		conflicting.schedule();
+		try {
+			waitForCompletion(yieldA);
+			waitForCompletion(conflicting);
+			assertEquals("While resuming from yieldRule, implicit Job should only run once", 0, count[0]);
+		} finally {
+			//clean up even if the test fails
+			yieldA.cancel();
+		}
+
+	}
+
+	public void testNestedAcquireJobIsNotRescheduled() {
+
+		final PathRule rule = new PathRule(getName());
+		final PathRule subRule = new PathRule(getName() + "/subRule");
+
+		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
+		final Job yieldA = new Job(getName()) {
+			protected IStatus run(IProgressMonitor monitor) {
+
+				b.setStatus(TestBarrier.STATUS_RUNNING);
+				try {
+					Job.getJobManager().beginRule(subRule, null);
+
+					while (yieldRule(null) == null) {
+						//loop until yield succeeds
+					}
+				} finally {
+					Job.getJobManager().endRule(subRule);
+				}
+
+				return Status.OK_STATUS;
+			}
+		};
+		yieldA.setRule(rule);
+
+		final Job conflicting = new Job(getName() + " Conflicting") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		conflicting.setRule(rule);
+
+		final int[] count = new int[1];
+		JobChangeAdapter a = new JobChangeAdapter() {
+			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				if (event.getJob() == conflicting || event.getJob() == yieldA)
+					return;
+				count[0]++;
+			}
+		};
+		Job.getJobManager().addJobChangeListener(a);
+
+		// start testing
+
+		yieldA.schedule();
+		b.waitForStatus(TestBarrier.STATUS_RUNNING);
+		conflicting.schedule();
+
+		waitForCompletion(yieldA);
+		waitForCompletion(conflicting);
+		assertEquals("While resuming from yieldRule, implicit Job should only run once", 0, count[0]);
+	}
+
 }

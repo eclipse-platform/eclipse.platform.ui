@@ -12,9 +12,9 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
+import org.eclipse.core.tests.harness.TestBarrier;
 
 /**
  * Tests API methods IJobManager.beginRule and IJobManager.endRule
@@ -75,11 +75,11 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/testComplexRuleStarting/B/C"), status, 2, NUM_REPEATS, true);
 
 		//schedule the jobs
-		for (int i = 0; i < jobs.length; i++) 
+		for (int i = 0; i < jobs.length; i++)
 			jobs[i].schedule();
 
 		//wait until all the jobs start
-		for (int i = 0; i < jobs.length; i++) 
+		for (int i = 0; i < jobs.length; i++)
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_START);
 
 		//all jobs should be running
@@ -113,7 +113,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			//let the first job finish			
 			status[order[0]] = TestBarrier.STATUS_WAIT_FOR_DONE;
 			TestBarrier.waitForStatus(status, order[0], TestBarrier.STATUS_DONE);
-			
+
 			//the remaining jobs will now compete for execution (order NOT guaranteed)
 			//let them both start and wait until they complete
 			int doneCount = 0;
@@ -363,7 +363,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		assertTrue("1.0", exception[0] != null);
 		assertTrue("1.1", exception[0].getMessage().indexOf("does not match outer scope rule") > 0);
 	}
-	
+
 	public void testNestedCase() {
 		ISchedulingRule rule1 = new PathRule("/testNestedCase");
 		ISchedulingRule rule2 = new PathRule("/testNestedCase/B");
@@ -595,6 +595,77 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to end", i++ < 100);
 		}
+	}
+
+	public void testIgnoreScheduleThreadJob() throws Exception {
+		final int[] count = new int[1];
+		JobChangeAdapter a = new JobChangeAdapter() {
+			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				count[0]++;
+			}
+		};
+		Job.getJobManager().addJobChangeListener(a);
+		IdentityRule rule = new IdentityRule();
+		try {
+			Job.getJobManager().beginRule(rule, null);
+			Job.getJobManager().currentJob().schedule();
+		} finally {
+			Job.getJobManager().endRule(rule);
+		}
+		Thread.sleep(250);
+		Job.getJobManager().removeJobChangeListener(a);
+		assertEquals("ThreadJob did not ignore reschedule", 0, count[0]);
+	}
+
+	public void testRunThreadJobIsNotRescheduled() throws Exception {
+		final int[] count = new int[1];
+		JobChangeAdapter a = new JobChangeAdapter() {
+			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				count[0]++;
+			}
+		};
+		Job.getJobManager().addJobChangeListener(a);
+		IdentityRule rule = new IdentityRule();
+		try {
+			Job.getJobManager().beginRule(rule, null);
+		} finally {
+			Job.getJobManager().endRule(rule);
+		}
+		Thread.sleep(250);
+		Job.getJobManager().removeJobChangeListener(a);
+		assertEquals("ThreadJob did not ignore reschedule", 0, count[0]);
+	}
+
+	public void testRunNestedAcquireThreadIsNotRescheduled() throws Exception {
+		final PathRule rule = new PathRule(getName());
+		final PathRule subRule = new PathRule(getName() + "/subRule");
+
+		final int[] count = new int[1];
+
+		final Job job = new Job(getName() + "acquire") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					Job.getJobManager().beginRule(subRule, null);
+				} finally {
+					Job.getJobManager().endRule(subRule);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(rule);
+
+		JobChangeAdapter a = new JobChangeAdapter() {
+			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				if (event.getJob() == job)
+					return;
+				count[0]++;
+			}
+		};
+		Job.getJobManager().addJobChangeListener(a);
+		job.schedule();
+		Thread.sleep(250);
+		Job.getJobManager().removeJobChangeListener(a);
+		assertEquals("ThreadJob did not ignore reschedule", 0, count[0]);
 	}
 
 }
