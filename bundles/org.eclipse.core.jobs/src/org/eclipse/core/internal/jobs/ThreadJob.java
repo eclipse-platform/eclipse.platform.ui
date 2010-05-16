@@ -430,4 +430,11 @@ class ThreadJob extends Job {
 		threadJob.isBlocked = true;
 		manager.reportBlocked(monitor, blockingJob);
 	}
+
+	/**
+	 * ThreadJobs are one-shot jobs, and they must ignore all attempts to schedule them. 
+	 */
+	public boolean shouldSchedule() {
+		return false;
+	}
 }

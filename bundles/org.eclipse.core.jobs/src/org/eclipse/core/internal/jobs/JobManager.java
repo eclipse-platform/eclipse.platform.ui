@@ -404,10 +404,9 @@ public class JobManager implements IJobManager {
 						break;
 					case Job.RUNNING :
 					case InternalJob.ABOUT_TO_RUN :
-						if (oldState != InternalJob.YIELDING) {
-							job.setStartTime(InternalJob.T_NONE);
-							job.setWaitQueueStamp(InternalJob.T_NONE);
-						}
+						// These flags must be reset in all cases, including resuming from yield
+						job.setStartTime(InternalJob.T_NONE);
+						job.setWaitQueueStamp(InternalJob.T_NONE);
 						running.add(job);
 						break;
 					case InternalJob.YIELDING :
@@ -1293,19 +1292,37 @@ public class JobManager implements IJobManager {
 		ThreadJob likeThreadJob;
 		synchronized (implicitJobs) {
 			synchronized (lock) {
+				// The nested implicit job, if any
+				likeThreadJob = implicitJobs.getThreadJob(currentThread);
+
 				unblocked = job.previous();
+
 				// if unblocked is not null, it was a blocked job. It is guaranteed
 				// that it will be the next job run by the worker threads once this 
 				// lock is released. 
 				if (unblocked == null) {
-					// look for any implicit (or yielding) jobs we may be blocking. 
-					unblocked = implicitJobs.findBlockedJob(job);
+
+					if (likeThreadJob != null) {
+
+						// look for any explicit jobs we may be blocking
+						unblocked = ((InternalJob) likeThreadJob).previous();
+
+						if (unblocked == null) {
+
+							// look for any implicit (or yielding) jobs we may be blocking. 
+							unblocked = findBlockedJob(likeThreadJob, waitingThreadJobs.iterator());
+						}
+
+					} else {
+
+						// look for any implicit (or yielding) jobs we may be blocking. 
+						unblocked = findBlockedJob(job, waitingThreadJobs.iterator());
+					}
 				}
+
 				// optimization: do nothing if we don't unblock any job
 				if (unblocked == null)
 					return null;
-
-				likeThreadJob = implicitJobs.getThreadJob(currentThread);
 
 				// "release" our rule by exiting RUNNING state
 				changeState(job, InternalJob.YIELDING);

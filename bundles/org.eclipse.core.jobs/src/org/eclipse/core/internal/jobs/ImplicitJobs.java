@@ -273,14 +273,6 @@ class ImplicitJobs {
 		notifyWaitingThreadJobs(source);
 	}
 
-	synchronized InternalJob findBlockedJob(InternalJob job) {
-		ThreadJob threadJob = (ThreadJob) threadJobs.get(job.getThread());
-		if (threadJob == null) {
-			return manager.findBlockedJob(job, this.manager.waitingThreadJobs.iterator());
-		}
-		return manager.findBlockedJob(threadJob, this.manager.waitingThreadJobs.iterator());
-	}
-
 	synchronized void removeWaiting(ThreadJob threadJob) {
 		synchronized (((InternalJob) threadJob).jobStateLock) {
 			threadJob.isWaiting = false;
@@ -303,8 +295,4 @@ class ImplicitJobs {
 		return (ThreadJob) threadJobs.get(thread);
 	}
 
-	synchronized void resumeJob(ThreadJob job) {
-		final Thread currentThread = Thread.currentThread();
-		threadJobs.put(currentThread, job);
-	}
 }
