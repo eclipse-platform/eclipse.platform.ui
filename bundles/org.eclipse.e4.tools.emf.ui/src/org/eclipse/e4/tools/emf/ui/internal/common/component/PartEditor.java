@@ -319,6 +319,7 @@ public class PartEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}
 
+		ControlFactory.createVariablesWidget(parent, this);
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;

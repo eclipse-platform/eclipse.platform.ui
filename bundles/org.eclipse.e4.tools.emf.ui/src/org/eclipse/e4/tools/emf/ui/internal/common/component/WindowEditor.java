@@ -237,6 +237,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createBindingsWidget(parent, this);
+		ControlFactory.createVariablesWidget(parent, this);
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;

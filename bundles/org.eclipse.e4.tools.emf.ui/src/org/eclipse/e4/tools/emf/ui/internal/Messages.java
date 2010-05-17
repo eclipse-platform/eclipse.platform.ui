@@ -67,6 +67,7 @@ public class Messages {
 	public static String ControlFactory_Tags;
 	public static String ControlFactory_Key;
 	public static String ControlFactory_Value;
+	public static String ControlFactory_ContextVariables;
 	
 	public static String DirectToolItemEditor_ClassURI;
 	public static String DirectToolItemEditor_Find;
@@ -305,7 +306,6 @@ public class Messages {
 	public static String ContributionClassDialog_DialogTitle;
 	public static String ContributionClassDialog_Label_Classname;
 	public static String ContributionClassDialog_ShellTitle;
-
 	
 	
 	static {
