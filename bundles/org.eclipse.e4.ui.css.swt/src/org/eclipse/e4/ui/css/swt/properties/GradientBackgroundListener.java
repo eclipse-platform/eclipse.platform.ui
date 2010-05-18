@@ -82,14 +82,9 @@ public class GradientBackgroundListener implements Listener {
 		if (size.x <= 0 || size.y <= 0) {
 			return;
 		}
-		/*
-		 * Dispose the old background image.
-		 */
+		
 		Image oldImage = control.getBackgroundImage();
-		if (oldImage != null && !oldImage.isDisposed()) {
-			oldImage.dispose();
-			oldImage = null;
-		}
+		
 		/*
 		 * Draw the new background.
 		 */
@@ -116,29 +111,48 @@ public class GradientBackgroundListener implements Listener {
 			// + (System.currentTimeMillis() - startTime) + " ms");
 			newImage = new Image(control.getDisplay(), imagedata);
 		} else {
-			newImage = new Image(control.getDisplay(), size.x, size.y);
-			GC gc = new GC(newImage);
-			List<Color> colors = new ArrayList<Color>();
-			for (Iterator iterator = grad.getRGBs().iterator(); iterator
-					.hasNext();) {
-				RGB rgb = (RGB) iterator.next();
-				Color color = new Color(control.getDisplay(), rgb.red,
-						rgb.green, rgb.blue);
-				colors.add(color);
-			}
-			fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors,
-					CSSSWTColorHelper.getPercents(grad), true);
-			gc.dispose();
-			for (Iterator<Color> iterator = colors.iterator(); iterator
-					.hasNext();) {
-				Color c = iterator.next();
-				c.dispose(); // Dispose colors too.
+			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y ) {
+				int x = 2;
+				int y = size.y;
+				newImage = new Image(control.getDisplay(), x, y);
+				GC gc = new GC(newImage);
+				List<Color> colors = new ArrayList<Color>();
+				for (Iterator iterator = grad.getRGBs().iterator(); iterator
+						.hasNext();) {
+					RGB rgb = (RGB) iterator.next();
+					Color color = new Color(control.getDisplay(), rgb.red,
+							rgb.green, rgb.blue);
+					colors.add(color);
+				}
+				fillGradient(gc, new Rectangle(0, 0, x, y), colors,
+						CSSSWTColorHelper.getPercents(grad), true);
+				gc.dispose();
+				for (Iterator<Color> iterator = colors.iterator(); iterator
+						.hasNext();) {
+					Color c = iterator.next();
+					c.dispose(); // Dispose colors too.
+				}
+			} else {
+				// Avoid destroying the image
+				oldImage = null;
+				newImage = null;
 			}
 		}
+		
+		if( newImage != null ) {
+			/*
+			 * Set the new background.
+			 */
+			control.setBackgroundImage(newImage);			
+		}
+		
 		/*
-		 * Set the new background.
+		 * Dispose the old background image.
 		 */
-		control.setBackgroundImage(newImage);
+		if (oldImage != null && !oldImage.isDisposed()) {
+			oldImage.dispose();
+			oldImage = null;
+		}
 	}
 
 	/*
