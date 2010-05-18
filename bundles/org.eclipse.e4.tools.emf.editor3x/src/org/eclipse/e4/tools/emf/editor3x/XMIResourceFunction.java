@@ -13,7 +13,7 @@ import org.eclipse.ui.part.EditorPart;
 public class XMIResourceFunction extends ContextFunction {
 
 	@Override
-	public Object compute(final IEclipseContext context, Object[] arguments) {
+	public Object compute(final IEclipseContext context) {
 		final IEditorInput input = context.get(IEditorInput.class);
 		final E4CompatEditorPart part = (E4CompatEditorPart) context.get(EditorPart.class);
 		

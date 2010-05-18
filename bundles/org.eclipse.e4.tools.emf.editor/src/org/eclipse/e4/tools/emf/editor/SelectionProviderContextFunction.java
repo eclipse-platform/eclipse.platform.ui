@@ -8,7 +8,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 public class SelectionProviderContextFunction extends ContextFunction {
 
 	@Override
-	public Object compute(final IEclipseContext context, Object[] arguments) {
+	public Object compute(final IEclipseContext context) {
 		return new ISelectionProviderService() {
 			
 			public void setSelection(Object selection) {
