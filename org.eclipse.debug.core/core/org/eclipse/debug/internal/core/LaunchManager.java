@@ -1617,7 +1617,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		// @since 3.5
 		// If the legacy mechanism didn't work, try the new preference name for 
 		// the given launch type.  
-        String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid, IInternalDebugCoreConstants.EMPTY_STRING, null);
+        String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), "//" + LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid, IInternalDebugCoreConstants.EMPTY_STRING, null); //$NON-NLS-1$
         if (preferred != null && preferred.length() != 0) {
             StringTokenizer tokenizer = new StringTokenizer(preferred, ";"); //$NON-NLS-1$
             while(tokenizer.hasMoreTokens()) {
