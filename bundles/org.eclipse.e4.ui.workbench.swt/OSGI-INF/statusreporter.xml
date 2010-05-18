@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.core.contexts.IContextFunction"/>
    </service>
-   <property name="service.context.key" type="String" value="org.eclipse.e4.core.services.StatusReporter"/>
+   <property name="service.context.key" type="String" value="org.eclipse.e4.core.services.statusreporter.StatusReporter"/>
 </scr:component>
