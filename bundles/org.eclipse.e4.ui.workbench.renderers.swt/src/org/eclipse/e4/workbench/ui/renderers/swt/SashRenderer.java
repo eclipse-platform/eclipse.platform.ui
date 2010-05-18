@@ -422,7 +422,7 @@ public class SashRenderer extends SWTPartRenderer {
 			elements[i].setContainerData(Integer.toString(newWeight));
 			totalAdded += newWeight;
 		}
-		System.out
-				.println("Model Weights changed: " + totalModelWeight + " " + totalAdded); //$NON-NLS-1$//$NON-NLS-2$
+		// System.out
+		//				.println("Model Weights changed: " + totalModelWeight + " " + totalAdded); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

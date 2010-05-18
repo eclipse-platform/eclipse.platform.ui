@@ -26,11 +26,8 @@ public class ActionBars extends SubActionBars {
 
 	private IMenuManager menuManager;
 
-	private MPart part;
-
 	public ActionBars(final IActionBars parent, final IServiceLocator serviceLocator, MPart part) {
 		super(parent, serviceLocator);
-		this.part = part;
 	}
 
 	/*
@@ -64,11 +61,11 @@ public class ActionBars extends SubActionBars {
 	 * @see org.eclipse.ui.IActionBars#updateActionBars()
 	 */
 	public void updateActionBars() {
-		// FIXME compat: updateActionBars : should do someting useful
+		// FIXME compat: updateActionBars : should do something useful
 		getStatusLineManager().update(false);
 		getMenuManager().update(false);
 		if (toolbarManager != null) {
-			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
+			//			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
 			getToolBarManager().update(false);
 		}
 		super.updateActionBars();
