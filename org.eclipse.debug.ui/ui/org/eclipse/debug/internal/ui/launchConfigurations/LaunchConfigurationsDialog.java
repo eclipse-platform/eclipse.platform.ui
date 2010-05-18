@@ -239,6 +239,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private boolean fSetDefaultOnOpen = false;
 	
 	/**
+	 * Whether in the process of setting the input to the tab viewer
+	 */
+	private boolean fSettingInput = false;
+	
+	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
 	 * 
@@ -911,30 +916,35 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (newInput instanceof ILaunchConfiguration) {
 				renamed = getLaunchManager().getMovedFrom((ILaunchConfiguration)newInput) != null;
 			}
- 			if (fTabViewer.canSave() && fTabViewer.isDirty() && !deleted && !renamed) {
- 				if(fLaunchConfigurationView != null) {
- 					fLaunchConfigurationView.setAutoSelect(false);
- 				}
- 				int ret = showUnsavedChangesDialog();
- 				if(ret == IDialogConstants.YES_ID) {
- 					fTabViewer.handleApplyPressed();
- 					fTabViewer.setInput(newInput);
- 				}
-				else if(ret == IDialogConstants.NO_ID) {
-					fTabViewer.handleRevertPressed();
-					fTabViewer.setInput(newInput);
-				}
-				else {
-					fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(input));
-				}
- 				fLaunchConfigurationView.setAutoSelect(true);
-  			}
- 			else {
- 				fTabViewer.setInput(newInput);
- 				if(fTabViewer.isDirty()) {
- 					fTabViewer.handleApplyPressed();
- 				}
- 			}
+			try {
+				fSettingInput = true;
+	 			if (fTabViewer.canSave() && fTabViewer.isDirty() && !deleted && !renamed) {
+	 				if(fLaunchConfigurationView != null) {
+	 					fLaunchConfigurationView.setAutoSelect(false);
+	 				}
+	 				int ret = showUnsavedChangesDialog();
+	 				if(ret == IDialogConstants.YES_ID) {
+	 					fTabViewer.handleApplyPressed();
+	 					fTabViewer.setInput(newInput);
+	 				}
+					else if(ret == IDialogConstants.NO_ID) {
+						fTabViewer.handleRevertPressed();
+						fTabViewer.setInput(newInput);
+					}
+					else {
+						fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(input));
+					}
+	 				fLaunchConfigurationView.setAutoSelect(true);
+	  			}
+	 			else {
+	 				fTabViewer.setInput(newInput);
+	 				if(fTabViewer.isDirty()) {
+	 					fTabViewer.handleApplyPressed();
+	 				}
+	 			}
+			} finally {
+				fSettingInput = false;
+			}
  			if(getShell() != null && getShell().isVisible()) {
  				resize();
  			}
@@ -1499,20 +1509,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
-		// New, Delete, & Duplicate toolbar actions
- 		getNewAction().setEnabled(getNewAction().isEnabled());
-		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
-		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
-		fTabViewer.refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates());
+		if (!fSettingInput) {
+			// New, Delete, & Duplicate toolbar actions
+	 		getNewAction().setEnabled(getNewAction().isEnabled());
+			getDeleteAction().setEnabled(getDeleteAction().isEnabled());
+			getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
+			fTabViewer.refresh();
+			getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
 	 */
 	public void updateMessage() {
-		setErrorMessage(fTabViewer.getErrorMesssage());
-		setMessage(fTabViewer.getMessage());
+		if (!fSettingInput) {
+			setErrorMessage(fTabViewer.getErrorMesssage());
+			setMessage(fTabViewer.getMessage());
+		}
 	}
 	
 	/**
