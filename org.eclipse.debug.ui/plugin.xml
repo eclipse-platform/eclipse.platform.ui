@@ -765,8 +765,8 @@
          <action
                label="%addWatchExpressionAction.label"
                toolbarPath="expressionGroup"
-               icon="$nl$/icons/full/etool16/watch_exp.gif"
-               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               hoverIcon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
                helpContextId="add_watch_expression_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.AddWatchExpressionAction"
                tooltip="%addWatchExpressionAction.tooltip"
@@ -1199,7 +1199,7 @@
             id="org.eclipse.debug.ui.ExpressionViewPopupActions">
          <action
                label="%addWatchExpressionAction.label"
-               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
                helpContextId="add_watch_expression_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.AddWatchExpressionAction"
                tooltip="%addWatchExpressionAction.tooltip"
