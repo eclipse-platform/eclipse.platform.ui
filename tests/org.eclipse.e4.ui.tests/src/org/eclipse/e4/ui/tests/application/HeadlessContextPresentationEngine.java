@@ -199,9 +199,6 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			MPart active = (MPart) container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container);
-				IEclipseContext childContext = ((MContext) active).getContext();
-				IEclipseContext parentContext = getParentContext(active);
-				parentContext.set(IContextConstants.ACTIVE_CHILD, childContext);
 			} else {
 				List<MStackElement> children = container.getChildren();
 				if (!children.isEmpty()) {

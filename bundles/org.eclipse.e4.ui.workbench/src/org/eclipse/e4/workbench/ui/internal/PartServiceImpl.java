@@ -211,6 +211,18 @@ public class PartServiceImpl implements EPartService {
 
 	private MContext getParentWithContext(MUIElement part) {
 		MElementContainer<MUIElement> parent = part.getParent();
+		MUIElement intermediate = parent;
+		while (parent != null) {
+			if (parent instanceof MContext) {
+				if (((MContext) parent).getContext() != null)
+					return (MContext) parent;
+			}
+			intermediate = parent;
+			parent = parent.getParent();
+		}
+
+		MPlaceholder placeholder = modelService.findPlaceholderFor(window, intermediate);
+		parent = placeholder.getParent();
 		while (parent != null) {
 			if (parent instanceof MContext) {
 				if (((MContext) parent).getContext() != null)
@@ -223,30 +235,49 @@ public class PartServiceImpl implements EPartService {
 
 	public void bringToTop(MPart part) {
 		if (isInContainer(part)) {
-			part.setToBeRendered(true);
-			internalBringToTop(part);
+			MElementContainer<MUIElement> parent = part.getParent();
+			if (parent == null) {
+				parent = modelService.findPlaceholderFor(window, part).getParent();
+			}
+
+			MUIElement oldSelectedElement = parent.getSelectedElement();
+
+			modelService.bringToTop(window, part);
+
+			if (oldSelectedElement != part) {
+				internalFixContext(part, oldSelectedElement);
+			}
 		}
 	}
 
-	private void internalBringToTop(MPart part) {
-		MElementContainer<MUIElement> parent = part.getParent();
-		MPart oldSelectedElement = (MPart) parent.getSelectedElement();
-		if (oldSelectedElement != part) {
-			parent.setSelectedElement(part);
-			internalFixContext(part, oldSelectedElement);
+	private IEclipseContext getSubContext(MUIElement element) {
+		if (element instanceof MContext) {
+			return ((MContext) element).getContext();
+		} else if (element instanceof MElementContainer<?>) {
+			Object selectedElement = ((MElementContainer<?>) element).getSelectedElement();
+			if (selectedElement instanceof MContext) {
+				return ((MContext) selectedElement).getContext();
+			} else if (selectedElement instanceof MElementContainer<?>) {
+				return getSubContext((MUIElement) selectedElement);
+			}
 		}
+		return null;
 	}
 
-	private void internalFixContext(MPart part, MPart oldSelectedElement) {
-		MContext parentPart = oldSelectedElement == null ? null
-				: getParentWithContext(oldSelectedElement);
+	private void internalFixContext(MPart part, MUIElement oldSelectedElement) {
+		if (oldSelectedElement == null) {
+			return;
+		}
+
+		MContext parentPart = getParentWithContext(oldSelectedElement);
 		if (parentPart == null) {
+			// technically this shouldn't happen as there should be an MWindow somewhere
 			return;
 		}
 		IEclipseContext parentContext = parentPart.getContext();
-		IEclipseContext oldContext = oldSelectedElement.getContext();
+		IEclipseContext oldContext = getSubContext(oldSelectedElement);
 		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
-		if (child == oldContext) {
+		if (child == null || oldContext == null || child == oldContext) {
 			parentContext.set(IContextConstants.ACTIVE_CHILD,
 					part == null ? null : part.getContext());
 		}
