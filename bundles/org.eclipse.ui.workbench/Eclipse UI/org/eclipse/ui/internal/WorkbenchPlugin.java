@@ -76,6 +76,7 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.framework.Version;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -1055,6 +1056,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public String getAppName() {
         return getProductInfo().getAppName();
     }
+
+	/**
+	 * Return the application version, as defined by the product.
+	 * 
+	 * @return the application version, or the empty version.
+	 * @see org.eclipse.swt.widgets.Display#setAppVersion
+	 * @see Version#emptyVersion
+	 * @since 3.6
+	 */
+	public String getAppVersion() {
+		return getProductInfo().getAppVersion();
+	}
 
     /**
      * Returns the name of the product.

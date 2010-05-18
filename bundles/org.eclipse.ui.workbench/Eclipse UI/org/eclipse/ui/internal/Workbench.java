@@ -686,6 +686,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			Display.setAppName(applicationName);
 		}
 
+		String appVersion = WorkbenchPlugin.getDefault().getAppVersion();
+		if (appVersion != null) {
+			Display.setAppVersion(appVersion);
+		}
+
 		// create the display
 		Display newDisplay = Display.getCurrent();
 		if(newDisplay == null) {
