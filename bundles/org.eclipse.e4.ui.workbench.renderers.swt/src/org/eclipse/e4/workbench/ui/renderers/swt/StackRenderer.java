@@ -279,7 +279,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		int createFlags = SWT.NONE;
-		if (element instanceof MPart && ((MPart) element).isCloseable()) {
+		if (part != null && part.isCloseable()) {
 			createFlags |= SWT.CLOSE;
 		}
 
