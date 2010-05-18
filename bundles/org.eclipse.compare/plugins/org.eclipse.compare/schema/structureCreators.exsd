@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.compare" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.compare" id="structureCreators" name="Structure Creators"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point allows a plug-in to register a structure creator 
 for specific content types. The structure creator is expected to create
@@ -16,9 +16,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -44,9 +44,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -66,9 +66,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   a fully qualified name of a class that implements &lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/samp&gt;
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.compare.structuremergeviewer.IStructureComparator"/>
-               </appinfo>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.compare.structuremergeviewer.IStructureCreator"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string">
@@ -93,9 +93,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   The id of a content type defined using the &lt;code&gt;org.eclipse.core.contenttype.contentTypes&lt;/code&gt; extension point.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="structureCreatorId" type="string" use="required">
@@ -103,18 +103,18 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   The id of a structure creator defined using the &lt;code&gt;structureCreator&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.compare.structureCreators&lt;/code&gt;)
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.compare.structureCreators/structureCreator/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of a structure creator for 
 java files (extension &quot;java&quot;): 
@@ -133,9 +133,9 @@ java files (extension &quot;java&quot;):
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The contributed class must implement &lt;code&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/code&gt;
       </documentation>
@@ -143,20 +143,20 @@ java files (extension &quot;java&quot;):
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The Compare UI plugin defines a structure creator for zip archives.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2000, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2010 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
