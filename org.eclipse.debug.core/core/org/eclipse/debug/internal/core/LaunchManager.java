@@ -11,6 +11,7 @@
  *     Pawel Piech - Bug 82001: When shutting down the IDE, the debugger should first
  *     attempt to disconnect debug targets before terminating them
  *     Alena Laskavaia - Bug 259281
+ *     Marc Khouzam - Bug 313143: Preferred Launch Delegate not recovered from preferences 
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
