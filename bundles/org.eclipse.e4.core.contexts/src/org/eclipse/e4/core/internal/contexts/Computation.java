@@ -107,9 +107,9 @@ abstract class Computation {
 	}
 
 	void startListening(EclipseContext originatingContext) {
-		if (EclipseContext.DEBUG)
-			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
-					+ mapToString(dependencies));
+		if (DebugHelper.DEBUG_LISTENERS)
+			System.out.println("[context] " + toString() + " now listening to: " + mapToString(dependencies));//$NON-NLS-1$ //$NON-NLS-2$
+
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next();
 			Computation existingComputation = c.listeners.get(this);
@@ -131,19 +131,16 @@ abstract class Computation {
 	}
 
 	protected void stopListening(IEclipseContext context, String name) {
-
 		if (name == null) {
-			if (EclipseContext.DEBUG)
-				System.out.println(toString() + " no longer listening to " + context); //$NON-NLS-1$
+			if (DebugHelper.DEBUG_LISTENERS)
+				System.out.println("[context] " + toString() + " no longer listening to " + context);//$NON-NLS-1$ //$NON-NLS-2$
 			dependencies.remove(context);
 			return;
 		}
 		Set<String> properties = dependencies.get(context);
 		if (properties != null) {
-			if (EclipseContext.DEBUG)
-				System.out.println(toString() + " no longer listening to " + context + ',' + name); //$NON-NLS-1$
-			// Bug 304859 - causes reordering of listeners
-			// ((EclipseContext) context).listeners.remove(this);
+			if (DebugHelper.DEBUG_LISTENERS)
+				System.out.println("[context] " + toString() + " no longer listening to " + context + ',' + name);//$NON-NLS-1$ //$NON-NLS-2$
 			properties.remove(name);
 			// if we no longer track any values in the context, remove dependency
 			if (properties.isEmpty())

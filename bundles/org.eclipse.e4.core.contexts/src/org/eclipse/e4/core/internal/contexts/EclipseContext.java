@@ -190,11 +190,6 @@ public class EclipseContext implements IEclipseContext {
 
 	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
 
-	// TODO replace with variable on bundle-specific class
-	public static boolean DEBUG = false;
-	public static boolean DEBUG_VERBOSE = false;
-	public static String DEBUG_VERBOSE_NAME = null;
-
 	private DebugSnap snapshot;
 
 	final Map<Computation, Computation> listeners = Collections.synchronizedMap(new LinkedHashMap<Computation, Computation>());
@@ -324,10 +319,6 @@ public class EclipseContext implements IEclipseContext {
 
 	public Object internalGet(EclipseContext originatingContext, String name, boolean local) {
 		trackAccess(name);
-		if (DEBUG_VERBOSE) {
-			System.out.println("IEC.get(" + name + ", " + local + "):" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ originatingContext + " for " + toString()); //$NON-NLS-1$
-		}
 		if (this == originatingContext) {
 			ValueComputation valueComputation = localValueComputations.get(name);
 			if (valueComputation != null) {
@@ -345,16 +336,11 @@ public class EclipseContext implements IEclipseContext {
 		if (result != null) {
 			if (result instanceof IContextFunction) {
 				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IContextFunction) result));
-				if (EclipseContext.DEBUG)
-					System.out.println("created " + valueComputation); //$NON-NLS-1$
 				originatingContext.localValueComputations.put(name, valueComputation);
 				// value computation depends on parent if function is defined in a parent
 				if (this != originatingContext)
 					valueComputation.addDependency(originatingContext, PARENT);
 				result = valueComputation.get();
-			}
-			if (DEBUG_VERBOSE) {
-				System.out.println("IEC.get(" + name + "): " + result); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return result;
 		}
@@ -373,8 +359,8 @@ public class EclipseContext implements IEclipseContext {
 	 * computations and listeners that depend on this name.
 	 */
 	public void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
-		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
+		if (DebugHelper.DEBUG_NAMES)
+			System.out.println("[context] invalidating \"" + name + "\" on " + toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		removeLocalValueComputations(name);
 		handleInvalid(name, eventType, oldValue, scheduled);
 	}
@@ -446,6 +432,9 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void set(String name, Object value) {
+		if (DebugHelper.DEBUG_NAMES)
+			System.out.println("[context] set(" + name + ',' + value + ")" + " on " + toString());//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		if (PARENT.equals(name)) {
 			setParent((IEclipseContext) value);
 			return;
@@ -453,10 +442,6 @@ public class EclipseContext implements IEclipseContext {
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
-			if (DEBUG_VERBOSE) {
-				System.out.println("IEC.set(" + name + ',' + value + "):" + oldValue + " for " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ toString());
-			}
 			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 			processScheduled(scheduled);
@@ -478,12 +463,8 @@ public class EclipseContext implements IEclipseContext {
 				throw new IllegalArgumentException(tmp);
 			}
 			Object oldValue = localValues.put(name, value);
-			if (value != oldValue) {
-				if (DEBUG_VERBOSE)
-					System.out.println("IEC.set(" + name + ',' + value + "):" + oldValue + " for " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ toString());
+			if (value != oldValue)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
-			}
 			return true;
 		}
 
