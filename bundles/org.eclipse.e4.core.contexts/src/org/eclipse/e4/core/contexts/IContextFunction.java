@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,11 +63,8 @@ public interface IContextFunction {
 	 * 
 	 * @param context
 	 *            The context in which to perform the value computation.
-	 * @param arguments
-	 *            The arguments required to compute the value, or
-	 *            <code>null</code> if no arguments are applicable
 	 * @return The concrete value.
 	 */
-	public Object compute(IEclipseContext context, Object[] arguments);
+	public Object compute(IEclipseContext context);
 
 }

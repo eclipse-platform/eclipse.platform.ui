@@ -39,7 +39,7 @@ public class ContextDynamicTest extends TestCase {
 		assertNull(context.getLocal("bar"));
 		context.set("bar", "baz1");
 		context.set("bar", new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				return "baz1";
 			}
 		});

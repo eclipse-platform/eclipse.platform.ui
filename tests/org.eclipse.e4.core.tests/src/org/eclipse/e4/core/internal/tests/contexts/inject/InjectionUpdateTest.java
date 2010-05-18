@@ -66,19 +66,19 @@ public class InjectionUpdateTest extends TestCase {
 		c1.set("base", "abc");
 
 		c21.set("derived1", new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				String baseString = (String) context.get("base");
 				return baseString.charAt(0) + "_";
 			}});
 
 		c22.set("derived2", new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				String baseString = (String) context.get("base");
 				return "_" + baseString.charAt(baseString.length() - 1);
 			}});
 
 		c1.set("calculated", new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				IEclipseContext context21 = (IEclipseContext) context.get("c21");
 				String derived1 = (String) context21.get("derived1");
 				

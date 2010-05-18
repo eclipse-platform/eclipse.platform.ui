@@ -120,7 +120,7 @@ public class ValueComputation extends Computation {
 		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType, event.getOldValue(), scheduled);
 	}
 
-	final Object get(Object[] arguments) {
+	final Object get() {
 		if (valid) {
 			return cachedValue;
 		}
@@ -131,7 +131,7 @@ public class ValueComputation extends Computation {
 		EclipseContext.currentComputation.set(this);
 		computing = true;
 		try {
-			cachedValue = function.compute(originatingContext, arguments);
+			cachedValue = function.compute(originatingContext);
 			valid = true;
 		} catch (CycleException ex) {
 			throw new CycleException(ex.getCycleMessage() + '\n' + this.toString());

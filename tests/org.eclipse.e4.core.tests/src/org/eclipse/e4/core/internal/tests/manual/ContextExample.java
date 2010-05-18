@@ -62,7 +62,7 @@ public class ContextExample {
 	}
 
 	static class ComplementaryColor extends ContextFunction {
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			switch ((Color) context.get("color")) {
 			case RED:
 				return Color.GREEN;
@@ -83,7 +83,7 @@ public class ContextExample {
 	}
 
 	static class ResourceSelection extends ContextFunction {
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			return null;
 		}
 	}

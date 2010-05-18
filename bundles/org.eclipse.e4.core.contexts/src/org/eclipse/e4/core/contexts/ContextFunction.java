@@ -31,6 +31,6 @@ public abstract class ContextFunction implements IContextFunction {
 	/**
 	 * {@inheritDoc}
 	 */
-	public abstract Object compute(IEclipseContext context, Object[] arguments);
+	public abstract Object compute(IEclipseContext context);
 
 }

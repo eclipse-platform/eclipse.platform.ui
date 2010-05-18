@@ -78,19 +78,6 @@ public interface IEclipseContext extends IDisposable {
 	public <T> T get(Class<T> clazz);
 
 	/**
-	 * Returns the context value associated with the given name, or <code>null</code> if no such
-	 * value is defined or computable by this context.
-	 * <p>
-	 * If the value associated with this name is an {@link ContextFunction}, this method will
-	 * evaluate {@link ContextFunction#compute(IEclipseContext, Object[])} with the provided
-	 * arguments.
-	 * </p>
-	 * @param name the name of the value to return
-	 * @return an object corresponding to the given name, or <code>null</code>
-	 */
-	public Object get(String name, Object[] arguments);
-
-	/**
 	 * Returns the context value associated with the given name in this context, or <code>null</code> if 
 	 * no such value is defined in this context.
 	 * <p>

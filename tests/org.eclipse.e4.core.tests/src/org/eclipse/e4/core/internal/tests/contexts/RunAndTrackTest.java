@@ -30,13 +30,7 @@ public class RunAndTrackTest extends TestCase {
 
 	private class ActivePartLookupFunction extends ContextFunction {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(
-		 * org.eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
-		 */
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			IEclipseContext childContext = (IEclipseContext) context.getLocal(ACTIVE_CHILD);
 			if (childContext != null) {
 				return childContext.get(ACTIVE_PART);

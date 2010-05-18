@@ -22,22 +22,8 @@ import org.eclipse.e4.core.internal.contexts.TestHelper;
 public class EclipseContextTest extends TestCase {
 
 	private static class ComputedValueBar extends ContextFunction {
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			return context.get("bar");
-		}
-	}
-
-	private static class ConcatFunction extends ContextFunction {
-		public Object compute(IEclipseContext context, Object[] arguments) {
-			String separator = (String) context.get("separator");
-			StringBuffer result = new StringBuffer();
-			for (int i = 0; i < arguments.length; i++) {
-				if (i > 0) {
-					result.append(separator);
-				}
-				result.append(arguments[i]);
-			}
-			return result.toString();
 		}
 	}
 
@@ -57,9 +43,7 @@ public class EclipseContextTest extends TestCase {
 		assertFalse("1.0", context.containsKey("function"));
 		assertFalse("1.1", context.containsKey("separator"));
 
-		context.set("function", new ConcatFunction());
 		context.set("separator", ",");
-		assertTrue("2.0", context.containsKey("function"));
 		assertTrue("2.1", context.containsKey("separator"));
 
 		// null value is still a value
@@ -68,13 +52,6 @@ public class EclipseContextTest extends TestCase {
 
 		context.remove("separator");
 		assertFalse("4.0", context.containsKey("separator"));
-	}
-
-	public void testFunctions() {
-		context.set("function", new ConcatFunction());
-		context.set("separator", ",");
-		assertEquals("x", context.get("function", new String[] { "x" }));
-		assertEquals("x,y", context.get("function", new String[] { "x", "y" }));
 	}
 
 	public void testGet() {
@@ -161,7 +138,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				return context.get("bar");
 			}
 		});

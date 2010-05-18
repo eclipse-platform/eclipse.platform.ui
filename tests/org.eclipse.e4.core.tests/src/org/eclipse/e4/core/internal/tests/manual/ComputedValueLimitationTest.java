@@ -66,14 +66,14 @@ public class ComputedValueLimitationTest extends TestCase {
 
 	public class CalcColor extends ContextFunction {
 
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			int useArg = ExtenralFactor.useChild();
 			return context.get("arg" + Integer.toString(useArg));
 		}
 	}
 
 	public class Time extends ContextFunction {
-		public Object compute(IEclipseContext context, Object[] arguments) {
+		public Object compute(IEclipseContext context) {
 			context.get(String.valueOf(System.currentTimeMillis()));
 			return new Long(System.currentTimeMillis());
 		}
@@ -112,8 +112,7 @@ public class ComputedValueLimitationTest extends TestCase {
 		} catch (InterruptedException e) {
 			//
 		}
-		long newTime = ((Long) context.get("time", new Object[] { new Long(System
-				.currentTimeMillis()) })).longValue();
+		long newTime = ((Long) context.get("time")).longValue();
 		assertTrue(time != newTime);
 	}
 
