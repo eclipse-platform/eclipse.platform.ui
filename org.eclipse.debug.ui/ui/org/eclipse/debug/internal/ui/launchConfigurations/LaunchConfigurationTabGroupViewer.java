@@ -785,6 +785,7 @@ public class LaunchConfigurationTabGroupViewer {
 			tab.setText(name);
 			tab.setImage(tabs[i].getImage());
 			ScrolledComposite sc = new ScrolledComposite(tab.getParent(), SWT.V_SCROLL | SWT.H_SCROLL);
+			sc.setFont(tab.getParent().getFont());
 			sc.setExpandHorizontal(true);
 			sc.setExpandVertical(true);
 			sc.setShowFocusedControl(true);
