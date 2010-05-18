@@ -525,7 +525,9 @@ public class CreateLinkedResourceGroup {
 
 		PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(
 				linkTargetField.getShell(), variableTypes);
-		dialog.setResource(updatableResourceName.getResource());
+		if (updatableResourceName != null) {
+		    dialog.setResource(updatableResourceName.getResource());
+		}
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			String[] variableNames = (String[]) dialog.getResult();
 			if (variableNames != null && variableNames.length == 1) {
@@ -561,7 +563,7 @@ public class CreateLinkedResourceGroup {
 	private void resolveVariable() {
 		IPathVariableManager pathVariableManager;
 		// use the resolved link target name
-		if (updatableResourceName.getResource() != null)
+		if (updatableResourceName != null && updatableResourceName.getResource() != null)
 			pathVariableManager = updatableResourceName.getResource().getPathVariableManager();
 		else
 			pathVariableManager = ResourcesPlugin
