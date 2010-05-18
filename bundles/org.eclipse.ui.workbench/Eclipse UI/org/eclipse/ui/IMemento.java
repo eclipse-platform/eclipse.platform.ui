@@ -11,32 +11,34 @@
 package org.eclipse.ui;
 
 /**
- * Interface to a memento used for saving the important state of an object
- * in a form that can be persisted in the file system.
+ * Interface to a memento used for saving the important state of an object in a
+ * form that can be persisted in the file system.
  * <p>
  * Mementos were designed with the following requirements in mind:
  * <ol>
- *  <li>Certain objects need to be saved and restored across platform sessions.
- *    </li>
- *  <li>When an object is restored, an appropriate class for an object might not
- *    be available. It must be possible to skip an object in this case.</li>
- *  <li>When an object is restored, the appropriate class for the object may be
- *    different from the one when the object was originally saved. If so, the
- *    new class should still be able to read the old form of the data.</li>
+ * <li>Certain objects need to be saved and restored across platform sessions.</li>
+ * <li>When an object is restored, an appropriate class for an object might not
+ * be available. It must be possible to skip an object in this case.</li>
+ * <li>When an object is restored, the appropriate class for the object may be
+ * different from the one when the object was originally saved. If so, the new
+ * class should still be able to read the old form of the data.</li>
  * </ol>
  * </p>
  * <p>
- * Mementos meet these requirements by providing support for storing a
- * mapping of arbitrary string keys to primitive values, and by allowing
- * mementos to have other mementos as children (arranged into a tree).
- * A robust external storage format based on XML is used.
- * </p><p>
- * The key for an attribute may be any alpha numeric value.  However, the
- * value of <code>TAG_ID</code> is reserved for internal use.
- * </p><p>
+ * Mementos meet these requirements by providing support for storing a mapping
+ * of arbitrary string keys to primitive values, and by allowing mementos to
+ * have other mementos as children (arranged into a tree). A robust external
+ * storage format based on XML is used.
+ * </p>
+ * <p>
+ * The key for an attribute may be any alpha numeric value that doesn't start
+ * with a number. eg: [A-Za-z][A-Za-z0-9]* Using '.' is unsupported. However,
+ * the value of <code>TAG_ID</code> is reserved for internal use.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- *
+ * 
  * @see IPersistableElement
  * @see IElementFactory
  * @noimplement This interface is not intended to be implemented by clients.
