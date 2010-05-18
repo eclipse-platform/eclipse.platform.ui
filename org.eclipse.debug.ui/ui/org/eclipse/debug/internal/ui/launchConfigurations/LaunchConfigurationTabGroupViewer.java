@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,6 +60,7 @@ import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -170,6 +172,11 @@ public class LaunchConfigurationTabGroupViewer {
 	private Composite fGettingStarted = null;
 
 	private ViewForm fViewform;
+	
+	/**
+	 * Job to update the dialog after a delay.
+	 */
+	private Job fRefreshJob;
 	
 	/**
 	 * Constructs a viewer in the given composite, contained by the given
@@ -664,17 +671,21 @@ public class LaunchConfigurationTabGroupViewer {
 			if(config1 == null || config2 == null) {
 				return false;
 			}
-			Set modes = getCurrentModeSet();
-			ILaunchDelegate d1 = config1.getPreferredDelegate(modes);
-			if(d1 == null) {
-				d1 = config1.getType().getPreferredDelegate(modes);
-			}
-			ILaunchDelegate d2 = config2.getPreferredDelegate(modes);
-			if(d2 == null) {
-				d2 = config2.getType().getPreferredDelegate(modes);
-			}
-			if(d1 != null) {
-				return d1.equals(d2);
+			if (config1.getType().equals(config2.getType())) {
+				Set modes = getCurrentModeSet();
+				ILaunchDelegate d1 = config1.getPreferredDelegate(modes);
+				if(d1 == null) {
+					d1 = config1.getType().getPreferredDelegate(modes);
+				}
+				ILaunchDelegate d2 = config2.getPreferredDelegate(modes);
+				if(d2 == null) {
+					d2 = config2.getType().getPreferredDelegate(modes);
+				}
+				if (d1 == null) {
+					return d2 == null;
+				} else {
+					return d1.equals(d2);
+				}
 			}
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
@@ -920,6 +931,62 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return fOriginal != null && !fOriginal.contentsEqual(workingCopy);
 	}
+	
+	/**
+	 * Returns the job to update the launch configuration dialog.
+	 * 
+	 * @return update job
+	 */
+	private Job getUpdateJob() {
+		if (fRefreshJob == null) {
+			fRefreshJob = createUpdateJob();
+			fRefreshJob.setSystem(true);
+		}
+		return fRefreshJob;
+	}
+	
+	/**
+	 * Schedules the update job to run for this tab based on this tab's delay.
+	 * 
+	 * @since 3.6
+	 */
+	protected void scheduleUpdateJob() {
+		Job job = getUpdateJob();
+		job.cancel(); // cancel existing job
+		job.schedule(getUpdateJobDelay());
+	}
+	
+	/**
+	 * Return the time delay that should be used when scheduling the
+	 * update job. Subclasses may override.
+	 * 
+	 * @return a time delay in milliseconds before the job should run
+	 * @since 3.6
+	 */
+	protected long getUpdateJobDelay() {
+		return 200;
+	}		
+	
+	/**
+	 * Creates and returns a job used to update the launch configuration dialog
+	 * for this tab. Subclasses may override.
+	 * 
+	 * @return job to update the launch dialog for this tab
+	 * @since 3.6
+	 */
+	protected Job createUpdateJob() {
+		return  new WorkbenchJob(getControl().getDisplay(), "Update LCD") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (!getControl().isDisposed()) {
+					refreshStatus();
+				}
+				return Status.OK_STATUS;
+			}
+			public boolean shouldRun() {
+				return !getControl().isDisposed();
+			}
+		};
+	}	
 	
 	/**
 	 * Update apply & revert buttons, as well as buttons and message on the
@@ -1255,7 +1322,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void handleNameModified() {
 		getWorkingCopy().rename(fNameWidget.getText().trim());
-		refreshStatus();
+		scheduleUpdateJob();
 	}		
 	
 	/**
