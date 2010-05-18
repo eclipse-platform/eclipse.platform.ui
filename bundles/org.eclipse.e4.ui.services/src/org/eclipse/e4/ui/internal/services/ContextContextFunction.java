@@ -17,7 +17,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class ContextContextFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		return new ContextContextService(context);
 	}
 

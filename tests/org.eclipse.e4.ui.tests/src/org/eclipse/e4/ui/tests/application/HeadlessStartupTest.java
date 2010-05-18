@@ -14,9 +14,7 @@ package org.eclipse.e4.ui.tests.application;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -107,30 +105,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 			public String toString() {
 				return "HeadlessStartupTest$RunAndTrack[" //$NON-NLS-1$
 						+ IServiceConstants.ACTIVE_PART_ID + ']';
-			}
-		});
-		appContext.set(IServiceConstants.INPUT, new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				Class<?> adapterType = null;
-				if (arguments.length > 0 && arguments[0] instanceof Class<?>) {
-					adapterType = (Class<?>) arguments[0];
-				}
-				Object newInput = null;
-				Object newValue = context.get(IServiceConstants.SELECTION);
-				if (adapterType == null || adapterType.isInstance(newValue)) {
-					newInput = newValue;
-				} else if (newValue != null && adapterType != null) {
-					IAdapterManager adapters = (IAdapterManager) context
-							.get(IAdapterManager.class.getName());
-					if (adapters != null) {
-						Object adapted = adapters.loadAdapter(newValue,
-								adapterType.getName());
-						if (adapted != null) {
-							newInput = adapted;
-						}
-					}
-				}
-				return newInput;
 			}
 		});
 

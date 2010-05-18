@@ -127,12 +127,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNotNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	public void testGet_Input2() throws Exception {
-		IEclipseContext context = getActiveChildContext(application);
-
-		assertNull(context.get(IServiceConstants.INPUT));
-	}
-
 	public void testGet_ActiveShell2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 

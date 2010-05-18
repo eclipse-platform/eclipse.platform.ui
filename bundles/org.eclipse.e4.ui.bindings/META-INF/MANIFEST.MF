@@ -23,4 +23,4 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
 Export-Package: org.eclipse.e4.ui.bindings,
  org.eclipse.e4.ui.bindings.internal;x-internal:=true,
  org.eclipse.e4.ui.bindings.keys
-Service-Component: OSGI-INF/bindings.xml, OSGI-INF/bindingLookup.xml,OSGI-INF/cmdLookup.xml, OSGI-INF/cmdSequenceLookup.xml,OSGI-INF/bindingPrefixLookup.xml, OSGI-INF/partialMatchCommand.xml
+Service-Component: OSGI-INF/bindings.xml

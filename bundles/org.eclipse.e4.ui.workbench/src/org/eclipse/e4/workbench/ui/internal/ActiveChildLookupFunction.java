@@ -28,14 +28,8 @@ public class ActiveChildLookupFunction extends ContextFunction {
 		this.localVar = localVar;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
-	 * eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
-	 */
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		IEclipseContext childContext = (IEclipseContext) context
 				.getLocal(IContextConstants.ACTIVE_CHILD);
 		if (childContext != null) {

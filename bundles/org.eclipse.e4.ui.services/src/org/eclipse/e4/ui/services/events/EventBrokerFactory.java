@@ -27,7 +27,7 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 
 public class EventBrokerFactory extends ContextFunction {
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		return ContextInjectionFactory.make(EventBroker.class, context);
 	}
 }

@@ -229,11 +229,10 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext
-				.set(Logger.class.getName(), ContextInjectionFactory.make(
-						WorkbenchLogger.class, appContext));
-		appContext.set(Adapter.class.getName(),
-				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
+		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
+				WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
+				EclipseAdapter.class, appContext));
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());
@@ -263,7 +262,7 @@ public class E4Application implements IApplication {
 		});
 		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				MContext perceivedRoot = (MContext) context.get(MWindow.class
 						.getName());
 				if (perceivedRoot == null) {

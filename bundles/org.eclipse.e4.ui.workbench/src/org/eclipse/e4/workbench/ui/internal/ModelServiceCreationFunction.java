@@ -21,7 +21,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class ModelServiceCreationFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		return ContextInjectionFactory.make(ModelServiceImpl.class, context);
 	}
 

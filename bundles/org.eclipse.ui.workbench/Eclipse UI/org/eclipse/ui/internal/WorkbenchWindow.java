@@ -351,7 +351,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(IExtensionTracker.class.getName(), new ContextFunction() {
 
 			@Override
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				if (tracker == null) {
 					tracker = new UIExtensionTracker(getWorkbench().getDisplay());
 				}

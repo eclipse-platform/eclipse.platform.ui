@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.di.annotations.Execute;
-
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -32,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-
+// TBD this is not used in the demo and likely got stale. Remove it?
 public class ImageDialogHandler {
 
 	private class ImageDialog extends Dialog {
@@ -41,36 +38,8 @@ public class ImageDialogHandler {
 
 		public ImageDialog(Shell shell, MApplication app, IPresentationEngine renderer) {
 			super(shell);
-
 			theRenderer = renderer;
-			
 			dlgContext = app.getContext().createChild();
-
-			// 'adopt' the app's 'INPUT' (used to support selection, we should 
-			// replace this with a viable strategy to support 'local' selection
-			dlgContext.set(IServiceConstants.INPUT, new ContextFunction() {
-				public Object compute(IEclipseContext context, Object[] arguments) {
-					Class<?> adapterType = null;
-					if (arguments.length > 0 && arguments[0] instanceof Class<?>) {
-						adapterType = (Class<?>) arguments[0];
-					}
-					Object newInput = null;
-					Object newValue = dlgContext.get(IServiceConstants.SELECTION);
-					if (adapterType == null || adapterType.isInstance(newValue)) {
-						newInput = newValue;
-					} else if (newValue != null && adapterType != null) {
-						IAdapterManager adapters = (IAdapterManager) dlgContext
-								.get(IAdapterManager.class.getName());
-						if (adapters != null) {
-							Object adapted = adapters.loadAdapter(newValue, adapterType.getName());
-							if (adapted != null) {
-								newInput = adapted;
-							}
-						}
-					}
-					return newInput;
-				}
-			});
 		}
 		
 		protected Control createDialogArea(Composite parent) {

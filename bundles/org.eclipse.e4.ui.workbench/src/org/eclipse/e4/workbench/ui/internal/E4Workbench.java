@@ -14,10 +14,8 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -179,29 +177,6 @@ public class E4Workbench implements IWorkbench {
 		// EContextService comes from a ContextFunction
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				Class adapterType = null;
-				if (arguments.length > 0 && arguments[0] instanceof Class) {
-					adapterType = (Class) arguments[0];
-				}
-				Object newInput = null;
-				Object newValue = context.get(IServiceConstants.SELECTION);
-				if (adapterType == null || adapterType.isInstance(newValue)) {
-					newInput = newValue;
-				} else if (newValue != null && adapterType != null) {
-					IAdapterManager adapters = (IAdapterManager) applicationContext
-							.get(IAdapterManager.class.getName());
-					if (adapters != null) {
-						Object adapted = adapters.loadAdapter(newValue, adapterType.getName());
-						if (adapted != null) {
-							newInput = adapted;
-						}
-					}
-				}
-				return newInput;
-			}
-		});
 		mainContext.set(IServiceConstants.ACTIVE_SHELL, new ActiveChildLookupFunction(
 				IServiceConstants.ACTIVE_SHELL, null));
 

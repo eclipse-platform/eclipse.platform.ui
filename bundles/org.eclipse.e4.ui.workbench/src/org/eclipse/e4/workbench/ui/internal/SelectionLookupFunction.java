@@ -28,7 +28,7 @@ public class SelectionLookupFunction extends ContextFunction {
 	 * .context.IEclipseContext, java.lang.Object[])
 	 */
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		IEclipseContext leafContext = context;
 		IEclipseContext child = (IEclipseContext) leafContext
 				.getLocal(IContextConstants.ACTIVE_CHILD);

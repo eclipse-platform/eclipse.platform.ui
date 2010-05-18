@@ -36,11 +36,6 @@ public class BindingServiceImpl implements EBindingService {
 
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
 	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
-	static final String BINDING_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingLookup"; //$NON-NLS-1$
-	static final String BINDING_PREFIX_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingPrefixLookup"; //$NON-NLS-1$
-	static final String CMD_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandLookup"; //$NON-NLS-1$
-	static final String CMD_SEQ_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandSequenceLookup"; //$NON-NLS-1$
-	static final String LOOKUP_PARTIAL_MATCH = "org.eclipse.e4.ui.bindings.EPartialMatchLookup"; //$NON-NLS-1$
 	static final String B_ID = "binding::"; //$NON-NLS-1$
 	static final String B_SEQ = "bindSeq::"; //$NON-NLS-1$
 	static final String P_ID = "parmCmd::"; //$NON-NLS-1$

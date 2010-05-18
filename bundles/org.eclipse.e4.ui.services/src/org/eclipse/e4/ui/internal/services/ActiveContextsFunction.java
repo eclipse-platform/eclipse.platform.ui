@@ -5,32 +5,25 @@ import java.util.Set;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ActiveContextsFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
-		IEclipseContext childContext = (IEclipseContext) context
-				.getLocal(IContextConstants.ACTIVE_CHILD);
-		if (childContext != null && arguments.length == 0) {
-			return childContext.get(IServiceConstants.ACTIVE_CONTEXTS);
+	public Object compute(IEclipseContext context) {
+		// 1) get active child
+		IEclipseContext current = context;
+		IEclipseContext child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+		while (child != null) {
+			current = child;
+			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		}
-		Set<String> rc = null;
-		if (arguments.length == 0) {
-			rc = new HashSet<String>();
-		} else {
-			rc = (Set<String>) arguments[0];
-		}
-		Set<String> locals = (Set<String>) context
-				.getLocal(ContextContextService.LOCAL_CONTEXTS);
-		if (locals != null) {
-			rc.addAll(locals);
-		}
-		IEclipseContext parent = context.getParent();
-		if (parent != null) {
-			parent.get(IServiceConstants.ACTIVE_CONTEXTS,
-					new Object[] { rc });
+		//2 form an answer going up
+		Set<String> rc = new HashSet<String>();
+		while (current != null) {
+			Set<String> locals = (Set<String>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
+			if (locals != null)
+				rc.addAll(locals);
+			current = current.getParent();
 		}
 		return rc;
 	}

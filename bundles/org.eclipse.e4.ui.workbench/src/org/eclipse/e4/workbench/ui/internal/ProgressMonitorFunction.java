@@ -21,7 +21,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  */
 public class ProgressMonitorFunction extends ContextFunction {
 
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		return new NullProgressMonitor();
 	}
 

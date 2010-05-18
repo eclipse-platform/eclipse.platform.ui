@@ -219,7 +219,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		e4Context.set(IWorkbenchSiteProgressService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				if (progressService == null) {
 					progressService = new WorkbenchSiteProgressService(PartSite.this);
 				}
@@ -228,7 +228,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		});
 		e4Context.set(IProgressService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				if (progressService == null) {
 					progressService = new WorkbenchSiteProgressService(PartSite.this);
 				}
@@ -237,7 +237,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		});
 		e4Context.set(IKeyBindingService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context, Object[] arguments) {
+			public Object compute(IEclipseContext context) {
 				if (keyBindingService == null) {
 					keyBindingService = new KeyBindingService(PartSite.this);
 				}

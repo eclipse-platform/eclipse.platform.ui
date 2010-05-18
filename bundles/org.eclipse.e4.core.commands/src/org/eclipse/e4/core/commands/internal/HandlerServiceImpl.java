@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -27,16 +28,16 @@ import org.eclipse.e4.core.di.annotations.Execute;
 public class HandlerServiceImpl implements EHandlerService {
 	final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
-	final static String HANDLER_LOOKUP = "org.eclipse.e4.core.commands.EHandlerLookup"; //$NON-NLS-1$
 	final static String LOOKUP_HANDLER = "handler"; //$NON-NLS-1$
 
-	private static Object[] lookupHandler(String handlerId) {
-		return new Object[] { handlerId };
-	}
-
 	public static Object lookUpHandler(IEclipseContext context, String commandId) {
-		String handlerId = H_ID + commandId;
-		return context.get(HANDLER_LOOKUP, lookupHandler(handlerId));
+		IEclipseContext current = context;
+		IEclipseContext child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+		while (child != null) {
+			current = child;
+			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+		}
+		return current.get(H_ID + commandId);
 	}
 
 	private IEclipseContext context;

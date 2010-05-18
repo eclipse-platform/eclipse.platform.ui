@@ -105,12 +105,6 @@ public abstract class HeadlessApplicationTest extends
 		assertNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	public void testGet_Input() throws Exception {
-		IEclipseContext context = application.getContext();
-
-		assertNull(context.get(IServiceConstants.INPUT));
-	}
-
 	public void testGet_PersistedState() throws Exception {
 		IEclipseContext context = application.getContext();
 
