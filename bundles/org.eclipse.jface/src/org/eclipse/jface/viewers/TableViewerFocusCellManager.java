@@ -13,6 +13,7 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Table;
 
 /**
@@ -68,15 +69,25 @@ public class TableViewerFocusCellManager extends SWTFocusCellManager {
 		Table table = (Table) getViewer().getControl();
 
 		if (!table.isDisposed() && table.getItemCount() > 0
-				&& !table.getItem(0).isDisposed()) {
+				&& !table.getItem(table.getTopIndex()).isDisposed()) {
 			final ViewerRow aViewerRow = getViewer().getViewerRowFromItem(
-					table.getItem(0));
+					table.getItem(table.getTopIndex()));
+			if (table.getColumnCount() == 0) {
+				return aViewerRow.getCell(0);
+			}
+
+			Rectangle clientArea = table.getClientArea();
 			for (int i = 0; i < table.getColumnCount(); i++) {
-				if (aViewerRow.getWidth(i) > 0)
+				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i))
 					return aViewerRow.getCell(i);
-			}}
+				}
+			}
 
 		return null;
+	}
+
+	private boolean columnInVisibleArea(Rectangle clientArea, ViewerRow row, int colIndex) {
+		return row.getBounds(colIndex).x >= clientArea.x;
 	}
 
 	public ViewerCell getFocusCell() {
