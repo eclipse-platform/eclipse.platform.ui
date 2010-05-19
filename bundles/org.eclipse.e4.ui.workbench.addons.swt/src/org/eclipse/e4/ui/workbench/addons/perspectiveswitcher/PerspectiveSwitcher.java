@@ -24,6 +24,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -32,8 +34,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
@@ -51,6 +55,8 @@ public class PerspectiveSwitcher {
 	EModelService modelService;
 
 	private ToolBar psTB;
+	private Composite comp;
+	private Image backgroundImage;
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -142,14 +148,24 @@ public class PerspectiveSwitcher {
 
 	@PostConstruct
 	void createWidget(Composite parent, MWindow window) {
-		psTB = new ToolBar(parent, SWT.FLAT | SWT.WRAP);
-		// psTB.addPaintListener(new PaintListener() {
-		// public void paintControl(PaintEvent e) {
-		// paint(e.gc);
-		// }
-		//
-		// });
-		psTB.addDisposeListener(new DisposeListener() {
+		comp = new Composite(parent, SWT.NONE);
+		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		layout.marginLeft = layout.marginRight = 8;
+		layout.marginBottom = layout.marginTop = 0;
+		comp.setLayout(layout);
+		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP);
+		comp.addControlListener(new ControlListener() {
+
+			public void controlMoved(ControlEvent e) {
+				// we don't care
+			}
+
+			public void controlResized(ControlEvent e) {
+				resize(e);
+			}
+
+		});
+		comp.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
@@ -249,13 +265,17 @@ public class PerspectiveSwitcher {
 		return null;
 	}
 
-	void paint(GC gc) {
-		Point size = psTB.getSize();
-		Color background = psTB.getBackground();
-		Color border = psTB.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+	void resize(ControlEvent e) {
+		Point size = comp.getSize();
+		Image oldBackgroundImage = backgroundImage;
+		backgroundImage = new Image(comp.getDisplay(), size.x, size.y);
+		GC gc = new GC(backgroundImage);
+		comp.getParent().drawBackground(gc, 0, 0, size.x, size.y, 0, 0);
+		Color background = comp.getBackground();
+		Color border = comp.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		RGB backgroundRGB = background.getRGB();
 		// TODO naive and hard coded, doesn't deal with high contrast, etc.
-		Color gradientTop = new Color(psTB.getDisplay(), backgroundRGB.red + 12,
+		Color gradientTop = new Color(comp.getDisplay(), backgroundRGB.red + 12,
 				backgroundRGB.green + 10, backgroundRGB.blue + 10);
 		int h = size.y;
 		int curveStart = 0;
@@ -293,10 +313,18 @@ public class PerspectiveSwitcher {
 
 		gc.setForeground(border);
 		gc.drawPolyline(line2);
+		gc.dispose();
+		comp.setBackgroundImage(backgroundImage);
+		if (oldBackgroundImage != null)
+			oldBackgroundImage.dispose();
 
 	}
 
 	void dispose() {
-
-	};
+		if (backgroundImage != null) {
+			comp.setBackgroundImage(null);
+			backgroundImage.dispose();
+			backgroundImage = null;
+		}
+	}
 }
