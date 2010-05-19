@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.help.util.LoadServletUtil;
 
@@ -41,6 +42,7 @@ public class HelpServerTest extends PerformanceTestCase {
 	
 	public void testServletRead100x() throws Exception {
 		tagAsSummary("Servlet Read", Dimension.ELAPSED_PROCESS);
+		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "explanation");
 		LoadServletUtil.startServer();
 		// run the tests
 		for (int i=0; i < 100; ++i) {
