@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		for (int i = 0; i < launches.length; i++) {
 			if (launches[i] == fLaunch) {
 				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.UNINSTALL);
+				break;
 			}
 		}		
 	}
@@ -91,6 +92,12 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i] == fLaunch) {
+				fireDelta(IModelDelta.UNINSTALL);
+				break;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -107,6 +114,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 			if (launches[i] == fLaunch) {
 				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT);
 				installModelProxies();
+				break;
 			}
 		}
 	}
