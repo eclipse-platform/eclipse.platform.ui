@@ -5,7 +5,7 @@
  <copyright>
  </copyright>
 
- $Id: plugin.xml,v 1.2 2010/04/16 17:28:41 pwebster Exp $
+ $Id: plugin.xml,v 1.2.2.1 2010/05/19 14:56:08 pwebster Exp $
 -->
 
 <plugin>
@@ -22,6 +22,25 @@
       <snippet
             uri="platform:/plugin/org.eclipse.e4.ui.tests/xmi/contextViewMenu.e4xmi">
       </snippet>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.e4.ui.tests.selection.Entry">
+         <with
+               variable="output.selection">
+            <count
+                  value="1">
+            </count>
+            <iterate
+                  ifEmpty="true"
+                  operator="and">
+               <adapt
+                     type="org.eclipse.e4.ui.tests.workbench.ContextMenuView$Entry">
+               </adapt>
+            </iterate>
+         </with>
+      </definition>
    </extension>
 
 </plugin>

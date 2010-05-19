@@ -17,10 +17,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.internal.expressions.ReferenceExpression;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -28,12 +33,14 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
@@ -49,6 +56,40 @@ import org.osgi.service.event.EventHandler;
  * Create a contribute part.
  */
 public class MenuItemRenderer extends SWTPartRenderer {
+	static class VisibleRAT extends RunAndTrack {
+		Expression exp;
+		MMenuItem item;
+		ExpressionContext ec;
+		boolean participating = true;
+
+		public VisibleRAT(MMenuItem i, Expression e, IEclipseContext c) {
+			exp = e;
+			item = i;
+			ec = new ExpressionContext(c);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.e4.core.contexts.RunAndTrack#changed(org.eclipse.e4.core
+		 * .contexts.IEclipseContext)
+		 */
+		@Override
+		public boolean changed(IEclipseContext context) {
+			try {
+				item.setVisible(EvaluationResult.TRUE == exp.evaluate(ec));
+				System.err.println("" + item.isVisible() + ": " + item); //$NON-NLS-1$//$NON-NLS-2$
+			} catch (CoreException e) {
+				item.setVisible(false);
+				e.printStackTrace();
+			}
+			return participating;
+		}
+	}
+
+	private HashMap<MMenuItem, Expression> menuItemToExpression = new HashMap<MMenuItem, Expression>();
+	private HashMap<MMenuItem, VisibleRAT> menuItemToRAT = new HashMap<MMenuItem, VisibleRAT>();
 
 	@Inject
 	Logger logger;
@@ -112,6 +153,13 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			return null;
 
 		MMenuItem itemModel = (MMenuItem) element;
+		if (itemModel.getVisibleWhen() != null) {
+			processVisible(itemModel);
+		}
+
+		if (!itemModel.isVisible()) {
+			return null;
+		}
 
 		// determine the index at which we should create the new item
 		int addIndex = calcVisibleIndex(element);
@@ -133,6 +181,20 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		return newItem;
 	}
 
+	private void processVisible(MMenuItem item) {
+		if (menuItemToExpression.get(item) != null) {
+			return;
+		}
+		MCoreExpression exp = (MCoreExpression) item.getVisibleWhen();
+		ReferenceExpression ref = new ReferenceExpression(
+				exp.getCoreExpressionId());
+		menuItemToExpression.put(item, ref);
+		IEclipseContext itemContext = getContext(item);
+		VisibleRAT rat = new VisibleRAT(item, ref, itemContext);
+		menuItemToRAT.put(item, rat);
+		itemContext.runAndTrack(rat);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -151,6 +213,11 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		Widget widget = (Widget) child.getWidget();
 		if (widget != null && !widget.isDisposed())
 			widget.dispose();
+		menuItemToExpression.remove(child);
+		VisibleRAT rat = menuItemToRAT.remove(child);
+		if (rat != null) {
+			rat.participating = false;
+		}
 	}
 
 	private void setItemText(MMenuItem model, MenuItem item) {
@@ -217,8 +284,8 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					if (contrib.getObject() == null) {
 						IContributionFactory cf = (IContributionFactory) lclContext
 								.get(IContributionFactory.class.getName());
-						contrib.setObject(cf.create(contrib
-								.getContributionURI(), lclContext));
+						contrib.setObject(cf.create(
+								contrib.getContributionURI(), lclContext));
 					}
 					lclContext.set(MItem.class.getName(), item);
 					ContextInjectionFactory.invoke(contrib.getObject(),
