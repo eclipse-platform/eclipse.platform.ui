@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application.ui.impl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -42,6 +43,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getVisibleWhen <em>Visible When</em>}</li>
  * </ul>
  * </p>
  *
@@ -177,6 +179,16 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @ordered
 	 */
 	protected MPlaceholder curSharedRef;
+
+	/**
+	 * The cached value of the '{@link #getVisibleWhen() <em>Visible When</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getVisibleWhen()
+	 * @generated
+	 * @ordered
+	 */
+	protected MExpression visibleWhen;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -408,6 +420,49 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MExpression getVisibleWhen() {
+		return visibleWhen;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetVisibleWhen(MExpression newVisibleWhen, NotificationChain msgs) {
+		MExpression oldVisibleWhen = visibleWhen;
+		visibleWhen = newVisibleWhen;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, oldVisibleWhen, newVisibleWhen);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setVisibleWhen(MExpression newVisibleWhen) {
+		if (newVisibleWhen != visibleWhen) {
+			NotificationChain msgs = null;
+			if (visibleWhen != null)
+				msgs = ((InternalEObject)visibleWhen).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, null, msgs);
+			if (newVisibleWhen != null)
+				msgs = ((InternalEObject)newVisibleWhen).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, null, msgs);
+			msgs = basicSetVisibleWhen(newVisibleWhen, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, newVisibleWhen, newVisibleWhen));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -430,6 +485,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		switch (featureID) {
 			case UiPackageImpl.UI_ELEMENT__PARENT:
 				return basicSetParent(null, msgs);
+			case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
+				return basicSetVisibleWhen(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -473,6 +530,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
 				if (resolve) return getCurSharedRef();
 				return basicGetCurSharedRef();
+			case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
+				return getVisibleWhen();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -510,6 +569,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)newValue);
 				return;
+			case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -546,6 +608,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)null);
 				return;
+			case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -574,6 +639,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
 				return curSharedRef != null;
+			case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
+				return visibleWhen != null;
 		}
 		return super.eIsSet(featureID);
 	}

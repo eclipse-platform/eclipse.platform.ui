@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getCurSharedRef <em>Cur Shared Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getVisibleWhen <em>Visible When</em>}</li>
  * </ul>
  * </p>
  *
@@ -239,5 +240,30 @@ public interface MUIElement extends MApplicationElement {
 	 * @generated
 	 */
 	void setCurSharedRef(MPlaceholder value);
+
+	/**
+	 * Returns the value of the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Visible When</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Visible When</em>' containment reference.
+	 * @see #setVisibleWhen(MExpression)
+	 * @model containment="true"
+	 * @generated
+	 */
+	MExpression getVisibleWhen();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getVisibleWhen <em>Visible When</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Visible When</em>' containment reference.
+	 * @see #getVisibleWhen()
+	 * @generated
+	 */
+	void setVisibleWhen(MExpression value);
 
 } // MUIElement

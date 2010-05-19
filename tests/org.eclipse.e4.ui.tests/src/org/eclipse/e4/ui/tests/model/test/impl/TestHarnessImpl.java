@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.2 2010/04/16 17:28:40 pwebster Exp $
+ * $Id: TestHarnessImpl.java,v 1.3 2010/05/14 19:39:11 emoffatt Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -68,6 +69,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getVisibleWhen <em>Visible When</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getSelectedElement <em>Selected Element</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getName <em>Name</em>}</li>
@@ -309,6 +311,15 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected MPlaceholder curSharedRef;
+	/**
+	 * The cached value of the '{@link #getVisibleWhen() <em>Visible When</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getVisibleWhen()
+	 * @generated
+	 * @ordered
+	 */
+	protected MExpression visibleWhen;
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -788,6 +799,49 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MExpression getVisibleWhen() {
+		return visibleWhen;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetVisibleWhen(MExpression newVisibleWhen, NotificationChain msgs) {
+		MExpression oldVisibleWhen = visibleWhen;
+		visibleWhen = newVisibleWhen;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MTestPackage.TEST_HARNESS__VISIBLE_WHEN, oldVisibleWhen, newVisibleWhen);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setVisibleWhen(MExpression newVisibleWhen) {
+		if (newVisibleWhen != visibleWhen) {
+			NotificationChain msgs = null;
+			if (visibleWhen != null)
+				msgs = ((InternalEObject)visibleWhen).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MTestPackage.TEST_HARNESS__VISIBLE_WHEN, null, msgs);
+			if (newVisibleWhen != null)
+				msgs = ((InternalEObject)newVisibleWhen).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MTestPackage.TEST_HARNESS__VISIBLE_WHEN, null, msgs);
+			msgs = basicSetVisibleWhen(newVisibleWhen, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MTestPackage.TEST_HARNESS__VISIBLE_WHEN, newVisibleWhen, newVisibleWhen));
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -1001,6 +1055,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
 			case MTestPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
+			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
+				return basicSetVisibleWhen(null, msgs);
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 		}
@@ -1065,6 +1121,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__CUR_SHARED_REF:
 				if (resolve) return getCurSharedRef();
 				return basicGetCurSharedRef();
+			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
+				return getVisibleWhen();
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				return getChildren();
 			case MTestPackage.TEST_HARNESS__SELECTED_ELEMENT:
@@ -1148,6 +1206,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return;
 			case MTestPackage.TEST_HARNESS__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)newValue);
+				return;
+			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)newValue);
 				return;
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				getChildren().clear();
@@ -1239,6 +1300,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)null);
 				return;
+			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)null);
+				return;
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				getChildren().clear();
 				return;
@@ -1311,6 +1375,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MTestPackage.TEST_HARNESS__CUR_SHARED_REF:
 				return curSharedRef != null;
+			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
+				return visibleWhen != null;
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MTestPackage.TEST_HARNESS__SELECTED_ELEMENT:
@@ -1373,6 +1439,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case MTestPackage.TEST_HARNESS__PARENT: return UiPackageImpl.UI_ELEMENT__PARENT;
 				case MTestPackage.TEST_HARNESS__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 				case MTestPackage.TEST_HARNESS__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+				case MTestPackage.TEST_HARNESS__VISIBLE_WHEN: return UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 				default: return -1;
 			}
 		}
@@ -1453,6 +1520,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case UiPackageImpl.UI_ELEMENT__PARENT: return MTestPackage.TEST_HARNESS__PARENT;
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return MTestPackage.TEST_HARNESS__CONTAINER_DATA;
 				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return MTestPackage.TEST_HARNESS__CUR_SHARED_REF;
+				case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN: return MTestPackage.TEST_HARNESS__VISIBLE_WHEN;
 				default: return -1;
 			}
 		}

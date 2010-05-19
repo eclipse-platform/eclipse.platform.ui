@@ -41,4 +41,5 @@ Import-Package: javax.annotation;version="1.0.0",
  org.osgi.framework;version="1.5.0",
  org.osgi.service.packageadmin;version="1.2.0",
  org.osgi.util.tracker;version="1.4.0"
-Service-Component: OSGI-INF/testableobject.xml, OSGI-INF/statusreporter.xml
+Service-Component: OSGI-INF/testableobject.xml, OSGI-INF/statusreporter.xml,
+ OSGI-INF/menuservice.xml

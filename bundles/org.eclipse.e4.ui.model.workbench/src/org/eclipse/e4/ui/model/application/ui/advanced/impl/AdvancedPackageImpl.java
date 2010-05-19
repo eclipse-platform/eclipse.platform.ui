@@ -182,6 +182,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__CUR_SHARED_REF = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN;
+
+	/**
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -298,6 +307,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE__CUR_SHARED_REF = UiPackageImpl.ELEMENT_CONTAINER__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -488,6 +506,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE_STACK__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.

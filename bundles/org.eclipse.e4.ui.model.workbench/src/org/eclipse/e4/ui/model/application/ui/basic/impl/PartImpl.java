@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
@@ -80,6 +81,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getVisibleWhen <em>Visible When</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
@@ -264,6 +266,16 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected MPlaceholder curSharedRef;
+
+	/**
+	 * The cached value of the '{@link #getVisibleWhen() <em>Visible When</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getVisibleWhen()
+	 * @generated
+	 * @ordered
+	 */
+	protected MExpression visibleWhen;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -680,6 +692,49 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MExpression getVisibleWhen() {
+		return visibleWhen;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetVisibleWhen(MExpression newVisibleWhen, NotificationChain msgs) {
+		MExpression oldVisibleWhen = visibleWhen;
+		visibleWhen = newVisibleWhen;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__VISIBLE_WHEN, oldVisibleWhen, newVisibleWhen);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setVisibleWhen(MExpression newVisibleWhen) {
+		if (newVisibleWhen != visibleWhen) {
+			NotificationChain msgs = null;
+			if (visibleWhen != null)
+				msgs = ((InternalEObject)visibleWhen).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__VISIBLE_WHEN, null, msgs);
+			if (newVisibleWhen != null)
+				msgs = ((InternalEObject)newVisibleWhen).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__VISIBLE_WHEN, null, msgs);
+			msgs = basicSetVisibleWhen(newVisibleWhen, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__VISIBLE_WHEN, newVisibleWhen, newVisibleWhen));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLabel() {
 		return label;
 	}
@@ -888,6 +943,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART__PARENT:
 				return basicSetParent(null, msgs);
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
+				return basicSetVisibleWhen(null, msgs);
 			case BasicPackageImpl.PART__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART__MENUS:
@@ -944,6 +1001,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case BasicPackageImpl.PART__CUR_SHARED_REF:
 				if (resolve) return getCurSharedRef();
 				return basicGetCurSharedRef();
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
+				return getVisibleWhen();
 			case BasicPackageImpl.PART__LABEL:
 				return getLabel();
 			case BasicPackageImpl.PART__ICON_URI:
@@ -1008,6 +1067,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)newValue);
+				return;
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)newValue);
 				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel((String)newValue);
@@ -1084,6 +1146,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case BasicPackageImpl.PART__CUR_SHARED_REF:
 				setCurSharedRef((MPlaceholder)null);
 				return;
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
+				setVisibleWhen((MExpression)null);
+				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
@@ -1145,6 +1210,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case BasicPackageImpl.PART__CUR_SHARED_REF:
 				return curSharedRef != null;
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
+				return visibleWhen != null;
 			case BasicPackageImpl.PART__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case BasicPackageImpl.PART__ICON_URI:
@@ -1192,6 +1259,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case BasicPackageImpl.PART__PARENT: return UiPackageImpl.UI_ELEMENT__PARENT;
 				case BasicPackageImpl.PART__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 				case BasicPackageImpl.PART__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+				case BasicPackageImpl.PART__VISIBLE_WHEN: return UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 				default: return -1;
 			}
 		}
@@ -1264,6 +1332,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case UiPackageImpl.UI_ELEMENT__PARENT: return BasicPackageImpl.PART__PARENT;
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return BasicPackageImpl.PART__CONTAINER_DATA;
 				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return BasicPackageImpl.PART__CUR_SHARED_REF;
+				case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN: return BasicPackageImpl.PART__VISIBLE_WHEN;
 				default: return -1;
 			}
 		}

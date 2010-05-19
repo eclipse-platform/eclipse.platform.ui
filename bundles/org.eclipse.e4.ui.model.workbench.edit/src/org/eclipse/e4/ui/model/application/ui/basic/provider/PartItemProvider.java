@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.provider.ContributionItemProvider;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
+import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -92,6 +93,7 @@ public class PartItemProvider
 			addOnTopPropertyDescriptor(object);
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
+			addCurSharedRefPropertyDescriptor(object);
 			addLabelPropertyDescriptor(object);
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
@@ -230,6 +232,28 @@ public class PartItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Cur Shared Ref feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addCurSharedRefPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UIElement_curSharedRef_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_curSharedRef_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_ELEMENT__CUR_SHARED_REF,
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}
@@ -379,6 +403,7 @@ public class PartItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
+			childrenFeatures.add(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(BasicPackageImpl.Literals.PART__MENUS);
 			childrenFeatures.add(BasicPackageImpl.Literals.PART__TOOLBAR);
@@ -453,6 +478,7 @@ public class PartItemProvider
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case BasicPackageImpl.PART__PROPERTIES:
+			case BasicPackageImpl.PART__VISIBLE_WHEN:
 			case BasicPackageImpl.PART__HANDLERS:
 			case BasicPackageImpl.PART__MENUS:
 			case BasicPackageImpl.PART__TOOLBAR:
@@ -477,6 +503,11 @@ public class PartItemProvider
 			(createChildParameter
 				(UiPackageImpl.Literals.CONTEXT__PROPERTIES,
 				 ((EFactory)MApplicationFactory.INSTANCE).create(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP)));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN,
+				 MUiFactory.INSTANCE.createExpression()));
 
 		newChildDescriptors.add
 			(createChildParameter

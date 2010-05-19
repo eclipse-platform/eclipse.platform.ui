@@ -5,7 +5,7 @@
  <copyright>
  </copyright>
 
- $Id: plugin.xml,v 1.1.2.1 2010/04/16 12:24:25 tschindl Exp $
+ $Id: plugin.xml,v 1.2 2010/04/16 17:28:41 pwebster Exp $
 -->
 
 <plugin>
@@ -15,6 +15,13 @@
             uri="http://www.eclipse.org/ui/2010/Test/UIModel/test"
             class="org.eclipse.e4.ui.tests.model.test.MTestPackage"
             genModel="model/TestModel.genmodel"/>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <snippet
+            uri="platform:/plugin/org.eclipse.e4.ui.tests/xmi/contextViewMenu.e4xmi">
+      </snippet>
    </extension>
 
 </plugin>

@@ -27,4 +27,13 @@ public interface MUiFactory {
 	 */
 	MUiFactory INSTANCE = org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl.eINSTANCE;
 
+	/**
+	 * Returns a new object of class '<em>Expression</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Expression</em>'.
+	 * @generated
+	 */
+	MExpression createExpression();
+
 } //MUiFactory

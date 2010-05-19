@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_rd8OoUlnEd-SOJlNeoxGXA">
+  <components xmi:id="__Z8qEElnEd-SOJlNeoxGXA" elementId="__Z8qEElnEd-SOJlNeoxGXA" parentID="org.eclipse.e4.ide.application" processor="org.eclipse.e4.ui.tests.workbench.ContextMenuViewProcessor">
+    <!--descriptors xmi:id="_igXaMEloEd-SOJlNeoxGX0" label="Context Menu View" elementId="org.eclipse.e4.ui.tests.workbench.ContextMenuView" category="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.ContextMenuView">
+      <menus xmi:id="_JWJ4wV6WEd-kocunFhpHRA" elementId="org.eclipse.e4.ui.tests.workbench.ContextMenuView">
+        <tags>ViewMenu</tags>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpHRA" elementId="e4.showView" label="Show View" command="org.eclipse.ui.views.showView"/>
+      </menus>
+    </descriptors-->
+  </components>
+</application:ModelComponents>
