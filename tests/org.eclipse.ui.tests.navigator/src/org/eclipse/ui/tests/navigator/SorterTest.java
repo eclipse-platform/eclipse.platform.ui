@@ -145,7 +145,9 @@ public class SorterTest extends NavigatorTestBase {
 		refreshViewer();
 		_viewer.expandAll();
 
-		int count = 20;
+		final int WAIT_COUNT = 100;
+		
+		int count = WAIT_COUNT;
 		boolean passed = false;
 
 		while (!passed) {
@@ -173,7 +175,7 @@ public class SorterTest extends NavigatorTestBase {
 		refreshViewer();
 		_viewer.expandAll();
 
-		count = 20;
+		count = WAIT_COUNT;
 		passed = false;
 
 		while (!passed) {
@@ -201,7 +203,7 @@ public class SorterTest extends NavigatorTestBase {
 		refreshViewer();
 		_viewer.expandAll();
 
-		count = 20;
+		count = WAIT_COUNT;
 		passed = false;
 
 		while (!passed) {
