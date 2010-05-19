@@ -88,6 +88,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                         updateExtendButtonState();
                     }
                 });
+        pathVariablesGroup.setSaveVariablesOnChange(true);
         setShellStyle(getShellStyle() | SWT.SHEET);
     }
 

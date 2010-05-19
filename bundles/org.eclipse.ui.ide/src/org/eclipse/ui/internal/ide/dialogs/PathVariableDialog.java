@@ -318,7 +318,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
         		false, 1, 1));
-        GridLayout layout = new GridLayout(1, true);
+        GridLayout layout = new GridLayout(0, true);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         buttonsComposite.setLayout(layout);
@@ -355,28 +355,32 @@ public class PathVariableDialog extends TitleAreaDialog {
 	        setButtonLayoutData(folderButton);
         }
 
-    	variableButton = new Button(buttonsComposite, SWT.PUSH);
-    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
+        // the workspace path variable manager does not support variables.
+        if (currentResource != null) {
+        	layout.numColumns++;
+	    	variableButton = new Button(buttonsComposite, SWT.PUSH);
+	    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
+	
+	 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+	    		false));
+	
+	        variableButton.addSelectionListener(new SelectionAdapter() {
+	            public void widgetSelected(SelectionEvent e) {
+	                selectVariable();
+	            }
+	        });
+	        setButtonLayoutData(variableButton);
 
- 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-    		false));
+	        // variable value label
+	        variableResolvedValueLabel = new Label(contents, SWT.LEAD);
+	        variableResolvedValueLabel.setText(resolvedValueLabelText);
 
-        variableButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                selectVariable();
-            }
-        });
-        setButtonLayoutData(variableButton);
-
-        // variable value label
-        variableResolvedValueLabel = new Label(contents, SWT.LEAD);
-        variableResolvedValueLabel.setText(resolvedValueLabelText);
-
-        // variable value field.  Attachments done after all widgets created.
-        variableResolvedValueField = new Label(contents, SWT.LEAD | SWT.SINGLE | SWT.READ_ONLY);
-        variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));
-        variableResolvedValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-        		false, 2, 1));
+	        // variable value field.  Attachments done after all widgets created.
+	        variableResolvedValueField = new Label(contents, SWT.LEAD | SWT.SINGLE | SWT.READ_ONLY);
+	        variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));
+	        variableResolvedValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+	        		false, 2, 1));
+        }
     }
 
     private IPathVariableManager getPathVariableManager() {
@@ -439,7 +443,8 @@ public class PathVariableDialog extends TitleAreaDialog {
         validationStatus = IMessageProvider.NONE;
         okButton.setEnabled(validateVariableValue() && validateVariableName());
         locationEntered = true;
-        variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));        
+        if (variableResolvedValueField != null)
+        	variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));        
     }
 
     /**

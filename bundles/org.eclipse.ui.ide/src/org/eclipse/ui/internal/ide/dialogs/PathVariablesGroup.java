@@ -131,6 +131,9 @@ public class PathVariablesGroup {
     // reference to the workspace's path variable manager
     private IPathVariableManager pathVariableManager;
 
+    // if set to true, variables will be saved after each change
+    private boolean saveVariablesOnChange = false;
+    
     // file image
     private final Image FILE_IMG = PlatformUI.getWorkbench().getSharedImages()
             .getImage(ISharedImages.IMG_OBJ_FILE);
@@ -208,6 +211,7 @@ public class PathVariablesGroup {
 
         // the UI must be updated
         updateWidgetState();
+        saveVariablesIfRequired();
     }
 
     /**
@@ -435,6 +439,7 @@ public class PathVariablesGroup {
 
         // now we must refresh the UI state
         updateWidgetState();
+        saveVariablesIfRequired();
     }
 
     /**
@@ -452,6 +457,21 @@ public class PathVariablesGroup {
         return true;
     }
 
+    /**
+     * Automatically save the path variable list when new variables
+     * are added, changed, or removed by the user. 
+     * @param value 
+     *
+     */
+    public void setSaveVariablesOnChange(boolean value) {
+    	saveVariablesOnChange = value;
+    }
+    
+    private void saveVariablesIfRequired() {
+    	if (saveVariablesOnChange) {
+    		performOk();
+    	}
+    }
     /**
      * Returns the selected variables.
      *  
@@ -656,6 +676,7 @@ public class PathVariablesGroup {
             tempPathVariables.remove(varName);
         }
         updateWidgetState();
+        saveVariablesIfRequired();
     }
 
     private boolean canChangeSelection() {
