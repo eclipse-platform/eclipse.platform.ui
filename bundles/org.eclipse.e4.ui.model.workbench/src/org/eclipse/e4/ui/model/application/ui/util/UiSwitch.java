@@ -167,6 +167,13 @@ public class UiSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case UiPackageImpl.CORE_EXPRESSION: {
+				MCoreExpression coreExpression = (MCoreExpression)theEObject;
+				T1 result = caseCoreExpression(coreExpression);
+				if (result == null) result = caseExpression(coreExpression);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -318,6 +325,21 @@ public class UiSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseExpression(MExpression object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Core Expression</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Core Expression</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseCoreExpression(MCoreExpression object) {
 		return null;
 	}
 

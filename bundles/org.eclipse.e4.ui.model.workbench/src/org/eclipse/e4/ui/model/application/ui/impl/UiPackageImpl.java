@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
@@ -931,22 +932,41 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int EXPRESSION = 9;
 
 	/**
-	 * The feature id for the '<em><b>Core Expression Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EXPRESSION__CORE_EXPRESSION_ID = 0;
-
-	/**
 	 * The number of structural features of the '<em>Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EXPRESSION_FEATURE_COUNT = 1;
+	public static final int EXPRESSION_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl <em>Core Expression</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
+	 * @generated
+	 */
+	public static final int CORE_EXPRESSION = 10;
+
+	/**
+	 * The feature id for the '<em><b>Core Expression Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__CORE_EXPRESSION_ID = EXPRESSION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Core Expression</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.SideValue <em>Side Value</em>}' enum.
@@ -956,7 +976,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
 	 * @generated
 	 */
-	public static final int SIDE_VALUE = 10;
+	public static final int SIDE_VALUE = 11;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1027,6 +1047,13 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass expressionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass coreExpressionEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1514,16 +1541,29 @@ public class UiPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MExpression#getCoreExpressionId <em>Core Expression Id</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression <em>Core Expression</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Core Expression</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression
+	 * @generated
+	 */
+	public EClass getCoreExpression() {
+		return coreExpressionEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpressionId <em>Core Expression Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Core Expression Id</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MExpression#getCoreExpressionId()
-	 * @see #getExpression()
+	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpressionId()
+	 * @see #getCoreExpression()
 	 * @generated
 	 */
-	public EAttribute getExpression_CoreExpressionId() {
-		return (EAttribute)expressionEClass.getEStructuralFeatures().get(0);
+	public EAttribute getCoreExpression_CoreExpressionId() {
+		return (EAttribute)coreExpressionEClass.getEStructuralFeatures().get(0);
 	}
 
 
@@ -1609,7 +1649,9 @@ public class UiPackageImpl extends EPackageImpl {
 		createEAttribute(genericTrimContainerEClass, GENERIC_TRIM_CONTAINER__SIDE);
 
 		expressionEClass = createEClass(EXPRESSION);
-		createEAttribute(expressionEClass, EXPRESSION__CORE_EXPRESSION_ID);
+
+		coreExpressionEClass = createEClass(CORE_EXPRESSION);
+		createEAttribute(coreExpressionEClass, CORE_EXPRESSION__CORE_EXPRESSION_ID);
 
 		// Create enums
 		sideValueEEnum = createEEnum(SIDE_VALUE);
@@ -1680,6 +1722,7 @@ public class UiPackageImpl extends EPackageImpl {
 		g2 = createEGenericType(genericTrimContainerEClass_T);
 		g1.getETypeArguments().add(g2);
 		genericTrimContainerEClass.getEGenericSuperTypes().add(g1);
+		coreExpressionEClass.getESuperTypes().add(this.getExpression());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1726,8 +1769,10 @@ public class UiPackageImpl extends EPackageImpl {
 		initEClass(genericTrimContainerEClass, MGenericTrimContainer.class, "GenericTrimContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getGenericTrimContainer_Side(), this.getSideValue(), "side", null, 1, 1, MGenericTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(expressionEClass, MExpression.class, "Expression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getExpression_CoreExpressionId(), ecorePackage.getEString(), "coreExpressionId", "", 0, 1, MExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEClass(expressionEClass, MExpression.class, "Expression", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(coreExpressionEClass, MCoreExpression.class, "CoreExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getCoreExpression_CoreExpressionId(), ecorePackage.getEString(), "coreExpressionId", "", 0, 1, MCoreExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Initialize enums and add enum literals
 		initEEnum(sideValueEEnum, SideValue.class, "SideValue"); //$NON-NLS-1$
@@ -2019,12 +2064,22 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EClass EXPRESSION = eINSTANCE.getExpression();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl <em>Core Expression</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
+		 * @generated
+		 */
+		public static final EClass CORE_EXPRESSION = eINSTANCE.getCoreExpression();
+
+		/**
 		 * The meta object literal for the '<em><b>Core Expression Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EAttribute EXPRESSION__CORE_EXPRESSION_ID = eINSTANCE.getExpression_CoreExpressionId();
+		public static final EAttribute CORE_EXPRESSION__CORE_EXPRESSION_ID = eINSTANCE.getCoreExpression_CoreExpressionId();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.SideValue <em>Side Value</em>}' enum.

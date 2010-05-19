@@ -205,7 +205,8 @@
       <eLiterals name="Left" value="2"/>
       <eLiterals name="Right" value="3"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Expression">
+    <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="CoreExpression" eSuperTypes="#//ui/Expression">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpressionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           defaultValueLiteral=""/>
     </eClassifiers>

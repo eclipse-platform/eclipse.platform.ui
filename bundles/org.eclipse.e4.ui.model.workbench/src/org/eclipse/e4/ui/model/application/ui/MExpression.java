@@ -16,41 +16,10 @@ package org.eclipse.e4.ui.model.application.ui;
  * A representation of the model object '<em><b>Expression</b></em>'.
  * <!-- end-user-doc -->
  *
- * <p>
- * The following features are supported:
- * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.MExpression#getCoreExpressionId <em>Core Expression Id</em>}</li>
- * </ul>
- * </p>
  *
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MExpression {
-	/**
-	 * Returns the value of the '<em><b>Core Expression Id</b></em>' attribute.
-	 * The default value is <code>""</code>.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Core Expression Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Core Expression Id</em>' attribute.
-	 * @see #setCoreExpressionId(String)
-	 * @model default=""
-	 * @generated
-	 */
-	String getCoreExpressionId();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MExpression#getCoreExpressionId <em>Core Expression Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Core Expression Id</em>' attribute.
-	 * @see #getCoreExpressionId()
-	 * @generated
-	 */
-	void setCoreExpressionId(String value);
 
 } // MExpression

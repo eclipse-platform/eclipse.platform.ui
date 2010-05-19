@@ -507,7 +507,7 @@ public class PartItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN,
-				 MUiFactory.INSTANCE.createExpression()));
+				 MUiFactory.INSTANCE.createCoreExpression()));
 
 		newChildDescriptors.add
 			(createChildParameter

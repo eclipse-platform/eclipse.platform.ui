@@ -290,7 +290,7 @@ public class ToolControlItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN,
-				 MUiFactory.INSTANCE.createExpression()));
+				 MUiFactory.INSTANCE.createCoreExpression()));
 	}
 
 	/**

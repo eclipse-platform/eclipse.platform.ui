@@ -80,26 +80,26 @@ public class UiItemProviderAdapterFactory extends UiAdapterFactory implements Co
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.MExpression} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.MCoreExpression} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ExpressionItemProvider expressionItemProvider;
+	protected CoreExpressionItemProvider coreExpressionItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.MExpression}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.MCoreExpression}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createExpressionAdapter() {
-		if (expressionItemProvider == null) {
-			expressionItemProvider = new ExpressionItemProvider(this);
+	public Adapter createCoreExpressionAdapter() {
+		if (coreExpressionItemProvider == null) {
+			coreExpressionItemProvider = new CoreExpressionItemProvider(this);
 		}
 
-		return expressionItemProvider;
+		return coreExpressionItemProvider;
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class UiItemProviderAdapterFactory extends UiAdapterFactory implements Co
 	 * @generated
 	 */
 	public void dispose() {
-		if (expressionItemProvider != null) expressionItemProvider.dispose();
+		if (coreExpressionItemProvider != null) coreExpressionItemProvider.dispose();
 	}
 
 }
