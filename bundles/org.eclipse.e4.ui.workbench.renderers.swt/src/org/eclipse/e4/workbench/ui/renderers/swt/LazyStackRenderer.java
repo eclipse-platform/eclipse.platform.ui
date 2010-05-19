@@ -137,7 +137,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		List<MUIElement> becomingVisible = new ArrayList<MUIElement>();
 		MUIElement curSel = element.getParent().getSelectedElement();
 		if (curSel != null) {
-			showElementRecursive(curSel, becomingVisible, null);
+			showElementRecursive(curSel, becomingVisible);
 		}
 	}
 
@@ -182,7 +182,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	private void showElementRecursive(MUIElement element,
-			List<MUIElement> becomingVisible, IEclipseContext phParentContext) {
+			List<MUIElement> becomingVisible) {
 		if (!element.isToBeRendered())
 			return;
 
@@ -190,8 +190,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			MPlaceholder ph = (MPlaceholder) element;
 			MUIElement ref = ph.getRef();
 			ref.setCurSharedRef(ph);
-
-			phParentContext = getContext(ph.getParent());
 
 			Composite phComp = (Composite) ph.getWidget();
 			Control refCtrl = (Control) ph.getRef().getWidget();
@@ -219,11 +217,17 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			element = ref;
 		}
 
-		if (element instanceof MContext && phParentContext != null) {
+		if (element instanceof MContext) {
 			IEclipseContext context = ((MContext) element).getContext();
-			if (context.getParent() != phParentContext)
-				context.setParent(phParentContext);
-			phParentContext = null;
+			if (context != null) {
+				IEclipseContext newParentContext = modelService
+						.getContainingContext(element);
+				if (context.getParent() != newParentContext) {
+					System.out.println("Update Context: " + context.toString() //$NON-NLS-1$
+							+ " new parent: " + newParentContext.toString()); //$NON-NLS-1$
+					context.setParent(newParentContext);
+				}
+			}
 		}
 
 		// Show any floating windows
@@ -240,24 +244,23 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (curSel == null && container.getChildren().size() > 0)
 				curSel = container.getChildren().get(0);
 			if (curSel != null)
-				showElementRecursive(curSel, becomingVisible, phParentContext);
+				showElementRecursive(curSel, becomingVisible);
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
 			List<MUIElement> kids = new ArrayList<MUIElement>(
 					container.getChildren());
 			for (MUIElement childElement : kids) {
-				showElementRecursive(childElement, becomingVisible,
-						phParentContext);
+				showElementRecursive(childElement, becomingVisible);
 			}
 
 			// OK, now process detached windows
 			if (element instanceof MWindow) {
 				for (MWindow w : ((MWindow) element).getWindows()) {
-					showElementRecursive(w, becomingVisible, phParentContext);
+					showElementRecursive(w, becomingVisible);
 				}
 			} else if (element instanceof MPerspective) {
 				for (MWindow w : ((MPerspective) element).getWindows()) {
-					showElementRecursive(w, becomingVisible, phParentContext);
+					showElementRecursive(w, becomingVisible);
 				}
 			}
 		}

@@ -21,8 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -64,19 +62,10 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 
 		Composite newComp = new Composite((Composite) parent, SWT.NONE);
 		newComp.setLayout(new FillLayout());
-		newComp.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				List<MPlaceholder> refs = renderedMap.get(ref);
-				refs.remove(element);
-				if (refs.size() == 0) {
-					System.out.println("Last Ref closed"); //$NON-NLS-1$
-					// renderingEngine.removeGui(ref);
-				}
-			}
-		});
 
 		Control refWidget = (Control) ref.getWidget();
 		if (refWidget == null) {
+			ref.setToBeRendered(true);
 			refWidget = (Control) renderingEngine.createGui(ref, newComp);
 		} else {
 			if (refWidget.getParent() != newComp) {
@@ -87,10 +76,52 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 		if (ref instanceof MContext) {
 			IEclipseContext context = ((MContext) ref).getContext();
 			IEclipseContext newParentContext = getContext(ph);
-			if (context.getParent() != newParentContext)
+			if (context.getParent() != newParentContext) {
+				System.out.println("Update Context: " + context.toString() //$NON-NLS-1$
+						+ " new parent: " + newParentContext.toString()); //$NON-NLS-1$
 				context.setParent(newParentContext);
+			}
 		}
 
 		return newComp;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer#disposeWidget
+	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void disposeWidget(MUIElement element) {
+		MPlaceholder ph = (MPlaceholder) element;
+		MUIElement refElement = ph.getRef();
+		Control refCtrl = (Control) refElement.getWidget();
+
+		// Remove the element ref from the rendered list
+		List<MPlaceholder> refs = renderedMap.get(refElement);
+		refs.remove(ph);
+
+		if (refs.size() == 0) {
+			renderingEngine.removeGui(refElement);
+		} else {
+			// Ensure that the dispose of the element reference doesn't cascade
+			// to
+			// dispose the 'real' part
+			if (refCtrl != null && !refCtrl.isDisposed()
+					&& refElement.getCurSharedRef() == ph) {
+				// Find another *rendered* ref to pass the part on to
+				for (MPlaceholder aPH : refs) {
+					Composite phComp = (Composite) aPH.getWidget();
+					if (phComp != null && !phComp.isDisposed()) {
+						refCtrl.setParent(phComp);
+						break;
+					}
+				}
+			}
+		}
+
+		super.disposeWidget(element);
 	}
 }

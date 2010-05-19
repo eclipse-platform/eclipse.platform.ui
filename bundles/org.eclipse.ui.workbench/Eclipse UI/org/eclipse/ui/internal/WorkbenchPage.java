@@ -960,7 +960,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		if (reference != null) {
 			partService.hidePart(part);
-			viewReferences.remove(reference);
+			// viewReferences.remove(reference);
 			return true;
 		}
 
@@ -2728,7 +2728,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		if (part instanceof IViewPart) {
-			viewReferences.remove(partReference);
+			// viewReferences.remove(partReference);
 		} else {
 			editorReferences.remove(partReference);
 		}

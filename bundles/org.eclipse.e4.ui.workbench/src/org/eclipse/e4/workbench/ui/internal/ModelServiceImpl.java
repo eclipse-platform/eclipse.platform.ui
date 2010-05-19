@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  *
@@ -149,12 +150,21 @@ public class ModelServiceImpl implements EModelService {
 	 * .application.MUIElement)
 	 */
 	public IEclipseContext getContainingContext(MUIElement element) {
-		MElementContainer<MUIElement> curParent = element.getParent();
+		MUIElement curParent = null;
+		if (element.getCurSharedRef() != null)
+			curParent = element.getCurSharedRef().getParent();
+		else
+			curParent = (MUIElement) ((EObject) element).eContainer();
+
 		while (curParent != null) {
 			if (curParent instanceof MContext) {
 				return ((MContext) curParent).getContext();
 			}
-			curParent = curParent.getParent();
+
+			if (curParent.getCurSharedRef() != null)
+				curParent = curParent.getCurSharedRef().getParent();
+			else
+				curParent = (MUIElement) ((EObject) curParent).eContainer();
 		}
 
 		return null;

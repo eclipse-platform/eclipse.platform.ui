@@ -64,7 +64,11 @@ public class CleanupAddon {
 	private EventHandler renderingChangeHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-			MElementContainer<MUIElement> container = changedObj.getParent();
+			MElementContainer<MUIElement> container = null;
+			if (changedObj.getCurSharedRef() != null)
+				container = changedObj.getCurSharedRef().getParent();
+			else
+				container = changedObj.getParent();
 
 			// Don't mess with editor stacks (for now)
 			if (container.getTags().contains("EditorStack")) //$NON-NLS-1$
