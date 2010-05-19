@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
@@ -55,10 +54,6 @@ public class FileSystemSelectionArea {
 
 		fileSystems = new ComboViewer(composite, SWT.READ_ONLY);
 		fileSystems.getControl().setFont(composite.getFont());
-
-		fileSystems.getControl().setLayoutData(
-				new GridData(GridData.FILL_HORIZONTAL
-						| GridData.GRAB_HORIZONTAL));
 
 		fileSystems.setLabelProvider(new LabelProvider() {
 			/*

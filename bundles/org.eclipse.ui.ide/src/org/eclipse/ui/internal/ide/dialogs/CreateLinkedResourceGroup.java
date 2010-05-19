@@ -344,7 +344,17 @@ public class CreateLinkedResourceGroup {
 		}
 
 		fileSystemSelectionArea = new FileSystemSelectionArea();
-		fileSystemSelectionArea.createContents(composite);
+		
+		Composite parent = new Composite(composite, SWT.NONE);
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 4, 1));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		parent.setLayout(layout);
+		parent.setFont(composite.getFont());
+
+		fileSystemSelectionArea.createContents(parent);
+		
 		fileSystemSelectionArea.setEnabled(enabled);
 	}
 
@@ -537,7 +547,7 @@ public class CreateLinkedResourceGroup {
 		PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(
 				linkTargetField.getShell(), variableTypes);
 		if (updatableResourceName != null) {
-		    dialog.setResource(updatableResourceName.getResource());
+		dialog.setResource(updatableResourceName.getResource());
 		}
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			String[] variableNames = (String[]) dialog.getResult();
