@@ -234,6 +234,9 @@
       <initializer
             class="org.eclipse.debug.internal.core.DebugPreferenceInitializer">
       </initializer>
+      <modifier
+            class="org.eclipse.debug.internal.core.PreferredDelegateModifyListener">
+      </modifier>
    </extension>
 
 <!-- ===================================== -->

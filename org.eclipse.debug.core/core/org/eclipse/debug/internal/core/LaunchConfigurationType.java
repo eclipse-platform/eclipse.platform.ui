@@ -186,12 +186,14 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		} else {
 			fPreferredDelegates.put(modes, delegate);
 		}
+		((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).persistPreferredLaunchDelegate(this);
 	}
 	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPreferredDelegate(java.util.Set)
 	 */
 	public ILaunchDelegate getPreferredDelegate(Set modes) {
+		initializePreferredDelegates();
 		return (ILaunchDelegate) fPreferredDelegates.get(modes);
 	}
 	
@@ -208,6 +210,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @since 3.3
 	 */
 	public Map getPreferredDelegates() {
+		initializePreferredDelegates();
 		return fPreferredDelegates;
 	}
 	
@@ -503,5 +506,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fModeCombinations.contains(modes);
 	}
 
+	/** 
+	 * Called on preference import to reset preferred delegates.
+	 */
+	void resetPreferredDelegates() {
+		fPreferredDelegates = null;
+	}
 }
 

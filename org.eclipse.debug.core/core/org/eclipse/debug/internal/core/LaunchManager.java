@@ -1596,6 +1596,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
+	 * Allows internal access to reset preferred delegates when re-importing 
+	 * preferences.  
+	 * 
+	 * @since 3.6
+	 */
+	protected void resetPreferredDelegates() {
+	    fPreferredDelegates = null;
+	}
+	
+	/**
 	 * Allows internal access to a preferred delegate for a given type and mode set
 	 * @param typeid the id of the <code>ILaunchConfigurationType</code> to find a delegate for
 	 * @param modes the set of modes for the delegate
@@ -2347,43 +2357,50 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * 
 	 * @since 3.3
 	 */
-	private void persistPreferredLaunchDelegates() {
+	public void persistPreferredLaunchDelegates() {
         ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
-        Map preferred = null;
-        ILaunchDelegate delegate = null;
-        Set modes = null;
         for(int i = 0; i < types.length; i++) {
-            String preferenceName = PREF_PREFERRED_DELEGATES + '/' + types[i].getIdentifier();
-            preferred = ((LaunchConfigurationType)types[i]).getPreferredDelegates();
-            if(preferred != null && preferred.size() > 0) {
-                StringBuffer str = new StringBuffer();
-                for(Iterator iter = preferred.keySet().iterator(); iter.hasNext();) {
-                    modes = (Set) iter.next();
-                    delegate = (ILaunchDelegate) preferred.get(modes);
-                    if(delegate != null) {
-                        str.append(delegate.getId());
-                        str.append(',');
-                        for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
-                            str.append(iter2.next());
-                            if(iter2.hasNext()) {
-                                str.append(',');
-                            }
-                        }
-                        if (iter.hasNext()) {
-                            str.append(';');
+            persistPreferredLaunchDelegate((LaunchConfigurationType)types[i]);
+        }
+	}
+
+	/**
+	 * Persists the given launch configuration delegate. 
+	 * @param type Launch configuration type to persist
+	 * 
+	 * @since 3.6
+	 */
+    public void persistPreferredLaunchDelegate(LaunchConfigurationType type) {
+        String preferenceName = PREF_PREFERRED_DELEGATES + '/' + type.getIdentifier();
+        Map preferred = type.getPreferredDelegates();
+        if(preferred != null && preferred.size() > 0) {
+            StringBuffer str = new StringBuffer();
+            for(Iterator iter = preferred.keySet().iterator(); iter.hasNext();) {
+                Set modes = (Set) iter.next();
+                ILaunchDelegate delegate = (ILaunchDelegate) preferred.get(modes);
+                if(delegate != null) {
+                    str.append(delegate.getId());
+                    str.append(',');
+                    for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
+                        str.append(iter2.next());
+                        if(iter2.hasNext()) {
+                            str.append(',');
                         }
                     }
+                    if (iter.hasNext()) {
+                        str.append(';');
+                    }
                 }
-                Preferences.setString(DebugPlugin.getUniqueIdentifier(), preferenceName, str.toString(), null);
-            } else {
-            	Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), preferenceName);
             }
+            Preferences.setString(DebugPlugin.getUniqueIdentifier(), preferenceName, str.toString(), null);
+        } else {
+            Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), preferenceName);
         }
 
         // Reset the legacy preference string.
         Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), PREF_PREFERRED_DELEGATES);
-	}
-	
+    }
+
 	/**
 	 * finds and terminates any running launch configurations associated with the given resource
 	 * @param resource the resource to search for launch configurations and hence launches for
