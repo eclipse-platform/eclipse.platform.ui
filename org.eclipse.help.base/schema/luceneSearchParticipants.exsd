@@ -6,7 +6,10 @@
          <meta.schema plugin="org.eclipse.help.base" id="luceneSearchParticipants" name="Lucene Search Participants"/>
       </appInfo>
       <documentation>
-         This extension point should be used to add document content to the Lucene search index. There are two cases were you would want to add a search participant:
+         &lt;p&gt;&lt;strong&gt;In Eclipse 3.6 the announcement was made that this API is deprecated and will be removed in a future release. Use org.eclipse.help.base.searchParticipant as a replacement.
+&lt;/strong&gt;&lt;/p&gt;
+
+This extension point should be used to add document content to the Lucene search index. There are two cases were you would want to add a search participant:
 &lt;ol&gt;
 &lt;li&gt;
 To index documents registered with the help system&apos;s TOC that are not of the HTML format (e.g. XML). In this case, the participant must declare file extensions it can handle. It will be called to index each matching document. In this case, the participant has the plug-in scope.
@@ -232,7 +235,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2010 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;

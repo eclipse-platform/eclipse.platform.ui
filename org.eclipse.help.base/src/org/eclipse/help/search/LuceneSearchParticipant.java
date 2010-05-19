@@ -56,6 +56,9 @@ import org.osgi.framework.Bundle;
  * which are not binary compatible between major release. The 
  * extension point org.eclipse.help.base.searchParticipant 
  * and the class SearchParticipant should be used instead.
+ * 
+ * In Eclipse 3.6 the announcement was made that this API class will be removed 
+ * in a future release.
  */
 public abstract class LuceneSearchParticipant {
 
