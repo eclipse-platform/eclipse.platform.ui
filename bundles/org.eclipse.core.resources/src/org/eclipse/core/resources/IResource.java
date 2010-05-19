@@ -2475,7 +2475,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> Resource changes are disallowed during certain types of resource change 
-	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 *       event notification. See {@link IResourceChangeEvent} for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
