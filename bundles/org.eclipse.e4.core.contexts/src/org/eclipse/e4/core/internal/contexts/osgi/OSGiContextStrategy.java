@@ -50,6 +50,7 @@ public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy,
 		public void addContext(IEclipseContext originatingContext) {
 			users.put(originatingContext, null);
 			// track this context so we can cleanup when the context is disposed
+			// XXX this is a problem - duplicate listeners
 			originatingContext.runAndTrack(OSGiContextStrategy.this);
 		}
 

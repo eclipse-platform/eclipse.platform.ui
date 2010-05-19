@@ -71,7 +71,7 @@ public class InjectorImpl implements IInjector {
 			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, object, true));
 
 		// Then ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, objectSupplier, false);
+		resolveRequestorArgs(requestors, objectSupplier, false, true);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -140,7 +140,7 @@ public class InjectorImpl implements IInjector {
 		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, false /* inverse order */, requestors);
 		// might still need to get resolved values from secondary suppliers
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, null, true /* fill with nulls */);
+		resolveRequestorArgs(requestors, null, true /* fill with nulls */, false);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -167,7 +167,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
 
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (throwUnresolved)
@@ -232,7 +232,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
 			if (unresolved(actualArgs) != -1)
 				continue;
 			requestor.setResolvedArgs(actualArgs);
@@ -254,7 +254,7 @@ public class InjectorImpl implements IInjector {
 	public void resolveArguments(IRequestor requestor) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		list.add((Requestor) requestor);
-		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), true);
+		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), true, false /* no nested track */);
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
@@ -279,9 +279,9 @@ public class InjectorImpl implements IInjector {
 		forgetSupplier(objectSupplier);
 	}
 
-	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, boolean fillNulls) {
+	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, boolean fillNulls, boolean track) {
 		for (Requestor requestor : requestors) {
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, fillNulls);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, fillNulls, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
 				requestor.setResolvedArgs(actualArgs);
@@ -305,7 +305,7 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException(tmp.toString());
 	}
 
-	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, boolean fillNulls) {
+	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, boolean fillNulls, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
 
 		// 0) initial fill - all are unresolved
@@ -325,7 +325,7 @@ public class InjectorImpl implements IInjector {
 
 		// 2) use the primary supplier
 		if (objectSupplier != null) {
-			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor, requestor.shouldTrack(), requestor.shouldGroupUpdates());
+			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 			for (int i = 0; i < actualArgs.length; i++) {
 				if (descriptors[i] == null)
 					continue; // already resolved
@@ -343,7 +343,7 @@ public class InjectorImpl implements IInjector {
 			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i]);
 			if (extendedSupplier == null)
 				continue;
-			Object result = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack(), requestor.shouldGroupUpdates());
+			Object result = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 			if (result != NOT_A_VALUE) {
 				actualArgs[i] = result;
 				descriptors[i] = null; // mark as used
@@ -693,7 +693,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (method.isAnnotationPresent(Optional.class))
