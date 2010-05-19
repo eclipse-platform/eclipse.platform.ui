@@ -17,26 +17,28 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -48,13 +50,10 @@ public class PerspectiveSwitcher {
 	@Inject
 	EModelService modelService;
 
-	private MToolBar perspectiveSwitcherTB;
+	private ToolBar psTB;
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			if (perspectiveSwitcherTB == null)
-				return;
-
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			if (!(changedElement instanceof MPerspectiveStack))
@@ -64,38 +63,15 @@ public class PerspectiveSwitcher {
 			if (!perspStack.isToBeRendered())
 				return;
 
-			// Clear the previous selected item (if any)
-			clearCurSelection();
-
-			MToolItem psItem = getItemFor(perspStack.getSelectedElement());
-			if (psItem != null)
-				psItem.setSelected(true);
-
-			if (event.getProperty(UIEvents.EventTags.OLD_VALUE) instanceof MPerspective) {
-				MPerspective oldSel = (MPerspective) event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				MToolItem oldSelItem = getItemFor(oldSel);
-				if (oldSelItem != null)
-					oldSelItem.setSelected(false);
-			}
-		}
-
-		private void clearCurSelection() {
-			for (MToolBarElement te : perspectiveSwitcherTB.getChildren()) {
-				if (te instanceof MToolItem) {
-					MToolItem ti = (MToolItem) te;
-					if (ti.isSelected())
-						ti.setSelected(false);
-				}
+			MPerspective selElement = perspStack.getSelectedElement();
+			for (ToolItem ti : psTB.getItems()) {
+				ti.setSelection(ti.getData() == selElement);
 			}
 		}
 	};
 
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			if (perspectiveSwitcherTB == null)
-				return;
-
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			if (!(changedElement instanceof MPerspective))
@@ -121,22 +97,9 @@ public class PerspectiveSwitcher {
 			if (changedObj instanceof MWindow && UIEvents.EventTypes.ADD.equals(eventType)) {
 				MUIElement added = (MUIElement) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (added instanceof MPerspectiveStack) {
-					MUIElement parent = added.getParent();
-					while (!(parent instanceof MApplication))
-						parent = parent.getParent();
-					addSwitcher((MApplication) parent, (MPerspectiveStack) added);
 				}
 			}
 			if (!(changedObj instanceof MPerspectiveStack))
-				return;
-
-			if (perspectiveSwitcherTB == null)
-				return;
-
-			MPerspectiveStack perspStack = (MPerspectiveStack) changedObj;
-
-			// if we aren't in the UI who cares?
-			if (!perspStack.isToBeRendered())
 				return;
 
 			if (UIEvents.EventTypes.ADD.equals(eventType)) {
@@ -145,13 +108,11 @@ public class PerspectiveSwitcher {
 				if (!added.isToBeRendered())
 					return;
 
-				MToolItem psItem = addPerspectiveItem(added);
-				perspectiveSwitcherTB.getChildren().add(psItem);
+				addPerspectiveItem(added);
 
-				// Hack!! fix the layout
-				ToolBar tb = (ToolBar) perspectiveSwitcherTB.getWidget();
-				tb.pack();
-				tb.getParent().layout(new Control[] { tb }, SWT.DEFER);
+				// update fix the layout
+				psTB.pack();
+				psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				MPerspective removed = (MPerspective) event
 						.getProperty(UIEvents.EventTags.OLD_VALUE);
@@ -161,10 +122,9 @@ public class PerspectiveSwitcher {
 
 				removePerspectiveItem(removed);
 
-				// Hack!! fix the layout
-				ToolBar tb = (ToolBar) perspectiveSwitcherTB.getWidget();
-				tb.pack();
-				tb.getParent().layout(new Control[] { tb }, SWT.DEFER);
+				// update the layout
+				psTB.pack();
+				psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
 			}
 		}
 	};
@@ -173,10 +133,64 @@ public class PerspectiveSwitcher {
 	void init(IEclipseContext context) {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+	}
+
+	@PostConstruct
+	void createWidget(Composite parent, MWindow window) {
+		psTB = new ToolBar(parent, SWT.FLAT | SWT.WRAP);
+		// psTB.addPaintListener(new PaintListener() {
+		// public void paintControl(PaintEvent e) {
+		// paint(e.gc);
+		// }
+		//
+		// });
+		psTB.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+
+		});
+
+		psTB.addMenuDetectListener(new MenuDetectListener() {
+			public void menuDetected(MenuDetectEvent e) {
+				ToolBar tb = (ToolBar) e.widget;
+				System.out.println("Menu Detect"); //$NON-NLS-1$
+				Point p = new Point(e.x, e.y);
+				p = psTB.getDisplay().map(null, psTB, p);
+				ToolItem item = tb.getItem(p);
+				if (item == null)
+					System.out.println("  ToolBar menu"); //$NON-NLS-1$
+				else {
+					MPerspective persp = (MPerspective) item.getData();
+					if (persp == null)
+						System.out.println("  Add button Menu"); //$NON-NLS-1$
+					else
+						System.out.println("  Perspective menu: " + persp.getElementId()); //$NON-NLS-1$
+				}
+			}
+		});
+
+		ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
+		createItem.setText("+"); //$NON-NLS-1$
+		new ToolItem(psTB, SWT.SEPARATOR);
+
+		List<MPerspectiveStack> psList = modelService.findElements(window, null,
+				MPerspectiveStack.class, null);
+		if (psList.size() > 0) {
+			MPerspectiveStack perspStack = psList.get(0);
+
+			// Create an item for each perspective that should show up
+			for (MPerspective persp : perspStack.getChildren()) {
+				if (persp.isToBeRendered()) {
+					addPerspectiveItem(persp);
+				}
+			}
+		}
 	}
 
 	@PreDestroy
@@ -186,90 +200,103 @@ public class PerspectiveSwitcher {
 		eventBroker.unsubscribe(selectionHandler);
 	}
 
-	@Inject
-	public void createSwitcher(MApplication appModel) {
-		perspectiveSwitcherTB = (MToolBar) modelService.find(PERSPECTIVE_SWITCHER_ID, appModel);
-		if (perspectiveSwitcherTB != null)
-			return;
+	private ToolItem addPerspectiveItem(MPerspective persp) {
+		ToolItem psItem = new ToolItem(psTB, SWT.RADIO);
+		psItem.setData(persp);
+		psItem.setText(persp.getLabel());
+		// psItem.setIconURI(persp.getIconURI());
+		psItem.setToolTipText(persp.getTooltip());
 
-		// OK, we don't already have one so create one...
-		List<MPerspectiveStack> psList = modelService.findElements(appModel, null,
-				MPerspectiveStack.class, null);
-		for (MPerspectiveStack ps : psList) {
-			if (ps.isToBeRendered()) {
-				addSwitcher(appModel, ps);
+		psItem.setSelection(persp == persp.getParent().getSelectedElement());
+
+		psItem.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				MPerspective persp = (MPerspective) e.widget.getData();
+				persp.getParent().setSelectedElement(persp);
 			}
-		}
-	}
 
-	private void addSwitcher(MApplication appModel, MPerspectiveStack ps) {
-		MTrimBar trim = getTopTrim(appModel);
-		perspectiveSwitcherTB = MenuFactoryImpl.eINSTANCE.createToolBar();
-		perspectiveSwitcherTB.setElementId(PERSPECTIVE_SWITCHER_ID);
-
-		// Create an item for each perspective that should show up
-		for (MPerspective persp : ps.getChildren()) {
-			if (persp.isToBeRendered()) {
-				MToolItem psItem = addPerspectiveItem(persp);
-				psItem.setLabel(persp.getLabel());
-				psItem.setIconURI(persp.getIconURI());
-				psItem.setSelected(persp == ps.getSelectedElement());
+			public void widgetDefaultSelected(SelectionEvent e) {
+				MPerspective persp = (MPerspective) e.widget.getData();
+				persp.getParent().setSelectedElement(persp);
 			}
-		}
-		trim.getChildren().add(perspectiveSwitcherTB);
-	}
+		});
 
-	/**
-	 * @param appModel
-	 * @return
-	 */
-	private MTrimBar getTopTrim(MApplication appModel) {
-		List<MTrimmedWindow> windowList = modelService.findElements(appModel, null,
-				MTrimmedWindow.class, null);
-		List<MTrimBar> trimList;
-
-		for (MTrimmedWindow tw : windowList) {
-			trimList = tw.getTrimBars();
-			for (MTrimBar trim : trimList) {
-				if (trim.getSide() == SideValue.TOP) {
-					return trim;
-				}
+		psItem.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
+				MPerspective persp = (MPerspective) event.widget.getData();
+				System.out.println("Menu for: " + persp.getElementId()); //$NON-NLS-1$
 			}
-		}
-
-		// None there, create one
-		MTrimmedWindow tw = (MTrimmedWindow) appModel.getChildren().get(0);
-		MTrimBar mtb = MBasicFactory.INSTANCE.createTrimBar();
-		mtb.setSide(SideValue.TOP);
-		tw.getTrimBars().add(mtb);
-		return mtb;
-	}
-
-	private MToolItem addPerspectiveItem(MPerspective persp) {
-		MDirectToolItem psItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
-		psItem.setElementId(persp.getElementId());
-		psItem.setLabel(persp.getLabel());
-		psItem.setIconURI(persp.getIconURI());
-		psItem.setTooltip(persp.getTooltip());
-		psItem.setType(ItemType.CHECK);
-
-		String bundleId = "org.eclipse.e4.ui.workbench.addons.swt"; //$NON-NLS-1$
-		String classSpec = "org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SwitchPerspective"; //$NON-NLS-1$
-		psItem.setContributionURI("platform:/plugin/" + bundleId + '/' //$NON-NLS-1$
-				+ classSpec);
-
-		perspectiveSwitcherTB.getChildren().add(psItem);
+		});
 		return psItem;
 	}
 
-	protected MToolItem getItemFor(MPerspective persp) {
-		return (MToolItem) modelService.find(persp.getElementId(), perspectiveSwitcherTB);
-	}
-
 	private void removePerspectiveItem(MPerspective toRemove) {
-		MToolItem psItem = getItemFor(toRemove);
+		ToolItem psItem = getItemFor(toRemove);
 		if (psItem != null) {
-			perspectiveSwitcherTB.getChildren().remove(psItem);
+			psItem.dispose();
 		}
 	}
+
+	protected ToolItem getItemFor(MPerspective persp) {
+		if (psTB == null)
+			return null;
+
+		for (ToolItem ti : psTB.getItems()) {
+			if (ti.getData() == persp)
+				return ti;
+		}
+
+		return null;
+	}
+
+	void paint(GC gc) {
+		Point size = psTB.getSize();
+		Color background = psTB.getBackground();
+		Color border = psTB.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		RGB backgroundRGB = background.getRGB();
+		// TODO naive and hard coded, doesn't deal with high contrast, etc.
+		Color gradientTop = new Color(psTB.getDisplay(), backgroundRGB.red + 12,
+				backgroundRGB.green + 10, backgroundRGB.blue + 10);
+		int h = size.y;
+		int curveStart = 0;
+		int curve_width = 5;
+
+		int[] curve = new int[] { 0, h, 1, h, 2, h - 1, 3, h - 2, 3, 2, 4, 1, 5, 0, };
+		int[] line1 = new int[curve.length + 4];
+		int index = 0;
+		int x = curveStart;
+		line1[index++] = x + 1;
+		line1[index++] = h;
+		for (int i = 0; i < curve.length / 2; i++) {
+			line1[index++] = x + curve[2 * i];
+			line1[index++] = curve[2 * i + 1];
+		}
+		line1[index++] = x + curve_width;
+		line1[index++] = 0;
+
+		int[] line2 = new int[line1.length];
+		index = 0;
+		for (int i = 0; i < line1.length / 2; i++) {
+			line2[index] = line1[index++] - 1;
+			line2[index] = line1[index++];
+		}
+
+		// custom gradient
+		gc.setForeground(gradientTop);
+		gc.setBackground(background);
+		gc.drawLine(4, 0, size.x, 0);
+		gc.drawLine(3, 1, size.x, 1);
+		gc.fillGradientRectangle(2, 2, size.x - 2, size.y - 3, true);
+		gc.setForeground(background);
+		gc.drawLine(2, size.y - 1, size.x, size.y - 1);
+		gradientTop.dispose();
+
+		gc.setForeground(border);
+		gc.drawPolyline(line2);
+
+	}
+
+	void dispose() {
+
+	};
 }
