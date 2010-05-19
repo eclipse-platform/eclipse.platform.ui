@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -413,7 +414,17 @@ public class CreateLinkedResourceGroup {
 		//  3) A path variable relative path, ex:		VAR\foo\bar\file.txt
 		URI uri;
 		try {
+			IPath path = Path.fromOSString(linkTarget);
+			if (path != null && path.toFile().exists())
+				return URIUtil.toURI(path);
+			
 			uri = new URI(linkTarget);
+			URI resolved = getPathVariableManager().resolveURI(uri);
+			try {
+				EFS.getStore(resolved);
+			} catch (CoreException e) {
+				return URIUtil.toURI(path);
+			}
 		}catch(URISyntaxException e) {
 			uri = convertToURI(linkTarget);
 		}
@@ -561,13 +572,7 @@ public class CreateLinkedResourceGroup {
 	 * the entered value is a variable.
 	 */
 	private void resolveVariable() {
-		IPathVariableManager pathVariableManager;
-		// use the resolved link target name
-		if (updatableResourceName != null && updatableResourceName.getResource() != null)
-			pathVariableManager = updatableResourceName.getResource().getPathVariableManager();
-		else
-			pathVariableManager = ResourcesPlugin
-									.getWorkspace().getPathVariableManager();
+		IPathVariableManager pathVariableManager = getPathVariableManager();
 		boolean isURL = true;
 		URI uri;
 		try {
@@ -592,6 +597,17 @@ public class CreateLinkedResourceGroup {
 		}
 		resolvedPathLabelData.setText(resolvedString);
 	}
+
+	/**
+	 * @return the current IPathVariableManager
+	 */
+	private IPathVariableManager getPathVariableManager() {
+		if (updatableResourceName.getResource() != null)
+			return updatableResourceName.getResource()
+					.getPathVariableManager();
+		return ResourcesPlugin.getWorkspace()
+					.getPathVariableManager();
+	}		
 
 	/**
 	 * Sets the <code>GridData</code> on the specified button to be one that

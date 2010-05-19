@@ -209,8 +209,14 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 						IResource resource = root.findMember(path);
 						if (resource != null && resource instanceof IContainer) {
 							String resourceName = resourceGroup.getResource();
-							if (resourceName.length() > 0)
-								return ((IContainer) resource).getFile(Path.fromOSString(resourceName.length() > 0 ? resourceName:"foo")); //$NON-NLS-1$
+							if (resourceName.length() > 0) {
+								try {
+									return ((IContainer) resource).getFile(Path
+											.fromOSString(resourceName));
+								} catch (IllegalArgumentException e) {
+									// continue below.
+								}
+							}
 							return resource;
 						}
 						return resource;
