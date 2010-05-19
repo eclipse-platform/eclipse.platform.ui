@@ -57,7 +57,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  
+                  A class which contains methods to define criteria values associated with a topic or table of contents.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractCriteriaProvider:"/>
@@ -86,14 +86,6 @@
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
