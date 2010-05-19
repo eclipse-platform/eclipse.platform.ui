@@ -14,7 +14,6 @@ package org.eclipse.jface.window;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
@@ -25,7 +24,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
@@ -78,8 +76,6 @@ public abstract class ToolTip {
 	private int style;
 
 	private Object currentArea;
-
-	private static final boolean IS_OSX = Util.isCarbon();
 
 	/**
 	 * Create new instance which add TooltipSupport to the widget
@@ -462,51 +458,8 @@ public abstract class ToolTip {
 	private void passOnEvent(Shell tip, Event event) {
 		if (control != null && !control.isDisposed() && event != null
 				&& event.widget != control && event.type == SWT.MouseDown) {
-			final Display display = control.getDisplay();
-			Point newPt = display.map(tip, null, new Point(event.x, event.y));
-
-			final Event newEvent = new Event();
-			newEvent.button = event.button;
-			newEvent.character = event.character;
-			newEvent.count = event.count;
-			newEvent.data = event.data;
-			newEvent.detail = event.detail;
-			newEvent.display = event.display;
-			newEvent.doit = event.doit;
-			newEvent.end = event.end;
-			newEvent.gc = event.gc;
-			newEvent.height = event.height;
-			newEvent.index = event.index;
-			newEvent.item = event.item;
-			newEvent.keyCode = event.keyCode;
-			newEvent.start = event.start;
-			newEvent.stateMask = event.stateMask;
-			newEvent.text = event.text;
-			newEvent.time = event.time;
-			newEvent.type = event.type;
-			newEvent.widget = event.widget;
-			newEvent.width = event.width;
-			newEvent.x = newPt.x;
-			newEvent.y = newPt.y;
-
+			// the following was left in order to fix bug 298770 with minimal change. In 3.7, the complete method should be removed.
 			tip.close();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (IS_OSX) {
-						try {
-							Thread.sleep(300);
-						} catch (InterruptedException e) {
-
-						}
-
-						display.post(newEvent);
-						newEvent.type = SWT.MouseUp;
-						display.post(newEvent);
-					} else {
-						display.post(newEvent);
-					}
-				}
-			});
 		}
 	}
 
