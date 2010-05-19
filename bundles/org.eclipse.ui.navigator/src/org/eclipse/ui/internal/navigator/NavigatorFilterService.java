@@ -270,6 +270,10 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			setActiveFilterIds(filterIdsToActivate);
 			persistFilterActivationState();
 			updateViewer();
+			// the action providers may no longer be enabled, so we
+			// reset the selection.
+			StructuredViewer commonViewer = (StructuredViewer) contentService.getViewer();
+			commonViewer.setSelection(StructuredSelection.EMPTY);
 		}
 	}
 
@@ -281,9 +285,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 
 		ViewerFilter[] visibleFilters =	getVisibleFilters(true);
 		commonViewer.setFilters(visibleFilters);
-		// the action providers may no longer be enabled, so we
-		// reset the selection.
-		commonViewer.setSelection(StructuredSelection.EMPTY);
 	}		
 		
 	/**
