@@ -24,15 +24,11 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -65,6 +61,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	public void setCSSInfo(MUIElement me, Object widget) {
 		// Set up the CSS Styling parameters; id & class
+		IEclipseContext ctxt = getContext(me);
+		if (ctxt == null)
+			ctxt = getContext(me);
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
 		if (engine == null)
@@ -195,42 +194,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				curIndex++;
 		}
 		return -1;
-	}
-
-	/*
-	 * HACK: Create a wrapper composite with appropriate layout for the purpose
-	 * of styling margins. See bug #280632
-	 */
-	protected Composite createWrapperForStyling(Composite parentWidget,
-			IEclipseContext context) {
-		Composite layoutHolder = new Composite(parentWidget, SWT.NONE);
-		addLayoutForStyling(layoutHolder);
-		layoutHolder.setData("org.eclipse.e4.ui.css.swt.marginWrapper", true); //$NON-NLS-1$
-		final IStylingEngine engine = (IStylingEngine) context
-				.get(IStylingEngine.SERVICE_NAME);
-		engine.setClassname(layoutHolder, "marginWrapper"); //$NON-NLS-1$
-		return layoutHolder;
-	}
-
-	/*
-	 * HACK: Add layout information to the composite for the purpose of styling
-	 * margins. See bug #280632
-	 */
-	protected void addLayoutForStyling(Composite composite) {
-		GridLayout gl = new GridLayout(1, true);
-		composite.setLayout(gl);
-		gl.horizontalSpacing = 0;
-		gl.verticalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-	}
-
-	/*
-	 * HACK: Prep the control with layout information for the purpose of styling
-	 * margins. See bug #280632
-	 */
-	protected void configureForStyling(Control control) {
-		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}
 
 	/*
