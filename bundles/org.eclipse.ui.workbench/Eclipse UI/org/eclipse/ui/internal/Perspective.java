@@ -1116,8 +1116,8 @@ public class Perspective {
      * deactivate.
      */
 	protected void onDeactivate() {
-		presentation.deactivate();
 		setActiveFastView(null);
+		presentation.deactivate();
 		setAllPinsVisible(false);
 
 		// Update fast views.
@@ -1928,7 +1928,7 @@ public class Perspective {
             ViewPane pane = getPane(activeFastView);
             if (pane != null) {
                 if (pane.isZoomed()) {
-                    presentation.zoomOut();
+					pane.setZoomed(false);
                 }
                 hideFastView(activeFastView, steps);
             }
