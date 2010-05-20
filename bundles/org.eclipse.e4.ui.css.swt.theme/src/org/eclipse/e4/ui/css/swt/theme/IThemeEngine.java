@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.css.swt.theme;
 
 import java.util.List;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.swt.widgets.Widget;
 
@@ -30,4 +31,8 @@ public interface IThemeEngine {
 	public void setTheme(ITheme theme);
 
 	public void applyStyles(Widget widget, boolean applyStylesToChildNodes);
+	
+	// TODO may not be ideal??
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
+	public CSSEngine getCSSEngine();
 }

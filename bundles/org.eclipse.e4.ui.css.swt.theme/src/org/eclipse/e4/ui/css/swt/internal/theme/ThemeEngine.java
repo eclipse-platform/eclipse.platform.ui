@@ -281,4 +281,10 @@ public class ThemeEngine implements IThemeEngine {
 	public void applyStyles(Widget widget, boolean applyStylesToChildNodes) {
 		engine.applyStyles(widget, applyStylesToChildNodes);
 	}
+	
+	// TODO may not be ideal??
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
+	public CSSEngine getCSSEngine() {
+				return engine;
+	}
 }
