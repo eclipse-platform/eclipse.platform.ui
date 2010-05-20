@@ -117,6 +117,12 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	public synchronized void registerStylsheet(String uri, String... themes) {
+		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
+		String osname = bundle.getBundleContext().getProperty("osgi.os");
+		String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
+        
+		uri = uri.replaceAll("\\$os\\$", osname).replaceAll("\\$ws\\$", wsname);
+		
 		if (themes.length == 0) {
 			globalStyles.add(uri);
 		} else {
