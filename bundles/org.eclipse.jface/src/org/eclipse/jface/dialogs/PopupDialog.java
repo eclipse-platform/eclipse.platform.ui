@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.jface.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -36,9 +37,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -320,6 +323,13 @@ public class PopupDialog extends Window {
 	 */
 	private Control titleSeparator, infoSeparator;
 
+	/**
+	 * Color to be used for the info area text.
+	 * 
+	 * @since 3.6
+	 */
+	private Color infoColor;
+	
 	/**
 	 * Font to be used for the info area text. Computed based on the dialog's
 	 * font.
@@ -856,11 +866,41 @@ public class PopupDialog extends Window {
 		
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL,
 				SWT.BEGINNING).applyTo(infoLabel);
-		infoLabel.setForeground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_DARK_SHADOW));
+		Display display = parent.getDisplay();
+		infoColor = new Color(display, blend(
+				display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(),
+				display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(),
+				0.56f));
+		infoLabel.setForeground(infoColor);
 		return infoLabel;
 	}
 
+	/**
+	 * Returns an RGB that lies between the given foreground and background
+	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
+	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
+	 * equal to <code>bg</code>.
+	 * @param bg the background color
+	 * @param fg the foreground color
+	 * @param factor the mixing factor, must be in [0,&nbsp;1]
+	 *
+	 * @return the interpolated color
+	 * @since 3.6
+	 */
+	private static RGB blend(RGB bg, RGB fg, float factor) {
+		// copy of org.eclipse.jface.internal.text.revisions.Colors#blend(..)
+		Assert.isLegal(bg != null);
+		Assert.isLegal(fg != null);
+		Assert.isLegal(factor >= 0f && factor <= 1f);
+		
+		float complement = 1f - factor;
+		return new RGB(
+				(int) (complement * bg.red + factor * fg.red),
+				(int) (complement * bg.green + factor * fg.green),
+				(int) (complement * bg.blue + factor * fg.blue)
+		);
+	}
+	
 	/**
 	 * Create a horizontal separator for the given parent.
 	 * 
@@ -1586,6 +1626,10 @@ public class PopupDialog extends Window {
 	 * 
 	 */
 	private void handleDispose() {
+		if (infoColor != null && !infoColor.isDisposed()) {
+			infoColor.dispose();
+		}
+		infoColor = null;
 		if (infoFont != null && !infoFont.isDisposed()) {
 			infoFont.dispose();
 		}
