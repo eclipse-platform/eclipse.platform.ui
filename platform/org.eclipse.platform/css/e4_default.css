@@ -3,6 +3,13 @@
     background-color:  #EEF2F7 #DEEBF3 100%;
 }
 
+.MTrimmedWindow {  
+    margin-top: 12px;
+    margin-bottom: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .MPartStack {
     tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.workbench.ui.renderers.swt.CTabRendering');
     unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
