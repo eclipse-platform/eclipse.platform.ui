@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,6 +31,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.resource.JFaceResources;
 
@@ -67,6 +70,12 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private Label fSeparator;
 	/** The font of the optional status text label.*/
 	private Font fStatusTextFont;
+	/**
+	 * The color of the optional status text label or <code>null</code> if none.
+	 * 
+	 * @since 3.6
+	 */
+	private Color fStatusTextForegroundColor;
 	/** The maximal widget width. */
 	private int fMaxWidth;
 	/** The maximal widget height. */
@@ -158,8 +167,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			GridData gd2= new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
-			// Regarding the color see bug 41128
-			fStatusField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			fStatusTextForegroundColor= new Color(fStatusField.getDisplay(), blend(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(), display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56f));
+			fStatusField.setForeground(fStatusTextForegroundColor);
 
 			fStatusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
@@ -167,6 +176,32 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		addDisposeListener(this);
 	}
 
+	/**
+	 * Returns an RGB that lies between the given foreground and background
+	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
+	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
+	 * equal to <code>bg</code>.
+	 * @param bg the background color
+	 * @param fg the foreground color
+	 * @param factor the mixing factor, must be in [0,&nbsp;1]
+	 *
+	 * @return the interpolated color
+	 * @since 3.6
+	 */
+	private static RGB blend(RGB bg, RGB fg, float factor) {
+		// copy of org.eclipse.jface.internal.text.revisions.Colors#blend(..)
+		Assert.isLegal(bg != null);
+		Assert.isLegal(fg != null);
+		Assert.isLegal(factor >= 0f && factor <= 1f);
+		
+		float complement= 1f - factor;
+		return new RGB(
+				(int) (complement * bg.red + factor * fg.red),
+				(int) (complement * bg.green + factor * fg.green),
+				(int) (complement * bg.blue + factor * fg.blue)
+		);
+	}
+	
 	/**
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 * @param input the input object
@@ -204,8 +239,11 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
-
 		fStatusTextFont= null;
+		if (fStatusTextForegroundColor != null && !fStatusTextForegroundColor.isDisposed())
+			fStatusTextForegroundColor.dispose();
+		fStatusTextForegroundColor= null;
+		
 		fTextFont= null;
 		fShell= null;
 		fText= null;

@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.text.revisions.Colors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
@@ -86,6 +87,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @since 3.4.2
 	 */
 	private Font fStatusLabelFont;
+	/**
+	 * Color for the label in the status line or <code>null</code> if none.
+	 * 
+	 * @since 3.6
+	 */
+	private Color fStatusLabelForeground;
 	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
 	private final ToolBarManager fToolBarManager;
 	/** Status line toolbar or <code>null</code> if none. */
@@ -232,8 +239,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
 		fStatusLabel.setFont(fStatusLabelFont);
-
-		fStatusLabel.setForeground(fStatusLabel.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		
+		fStatusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+		fStatusLabel.setForeground(fStatusLabelForeground);
 		fStatusLabel.setBackground(background);
 		setColor(fStatusComposite, foreground, background);
 	}
@@ -516,6 +524,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (fStatusLabelFont != null) {
 			fStatusLabelFont.dispose();
 			fStatusLabelFont= null;
+		}
+		if (fStatusLabelForeground != null) {
+			fStatusLabelForeground.dispose();
+			fStatusLabelForeground= null;
 		}
 	}
 
