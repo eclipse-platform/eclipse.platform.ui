@@ -1,6 +1,6 @@
 
-
 .MTrimmedWindow { 
+    background-color: #E6EAF7; 
     margin-top: 12px;
     margin-bottom: 2px;
     margin-left: 10px;
@@ -15,11 +15,11 @@
 }
 
 .MTrimBar  {
-    background-image:  url(./winXPOlive.PNG);	
+    background-image:  url(./win7.PNG);	
 }
 
 .MPartStack.active {
-	unselected-tabs-color: #E6E3C3 #EDEACA #FFFFFF 100% 100%;
-    outer-keyline-color: #BFCDA4;
+	unselected-tabs-color: #F3F9ff #D0DFEE #CEDDED #D2E1F0 #FFFFFF 30% 50% 100% 100%;
+    	outer-keyline-color: #C4C5C1;
 	inner-keyline-color: #FFFFFF;
 }
