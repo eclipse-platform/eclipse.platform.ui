@@ -289,8 +289,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getInterfaces());
 				ctxt.setContext(lclContext);
 
-				System.out.println("New Context: " + lclContext.toString()
-						+ " parent: " + parentContext.toString());
+				// System.out.println("New Context: " + lclContext.toString()
+				// + " parent: " + parentContext.toString());
 
 				// make sure the context knows about these variables that have
 				// been defined in the model

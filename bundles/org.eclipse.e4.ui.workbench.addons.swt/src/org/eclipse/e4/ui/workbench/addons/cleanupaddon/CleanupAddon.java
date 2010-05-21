@@ -19,6 +19,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.Event;
@@ -71,7 +73,10 @@ public class CleanupAddon {
 				container = changedObj.getParent();
 
 			// Don't mess with editor stacks (for now)
-			if (container.getTags().contains("EditorStack")) //$NON-NLS-1$
+			MUIElement containerElement = container;
+			if (containerElement.getTags().contains("EditorStack")
+					|| containerElement instanceof MWindow
+					|| containerElement instanceof MPerspectiveStack) //$NON-NLS-1$
 				return;
 
 			Boolean toBeRendered = (Boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);

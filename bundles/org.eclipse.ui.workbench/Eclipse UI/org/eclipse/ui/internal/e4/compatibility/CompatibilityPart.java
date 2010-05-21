@@ -94,8 +94,8 @@ public abstract class CompatibilityPart {
 			// being unset
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				Assert.isTrue(!composite.isDisposed(),
-						"The widget should not have been disposed at this point"); //$NON-NLS-1$
+				 Assert.isTrue(!composite.isDisposed(),
+										"The widget should not have been disposed at this point"); //$NON-NLS-1$
 				beingDisposed = true;
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed

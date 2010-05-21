@@ -139,7 +139,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				MPlaceholder ph = activePart.getCurSharedRef();
 				parent = ph.getParent();
 			}
-			if (parent instanceof MPartStack) {
+			if (parent instanceof MPartStack && parent.getWidget() != null) {
 				parent.getTags().add("active"); //$NON-NLS-1$
 				setCSSInfo(parent, parent.getWidget());
 			} else {

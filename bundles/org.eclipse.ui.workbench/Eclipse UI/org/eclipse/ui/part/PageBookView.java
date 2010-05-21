@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -1007,6 +1006,10 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	
 	private IPartListener2 partListener = new IPartListener2() {
 		public void partActivated(IWorkbenchPartReference partRef) {
+			if (partRef == null) {
+				WorkbenchPlugin.log("partRef is null in PageBookView partActivated"); //$NON-NLS-1$
+				return;
+			}
 			IWorkbenchPart part = partRef.getPart(false);
 			PageBookView.this.partActivated(part);
 		}

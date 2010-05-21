@@ -2563,6 +2563,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
 			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			if (partReference == null) {
+				WorkbenchPlugin.log("Reference is null in firePartActivated"); //$NON-NLS-1$
+				return;
+			}
 
 			for (Object listener : partListenerList.getListeners()) {
 				((IPartListener) listener).partActivated(workbenchPart);

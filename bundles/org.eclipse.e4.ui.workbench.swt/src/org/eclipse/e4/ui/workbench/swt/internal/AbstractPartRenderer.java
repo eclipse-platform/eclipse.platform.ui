@@ -98,9 +98,12 @@ public abstract class AbstractPartRenderer {
 	 */
 	public void activate(MPart element) {
 		IEclipseContext curContext = getContext(element);
-		EPartService ps = (EPartService) curContext.get(EPartService.class
-				.getName());
-		ps.activate(element);
+		if (curContext != null) {
+			EPartService ps = (EPartService) curContext.get(EPartService.class
+					.getName());
+			if (ps != null)
+				ps.activate(element);
+		}
 	}
 
 	public void removeGui(MUIElement element, Object widget) {
