@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IWorkbench;
@@ -44,7 +45,6 @@ import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
@@ -171,6 +171,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 	protected IEventBroker eventBroker;
 
 	@Inject
+	EModelService modelService;
+
+	@Inject
 	protected Logger logger;
 
 	public PartRenderingEngine() {
@@ -286,6 +289,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getInterfaces());
 				ctxt.setContext(lclContext);
 
+				System.out.println("New Context: " + lclContext.toString()
+						+ " parent: " + parentContext.toString());
+
 				// make sure the context knows about these variables that have
 				// been defined in the model
 				for (String variable : ctxt.getVariables()) {
@@ -343,14 +349,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	private IEclipseContext getContext(MElementContainer<MUIElement> parent) {
-		MUIElement uiElement = parent;
-		while (uiElement != null) {
-			if (uiElement instanceof MContext) {
-				return ((MContext) uiElement).getContext();
-			}
-			uiElement = (MUIElement) ((EObjectImpl) uiElement).eContainer(); // uiElement.getParent();
+		if (parent instanceof MContext) {
+			return ((MContext) parent).getContext();
 		}
-		return null;
+		return modelService.getContainingContext(parent);
 	}
 
 	public Object createGui(MUIElement element) {

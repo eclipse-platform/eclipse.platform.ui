@@ -300,21 +300,23 @@ public class WBWRenderer extends SWTPartRenderer {
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(),
 				wbwModel.getWidth(), wbwModel.getHeight());
-
-		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
-		// TODO these values should come from CSS
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
-		tl.gutterTop = 12;
-		tl.gutterBottom = 2;
-		tl.gutterLeft = tl.gutterRight = 10;
-
-		wbwShell.setLayout(tl);
-		newWidget = wbwShell;
-		bindWidget(element, newWidget);
+		setCSSInfo(wbwModel, wbwShell);
 
 		// set up context
 		IEclipseContext localContext = getContext(wbwModel);
 		parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
+
+		// We need to retrieve specific CSS properties for our layout.
+		CSSEngineHelper helper = new CSSEngineHelper(localContext, wbwShell);
+		TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
+		tl.gutterTop = helper.getMarginTop(0);
+		tl.gutterBottom = helper.getMarginBottom(0);
+		tl.gutterLeft = helper.getMarginLeft(0);
+		tl.gutterRight = helper.getMarginRight(0);
+
+		wbwShell.setLayout(tl);
+		newWidget = wbwShell;
+		bindWidget(element, newWidget);
 
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);

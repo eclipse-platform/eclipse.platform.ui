@@ -199,25 +199,33 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.TOP) {
 			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
-				top.setLayout(new RowLayout(SWT.HORIZONTAL));
+				RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+				layout.marginTop = layout.marginBottom = layout.marginHeight = 0;
+				top.setLayout(layout);
 			}
 			return top;
 		} else if (side == SWT.BOTTOM) {
 			if (bottom == null) {
 				bottom = new Composite(parent, SWT.NONE);
-				bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
+				RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+				layout.marginTop = layout.marginBottom = layout.marginHeight = 0;
+				bottom.setLayout(layout);
 			}
 			return bottom;
 		} else if (side == SWT.LEFT) {
 			if (left == null) {
 				left = new Composite(parent, SWT.NONE);
-				left.setLayout(new RowLayout(SWT.VERTICAL));
+				RowLayout layout = new RowLayout(SWT.VERTICAL);
+				layout.marginLeft = layout.marginRight = layout.marginWidth = 0;
+				left.setLayout(layout);
 			}
 			return left;
 		} else if (side == SWT.RIGHT) {
 			if (right == null) {
 				right = new Composite(parent, SWT.NONE);
-				right.setLayout(new RowLayout(SWT.VERTICAL));
+				RowLayout layout = new RowLayout(SWT.VERTICAL);
+				layout.marginLeft = layout.marginRight = layout.marginWidth = 0;
+				right.setLayout(layout);
 			}
 			return right;
 		}

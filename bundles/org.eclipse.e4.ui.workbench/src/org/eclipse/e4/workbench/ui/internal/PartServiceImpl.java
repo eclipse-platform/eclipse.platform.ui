@@ -601,7 +601,10 @@ public class PartServiceImpl implements EPartService {
 
 	public void hidePart(MPart part) {
 		if (isInContainer(part)) {
-			part.setToBeRendered(false);
+			if (part.getCurSharedRef() != null)
+				part.getCurSharedRef().setToBeRendered(false);
+			else
+				part.setToBeRendered(false);
 
 			if (part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
 				MElementContainer<MUIElement> parent = part.getParent();

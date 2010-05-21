@@ -16,16 +16,19 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.modeling.EPartService;
-import org.eclipse.emf.ecore.EObject;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
 	protected IEclipseContext context;
+	protected EModelService modelService;
 
 	public void init(IEclipseContext context) {
 		this.context = context;
+		modelService = (EModelService) context.get(EModelService.class
+				.getName());
 	}
 
 	public abstract Object createWidget(MUIElement element, Object parent);
@@ -64,36 +67,13 @@ public abstract class AbstractPartRenderer {
 	/**
 	 * Return a parent context for this part.
 	 * 
-	 * @param part
+	 * @param element
 	 *            the part to start searching from
 	 * @return the parent's closest context, or global context if none in the
 	 *         hierarchy
 	 */
-	protected IEclipseContext getContextForParent(MUIElement part) {
-		MContext pwc = getParentWithContext(part);
-		return pwc != null ? pwc.getContext() : context;
-	}
-
-	/**
-	 * Return a parent context for this part. Note that this code uses the EMF
-	 * container rather than walking the model's 'parent' references in order to
-	 * handle elements that are not contained in the regular child lists.
-	 * 
-	 * @param part
-	 *            the part to start searching from
-	 * @return the parent's closest context, or global context if none in the
-	 *         hierarchy
-	 */
-	protected MContext getParentWithContext(MUIElement part) {
-		EObject parent = ((EObject) part).eContainer();
-		while (parent != null) {
-			if (parent instanceof MContext) {
-				if (((MContext) parent).getContext() != null)
-					return (MContext) parent;
-			}
-			parent = parent.eContainer();
-		}
-		return null;
+	protected IEclipseContext getContextForParent(MUIElement element) {
+		return modelService.getContainingContext(element);
 	}
 
 	/**
@@ -105,22 +85,9 @@ public abstract class AbstractPartRenderer {
 	 */
 	protected IEclipseContext getContext(MUIElement part) {
 		if (part instanceof MContext) {
-			IEclipseContext theContext = ((MContext) part).getContext();
-			if (theContext != null)
-				return theContext;
+			return ((MContext) part).getContext();
 		}
 		return getContextForParent(part);
-	}
-
-	protected IEclipseContext getToplevelContext(MUIElement part) {
-		IEclipseContext result = null;
-		if (part.getParent() != null) {
-			result = getToplevelContext(part.getParent());
-		}
-		if (result == null && part instanceof MContext) {
-			result = ((MContext) part).getContext();
-		}
-		return result;
 	}
 
 	/**
