@@ -224,14 +224,14 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 
 		});
 		
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PART_MENU, MODEL_COMPONENT__CHILDREN, element, Messages.ModelComponentEditor_Menus) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return o instanceof MMenu;
-			}
-
-		});
+//		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PART_MENU, MODEL_COMPONENT__CHILDREN, element, Messages.ModelComponentEditor_Menus) {
+//
+//			@Override
+//			protected boolean accepted(Object o) {
+//				return o instanceof MMenu;
+//			}
+//
+//		});
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MODEL_COMPONENT_CHILDREN, MODEL_COMPONENT__CHILDREN, element, Messages.ModelComponentEditor_UiChildren) {
 
 			@Override
