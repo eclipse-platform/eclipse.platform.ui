@@ -31,6 +31,7 @@ abstract public class RunAndTrack {
 	 * by calling this method in the superclass.
 	 * </p>
 	 * @param context the context being disposed of
+	 * @deprecated this method will be removed; use IContextDisposalListener instead
 	 */
 	public void disposed(IEclipseContext context) {
 		// subclasses may override

@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -34,7 +35,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * <p>
  * OSGi services are looked up by service class name.
  */
-public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer {
+public class OSGiContextStrategy implements IContextDisposalListener, ILookupStrategy, IDisposable, ServiceTrackerCustomizer {
 	class ServiceData {
 		// the service name
 		String name;
@@ -49,9 +50,6 @@ public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy,
 
 		public void addContext(IEclipseContext originatingContext) {
 			users.put(originatingContext, null);
-			// track this context so we can cleanup when the context is disposed
-			// XXX this is a problem - duplicate listeners
-			originatingContext.runAndTrack(OSGiContextStrategy.this);
 		}
 
 		public IEclipseContext[] getUsingContexts() {
@@ -206,6 +204,10 @@ public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy,
 			}
 			// add the context immediately so cleanReferences doesn't remove it
 			data.addContext(originatingContext);
+
+			// link to this context so we can cleanup when the context is disposed
+			((EclipseContext) originatingContext).notifyOnDisposal(this);
+
 			services.put(name, data);
 			// just opening a tracker will cause values to be set by the tracker
 			// callback methods
@@ -253,19 +255,6 @@ public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy,
 		return ((String[]) reference.getProperty(Constants.OBJECTCLASS))[0];
 	}
 
-	/**
-	 * Listen for changes on all contexts that have obtained a service from this strategy, so that
-	 * we can do appropriate cleanup of our caches when the requesting context is disposed.
-	 */
-	public boolean changed(IEclipseContext context) {
-		if (context == null)
-			return false;
-		// do a lookup so the listener isn't removed
-		context.getParent();
-		return true;
-	}
-
-	@Override
 	public void disposed(IEclipseContext context) {
 		synchronized (services) {
 			for (Iterator<ServiceData> it = services.values().iterator(); it.hasNext();) {
@@ -278,6 +267,5 @@ public class OSGiContextStrategy extends RunAndTrack implements ILookupStrategy,
 				}
 			}
 		}
-		super.disposed(context);
 	}
 }

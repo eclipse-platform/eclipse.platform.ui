@@ -205,6 +205,8 @@ public class EclipseContext implements IEclipseContext {
 
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
+	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<IContextDisposalListener>();
+
 	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
 		this.strategy = strategy;
 		setParent(parent);
@@ -300,6 +302,12 @@ public class EclipseContext implements IEclipseContext {
 			List<Scheduled> scheduled = new ArrayList<Scheduled>();
 			ls[i].handleInvalid(event, scheduled);
 			processScheduled(scheduled);
+		}
+
+		synchronized (notifyOnDisposal) {
+			for (IContextDisposalListener listener : notifyOnDisposal) {
+				listener.disposed(this);
+			}
 		}
 
 		if (strategy instanceof IDisposable)
@@ -664,5 +672,11 @@ public class EclipseContext implements IEclipseContext {
 		IEclipseContext result = createChild();
 		result.set(DEBUG_STRING, name);
 		return result;
+	}
+
+	public void notifyOnDisposal(IContextDisposalListener listener) {
+		synchronized (notifyOnDisposal) {
+			notifyOnDisposal.add(listener);
+		}
 	}
 }
