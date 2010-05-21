@@ -32,7 +32,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -2100,7 +2099,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				modelPerspective,
 				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
-		tagPerspective(modelPerspective);
+		PerspectiveTagger.tagPerspective(modelPerspective, modelService);
 
 		if (lastPerspective != null) {
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
@@ -2116,113 +2115,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// FIXME: we need to fire events
 	}
 
-	/**
-	 * Alters known 3.x perspective part folders into their e4 counterparts.
-	 */
-	private void tagPerspective(MPerspective perspective) {
-		String id = perspective.getElementId();
-		if (id == null) {
-			return;
-		}
-
-		// see bug 305557
-		if (id.equals("org.eclipse.jdt.ui.JavaPerspective")) { //$NON-NLS-1$
-			tagJavaPerspective(perspective);
-		} else if (id.equals("org.eclipse.team.cvs.ui.cvsPerspective")) { //$NON-NLS-1$
-			tagCVSPerspective(perspective);
-		} else if (id.equals("org.eclipse.team.ui.TeamSynchronizingPerspective")) { //$NON-NLS-1$
-			tagTeamPerspective(perspective);
-		} else if (id.equals("org.eclipse.debug.ui.DebugPerspective")) { //$NON-NLS-1$
-			tagDebugPerspective(perspective);
-		} else if (id.equals("org.eclipse.ui.resourcePerspective")) { //$NON-NLS-1$
-			tagResourcePerspective(perspective);
-		} else if (id.equals("org.eclipse.pde.ui.PDEPerspective")) { //$NON-NLS-1$
-			tagPluginDevelopmentPerspective(perspective);
-		}
-	}
-
-	private void tagJavaPerspective(MPerspective perspective) {
-		MUIElement element = modelService.find("left", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("bottom", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("right", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
-		}
-	}
-
-	private void tagCVSPerspective(MPerspective perspective) {
-		MUIElement element = modelService.find("top", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-	}
-
-	private void tagTeamPerspective(MPerspective perspective) {
-		MUIElement element = modelService.find("top", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("top2", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
-	}
-
-	private void tagDebugPerspective(MPerspective perspective) {
-		MUIElement element = modelService.find(
-				"org.eclipse.debug.internal.ui.NavigatorFolderView", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("org.eclipse.debug.internal.ui.ConsoleFolderView", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("org.eclipse.debug.internal.ui.OutlineFolderView", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
-		}
-	}
-
-	private void tagResourcePerspective(MPerspective perspective) {
-		MUIElement element = modelService.find("topLeft", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("bottomRight", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("bottomLeft", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
-		}
-	}
-
-	private void tagPluginDevelopmentPerspective(MPerspective perspective) {
-		MUIElement element = modelService.find("topLeft", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		}
-
-		element = modelService.find("bottomRight", perspective); //$NON-NLS-1$
-		if (element != null) {
-			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
-	}
 
 	/**
 	 * Retrieves the perspective stack of the window that's containing this

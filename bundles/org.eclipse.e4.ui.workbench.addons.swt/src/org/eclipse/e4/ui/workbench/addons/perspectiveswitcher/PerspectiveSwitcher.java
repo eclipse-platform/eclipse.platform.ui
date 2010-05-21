@@ -15,14 +15,19 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -30,6 +35,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -41,8 +49,22 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.PerspectiveTagger;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -53,6 +75,12 @@ public class PerspectiveSwitcher {
 
 	@Inject
 	EModelService modelService;
+
+	@Inject
+	private EPartService partService;
+
+	@Inject
+	private MWindow window;
 
 	private ToolBar psTB;
 	private Composite comp;
@@ -153,7 +181,7 @@ public class PerspectiveSwitcher {
 		layout.marginLeft = layout.marginRight = 8;
 		layout.marginBottom = layout.marginTop = 0;
 		comp.setLayout(layout);
-		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP);
+		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
 		comp.addControlListener(new ControlListener() {
 
 			public void controlMoved(ControlEvent e) {
@@ -161,7 +189,7 @@ public class PerspectiveSwitcher {
 			}
 
 			public void controlResized(ControlEvent e) {
-				resize(e);
+				resize();
 			}
 
 		});
@@ -186,27 +214,48 @@ public class PerspectiveSwitcher {
 					if (persp == null)
 						System.out.println("  Add button Menu"); //$NON-NLS-1$
 					else
-						System.out.println("  Perspective menu: " + persp.getElementId()); //$NON-NLS-1$
+						openMenuFor(item, persp);
 				}
 			}
 		});
 
-		ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
+		psTB.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				disposeTBImages();
+			}
+
+		});
+
+		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
 		createItem.setText("+"); //$NON-NLS-1$
+		createItem.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				selectPerspective();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				selectPerspective();
+			}
+		});
 		new ToolItem(psTB, SWT.SEPARATOR);
 
-		List<MPerspectiveStack> psList = modelService.findElements(window, null,
-				MPerspectiveStack.class, null);
-		if (psList.size() > 0) {
-			MPerspectiveStack perspStack = psList.get(0);
-
+		MPerspectiveStack stack = getPerspectiveStack();
+		if (stack != null) {
 			// Create an item for each perspective that should show up
-			for (MPerspective persp : perspStack.getChildren()) {
+			for (MPerspective persp : stack.getChildren()) {
 				if (persp.isToBeRendered()) {
 					addPerspectiveItem(persp);
 				}
 			}
 		}
+	}
+
+	MPerspectiveStack getPerspectiveStack() {
+		List<MPerspectiveStack> psList = modelService.findElements(window, null,
+				MPerspectiveStack.class, null);
+		if (psList.size() > 0)
+			return psList.get(0);
+		return null;
 	}
 
 	@PreDestroy
@@ -217,11 +266,24 @@ public class PerspectiveSwitcher {
 	}
 
 	private ToolItem addPerspectiveItem(MPerspective persp) {
-		ToolItem psItem = new ToolItem(psTB, SWT.RADIO);
+		final ToolItem psItem = new ToolItem(psTB, SWT.RADIO);
 		psItem.setData(persp);
-		psItem.setText(persp.getLabel());
-		// psItem.setIconURI(persp.getIconURI());
-		psItem.setToolTipText(persp.getTooltip());
+		IPerspectiveDescriptor descriptor = getDescriptorFor(persp);
+		boolean foundImage = false;
+		if (descriptor != null) {
+			ImageDescriptor desc = descriptor.getImageDescriptor();
+			if (desc != null) {
+				psItem.setImage(desc.createImage(false));
+				foundImage = true;
+				psItem.setToolTipText(persp.getLabel());
+			}
+		}
+		if (!foundImage
+				|| PrefUtil.getAPIPreferenceStore().getBoolean(
+						IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
+			psItem.setText(persp.getLabel());
+			psItem.setToolTipText(persp.getTooltip());
+		}
 
 		psItem.setSelection(persp == persp.getParent().getSelectedElement());
 
@@ -240,10 +302,203 @@ public class PerspectiveSwitcher {
 		psItem.addListener(SWT.MenuDetect, new Listener() {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				MPerspective persp = (MPerspective) event.widget.getData();
-				System.out.println("Menu for: " + persp.getElementId()); //$NON-NLS-1$
+				openMenuFor(psItem, persp);
 			}
 		});
 		return psItem;
+	}
+
+	// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
+	private IPerspectiveDescriptor getDescriptorFor(MPerspective persp) {
+		return PlatformUI.getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(persp.getElementId());
+	}
+
+	private MPerspective getPerspectiveFor(IPerspectiveDescriptor desc) {
+		MPerspectiveStack stack = getPerspectiveStack();
+		if (stack != null) {
+			// Create an item for each perspective that should show up
+			for (MPerspective persp : stack.getChildren()) {
+				if (persp.isToBeRendered() && persp.getElementId().equals(desc.getId())) {
+					return persp;
+				}
+			}
+		}
+		return null;
+	}
+
+	// FIXME singletons, singletons, everywhere!!
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
+	private void openPerspective(List<MPerspective> children, MPerspective persp) {
+		// instantiate the perspective
+		IPerspectiveDescriptor descriptor = getDescriptorFor(persp);
+		if (descriptor == null) {
+			// something bad happened
+			E4Util.unsupported("Couldn't open perspective " + persp.getLabel());
+			return;
+		}
+		IPerspectiveFactory factory = ((PerspectiveDescriptor) descriptor).createFactory();
+		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
+				persp, descriptor, (WorkbenchPage) PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage(), true);
+		factory.createInitialLayout(modelLayout);
+		PerspectiveTagger.tagPerspective(persp, modelService);
+		// add it to the stack
+		children.add(persp);
+		// activate it
+		getPerspectiveStack().setSelectedElement(persp);
+		window.getContext().set(IContextConstants.ACTIVE_CHILD, persp.getContext());
+
+	}
+
+	private void selectPerspective() {
+		SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(psTB.getShell(), PlatformUI
+				.getWorkbench().getPerspectiveRegistry());
+		dialog.open();
+		if (dialog.getReturnCode() == Window.CANCEL) {
+			return;
+		}
+		IPerspectiveDescriptor descriptor = dialog.getSelection();
+		if (descriptor != null) {
+			MPerspective persp = getPerspectiveFor(descriptor);
+			if (persp != null) {
+				persp.getParent().setSelectedElement(persp);
+			} else {
+				MPerspective created = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+				// tag it with the same id
+				created.setElementId(descriptor.getId());
+				created.setLabel(descriptor.getLabel());
+				openPerspective(getPerspectiveStack().getChildren(), created);
+			}
+		}
+	}
+
+	private void openMenuFor(ToolItem item, MPerspective persp) {
+		final Menu menu = new Menu(psTB);
+		menu.setData(persp);
+		if (persp.isVisible()) {
+			addItem(menu, "Customize...");
+			addItem(menu, "Save As...");
+			addCloseItem(menu);
+		}
+		if (persp.getParent().getSelectedElement() == persp) {
+			addResetItem(menu);
+		}
+
+		new MenuItem(menu, SWT.SEPARATOR);
+		// addDockOnSubMenu(menu);
+		addShowTextItem(menu);
+
+		Point point = psTB.toDisplay(item.getBounds().x, item.getBounds().y);
+		menu.setLocation(point.x, point.y);
+		menu.setVisible(true);
+		menu.addMenuListener(new MenuListener() {
+
+			public void menuHidden(MenuEvent e) {
+				psTB.getDisplay().asyncExec(new Runnable() {
+
+					public void run() {
+						menu.dispose();
+					}
+
+				});
+			}
+
+			public void menuShown(MenuEvent e) {
+				// Nothing to do
+			}
+
+		});
+	}
+
+	private void addCloseItem(final Menu menu) {
+		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+		menuItem.setText("&Close");
+		menuItem.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				MPerspective persp = (MPerspective) menu.getData();
+				persp.setToBeRendered(false);
+				removePerspectiveItem(persp);
+			}
+		});
+	}
+
+	private void addResetItem(final Menu menu) {
+		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+		menuItem.setText("&Reset");
+		menuItem.addSelectionListener(new SelectionAdapter() {
+
+			@SuppressWarnings("restriction")
+			public void widgetSelected(SelectionEvent e) {
+				MPerspective persp = (MPerspective) menu.getData();
+				persp.setToBeRendered(false);
+				// remove it, then recreate it and add it
+				// FIXME should be persp.getParent() to handle more than one!
+				MPerspectiveStack stack = getPerspectiveStack();
+				stack.getChildren().remove(persp);
+				MPerspective recreated = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+				// tag it with the same id
+				recreated.setElementId(persp.getElementId());
+				recreated.setLabel(persp.getLabel());
+
+				openPerspective(stack.getChildren(), recreated);
+			}
+		});
+	}
+
+	private void addShowTextItem(final Menu menu) {
+		final MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
+		showtextMenuItem.setText("&Show Text");
+		showtextMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean preference = showtextMenuItem.getSelection();
+				if (preference != PrefUtil.getAPIPreferenceStore().getDefaultBoolean(
+						IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
+					PrefUtil.getInternalPreferenceStore().setValue(
+							IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+				}
+				PrefUtil.getAPIPreferenceStore().setValue(
+						IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, preference);
+				changeShowText(preference);
+			}
+		});
+		showtextMenuItem.setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+	}
+
+	private void changeShowText(boolean showText) {
+		ToolItem[] items = psTB.getItems();
+		for (int i = 0; i < items.length; i++) {
+			MPerspective persp = (MPerspective) items[i].getData();
+			if (persp != null)
+				if (showText) {
+					items[i].setText(persp.getLabel());
+					items[i].setToolTipText(persp.getTooltip());
+				} else {
+					Image image = items[i].getImage();
+					if (image != null) {
+						items[i].setText("");
+						items[i].setToolTipText(persp.getLabel());
+					}
+				}
+		}
+		comp.getParent().layout(true, true);
+		resize();
+		comp.getParent().redraw();
+	}
+
+	private void addItem(final Menu menu, final String label) {
+		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+		menuItem.setText(label);
+		menuItem.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				MPerspective persp = (MPerspective) menu.getData();
+				E4Util.unsupported(label + " " + persp.getLabel());
+			}
+		});
+
 	}
 
 	private void removePerspectiveItem(MPerspective toRemove) {
@@ -265,7 +520,7 @@ public class PerspectiveSwitcher {
 		return null;
 	}
 
-	void resize(ControlEvent e) {
+	void resize() {
 		Point size = comp.getSize();
 		Image oldBackgroundImage = backgroundImage;
 		backgroundImage = new Image(comp.getDisplay(), size.x, size.y);
@@ -325,6 +580,17 @@ public class PerspectiveSwitcher {
 			comp.setBackgroundImage(null);
 			backgroundImage.dispose();
 			backgroundImage = null;
+		}
+	}
+
+	void disposeTBImages() {
+		ToolItem[] items = psTB.getItems();
+		for (int i = 0; i < items.length; i++) {
+			Image image = items[i].getImage();
+			if (image != null) {
+				items[i].setImage(null);
+				image.dispose();
+			}
 		}
 	}
 }
