@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ApplicationModelEditor extends ModelEditor {
 	@Inject
 	public ApplicationModelEditor(Composite composite, IEclipseContext context,
-			@Optional IModelResource modelProvider, @Optional IProject project) {
+			IModelResource modelProvider, @Optional IProject project) {
 		super(composite, context, modelProvider, project);
 	}
 }
