@@ -108,7 +108,8 @@ public class CSSEngineHelper {
 	}
 
 	private int getPxValue(CSSValue value, int defaultValue) {
-		if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)
+		if (value != null
+				&& (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)
 				&& (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_PX)) {
 			return (int) ((CSSPrimitiveValue) value)
 					.getFloatValue(CSSPrimitiveValue.CSS_PX);
