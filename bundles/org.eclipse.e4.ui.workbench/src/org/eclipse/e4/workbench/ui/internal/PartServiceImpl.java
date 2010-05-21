@@ -90,9 +90,14 @@ public class PartServiceImpl implements EPartService {
 	/**
 	 * This is the specific implementation. TODO: generalize it
 	 */
-	@Inject
-	@Named(EPartService.PART_SERVICE_ROOT)
+	// @Inject
+	// @Named(EPartService.PART_SERVICE_ROOT)
 	private MElementContainer<MUIElement> rootContainer;
+
+	@Inject
+	public void setRootContainer(@Named(EPartService.PART_SERVICE_ROOT) MElementContainer root) {
+		rootContainer = root;
+	}
 
 	@Inject
 	private IPresentationEngine engine;
@@ -286,6 +291,7 @@ public class PartServiceImpl implements EPartService {
 	public MPart findPart(String id) {
 		MApplicationElement element = modelService.find(id, rootContainer);
 		if (element instanceof MPlaceholder) {
+			((MPlaceholder) element).getRef().setCurSharedRef((MPlaceholder) element);
 			element = ((MPlaceholder) element).getRef();
 		}
 		return element instanceof MPart ? (MPart) element : null;
@@ -564,7 +570,12 @@ public class PartServiceImpl implements EPartService {
 			return part;
 		case CREATE:
 			part.setToBeRendered(true);
-			engine.createGui(part);
+			if (part.getCurSharedRef() != null) {
+				part.getCurSharedRef().setToBeRendered(true);
+				engine.createGui(part.getCurSharedRef());
+			} else {
+				engine.createGui(part);
+			}
 			return part;
 		}
 		return part;

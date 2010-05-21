@@ -223,8 +223,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				IEclipseContext newParentContext = modelService
 						.getContainingContext(element);
 				if (context.getParent() != newParentContext) {
-					System.out.println("Update Context: " + context.toString() //$NON-NLS-1$
-							+ " new parent: " + newParentContext.toString()); //$NON-NLS-1$
+					//					System.out.println("Update Context: " + context.toString() //$NON-NLS-1$
+					//							+ " new parent: " + newParentContext.toString()); //$NON-NLS-1$
 					context.setParent(newParentContext);
 				}
 			}
