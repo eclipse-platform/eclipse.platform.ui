@@ -78,9 +78,9 @@
 &lt;p&gt;&lt;b&gt;The criteriaDefinition element&lt;/b&gt;
 &lt;p&gt;The criteriaDefinition element represents an instance of criteria definition. CriteriaDefinition consists of criterion, each of them corresponds to a particular id and its name.
 &lt;p&gt;&lt;b&gt;The criterion element&lt;/b&gt;
-&lt;p&gt;The criterion element represents a criterion. Each criterion may contain several criterion-value which associated with the critrion. 
+&lt;p&gt;The criterion element represents a criterion. Each criterion may contain several criterion-value which associated with the criterion. 
 &lt;p&gt;&lt;b&gt;The criterion-value element&lt;/b&gt;
-&lt;p&gt;The criterion-value element provides value to the criterion category. It also has id and name accociated with it.
+&lt;p&gt;The criterion-value element provides value to the criterion category. It also has id and name associated with it.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -172,13 +172,10 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2010 IBM Corporation and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
-Contributors:
-IBM Corporation - initial API and implementation
+         Copyright (c) 2010 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
