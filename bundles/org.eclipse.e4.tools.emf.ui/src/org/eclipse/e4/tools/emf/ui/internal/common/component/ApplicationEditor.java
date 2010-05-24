@@ -108,6 +108,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
 		
+		ControlFactory.createVariablesWidget(parent, this);
 		ControlFactory.createBindingsWidget(parent, this);
 
 		return parent;
