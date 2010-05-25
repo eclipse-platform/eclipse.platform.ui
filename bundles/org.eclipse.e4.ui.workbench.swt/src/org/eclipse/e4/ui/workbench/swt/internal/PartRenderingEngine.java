@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -477,7 +478,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					theApp = (MApplication) uiRoot;
 					// long startTime = System.currentTimeMillis();
 					for (MWindow window : theApp.getChildren()) {
-						testShell = (Shell) createGui(window);
+						createGui(window);
 					}
 					// long endTime = System.currentTimeMillis();
 					// System.out.println("Render: " + (endTime - startTime));
@@ -499,7 +500,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 									.getName()));
 				}
 				// Spin the event loop until someone disposes the display
-				while (testShell != null && !testShell.isDisposed()
+				while (((testShell != null && !testShell.isDisposed()) || (!theApp
+						.getChildren().isEmpty() && someAreVisible(theApp
+						.getChildren())))
 						&& !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
@@ -533,6 +536,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 		});
 
 		return IApplication.EXIT_OK;
+	}
+
+	protected boolean someAreVisible(List<MWindow> windows) {
+		for (MWindow win : windows) {
+			if (win.isToBeRendered() && win.isVisible()
+					&& win.getWidget() != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void stop() {
