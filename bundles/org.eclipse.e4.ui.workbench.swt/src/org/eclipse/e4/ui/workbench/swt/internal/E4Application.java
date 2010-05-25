@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.workbench.ui.IModelResourceHandler;
 import org.eclipse.e4.workbench.ui.internal.ActiveChildLookupFunction;
 import org.eclipse.e4.workbench.ui.internal.ActivePartLookupFunction;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -61,7 +62,7 @@ import org.eclipse.swt.widgets.Shell;
 public class E4Application implements IApplication {
 	private String[] args;
 
-	private ResourceHandler handler;
+	private IModelResourceHandler handler;
 	private Display display = null;
 
 	public Display getApplicationDisplay() {
@@ -103,6 +104,7 @@ public class E4Application implements IApplication {
 				IApplicationContext.APPLICATION_ARGS);
 
 		IEclipseContext appContext = createDefaultContext();
+		appContext.set(IApplicationContext.class, applicationContext);
 
 		// Get the factory to create DI instances with
 		IContributionFactory factory = (IContributionFactory) appContext
@@ -187,10 +189,31 @@ public class E4Application implements IApplication {
 		final URI initialWorkbenchDefinitionInstance = URI
 				.createPlatformPluginURI(appModelPath, true);
 
-		boolean saveAndRestore = true;
-		handler = new ResourceHandler(instanceLocation,
-				initialWorkbenchDefinitionInstance, saveAndRestore,
-				(Logger) eclipseContext.get(Logger.class.getName()));
+		boolean saveAndRestore;
+		String value = getArgValue(E4Workbench.SAVE_AND_RESTORE, appContext);
+
+		saveAndRestore = value == null || Boolean.getBoolean(value);
+
+		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE,
+				Boolean.valueOf(saveAndRestore));
+		eclipseContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI,
+				initialWorkbenchDefinitionInstance);
+		eclipseContext.set(E4Workbench.INSTANCE_LOCATION, instanceLocation);
+
+		String resourceHandler = getArgValue(
+				E4Workbench.MODEL_RESOURCE_HANDLER, appContext);
+
+		if (resourceHandler == null) {
+			resourceHandler = "platform:/plugin/org.eclipse.e4.ui.workbench/"
+					+ ResourceHandler.class.getName();
+		}
+
+		IContributionFactory factory = eclipseContext
+				.get(IContributionFactory.class);
+
+		handler = (IModelResourceHandler) factory.create(resourceHandler,
+				eclipseContext);
+
 		Resource resource = handler.loadMostRecentModel();
 		theApp = (MApplication) resource.getContents().get(0);
 
@@ -229,10 +252,11 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
-				WorkbenchLogger.class, appContext));
-		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
-				EclipseAdapter.class, appContext));
+		appContext
+				.set(Logger.class.getName(), ContextInjectionFactory.make(
+						WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(),
+				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());

@@ -18,6 +18,8 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -36,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.e4.workbench.ui.IModelResourceHandler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -48,7 +51,7 @@ import org.w3c.dom.Document;
 /**
  * This class is responsible to load and save the model
  */
-public class ResourceHandler {
+public class ResourceHandler implements IModelResourceHandler {
 
 	/**
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
@@ -64,13 +67,15 @@ public class ResourceHandler {
 	private ModelReconciler reconciler;
 	private Logger logger;
 
-	public ResourceHandler(Location instanceLocation, URI applicationDefinitionInstance,
-			boolean saveAndRestore, Logger logger) {
+	@Inject
+	public ResourceHandler(@Named(E4Workbench.INSTANCE_LOCATION) Location instanceLocation,
+			@Named(E4Workbench.INITIAL_WORKBENCH_MODEL_URI) URI applicationDefinitionInstance,
+			@Named(E4Workbench.SAVE_AND_RESTORE) boolean saveAndRestore, Logger logger) {
 		this.applicationDefinitionInstance = applicationDefinitionInstance;
 		this.logger = logger;
 		resourceSetImpl = new ResourceSetImpl();
-		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-				Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
+		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap()
+				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
 
 		resourceSetImpl.getPackageRegistry().put(ApplicationPackageImpl.eNS_URI,
 				ApplicationPackageImpl.eINSTANCE);
@@ -85,8 +90,7 @@ public class ResourceHandler {
 				AdvancedPackageImpl.eINSTANCE);
 		resourceSetImpl
 				.getPackageRegistry()
-				.put(
-						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
+				.put(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
 						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// this.registry = registry;
@@ -111,8 +115,8 @@ public class ResourceHandler {
 	}
 
 	public long getLastStoreDatetime() {
-		long restoreLastModified = restoreLocation == null ? 0L : new File(restoreLocation
-				.toFileString()).lastModified();
+		long restoreLastModified = restoreLocation == null ? 0L : new File(
+				restoreLocation.toFileString()).lastModified();
 		return restoreLastModified;
 	}
 
@@ -244,8 +248,8 @@ public class ResourceHandler {
 
 		Map<String, ?> attributes = resourceSetImpl.getURIConverter().getAttributes(
 				applicationDefinitionInstance,
-				Collections.singletonMap(URIConverter.OPTION_REQUESTED_ATTRIBUTES, Collections
-						.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
+				Collections.singletonMap(URIConverter.OPTION_REQUESTED_ATTRIBUTES,
+						Collections.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
 
 		Object timestamp = attributes.get(URIConverter.ATTRIBUTE_TIME_STAMP);
 		if (timestamp instanceof Long) {
