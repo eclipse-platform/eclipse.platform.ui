@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to
