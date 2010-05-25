@@ -1,5 +1,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -137,6 +138,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 		ContextInjectionFactory.inject(renderer, context);
 	}
 
+	@PostConstruct
 	public void init(IEclipseContext context) {
 		this.context = context;
 	}

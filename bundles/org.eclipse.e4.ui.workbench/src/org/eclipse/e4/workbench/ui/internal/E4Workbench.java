@@ -51,6 +51,7 @@ public class E4Workbench implements IWorkbench {
 	public static final String INITIAL_WORKBENCH_MODEL_URI = "initialWorkbenchModelURI"; //$NON-NLS-1$
 	public static final String INSTANCE_LOCATION = "instanceLocation"; //$NON-NLS-1$
 	public static final String MODEL_RESOURCE_HANDLER = "modelResourceHandler"; //$NON-NLS-1$
+	public static final String RENDERER_FACTORY_URI = "rendererFactoryUri"; //$NON-NLS-1$
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;

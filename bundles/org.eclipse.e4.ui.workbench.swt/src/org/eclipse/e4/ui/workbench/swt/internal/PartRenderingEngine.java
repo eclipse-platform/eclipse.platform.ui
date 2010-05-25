@@ -14,15 +14,14 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -62,8 +61,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
 			+ "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine";
 
-	private String defaultRenderingFactoryId = "org.eclipse.e4.ui.workbench.renderers.default";
-	private String curFactoryId = defaultRenderingFactoryId;
+	private static final String defaultFactoryUrl = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/"
+			+ "org.eclipse.e4.workbench.ui.renderers.swt.WorkbenchRendererFactory";
+	private String factoryUrl;
+
 	IRendererFactory curFactory = null;
 
 	// Life Cycle handlers
@@ -176,12 +177,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 	@Inject
 	protected Logger logger;
 
-	public PartRenderingEngine() {
-		super();
-	}
-
-	public PartRenderingEngine(String curFactoryId) {
-		this.curFactoryId = curFactoryId;
+	@Inject
+	public PartRenderingEngine(
+			@Named(E4Workbench.RENDERER_FACTORY_URI) @Optional String factoryUrl) {
+		if (factoryUrl == null) {
+			factoryUrl = defaultFactoryUrl;
+		}
+		this.factoryUrl = defaultFactoryUrl;
 	}
 
 	/**
@@ -198,31 +200,35 @@ public class PartRenderingEngine implements IPresentationEngine {
 		KeyFormatterFactory.setDefault(SWTKeySupport
 				.getKeyFormatterForPlatform());
 
-		IExtensionRegistry registry = (IExtensionRegistry) context
-				.get(IExtensionRegistry.class.getName());
-		IConfigurationElement[] factories = registry
-				.getConfigurationElementsFor("org.eclipse.e4.workbench.rendererfactory"); //$NON-NLS-1$
-		for (int i = 0; i < factories.length; i++) {
-			String id = factories[i].getAttribute("id"); //$NON-NLS-1$
-			if (!curFactoryId.equals(id))
-				continue;
+		// Add the renderer to the context
+		context.set(IPresentationEngine.class.getName(), this);
 
-			IRendererFactory factory = null;
+		IRendererFactory factory = null;
+		IContributionFactory contribFactory = context
+				.get(IContributionFactory.class);
+		try {
+			factory = (IRendererFactory) contribFactory.create(factoryUrl,
+					context);
+		} catch (Exception e) {
+			logger.warn(e, "Could not create rendering factory");
+		}
+
+		// Try to load the default one
+		if (factory == null) {
 			try {
-				factory = (IRendererFactory) factories[i]
-						.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-
-			if (factory != null) {
-				factory.init(context);
-				curFactory = factory;
+				factory = (IRendererFactory) contribFactory.create(
+						defaultFactoryUrl, context);
+			} catch (Exception e) {
+				logger.error(e, "Could not create default rendering factory");
 			}
 		}
 
-		// Add the renderer to the context
-		context.set(IPresentationEngine.class.getName(), this);
+		if (factory == null) {
+			throw new IllegalStateException(
+					"Could not create any rendering factory. Aborting ...");
+		}
+
+		curFactory = factory;
 
 		// Hook up the widget life-cycle subscriber
 		if (eventBroker != null) {
