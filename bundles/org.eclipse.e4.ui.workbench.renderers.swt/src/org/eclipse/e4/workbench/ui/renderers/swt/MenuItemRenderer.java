@@ -79,7 +79,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		public boolean changed(IEclipseContext context) {
 			try {
 				item.setVisible(EvaluationResult.TRUE == exp.evaluate(ec));
-				System.err.println("" + item.isVisible() + ": " + item); //$NON-NLS-1$//$NON-NLS-2$
+				//System.err.println("" + item.isVisible() + ": " + item); //$NON-NLS-1$//$NON-NLS-2$
 			} catch (CoreException e) {
 				item.setVisible(false);
 				e.printStackTrace();
