@@ -245,13 +245,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__CUR_SHARED_REF = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__VISIBLE_WHEN = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 11;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LABEL = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 11;
+	public static final int PART__LABEL = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -260,7 +269,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ICON_URI = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 12;
+	public static final int PART__ICON_URI = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -269,7 +278,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLTIP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 13;
+	public static final int PART__TOOLTIP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -278,7 +287,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__HANDLERS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 14;
+	public static final int PART__HANDLERS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -287,7 +296,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DIRTY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 15;
+	public static final int PART__DIRTY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
@@ -296,7 +305,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__BINDING_CONTEXTS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 16;
+	public static final int PART__BINDING_CONTEXTS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -305,7 +314,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__MENUS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 17;
+	public static final int PART__MENUS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -314,7 +323,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLBAR = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 18;
+	public static final int PART__TOOLBAR = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -323,7 +332,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CLOSEABLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 19;
+	public static final int PART__CLOSEABLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 20;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -332,7 +341,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 20;
+	public static final int PART_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 21;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl <em>Input Part</em>}' class.
@@ -487,6 +496,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__CUR_SHARED_REF = PART__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__VISIBLE_WHEN = PART__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -688,6 +706,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__CUR_SHARED_REF = UiPackageImpl.GENERIC_STACK__CUR_SHARED_REF;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_STACK__VISIBLE_WHEN = UiPackageImpl.GENERIC_STACK__VISIBLE_WHEN;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -813,6 +840,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER__CUR_SHARED_REF = UiPackageImpl.GENERIC_TILE__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER__VISIBLE_WHEN = UiPackageImpl.GENERIC_TILE__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -949,6 +985,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW__CUR_SHARED_REF = UiPackageImpl.ELEMENT_CONTAINER__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1211,6 +1256,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__CUR_SHARED_REF = WINDOW__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__VISIBLE_WHEN = WINDOW__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1484,6 +1538,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+
+	/**
 	 * The number of structural features of the '<em>Trim Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1591,6 +1654,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The number of structural features of the '<em>Part Sash Container Element</em>' class.
@@ -1702,6 +1774,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+
+	/**
 	 * The number of structural features of the '<em>Window Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1809,6 +1890,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR__CUR_SHARED_REF = UiPackageImpl.GENERIC_TRIM_CONTAINER__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_BAR__VISIBLE_WHEN = UiPackageImpl.GENERIC_TRIM_CONTAINER__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1945,6 +2035,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STACK_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STACK_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The number of structural features of the '<em>Stack Element</em>' class.

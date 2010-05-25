@@ -28,4 +28,17 @@
       </application>
    </extension>
 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.jface.viewers.ISelection"
+            class="org.eclipse.e4.ui.workbench.swt.internal.SelectionAdapterFactory">
+         <adapter
+               type="org.eclipse.core.expressions.IIterable">
+         </adapter>
+         <adapter
+               type="org.eclipse.core.expressions.ICountable">
+         </adapter>
+      </factory>
+   </extension>
 </plugin>

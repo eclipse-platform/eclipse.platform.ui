@@ -8,32 +8,41 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui;
+package org.eclipse.e4.ui.model.application.ui.impl;
 
+import org.eclipse.e4.ui.model.application.ui.MExpression;
+
+import org.eclipse.emf.ecore.EClass;
+
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * The <b>Factory</b> for the model.
- * It provides a create method for each non-abstract class of the model.
+ * An implementation of the model object '<em><b>Expression</b></em>'.
  * <!-- end-user-doc -->
+ * <p>
+ * </p>
+ *
  * @generated
  */
-public interface MUiFactory {
+public abstract class ExpressionImpl extends EObjectImpl implements MExpression {
 	/**
-	 * The singleton instance of the factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	MUiFactory INSTANCE = org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl.eINSTANCE;
+	protected ExpressionImpl() {
+		super();
+	}
 
 	/**
-	 * Returns a new object of class '<em>Core Expression</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Core Expression</em>'.
 	 * @generated
 	 */
-	MCoreExpression createCoreExpression();
+	@Override
+	protected EClass eStaticClass() {
+		return UiPackageImpl.Literals.EXPRESSION;
+	}
 
-} //MUiFactory
+} //ExpressionImpl
