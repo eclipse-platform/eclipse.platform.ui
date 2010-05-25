@@ -232,7 +232,7 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Performs arbitrary actions just before the first workbench window is
-	 * opened (or restored).
+	 * opened (or restored), and before the main event loop is run.
 	 * <p>
 	 * This method is called after the workbench has been initialized and just
 	 * before the first window is about to be opened. Clients must not call this
