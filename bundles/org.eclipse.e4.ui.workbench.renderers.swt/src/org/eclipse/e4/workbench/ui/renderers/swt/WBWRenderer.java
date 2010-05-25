@@ -142,7 +142,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			if (parent instanceof MPartStack && parent.getWidget() != null) {
 				parent.getTags().add("active"); //$NON-NLS-1$
 				setCSSInfo(parent, parent.getWidget());
-			} else {
+			} else if (activePart.getWidget() != null) {
 				setCSSInfo(activePart, activePart.getWidget());
 			}
 		}
