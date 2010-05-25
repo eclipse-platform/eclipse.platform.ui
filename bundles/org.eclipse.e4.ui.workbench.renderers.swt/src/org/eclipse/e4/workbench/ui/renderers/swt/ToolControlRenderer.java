@@ -17,6 +17,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -26,18 +28,23 @@ public class ToolControlRenderer extends SWTPartRenderer {
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MToolControl)
-				|| !(parent instanceof Composite))
+				|| !(parent instanceof ToolBar || parent instanceof Composite))
 			return null;
 
 		MToolControl toolControl = (MToolControl) element;
 		Widget parentWidget = (Widget) parent;
 		IEclipseContext parentContext = getContextForParent(element);
 
+		ToolItem sep = null;
+		if (parent instanceof ToolBar) {
+			sep = new ToolItem((ToolBar) parentWidget, SWT.SEPARATOR);
+		}
+
 		final Composite newComposite = new Composite((Composite) parentWidget,
 				SWT.NONE);
 		newComposite.setLayout(new FillLayout());
 
-		// Create a context for this part
+		// Create a context just to contain the parameters for injection
 		IEclipseContext localContext = parentContext.createChild("TrimControl"); //$NON-NLS-1$
 		IContributionFactory contributionFactory = (IContributionFactory) localContext
 				.get(IContributionFactory.class.getName());
@@ -48,6 +55,12 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		Object tcImpl = contributionFactory.create(
 				toolControl.getContributionURI(), localContext);
 		toolControl.setObject(tcImpl);
+
+		if (sep != null) {
+			sep.setControl(newComposite);
+			newComposite.pack();
+			sep.setWidth(newComposite.getSize().x);
+		}
 
 		return parentWidget;
 	}
