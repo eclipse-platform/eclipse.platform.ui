@@ -161,6 +161,46 @@ public class CommandEditor extends AbstractComponentEditor {
 			viewer.getControl().setLayoutData(gd);
 
 			{
+				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
+				
+				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setText(Messages.CommandEditor_ParameterId);
+				column.getColumn().setWidth(200);
+				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
+				column.setEditingSupport(new EditingSupport(viewer) {
+					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
+					
+					@Override
+					protected void setValue(Object element, Object value) {
+						if( value.toString().trim().length() == 0 ) {
+							value = null;
+						}
+						
+						Command cmd = SetCommand.create(getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, value);
+						if( cmd.canExecute() ) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+					
+					@Override
+					protected Object getValue(Object element) {
+						MCommandParameter obj = (MCommandParameter) element;
+						return obj.getElementId() != null ? obj.getElementId() : ""; //$NON-NLS-1$
+					}
+					
+					@Override
+					protected CellEditor getCellEditor(Object element) {
+						return editor;
+					}
+					
+					@Override
+					protected boolean canEdit(Object element) {
+						return true;
+					}
+				});
+			}
+			
+			{
 				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME);
 				
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);

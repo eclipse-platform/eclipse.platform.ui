@@ -53,6 +53,7 @@ public class Messages {
 	public static String CommandEditor_Down;
 	public static String CommandEditor_Add;
 	public static String CommandEditor_Remove;
+	public static String CommandEditor_ParameterId;
 	
 	public static String DirectMenuItemEditor_Label;
 	public static String DirectMenuItemEditor_Description;
@@ -306,6 +307,8 @@ public class Messages {
 	public static String ContributionClassDialog_DialogTitle;
 	public static String ContributionClassDialog_Label_Classname;
 	public static String ContributionClassDialog_ShellTitle;
+
+	
 	
 	
 	static {
