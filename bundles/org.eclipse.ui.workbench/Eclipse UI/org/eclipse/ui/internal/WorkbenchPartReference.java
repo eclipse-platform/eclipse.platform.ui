@@ -19,7 +19,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -433,10 +434,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         
         if (legacyPart == null) {
 			if (restore && part.getWidget() == null) {
-				// ask the renderer to create this part
-				IPresentationEngine engine = (IPresentationEngine) windowContext
-						.get(IPresentationEngine.SERVICE_NAME);
-				engine.createGui(part);
+				EPartService partService = windowContext.get(EPartService.class);
+				partService.showPart(part, PartState.CREATE);
 			}
 
 			CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
