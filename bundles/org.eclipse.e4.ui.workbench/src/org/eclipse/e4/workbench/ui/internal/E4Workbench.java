@@ -47,6 +47,11 @@ public class E4Workbench implements IWorkbench {
 	public static final String CSS_RESOURCE_URI_ARG = "applicationCSSResources"; //$NON-NLS-1$
 	public static final String PRESENTATION_URI_ARG = "presentationURI"; //$NON-NLS-1$
 	public static final String LIFE_CYCLE_URI_ARG = "lifeCycleURI"; //$NON-NLS-1$
+	public static final String SAVE_AND_RESTORE = "saveAndRestore"; //$NON-NLS-1$
+	public static final String INITIAL_WORKBENCH_MODEL_URI = "initialWorkbenchModelURI"; //$NON-NLS-1$
+	public static final String INSTANCE_LOCATION = "instanceLocation"; //$NON-NLS-1$
+	public static final String MODEL_RESOURCE_HANDLER = "modelResourceHandler"; //$NON-NLS-1$
+	public static final String RENDERER_FACTORY_URI = "rendererFactoryUri"; //$NON-NLS-1$
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;
@@ -141,12 +146,11 @@ public class E4Workbench implements IWorkbench {
 			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
 			IContributionFactory contributionFactory) {
 		Activator
-				.trace(
-						Policy.DEBUG_CONTEXTS,
+				.trace(Policy.DEBUG_CONTEXTS,
 						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
 		final IEclipseContext mainContext = applicationContext.createChild("WorkbenchContext"); //$NON-NLS-1$
-		mainContext.set(Logger.class.getName(), ContextInjectionFactory.make(WorkbenchLogger.class,
-				mainContext));
+		mainContext.set(Logger.class.getName(),
+				ContextInjectionFactory.make(WorkbenchLogger.class, mainContext));
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
