@@ -50,6 +50,7 @@ import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -277,6 +278,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 			return null;
 
 		if (element.getWidget() != null) {
+			if (element.getWidget() instanceof Control
+					&& parent instanceof Composite) {
+				Control ctrl = (Control) element.getWidget();
+				if (ctrl.getParent() != parent) {
+					ctrl.setParent((Composite) parent);
+				}
+			}
 			return element.getWidget();
 		}
 

@@ -83,9 +83,15 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean drop(MUIElement dragElement, CursorInfo info) {
+		if (dragElement.getCurSharedRef() != null)
+			dragElement = dragElement.getCurSharedRef();
+
 		MUIElement relTo = info.curElement;
 		Control ctrl = (Control) relTo.getWidget();
 		int where = whereToDrop(ctrl, info.cursorPos);
+
+		if (relTo.getCurSharedRef() != null)
+			relTo = relTo.getCurSharedRef();
 
 		MUIElement relParent = relTo.getParent();
 		if (relParent instanceof MPartStack)
@@ -97,10 +103,10 @@ public class SplitDropAgent extends DropAgent {
 
 		// If we're dropping a part wrap it in a stack
 		MUIElement toInsert = dragElement;
-		if (dragElement instanceof MPart) {
+		if (dragElement instanceof MStackElement) {
 			MPartStack newPS = BasicFactoryImpl.eINSTANCE.createPartStack();
-			newPS.getChildren().add((MPart) dragElement);
-			newPS.setSelectedElement((MPart) dragElement);
+			newPS.getChildren().add((MStackElement) dragElement);
+			newPS.setSelectedElement((MStackElement) dragElement);
 			toInsert = newPS;
 		}
 
