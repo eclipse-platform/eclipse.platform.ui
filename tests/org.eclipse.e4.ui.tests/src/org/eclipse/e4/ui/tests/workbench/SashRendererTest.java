@@ -61,7 +61,7 @@ public class SashRendererTest extends TestCase {
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 
-		window.setWidget(600);
+		window.setWidth(600);
 		window.setHeight(400);
 
 		partStackA.setContainerData("50");

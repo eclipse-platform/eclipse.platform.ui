@@ -276,6 +276,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (!element.isToBeRendered())
 			return null;
 
+		if (element.getWidget() != null) {
+			return element.getWidget();
+		}
+
 		if (element instanceof MContext) {
 			MContext ctxt = (MContext) element;
 			// Assert.isTrue(ctxt.getContext() == null,
