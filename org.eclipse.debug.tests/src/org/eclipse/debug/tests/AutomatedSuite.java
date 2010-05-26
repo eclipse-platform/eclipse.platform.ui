@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipe.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipe.debug.tests.launching.LaunchConfigurationTests;
+import org.eclipe.debug.tests.launching.LaunchFavoriteTests;
 import org.eclipe.debug.tests.launching.LaunchHistoryTests;
 import org.eclipe.debug.tests.launching.LaunchManagerTests;
 import org.eclipe.debug.tests.launching.RefreshTabTests;
@@ -84,6 +85,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 		addTest(new TestSuite(LaunchHistoryTests.class));
+		addTest(new TestSuite(LaunchFavoriteTests.class));
 		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,26 +344,31 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		checkFavorites(configuration);
+		ILaunchConfiguration movedFrom = DebugPlugin.getDefault().getLaunchManager().getMovedFrom(configuration);
+		// if this is a move, the launchConfigurationRemoved(...) method will handle updates
+		if (movedFrom == null) {
+			checkFavorites(configuration);
+		}
 	}
 	
 	/**
-	 * This method checks if the specified <code>ILaunchConfiguration</code> is a favorite of the launch group 
-	 * with the specified id
+	 * This method checks if the specified <code>ILaunchConfiguration</code> is a favorite in this
+	 * history's launch group.
+	 * 
 	 * @param configuration
-	 * @param launchgroup
-	 * @return true if the configuration is a favorite of the launch group with the given id, false otherwise
+	 * @return true if the configuration is a favorite in this history's launch group, false otherwise
 	 * @throws CoreException
 	 * 
 	 * @since 3.4
 	 */
-	protected boolean isFavorite(ILaunchConfiguration configuration, String launchgroup) throws CoreException {
+	protected boolean isFavorite(ILaunchConfiguration configuration) throws CoreException {
+		String groupId = getLaunchGroup().getIdentifier();
 		List favoriteGroups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
 		if (favoriteGroups == null) {
 			// check deprecated attributes for backwards compatibility
-			if (launchgroup.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP)) {
+			if (groupId.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP)) {
 				return configuration.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
-			} else if (launchgroup.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP)) {
+			} else if (groupId.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP)) {
 				return configuration.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 			} 
 		} 
@@ -386,28 +391,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			return false;
 		}
 		try {
-			List favoriteGroups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
-			if (favoriteGroups == null) {
-				// check deprecated attributes for backwards compatibility
-				String groupId = getLaunchGroup().getIdentifier();
-				boolean fav = false;
-				if (groupId.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP)) {
-					fav = configuration.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
-				} else if (groupId.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP)) {
-					fav = configuration.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
-				}
-				if (fav) {
-					addFavorite(configuration);
-					return true;
-				} 
-				removeFavorite(configuration);
-				return false;
-			} 
-			else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
+			if (isFavorite(configuration)) {
 				addFavorite(configuration);
 				return true;
-			} 
-			else {
+			} else {
 				removeFavorite(configuration);
 				return false;
 			}
@@ -441,7 +428,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public synchronized void removeFromHistory(ILaunchConfiguration configuration) {
 		try {
 			boolean removed = fCompleteHistory.remove(configuration);
-			if(isFavorite(configuration, getLaunchGroup().getIdentifier())) {
+			if(isFavorite(configuration)) {
 				removed |= fFavorites.remove(configuration);
 			}
 			if(removed) {
