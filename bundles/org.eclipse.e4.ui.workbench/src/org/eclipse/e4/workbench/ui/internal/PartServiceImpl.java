@@ -563,7 +563,12 @@ public class PartServiceImpl implements EPartService {
 			} else if (activePart.getParent() == part.getParent()) {
 				// same parent as the active part, just instantiate this part then
 				part.setToBeRendered(true);
-				engine.createGui(part);
+				if (part.getCurSharedRef() != null) {
+					part.getCurSharedRef().setToBeRendered(true);
+					engine.createGui(part.getCurSharedRef());
+				} else {
+					engine.createGui(part);
+				}
 			} else {
 				bringToTop(part);
 			}
