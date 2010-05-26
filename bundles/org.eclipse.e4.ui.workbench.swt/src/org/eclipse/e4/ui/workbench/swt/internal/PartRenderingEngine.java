@@ -184,7 +184,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (factoryUrl == null) {
 			factoryUrl = defaultFactoryUrl;
 		}
-		this.factoryUrl = defaultFactoryUrl;
+		this.factoryUrl = factoryUrl;
 	}
 
 	/**
