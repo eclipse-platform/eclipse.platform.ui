@@ -36,24 +36,30 @@ public class CleanupAddon {
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
-				if (container instanceof MApplication) {
-					// the application should not be unrendered
+				if (container instanceof MApplication || container instanceof MWindow
+						|| container instanceof MPerspectiveStack) {
 					return;
 				}
 
 				Display display = Display.getCurrent();
 
 				// Stall the removal to handle cases where the container is only transiently empty
-				if (display != null) {
+				if (display != null && !container.getTags().contains("EditorStack")) { //$NON-NLS-1$
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
-							// Don't mess with editor stacks (for now)
-							if (container.getTags().contains("EditorStack")) //$NON-NLS-1$
-								return;
-
-							// Remove it from the model if it's empty
-							if (container.getChildren().size() == 0) {
+							// Remove it from the display if no visible children
+							boolean hide = true;
+							for (MUIElement child : container.getChildren()) {
+								if (child.isToBeRendered()) {
+									hide = false;
+									break;
+								}
+							}
+							if (hide) {
 								container.setToBeRendered(false);
+							}
+							// Remove it from the model if it has no children at all
+							if (container.getChildren().size() == 0) {
 								container.getParent().getChildren().remove(container);
 							}
 						}
