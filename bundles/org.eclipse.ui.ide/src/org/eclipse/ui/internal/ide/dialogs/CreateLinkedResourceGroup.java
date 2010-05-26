@@ -612,12 +612,11 @@ public class CreateLinkedResourceGroup {
 	 * @return the current IPathVariableManager
 	 */
 	private IPathVariableManager getPathVariableManager() {
-		if (updatableResourceName.getResource() != null)
-			return updatableResourceName.getResource()
-					.getPathVariableManager();
-		return ResourcesPlugin.getWorkspace()
-					.getPathVariableManager();
-	}		
+		if (updatableResourceName != null
+				&& updatableResourceName.getResource() != null)
+			return updatableResourceName.getResource().getPathVariableManager();
+		return ResourcesPlugin.getWorkspace().getPathVariableManager();
+	}	
 
 	/**
 	 * Sets the <code>GridData</code> on the specified button to be one that
