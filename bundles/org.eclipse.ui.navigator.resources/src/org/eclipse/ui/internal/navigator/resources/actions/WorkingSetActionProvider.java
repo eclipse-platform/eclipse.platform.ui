@@ -14,6 +14,8 @@
 package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -28,6 +30,7 @@ import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -251,6 +254,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	}
 
 	private void setWorkingSetFilter(IWorkingSet workingSet) {
+		setWorkingSetFilter(workingSet, FIRST_TIME);
+	}
+	
+	private static final boolean FIRST_TIME = true;
+	
+	private void setWorkingSetFilter(IWorkingSet workingSet, boolean firstTime) {
 		ResourceWorkingSetFilter workingSetFilter = null;
 		ViewerFilter[] filters = viewer.getFilters();
 		for (int i = 0; i < filters.length; i++) {
@@ -260,9 +269,15 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 			}
 		}
 		if (workingSetFilter == null) {
-			filterService.addActiveFilterIds(new String[] { WORKING_SET_FILTER_ID });
-			filterService.updateViewer();
-			setWorkingSetFilter(workingSet);
+			if (firstTime) {
+				filterService.addActiveFilterIds(new String[] { WORKING_SET_FILTER_ID });
+				filterService.updateViewer();
+				setWorkingSetFilter(workingSet, !FIRST_TIME);
+				return;
+			}
+			WorkbenchNavigatorPlugin.log("Required filter " + WORKING_SET_FILTER_ID +  //$NON-NLS-1$
+					" is not present. Working set support will not function correctly.",   //$NON-NLS-1$
+				new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, ""));  //$NON-NLS-1$
 			return;
 		}
 		workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
