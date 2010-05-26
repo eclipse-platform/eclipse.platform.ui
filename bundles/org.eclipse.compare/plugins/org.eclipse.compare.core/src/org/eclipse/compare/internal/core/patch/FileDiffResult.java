@@ -102,7 +102,7 @@ public class FileDiffResult implements IFilePatchResult {
 			IHunk[] hunks = this.fDiff.getHunks();
 			for (int i = 0; i < hunks.length; i++) {
 				Hunk hunk = (Hunk) hunks[i];
-				hunk.setCharset(this.charset);
+				hunk.setCharset(getCharset());
 				HunkResult result = getHunkResult(hunk);
 				result.setMatches(false);
 			}
@@ -161,7 +161,7 @@ public class FileDiffResult implements IFilePatchResult {
 		IHunk[] hunks = this.fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
 			Hunk hunk = (Hunk) hunks[i];
-			hunk.setCharset(this.charset);
+			hunk.setCharset(getCharset());
 			HunkResult result = getHunkResult(hunk);
 			result.setShift(shift);
 			if (result.patch(lines)) {
