@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,9 +36,10 @@ public class StatusLineContributionItem extends ContributionItem {
 	private final static int DEFAULT_CHAR_WIDTH = 40;
 	
 	/**
-	 * constant indicating that the contribution should compute its actual size
-	 * depending on the text. It will grab all space necessary to display the whole text.
-	 *
+	 * A constant indicating that the contribution should compute its actual
+	 * size depending on the text. It will grab all space necessary to display
+	 * the whole text.
+	 * 
 	 * @since 3.6
 	 */
 	public final static int CALC_TRUE_WIDTH = -1;

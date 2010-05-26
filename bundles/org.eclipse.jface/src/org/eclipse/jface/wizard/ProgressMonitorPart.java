@@ -93,7 +93,7 @@ public class ProgressMonitorPart extends Composite implements
 
 
 	/**
-	 * Creates a ProgressMonitorPart that does not provide a stop button.
+	 * Creates a <code>ProgressMonitorPart</code> that does not provide a stop button.
 	 * 
 	 * @param parent The SWT parent of the part.
 	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
@@ -105,7 +105,7 @@ public class ProgressMonitorPart extends Composite implements
 	}
 
 	/**
-	 * Creates a ProgressMonitorPart that does not provide a stop button.
+	 * Creates a <code>ProgressMonitorPart</code> that does not provide a stop button.
 	 * 
 	 * @param parent The SWT parent of the part.
 	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
@@ -121,7 +121,7 @@ public class ProgressMonitorPart extends Composite implements
 	}
 
 	/**
-	 * Creates a ProgressMonitorPart.
+	 * Creates a <code>ProgressMonitorPart</code>.
 	 * 
 	 * @param parent the SWT parent of the part
 	 * @param layout the SWT grid layout used by the part. A client can supply the layout to control
