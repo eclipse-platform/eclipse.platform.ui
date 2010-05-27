@@ -460,12 +460,11 @@ public class StackRenderer extends LazyStackRenderer {
 		Control ctrl = (Control) element.getWidget();
 		if (ctrl != null && ctrl.getParent() != ctf) {
 			ctrl.setParent(ctf);
+			cti.setControl(ctrl);
 		} else if (element.getWidget() == null) {
 			Control tabCtrl = (Control) renderer.createGui(element);
 			cti.setControl(tabCtrl);
 		}
-
-		cti.setControl(ctrl);
 
 		ignoreTabSelChanges = true;
 		ctf.setSelection(cti);
