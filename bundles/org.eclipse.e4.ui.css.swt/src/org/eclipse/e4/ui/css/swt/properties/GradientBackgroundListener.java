@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 public class GradientBackgroundListener implements Listener {
 	private Gradient grad;
 	private final Control control;
+	private boolean radialGradient;
 	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
 	private static boolean isRadialSupported;
 
@@ -90,7 +91,7 @@ public class GradientBackgroundListener implements Listener {
 		 */
 
 		Image newImage;
-
+		
 		// If Java 5 or lower is used, radial gradients are not supported yet
 		// and they will be replaced by linear gradients
 		if (grad.isRadial() && isRadialSupported) {
@@ -110,8 +111,10 @@ public class GradientBackgroundListener implements Listener {
 			// System.out.println("Conversion took "
 			// + (System.currentTimeMillis() - startTime) + " ms");
 			newImage = new Image(control.getDisplay(), imagedata);
+			radialGradient = true;
 		} else {
-			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y ) {
+			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y || radialGradient ) {
+				radialGradient = false;
 				int x = 2;
 				int y = size.y;
 				newImage = new Image(control.getDisplay(), x, y);
