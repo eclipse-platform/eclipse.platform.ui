@@ -73,7 +73,8 @@ public class ModelServiceImpl implements EModelService {
 			Class<? extends T> type, List<String> tagsToMatch, List<T> elements) {
 		// are *we* a match ?
 		if (match(searchRoot, id, type, tagsToMatch)) {
-			elements.add((T) searchRoot);
+			if (!elements.contains((T) searchRoot))
+				elements.add((T) searchRoot);
 		}
 
 		// Check regular containers

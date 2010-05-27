@@ -21,6 +21,10 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -202,5 +206,51 @@ public class EModelServiceFindTest extends TestCase {
 				.findElements(application, "invalidId",
 						MPartSashContainer.class, null);
 		assertEquals(badIdAndTypeAndTags.size(), 0);
+	}
+
+	public void testBug314685() {
+		MApplication application = createApplication();
+		application.setContext(applicationContext);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getSharedElements().add(partStack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(part);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partStack);
+		perspectiveA.getChildren().add(placeholderA);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partStack);
+		perspectiveB.getChildren().add(placeholderB);
+
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		List<MPart> elements = modelService.findElements(window, null,
+				MPart.class, null);
+		assertNotNull(elements);
+		assertEquals(1, elements.size());
+		assertEquals(part, elements.get(0));
 	}
 }
