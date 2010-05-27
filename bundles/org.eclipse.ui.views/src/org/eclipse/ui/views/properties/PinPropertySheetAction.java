@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Versant Corp. and others.
+ * Copyright (c) 2008, 2010 Versant Corp. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.views.properties;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -25,6 +26,9 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
  */
 public class PinPropertySheetAction extends Action {
 
+	/**
+	 * Creates a new <code>PinPropertySheetAction</code>.
+	 */
 	public PinPropertySheetAction() {
 		super(PropertiesMessages.Pin_text, IAction.AS_CHECK_BOX);
 
