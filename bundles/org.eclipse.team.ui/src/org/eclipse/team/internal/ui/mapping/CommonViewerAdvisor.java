@@ -18,8 +18,10 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
@@ -308,10 +310,16 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			});
 			dlp.setDecorationContext(decorationContext);
 		} else if (provider instanceof DecoratingStyledCellLabelProvider) {
-			DecoratingStyledCellLabelProvider dlp = (DecoratingStyledCellLabelProvider) provider;
-			ILabelDecorator decorator = ((SynchronizePageConfiguration)configuration).getLabelDecorator();
+			DecoratingStyledCellLabelProvider dsclp = (DecoratingStyledCellLabelProvider) provider;
+			ILabelDecorator decorator = ((SynchronizePageConfiguration) configuration)
+					.getLabelDecorator();
 			if (decorator != null) {
-				dlp.setLabelDecorator(decorator);
+				IStyledLabelProvider slp = dsclp.getStyledStringProvider();
+				dsclp = new DecoratingStyledCellLabelProvider(
+						new MyDecoratingStyledCellLabelProvider(slp, decorator),
+						PlatformUI.getWorkbench().getDecoratorManager()
+								.getLabelDecorator(), null);
+				viewer.setLabelProvider(dsclp);
 			}
 			DecorationContext decorationContext = new DecorationContext();
 			decorationContext.putProperty(SynchronizationStateTester.PROP_TESTER, new SynchronizationStateTester() {
@@ -319,7 +327,30 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 					return false;
 				}
 			});
-			dlp.setDecorationContext(decorationContext);
+			dsclp.setDecorationContext(decorationContext);
+		}
+	}
+
+	private class MyDecoratingStyledCellLabelProvider extends
+			DecoratingStyledCellLabelProvider implements IStyledLabelProvider,
+			IFontProvider {
+
+		private IStyledLabelProvider slp;
+
+		public MyDecoratingStyledCellLabelProvider(IStyledLabelProvider slp,
+				ILabelDecorator decorator) {
+			super(slp, decorator, null);
+			this.slp = slp;
+		}
+
+		public StyledString getStyledText(Object element) {
+			return slp.getStyledText(element);
+		}
+
+		public Font getFont(Object element) {
+			// DelegatingStyledCellLabelProvider does not implement
+			// IFontProvider
+			return super.getFont(element);
 		}
 	}
 	
