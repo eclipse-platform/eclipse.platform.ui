@@ -117,12 +117,33 @@ public class SelectionServiceImpl implements ESelectionService {
 		}
 	}
 
+	/**
+	 * Returns whether this selection service is one that should be tracking the selection of other
+	 * parts or not.
+	 * 
+	 * @return <code>true</code> if this service monitors the selection changes of multiple parts
+	 */
+	private boolean isMasterService() {
+		IEclipseContext rootContext = serviceRoot.getContext();
+		if (rootContext == context) {
+			return true;
+		}
+
+		IEclipseContext parent = rootContext.getParent();
+		while (parent != null) {
+			if (parent == context) {
+				return true;
+			}
+			parent = parent.getParent();
+		}
+		return false;
+	}
+
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
 		if ((part != null) && (activePart != part)) {
 			activePart = part;
-			IEclipseContext rootContext = serviceRoot.getContext();
-			if (rootContext == context) {
+			if (isMasterService()) {
 				IEclipseContext partContext = part.getContext();
 				if (partContext != null) {
 					Object selection = partContext.get(OUT_SELECTION);

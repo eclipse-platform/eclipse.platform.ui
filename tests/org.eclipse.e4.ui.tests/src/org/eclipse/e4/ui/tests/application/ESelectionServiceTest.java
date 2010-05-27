@@ -24,15 +24,18 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.e4.workbench.modeling.ISelectionListener;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
@@ -372,6 +375,74 @@ public class ESelectionServiceTest extends TestCase {
 
 		listener.reset();
 		serviceA.setSelection(selectionB);
+
+		assertNull(listener.getPart());
+		assertNull(listener.getSelection());
+	}
+
+	public void testBug314538() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		IEclipseContext windowContext = window.getContext();
+		ESelectionService windowService = (ESelectionService) windowContext
+				.get(ESelectionService.class.getName());
+		EPartService partService = (EPartService) windowContext
+				.get(EPartService.class.getName());
+
+		SelectionListener listener = new SelectionListener();
+		windowService.addSelectionListener(listener);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA"); //$NON-NLS-1$
+		perspective.getChildren().add(partA);
+		perspective.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB"); //$NON-NLS-1$
+		perspective.getChildren().add(partB);
+
+		IEclipseContext contextB = partB.getContext();
+
+		ESelectionService serviceB = (ESelectionService) contextB
+				.get(ESelectionService.class.getName());
+
+		Object selection = new Object();
+
+		serviceB.setSelection(selection);
+
+		listener.reset();
+		partService.activate(partB);
+
+		assertEquals(partB, listener.getPart());
+		assertEquals(selection, listener.getSelection());
+
+		windowService.removeSelectionListener(listener);
+
+		listener.reset();
+		partService.activate(partA);
+
+		assertNull(listener.getPart());
+		assertNull(listener.getSelection());
+
+		listener.reset();
+		partService.activate(partB);
 
 		assertNull(listener.getPart());
 		assertNull(listener.getSelection());
