@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -34,12 +31,10 @@ public class ImageDialogHandler {
 
 	private class ImageDialog extends Dialog {
 		private IPresentationEngine theRenderer;
-		private IEclipseContext dlgContext;
 
 		public ImageDialog(Shell shell, MApplication app, IPresentationEngine renderer) {
 			super(shell);
 			theRenderer = renderer;
-			dlgContext = app.getContext().createChild();
 		}
 		
 		protected Control createDialogArea(Composite parent) {
