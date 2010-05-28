@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,16 @@ public class HandlerServiceImpl implements EHandlerService {
 		context.set(PARM_MAP, parms);
 	}
 
+	private void removeParmsFromContext(ParameterizedCommand command) {
+		final Map<?, ?> parms = command.getParameterMap();
+		Iterator<?> i = parms.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
+			context.set((String) entry.getKey(), null);
+		}
+		context.set(PARM_MAP, null);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,10 +88,15 @@ public class HandlerServiceImpl implements EHandlerService {
 		if (handler == null) {
 			return false;
 		}
-		addParmsToContext(command);
-		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-				context, Boolean.TRUE));
-		return result.booleanValue();
+
+		try {
+			addParmsToContext(command);
+			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
+					context, Boolean.TRUE));
+			return result.booleanValue();
+		} finally {
+			removeParmsFromContext(command);
+		}
 	}
 
 	/*
@@ -106,13 +121,18 @@ public class HandlerServiceImpl implements EHandlerService {
 		if (handler == null) {
 			return null;
 		}
-		addParmsToContext(command);
 
-		Object rc = ContextInjectionFactory
-				.invoke(handler, CanExecute.class, context, Boolean.TRUE);
-		if (Boolean.FALSE.equals(rc))
-			return null;
-		return ContextInjectionFactory.invoke(handler, Execute.class, context, null);
+		try {
+			addParmsToContext(command);
+
+			Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, context,
+					Boolean.TRUE);
+			if (Boolean.FALSE.equals(rc))
+				return null;
+			return ContextInjectionFactory.invoke(handler, Execute.class, context, null);
+		} finally {
+			removeParmsFromContext(command);
+		}
 	}
 
 	@Inject

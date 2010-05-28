@@ -1,10 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
+
+import java.util.Collections;
+import java.util.Map;
 
 import javax.inject.Named;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.IParameterValues;
+import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -12,10 +28,12 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 public class HandlerTest extends TestCase {
 
 	private static final String ACTIVE_INFO_ID = "activeInfo";
+	private static final String TEST_ID3 = "test.id3";
 	private static final String TEST_ID2 = "test.id2";
 	private static final String TEST_ID1 = "test.id1";
 	private static final String TEST_CAT1 = "test.cat1";
@@ -216,6 +234,18 @@ public class HandlerTest extends TestCase {
 		}
 	}
 
+	static class HandlerWithParams {
+		@CanExecute
+		public boolean canExecute(@Optional @Named(ACTIVE_INFO_ID) String param) {
+			return true;
+		}
+
+		@Execute
+		public Object execute(@Optional @Named(ACTIVE_INFO_ID) String param) {
+			return param;
+		}
+	}
+
 	static class Info {
 		public String name;
 
@@ -261,6 +291,29 @@ public class HandlerTest extends TestCase {
 		assertNull(wHS.executeHandler(cmd));
 	}
 
+	public void testBug314847() {
+		Info helloInfo = new Info("Hello");
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		EHandlerService wHS = (EHandlerService) workbenchContext
+				.get(EHandlerService.class.getName());
+
+		ParameterizedCommand nonparameterizedCmd = cs.createCommand(TEST_ID3, null);
+		ParameterizedCommand parameterizedCmd = cs.createCommand(TEST_ID3,
+				Collections.singletonMap(ACTIVE_INFO_ID, "param"));
+		
+		HandlerWithParams handler = new HandlerWithParams();
+		wHS.activateHandler(TEST_ID3, handler);
+
+		assertEquals(true, wHS.canExecute(parameterizedCmd));
+
+		assertEquals("param", wHS.executeHandler(parameterizedCmd));
+
+		assertEquals(true, wHS.canExecute(nonparameterizedCmd));
+
+		assertEquals(null, wHS.executeHandler(nonparameterizedCmd));
+	}
+
 	private IEclipseContext workbenchContext;
 
 	@Override
@@ -281,5 +334,28 @@ public class HandlerTest extends TestCase {
 		Category category = cs.defineCategory(TEST_CAT1, "CAT1", null);
 		cs.defineCommand(TEST_ID1, "ID1", null, category, null);
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);
+		cs.defineCommand(TEST_ID3, "ID3", null, category, new IParameter[] { new IParameter() {
+			
+			public boolean isOptional() {
+				return true;
+			}
+			
+			public IParameterValues getValues() throws ParameterValuesException {
+				return new IParameterValues() {
+					
+					public Map<?, ?> getParameterValues() {
+						return Collections.EMPTY_MAP;
+					}
+				};
+			}
+			
+			public String getName() {
+				return ACTIVE_INFO_ID;
+			}
+			
+			public String getId() {
+				return ACTIVE_INFO_ID;
+			}
+		}});
 	}
 }
