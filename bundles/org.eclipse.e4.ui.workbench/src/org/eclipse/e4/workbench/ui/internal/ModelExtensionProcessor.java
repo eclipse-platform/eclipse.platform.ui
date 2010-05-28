@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.osgi.framework.Bundle;
 
 /**
@@ -108,9 +108,10 @@ public class ModelExtensionProcessor {
 					continue;
 				}
 
+				ResourceSet resourceSet = ((EObject) e4Window).eResource().getResourceSet();
 				Resource resource;
 				try {
-					resource = new ResourceSetImpl().getResource(uri, true);
+					resource = resourceSet.getResource(uri, true);
 				} catch (RuntimeException e) {
 					log("Unable to read model extension", e); //$NON-NLS-1$
 					continue;

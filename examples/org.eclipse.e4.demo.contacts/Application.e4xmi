@@ -41,7 +41,7 @@
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_SeXUHO8EEd6FC9cDb6iV7g" keySequence="CTRL+D" elementId="_SeXUHO8EEd6FC9cDb6iV7g" command="contacts.darkTheme"/>
     <bindings xmi:id="_SeXUHe8EEd6FC9cDb6iV7g" keySequence="CTRL+L" elementId="_SeXUHe8EEd6FC9cDb6iV7g" command="contacts.brightTheme"/>
     <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" elementId="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
