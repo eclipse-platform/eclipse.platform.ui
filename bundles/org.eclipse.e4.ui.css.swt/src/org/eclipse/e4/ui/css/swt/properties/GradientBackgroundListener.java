@@ -113,7 +113,7 @@ public class GradientBackgroundListener implements Listener {
 			newImage = new Image(control.getDisplay(), imagedata);
 			radialGradient = true;
 		} else {
-			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y || radialGradient ) {
+			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y || radialGradient || event == null ) {
 				radialGradient = false;
 				int x = 2;
 				int y = size.y;
