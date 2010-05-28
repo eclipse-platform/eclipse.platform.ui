@@ -133,7 +133,7 @@
             os="win32"
             ws="winxp">
       </theme>
-win32 <theme
+	  <theme
             basestylesheeturi="css/e4_default_winxp_olv.css"
             id="org.eclipse.e4.ui.css.theme.e4_default.xpolive"
             label="e4DefaultWinXPOlive"
