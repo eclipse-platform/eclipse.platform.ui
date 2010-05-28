@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis - order of processing of components.e4xmi, bug 314761
  *******************************************************************************/
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -30,6 +38,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.osgi.framework.Bundle;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.service.packageadmin.RequiredBundle;
 
 /**
  * Process extensions to E4 model contributed via extensions.
@@ -84,7 +94,7 @@ public class ModelExtensionProcessor {
 	public void addModelExtensions() {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
-		IExtension[] extensions = extPoint.getExtensions();
+		IExtension[] extensions = topoSort(extPoint.getExtensions());
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
@@ -173,6 +183,112 @@ public class ModelExtensionProcessor {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Sort the provided extensions by the dependencies of their contributors. Note that sorting is
+	 * done in-place.
+	 * 
+	 * @param extensions
+	 *            the list of extensions to be sorted
+	 * @return the same list of extensions in a topologically-sorted order
+	 */
+	private IExtension[] topoSort(IExtension[] extensions) {
+		PackageAdmin admin = Activator.getDefault().getBundleAdmin();
+		final Map<String, Collection<IExtension>> mappedExtensions = new HashMap<String, Collection<IExtension>>();
+		// Captures the bundles that are listed as requirements for a particular bundle.
+		final Map<String, Collection<String>> requires = new HashMap<String, Collection<String>>();
+		// Captures the bundles that list a particular bundle as a requirement
+		final Map<String, Collection<String>> depends = new HashMap<String, Collection<String>>();
+
+		// {@code requires} and {@code depends} define a graph where the vertices are
+		// bundleIds and the edges are the requires-relation. {@code requires} defines
+		// the out-edges for a vertex, and {@code depends} defines the in-edges for a vertex.
+		//
+		// Description of the algorithm:
+		// (1) build up the graph: we only record the bundles actually being considered
+		// (i.e., those that are contributors of {@code extensions})
+		// (2) sort the list of bundles by their out-degree: the bundles with the least
+		// out-edges are those that are depend on the fewest. If there is no bundles
+		// with 0 out-edges, then we must have a cycle; oh well, can't win them all.
+		// (3) take the bundle with lowest out-degree and add its extensions to the list.
+		// Remove the bundle from the list, and remove it from all of its dependents'
+		// required lists. This may require that the bundle list be resorted.
+		//
+		// Note this implementation assumes direct dependencies: if any of the bundles
+		// are dependent through a third bundle, then the ordering will fail. To prevent
+		// this would require recording the entire dependency subgraph for all contributors
+		// of the {@code extensions}.
+
+		// first build up the list of bundles actually being considered
+		for (IExtension extension : extensions) {
+			IContributor contributor = extension.getContributor();
+			Collection<IExtension> exts = mappedExtensions.get(contributor.getName());
+			if (exts == null) {
+				mappedExtensions.put(contributor.getName(), exts = new ArrayList<IExtension>());
+			}
+			exts.add(extension);
+			requires.put(contributor.getName(), new HashSet<String>());
+			depends.put(contributor.getName(), new HashSet<String>());
+		}
+
+		// now populate the dependency graph
+		for (String bundleId : mappedExtensions.keySet()) {
+			assert requires.containsKey(bundleId) && depends.containsKey(bundleId);
+			for (RequiredBundle requiredBundle : admin.getRequiredBundles(bundleId)) {
+				assert requiredBundle.getSymbolicName().equals(bundleId);
+				for (Bundle dependentBundle : requiredBundle.getRequiringBundles()) {
+					if (!mappedExtensions.containsKey(dependentBundle.getSymbolicName())) {
+						// not a contributor of an extension
+						continue;
+					}
+					String depBundleId = dependentBundle.getSymbolicName();
+					Collection<String> depBundleReqs = requires.get(depBundleId);
+					depBundleReqs.add(bundleId);
+					Collection<String> bundleDeps = depends.get(bundleId);
+					assert bundleDeps != null;
+					bundleDeps.add(depBundleId);
+				}
+			}
+		}
+
+		int resultIndex = 0;
+
+		// sort by out-degree ({@code depends})
+		// I suppose we could make {@code depends} a SortedMap, but we'd still need
+		// to explicitly resort anyways
+		List<String> sortedByOutdegree = new ArrayList<String>(requires.keySet());
+		Comparator<String> outdegreeSorter = new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				assert requires.containsKey(o1) && requires.containsKey(o2);
+				return requires.get(o1).size() - requires.get(o2).size();
+			}
+		};
+		Collections.sort(sortedByOutdegree, outdegreeSorter);
+		if (!requires.get(sortedByOutdegree.get(0)).isEmpty()) {
+			log("Extensions have a cycle", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		while (!sortedByOutdegree.isEmpty()) {
+			// don't sort unnecessarily: the current ordering is fine providing
+			// item #0 still has no dependencies
+			if (!depends.get(sortedByOutdegree.get(0)).isEmpty()) {
+				Collections.sort(sortedByOutdegree, outdegreeSorter);
+			}
+			String bundleId = sortedByOutdegree.remove(0);
+			assert depends.containsKey(bundleId) && requires.containsKey(bundleId);
+			for (IExtension ext : mappedExtensions.get(bundleId)) {
+				extensions[resultIndex++] = ext;
+			}
+			assert requires.get(bundleId).isEmpty();
+			requires.remove(bundleId);
+			for (String depId : depends.get(bundleId)) {
+				requires.get(depId).remove(bundleId);
+			}
+			depends.remove(bundleId);
+		}
+		assert resultIndex == extensions.length;
+		return extensions;
 	}
 
 	private void log(String msg, Exception e) {
