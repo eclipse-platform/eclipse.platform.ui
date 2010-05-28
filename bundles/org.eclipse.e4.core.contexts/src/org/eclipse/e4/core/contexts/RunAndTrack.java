@@ -12,7 +12,7 @@ package org.eclipse.e4.core.contexts;
 
 /**
  * Extended version of a runnable that can be used with the
- * {@link IEclipseContext#runAndTrack(IRunAndTrack)} version gets more detailed
+ * {@link IEclipseContext#runAndTrack(RunAndTrack)} version gets more detailed
  * information on the change, such as the service name and the event type.
  */
 abstract public class RunAndTrack {
