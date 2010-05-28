@@ -214,6 +214,10 @@ public class PartServiceImpl implements EPartService {
 		listeners.remove(listener);
 	}
 
+	private MWindow getWindow() {
+		return ((MContext) rootContainer).getContext().get(MWindow.class);
+	}
+
 	private MContext getParentWithContext(MUIElement part) {
 		MElementContainer<MUIElement> parent = part.getParent();
 		MUIElement intermediate = parent;
@@ -226,7 +230,7 @@ public class PartServiceImpl implements EPartService {
 			parent = parent.getParent();
 		}
 
-		MPlaceholder placeholder = modelService.findPlaceholderFor(window, intermediate);
+		MPlaceholder placeholder = modelService.findPlaceholderFor(getWindow(), intermediate);
 		parent = placeholder.getParent();
 		while (parent != null) {
 			if (parent instanceof MContext) {
@@ -242,12 +246,12 @@ public class PartServiceImpl implements EPartService {
 		if (isInContainer(part)) {
 			MElementContainer<MUIElement> parent = part.getParent();
 			if (parent == null) {
-				parent = modelService.findPlaceholderFor(window, part).getParent();
+				parent = modelService.findPlaceholderFor(getWindow(), part).getParent();
 			}
 
 			MUIElement oldSelectedElement = parent.getSelectedElement();
 
-			modelService.bringToTop(window, part);
+			modelService.bringToTop(getWindow(), part);
 
 			if (oldSelectedElement != part) {
 				internalFixContext(part, oldSelectedElement);
@@ -349,7 +353,7 @@ public class PartServiceImpl implements EPartService {
 			return;
 		}
 
-		modelService.bringToTop(window, part);
+		modelService.bringToTop(getWindow(), part);
 		IEclipseContext context = part.getContext();
 		IEclipseContext parent = context.getParent();
 		while (parent != null) {
@@ -358,10 +362,6 @@ public class PartServiceImpl implements EPartService {
 			parent = parent.getParent();
 		}
 	}
-
-	@Inject
-	@Optional
-	MWindow window;
 
 	/*
 	 * (non-Javadoc)
