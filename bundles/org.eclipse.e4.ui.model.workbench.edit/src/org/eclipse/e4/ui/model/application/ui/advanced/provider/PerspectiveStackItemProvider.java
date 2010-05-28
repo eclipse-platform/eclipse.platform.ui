@@ -237,6 +237,11 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MMenuFactory.INSTANCE.createDirectMenuItem()));
 
 		newChildDescriptors.add

@@ -77,6 +77,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
 			case MenuPackageImpl.MENU_SEPARATOR: return (EObject)createMenuSeparator();
 			case MenuPackageImpl.MENU: return (EObject)createMenu();
+			case MenuPackageImpl.POPUP_MENU: return (EObject)createPopupMenu();
 			case MenuPackageImpl.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MenuPackageImpl.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
 			case MenuPackageImpl.TOOL_BAR: return (EObject)createToolBar();
@@ -157,6 +158,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MPopupMenu createPopupMenu() {
+		PopupMenuImpl popupMenu = new PopupMenuImpl();
+		return popupMenu;
 	}
 
 	/**

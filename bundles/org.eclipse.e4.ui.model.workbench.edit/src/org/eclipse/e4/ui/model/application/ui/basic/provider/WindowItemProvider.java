@@ -468,6 +468,11 @@ public class WindowItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__MAIN_MENU,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
 				 MBasicFactory.INSTANCE.createWindow()));
 
@@ -540,6 +545,11 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter

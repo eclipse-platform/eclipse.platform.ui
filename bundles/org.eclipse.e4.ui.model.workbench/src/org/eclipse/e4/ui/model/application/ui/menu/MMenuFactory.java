@@ -64,6 +64,15 @@ public interface MMenuFactory {
 	MMenu createMenu();
 
 	/**
+	 * Returns a new object of class '<em>Popup Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Popup Menu</em>'.
+	 * @generated
+	 */
+	MPopupMenu createPopupMenu();
+
+	/**
 	 * Returns a new object of class '<em>Direct Menu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

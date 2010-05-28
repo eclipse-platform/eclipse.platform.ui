@@ -172,6 +172,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected PopupMenuItemProvider popupMenuItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createPopupMenuAdapter() {
+		if (popupMenuItemProvider == null) {
+			popupMenuItemProvider = new PopupMenuItemProvider(this);
+		}
+
+		return popupMenuItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -435,6 +458,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (handledItemItemProvider != null) handledItemItemProvider.dispose();
 		if (menuSeparatorItemProvider != null) menuSeparatorItemProvider.dispose();
 		if (menuItemProvider != null) menuItemProvider.dispose();
+		if (popupMenuItemProvider != null) popupMenuItemProvider.dispose();
 		if (directMenuItemItemProvider != null) directMenuItemItemProvider.dispose();
 		if (handledMenuItemItemProvider != null) handledMenuItemItemProvider.dispose();
 		if (toolBarItemProvider != null) toolBarItemProvider.dispose();

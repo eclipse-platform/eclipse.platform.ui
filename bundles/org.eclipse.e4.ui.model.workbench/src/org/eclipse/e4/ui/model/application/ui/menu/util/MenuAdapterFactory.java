@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application.ui.menu.util;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -111,6 +112,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createMenuAdapter();
 			}
 			@Override
+			public Adapter casePopupMenu(MPopupMenu object) {
+				return createPopupMenuAdapter();
+			}
+			@Override
 			public Adapter caseDirectMenuItem(MDirectMenuItem object) {
 				return createDirectMenuItemAdapter();
 			}
@@ -161,6 +166,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <T extends MUIElement> Adapter caseElementContainer(MElementContainer<T> object) {
 				return createElementContainerAdapter();
+			}
+			@Override
+			public Adapter caseContext(MContext object) {
+				return createContextAdapter();
 			}
 			@Override
 			public Adapter caseContribution(MContribution object) {
@@ -271,6 +280,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMenuAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu <em>Popup Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu
+	 * @generated
+	 */
+	public Adapter createPopupMenuAdapter() {
 		return null;
 	}
 
@@ -453,6 +476,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @generated
+	 */
+	public Adapter createContextAdapter() {
 		return null;
 	}
 

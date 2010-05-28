@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -159,6 +160,19 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseUIElement(menu);
 				if (result == null) result = caseUILabel(menu);
 				if (result == null) result = caseApplicationElement(menu);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.POPUP_MENU: {
+				MPopupMenu popupMenu = (MPopupMenu)theEObject;
+				T1 result = casePopupMenu(popupMenu);
+				if (result == null) result = caseMenu(popupMenu);
+				if (result == null) result = caseContext(popupMenu);
+				if (result == null) result = caseMenuElement(popupMenu);
+				if (result == null) result = caseElementContainer(popupMenu);
+				if (result == null) result = caseUIElement(popupMenu);
+				if (result == null) result = caseUILabel(popupMenu);
+				if (result == null) result = caseApplicationElement(popupMenu);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -361,6 +375,21 @@ public class MenuSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Popup Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Popup Menu</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 casePopupMenu(MPopupMenu object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Direct Menu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -552,6 +581,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContext(MContext object) {
 		return null;
 	}
 
