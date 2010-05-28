@@ -113,7 +113,7 @@ See propertyPages, newWizards, importWizards, exportWizards and preferencePages.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Keywords are used with workbench wizards (new, import &amp; export), preference and property pages.  See the &lt;samp&gt;keywordReference&lt;/samp&gt; element of the org.eclipse.ui.propertyPages and org.eclipse.ui.preferencePages extension points.
+         Keywords are used with workbench wizards (new, import &amp;amp; export), preference and property pages.  See the &lt;samp&gt;keywordReference&lt;/samp&gt; element of the org.eclipse.ui.propertyPages and org.eclipse.ui.preferencePages extension points.
       </documentation>
    </annotation>
 
