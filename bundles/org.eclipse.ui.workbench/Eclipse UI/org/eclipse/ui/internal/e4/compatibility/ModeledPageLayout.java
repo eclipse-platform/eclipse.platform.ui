@@ -247,11 +247,14 @@ public class ModeledPageLayout implements IPageLayout {
 			if (descriptor.getElementId().equals(id)) {
 				MPlaceholder ph = partService.createSharedPart(id, page.getWindowModel());
 				ph.setToBeRendered(visible);
+
+				MPart part = (MPart) (ph.getRef());
+				part.setToBeRendered(visible);
+
 				// there should only be view references for views that are
 				// visible to the end user, that is, the tab items are being
 				// drawn
 				if (visible && createReferences) {
-					MPart part = (MPart) (ph.getRef());
 					page.createViewReferenceForPart(part, id);
 				}
 				return ph;
