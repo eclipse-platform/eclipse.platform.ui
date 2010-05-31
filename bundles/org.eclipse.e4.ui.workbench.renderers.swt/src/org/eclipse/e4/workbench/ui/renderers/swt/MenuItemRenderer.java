@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
@@ -230,6 +231,14 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			ParameterizedCommand cmd = handledItem.getWbCommand();
 			if (cmd == null) {
 				cmd = generateParameterizedCommand(handledItem, context);
+			}
+			if (cmd != null && (text == null || text.length() == 0)) {
+				try {
+					text = cmd.getName();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
 					.getWbCommand());
