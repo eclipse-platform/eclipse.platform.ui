@@ -41,6 +41,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -73,6 +76,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindingContexts <em>Binding Contexts</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getMenuContributions <em>Menu Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
  * </ul>
@@ -170,6 +174,16 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<String> bindingContexts;
+
+	/**
+	 * The cached value of the '{@link #getMenuContributions() <em>Menu Contributions</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMenuContributions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MMenuContribution> menuContributions;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -351,6 +365,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MMenuContribution> getMenuContributions() {
+		if (menuContributions == null) {
+			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this, ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS);
+		}
+		return menuContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public List<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, ApplicationPackageImpl.APPLICATION__COMMANDS);
@@ -388,6 +414,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return basicSetRootContext(null, msgs);
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				return ((InternalEList<?>)getMenuContributions()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -421,6 +449,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return getDescriptors();
 			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				return getBindingContexts();
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				return getMenuContributions();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return getCommands();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -467,6 +497,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getBindingContexts().clear();
 				getBindingContexts().addAll((Collection<? extends String>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				getMenuContributions().clear();
+				getMenuContributions().addAll((Collection<? extends MMenuContribution>)newValue);
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
@@ -511,6 +545,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				getMenuContributions().clear();
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
@@ -545,6 +582,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return descriptors != null && !descriptors.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				return bindingContexts != null && !bindingContexts.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				return menuContributions != null && !menuContributions.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -593,6 +632,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				default: return -1;
 			}
 		}
+		if (baseClass == MMenuContributions.class) {
+			switch (derivedFeatureID) {
+				case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS: return MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -633,6 +678,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
 				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MMenuContributions.class) {
+			switch (baseFeatureID) {
+				case MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
 				default: return -1;
 			}
 		}

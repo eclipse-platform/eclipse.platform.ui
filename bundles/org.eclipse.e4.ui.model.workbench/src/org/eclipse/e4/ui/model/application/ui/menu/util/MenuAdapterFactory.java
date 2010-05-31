@@ -112,6 +112,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createMenuAdapter();
 			}
 			@Override
+			public Adapter caseMenuContribution(MMenuContribution object) {
+				return createMenuContributionAdapter();
+			}
+			@Override
 			public Adapter casePopupMenu(MPopupMenu object) {
 				return createPopupMenuAdapter();
 			}
@@ -150,6 +154,10 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseToolBarSeparator(MToolBarSeparator object) {
 				return createToolBarSeparatorAdapter();
+			}
+			@Override
+			public Adapter caseMenuContributions(MMenuContributions object) {
+				return createMenuContributionsAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -280,6 +288,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMenuAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution <em>Contribution</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
+	 * @generated
+	 */
+	public Adapter createMenuContributionAdapter() {
 		return null;
 	}
 
@@ -420,6 +442,20 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createToolBarSeparatorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions <em>Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @generated
+	 */
+	public Adapter createMenuContributionsAdapter() {
 		return null;
 	}
 

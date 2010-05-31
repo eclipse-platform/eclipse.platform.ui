@@ -163,6 +163,15 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.MENU_CONTRIBUTION: {
+				MMenuContribution menuContribution = (MMenuContribution)theEObject;
+				T1 result = caseMenuContribution(menuContribution);
+				if (result == null) result = caseElementContainer(menuContribution);
+				if (result == null) result = caseUIElement(menuContribution);
+				if (result == null) result = caseApplicationElement(menuContribution);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MenuPackageImpl.POPUP_MENU: {
 				MPopupMenu popupMenu = (MPopupMenu)theEObject;
 				T1 result = casePopupMenu(popupMenu);
@@ -280,6 +289,12 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.MENU_CONTRIBUTIONS: {
+				MMenuContributions menuContributions = (MMenuContributions)theEObject;
+				T1 result = caseMenuContributions(menuContributions);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -371,6 +386,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenu(MMenu object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseMenuContribution(MMenuContribution object) {
 		return null;
 	}
 
@@ -521,6 +551,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseToolBarSeparator(MToolBarSeparator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseMenuContributions(MMenuContributions object) {
 		return null;
 	}
 

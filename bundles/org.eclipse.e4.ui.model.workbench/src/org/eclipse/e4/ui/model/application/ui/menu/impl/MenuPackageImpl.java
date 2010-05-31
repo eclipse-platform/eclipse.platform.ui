@@ -28,6 +28,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
@@ -1112,6 +1114,151 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl <em>Contribution</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
+	 * @generated
+	 */
+	public static final int MENU_CONTRIBUTION = 6;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__WIDGET = UiPackageImpl.ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__RENDERER = UiPackageImpl.ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__TO_BE_RENDERED = UiPackageImpl.ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__ON_TOP = UiPackageImpl.ELEMENT_CONTAINER__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__VISIBLE = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__PARENT = UiPackageImpl.ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__CONTAINER_DATA = UiPackageImpl.ELEMENT_CONTAINER__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__CUR_SHARED_REF = UiPackageImpl.ELEMENT_CONTAINER__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__CHILDREN = UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__POSITION_IN_PARENT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Contribution</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.PopupMenuImpl <em>Popup Menu</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1119,7 +1266,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getPopupMenu()
 	 * @generated
 	 */
-	public static final int POPUP_MENU = 6;
+	public static final int POPUP_MENU = 7;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1318,7 +1465,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectMenuItem()
 	 * @generated
 	 */
-	public static final int DIRECT_MENU_ITEM = 7;
+	public static final int DIRECT_MENU_ITEM = 8;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1526,7 +1673,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledMenuItem()
 	 * @generated
 	 */
-	public static final int HANDLED_MENU_ITEM = 8;
+	public static final int HANDLED_MENU_ITEM = 9;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1734,7 +1881,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolItem()
 	 * @generated
 	 */
-	public static final int TOOL_ITEM = 9;
+	public static final int TOOL_ITEM = 10;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1924,7 +2071,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBar()
 	 * @generated
 	 */
-	public static final int TOOL_BAR = 10;
+	public static final int TOOL_BAR = 11;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2060,7 +2207,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarElement()
 	 * @generated
 	 */
-	public static final int TOOL_BAR_ELEMENT = 11;
+	public static final int TOOL_BAR_ELEMENT = 12;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2178,7 +2325,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolControl()
 	 * @generated
 	 */
-	public static final int TOOL_CONTROL = 12;
+	public static final int TOOL_CONTROL = 13;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2323,7 +2470,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledToolItem()
 	 * @generated
 	 */
-	public static final int HANDLED_TOOL_ITEM = 13;
+	public static final int HANDLED_TOOL_ITEM = 14;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2540,7 +2687,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
 	 * @generated
 	 */
-	public static final int DIRECT_TOOL_ITEM = 14;
+	public static final int DIRECT_TOOL_ITEM = 15;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2757,7 +2904,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
 	 * @generated
 	 */
-	public static final int TOOL_BAR_SEPARATOR = 15;
+	public static final int TOOL_BAR_SEPARATOR = 16;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2868,6 +3015,34 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_SEPARATOR_FEATURE_COUNT = TOOL_BAR_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionsImpl <em>Contributions</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionsImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
+	 * @generated
+	 */
+	public static final int MENU_CONTRIBUTIONS = 17;
+
+	/**
+	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Contributions</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTIONS_FEATURE_COUNT = 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2875,7 +3050,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItemType()
 	 * @generated
 	 */
-	public static final int ITEM_TYPE = 16;
+	public static final int ITEM_TYPE = 18;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2918,6 +3093,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass menuEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass menuContributionEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2988,6 +3170,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass toolBarSeparatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass menuContributionsEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -3255,6 +3444,33 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution <em>Contribution</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Contribution</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
+	 * @generated
+	 */
+	public EClass getMenuContribution() {
+		return menuContributionEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent <em>Position In Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent()
+	 * @see #getMenuContribution()
+	 * @generated
+	 */
+	public EAttribute getMenuContribution_PositionInParent() {
+		return (EAttribute)menuContributionEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu <em>Popup Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3376,6 +3592,33 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions <em>Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Contributions</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @generated
+	 */
+	public EClass getMenuContributions() {
+		return menuContributionsEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions#getMenuContributions <em>Menu Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Menu Contributions</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions#getMenuContributions()
+	 * @see #getMenuContributions()
+	 * @generated
+	 */
+	public EReference getMenuContributions_MenuContributions() {
+		return (EReference)menuContributionsEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3437,6 +3680,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		menuEClass = createEClass(MENU);
 		createEAttribute(menuEClass, MENU__ENABLED);
 
+		menuContributionEClass = createEClass(MENU_CONTRIBUTION);
+		createEAttribute(menuContributionEClass, MENU_CONTRIBUTION__POSITION_IN_PARENT);
+
 		popupMenuEClass = createEClass(POPUP_MENU);
 
 		directMenuItemEClass = createEClass(DIRECT_MENU_ITEM);
@@ -3456,6 +3702,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		directToolItemEClass = createEClass(DIRECT_TOOL_ITEM);
 
 		toolBarSeparatorEClass = createEClass(TOOL_BAR_SEPARATOR);
+
+		menuContributionsEClass = createEClass(MENU_CONTRIBUTIONS);
+		createEReference(menuContributionsEClass, MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 
 		// Create enums
 		itemTypeEEnum = createEEnum(ITEM_TYPE);
@@ -3509,6 +3758,10 @@ public class MenuPackageImpl extends EPackageImpl {
 		EGenericType g2 = createEGenericType(this.getMenuElement());
 		g1.getETypeArguments().add(g2);
 		menuEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getElementContainer());
+		g2 = createEGenericType(this.getMenuElement());
+		g1.getETypeArguments().add(g2);
+		menuContributionEClass.getEGenericSuperTypes().add(g1);
 		popupMenuEClass.getESuperTypes().add(this.getMenu());
 		popupMenuEClass.getESuperTypes().add(theUiPackage.getContext());
 		directMenuItemEClass.getESuperTypes().add(this.getMenuItem());
@@ -3560,6 +3813,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEClass(menuEClass, MMenu.class, "Menu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMenu_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MMenu.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
+		initEClass(menuContributionEClass, MMenuContribution.class, "MenuContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getMenuContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", "", 0, 1, MMenuContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+
 		initEClass(popupMenuEClass, MPopupMenu.class, "PopupMenu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(directMenuItemEClass, MDirectMenuItem.class, "DirectMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -3579,6 +3835,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEClass(directToolItemEClass, MDirectToolItem.class, "DirectToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolBarSeparatorEClass, MToolBarSeparator.class, "ToolBarSeparator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(menuContributionsEClass, MMenuContributions.class, "MenuContributions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getMenuContributions_MenuContributions(), this.getMenuContribution(), null, "menuContributions", null, 0, -1, MMenuContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize enums and add enum literals
 		initEEnum(itemTypeEEnum, ItemType.class, "ItemType"); //$NON-NLS-1$
@@ -3725,6 +3984,24 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EAttribute MENU__ENABLED = eINSTANCE.getMenu_Enabled();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl <em>Contribution</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
+		 * @generated
+		 */
+		public static final EClass MENU_CONTRIBUTION = eINSTANCE.getMenuContribution();
+
+		/**
+		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute MENU_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getMenuContribution_PositionInParent();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.PopupMenuImpl <em>Popup Menu</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3823,6 +4100,24 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_SEPARATOR = eINSTANCE.getToolBarSeparator();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionsImpl <em>Contributions</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionsImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
+		 * @generated
+		 */
+		public static final EClass MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions();
+
+		/**
+		 * The meta object literal for the '<em><b>Menu Contributions</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions_MenuContributions();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}' enum.

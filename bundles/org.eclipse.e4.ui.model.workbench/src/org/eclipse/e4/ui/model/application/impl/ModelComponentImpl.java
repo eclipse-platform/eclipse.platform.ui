@@ -30,6 +30,9 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorC
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -56,6 +59,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getBindingTables <em>Binding Tables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getRootContext <em>Root Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getMenuContributions <em>Menu Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getPositionInParent <em>Position In Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getParentID <em>Parent ID</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl#getChildren <em>Children</em>}</li>
@@ -127,6 +131,16 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * @ordered
 	 */
 	protected MBindingContext rootContext;
+
+	/**
+	 * The cached value of the '{@link #getMenuContributions() <em>Menu Contributions</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMenuContributions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MMenuContribution> menuContributions;
 
 	/**
 	 * The default value of the '{@link #getPositionInParent() <em>Position In Parent</em>}' attribute.
@@ -342,6 +356,18 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MMenuContribution> getMenuContributions() {
+		if (menuContributions == null) {
+			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this, ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS);
+		}
+		return menuContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getPositionInParent() {
 		return positionInParent;
 	}
@@ -450,6 +476,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return basicSetRootContext(null, msgs);
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
+				return ((InternalEList<?>)getMenuContributions()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
@@ -478,6 +506,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return getBindingTables();
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return getRootContext();
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
+				return getMenuContributions();
 			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return getPositionInParent();
 			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
@@ -520,6 +550,10 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return;
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				setRootContext((MBindingContext)newValue);
+				return;
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
+				getMenuContributions().clear();
+				getMenuContributions().addAll((Collection<? extends MMenuContribution>)newValue);
 				return;
 			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent((String)newValue);
@@ -569,6 +603,9 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				setRootContext((MBindingContext)null);
 				return;
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
+				getMenuContributions().clear();
+				return;
 			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
 				return;
@@ -609,6 +646,8 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				return bindingTables != null && !bindingTables.isEmpty();
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
 				return rootContext != null;
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
+				return menuContributions != null && !menuContributions.isEmpty();
 			case ApplicationPackageImpl.MODEL_COMPONENT__POSITION_IN_PARENT:
 				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 			case ApplicationPackageImpl.MODEL_COMPONENT__PARENT_ID:
@@ -652,6 +691,12 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 				default: return -1;
 			}
 		}
+		if (baseClass == MMenuContributions.class) {
+			switch (derivedFeatureID) {
+				case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS: return MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -679,6 +724,12 @@ public class ModelComponentImpl extends PartDescriptorContainerImpl implements M
 			switch (baseFeatureID) {
 				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES: return ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES;
 				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT: return ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT;
+				default: return -1;
+			}
+		}
+		if (baseClass == MMenuContributions.class) {
+			switch (baseFeatureID) {
+				case MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS: return ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS;
 				default: return -1;
 			}
 		}

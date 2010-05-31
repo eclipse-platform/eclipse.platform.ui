@@ -77,6 +77,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
 			case MenuPackageImpl.MENU_SEPARATOR: return (EObject)createMenuSeparator();
 			case MenuPackageImpl.MENU: return (EObject)createMenu();
+			case MenuPackageImpl.MENU_CONTRIBUTION: return (EObject)createMenuContribution();
 			case MenuPackageImpl.POPUP_MENU: return (EObject)createPopupMenu();
 			case MenuPackageImpl.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MenuPackageImpl.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
@@ -85,6 +86,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
 			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MenuPackageImpl.TOOL_BAR_SEPARATOR: return (EObject)createToolBarSeparator();
+			case MenuPackageImpl.MENU_CONTRIBUTIONS: return (EObject)createMenuContributions();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -165,6 +167,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MMenuContribution createMenuContribution() {
+		MenuContributionImpl menuContribution = new MenuContributionImpl();
+		return menuContribution;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MPopupMenu createPopupMenu() {
 		PopupMenuImpl popupMenu = new PopupMenuImpl();
 		return popupMenu;
@@ -238,6 +250,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MToolBarSeparator createToolBarSeparator() {
 		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
 		return toolBarSeparator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuContributions createMenuContributions() {
+		MenuContributionsImpl menuContributions = new MenuContributionsImpl();
+		return menuContributions;
 	}
 
 	/**

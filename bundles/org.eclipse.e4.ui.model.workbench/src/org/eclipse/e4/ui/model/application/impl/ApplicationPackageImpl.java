@@ -364,13 +364,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__BINDING_CONTEXTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
+	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__MENU_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Addons</b></em>' containment reference list.
@@ -379,7 +388,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -388,7 +397,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
@@ -547,13 +556,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int MODEL_COMPONENT__ROOT_CONTEXT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MODEL_COMPONENT__MENU_CONTRIBUTIONS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__POSITION_IN_PARENT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
+	public static final int MODEL_COMPONENT__POSITION_IN_PARENT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Parent ID</b></em>' attribute.
@@ -562,7 +580,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__PARENT_ID = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
+	public static final int MODEL_COMPONENT__PARENT_ID = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -571,7 +589,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__CHILDREN = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
+	public static final int MODEL_COMPONENT__CHILDREN = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
@@ -580,7 +598,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__COMMANDS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
+	public static final int MODEL_COMPONENT__COMMANDS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Processor</b></em>' attribute.
@@ -589,7 +607,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__PROCESSOR = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
+	public static final int MODEL_COMPONENT__PROCESSOR = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -598,7 +616,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT__BINDINGS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
+	public static final int MODEL_COMPONENT__BINDINGS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of structural features of the '<em>Model Component</em>' class.
@@ -607,7 +625,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENT_FEATURE_COUNT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
+	public static final int MODEL_COMPONENT_FEATURE_COUNT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.AddonImpl <em>Addon</em>}' class.
@@ -1220,6 +1238,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		BasicPackageImpl theBasicPackage_1 = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Add subpackages
 		getESubpackages().add(theCommandsPackage);
@@ -1245,11 +1264,14 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getBindings());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theMenuPackage.getMenuContributions());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theBasicPackage_1.getPartDescriptorContainer());
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
 		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getBindingTableContainer());
+		modelComponentEClass.getESuperTypes().add(theMenuPackage.getMenuContributions());
 		addonEClass.getESuperTypes().add(this.getContribution());
 
 		// Initialize classes and features; add operations and parameters

@@ -549,6 +549,11 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createPopupMenu()));
 
 		newChildDescriptors.add

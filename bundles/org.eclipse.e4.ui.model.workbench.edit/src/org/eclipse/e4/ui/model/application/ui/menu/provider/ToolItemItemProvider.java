@@ -211,6 +211,11 @@ public class ToolItemItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MMenuFactory.INSTANCE.createPopupMenu()));
 
 		newChildDescriptors.add

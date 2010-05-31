@@ -172,6 +172,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MenuContributionItemProvider menuContributionItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMenuContributionAdapter() {
+		if (menuContributionItemProvider == null) {
+			menuContributionItemProvider = new MenuContributionItemProvider(this);
+		}
+
+		return menuContributionItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -356,6 +379,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MenuContributionsItemProvider menuContributionsItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMenuContributionsAdapter() {
+		if (menuContributionsItemProvider == null) {
+			menuContributionsItemProvider = new MenuContributionsItemProvider(this);
+		}
+
+		return menuContributionsItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -458,6 +504,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (handledItemItemProvider != null) handledItemItemProvider.dispose();
 		if (menuSeparatorItemProvider != null) menuSeparatorItemProvider.dispose();
 		if (menuItemProvider != null) menuItemProvider.dispose();
+		if (menuContributionItemProvider != null) menuContributionItemProvider.dispose();
 		if (popupMenuItemProvider != null) popupMenuItemProvider.dispose();
 		if (directMenuItemItemProvider != null) directMenuItemItemProvider.dispose();
 		if (handledMenuItemItemProvider != null) handledMenuItemItemProvider.dispose();
@@ -466,6 +513,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (handledToolItemItemProvider != null) handledToolItemItemProvider.dispose();
 		if (directToolItemItemProvider != null) directToolItemItemProvider.dispose();
 		if (toolBarSeparatorItemProvider != null) toolBarSeparatorItemProvider.dispose();
+		if (menuContributionsItemProvider != null) menuContributionsItemProvider.dispose();
 	}
 
 }

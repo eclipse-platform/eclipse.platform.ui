@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
@@ -217,6 +218,7 @@ public class ModelComponentItemProvider
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+			childrenFeatures.add(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS);
@@ -284,6 +286,7 @@ public class ModelComponentItemProvider
 			case ApplicationPackageImpl.MODEL_COMPONENT__HANDLERS:
 			case ApplicationPackageImpl.MODEL_COMPONENT__BINDING_TABLES:
 			case ApplicationPackageImpl.MODEL_COMPONENT__ROOT_CONTEXT:
+			case ApplicationPackageImpl.MODEL_COMPONENT__MENU_CONTRIBUTIONS:
 			case ApplicationPackageImpl.MODEL_COMPONENT__CHILDREN:
 			case ApplicationPackageImpl.MODEL_COMPONENT__COMMANDS:
 			case ApplicationPackageImpl.MODEL_COMPONENT__BINDINGS:
@@ -321,6 +324,11 @@ public class ModelComponentItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
@@ -343,6 +351,11 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
 				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -448,6 +461,29 @@ public class ModelComponentItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS,
 				 MCommandsFactory.INSTANCE.createKeyBinding()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS ||
+			childFeature == ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

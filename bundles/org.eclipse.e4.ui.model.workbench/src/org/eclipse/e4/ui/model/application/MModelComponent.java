@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,7 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * @model
  * @generated
  */
-public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement, MHandlerContainer, MBindingTableContainer {
+public interface MModelComponent extends MPartDescriptorContainer, MApplicationElement, MHandlerContainer, MBindingTableContainer, MMenuContributions {
 	/**
 	 * Returns the value of the '<em><b>Position In Parent</b></em>' attribute.
 	 * The default value is <code>""</code>.

@@ -64,6 +64,15 @@ public interface MMenuFactory {
 	MMenu createMenu();
 
 	/**
+	 * Returns a new object of class '<em>Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Contribution</em>'.
+	 * @generated
+	 */
+	MMenuContribution createMenuContribution();
+
+	/**
 	 * Returns a new object of class '<em>Popup Menu</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -134,5 +143,14 @@ public interface MMenuFactory {
 	 * @generated
 	 */
 	MToolBarSeparator createToolBarSeparator();
+
+	/**
+	 * Returns a new object of class '<em>Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Contributions</em>'.
+	 * @generated
+	 */
+	MMenuContributions createMenuContributions();
 
 } //MMenuFactory

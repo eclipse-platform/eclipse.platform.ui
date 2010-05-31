@@ -22,6 +22,7 @@
     <eGenericSuperTypes eClassifier="#//commands/BindingTableContainer"/>
     <eGenericSuperTypes eClassifier="#//descriptor/basic/PartDescriptorContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
+    <eGenericSuperTypes eClassifier="#//ui/menu/MenuContributions"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -38,7 +39,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//ModelComponent" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/basic/PartDescriptorContainer #//ApplicationElement #//commands/HandlerContainer #//commands/BindingTableContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/basic/PartDescriptorContainer #//ApplicationElement #//commands/HandlerContainer #//commands/BindingTableContainer #//ui/menu/MenuContributions">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
@@ -244,6 +245,13 @@
           <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
         </eGenericSuperTypes>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="MenuContribution">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            defaultValueLiteral=""/>
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PopupMenu" eSuperTypes="#//ui/menu/Menu #//ui/Context"/>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem"/>
@@ -266,6 +274,10 @@
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="MenuContributions">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
+            upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true"/>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">

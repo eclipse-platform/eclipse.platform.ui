@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.provider.ElementContainerItemProvider;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -158,6 +160,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+			childrenFeatures.add(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 		}
@@ -222,6 +225,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -269,6 +273,11 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
 				 MCommandsFactory.INSTANCE.createCommand()));
 
@@ -276,6 +285,29 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__ADDONS,
 				 MApplicationFactory.INSTANCE.createAddon()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**
