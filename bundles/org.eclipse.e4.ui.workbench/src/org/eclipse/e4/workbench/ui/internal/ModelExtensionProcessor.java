@@ -194,6 +194,10 @@ public class ModelExtensionProcessor {
 	 * @return the same list of extensions in a topologically-sorted order
 	 */
 	private IExtension[] topoSort(IExtension[] extensions) {
+		if (extensions.length == 0) {
+			return extensions;
+		}
+
 		PackageAdmin admin = Activator.getDefault().getBundleAdmin();
 		final Map<String, Collection<IExtension>> mappedExtensions = new HashMap<String, Collection<IExtension>>();
 		// Captures the bundles that are listed as requirements for a particular bundle.
