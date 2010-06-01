@@ -259,7 +259,7 @@ public class KeyBindingDispatcher {
 		final boolean commandEnabled = handlerService.canExecute(parameterizedCommand);
 		boolean commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
-		if (!commandEnabled) {
+		if (!commandEnabled && commandHandled && commandDefined) {
 			return true;
 		}
 		try {
