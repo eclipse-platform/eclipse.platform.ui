@@ -13,18 +13,11 @@ package org.eclipse.e4.ui.model.application.ui.menu.provider;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-
 import org.eclipse.e4.ui.model.application.ui.provider.UIElementItemProvider;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
