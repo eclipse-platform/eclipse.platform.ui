@@ -304,26 +304,32 @@ public class E4Application implements IApplication {
 
 				IEclipseContext next = (IEclipseContext) current
 						.getLocal(IContextConstants.ACTIVE_CHILD);
+				MPerspective candidate = null;
 				while (next != null) {
 					current = next;
+					MPerspective perspective = current.get(MPerspective.class);
+					if (perspective != null) {
+						candidate = perspective;
+					}
 					next = (IEclipseContext) current
 							.getLocal(IContextConstants.ACTIVE_CHILD);
 				}
-				Object object = current.get(MPerspective.class.getName());
-				if (object == null) {
-					// we need to consider detached windows
-					MUIElement window = (MUIElement) current.get(MWindow.class
-							.getName());
-					if (window == null)
-						return null;
-					MElementContainer<?> parent = window.getParent();
-					while (parent != null && !(parent instanceof MApplication)) {
-						window = parent;
-						parent = parent.getParent();
-					}
-					return window;
+
+				if (candidate != null) {
+					return candidate;
 				}
-				return object;
+
+				// we need to consider detached windows
+				MUIElement window = (MUIElement) current.get(MWindow.class
+						.getName());
+				if (window == null)
+					return null;
+				MElementContainer<?> parent = window.getParent();
+				while (parent != null && !(parent instanceof MApplication)) {
+					window = parent;
+					parent = parent.getParent();
+				}
+				return window;
 			}
 		});
 
