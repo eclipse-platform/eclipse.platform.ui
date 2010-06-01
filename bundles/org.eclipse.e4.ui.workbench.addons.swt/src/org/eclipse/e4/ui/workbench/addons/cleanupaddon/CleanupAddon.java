@@ -78,6 +78,11 @@ public class CleanupAddon {
 			else
 				container = changedObj.getParent();
 
+			// this can happen for shared parts that aren't attached to any placeholders
+			if (container == null) {
+				return;
+			}
+
 			// Don't mess with editor stacks (for now)
 			MUIElement containerElement = container;
 			if (containerElement.getTags().contains("EditorStack")
