@@ -90,13 +90,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.e4.ui.css.nebula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.e4.ui.css.swt"
          download-size="0"
          install-size="0"
@@ -119,13 +112,6 @@
 
    <plugin
          id="org.w3c.css.sac"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.gallery"
          download-size="0"
          install-size="0"
          version="0.0.0"
