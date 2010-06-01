@@ -10,17 +10,6 @@
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 271339 
  *          [FieldAssist] Add CC text field content assist doesn't work as expected when narrowing suggestions
  *******************************************************************************/
-
-/*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.ui.tests.fieldassist;
 
 import junit.framework.TestCase;

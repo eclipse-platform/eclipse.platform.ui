@@ -1,7 +1,5 @@
-package org.eclipse.ui.internal.progress;
-
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +8,8 @@ package org.eclipse.ui.internal.progress;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.ui.internal.progress;
+
 import com.ibm.icu.text.DateFormat;
 import java.net.URL;
 import java.util.ArrayList;
