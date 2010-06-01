@@ -20,6 +20,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
@@ -256,7 +257,7 @@ public class KeyBindingDispatcher {
 		final Command command = parameterizedCommand.getCommand();
 		final boolean commandDefined = command.isDefined();
 		final boolean commandEnabled = handlerService.canExecute(parameterizedCommand);
-		boolean commandHandled = true;
+		boolean commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
 		if (!commandEnabled) {
 			return true;
