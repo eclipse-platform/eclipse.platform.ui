@@ -93,5 +93,13 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/default.css"
+            id="org.eclipse.e4.ui.examples.css.rcp"
+            label="RCP example theme">
+      </theme>
+   </extension>
 
 </plugin>

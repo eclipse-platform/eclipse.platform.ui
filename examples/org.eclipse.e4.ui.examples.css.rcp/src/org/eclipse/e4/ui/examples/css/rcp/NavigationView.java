@@ -166,7 +166,7 @@ public class NavigationView extends ViewPart {
 		widget.setData(CSSSWTConstants.CSS_ID_KEY, name);
 		//Ideally just changing the widget's id would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line
-		ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
+		// ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
 	}
 
 }

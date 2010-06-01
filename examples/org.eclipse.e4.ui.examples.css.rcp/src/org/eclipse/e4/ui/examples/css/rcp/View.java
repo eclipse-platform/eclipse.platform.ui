@@ -117,7 +117,7 @@ public class View extends ViewPart {
 		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, name);
 		//Ideally just changing the widget's CSS class would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line
-		ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
+		// ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
 	}
 
 	private void updateCSSForReadState() {
