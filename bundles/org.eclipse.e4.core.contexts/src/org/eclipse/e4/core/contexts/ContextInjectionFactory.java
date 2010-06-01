@@ -34,7 +34,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * <p>
  * The injection of values is generally done as a number of calls. User objects that want to
  * finalize the injected data (for instance, to perform calculations based on multiple injected
- * values) can place such calculations in a method with the {@link PostConstruct} annotation.
+ * values) can place such calculations in a method with the <tt>javax.annotation.PostConstruct</tt> annotation.
  * </p>
  * <p>
  * When injecting values, all fields are injected prior to injection of methods. When values are
@@ -46,7 +46,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling methods with the {@link PreDestroy} annotation before resetting injected values to <code>null</code>.
+ * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation before resetting injected values to <code>null</code>.
  * 
  * @noextend This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
