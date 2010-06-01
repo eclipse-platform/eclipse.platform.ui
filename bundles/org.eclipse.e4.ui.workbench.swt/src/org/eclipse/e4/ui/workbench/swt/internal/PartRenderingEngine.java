@@ -465,8 +465,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				// Register an SWT resource handler
 				runContext.set(IResourceUtiltities.class.getName(),
-						new ResourceUtility(Activator.getDefault()
-								.getBundleAdmin()));
+						new ResourceUtility());
 
 				// set up the keybinding manager
 				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory

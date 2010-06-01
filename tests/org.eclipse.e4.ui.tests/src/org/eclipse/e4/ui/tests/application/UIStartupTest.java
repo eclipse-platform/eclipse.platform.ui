@@ -15,33 +15,23 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.util.tracker.ServiceTracker;
 
 public abstract class UIStartupTest extends HeadlessApplicationTest {
-
-	private BundleContext bundleContext;
-	private ServiceTracker bundleTracker;
 
 	protected Display display;
 
 	@Override
 	protected void setUp() throws Exception {
-		bundleContext = Activator.getDefault().getBundle().getBundleContext();
 		display = Display.getDefault();
 		super.setUp();
 		while (display.readAndDispatch())
@@ -51,21 +41,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (bundleTracker != null) {
-			bundleTracker.close();
-			bundleTracker = null;
-		}
-	}
-
-	protected PackageAdmin getBundleAdmin() {
-		if (bundleTracker == null) {
-			if (bundleContext == null)
-				return null;
-			bundleTracker = new ServiceTracker(bundleContext,
-					PackageAdmin.class.getName(), null);
-			bundleTracker.open();
-		}
-		return (PackageAdmin) bundleTracker.getService();
 	}
 
 	@Override
@@ -171,14 +146,14 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				while (display.readAndDispatch())
 					;
 
-				assertEquals(parts[0].getElementId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
+				assertEquals(parts[0].getElementId(),
+						context.get(IServiceConstants.ACTIVE_PART_ID));
 
 				context.set(IServiceConstants.ACTIVE_PART, parts[1]);
 				while (display.readAndDispatch())
 					;
-				assertEquals(parts[1].getElementId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
+				assertEquals(parts[1].getElementId(),
+						context.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
 	}
@@ -196,14 +171,14 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				while (display.readAndDispatch())
 					;
 
-				assertEquals(parts[0].getElementId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
+				assertEquals(parts[0].getElementId(),
+						context.get(IServiceConstants.ACTIVE_PART_ID));
 
 				service.activate(parts[1]);
 				while (display.readAndDispatch())
 					;
-				assertEquals(parts[1].getElementId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
+				assertEquals(parts[1].getElementId(),
+						context.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
 	}
@@ -246,7 +221,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				contexts[0] = UIStartupTest.super
 						.createApplicationContext(osgiContext);
 				contexts[0].set(IResourceUtiltities.class.getName(),
-						new ResourceUtility(getBundleAdmin()));
+						new ResourceUtility());
 				contexts[0].set(IStylingEngine.class.getName(),
 						new IStylingEngine() {
 							public void style(Object widget) {
