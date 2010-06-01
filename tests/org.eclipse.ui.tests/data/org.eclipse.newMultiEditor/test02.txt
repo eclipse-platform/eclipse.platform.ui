@@ -1,3 +1,0 @@
-test file 02
-
-test for MultiEditor
