@@ -150,6 +150,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	private IWorkbenchWindow workbenchWindow;
 	private MWindow window;
 
+	private String extensionId;
+
 	/**
 	 * Build the part site.
 	 * 
@@ -184,6 +186,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				});
 		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
+	}
+
+	void setExtensionId(String extensionId) {
+		this.extensionId = extensionId;
 	}
 
 	// @Inject
@@ -303,7 +309,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		return extensionId == null ? element.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
+				: extensionId;
 	}
 
 	/*

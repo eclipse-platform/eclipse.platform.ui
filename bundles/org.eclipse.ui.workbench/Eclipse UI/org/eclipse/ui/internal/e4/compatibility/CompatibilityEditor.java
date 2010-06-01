@@ -49,18 +49,20 @@ public class CompatibilityEditor extends CompatibilityPart {
 		EditorDescriptor descriptor = reference.getDescriptor();
 		if (descriptor != null) {
 			IConfigurationElement element = descriptor.getConfigurationElement();
-			String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-			if (iconURI != null) {
-				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-				builder.append(element.getNamespaceIdentifier()).append('/');
+			if (element != null) {
+				String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+				if (iconURI != null) {
+					StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+					builder.append(element.getNamespaceIdentifier()).append('/');
 
-				// FIXME: need to get rid of $nl$ properly
-				if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
-					iconURI = iconURI.substring(4);
+					// FIXME: need to get rid of $nl$ properly
+					if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
+						iconURI = iconURI.substring(4);
+					}
+
+					builder.append(iconURI);
+					part.setIconURI(builder.toString());
 				}
-
-				builder.append(iconURI);
-				part.setIconURI(builder.toString());
 			}
 		}
 	}
@@ -83,7 +85,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 	@PreDestroy
 	void preDestroy() {
 		IWorkbenchPartReference reference = getReference();
-		WorkbenchPage page = (WorkbenchPage) wrapped.getSite().getPage();
+		WorkbenchPage page = (WorkbenchPage) reference.getPage();
 		for (Iterator<EditorReference> it = page.getInternalEditorReferences().iterator(); it
 				.hasNext();) {
 			IEditorReference ref = it.next();

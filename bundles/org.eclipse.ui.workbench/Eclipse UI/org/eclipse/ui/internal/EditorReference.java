@@ -17,12 +17,14 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -40,6 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
 
@@ -49,6 +52,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private EditorDescriptor descriptor;
 	private String factoryId;
 	private EditorSite editorSite;
+	private String descriptorId;
 
 	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor) {
@@ -82,13 +86,18 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 						.getPersistedState().get(MEMENTO_KEY)));
 				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
 						.getEditorRegistry();
-				this.descriptor = (EditorDescriptor) registry.findEditor(createReadRoot
-						.getString(IWorkbenchConstants.TAG_ID));
-				setImageDescriptor(this.descriptor.getImageDescriptor());
+				descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
+				this.descriptor = (EditorDescriptor) registry.findEditor(descriptorId);
+				if (this.descriptor == null) {
+					setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
+				} else {
+					setImageDescriptor(this.descriptor.getImageDescriptor());
+				}
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin.log(e);
 			}
 		} else {
+			descriptorId = this.descriptor.getId();
 			setImageDescriptor(this.descriptor.getImageDescriptor());
 		}
 	}
@@ -201,6 +210,14 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
+			if (descriptor == null) {
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
+						WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId));
+				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
+						.getEditorRegistry();
+				descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
+				return new ErrorEditorPart(status);
+			}
 			return descriptor.createEditor();
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
@@ -219,8 +236,11 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		editorSite = new EditorSite(getModel(), part, descriptor
-				.getConfigurationElement());
+		IConfigurationElement element = descriptor.getConfigurationElement();
+		editorSite = new EditorSite(getModel(), part, element);
+		if (element == null) {
+			editorSite.setExtensionId(descriptor.getId());
+		}
 		ContextInjectionFactory.inject(editorSite, getModel().getContext());
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
