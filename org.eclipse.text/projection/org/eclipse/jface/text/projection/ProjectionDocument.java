@@ -806,7 +806,7 @@ public class ProjectionDocument extends AbstractDocument {
 		Position[] segments= getSegments();
 		for (int i= 0; i < segments.length; i++) {
 			Segment segment= (Segment) segments[i];
-			if (segment.isDeleted() || (segment.getLength() == 0 && i < segments.length - 1)) {
+			if (segment.isDeleted() || (segment.getLength() == 0 && (i < segments.length - 1 || (i > 0 && segments[i - 1].isDeleted())))) {
 				try {
 					removePosition(fSegmentsCategory, segment);
 					fMasterDocument.removePosition(fFragmentsCategory, segment.fragment);
