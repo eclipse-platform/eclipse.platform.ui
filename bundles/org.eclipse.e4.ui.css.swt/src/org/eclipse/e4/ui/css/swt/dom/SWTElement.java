@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
+ *     IBM Corporation - ongoing development
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
@@ -16,7 +16,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
-import org.eclipse.e4.ui.css.core.utils.NumberUtils;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.engine.AbstractCSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
@@ -334,7 +333,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 			if (widget instanceof TableItem) {
 				TableItem tableItem = (TableItem) widget;
 				int index = tableItem.getParent().indexOf(tableItem);
-				return NumberUtils.isOdd(index);
+				return (index % 2) == 1;
 			}
 		}
 		if ("even".equals(s)) {
@@ -342,7 +341,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 			if (widget instanceof TableItem) {
 				TableItem tableItem = (TableItem) widget;
 				int index = tableItem.getParent().indexOf(tableItem);
-				return NumberUtils.isEven(index);
+				return (index %2) == 0;
 			}
 		}
 		return super.isPseudoInstanceOf(s);
