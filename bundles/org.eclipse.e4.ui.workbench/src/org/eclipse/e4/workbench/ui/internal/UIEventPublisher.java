@@ -45,7 +45,7 @@ public class UIEventPublisher extends EContentAdapter {
 		super.notifyChanged(notification);
 
 		// Inhibit No-Ops
-		if (notification.isTouch())
+		if (notification.isTouch() || !(notification.getNotifier() instanceof MApplicationElement))
 			return;
 
 		// Format the event
