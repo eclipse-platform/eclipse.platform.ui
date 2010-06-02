@@ -137,7 +137,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 
 	private EventHandler enabledUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
-			// Ensure that this event is for a MToolItem
+			// Ensure that this event is for a MMenuItem
 			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
 				return;
 

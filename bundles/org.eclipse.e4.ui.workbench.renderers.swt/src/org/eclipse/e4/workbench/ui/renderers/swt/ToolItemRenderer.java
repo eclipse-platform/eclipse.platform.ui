@@ -98,18 +98,37 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private EventHandler enabledUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MToolItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
+				return;
+
+			MToolItem itemModel = (MToolItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			ToolItem toolItem = (ToolItem) itemModel.getWidget();
+			if (toolItem != null) {
+				toolItem.setEnabled(itemModel.isEnabled());
+			}
+		}
+	};
+
 	@PostConstruct
 	public void init() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
 				UIEvents.Item.SELECTED), selectionUpdater);
+		eventBroker
+				.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
+						UIEvents.Item.ENABLED), enabledUpdater);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
 		eventBroker.unsubscribe(selectionUpdater);
+		eventBroker.unsubscribe(enabledUpdater);
 	}
 
 	private ParameterizedCommand generateParameterizedCommand(
@@ -247,8 +266,8 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					if (contrib.getObject() == null) {
 						IContributionFactory cf = (IContributionFactory) lclContext
 								.get(IContributionFactory.class.getName());
-						contrib.setObject(cf.create(contrib
-								.getContributionURI(), lclContext));
+						contrib.setObject(cf.create(
+								contrib.getContributionURI(), lclContext));
 					}
 					lclContext.set(MItem.class.getName(), item);
 					ContextInjectionFactory.invoke(contrib.getObject(),
