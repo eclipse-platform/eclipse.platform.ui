@@ -477,7 +477,8 @@ public class PerspectiveSwitcher {
 			MPerspective persp = (MPerspective) items[i].getData();
 			if (persp != null)
 				if (showText) {
-					items[i].setText(persp.getLabel());
+					if (persp.getLabel() != null)
+						items[i].setText(persp.getLabel());
 					items[i].setToolTipText(persp.getTooltip());
 				} else {
 					Image image = items[i].getImage();
