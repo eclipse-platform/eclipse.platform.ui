@@ -67,6 +67,9 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	private void removeParmsFromContext(ParameterizedCommand command) {
+		if (context == null) {
+			return;
+		}
 		final Map<?, ?> parms = command.getParameterMap();
 		Iterator<?> i = parms.entrySet().iterator();
 		while (i.hasNext()) {
