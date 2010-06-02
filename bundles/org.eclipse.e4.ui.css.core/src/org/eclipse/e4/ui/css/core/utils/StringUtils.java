@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 public class StringUtils {
 
 	/**
-	 * Replace <b>oldString</b> occurences with <b>newString</b> occurences of
+	 * Replace <b>oldString</b> occurrences with <b>newString</b> occurrences of
 	 * the String <b>line</b> and return the result.
 	 * 
 	 * @param line
