@@ -333,11 +333,14 @@ public class EclipseContext implements IEclipseContext {
 				return valueComputation.get();
 			}
 		}
-		// 1. try for local value
-		Object result = localValues.get(name);
 
-		// 2. try the local strategy
-		if (result == null && strategy != null)
+		Object result = null;
+		// 1. try for local value
+		if (localValues.containsKey(name)) {
+			result = localValues.get(name);
+			if (result == null)
+				return null;
+		} else if (strategy != null) // 2. try the local strategy
 			result = strategy.lookup(name, originatingContext);
 
 		// if we found something, compute the concrete value and return

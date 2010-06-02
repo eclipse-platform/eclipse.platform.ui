@@ -310,4 +310,12 @@ public class EclipseContextTest extends TestCase {
 		child.dispose();
 		assertEquals(0, TestHelper.getListeners(parent).size());
 	}
+	
+	public void testNullInheritance() {
+		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
+		IEclipseContext child = parent.createChild("ChildContext");
+		parent.set("x", new Integer(1));
+		child.set("x", null);
+		assertNull(child.get("x"));
+	}
 }
