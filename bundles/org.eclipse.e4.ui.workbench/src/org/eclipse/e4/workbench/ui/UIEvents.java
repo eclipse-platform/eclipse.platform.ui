@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009,2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,15 +169,16 @@ public class UIEvents {
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
 	}
 
-	public static interface TrimContainer {
-		public static final String TOPIC = UITopicBase + "/basic/TrimContainer"; //$NON-NLS-1$
-		public static final String CONTENT = "content"; //$NON-NLS-1$
+	public static interface TrimmedWindow {
+		public static final String TOPIC = UITopicBase + "/basic/TrimmedWindow"; //$NON-NLS-1$
+		public static final String TRIMBARS = "trimBars"; //$NON-NLS-1$
 	}
 
 	public static interface Window {
 		public static final String TOPIC = UITopicBase + "/basic/Window"; //$NON-NLS-1$
 		public static final String HEIGHT = "height"; //$NON-NLS-1$
 		public static final String MAINMENU = "mainMenu"; //$NON-NLS-1$
+		public static final String SHAREDELEMENTS = "sharedElements"; //$NON-NLS-1$
 		public static final String WIDTH = "width"; //$NON-NLS-1$
 		public static final String WINDOWS = "windows"; //$NON-NLS-1$
 		public static final String X = "x"; //$NON-NLS-1$
@@ -189,6 +190,11 @@ public class UIEvents {
 		public static final String CONTEXT = "context"; //$NON-NLS-1$
 		public static final String PROPERTIES = "properties"; //$NON-NLS-1$
 		public static final String VARIABLES = "variables"; //$NON-NLS-1$
+	}
+
+	public static interface CoreExpression {
+		public static final String TOPIC = UITopicBase + "/ui/CoreExpression"; //$NON-NLS-1$
+		public static final String COREEXPRESSIONID = "coreExpressionId"; //$NON-NLS-1$
 	}
 
 	public static interface Dirtyable {
@@ -220,11 +226,13 @@ public class UIEvents {
 	public static interface UIElement {
 		public static final String TOPIC = UITopicBase + "/ui/UIElement"; //$NON-NLS-1$
 		public static final String CONTAINERDATA = "containerData"; //$NON-NLS-1$
+		public static final String CURSHAREDREF = "curSharedRef"; //$NON-NLS-1$
 		public static final String ONTOP = "onTop"; //$NON-NLS-1$
 		public static final String PARENT = "parent"; //$NON-NLS-1$
 		public static final String RENDERER = "renderer"; //$NON-NLS-1$
 		public static final String TOBERENDERED = "toBeRendered"; //$NON-NLS-1$
 		public static final String VISIBLE = "visible"; //$NON-NLS-1$
+		public static final String VISIBLEWHEN = "visibleWhen"; //$NON-NLS-1$
 		public static final String WIDGET = "widget"; //$NON-NLS-1$
 	}
 
@@ -252,6 +260,16 @@ public class UIEvents {
 	public static interface Menu {
 		public static final String TOPIC = UITopicBase + "/menu/Menu"; //$NON-NLS-1$
 		public static final String ENABLED = "enabled"; //$NON-NLS-1$
+	}
+
+	public static interface MenuContribution {
+		public static final String TOPIC = UITopicBase + "/menu/MenuContribution"; //$NON-NLS-1$
+		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
+	}
+
+	public static interface MenuContributions {
+		public static final String TOPIC = UITopicBase + "/menu/MenuContributions"; //$NON-NLS-1$
+		public static final String MENUCONTRIBUTIONS = "menuContributions"; //$NON-NLS-1$
 	}
 
 	public static interface MenuItem {
