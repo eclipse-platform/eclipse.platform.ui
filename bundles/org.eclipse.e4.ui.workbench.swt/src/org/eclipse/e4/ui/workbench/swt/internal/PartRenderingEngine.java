@@ -485,6 +485,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				theApp = null;
 				boolean spinOnce = true;
 				if (uiRoot instanceof MApplication) {
+					ShellActivationListener shellDialogListener = new ShellActivationListener(
+							(MApplication) uiRoot);
+					display.addFilter(SWT.Activate, shellDialogListener);
+					display.addFilter(SWT.Deactivate, shellDialogListener);
 					spinOnce = false; // loop until the app closes
 					theApp = (MApplication) uiRoot;
 					// long startTime = System.currentTimeMillis();

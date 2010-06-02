@@ -578,7 +578,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * </p>
 	 */
 	void submitGlobalActions() {
-		final IHandlerService handlerService = (IHandlerService) getWorkbench().getService(
+		final IHandlerService handlerService = (IHandlerService) getService(
 				IHandlerService.class);
 
 		/*

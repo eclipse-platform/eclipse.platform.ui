@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.internal.services;
 
 import java.util.HashSet;
@@ -18,11 +28,18 @@ public class ActiveContextsFunction extends ContextFunction {
 			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		}
 		//2 form an answer going up
+		boolean inDialog = false;
 		Set<String> rc = new HashSet<String>();
 		while (current != null) {
 			Set<String> locals = (Set<String>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
-			if (locals != null)
-				rc.addAll(locals);
+			if (locals != null) {
+				if (!inDialog || !locals.contains("org.eclipse.ui.contexts.window")) {
+					rc.addAll(locals);
+				}
+				if (!inDialog && locals.contains("org.eclipse.ui.contexts.dialog")) {
+					inDialog = true;
+				}
+			}
 			current = current.getParent();
 		}
 		return rc;

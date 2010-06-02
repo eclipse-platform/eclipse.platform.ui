@@ -77,10 +77,7 @@ public abstract class CompatibilityPart {
 					wrapped.dispose();
 				}
 
-				PartSite site = reference.getSite();
-				if (site != null) {
-					site.dispose();
-				}
+				disposeSite();
 			}
 		}
 	};
@@ -193,6 +190,17 @@ public abstract class CompatibilityPart {
 	void destroy() {
 		eventBroker.unsubscribe(objectSetHandler);
 		eventBroker.unsubscribe(widgetSetHandler);
+	}
+
+	/**
+	 * Disposes of the 3.x part's site if it has one. Subclasses may override
+	 * but must call <code>super.disposeSite()</code> in its implementation.
+	 */
+	void disposeSite() {
+		PartSite site = getReference().getSite();
+		if (site != null) {
+			site.dispose();
+		}
 	}
 
 	@Persist

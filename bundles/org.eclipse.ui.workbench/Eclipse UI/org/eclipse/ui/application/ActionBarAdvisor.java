@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * Public base class for configuring the action bars of a workbench window.
@@ -188,8 +189,10 @@ public class ActionBarAdvisor {
     	Assert.isNotNull(action, "Action must not be null"); //$NON-NLS-1$
         String id = action.getId();
         Assert.isNotNull(id, "Action must not have null id"); //$NON-NLS-1$
-        getActionBarConfigurer().registerGlobalAction(action);
-        actions.put(id, action);
+		if (!(action instanceof RetargetAction)) {
+			getActionBarConfigurer().registerGlobalAction(action);
+		}
+		actions.put(id, action);
     }
     
     /**
