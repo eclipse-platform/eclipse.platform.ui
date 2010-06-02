@@ -24,7 +24,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui,
- org.eclipse.e4.workbench.ui.behaviors,
  org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt"
 Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator
 Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml, OSGI-INF/modelService.xml, OSGI-INF/selectionLookup.xml, OSGI-INF/selectionService.xml
