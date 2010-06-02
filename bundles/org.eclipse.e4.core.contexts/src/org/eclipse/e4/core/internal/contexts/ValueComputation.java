@@ -116,6 +116,8 @@ public class ValueComputation extends Computation {
 			}
 			return;
 		}
+		if (event.getName().equals(name))
+			originatingContext.removeLocalValueComputations(name);
 		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType, event.getOldValue(), scheduled);
 	}
 

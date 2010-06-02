@@ -345,9 +345,15 @@ public class EclipseContext implements IEclipseContext {
 			if (result instanceof IContextFunction) {
 				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IContextFunction) result));
 				originatingContext.localValueComputations.put(name, valueComputation);
-				// value computation depends on parent if function is defined in a parent
-				if (this != originatingContext)
-					valueComputation.addDependency(originatingContext, PARENT);
+
+				// the cached value depends on all entries with this name and all parent relationships
+				// between the originating context and this context, inclusive
+				for (EclipseContext step = originatingContext; step != null; step = step.getParent()) {
+					valueComputation.addDependency(step, name);
+					if (step == this)
+						break;
+					valueComputation.addDependency(step, PARENT);
+				}
 				result = valueComputation.get();
 			}
 			return result;
@@ -406,7 +412,7 @@ public class EclipseContext implements IEclipseContext {
 	 * @param name
 	 *            The name to remove
 	 */
-	private void removeLocalValueComputations(String name) {
+	public void removeLocalValueComputations(String name) {
 		synchronized (localValueComputations) {
 			// remove all keys with a matching name
 			for (Iterator<String> it = localValueComputations.keySet().iterator(); it.hasNext();) {
