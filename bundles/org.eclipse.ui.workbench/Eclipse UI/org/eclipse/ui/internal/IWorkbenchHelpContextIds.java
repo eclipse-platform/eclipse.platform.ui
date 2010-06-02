@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -313,6 +313,12 @@ public interface IWorkbenchHelpContextIds {
 
 	public static final String WORKING_SET_TYPE_PAGE = PREFIX
 			+ "working_set_type_page"; //$NON-NLS-1$	
+
+	public static final String PREFERENCES_EXPORT_WIZARD_PAGE = PREFIX
+			+ "preferences_export_wizard_page"; //$NON-NLS-1$
+
+	public static final String PREFERENCES_IMPORT_WIZARD_PAGE = PREFIX
+			+ "preferences_import_wizard_page"; //$NON-NLS-1$
 
 	// Wizards
 	public static final String NEW_WIZARD = PREFIX + "new_wizard_context"; //$NON-NLS-1$
