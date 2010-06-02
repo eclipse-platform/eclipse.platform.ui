@@ -135,18 +135,37 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private EventHandler enabledUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MToolItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+				return;
+
+			MMenuItem itemModel = (MMenuItem) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			MenuItem menuItem = (MenuItem) itemModel.getWidget();
+			if (menuItem != null) {
+				menuItem.setEnabled(itemModel.isEnabled());
+			}
+		}
+	};
+
 	@PostConstruct
 	public void init() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
 				UIEvents.Item.SELECTED), selectionUpdater);
+		eventBroker
+				.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
+						UIEvents.Item.ENABLED), enabledUpdater);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
 		eventBroker.unsubscribe(selectionUpdater);
+		eventBroker.unsubscribe(enabledUpdater);
 	}
 
 	public Object createWidget(final MUIElement element, Object parent) {
@@ -177,9 +196,37 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		MenuItem newItem = new MenuItem((Menu) parent, flags, addIndex);
 		setItemText(itemModel, newItem);
 		newItem.setImage(getImage(itemModel));
+		setEnabled(itemModel, newItem);
 		newItem.setEnabled(itemModel.isEnabled());
 
 		return newItem;
+	}
+
+	private void setEnabled(MMenuItem itemModel, final MenuItem newItem) {
+		if (itemModel instanceof MHandledItem) {
+			final MHandledItem item = (MHandledItem) itemModel;
+			final IEclipseContext lclContext = getContext(itemModel);
+			lclContext.runAndTrack(new RunAndTrack() {
+				@Override
+				public boolean changed(IEclipseContext context) {
+					if (newItem.isDisposed()) {
+						return false;
+					}
+					EHandlerService service = lclContext
+							.get(EHandlerService.class);
+					ParameterizedCommand cmd = item.getWbCommand();
+					if (cmd == null) {
+						cmd = generateParameterizedCommand(item, lclContext);
+					}
+					if (cmd == null) {
+						return false;
+					}
+					item.setEnabled(service.canExecute(cmd));
+					return true;
+				}
+			});
+
+		}
 	}
 
 	private void processVisible(MMenuItem item) {

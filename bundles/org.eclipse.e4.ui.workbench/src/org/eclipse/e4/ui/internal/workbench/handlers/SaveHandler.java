@@ -22,7 +22,7 @@ public class SaveHandler {
 
 	@CanExecute
 	boolean canExecute(@Named(IServiceConstants.ACTIVE_PART) MDirtyable dirtyable) {
-		return dirtyable.isDirty();
+		return dirtyable == null ? false : dirtyable.isDirty();
 	}
 
 	@Execute
