@@ -10,11 +10,34 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
-import org.eclipse.e4.tools.emf.editor3x.compat.E4CompatEditorPart;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.tools.compat.parts.DIEditorPart;
+import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 
-public class E4WorkbenchModelEditor extends E4CompatEditorPart {
+@SuppressWarnings("restriction")
+public class E4WorkbenchModelEditor extends DIEditorPart<ApplicationModelEditor> {
 
 	public E4WorkbenchModelEditor() {
-		super("platform:/plugin/org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
+		super(ApplicationModelEditor.class);
+	}
+
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		getComponent().doSave(monitor);
+	}
+
+	@Override
+	public void doSaveAs() {
+		
+	}
+
+	@Override
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+	@Override
+	public void setFocus() {
+		getComponent().setFocus();
 	}
 }

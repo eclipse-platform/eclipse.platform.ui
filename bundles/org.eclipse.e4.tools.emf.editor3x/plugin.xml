@@ -38,14 +38,5 @@
             name="e4">
       </category>
       </extension>
-   <extension
-         point="org.eclipse.ui.services">
-      <serviceFactory
-            factoryClass="org.eclipse.e4.tools.emf.editor3x.compat.IEclipseContextServiceFactory">
-         <service
-               serviceClass="org.eclipse.e4.core.contexts.IEclipseContext">
-         </service>
-      </serviceFactory>
-   </extension>
 
 </plugin>

@@ -108,7 +108,7 @@ public abstract class DIEditorPart<C> extends EditorPart {
 		context.set(Composite.class.getName(), comp);
 		component = ContextInjectionFactory.make(clazz, context);
 		
-		styleEngine.setClassname(comp, getSite().getId());
+		styleEngine.setClassname(comp, getClass().getSimpleName());
 	}
 	
 	public C getComponent() {
