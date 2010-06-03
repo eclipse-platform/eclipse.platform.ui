@@ -15,9 +15,14 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -62,6 +67,27 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			IExtensionRegistry registry = RegistryFactory.getRegistry();
 			ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(registry);
 			appContext.set(IContributionFactory.class.getName(),contributionFactory);
+			
+			IThemeManager manager = serviceContext.get(IThemeManager.class);
+			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
+			
+			appContext.set(IStylingEngine.class, new IStylingEngine() {
+				
+				public void setClassname(Object widget, String classname) {
+					((Widget) widget).setData(
+							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void setId(Object widget, String id) {
+					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void style(Object widget) {
+					engine.applyStyles((Widget) widget, true);
+				}
+			});
 			
 			return appContext;
 		} else if( o != null && site == null ) {
