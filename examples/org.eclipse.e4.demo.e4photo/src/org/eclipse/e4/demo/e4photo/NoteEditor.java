@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.ui.di.Persist;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,7 +25,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;

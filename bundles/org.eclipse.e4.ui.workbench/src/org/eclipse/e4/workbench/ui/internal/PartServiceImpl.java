@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.ui.di.Persist;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +50,6 @@ import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.e4.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;

@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.ui.di.UIEventTopic;
+
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
