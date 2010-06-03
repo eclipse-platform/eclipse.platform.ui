@@ -37,7 +37,7 @@ public class Bug299755Test extends TestCase {
 		private IEclipseContext context;
 
 		public void setSelection(Object selection) {
-			context.modify(IServiceConstants.SELECTION, selection);
+			context.modify(IServiceConstants.ACTIVE_SELECTION, selection);
 		}
 	}
 
@@ -51,7 +51,8 @@ public class Bug299755Test extends TestCase {
 
 		@Inject
 		@Optional
-		void setSelection(@Named(IServiceConstants.SELECTION) Object selection) {
+		void setSelection(
+				@Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
 			this.selection = selection;
 		}
 
@@ -74,7 +75,7 @@ public class Bug299755Test extends TestCase {
 					}
 				});
 		// declare selection as modifiable
-		windowContext.declareModifiable(IServiceConstants.SELECTION);
+		windowContext.declareModifiable(IServiceConstants.ACTIVE_SELECTION);
 
 		// create an "out" part context
 		IEclipseContext outContext = windowContext.createChild();

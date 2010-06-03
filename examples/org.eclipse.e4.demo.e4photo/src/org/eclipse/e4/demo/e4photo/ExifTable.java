@@ -64,7 +64,7 @@ public class ExifTable {
 	}
 
 	@Inject @Optional
-	void setSelection(@Named(IServiceConstants.SELECTION) IResource selection) {
+	void setSelection(@Named(IServiceConstants.ACTIVE_SELECTION) IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;

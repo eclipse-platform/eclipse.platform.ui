@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,11 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.work.ISchedulingExecutor;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
@@ -49,7 +49,8 @@ public class Thumbnails {
 	private volatile Runnable runnable;
 	private final IStylingEngine stylingEngine;
 
-	private IEclipseContext context;
+	@Inject
+	private ESelectionService selectionService;
 
 	@Inject
 	public Thumbnails(Composite parent, 
@@ -74,7 +75,7 @@ public class Thumbnails {
 		gallery.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object data = e.item.getData();
-				context.modify(IServiceConstants.SELECTION, data);
+				selectionService.setSelection(data);
 			}
 		});
 
@@ -93,7 +94,7 @@ public class Thumbnails {
 	}
 
 	@Inject @Optional
-	public void setSelection(@Named("selection") IResource selection) {
+	public void setSelection(@Named(IServiceConstants.ACTIVE_SELECTION) IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -181,9 +182,4 @@ public class Thumbnails {
 		}
 	}
 	
-	@Inject
-	public void contextSet(IEclipseContext context) {
-		this.context = context;
-	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Siemens AG and others.
+ * Copyright (c) 2009, 2010 Siemens AG and others.
  * 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,10 +17,9 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
-import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -41,7 +40,7 @@ public class ListView {
 	private final TableViewer contactsViewer;
 
 	@Inject
-	private IEclipseContext context;
+	private ESelectionService selectionService;
 
 	@Inject
 	public ListView(Composite parent) {
@@ -63,7 +62,7 @@ public class ListView {
 					public void selectionChanged(SelectionChangedEvent event) {
 						IStructuredSelection selection = (IStructuredSelection) event
 								.getSelection();
-						context.modify(IServiceConstants.SELECTION, selection.getFirstElement());
+						selectionService.setSelection(selection.getFirstElement());
 					}
 				});
 

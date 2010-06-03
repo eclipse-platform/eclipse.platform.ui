@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
-import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
@@ -54,8 +53,6 @@ public class Library implements IDisposable {
 
 	Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
 	
-	private IEclipseContext context;
-
 	private IResourceChangeListener listener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
@@ -102,6 +99,9 @@ public class Library implements IDisposable {
 	private final IWorkspace workspace;
 
 	static int counter;
+	
+	@Inject
+	private ESelectionService selectionService;
 
 	@Inject
 	public Library(Composite parent, final IWorkspace workspace) {
@@ -114,7 +114,7 @@ public class Library implements IDisposable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection)event.getSelection();
-				context.modify(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
+				selectionService.setSelection(selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
 			}
 		});
 		IObservableFactory setFactory = new IObservableFactory() {
@@ -195,11 +195,6 @@ public class Library implements IDisposable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	@Inject
-	public void contextSet(IEclipseContext context) {
-		this.context = context;
 	}
 
 	public void dispose() {

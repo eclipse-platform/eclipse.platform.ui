@@ -17,8 +17,6 @@
         <children xsi:type="basic:Part" xmi:id="DetailsView" elementId="DetailsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="Contact Details"/>
       </children>
     </children>
-    <variables>selection</variables>
-    <variables>input</variables>
     <mainMenu xmi:id="menu:org.eclipse.ui.main.menu" elementId="menu:org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_SeXUD-8EEd6FC9cDb6iV7g" elementId="_SeXUD-8EEd6FC9cDb6iV7g" label="File">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUEO8EEd6FC9cDb6iV7g" elementId="_SeXUEO8EEd6FC9cDb6iV7g" label="Save" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" command="contacts.save"/>

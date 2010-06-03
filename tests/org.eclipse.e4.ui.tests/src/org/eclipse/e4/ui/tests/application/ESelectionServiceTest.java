@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.modeling.EPartService.PartState;
@@ -968,6 +969,71 @@ public class ESelectionServiceTest extends TestCase {
 		assertNull(partOneImpl.otherSelection);
 		assertNull(partTwoImpl.input);
 		assertNull(partThreeImpl.input);
+	}
+
+	static class InjectPart {
+
+		Object selection;
+
+		@Inject
+		void setSelection(
+				@Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
+			this.selection = selection;
+		}
+	}
+
+	public void testInjection() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partB);
+		window.setSelectedElement(partA);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		IEclipseContext windowContext = window.getContext();
+		IEclipseContext partContextA = partA.getContext();
+		IEclipseContext partContextB = partB.getContext();
+
+		EPartService partService = windowContext.get(EPartService.class);
+		partService.activate(partA);
+		ESelectionService selectionServiceA = partContextA
+				.get(ESelectionService.class);
+		ESelectionService selectionServiceB = partContextB
+				.get(ESelectionService.class);
+
+		InjectPart injectPart = ContextInjectionFactory.make(InjectPart.class,
+				partContextA);
+		assertNull(injectPart.selection);
+
+		Object o = new Object();
+		selectionServiceA.setSelection(o);
+
+		assertEquals(o, injectPart.selection);
+
+		partService.activate(partB);
+		assertNull(injectPart.selection);
+
+		partService.activate(partA);
+		assertEquals(o, injectPart.selection);
+
+		Object o2 = new Object();
+		selectionServiceB.setSelection(o2);
+
+		assertEquals(o, injectPart.selection);
+
+		partService.activate(partB);
+		assertEquals(o2, injectPart.selection);
+
+		partService.activate(partA);
+		assertEquals(o, injectPart.selection);
 	}
 
 	private void initialize(IEclipseContext applicationContext,

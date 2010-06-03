@@ -112,8 +112,11 @@ public class SelectionServiceImpl implements ESelectionService {
 				.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
 						eventHandler);
 
-		for (MPart part : partService.getParts()) {
-			track(part);
+		// individual services don't need to track active parts
+		if (isMasterService()) {
+			for (MPart part : partService.getParts()) {
+				track(part);
+			}
 		}
 	}
 
@@ -151,6 +154,22 @@ public class SelectionServiceImpl implements ESelectionService {
 
 					track(part);
 				}
+			} else {
+				IEclipseContext partContext = part.getContext();
+				if (partContext == null) {
+					serviceRoot.getContext().remove(IServiceConstants.ACTIVE_SELECTION);
+
+					if (isMasterService()) {
+						context.remove(IServiceConstants.ACTIVE_SELECTION);
+					}
+				} else {
+					Object selection = partContext.getLocal(OUT_SELECTION);
+					serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
+
+					if (isMasterService()) {
+						context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+					}
+				}
 			}
 		}
 	}
@@ -174,6 +193,9 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private void notifyListeners(MPart part, Object selection) {
+		serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
+		context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+
 		for (Object listener : genericListeners.getListeners()) {
 			((ISelectionListener) listener).selectionChanged(part, selection);
 		}
@@ -227,8 +249,16 @@ public class SelectionServiceImpl implements ESelectionService {
 	public void setSelection(Object selection) {
 		if (selection != null) {
 			context.set(OUT_SELECTION, selection);
+
+			if (activePart != null && activePart.getContext() == context) {
+				serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
+			}
 		} else {
 			context.remove(OUT_SELECTION);
+
+			if (activePart != null && activePart.getContext() == context) {
+				serviceRoot.getContext().remove(IServiceConstants.ACTIVE_SELECTION);
+			}
 		}
 	}
 

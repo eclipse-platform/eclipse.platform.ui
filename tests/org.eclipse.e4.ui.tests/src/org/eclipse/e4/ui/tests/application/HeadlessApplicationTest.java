@@ -90,7 +90,7 @@ public abstract class HeadlessApplicationTest extends
 	public void testGet_Selection() throws Exception {
 		IEclipseContext context = application.getContext();
 
-		assertNull(context.get(IServiceConstants.SELECTION));
+		assertNull(context.get(IServiceConstants.ACTIVE_SELECTION));
 	}
 
 	public void testGet_ActiveChild() throws Exception {

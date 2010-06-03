@@ -28,7 +28,7 @@ public class AddNoteHandler {
 	static int editors = 0;
 	
 	@Execute
-	public void execute(IWorkbench workbench, @Named(IServiceConstants.SELECTION) IResource selection, EPartService partService) {
+	public void execute(IWorkbench workbench, @Named(IServiceConstants.ACTIVE_SELECTION) IResource selection, EPartService partService) {
 		System.out.println("AddNoteHandler called " + selection.toString());
 		// add an editor next to the Exif tab
 		MPart exifPart = partService.findPart("e4.photo.demo.exif");

@@ -87,7 +87,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGet_Selection2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
-		assertNull(context.get(IServiceConstants.SELECTION));
+		assertNull(context.get(IServiceConstants.ACTIVE_SELECTION));
 	}
 
 	public void testGet_ActiveChild2() throws Exception {
