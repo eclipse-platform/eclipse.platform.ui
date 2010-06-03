@@ -21,14 +21,23 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class CleanupAddon {
 	@Inject
 	protected IEventBroker eventBroker;
+
+	Shell limbo;
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -64,6 +73,79 @@ public class CleanupAddon {
 							}
 						}
 					});
+				}
+			}
+		}
+	};
+
+	private EventHandler visibilityChangeHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (changedObj.getWidget() instanceof Shell) {
+				((Shell) changedObj).setVisible(changedObj.isVisible());
+			} else if (changedObj.getWidget() instanceof Control) {
+				Control ctrl = (Control) changedObj.getWidget();
+				MElementContainer<MUIElement> parent = changedObj.getParent();
+				if (changedObj.isVisible()) {
+					if (parent.getRenderer() != null) {
+						Object myParent = ((AbstractPartRenderer) parent.getRenderer())
+								.getUIContainer(changedObj);
+						if (myParent instanceof Composite) {
+							Composite parentComp = (Composite) myParent;
+							ctrl.setParent(parentComp);
+
+							Control prevControl = null;
+							for (MUIElement childME : parent.getChildren()) {
+								if (childME == changedObj)
+									break;
+								if (childME.getWidget() instanceof Control && childME.isVisible()) {
+									prevControl = (Control) childME.getWidget();
+								}
+							}
+							if (prevControl != null)
+								ctrl.moveBelow(prevControl);
+							else
+								ctrl.moveAbove(null);
+							ctrl.getShell().layout(new Control[] { ctrl }, SWT.DEFER);
+						}
+
+						// Check if the parent is visible
+						if (!parent.isVisible())
+							parent.setVisible(true);
+					}
+				} else {
+					if (limbo == null) {
+						limbo = new Shell(ctrl.getDisplay(), SWT.NONE);
+						limbo.setLayout(new Layout() {
+							@Override
+							protected void layout(Composite composite, boolean flushCache) {
+							}
+
+							@Override
+							protected Point computeSize(Composite composite, int wHint, int hHint,
+									boolean flushCache) {
+								return new Point(600, 400);
+							}
+						});
+						limbo.setVisible(false);
+					}
+
+					// Reparent the control to 'limbo'
+					Composite curParent = ctrl.getParent();
+					ctrl.setParent(limbo);
+					curParent.layout(true);
+					curParent.getShell().layout(new Control[] { curParent }, SWT.DEFER);
+
+					// If there are no more 'visible' children then make the parent go away too
+					boolean makeInvisible = true;
+					for (MUIElement kid : parent.getChildren()) {
+						if (kid.isToBeRendered() && kid.isVisible()) {
+							makeInvisible = false;
+							break;
+						}
+					}
+					if (makeInvisible)
+						parent.setVisible(false);
 				}
 			}
 		}
@@ -118,11 +200,15 @@ public class CleanupAddon {
 		eventBroker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
 				renderingChangeHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.VISIBLE),
+				visibilityChangeHandler);
 	}
 
 	@PreDestroy
 	void removeListeners() {
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(renderingChangeHandler);
+		eventBroker.unsubscribe(visibilityChangeHandler);
 	}
 }

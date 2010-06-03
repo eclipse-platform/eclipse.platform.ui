@@ -15,8 +15,12 @@ import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**
@@ -158,21 +162,6 @@ public interface EModelService {
 			boolean leavePlaceholder);
 
 	/**
-	 * Swaps the element and one of its place holders. This swap maintains the display information;
-	 * for example if the original element was 'toBeRendered' == true and the placeholder was
-	 * 'toBeRendered' == false then after the swap the element's value would be false and the
-	 * placeholder's true.
-	 * 
-	 * The given place holder's 'ref' attribute <b>must</b> be the element.
-	 * 
-	 * @param element
-	 *            The element to swap
-	 * @param placeholder
-	 *            The placeholder to swap it with
-	 */
-	public void swap(MPlaceholder placeholder);
-
-	/**
 	 * Inserts the given element into the UI Model by either creating a new sash or augmenting an
 	 * existing sash if the orientation permits.
 	 * 
@@ -195,4 +184,11 @@ public interface EModelService {
 	 *            The element to detach
 	 */
 	public void detach(MPartSashContainerElement mPartSashContainerElement);
+
+	public MWindow getTopLevelWindowFor(MUIElement element);
+
+	public MPerspective getPerspectiveFor(MUIElement element);
+
+	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
+
 }

@@ -81,6 +81,9 @@ public class StackRenderer extends LazyStackRenderer {
 			if (stackToActivate != null
 					&& stackToActivate.getSelectedElement() != null) {
 				MUIElement selElement = stackToActivate.getSelectedElement();
+				if (!selElement.isToBeRendered())
+					return;
+
 				if (selElement instanceof MPlaceholder)
 					selElement = ((MPlaceholder) selElement).getRef();
 				activate((MPart) selElement);
@@ -251,6 +254,13 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 
 		Composite parentComposite = (Composite) parent;
+
+		// Ensure that all rendered PartStacks have an Id
+		if (element.getElementId() == null
+				|| element.getElementId().length() == 0) {
+			String generatedId = "PartStack@" + Integer.toHexString(element.hashCode()); //$NON-NLS-1$
+			element.setElementId(generatedId);
+		}
 
 		// TBD: need to define attributes to handle this
 		int styleModifier = 0; // SWT.CLOSE

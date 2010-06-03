@@ -12,7 +12,10 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -21,8 +24,10 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -155,6 +160,26 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			element.setVisible(false);
 		}
 
+		// Hide any minimized stacks
+		if (element instanceof MPartStack && !element.isVisible()) {
+			MWindow window = modelService.getTopLevelWindowFor(element);
+			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
+			MPerspective persp = modelService.getPerspectiveFor(element);
+			if (persp != null)
+				trimId = element.getElementId() + '(' + persp.getElementId()
+						+ ')';
+			MToolControl trimCtrl = (MToolControl) modelService.find(trimId,
+					window);
+			if (trimCtrl != null) {
+				IEclipseContext ctxt = EclipseContextFactory.create();
+				ctxt.set("show", false); //$NON-NLS-1$
+				ContextInjectionFactory.invoke(trimCtrl.getObject(),
+						Execute.class, ctxt);
+
+				trimCtrl.setVisible(false);
+			}
+		}
+
 		goingHidden.add(element);
 
 		if (element instanceof MGenericStack<?>) {
@@ -228,6 +253,20 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					context.setParent(newParentContext);
 				}
 			}
+		}
+
+		// Hide any minimized stacks
+		if (element instanceof MPartStack && !element.isVisible()) {
+			MWindow window = modelService.getTopLevelWindowFor(element);
+			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
+			MPerspective persp = modelService.getPerspectiveFor(element);
+			if (persp != null)
+				trimId = element.getElementId() + '(' + persp.getElementId()
+						+ ')';
+			MToolControl trimCtrl = (MToolControl) modelService.find(trimId,
+					window);
+			if (trimCtrl != null)
+				trimCtrl.setVisible(true);
 		}
 
 		// Show any floating windows

@@ -179,6 +179,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	@Inject
 	protected Logger logger;
 
+	private Shell limbo;
+
 	@Inject
 	public PartRenderingEngine(
 			@Named(E4Workbench.RENDERER_FACTORY_URI) @Optional String factoryUrl) {
@@ -381,7 +383,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (parentME != null) {
 			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {
-				parent = renderer.getUIContainer(element);
+				if (!element.isVisible()) {
+					if (limbo == null)
+						limbo = new Shell(Display.getCurrent(), SWT.NONE);
+					parent = limbo;
+				} else {
+					parent = renderer.getUIContainer(element);
+				}
 			}
 		}
 

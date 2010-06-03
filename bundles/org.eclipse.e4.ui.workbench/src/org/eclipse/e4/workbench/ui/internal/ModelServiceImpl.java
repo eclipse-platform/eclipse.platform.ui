@@ -13,26 +13,32 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  *
@@ -182,6 +188,20 @@ public class ModelServiceImpl implements EModelService {
 		if (element instanceof MApplication)
 			return;
 
+		if (element instanceof MPartStack && !element.isVisible()) {
+			MWindow window1 = getTopLevelWindowFor(element);
+			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
+			MPerspective persp = getPerspectiveFor(element);
+			if (persp != null)
+				trimId = element.getElementId() + '(' + persp.getElementId() + ')';
+			MToolControl trimCtrl = (MToolControl) find(trimId, window1);
+			if (trimCtrl != null) {
+				IEclipseContext ctxt = EclipseContextFactory.create();
+				ctxt.set("show", true); //$NON-NLS-1$
+				ContextInjectionFactory.invoke(trimCtrl.getObject(), Execute.class, ctxt);
+			}
+		}
+
 		MUIElement parent = element.getParent();
 		if (parent == null) {
 			MPlaceholder ph = findPlaceholderFor(window, element);
@@ -318,72 +338,6 @@ public class ModelServiceImpl implements EModelService {
 		elementParent.getChildren().add(elementIndex, placeholder);
 		phParent.getChildren().add(phIndex, element);
 
-	}
-
-	public void selectStackElement(MGenericStack<MUIElement> stack, MUIElement element) {
-		assert (stack.getChildren().indexOf(element) >= 0);
-
-		// First, get all the elements under the existing 'selected' element
-		List<MUIElement> goingHidden = new ArrayList<MUIElement>();
-		MUIElement curSel = stack.getSelectedElement();
-		hideElementRecursive(curSel, goingHidden);
-
-		// Now process any newly visible elements
-		List<MUIElement> becomingVisible = new ArrayList<MUIElement>();
-		showElementRecursive(element, becomingVisible);
-	}
-
-	private void hideElementRecursive(MUIElement element, List<MUIElement> goingHidden) {
-		if (element.getWidget() == null)
-			return;
-
-		// Hide any floating windows
-		if (element instanceof MWindow && element.getWidget() != null) {
-			element.setVisible(false);
-		}
-
-		goingHidden.add(element);
-
-		if (element instanceof MGenericTile<?>) {
-			MGenericTile<?> container = (MGenericTile<?>) element;
-			for (MUIElement childElement : container.getChildren()) {
-				hideElementRecursive(childElement, goingHidden);
-			}
-		} else if (element instanceof MGenericStack<?>) {
-			// For stacks only the currently selected elements are being hidden
-			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getSelectedElement();
-			hideElementRecursive(curSel, goingHidden);
-		}
-	}
-
-	private void showElementRecursive(MUIElement element, List<MUIElement> becomingVisible) {
-		if (!element.isToBeRendered())
-			return;
-
-		if (element instanceof MPlaceholder) {
-			swap((MPlaceholder) element);
-			element = ((MPlaceholder) element).getRef();
-		}
-
-		// Show any floating windows
-		if (element instanceof MWindow && element.getWidget() != null) {
-			element.setVisible(true);
-		}
-
-		becomingVisible.add(element);
-
-		if (element instanceof MGenericTile<?>) {
-			MGenericTile<?> container = (MGenericTile<?>) element;
-			for (MUIElement childElement : container.getChildren()) {
-				showElementRecursive(childElement, becomingVisible);
-			}
-		} else if (element instanceof MGenericStack<?>) {
-			// For stacks only the currently selected elements are being visible
-			MGenericStack<?> container = (MGenericStack<?>) element;
-			MUIElement curSel = container.getSelectedElement();
-			showElementRecursive(curSel, becomingVisible);
-		}
 	}
 
 	private void combine(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
@@ -523,5 +477,62 @@ public class ModelServiceImpl implements EModelService {
 		if (element instanceof MWindowElement)
 			return (MWindowElement) element;
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#getTrim(org.eclipse.e4.ui.model.application
+	 * .ui.basic.MTrimmedWindow, org.eclipse.e4.ui.model.application.ui.SideValue)
+	 */
+	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv) {
+		List<MTrimBar> bars = window.getTrimBars();
+		for (MTrimBar bar : bars) {
+			if (bar.getSide() == sv)
+				return bar;
+		}
+
+		// Didn't find a trim bar for the side, make one
+		MTrimBar newBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(newBar);
+		return newBar;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#getTopLevelWindowFor(org.eclipse.e4.ui.model
+	 * .application.ui.MUIElement)
+	 */
+	public MWindow getTopLevelWindowFor(MUIElement element) {
+		EObjectImpl eObj = (EObjectImpl) element;
+		while (!(eObj.eContainer() instanceof MApplication))
+			eObj = (EObjectImpl) eObj.eContainer();
+
+		if (eObj instanceof MWindow)
+			return (MWindow) eObj;
+
+		return null; // Ooops!
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EModelService#getPerspectiveFor(org.eclipse.e4.ui.model
+	 * .application.ui.MUIElement)
+	 */
+	public MPerspective getPerspectiveFor(MUIElement element) {
+		EObjectImpl eObj = (EObjectImpl) element;
+		while (!(eObj.eContainer() instanceof MApplication)
+				&& !(eObj.eContainer() instanceof MPerspectiveStack))
+			eObj = (EObjectImpl) eObj.eContainer();
+
+		if (eObj instanceof MPerspective)
+			return (MPerspective) eObj;
+
+		return null; // Ooops!
 	}
 }

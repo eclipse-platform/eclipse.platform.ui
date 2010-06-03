@@ -150,6 +150,8 @@ public class SashRenderer extends SWTPartRenderer {
 
 	protected boolean ignoreWeightUpdates = false;
 
+	private EventHandler visibilityHandler;
+
 	public SashRenderer() {
 		super();
 	}
@@ -208,14 +210,34 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		};
 
+		visibilityHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MPartSashContainer
+				MUIElement element = (MUIElement) event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				MUIElement parent = element.getParent();
+				if (!(parent instanceof MPartSashContainer)
+						|| parent.getRenderer() != SashRenderer.this)
+					return;
+
+				MElementContainer<MUIElement> pscModel = (MElementContainer<MUIElement>) parent;
+				if (UIEvents.UIElement.VISIBLE.equals(event
+						.getProperty(UIEvents.EventTags.ATTNAME))) {
+					if (element.isVisible())
+						addModelToUpdate(pscModel);
+				}
+			}
+		};
+
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.CONTAINERDATA), sashWeightHandler);
+				UIEvents.UIElement.VISIBLE), visibilityHandler);
 	}
 
 	@PreDestroy
 	void preDestroy() {
 		eventBroker.unsubscribe(sashOrientationHandler);
 		eventBroker.unsubscribe(sashWeightHandler);
+		eventBroker.unsubscribe(visibilityHandler);
 	}
 
 	public Widget createWidget(MUIElement element, Object parent) {
@@ -337,14 +359,14 @@ public class SashRenderer extends SWTPartRenderer {
 	private static int[] getModelWeights(MElementContainer<MUIElement> psc) {
 		int count = 0;
 		for (MUIElement element : psc.getChildren()) {
-			if (element.getWidget() != null)
+			if (element.getWidget() != null && element.isVisible())
 				count++;
 		}
 
 		int[] modelWeights = new int[count];
 		int index = 0;
 		for (MUIElement element : psc.getChildren()) {
-			if (element.getWidget() != null)
+			if (element.getWidget() != null && element.isVisible())
 				modelWeights[index++] = getWeight(element);
 		}
 		return modelWeights;
@@ -358,7 +380,7 @@ public class SashRenderer extends SWTPartRenderer {
 		MPartSashContainer psc = (MPartSashContainer) me;
 		List<MUIElement> modelElements = new ArrayList<MUIElement>();
 		for (MUIElement element : psc.getChildren()) {
-			if (element.getWidget() != null)
+			if (element.getWidget() != null && element.isVisible())
 				modelElements.add(element);
 		}
 
@@ -395,7 +417,7 @@ public class SashRenderer extends SWTPartRenderer {
 		// Calculate the total amount of 'containerData' weights for the visible
 		// components
 		MUIElement[] elements = SashRenderer.getModelElements(sf);
-		if (elements.length == 0)
+		if (elements.length <= 1)
 			return;
 
 		int totalModelWeight = 0;
