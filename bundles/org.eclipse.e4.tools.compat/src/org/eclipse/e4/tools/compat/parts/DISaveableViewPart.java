@@ -10,7 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -22,15 +26,19 @@ public abstract class DISaveableViewPart<C> extends DIViewPart<C> implements ISa
 		super(clazz);
 	}
 	
-//	public void doSave(IProgressMonitor monitor) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	public void doSaveAs() {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	public void doSave(IProgressMonitor monitor) {
+		IEclipseContext saveContext = getContext().createChild();
+		ContextInjectionFactory.invoke(getComponent(), Persist.class, saveContext);
+		saveContext.dispose();
+	}
+	
+	public void doSaveAs() {
+		
+	}
+
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
 
 	public void setDirtyState(boolean dirtyState) {
 		if( dirtyState != this.dirtyState ) {
@@ -48,15 +56,5 @@ public abstract class DISaveableViewPart<C> extends DIViewPart<C> implements ISa
 		
 		getContext().declareModifiable(IDirtyProviderService.class);
 		getContext().set(IDirtyProviderService.class, this);
-	}
-	
-//	public boolean isSaveAsAllowed() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	public boolean isSaveOnCloseNeeded() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}	
+	}	
 }

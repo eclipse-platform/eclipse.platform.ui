@@ -81,6 +81,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelCompo
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
@@ -484,6 +485,7 @@ public class ModelEditor {
 		return editorMap.get(eClass);
 	}
 
+	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) {
 		if (modelProvider.isSaveable()) {
 			modelProvider.save();

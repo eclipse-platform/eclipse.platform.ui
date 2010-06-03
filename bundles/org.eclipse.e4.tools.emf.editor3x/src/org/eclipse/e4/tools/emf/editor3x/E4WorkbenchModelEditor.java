@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.tools.compat.parts.DIEditorPart;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 
@@ -19,21 +18,6 @@ public class E4WorkbenchModelEditor extends DIEditorPart<ApplicationModelEditor>
 
 	public E4WorkbenchModelEditor() {
 		super(ApplicationModelEditor.class);
-	}
-
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		getComponent().doSave(monitor);
-	}
-
-	@Override
-	public void doSaveAs() {
-		
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
 	}
 
 	@Override

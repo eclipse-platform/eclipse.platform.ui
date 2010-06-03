@@ -11,9 +11,12 @@
 package org.eclipse.e4.tools.compat.parts;
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.compat.internal.PartHelper;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -31,17 +34,22 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 		this.clazz = clazz;
 	}
 	
-//FIXME once @Persist is out of ui.workbench
-//	@Override
-//	public void doSave(IProgressMonitor monitor) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void doSaveAs() {
-//		// TODO Auto-generated method stub
-//	}
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		IEclipseContext saveContext = context.createChild();
+		ContextInjectionFactory.invoke(component, Persist.class, saveContext);
+		saveContext.dispose();
+	}
+	
+	@Override
+	public void doSaveAs() {
+		
+	}
+
+	@Override
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -60,13 +68,6 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 	}
 
 	
-//
-//	@Override
-//	public boolean isSaveAsAllowed() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 		component = PartHelper.creatComponent(parent, context, clazz, this);
