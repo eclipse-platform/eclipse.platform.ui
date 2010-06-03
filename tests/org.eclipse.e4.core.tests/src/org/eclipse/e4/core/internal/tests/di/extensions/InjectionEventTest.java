@@ -25,7 +25,6 @@ import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
-import org.eclipse.e4.core.di.extensions.UIEventTopic;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -40,11 +39,9 @@ public class InjectionEventTest extends TestCase {
 	// Class used to test receiving events
 	static class InjectTarget {
 		public int counter1 = 0;
-		public int counter2 = 0;
 		public int counter3 = 0;
 		
 		public String string1;
-		public String string2;
 		public String string3;
 		
 		public boolean valid = true;
@@ -52,7 +49,7 @@ public class InjectionEventTest extends TestCase {
 		public MyBinding myBinding;
 		
 		public void resetCounters() {
-			counter1 = counter2 = counter3 = 0;
+			counter1 = counter3 = 0;
 		}
 		
 		@Inject @Optional
@@ -61,14 +58,6 @@ public class InjectionEventTest extends TestCase {
 				testFailed = true;
 			counter1++;
 			this.string1 = string1;
-		}
-		
-		@Inject @Optional
-		public void receivedEvent2(@UIEventTopic("e4/test/event2") String string2) {
-			if (!valid)
-				testFailed = true;
-			counter2++;
-			this.string2 = string2;
 		}
 		
 		@Inject
@@ -119,8 +108,6 @@ public class InjectionEventTest extends TestCase {
 		// initial state
 		assertEquals(0, target.counter1);
 		assertNull(target.string1);
-		assertEquals(0, target.counter2);
-		assertNull(target.string2);
 		assertEquals(1, target.counter3);
 		assertNull(target.string3);
 		assertNotNull(target.myBinding);
@@ -130,8 +117,6 @@ public class InjectionEventTest extends TestCase {
 		
 		assertEquals(1, target.counter1);
 		assertEquals("event1data", target.string1);
-		assertEquals(0, target.counter2);
-		assertNull(target.string2);
 		assertEquals(1, target.counter3);
 		assertNull(target.string3);
 		assertNotNull(target.myBinding);
@@ -141,8 +126,6 @@ public class InjectionEventTest extends TestCase {
 		
 		assertEquals(1, target.counter1);
 		assertEquals("event1data", target.string1);
-		assertEquals(1, target.counter2);
-		assertEquals("event2data", target.string2);
 		assertEquals(1, target.counter3);
 		assertNull(target.string3);
 		assertNotNull(target.myBinding);
@@ -152,8 +135,6 @@ public class InjectionEventTest extends TestCase {
 		
 		assertEquals(1, target.counter1);
 		assertEquals("event1data", target.string1);
-		assertEquals(1, target.counter2);
-		assertEquals("event2data", target.string2);
 		assertEquals(2, target.counter3);
 		assertEquals("event3data", target.string3);
 		assertNotNull(target.myBinding);
@@ -163,8 +144,6 @@ public class InjectionEventTest extends TestCase {
 		
 		assertEquals(2, target.counter1);
 		assertEquals("abc", target.string1);
-		assertEquals(1, target.counter2);
-		assertEquals("event2data", target.string2);
 		assertEquals(2, target.counter3);
 		assertEquals("event3data", target.string3);
 		assertNotNull(target.myBinding);
@@ -178,6 +157,8 @@ public class InjectionEventTest extends TestCase {
 		injector.addBinding(MyBinding.class);
 		
 		wrapSetup(); // do it in a separate method to ease GC
+		System.gc();
+		System.runFinalization();
 		System.gc();
 		helper.sendEvent("e4/test/event1", "wrong");
 		assertFalse(testFailed); // target would have asserted if it is still subscribed
