@@ -156,13 +156,9 @@ public class SelectionServiceImpl implements ESelectionService {
 				}
 			} else {
 				IEclipseContext partContext = part.getContext();
-				if (partContext == null) {
-					serviceRoot.getContext().remove(IServiceConstants.ACTIVE_SELECTION);
-
-					if (isMasterService()) {
-						context.remove(IServiceConstants.ACTIVE_SELECTION);
-					}
-				} else {
+				// only alter if there is something of interest, if a part doesn't post a selection
+				// then the workbench window's selection should be unchanged
+				if (partContext.containsKey(OUT_SELECTION)) {
 					Object selection = partContext.getLocal(OUT_SELECTION);
 					serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
 

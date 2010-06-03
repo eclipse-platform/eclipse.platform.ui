@@ -971,13 +971,19 @@ public class ESelectionServiceTest extends TestCase {
 		assertNull(partThreeImpl.input);
 	}
 
+	static class Target {
+		Target(String s) {
+
+		}
+	}
+
 	static class InjectPart {
 
 		Object selection;
 
 		@Inject
 		void setSelection(
-				@Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
+				@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Target selection) {
 			this.selection = selection;
 		}
 	}
@@ -1013,18 +1019,19 @@ public class ESelectionServiceTest extends TestCase {
 				partContextA);
 		assertNull(injectPart.selection);
 
-		Object o = new Object();
+		Object o = new Target("");
 		selectionServiceA.setSelection(o);
 
 		assertEquals(o, injectPart.selection);
 
 		partService.activate(partB);
-		assertNull(injectPart.selection);
+		assertEquals("Part B doesn't post a selection, no change", o,
+				injectPart.selection);
 
 		partService.activate(partA);
 		assertEquals(o, injectPart.selection);
 
-		Object o2 = new Object();
+		Object o2 = new Target("");
 		selectionServiceB.setSelection(o2);
 
 		assertEquals(o, injectPart.selection);
