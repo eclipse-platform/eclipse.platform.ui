@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore http://www.eclipse.org/ui/2010/UIModel/application/ui/basic ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/menu" xmi:id="org.eclipse.e4.legacy.ide.application" elementId="org.eclipse.e4.legacy.ide.application">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="org.eclipse.e4.legacy.ide.application" elementId="org.eclipse.e4.legacy.ide.application">
   <children xsi:type="basic:TrimmedWindow" xmi:id="IDEWindow" elementId="IDEWindow" label="Eclipse SDK 4.0" width="1024" height="768">
     <mainMenu xmi:id="_UW9TUPr3Ed6gmo7caOxU9g" elementId="org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_UW9TUPr3Ed6gmo7caOx002" elementId="file" label="&amp;File">
@@ -268,7 +268,7 @@
       <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx029" elementId="org.eclipse.ui.workbench.help">
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx02A" elementId="group.help"/>
       </children>
-      <children xsi:type="menu:ToolControl" elementId="PerspectiveSwitcher" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"/>
+      <children xsi:type="menu:ToolControl" xmi:id="_50YegGp-Ed-QyNZjH9g15Q" elementId="PerspectiveSwitcher" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"/>
     </trimBars>
   </children>
   <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" elementId="_UW9TY_r3Ed6gmo7caOxU9g" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.ExitHandler" command="e4.exit"/>
@@ -786,4 +786,5 @@
   <commands xmi:id="org.eclipse.jdt.ui.edit.text.java.show.outline" elementId="org.eclipse.jdt.ui.edit.text.java.show.outline" commandName="Quick Outline" description="Show the quick outline for the editor input"/>
   <addons xmi:id="_XwQYkE2EEd-DfN2vYY4Lew" elementId="Cleanup Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"/>
   <addons xmi:id="_bqcWME2EEd-DfN2vYY4Lew" elementId="DnD Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
+  <addons xmi:id="_7GC6sGp-Ed-QyNZjH9g15Q" elementId="MinMax Addon" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
 </application:Application>
