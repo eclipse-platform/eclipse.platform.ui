@@ -6,7 +6,7 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.core.runtime.IConfigurationElement"
-            class="org.eclipse.e4.workbench.modeling.ICEAdapter">
+            class="org.eclipse.e4.workbench.ui.internal.ConfigurationElementAdapter">
          <adapter
                type="org.eclipse.e4.workbench.modeling.ModelHandlerBase">
          </adapter>
