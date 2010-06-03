@@ -62,7 +62,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 			sep.setWidth(newComposite.getSize().x);
 		}
 
-		return parentWidget;
+		return newComposite;
 	}
 
 }
