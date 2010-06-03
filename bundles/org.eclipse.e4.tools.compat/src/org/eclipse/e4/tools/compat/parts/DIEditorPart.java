@@ -64,7 +64,7 @@ public abstract class DIEditorPart<C> extends EditorPart {
 		if( parentContext.get("org.eclipse.e4.workbench.ui.IPresentationEngine") != null ) {
 			// Hack to get the MPart-Context
 			try {
-				Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model").loadClass("org.eclipse.e4.ui.model.application.ui.basic.MPart");
+				Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass("org.eclipse.e4.ui.model.application.ui.basic.MPart");
 				Object instance = getSite().getService(clazz);
 				Method m = clazz.getMethod("getContext", new Class[0]);
 				context = (IEclipseContext) m.invoke(instance);				

@@ -20,14 +20,16 @@ public class DirtyProviderFunction extends ContextFunction {
 
 	@Override
 	public Object compute(IEclipseContext context) {
-		DIEditorPart<?> part = (DIEditorPart<?>) context.get(EditorPart.class);
+		final DIEditorPart<?> part = (DIEditorPart<?>) context.get(EditorPart.class);
+		if( part == null ) {
+			return null;
+		}
+		
 		return new IDirtyProviderService() {
 
 			public void setDirtyState(boolean dirtyState) {
-				// TODO Auto-generated method stub
-				
+				part.setDirtyState(dirtyState);
 			}
-			
 		};
 	}
 
