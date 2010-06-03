@@ -16,7 +16,7 @@ import org.eclipse.emf.common.util.URI;
 /**
  *
  */
-public interface IResourceUtiltities<ImageDesc> {
+public interface IResourceUtilities<ImageDesc> {
 
 	public ImageDesc imageDescriptorFromURI(URI iconPath);
 

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
-import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
+import org.eclipse.e4.workbench.ui.IResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
@@ -103,8 +103,8 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 				imageDescriptor = workbench.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_DEF_VIEW);
 			} else {
-				ISWTResourceUtiltities utility = (ISWTResourceUtiltities) application.getContext()
-						.get(IResourceUtiltities.class.getName());
+				ISWTResourceUtilities utility = (ISWTResourceUtilities) application.getContext()
+						.get(IResourceUtilities.class.getName());
 				imageDescriptor = utility.imageDescriptorFromURI(URI.createURI(iconURI));
 			}
 		}

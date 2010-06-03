@@ -13,11 +13,11 @@ package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-public class ResourceUtility implements ISWTResourceUtiltities {
+public class ResourceUtility implements ISWTResourceUtilities {
 
 	public ResourceUtility() {
 		super();

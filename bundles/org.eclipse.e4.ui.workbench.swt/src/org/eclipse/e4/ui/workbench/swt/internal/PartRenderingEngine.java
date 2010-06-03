@@ -39,7 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.modeling.EModelService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.IResourceUtilities;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -464,7 +464,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						cssResourcesURI, runContext);
 
 				// Register an SWT resource handler
-				runContext.set(IResourceUtiltities.class.getName(),
+				runContext.set(IResourceUtilities.class.getName(),
 						new ResourceUtility());
 
 				// set up the keybinding manager

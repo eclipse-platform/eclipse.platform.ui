@@ -19,9 +19,9 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
-import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.IResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -160,8 +160,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		if (iconURI != null && iconURI.length() > 0) {
 			Image image = imageMap.get(iconURI);
 			if (image == null) {
-				ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
-						.get(IResourceUtiltities.class.getName());
+				ISWTResourceUtilities resUtils = (ISWTResourceUtilities) localContext
+						.get(IResourceUtilities.class.getName());
 				image = resUtils.imageDescriptorFromURI(URI.createURI(iconURI))
 						.createImage();
 				imageMap.put(iconURI, image);

@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.workbench.modeling.EPartService;
-import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.IResourceUtilities;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -220,7 +220,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 			public void run() {
 				contexts[0] = UIStartupTest.super
 						.createApplicationContext(osgiContext);
-				contexts[0].set(IResourceUtiltities.class.getName(),
+				contexts[0].set(IResourceUtilities.class.getName(),
 						new ResourceUtility());
 				contexts[0].set(IStylingEngine.class.getName(),
 						new IStylingEngine() {
