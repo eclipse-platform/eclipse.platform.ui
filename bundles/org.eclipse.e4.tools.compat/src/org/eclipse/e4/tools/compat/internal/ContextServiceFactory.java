@@ -67,6 +67,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			
 			IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
+			appContext.set(IStylingEngine.class, engine);
 			
 			appContext.set(IStylingEngine.class, new IStylingEngine() {
 				
@@ -90,8 +91,8 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 		} else if( o != null && site == null ) {
 			final IEclipseContext windowContext = ((IEclipseContext)o).createChild("WindowContext("+window+")");
 			windowContext.set(ISelectionService.class, window.getSelectionService());
-			windowContext.declareModifiable(IServiceConstants.SELECTION);
 			
+			windowContext.declareModifiable(IServiceConstants.SELECTION);
 			window.getSelectionService().addSelectionListener(new ISelectionListener() {
 				
 				public void selectionChanged(IWorkbenchPart part, ISelection selection) {

@@ -10,23 +10,13 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
-import java.lang.reflect.Method;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.compat.internal.Util;
+import org.eclipse.e4.tools.compat.internal.PartHelper;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
-import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
@@ -59,28 +49,12 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 		setSite(site);
 		setInput(input);
 		
-		IEclipseContext parentContext = (IEclipseContext) getSite().getService(IEclipseContext.class);
-		
-		// Check if running in 4.x
-		if( parentContext.get("org.eclipse.e4.workbench.ui.IPresentationEngine") != null ) {
-			// Hack to get the MPart-Context
-			try {
-				Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass("org.eclipse.e4.ui.model.application.ui.basic.MPart");
-				Object instance = getSite().getService(clazz);
-				Method m = clazz.getMethod("getContext", new Class[0]);
-				context = (IEclipseContext) m.invoke(instance);				
-			} catch (Exception e) {
-				throw new PartInitException("Could not create context",e);
-			}
-		} else {
-			context = parentContext.createChild("EditPart('"+getPartName()+"')"); //$NON-NLS-1$	
-		}
-		
+		context = PartHelper.createPartContext(this);
 		context.declareModifiable(IEditorInput.class);
-		context.declareModifiable(EditorPart.class);
+		context.declareModifiable(IEditorPart.class);
 		context.declareModifiable(IDirtyProviderService.class);
 		
-		context.set(EditorPart.class,this);
+		context.set(IEditorPart.class,this);
 		context.set(IDirtyProviderService.class,this);
 		context.set(IEditorInput.class, input);
 	}
@@ -95,23 +69,7 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 
 	@Override
 	public void createPartControl(Composite parent) {
-		ISelectionProvider s = new SelectionProviderImpl();
-		context.set(ISelectionProvider.class, s);
-		getSite().setSelectionProvider(s);
-		
-		IStylingEngine styleEngine = context.get(IStylingEngine.class);
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		
-		FillLayout layout = new FillLayout();
-		layout.marginWidth = 10;
-		layout.marginHeight = 10;
-		comp.setLayout(layout);
-		
-		context.set(Composite.class.getName(), comp);
-		component = ContextInjectionFactory.make(clazz, context);
-		
-		styleEngine.setClassname(comp, getClass().getSimpleName());
+		component = PartHelper.creatComponent(parent, context, clazz, this);
 	}
 	
 	public C getComponent() {
@@ -142,33 +100,5 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 		context.dispose();
 		context = null;
 		super.dispose();
-	}
-
-	private class SelectionProviderImpl implements ISelectionProvider {
-		private ISelection currentSelection = StructuredSelection.EMPTY;
-		
-		private ListenerList listeners = new ListenerList();
-		
-		public void setSelection(ISelection selection) {
-			currentSelection = selection;
-			SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
-			
-			for( Object l : listeners.getListeners() ) {
-				((ISelectionChangedListener)l).selectionChanged(evt);
-			}
-		}
-				
-		public void removeSelectionChangedListener(
-				ISelectionChangedListener listener) {
-			listeners.remove(listener);
-		}
-		
-		public ISelection getSelection() {
-			return currentSelection;
-		}
-		
-		public void addSelectionChangedListener(ISelectionChangedListener listener) {
-			listeners.add(listener);
-		}
 	}
 }
