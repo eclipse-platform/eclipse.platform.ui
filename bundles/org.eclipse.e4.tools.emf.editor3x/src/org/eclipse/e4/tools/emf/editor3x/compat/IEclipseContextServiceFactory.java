@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *      Simon Chemouil <eclipse@mithrandir.net> - bugfix 315362
+ *      ARTAL Technologies <simon.chemouil@artal.fr> - bugfix 315362
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x.compat;
 
