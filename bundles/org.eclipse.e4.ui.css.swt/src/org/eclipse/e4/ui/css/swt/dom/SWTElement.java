@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.eclipse.e4.ui.css.swt.helpers.PropertyHelper;
+
 import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
@@ -177,7 +178,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		if (o != null)
 			return o.toString();
 		try {
-			o = PropertyUtils.getProperty(widget, attr);
+			o = PropertyHelper.getProperty(widget, attr);
 			if (o != null)
 				return o.toString();
 		} catch (Exception e) {
