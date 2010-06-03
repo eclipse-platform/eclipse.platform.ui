@@ -218,7 +218,7 @@ public abstract class ModelReconcilerContributionTest extends
 		testContribution_PersistedState("state", "state2", "state2");
 	}
 
-	public void testContribution_NewPersistedState() {
+	public void testContribution_NewContribution() {
 		MApplication application = createApplication();
 
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
@@ -245,6 +245,42 @@ public abstract class ModelReconcilerContributionTest extends
 		applyAll(deltas);
 
 		part = (MPart) window.getChildren().get(0);
+		assertEquals(1, part.getPersistedState().size());
+		assertEquals("value", part.getPersistedState().get("key"));
+	}
+
+	public void testContribution_NewPersistedState() {
+		MApplication application = createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(part);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		part.getPersistedState().put("key", "value");
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(part, window.getChildren().get(0));
+		assertEquals(0, part.getPersistedState().size());
+
+		applyAll(deltas);
+
+		part = (MPart) window.getChildren().get(0);
+		assertEquals(1, part.getPersistedState().size());
 		assertEquals("value", part.getPersistedState().get("key"));
 	}
 

@@ -13,10 +13,12 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -443,6 +445,9 @@ public class XMLModelReconciler extends ModelReconciler {
 					ModelDelta delta = createUnorderedChainedAttributeDelta(object, feature,
 							innerElement, featureName);
 					deltas.add(delta);
+				} else if (isStringToStringMap(featureName)) {
+					ModelDelta delta = createMapDelta(object, innerElement, feature);
+					deltas.add(delta);
 				} else {
 					ModelDelta delta = createAttributeDelta(object, feature, innerElement,
 							featureName);
@@ -490,6 +495,22 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		return new EMFModelDeltaSet(eObject, feature, match);
+	}
+
+	private ModelDelta createMapDelta(EObject object, Element innerElement,
+			EStructuralFeature feature) {
+		Map<String, String> deltaMap = new HashMap<String, String>();
+		NodeList attributes = (NodeList) innerElement;
+		for (int j = 0; j < attributes.getLength(); j++) {
+			Node entry = attributes.item(j);
+			if (entry instanceof Element) {
+				Element keyValue = (Element) entry;
+				String key = keyValue.getAttribute(ENTRY_ATTVALUE_KEY);
+				String value = keyValue.getAttribute(ENTRY_ATTVALUE_VALUE);
+				deltaMap.put(key, value);
+			}
+		}
+		return new EMFDeltaMapSet(object, feature, deltaMap);
 	}
 
 	private ModelDelta createDelayedDelta(EObject object, EStructuralFeature feature,
@@ -1386,6 +1407,14 @@ public class XMLModelReconciler extends ModelReconciler {
 				Element attributeElement = document.createElement(featureName);
 				attributeElement.setAttribute(featureName, String.valueOf(attribute));
 				featureElement.appendChild(attributeElement);
+			}
+		} else if (isStringToStringMap(featureName)) {
+			EMap<?, ?> map = (EMap<?, ?>) object.eGet(feature);
+			for (Entry<?, ?> entry : map.entrySet()) {
+				Element entryElement = document.createElement(featureName);
+				entryElement.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
+				entryElement.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
+				featureElement.appendChild(entryElement);
 			}
 		} else {
 			featureElement.setAttribute(featureName, String.valueOf(value));
