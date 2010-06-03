@@ -50,4 +50,11 @@
             label="Bright Gradient Theme">
       </theme>
    </extension>
+   <extension
+         id="contribution"
+         point="org.eclipse.e4.workbench.model">
+      <snippet
+            uri="contribution.e4xmi">
+      </snippet>
+   </extension>
 </plugin>

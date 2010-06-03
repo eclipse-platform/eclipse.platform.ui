@@ -30,13 +30,18 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.workbench.modeling.IModelExtension;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EContentsEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.packageadmin.RequiredBundle;
@@ -95,6 +100,10 @@ public class ModelExtensionProcessor {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
 		IExtension[] extensions = topoSort(extPoint.getExtensions());
+
+		List<MApplicationElement> imports = new ArrayList<MApplicationElement>();
+		EList<EObject> addedElements = new BasicEList<EObject>();
+
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
@@ -135,7 +144,14 @@ public class ModelExtensionProcessor {
 							contributor.getName());
 					continue;
 				}
-				List<MModelComponent> snippets = ((MModelComponents) extensionRoot).getComponents();
+
+				MModelComponents components = (MModelComponents) extensionRoot;
+
+				List<MApplicationElement> localImports = components.getImports();
+				if (localImports != null)
+					imports.addAll(localImports);
+
+				List<MModelComponent> snippets = components.getComponents();
 				for (MModelComponent snippet : snippets) {
 					Object parentElement = findDefaultParent(snippet.getParentID());
 					if (parentElement == null) {
@@ -150,7 +166,7 @@ public class ModelExtensionProcessor {
 								contributor.getName());
 						if (bundle != null) {
 							try {
-								Class pc = bundle.loadClass(snippet.getProcessor());
+								Class<?> pc = bundle.loadClass(snippet.getProcessor());
 								IModelExtension me = (IModelExtension) pc.newInstance();
 								me.processElement(parentObject);
 							} catch (Exception e) {
@@ -161,6 +177,7 @@ public class ModelExtensionProcessor {
 					}
 
 					Object[] elements = ((EObject) snippet).eContents().toArray();
+					addedElements.addAll(((EObject) snippet).eContents());
 					for (int i = 0; i < elements.length; i++) {
 						EStructuralFeature sourceFeature = ((EObject) elements[i])
 								.eContainingFeature();
@@ -182,6 +199,65 @@ public class ModelExtensionProcessor {
 					}
 				}
 			}
+		}
+
+		if (imports.isEmpty())
+			return;
+		// now that we have all components loaded, resolve imports
+		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<MApplicationElement, MApplicationElement>();
+		for (MApplicationElement importedElement : imports) {
+			MApplicationElement realElement = findElementById(e4Window, importedElement
+					.getElementId());
+			if (realElement == null)
+				log(
+						"Could not resolve an import element for '" + realElement + "'", new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
+			importMaps.put(importedElement, realElement);
+		}
+
+		TreeIterator<EObject> it = EcoreUtil.getAllContents(addedElements);
+		List<Runnable> commands = new ArrayList<Runnable>();
+
+		// TODO Probably use EcoreUtil.UsageCrossReferencer
+		while (it.hasNext()) {
+			EObject o = it.next();
+
+			EContentsEList.FeatureIterator<EObject> featureIterator = (EContentsEList.FeatureIterator<EObject>) o
+					.eCrossReferences().iterator();
+			while (featureIterator.hasNext()) {
+				EObject importObject = featureIterator.next();
+				if (importObject.eContainmentFeature() == ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS) {
+					EStructuralFeature feature = featureIterator.feature();
+
+					MApplicationElement el = importMaps.get(importObject);
+					if (el == null) {
+						log("Could not resolve import for " + el, new Exception()); //$NON-NLS-1$
+					}
+
+					final EObject interalTarget = o;
+					final EStructuralFeature internalFeature = feature;
+					final MApplicationElement internalElment = el;
+					final EObject internalImportObject = importObject;
+
+					commands.add(new Runnable() {
+
+						public void run() {
+							if (internalFeature.isMany()) {
+								List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
+								int index = l.indexOf(internalImportObject);
+								if (index >= 0) {
+									l.set(index, internalElment);
+								}
+							} else {
+								interalTarget.eSet(internalFeature, internalElment);
+							}
+						}
+					});
+				}
+			}
+		}
+
+		for (Runnable cmd : commands) {
+			cmd.run();
 		}
 	}
 

@@ -21,6 +21,7 @@ import java.util.List;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponents#getComponents <em>Components</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MModelComponents#getImports <em>Imports</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,5 +43,20 @@ public interface MModelComponents {
 	 * @generated
 	 */
 	List<MModelComponent> getComponents();
+
+	/**
+	 * Returns the value of the '<em><b>Imports</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MApplicationElement}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Imports</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Imports</em>' containment reference list.
+	 * @model containment="true"
+	 * @generated
+	 */
+	List<MApplicationElement> getImports();
 
 } // MModelComponents

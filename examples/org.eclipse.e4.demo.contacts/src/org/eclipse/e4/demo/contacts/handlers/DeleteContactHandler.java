@@ -24,6 +24,8 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 public class DeleteContactHandler {
 	@CanExecute
 	boolean canExecute(@Named(IServiceConstants.ACTIVE_PART) MContext context) {
+		if (context == null)
+			return false;
 		Contact contact = (Contact) context.getContext().get(
 				IServiceConstants.SELECTION);
 		return contact != null;

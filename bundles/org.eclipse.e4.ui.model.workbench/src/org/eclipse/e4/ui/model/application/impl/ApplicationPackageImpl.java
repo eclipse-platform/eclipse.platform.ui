@@ -483,13 +483,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int MODEL_COMPONENTS__COMPONENTS = 0;
 
 	/**
+	 * The feature id for the '<em><b>Imports</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MODEL_COMPONENTS__IMPORTS = 1;
+
+	/**
 	 * The number of structural features of the '<em>Model Components</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODEL_COMPONENTS_FEATURE_COUNT = 1;
+	public static final int MODEL_COMPONENTS_FEATURE_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
@@ -1032,6 +1041,20 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponents#getImports <em>Imports</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Imports</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponents#getImports()
+	 * @see #getModelComponents()
+	 * @generated
+	 */
+	public EReference getModelComponents_Imports() {
+		return (EReference)modelComponentsEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponent <em>Model Component</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1195,6 +1218,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		modelComponentsEClass = createEClass(MODEL_COMPONENTS);
 		createEReference(modelComponentsEClass, MODEL_COMPONENTS__COMPONENTS);
+		createEReference(modelComponentsEClass, MODEL_COMPONENTS__IMPORTS);
 
 		modelComponentEClass = createEClass(MODEL_COMPONENT);
 		createEAttribute(modelComponentEClass, MODEL_COMPONENT__POSITION_IN_PARENT);
@@ -1294,6 +1318,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		initEClass(modelComponentsEClass, MModelComponents.class, "ModelComponents", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getModelComponents_Components(), this.getModelComponent(), null, "components", null, 0, -1, MModelComponents.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getModelComponents_Imports(), this.getApplicationElement(), null, "imports", null, 0, -1, MModelComponents.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(modelComponentEClass, MModelComponent.class, "ModelComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getModelComponent_PositionInParent(), ecorePackage.getEString(), "positionInParent", "", 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1454,6 +1479,14 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference MODEL_COMPONENTS__COMPONENTS = eINSTANCE.getModelComponents_Components();
+
+		/**
+		 * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference MODEL_COMPONENTS__IMPORTS = eINSTANCE.getModelComponents_Imports();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.

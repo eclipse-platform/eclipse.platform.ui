@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MModelComponent;
 import org.eclipse.e4.ui.model.application.MModelComponents;
 
@@ -36,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl#getComponents <em>Components</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl#getImports <em>Imports</em>}</li>
  * </ul>
  * </p>
  *
@@ -51,6 +53,16 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * @ordered
 	 */
 	protected EList<MModelComponent> components;
+
+	/**
+	 * The cached value of the '{@link #getImports() <em>Imports</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImports()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MApplicationElement> imports;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -88,11 +100,25 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MApplicationElement> getImports() {
+		if (imports == null) {
+			imports = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS);
+		}
+		return imports;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return ((InternalEList<?>)getComponents()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
+				return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -107,6 +133,8 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 		switch (featureID) {
 			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return getComponents();
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
+				return getImports();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -124,6 +152,10 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 				getComponents().clear();
 				getComponents().addAll((Collection<? extends MModelComponent>)newValue);
 				return;
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
+				getImports().clear();
+				getImports().addAll((Collection<? extends MApplicationElement>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -139,6 +171,9 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				getComponents().clear();
 				return;
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
+				getImports().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -153,6 +188,8 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 		switch (featureID) {
 			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
 				return components != null && !components.isEmpty();
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
+				return imports != null && !imports.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

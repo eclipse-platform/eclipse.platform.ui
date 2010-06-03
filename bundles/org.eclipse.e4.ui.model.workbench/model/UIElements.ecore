@@ -38,6 +38,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="ModelComponents">
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//ModelComponent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
+        eType="#//ApplicationElement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//descriptor/basic/PartDescriptorContainer #//ApplicationElement #//commands/HandlerContainer #//commands/BindingTableContainer #//ui/menu/MenuContributions">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
