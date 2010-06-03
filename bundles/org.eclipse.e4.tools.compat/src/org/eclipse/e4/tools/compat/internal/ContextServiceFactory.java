@@ -10,11 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -39,7 +36,7 @@ import org.osgi.framework.FrameworkUtil;
 public class ContextServiceFactory extends AbstractServiceFactory {
 
 	@Override
-	public Object create(Class serviceInterface, IServiceLocator parentLocator,
+	public Object create(@SuppressWarnings("rawtypes") Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 		if( ! IEclipseContext.class.equals(serviceInterface) ) {
 			return null;
@@ -64,9 +61,9 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
 
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
-			IExtensionRegistry registry = RegistryFactory.getRegistry();
-			ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(registry);
-			appContext.set(IContributionFactory.class.getName(),contributionFactory);
+//			IExtensionRegistry registry = RegistryFactory.getRegistry();
+//			ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(registry);
+//			appContext.set(IContributionFactory.class.getName(),contributionFactory);
 			
 			IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());

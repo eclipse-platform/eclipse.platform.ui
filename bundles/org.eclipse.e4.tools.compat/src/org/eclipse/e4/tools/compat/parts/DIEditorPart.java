@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.compat.internal.Util;
+import org.eclipse.e4.tools.services.IDirtyProviderService;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,7 +31,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-public abstract class DIEditorPart<C> extends EditorPart {
+public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProviderService {
 	private IEclipseContext context;
 	private C component;
 	private Class<C> clazz;
@@ -77,8 +78,10 @@ public abstract class DIEditorPart<C> extends EditorPart {
 		
 		context.declareModifiable(IEditorInput.class);
 		context.declareModifiable(EditorPart.class);
+		context.declareModifiable(IDirtyProviderService.class);
 		
 		context.set(EditorPart.class,this);
+		context.set(IDirtyProviderService.class,this);
 		context.set(IEditorInput.class, input);
 	}
 
