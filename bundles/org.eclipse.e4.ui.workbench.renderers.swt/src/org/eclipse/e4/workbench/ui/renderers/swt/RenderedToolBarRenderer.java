@@ -60,4 +60,17 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 		if (widget != null && !widget.isDisposed())
 			widget.dispose();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer#processContents
+	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer)
+	 */
+	@Override
+	public void processContents(MElementContainer<MUIElement> container) {
+		// We've delegated further rendering to the ContributionManager
+		// it's their fault the menu items don't show up!
+	}
 }
