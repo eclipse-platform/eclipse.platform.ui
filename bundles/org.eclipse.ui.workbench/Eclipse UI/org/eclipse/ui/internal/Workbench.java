@@ -121,6 +121,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
@@ -978,6 +979,27 @@ public final class Workbench extends EventManager implements IWorkbench {
 				return false;
 			}
 		}
+
+		// discard editors that with non-ppersistable inputs
+		SafeRunner.run(new SafeRunnable() {
+			public void run() {
+				IWorkbenchWindow windows[] = getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					IWorkbenchPage pages[] = windows[i].getPages();
+					for (int j = 0; j < pages.length; j++) {
+						IEditorReference[] references = pages[j].getEditorReferences();
+						for (int k = 0; k < references.length; k++) {
+							IEditorPart editor = references[k].getEditor(false);
+							if (editor != null) {
+								if (editor.getEditorInput().getPersistable() == null) {
+									pages[j].closeEditor(editor, false);
+								}
+							}
+						}
+					}
+				}
+			}
+		});
 
 		if (!force && !isClosing) {
 			return false;
