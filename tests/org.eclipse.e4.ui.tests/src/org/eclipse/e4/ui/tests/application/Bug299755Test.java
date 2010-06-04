@@ -12,9 +12,7 @@ package org.eclipse.e4.ui.tests.application;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;

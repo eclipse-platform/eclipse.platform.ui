@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import org.eclipse.e4.ui.model.application.MAddon;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

@@ -12,16 +12,16 @@
 package org.eclipse.e4.ui.tests.application;
 
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -30,10 +30,8 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.e4.workbench.ui.internal.Activator;
-import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -147,7 +145,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.workbench.ui.IPresentationEngine#createGui(org.eclipse
+	 * org.eclipse.e4.ui.workbench.IPresentationEngine#createGui(org.eclipse
 	 * .e4.ui.model.application.MUIElement, java.lang.Object)
 	 */
 	public Object createGui(MUIElement element, Object parent) {
@@ -229,7 +227,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.workbench.ui.IPresentationEngine#createGui(org.eclipse
+	 * org.eclipse.e4.ui.workbench.IPresentationEngine#createGui(org.eclipse
 	 * .e4.ui.model.application.MUIElement)
 	 */
 	public Object createGui(MUIElement element) {
@@ -260,7 +258,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.workbench.ui.IPresentationEngine#run(org.eclipse.e4.ui
+	 * org.eclipse.e4.ui.workbench.IPresentationEngine#run(org.eclipse.e4.ui
 	 * .model.application.MApplicationElement)
 	 */
 	public Object run(MApplicationElement uiRoot, IEclipseContext appContext) {
@@ -270,7 +268,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.workbench.ui.IPresentationEngine#stop()
+	 * @see org.eclipse.e4.ui.workbench.IPresentationEngine#stop()
 	 */
 	public void stop() {
 	}

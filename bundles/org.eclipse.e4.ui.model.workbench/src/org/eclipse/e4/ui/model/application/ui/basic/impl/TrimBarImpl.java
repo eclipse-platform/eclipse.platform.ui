@@ -12,9 +12,7 @@ package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-
 import org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

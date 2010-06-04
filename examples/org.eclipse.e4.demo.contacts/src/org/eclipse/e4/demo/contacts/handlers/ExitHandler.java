@@ -13,7 +13,7 @@
 package org.eclipse.e4.demo.contacts.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 
 public class ExitHandler {
 	@Execute

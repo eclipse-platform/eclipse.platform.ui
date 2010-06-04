@@ -14,7 +14,6 @@ package org.eclipse.e4.demo.contacts.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
 import org.eclipse.swt.graphics.Image;
 
 public class Contact implements Cloneable {

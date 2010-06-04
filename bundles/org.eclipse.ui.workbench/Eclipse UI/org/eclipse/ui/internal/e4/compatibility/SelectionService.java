@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,7 +26,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -56,7 +57,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	private ListenerList listeners = new ListenerList();
 	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<String, Set<ISelectionListener>>();
 
-	private org.eclipse.e4.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.workbench.modeling.ISelectionListener() {
+	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
 		public void selectionChanged(MPart part, Object selection) {
 			selection = createCompatibilitySelection(selection);
 			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);

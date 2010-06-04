@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.e4photo;
 
 import java.net.URI;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;

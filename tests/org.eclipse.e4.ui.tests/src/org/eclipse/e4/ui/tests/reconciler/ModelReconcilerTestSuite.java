@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.e4.ui.tests.reconciler.xml.XMLModelReconcilerTestSuite;
 
 public class ModelReconcilerTestSuite extends TestSuite {

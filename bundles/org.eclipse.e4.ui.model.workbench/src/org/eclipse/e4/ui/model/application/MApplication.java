@@ -11,17 +11,13 @@
 package org.eclipse.e4.ui.model.application;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
-
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 

@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -22,7 +21,7 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 
 /**
  *

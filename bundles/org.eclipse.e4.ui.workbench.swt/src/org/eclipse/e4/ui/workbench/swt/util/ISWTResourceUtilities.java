@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.util;
 
-import org.eclipse.e4.workbench.ui.IResourceUtilities;
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public interface ISWTResourceUtilities extends

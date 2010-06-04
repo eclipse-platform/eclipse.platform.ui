@@ -11,9 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.impl;
 
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -27,13 +25,9 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
-
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
@@ -42,7 +36,6 @@ import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**

@@ -62,7 +62,7 @@
                   A processor that can update the model.  Element must specify either uri or processor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.workbench.modeling.IModelExtension"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.workbench.modeling.IModelExtension"/>
                </appInfo>
             </annotation>
          </attribute>

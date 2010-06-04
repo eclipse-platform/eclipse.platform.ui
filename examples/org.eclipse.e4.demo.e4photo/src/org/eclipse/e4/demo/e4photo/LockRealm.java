@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.e4photo;
 
 import java.util.LinkedList;
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

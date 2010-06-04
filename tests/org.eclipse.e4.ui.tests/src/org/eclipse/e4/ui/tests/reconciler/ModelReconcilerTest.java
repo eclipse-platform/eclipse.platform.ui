@@ -13,17 +13,15 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.io.StringWriter;
 import java.util.Collection;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
-import org.eclipse.e4.workbench.modeling.ModelDelta;
-import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
+import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
+import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.w3c.dom.Node;
 
 public abstract class ModelReconcilerTest extends ModelResourceTest {

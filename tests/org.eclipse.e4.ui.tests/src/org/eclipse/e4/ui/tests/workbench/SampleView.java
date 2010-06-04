@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;

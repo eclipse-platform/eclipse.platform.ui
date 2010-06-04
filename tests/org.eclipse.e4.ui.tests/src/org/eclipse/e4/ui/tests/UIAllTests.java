@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.e4.ui.tests.application.Bug299755Test;
 import org.eclipse.e4.ui.tests.application.Bug308220Test;
 import org.eclipse.e4.ui.tests.application.ModelRobustnessTest;

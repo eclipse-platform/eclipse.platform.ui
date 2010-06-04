@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.modeling;
 
-import org.eclipse.e4.workbench.modeling.ModelService;
+import org.eclipse.e4.ui.workbench.modeling.ModelService;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 

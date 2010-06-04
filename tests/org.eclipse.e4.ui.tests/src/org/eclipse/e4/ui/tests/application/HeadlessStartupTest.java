@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.TestCase;
-
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -24,14 +23,14 @@ import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
+import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
+import org.eclipse.e4.ui.internal.workbench.ExceptionHandler;
+import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
+import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.swt.Activator;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
-import org.eclipse.e4.workbench.ui.internal.ActivePartLookupFunction;
-import org.eclipse.e4.workbench.ui.internal.ExceptionHandler;
-import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
-import org.eclipse.e4.workbench.ui.internal.WorkbenchLogger;
 
 public abstract class HeadlessStartupTest extends TestCase {
 

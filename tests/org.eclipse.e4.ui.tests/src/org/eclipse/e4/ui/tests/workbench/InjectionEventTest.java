@@ -12,9 +12,7 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;

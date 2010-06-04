@@ -12,20 +12,19 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
+import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.tests.Activator;
-import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;

@@ -12,12 +12,11 @@
 package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
-
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.workbench.modeling.ModelDelta;
-import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
+import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerPartDescriptorTest extends
 		ModelReconcilerTest {

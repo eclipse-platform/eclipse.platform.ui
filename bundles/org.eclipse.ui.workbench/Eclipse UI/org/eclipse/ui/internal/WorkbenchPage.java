@@ -11,6 +11,12 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.ui.workbench.UIEvents;
+
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,10 +46,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
-import org.eclipse.e4.workbench.modeling.EModelService;
-import org.eclipse.e4.workbench.modeling.EPartService;
-import org.eclipse.e4.workbench.modeling.EPartService.PartState;
-import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -113,7 +115,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
 
-	class E4PartListener implements org.eclipse.e4.workbench.modeling.IPartListener {
+	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
 		public void partActivated(MPart part) {
 			updateActivations(part);

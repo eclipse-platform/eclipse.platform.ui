@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.di.annotations.Execute;
-
 import java.util.List;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 public class SwitchPerspectiveHandler {
 

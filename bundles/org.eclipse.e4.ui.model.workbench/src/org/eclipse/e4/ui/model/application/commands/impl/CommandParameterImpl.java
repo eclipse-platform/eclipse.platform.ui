@@ -11,13 +11,9 @@
 package org.eclipse.e4.ui.model.application.commands.impl;
 
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**

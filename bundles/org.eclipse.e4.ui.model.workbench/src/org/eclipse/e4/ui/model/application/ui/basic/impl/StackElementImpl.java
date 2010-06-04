@@ -11,9 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

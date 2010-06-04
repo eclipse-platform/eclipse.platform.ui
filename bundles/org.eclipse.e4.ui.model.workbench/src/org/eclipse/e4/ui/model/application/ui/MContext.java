@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.ui;
 
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**

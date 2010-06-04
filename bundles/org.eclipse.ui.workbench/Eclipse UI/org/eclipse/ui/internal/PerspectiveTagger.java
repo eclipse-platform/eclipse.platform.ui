@@ -11,9 +11,10 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.workbench.modeling.EModelService;
 
 public class PerspectiveTagger {
 	/**

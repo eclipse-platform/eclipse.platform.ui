@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import org.eclipse.emf.common.EMFPlugin;
-
 import org.eclipse.emf.common.util.ResourceLocator;
 
 /**

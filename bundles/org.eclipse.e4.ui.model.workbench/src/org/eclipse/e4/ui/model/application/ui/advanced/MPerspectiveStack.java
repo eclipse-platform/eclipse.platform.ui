@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 /**

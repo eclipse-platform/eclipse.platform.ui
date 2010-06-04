@@ -13,6 +13,14 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+
+import org.eclipse.e4.ui.internal.workbench.E4CommandProcessor;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
+
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -79,11 +87,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.UIEvents;
-import org.eclipse.e4.workbench.ui.internal.E4CommandProcessor;
-import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -1703,8 +1706,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * .ExecutionEvent)
 		 */
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			org.eclipse.e4.workbench.ui.internal.Activator.trace(
-					org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+			org.eclipse.e4.ui.internal.workbench.Activator.trace(
+					org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CMDS,
 					"AllHandlerGo: not for executing", null); //$NON-NLS-1$
 			return null;
 		}
@@ -1742,8 +1745,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			Command cmd = cmds[i];
 			final String cmdId = cmd.getId();
 			if (cmdId.contains("(")) { //$NON-NLS-1$
-				org.eclipse.e4.workbench.ui.internal.Activator.trace(
-						org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+				org.eclipse.e4.ui.internal.workbench.Activator.trace(
+						org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CMDS,
 						"Invalid command: " + cmd, null); //$NON-NLS-1$
 				continue;
 			}

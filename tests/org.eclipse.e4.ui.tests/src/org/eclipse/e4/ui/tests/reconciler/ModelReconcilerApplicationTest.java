@@ -12,12 +12,11 @@
 package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
-
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
-import org.eclipse.e4.workbench.modeling.ModelDelta;
-import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
+import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerApplicationTest extends
 		ModelReconcilerTest {

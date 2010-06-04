@@ -11,9 +11,9 @@
 package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -23,8 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
-import org.eclipse.e4.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 public class EModelServiceInsertTest extends TestCase {
 

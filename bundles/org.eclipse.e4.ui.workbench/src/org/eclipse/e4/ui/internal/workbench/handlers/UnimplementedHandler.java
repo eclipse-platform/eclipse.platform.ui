@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.internal.workbench.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 
 public class UnimplementedHandler {
 	@Execute

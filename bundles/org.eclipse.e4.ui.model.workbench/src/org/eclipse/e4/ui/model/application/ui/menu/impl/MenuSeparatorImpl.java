@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

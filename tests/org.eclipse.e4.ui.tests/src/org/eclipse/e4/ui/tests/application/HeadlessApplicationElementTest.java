@@ -12,8 +12,8 @@
 package org.eclipse.e4.ui.tests.application;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
 import org.eclipse.emf.common.notify.Notifier;
 
 public abstract class HeadlessApplicationElementTest extends

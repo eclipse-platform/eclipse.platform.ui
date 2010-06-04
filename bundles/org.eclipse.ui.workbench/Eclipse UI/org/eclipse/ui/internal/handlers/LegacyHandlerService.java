@@ -11,6 +11,11 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
+
 import java.util.Collection;
 import java.util.Collections;
 import org.eclipse.core.commands.Command;
@@ -33,9 +38,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
-import org.eclipse.e4.workbench.ui.internal.Activator;
-import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;

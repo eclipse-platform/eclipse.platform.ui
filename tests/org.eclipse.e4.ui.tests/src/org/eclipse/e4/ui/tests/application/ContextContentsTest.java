@@ -24,8 +24,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.work.ISchedulingExecutor;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.IExceptionHandler;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.osgi.service.event.EventAdmin;
 
 public class ContextContentsTest extends HeadlessStartupTest {

@@ -12,10 +12,8 @@ package org.eclipse.e4.demo.e4photo;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.Realm;

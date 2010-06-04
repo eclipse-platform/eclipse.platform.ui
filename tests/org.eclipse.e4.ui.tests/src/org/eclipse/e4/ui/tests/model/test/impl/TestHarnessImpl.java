@@ -2,14 +2,13 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.3 2010/05/14 19:39:11 emoffatt Exp $
+ * $Id: TestHarnessImpl.java,v 1.4 2010/05/25 18:07:13 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MCommand;

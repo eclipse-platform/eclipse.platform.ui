@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
-import org.eclipse.e4.workbench.ui.IResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;

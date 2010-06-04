@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.commands;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 
 /**

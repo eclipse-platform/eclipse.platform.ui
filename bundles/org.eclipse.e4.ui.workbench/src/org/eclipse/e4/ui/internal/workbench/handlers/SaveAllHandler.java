@@ -12,7 +12,7 @@ package org.eclipse.e4.ui.internal.workbench.handlers;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 public class SaveAllHandler {
 

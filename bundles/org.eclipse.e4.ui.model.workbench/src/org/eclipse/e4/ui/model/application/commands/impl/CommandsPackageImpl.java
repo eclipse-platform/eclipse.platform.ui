@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.commands.impl;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
@@ -24,24 +23,17 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MKeySequence;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**

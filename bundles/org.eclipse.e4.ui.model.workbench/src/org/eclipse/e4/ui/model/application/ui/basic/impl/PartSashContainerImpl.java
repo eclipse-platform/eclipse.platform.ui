@@ -12,9 +12,7 @@ package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
-
 import org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

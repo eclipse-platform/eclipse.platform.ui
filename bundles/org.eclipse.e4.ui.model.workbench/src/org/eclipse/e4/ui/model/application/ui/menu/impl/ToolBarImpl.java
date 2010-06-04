@@ -11,10 +11,8 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
-
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**

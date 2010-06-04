@@ -2,12 +2,11 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestSwitch.java,v 1.1.2.1 2010/04/16 12:24:24 tschindl Exp $
+ * $Id: TestSwitch.java,v 1.2 2010/04/16 17:28:42 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.util;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MCommand;

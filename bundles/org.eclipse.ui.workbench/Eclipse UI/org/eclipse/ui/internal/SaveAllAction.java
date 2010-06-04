@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;

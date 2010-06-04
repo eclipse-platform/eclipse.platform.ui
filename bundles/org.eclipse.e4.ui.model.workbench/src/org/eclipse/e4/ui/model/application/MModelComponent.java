@@ -11,14 +11,11 @@
 package org.eclipse.e4.ui.model.application;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
-
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 

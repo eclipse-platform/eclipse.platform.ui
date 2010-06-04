@@ -14,12 +14,11 @@ package org.eclipse.e4.demo.contacts.views;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
-import org.eclipse.e4.workbench.modeling.ESelectionService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;

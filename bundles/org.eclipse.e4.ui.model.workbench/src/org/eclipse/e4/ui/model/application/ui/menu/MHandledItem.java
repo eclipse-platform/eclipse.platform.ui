@@ -11,9 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.menu;
 
 import java.util.List;
-
 import org.eclipse.core.commands.ParameterizedCommand;
-
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 

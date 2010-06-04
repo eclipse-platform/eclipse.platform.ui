@@ -6,23 +6,23 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.core.runtime.IConfigurationElement"
-            class="org.eclipse.e4.workbench.ui.internal.ConfigurationElementAdapter">
+            class="org.eclipse.e4.ui.internal.workbench.ConfigurationElementAdapter">
          <adapter
-               type="org.eclipse.e4.workbench.modeling.ModelHandlerBase">
+               type="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase">
          </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.emf.ecore.EObject"
-            class="org.eclipse.e4.workbench.modeling.EObjModelHandler">
+            class="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler">
          <adapter
-               type="org.eclipse.e4.workbench.modeling.ModelHandlerBase">
+               type="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase">
          </adapter>
       </factory>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.extension_parser">
       <parser
-            class="org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory"
+            class="org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory"
             type="e4xmi">
       </parser>
    </extension>

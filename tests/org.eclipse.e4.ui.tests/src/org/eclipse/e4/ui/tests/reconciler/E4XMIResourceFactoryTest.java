@@ -12,17 +12,16 @@
 package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
-
+import org.eclipse.e4.ui.internal.workbench.ModelReconcilingService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
-import org.eclipse.e4.workbench.modeling.ModelDelta;
-import org.eclipse.e4.workbench.modeling.ModelReconciler;
-import org.eclipse.e4.workbench.ui.internal.ModelReconcilingService;
+import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
+import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
+import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 
 public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 
