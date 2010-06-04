@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
@@ -46,7 +47,8 @@ public class CleanupAddon {
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
 				if (container instanceof MApplication || container instanceof MWindow
-						|| container instanceof MPerspectiveStack) {
+						|| container instanceof MPerspectiveStack
+						|| container instanceof MMenuElement) {
 					return;
 				}
 
