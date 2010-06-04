@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.edit.domain.EditingDomain;
 
 public interface IModelResource {
 	public IObservableList getRoot();

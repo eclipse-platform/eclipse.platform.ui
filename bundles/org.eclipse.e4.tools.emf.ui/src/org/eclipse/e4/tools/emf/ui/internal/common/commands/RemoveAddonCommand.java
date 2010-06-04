@@ -11,13 +11,10 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.commands;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class RemoveAddonCommand {
 	public void execute(EditingDomain editingDomain, List<MAddon> addons) {

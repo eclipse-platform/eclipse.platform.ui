@@ -11,7 +11,6 @@
 package org.eclipse.e4.tools.emf.ui.internal;
 
 import java.util.Set;
-
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;

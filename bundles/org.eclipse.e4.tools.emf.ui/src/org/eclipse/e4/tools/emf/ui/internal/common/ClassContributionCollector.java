@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;

@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
