@@ -280,6 +280,16 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
             upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RenderedMenu" eSuperTypes="#//ui/menu/Menu">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+            transient="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RenderedToolBar" eSuperTypes="#//ui/menu/ToolBar">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+            transient="true"/>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">

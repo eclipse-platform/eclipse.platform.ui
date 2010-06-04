@@ -12,9 +12,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -25,7 +28,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 public class WorkbenchRendererFactory implements IRendererFactory {
 
 	private MenuRenderer menuRenderer;
-	private MenuItemRenderer menuItemRenderer;
+	private HandledMenuItemRenderer handledMenuItemRenderer;
 	private ToolBarRenderer toolbarRenderer;
 	private ToolItemRenderer toolItemRenderer;
 	private SeparatorRenderer separatorRenderer;
@@ -40,6 +43,9 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
+	private DirectMenuItemRenderer directMenuItemRenderer;
+	private RenderedMenuRenderer renderedMenuRenderer;
+	private RenderedToolBarRenderer renderedToolbarRenderer;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
 		if (uiElement instanceof MPart) {
@@ -48,18 +54,36 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(contributedPartRenderer);
 			}
 			return contributedPartRenderer;
-		} else if (uiElement instanceof MMenuItem) {
-			if (menuItemRenderer == null) {
-				menuItemRenderer = new MenuItemRenderer();
-				initRenderer(menuItemRenderer);
+		} else if (uiElement instanceof MHandledMenuItem) {
+			if (handledMenuItemRenderer == null) {
+				handledMenuItemRenderer = new HandledMenuItemRenderer();
+				initRenderer(handledMenuItemRenderer);
 			}
-			return menuItemRenderer;
+			return handledMenuItemRenderer;
+		} else if (uiElement instanceof MDirectMenuItem) {
+			if (directMenuItemRenderer == null) {
+				directMenuItemRenderer = new DirectMenuItemRenderer();
+				initRenderer(directMenuItemRenderer);
+			}
+			return directMenuItemRenderer;
+		} else if (uiElement instanceof MRenderedMenu) {
+			if (renderedMenuRenderer == null) {
+				renderedMenuRenderer = new RenderedMenuRenderer();
+				initRenderer(renderedMenuRenderer);
+			}
+			return renderedMenuRenderer;
 		} else if (uiElement instanceof MMenu) {
 			if (menuRenderer == null) {
 				menuRenderer = new MenuRenderer();
 				initRenderer(menuRenderer);
 			}
 			return menuRenderer;
+		} else if (uiElement instanceof MRenderedToolBar) {
+			if (renderedToolbarRenderer == null) {
+				renderedToolbarRenderer = new RenderedToolBarRenderer();
+				initRenderer(renderedToolbarRenderer);
+			}
+			return renderedToolbarRenderer;
 		} else if (uiElement instanceof MToolBar) {
 			if (toolbarRenderer == null) {
 				toolbarRenderer = new ToolBarRenderer();

@@ -17,8 +17,12 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MModelComponents;
 
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
@@ -87,6 +91,7 @@ public class ModelComponentsItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS);
 		}
 		return childrenFeatures;
 	}
@@ -139,6 +144,7 @@ public class ModelComponentsItemProvider
 
 		switch (notification.getFeatureID(MModelComponents.class)) {
 			case ApplicationPackageImpl.MODEL_COMPONENTS__COMPONENTS:
+			case ApplicationPackageImpl.MODEL_COMPONENTS__IMPORTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -160,6 +166,214 @@ public class ModelComponentsItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS,
 				 MApplicationFactory.INSTANCE.createModelComponent()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MApplicationFactory.INSTANCE.createApplication()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MApplicationFactory.INSTANCE.createModelComponent()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MApplicationFactory.INSTANCE.createAddon()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createBindingContext()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createBindingTable()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createCommand()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createCommandParameter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createHandler()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createKeyBinding()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createParameter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createHandledItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createToolControl()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MBasicFactory.INSTANCE.createStackElement()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory.INSTANCE.createPartDescriptor()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.MODEL_COMPONENTS__COMPONENTS ||
+			childFeature == ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

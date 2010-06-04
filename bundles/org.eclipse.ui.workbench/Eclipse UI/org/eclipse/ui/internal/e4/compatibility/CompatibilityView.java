@@ -11,17 +11,17 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.workbench.ui.renderers.swt.StackRenderer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -77,30 +77,32 @@ public class CompatibilityView extends CompatibilityPart {
 		MenuManager mm = (MenuManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
 				.getMenuManager();
 		if (mm.getItems().length > 0) {
-			Control partCtrl = (Control) part.getWidget();
-			partCtrl.setData("legacyMM", mm); //$NON-NLS-1$
-			List<MMenu> menus = part.getMenus();
-			if (menus.size() == 0) {
-				MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-
-				// HACK!! Identifies this to the menu renderer
-				menu.getTags().add("LegacyMenu"); //$NON-NLS-1$
-				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
-				menus.add(menu);
+			MRenderedMenu menu = null;
+			for (MMenu me : part.getMenus()) {
+				if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)
+						&& (me instanceof MRenderedMenu)) {
+					menu = (MRenderedMenu) me;
+				}
 			}
+			if (menu == null) {
+				menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+
+				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
+				part.getMenus().add(menu);
+
+			}
+			menu.setContributionManager(mm);
 		}
 
-		Control partCtrl = (Control) part.getWidget();
-		partCtrl.setData("legacyTBM", tbm); //$NON-NLS-1$
 		// Construct the toolbar (if necessary)
 		if (tbm.getItems().length > 0) {
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar == null) {
-				toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
-
-				// HACK!! Identifies this to the TB renderer
-				toolbar.getTags().add("LegacyTB"); //$NON-NLS-1$
+				toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
 				part.setToolbar(toolbar);
+			}
+			if (toolbar instanceof MRenderedToolBar) {
+				((MRenderedToolBar) toolbar).setContributionManager(tbm);
 			}
 		}
 	}

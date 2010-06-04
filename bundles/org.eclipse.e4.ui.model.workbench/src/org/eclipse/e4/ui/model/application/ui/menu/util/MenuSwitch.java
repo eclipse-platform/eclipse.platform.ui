@@ -295,6 +295,29 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.RENDERED_MENU: {
+				MRenderedMenu renderedMenu = (MRenderedMenu)theEObject;
+				T1 result = caseRenderedMenu(renderedMenu);
+				if (result == null) result = caseMenu(renderedMenu);
+				if (result == null) result = caseMenuElement(renderedMenu);
+				if (result == null) result = caseElementContainer(renderedMenu);
+				if (result == null) result = caseUIElement(renderedMenu);
+				if (result == null) result = caseUILabel(renderedMenu);
+				if (result == null) result = caseApplicationElement(renderedMenu);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.RENDERED_TOOL_BAR: {
+				MRenderedToolBar renderedToolBar = (MRenderedToolBar)theEObject;
+				T1 result = caseRenderedToolBar(renderedToolBar);
+				if (result == null) result = caseToolBar(renderedToolBar);
+				if (result == null) result = caseElementContainer(renderedToolBar);
+				if (result == null) result = caseTrimElement(renderedToolBar);
+				if (result == null) result = caseUIElement(renderedToolBar);
+				if (result == null) result = caseApplicationElement(renderedToolBar);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -566,6 +589,36 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Rendered Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Rendered Menu</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseRenderedMenu(MRenderedMenu object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Rendered Tool Bar</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Rendered Tool Bar</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseRenderedToolBar(MRenderedToolBar object) {
 		return null;
 	}
 

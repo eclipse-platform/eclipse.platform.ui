@@ -400,6 +400,16 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add

@@ -256,6 +256,16 @@ public class ToolItemItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add

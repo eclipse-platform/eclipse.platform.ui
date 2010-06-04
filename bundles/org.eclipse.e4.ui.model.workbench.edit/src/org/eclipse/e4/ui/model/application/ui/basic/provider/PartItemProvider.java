@@ -526,8 +526,18 @@ public class PartItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(BasicPackageImpl.Literals.PART__MENUS,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(BasicPackageImpl.Literals.PART__TOOLBAR,
 				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.PART__TOOLBAR,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
 	}
 
 	/**

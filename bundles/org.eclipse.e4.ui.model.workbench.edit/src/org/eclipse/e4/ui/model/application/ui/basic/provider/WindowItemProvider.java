@@ -473,6 +473,11 @@ public class WindowItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__MAIN_MENU,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__WINDOWS,
 				 MBasicFactory.INSTANCE.createWindow()));
 
@@ -590,6 +595,16 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
 
 		newChildDescriptors.add
 			(createChildParameter

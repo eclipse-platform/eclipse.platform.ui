@@ -15,11 +15,8 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 
@@ -45,17 +42,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 
 		// HACK!! This should be done using a separate renderer
 		ToolBar tb = null;
-		if (element.getTags().contains("LegacyTB")) { //$NON-NLS-1$
-			MUIElement parentElement = (MUIElement) ((EObject) element)
-					.eContainer();
-			Control ctrl = (Control) parentElement.getWidget();
-			ToolBarManager tbm = (ToolBarManager) ctrl.getData("legacyTBM"); //$NON-NLS-1$
-			tb = tbm.createControl((Composite) parent);
-			tbm.update(true);
-		} else {
-			tb = new ToolBar((Composite) parent, orientation | SWT.WRAP
-					| SWT.FLAT | SWT.RIGHT);
-		}
+		tb = new ToolBar((Composite) parent, orientation | SWT.WRAP | SWT.FLAT
+				| SWT.RIGHT);
 
 		return tb;
 	}

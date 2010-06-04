@@ -402,6 +402,52 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected RenderedMenuItemProvider renderedMenuItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createRenderedMenuAdapter() {
+		if (renderedMenuItemProvider == null) {
+			renderedMenuItemProvider = new RenderedMenuItemProvider(this);
+		}
+
+		return renderedMenuItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected RenderedToolBarItemProvider renderedToolBarItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createRenderedToolBarAdapter() {
+		if (renderedToolBarItemProvider == null) {
+			renderedToolBarItemProvider = new RenderedToolBarItemProvider(this);
+		}
+
+		return renderedToolBarItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -514,6 +560,8 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (directToolItemItemProvider != null) directToolItemItemProvider.dispose();
 		if (toolBarSeparatorItemProvider != null) toolBarSeparatorItemProvider.dispose();
 		if (menuContributionsItemProvider != null) menuContributionsItemProvider.dispose();
+		if (renderedMenuItemProvider != null) renderedMenuItemProvider.dispose();
+		if (renderedToolBarItemProvider != null) renderedToolBarItemProvider.dispose();
 	}
 
 }

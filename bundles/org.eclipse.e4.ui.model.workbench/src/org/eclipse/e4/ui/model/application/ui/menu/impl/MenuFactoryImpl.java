@@ -87,6 +87,8 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MenuPackageImpl.TOOL_BAR_SEPARATOR: return (EObject)createToolBarSeparator();
 			case MenuPackageImpl.MENU_CONTRIBUTIONS: return (EObject)createMenuContributions();
+			case MenuPackageImpl.RENDERED_MENU: return (EObject)createRenderedMenu();
+			case MenuPackageImpl.RENDERED_TOOL_BAR: return (EObject)createRenderedToolBar();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -260,6 +262,26 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MMenuContributions createMenuContributions() {
 		MenuContributionsImpl menuContributions = new MenuContributionsImpl();
 		return menuContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MRenderedMenu createRenderedMenu() {
+		RenderedMenuImpl renderedMenu = new RenderedMenuImpl();
+		return renderedMenu;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MRenderedToolBar createRenderedToolBar() {
+		RenderedToolBarImpl renderedToolBar = new RenderedToolBarImpl();
+		return renderedToolBar;
 	}
 
 	/**
