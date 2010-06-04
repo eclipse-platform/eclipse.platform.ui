@@ -18,8 +18,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
@@ -40,6 +42,9 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	@Inject
 	private IEclipseContext context;
 
+	@Inject
+	private MApplication application;
+
 	private ESelectionService selectionService;
 
 	@Inject
@@ -53,9 +58,14 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	private org.eclipse.e4.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.workbench.modeling.ISelectionListener() {
 		public void selectionChanged(MPart part, Object selection) {
-			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME,
-					createCompatibilitySelection(selection));
-			
+			selection = createCompatibilitySelection(selection);
+			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
+
+			IEclipseContext applicationContext = application.getContext();
+			if (applicationContext.get(IContextConstants.ACTIVE_CHILD) == context) {
+				application.getContext().set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
+			}
+
 			Object client = part.getObject();
 			if (client instanceof CompatibilityPart) {
 				IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
