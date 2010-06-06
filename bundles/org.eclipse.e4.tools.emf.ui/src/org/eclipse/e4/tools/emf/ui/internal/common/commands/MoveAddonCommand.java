@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.commands;
 
 import org.eclipse.e4.ui.model.application.MAddon;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class MoveAddonCommand {
 	public void execute(EditingDomain editingDomain, MAddon addon, boolean up) {

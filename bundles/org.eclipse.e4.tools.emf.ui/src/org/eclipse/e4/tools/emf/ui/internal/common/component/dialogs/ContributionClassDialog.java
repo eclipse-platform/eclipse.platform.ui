@@ -21,6 +21,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;

@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
-import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory; 
+import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.util.URI;

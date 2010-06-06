@@ -15,6 +15,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class AddAddonCommand {
 	public void execute(EditingDomain editingDomain, MApplication parent) {

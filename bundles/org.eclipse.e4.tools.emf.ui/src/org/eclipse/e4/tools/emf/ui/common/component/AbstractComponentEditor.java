@@ -20,6 +20,8 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;

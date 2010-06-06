@@ -15,6 +15,8 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
 public class KeyBindingCommandSelectionDialog extends AbstractCommandSelectionDialog {

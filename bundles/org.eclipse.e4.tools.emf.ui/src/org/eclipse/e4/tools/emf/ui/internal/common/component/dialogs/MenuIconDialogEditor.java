@@ -3,6 +3,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
 public class MenuIconDialogEditor extends AbstractIconDialog {

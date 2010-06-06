@@ -24,6 +24,13 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorConta
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
