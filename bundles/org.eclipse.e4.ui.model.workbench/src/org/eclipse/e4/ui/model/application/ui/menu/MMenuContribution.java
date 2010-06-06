@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent <em>Position In Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getParentID <em>Parent ID</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,5 +54,30 @@ public interface MMenuContribution extends MElementContainer<MMenuElement> {
 	 * @generated
 	 */
 	void setPositionInParent(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Parent ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Parent ID</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Parent ID</em>' attribute.
+	 * @see #setParentID(String)
+	 * @model required="true"
+	 * @generated
+	 */
+	String getParentID();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getParentID <em>Parent ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Parent ID</em>' attribute.
+	 * @see #getParentID()
+	 * @generated
+	 */
+	void setParentID(String value);
 
 } // MMenuContribution

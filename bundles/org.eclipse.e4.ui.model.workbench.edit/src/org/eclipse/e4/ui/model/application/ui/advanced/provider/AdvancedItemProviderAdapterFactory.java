@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.ui.advanced.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.model.application.ui.advanced.util.AdvancedAdapterFactory;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -21,6 +20,7 @@ import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.IChangeNotifier;
+import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertySource;

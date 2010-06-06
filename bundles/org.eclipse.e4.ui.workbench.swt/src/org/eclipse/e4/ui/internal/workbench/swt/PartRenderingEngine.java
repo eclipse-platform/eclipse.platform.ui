@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
@@ -483,6 +484,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getKeyDownFilter();
 				display.addFilter(SWT.KeyDown, listener);
 				display.addFilter(SWT.Traverse, listener);
+
+				// set up a menu contribution manager filter
+				MenuServiceFilter menuFilter = ContextInjectionFactory.make(
+						MenuServiceFilter.class, runContext);
+				display.addFilter(SWT.Show, menuFilter);
+				display.addFilter(SWT.Hide, menuFilter);
+				display.addFilter(SWT.Dispose, menuFilter);
 
 				// Show the initial UI
 
