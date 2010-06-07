@@ -216,10 +216,6 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx144" elementId="org.eclipse.ui.actions.showKeyAssistHandler" label="&amp;Key Assist..." command="org.eclipse.ui.window.showKeyAssist"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx145" elementId="tipsAndTricks" label="&amp;Tips and Tricks..." command="org.eclipse.ui.help.tipsAndTricksAction"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx146" elementId="group.updates"/>
-        <children xsi:type="menu:Menu" xmi:id="_UW9TUPr3Ed6gmo7caOx147" elementId="org.eclipse.update.ui.updateMenu" label="&amp;Software Updates">
-          <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx148" elementId="org.eclipse.ui.update.findAndInstallUpdates" label="Find and Install Updates" command="org.eclipse.ui.update.findAndInstallUpdates"/>
-          <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx149" elementId="org.eclipse.ui.update.manageConfiguration" label="Manage Configuration" command="org.eclipse.ui.update.manageConfiguration"/>
-        </children>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx14A" elementId="org.eclipse.equinox.p2.ui.sdk.update" label="Check for Updates" command="org.eclipse.equinox.p2.ui.sdk.update"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TVvr3Ed6gmo7caOx14B" elementId="org.eclipse.equinox.p2.ui.sdk.install" label="Install New Software..." command="org.eclipse.equinox.p2.ui.sdk.install"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx14C" elementId="group.about"/>
