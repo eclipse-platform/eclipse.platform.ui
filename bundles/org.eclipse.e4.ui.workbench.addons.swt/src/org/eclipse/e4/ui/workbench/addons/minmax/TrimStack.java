@@ -19,6 +19,7 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
@@ -382,11 +383,13 @@ public class TrimStack {
 		Shell theShell;
 		if (shellType == HOVER_SHELL) {
 			hoverShell = new Shell(mainShell, SWT.NONE);
+			hoverShell.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
 			// hoverShell.setAlpha(128);
 			hoverShell.setSize(300, 200);
 			theShell = hoverShell;
 		} else {
 			showShell = new Shell(mainShell, SWT.RESIZE);
+			showShell.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
 			showShell.setSize(600, 400);
 			theShell = showShell;
 

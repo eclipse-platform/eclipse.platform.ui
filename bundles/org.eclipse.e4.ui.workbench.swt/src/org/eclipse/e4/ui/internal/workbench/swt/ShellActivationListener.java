@@ -28,7 +28,15 @@ import org.eclipse.swt.widgets.Shell;
  * An SWT listener for listening for activation events of shells that aren't
  * associated with an MWindow.
  */
-class ShellActivationListener implements Listener {
+public class ShellActivationListener implements Listener {
+
+	/**
+	 * A string key for use with a shell's keyed data to determine whether
+	 * activation events of that shell should be ignored by this listener. The
+	 * retrieved data of this string key must either be <code>null</code> or be
+	 * of type <code>Boolean</code>.
+	 */
+	public static final String DIALOG_IGNORE_KEY = "org.eclipse.e4.ui.ignoreDialog"; //$NON-NLS-1$
 
 	private static final String ECLIPSE_CONTEXT_DIALOG_ID = "org.eclipse.e4.ui.dialogContext"; //$NON-NLS-1$
 	private static final String ECLIPSE_CONTEXT_PREV_CHILD = "org.eclipse.e4.ui.dialogContext.prevChild"; //$NON-NLS-1$
@@ -47,6 +55,11 @@ class ShellActivationListener implements Listener {
 		Shell shell = (Shell) event.widget;
 		Object obj = shell.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj instanceof MWindow) {
+			return;
+		}
+
+		obj = shell.getData(DIALOG_IGNORE_KEY);
+		if (obj instanceof Boolean && ((Boolean) obj).booleanValue()) {
 			return;
 		}
 
