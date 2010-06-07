@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		System.err.println(msg + ": " + menu + ": " + menuModel);
