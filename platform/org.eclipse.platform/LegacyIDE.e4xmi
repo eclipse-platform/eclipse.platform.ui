@@ -274,7 +274,7 @@
   <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" elementId="_UW9TY_r3Ed6gmo7caOxU9g" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.ExitHandler" command="e4.exit"/>
   <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" elementId="_BESTZfr3Ed6gmo7caOxU04" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="org.eclipse.ui.views.showView"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" elementId="org.eclipse.e4.ui.saveHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.handlers.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
-  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.e4.ui.saveAllHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.handlers.SaveAllHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
+  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.e4.ui.saveAllHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.handlers.SaveAllHandler" command="_jR5mUAFSEd-Z8rQksLwRYx"/>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_UW9TZfr3Ed6gmo7caOxU9g" keySequence="CTRL+Q" elementId="_UW9TZfr3Ed6gmo7caOxU9g" command="e4.exit"/>
     <bindings xmi:id="_oRr6EAFSEd-Z8rQksLwRYw" keySequence="CTRL+S" elementId="_oRr6EAFSEd-Z8rQksLwRYw" command="_jR5mUAFSEd-Z8rQksLwRYw"/>
