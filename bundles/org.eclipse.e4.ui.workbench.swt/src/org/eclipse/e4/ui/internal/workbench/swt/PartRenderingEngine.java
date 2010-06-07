@@ -70,6 +70,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	IRendererFactory curFactory = null;
 
+	MenuServiceFilter menuServiceFilter;
+
+	org.eclipse.swt.widgets.Listener keyListener;
+
 	// Life Cycle handlers
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -464,6 +468,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			final IEclipseContext runContext) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+
 			public void run() {
 				String cssURI = (String) runContext
 						.get(E4Workbench.CSS_URI_ARG);
@@ -480,17 +485,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 				KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
 						.make(KeyBindingDispatcher.class, runContext);
 				runContext.set(KeyBindingDispatcher.class.getName(), dispatcher);
-				org.eclipse.swt.widgets.Listener listener = dispatcher
-						.getKeyDownFilter();
-				display.addFilter(SWT.KeyDown, listener);
-				display.addFilter(SWT.Traverse, listener);
+				keyListener = dispatcher.getKeyDownFilter();
+				display.addFilter(SWT.KeyDown, keyListener);
+				display.addFilter(SWT.Traverse, keyListener);
 
-				// set up a menu contribution manager filter
-				MenuServiceFilter menuFilter = ContextInjectionFactory.make(
+				menuServiceFilter = ContextInjectionFactory.make(
 						MenuServiceFilter.class, runContext);
-				display.addFilter(SWT.Show, menuFilter);
-				display.addFilter(SWT.Hide, menuFilter);
-				display.addFilter(SWT.Dispose, menuFilter);
+				display.addFilter(SWT.Show, menuServiceFilter);
+				display.addFilter(SWT.Hide, menuServiceFilter);
+				display.addFilter(SWT.Dispose, menuServiceFilter);
 
 				// Show the initial UI
 
@@ -580,6 +583,25 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public void stop() {
+		if (menuServiceFilter != null) {
+			System.err.println("IPE#stop()");
+			Display display = Display.getDefault();
+			if (!display.isDisposed()) {
+				System.err.println("IPE#stop() - dispose");
+				display.removeFilter(SWT.Show, menuServiceFilter);
+				display.removeFilter(SWT.Hide, menuServiceFilter);
+				display.removeFilter(SWT.Dispose, menuServiceFilter);
+				menuServiceFilter = null;
+			}
+		}
+		if (keyListener != null) {
+			Display display = Display.getDefault();
+			if (!display.isDisposed()) {
+				display.removeFilter(SWT.KeyDown, keyListener);
+				display.removeFilter(SWT.Traverse, keyListener);
+				keyListener = null;
+			}
+		}
 		if (theApp != null) {
 			for (MWindow window : theApp.getChildren()) {
 				if (window.getWidget() != null) {

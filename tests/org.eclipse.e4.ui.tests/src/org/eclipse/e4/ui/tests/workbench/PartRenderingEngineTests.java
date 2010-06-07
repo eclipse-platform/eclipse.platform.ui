@@ -355,7 +355,8 @@ public class PartRenderingEngineTests extends TestCase {
 
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
-		wb.createAndRunUI(window2);
+		IPresentationEngine engine = appContext.get(IPresentationEngine.class);
+		engine.createGui(window2);
 
 		// try to show the parts in the second window, a new stack should be
 		// created in the second window instead of trying to reuse the one in
