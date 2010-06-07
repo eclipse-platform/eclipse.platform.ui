@@ -1489,7 +1489,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
-		return editorReferences.toArray(new IEditorReference[editorReferences.size()]);
+		List<IEditorReference> sortedReferences = new ArrayList<IEditorReference>();
+		for (MPart part : activationList) {
+			for (EditorReference ref : editorReferences) {
+				if (ref.getModel() == part) {
+					sortedReferences.add(ref);
+					break;
+				}
+			}
+		}
+
+		for (EditorReference ref : editorReferences) {
+			if (!sortedReferences.contains(ref)) {
+				sortedReferences.add(ref);
+			}
+		}
+
+		return sortedReferences.toArray(new IEditorReference[sortedReferences.size()]);
 	}
     /**
      * @see IWorkbenchPage
