@@ -677,6 +677,13 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				return;
 			}
 
+			Shell theShell = (Shell) event.widget;
+			if (theShell != null && theShell.getParent() != null)
+				return;
+
+			if (display.getActiveShell().getParent() != null)
+				return;
+
 			if (DEBUG) {
 				logDebuggingInfo("\tWSP:lastActiveShell: " + lastActiveShell); //$NON-NLS-1$
 				logDebuggingInfo("\tWSP:lastActiveWorkbenchWindowShell" + lastActiveWorkbenchWindowShell); //$NON-NLS-1$
