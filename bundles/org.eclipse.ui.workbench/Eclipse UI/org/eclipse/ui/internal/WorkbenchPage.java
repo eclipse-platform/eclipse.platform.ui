@@ -1507,6 +1507,41 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		return sortedReferences.toArray(new IEditorReference[sortedReferences.size()]);
 	}
+
+	public IWorkbenchPartReference[] getSortedParts() {
+		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
+
+		activationLoop: for (MPart part : activationList) {
+			for (ViewReference ref : viewReferences) {
+				if (ref.getModel() == part) {
+					sortedReferences.add(ref);
+					continue activationLoop;
+				}
+			}
+
+			for (EditorReference ref : editorReferences) {
+				if (ref.getModel() == part) {
+					sortedReferences.add(ref);
+					break;
+				}
+			}
+		}
+
+		for (ViewReference ref : viewReferences) {
+			if (!sortedReferences.contains(ref)) {
+				sortedReferences.add(ref);
+			}
+		}
+
+		for (EditorReference ref : editorReferences) {
+			if (!sortedReferences.contains(ref)) {
+				sortedReferences.add(ref);
+			}
+		}
+
+		return sortedReferences.toArray(new IWorkbenchPartReference[sortedReferences.size()]);
+	}
+
     /**
      * @see IWorkbenchPage
      */
