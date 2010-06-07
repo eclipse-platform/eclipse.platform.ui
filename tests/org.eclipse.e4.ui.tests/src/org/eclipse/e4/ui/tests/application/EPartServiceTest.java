@@ -878,6 +878,35 @@ public class EPartServiceTest extends TestCase {
 				partBack.isToBeRendered());
 	}
 
+	public void testActivate_Focus() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		window.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		ClientEditor editorB = (ClientEditor) partB.getObject();
+
+		assertFalse(editorB.wasFocusCalled());
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partB);
+
+		assertTrue(editorB.wasFocusCalled());
+	}
+
 	public void testCreatePart() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

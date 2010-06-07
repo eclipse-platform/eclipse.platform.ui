@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlEvent;
@@ -159,6 +160,11 @@ public class Preview {
 				inputFile.setValue(input);
 			}
 		});
+	}
+	
+	@Focus
+	void setFocus() {
+		parent.setFocus();
 	}
 
 	private Point getBestSize(int originalX, int originalY, int maxX, int maxY) {

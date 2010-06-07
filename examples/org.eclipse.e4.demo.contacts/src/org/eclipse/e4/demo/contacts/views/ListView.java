@@ -18,6 +18,7 @@ import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -104,5 +105,10 @@ public class ListView {
 				image.dispose();
 			}
 		}
+	}
+	
+	@Focus
+	void setFocus() {
+		contactsViewer.getControl().setFocus();
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -360,6 +361,11 @@ public class PartServiceImpl implements EPartService {
 			parent.set(IContextConstants.ACTIVE_CHILD, context);
 			context = parent;
 			parent = parent.getParent();
+		}
+
+		Object object = part.getObject();
+		if (object != null) {
+			ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
 		}
 	}
 

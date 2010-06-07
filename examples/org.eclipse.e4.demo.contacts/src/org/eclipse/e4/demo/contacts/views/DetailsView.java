@@ -26,6 +26,7 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.demo.contacts.handlers.ThemeUtil;
 import org.eclipse.e4.demo.contacts.model.Contact;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -62,6 +63,11 @@ public class DetailsView {
 		this.dirtyable = dirtyable;
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
+	}
+	
+	@Focus
+	void setFocus() {
+		detailComposite.setFocus();
 	}
 
 	public boolean isSaveOnCloseNeeded() {

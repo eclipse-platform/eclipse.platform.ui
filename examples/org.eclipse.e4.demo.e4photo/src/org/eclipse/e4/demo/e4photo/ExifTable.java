@@ -26,6 +26,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.util.JSONObject;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -58,6 +59,8 @@ public class ExifTable {
 	
 	@Inject
 	private EventAdmin eventAdmin;
+	
+	private TableViewer viewer;
 
 	public ExifTable() {
 		super();
@@ -114,7 +117,7 @@ public class ExifTable {
 	void init() {
 		parent.setLayout(new FillLayout());
 
-		TableViewer viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION
+		viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
@@ -166,6 +169,11 @@ public class ExifTable {
 								columnNames)));
 
 		viewer.setInput(inputList);
+	}
+	
+	@Focus
+	void setFocus() {
+		viewer.getControl().setFocus();
 	}
 
 	void dispose() {

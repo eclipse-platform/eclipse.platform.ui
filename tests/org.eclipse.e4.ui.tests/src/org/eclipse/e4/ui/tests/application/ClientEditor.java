@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.application;
 
 import javax.inject.Inject;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 
@@ -22,10 +23,17 @@ public class ClientEditor {
 
 	private boolean saveCalled = false;
 
+	private boolean focusCalled = false;
+
 	private boolean throwException = false;
 
 	public void setThrowException(boolean throwException) {
 		this.throwException = throwException;
+	}
+
+	@Focus
+	void delegateFocus() {
+		focusCalled = true;
 	}
 
 	@Persist
@@ -40,6 +48,10 @@ public class ClientEditor {
 
 	public boolean wasSaveCalled() {
 		return saveCalled;
+	}
+
+	public boolean wasFocusCalled() {
+		return focusCalled;
 	}
 
 }

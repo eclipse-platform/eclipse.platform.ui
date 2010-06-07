@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.work.ISchedulingExecutor;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -89,6 +90,11 @@ public class Thumbnails {
 		int newHeight = (int) ((double) originalY / bestRatio);
 
 		return new Point(newWidth, newHeight);
+	}
+	
+	@Focus
+	void setFocus() {
+		gallery.setFocus();
 	}
 
 	@Inject @Optional

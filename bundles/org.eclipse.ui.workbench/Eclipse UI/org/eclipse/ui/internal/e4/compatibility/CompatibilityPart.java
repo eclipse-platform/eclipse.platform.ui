@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
@@ -117,6 +118,7 @@ public abstract class CompatibilityPart {
 		}
 	}
 
+	@Focus
 	public void delegateSetFocus() {
 		wrapped.setFocus();
 	}

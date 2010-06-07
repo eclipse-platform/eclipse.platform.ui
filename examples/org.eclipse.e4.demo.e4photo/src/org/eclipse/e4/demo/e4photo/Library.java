@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
@@ -100,13 +101,15 @@ public class Library implements IDisposable {
 	
 	@Inject
 	private ESelectionService selectionService;
+	
+	private TreeViewer viewer;
 
 	@Inject
 	public Library(Composite parent, final IWorkspace workspace) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		this.workspace = workspace;
 		initializeWorkspace();
-		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTree().setData("org.eclipse.e4.ui.css.id", "library");
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
@@ -193,6 +196,11 @@ public class Library implements IDisposable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Focus
+	void setFocus() {
+		viewer.getControl().setFocus();
 	}
 
 	public void dispose() {
