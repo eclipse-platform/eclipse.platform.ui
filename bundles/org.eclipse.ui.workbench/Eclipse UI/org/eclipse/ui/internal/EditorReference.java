@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 
@@ -217,6 +218,12 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 						.getEditorRegistry();
 				descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
 				return new ErrorEditorPart(status);
+			} else if (descriptor.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
+				IEditorPart part = ComponentSupport.getSystemInPlaceEditor();
+				if (part == null) {
+					throw new PartInitException(WorkbenchMessages.EditorManager_no_in_place_support);
+				}
+				return part;
 			}
 			return descriptor.createEditor();
 		} catch (CoreException e) {
