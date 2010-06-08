@@ -67,7 +67,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			
 			IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
-			appContext.set(IStylingEngine.class, engine);
+			appContext.set(IThemeEngine.class, engine);
 			
 			appContext.set(IStylingEngine.class, new IStylingEngine() {
 				
@@ -92,7 +92,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			final IEclipseContext windowContext = ((IEclipseContext)o).createChild("WindowContext("+window+")");
 			windowContext.set(ISelectionService.class, window.getSelectionService());
 			
-			windowContext.declareModifiable(IServiceConstants.SELECTION);
+			windowContext.declareModifiable(IServiceConstants.ACTIVE_SELECTION);
 			window.getSelectionService().addSelectionListener(new ISelectionListener() {
 				
 				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -100,12 +100,12 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 						if( selection instanceof IStructuredSelection ) {
 							IStructuredSelection s = (IStructuredSelection) selection;
 							if( s.size() == 1 ) {
-								windowContext.set(IServiceConstants.SELECTION, s.getFirstElement());	
+								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.getFirstElement());	
 							} else {
-								windowContext.set(IServiceConstants.SELECTION, s.toList());
+								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.toList());
 							}	
 						} else {
-							windowContext.set(IServiceConstants.SELECTION, selection);
+							windowContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
 						}
 					}
 				}
