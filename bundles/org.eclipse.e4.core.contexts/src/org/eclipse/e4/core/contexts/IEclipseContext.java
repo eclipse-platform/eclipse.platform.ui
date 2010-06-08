@@ -173,10 +173,10 @@ public interface IEclipseContext extends IDisposable {
 	/**
 	 * Sets a value to be associated with a given class in this context. 
 	 * @param clazz The class to store a value for
-	 * @param value The value to be stored, or a {@link ContextFunction} that can return the stored value.
+	 * @param value The value to be stored
 	 * @see #set(String, Object)
 	 */
-	public void set(Class<?> clazz, Object value);
+	public <T> void set(Class<T> clazz, T value);
 
 	/**
 	 * Modifies the value to be associated with the given name.
@@ -199,11 +199,11 @@ public interface IEclipseContext extends IDisposable {
 	/**
 	 * Modifies the value to be associated with the given class.
 	 * @param clazz The class to store a value for
-	 * @param value The value to be stored, or a {@link ContextFunction} that can return the stored value.
+	 * @param value The value to be stored
 	 * @throws IllegalArgumentException if the variable has not been declared as modifiable
 	 * @see #modify(String, Object)
 	 */
-	public void modify(Class<?> clazz, Object value);
+	public <T> void modify(Class<T> clazz, T value);
 
 	/**
 	 * Declares the named value as modifiable by descendants of this context. If the value does not

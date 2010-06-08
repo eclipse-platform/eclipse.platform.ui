@@ -653,7 +653,7 @@ public class EclipseContext implements IEclipseContext {
 		return containsKey(clazz.getName());
 	}
 
-	public void set(Class<?> clazz, Object value) {
+	public <T> void set(Class<T> clazz, T value) {
 		set(clazz.getName(), value);
 	}
 
@@ -665,7 +665,7 @@ public class EclipseContext implements IEclipseContext {
 		return clazz.cast(getLocal(clazz.getName()));
 	}
 
-	public void modify(Class<?> clazz, Object value) {
+	public <T> void modify(Class<T> clazz, T value) {
 		modify(clazz.getName(), value);
 	}
 
