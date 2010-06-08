@@ -155,6 +155,9 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 					ParameterizedCommand cmd = item.getWbCommand();
 					if (cmd == null) {
 						cmd = generateParameterizedCommand(item, lclContext);
+						if (cmd == null) {
+							return;
+						}
 					}
 					lclContext.set(MItem.class.getName(), item);
 					service.executeHandler(cmd);
