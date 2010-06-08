@@ -17,13 +17,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener2;
@@ -83,6 +89,8 @@ public class PopupMenuExtender implements IMenuListener2,
 	private ArrayList managerContributionCache = new ArrayList();
 	private boolean cleanupNeeded = false;
 
+	private MPart modelPart;
+
     /**
      * Construct a new menu extender.
      * 
@@ -122,6 +130,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		this.menu = menu;
 		this.selProvider = prov;
 		this.part = part;
+		this.modelPart = ((PartSite) part.getSite()).getModel();
 		if (includeEditorInput) {
 			bitSet |= INCLUDE_EDITOR_INPUT;
 		}
@@ -130,11 +139,43 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuWrapper = new SubMenuManager(menu);
 			menuWrapper.setVisible(true);
 		}
+		createModelFor(id);
 		readStaticActionsFor(id);
 				
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
 
+	private void createModelFor(String id) {
+		menuModel = null;
+		for (MMenu item : modelPart.getMenus()) {
+			if (id.equals(item.getElementId()) && item instanceof MRenderedMenu) {
+				menuModel = (MRenderedMenu) item;
+				break;
+			}
+		}
+		if (menuModel == null) {
+			menuModel = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menuModel.setElementId(id);
+			modelPart.getMenus().add(menuModel);
+			MPopupMenu popup = MenuFactoryImpl.eINSTANCE.createPopupMenu();
+			popup.setElementId(id);
+			menuModel.getChildren().add(popup);
+		}
+		menuModel.setContributionManager(menu);
+		registerE4Support();
+	}
+
+	private void registerE4Support() {
+		if (menuModel.getWidget() == null && menu.getMenu() != null) {
+			menuModel.setWidget(menu.getMenu());
+			menu.getMenu().setData(AbstractPartRenderer.OWNING_ME, menuModel);
+			MPopupMenu popup = (MPopupMenu) menuModel.getChildren().get(0);
+			IEclipseContext popupContext = modelPart.getContext().createChild(
+					"popup:" + popup.getElementId()); //$NON-NLS-1$
+			popup.setContext(popupContext);
+
+		}
+	}
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
     /**
      * Return the menu identifiers for this extender.
@@ -302,6 +343,7 @@ public class PopupMenuExtender implements IMenuListener2,
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
+		registerE4Support();
     	IMenuManager originalManager = mgr;
     	
     	// Add this menu as a visible menu.
@@ -342,6 +384,8 @@ public class PopupMenuExtender implements IMenuListener2,
     }
     
     private boolean contributionsPopulated = false;
+
+	private MRenderedMenu menuModel;
     
     private void addMenuContributions(IMenuManager mgr) {
 		final IMenuService menuService = (IMenuService) part.getSite()

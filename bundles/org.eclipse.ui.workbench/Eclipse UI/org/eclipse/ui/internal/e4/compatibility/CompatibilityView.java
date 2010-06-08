@@ -86,6 +86,7 @@ public class CompatibilityView extends CompatibilityPart {
 			}
 			if (menu == null) {
 				menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+				menu.setElementId(part.getElementId());
 
 				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
 				part.getMenus().add(menu);
@@ -99,6 +100,7 @@ public class CompatibilityView extends CompatibilityPart {
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar == null) {
 				toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
+				toolbar.setElementId(part.getElementId());
 				part.setToolbar(toolbar);
 			}
 			if (toolbar instanceof MRenderedToolBar) {

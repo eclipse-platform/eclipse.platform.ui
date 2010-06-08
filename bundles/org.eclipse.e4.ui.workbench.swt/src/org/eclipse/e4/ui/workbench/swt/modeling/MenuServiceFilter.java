@@ -1,5 +1,7 @@
 package org.eclipse.e4.ui.workbench.swt.modeling;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.inject.Inject;
@@ -21,6 +23,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -32,6 +35,25 @@ public class MenuServiceFilter implements Listener {
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		System.err.println(msg + ": " + menu + ": " + menuModel);
+	}
+
+	private static Method aboutToShow;
+
+	public static Method getAboutToShow() {
+		if (aboutToShow == null) {
+			try {
+				aboutToShow = MenuManager.class
+						.getDeclaredMethod("handleAboutToShow");
+				aboutToShow.setAccessible(true);
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return aboutToShow;
 	}
 
 	@Inject
@@ -229,6 +251,7 @@ public class MenuServiceFilter implements Listener {
 				trace("handlerRenderedMenu.Show", menu, menuModel);
 			}
 			cleanUp(menu);
+			showRenderedMenu(event, menu, menuModel);
 			break;
 		case SWT.Hide:
 			if (DEBUG) {
@@ -243,6 +266,42 @@ public class MenuServiceFilter implements Listener {
 			cleanUp(menu);
 			break;
 		}
+	}
+
+	private void showRenderedMenu(final Event event, final Menu menu,
+			final MRenderedMenu menuModel) {
+		if (!(menuModel.getContributionManager() instanceof MenuManager)) {
+			return;
+		}
+
+		MenuManager manager = (MenuManager) menuModel.getContributionManager();
+		if (DEBUG) {
+			trace("showRenderedMenu: " + manager, menu, menuModel);
+		}
+		Method handleAboutToShow = getAboutToShow();
+		try {
+			handleAboutToShow.invoke(manager);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (menuModel.getChildren().size() == 1
+				&& menuModel.getChildren().get(0) instanceof MPopupMenu) {
+			System.err.println("show popups successfull");
+			showPopup(event, menu, (MPopupMenu) menuModel.getChildren().get(0));
+		} else {
+			System.err.println("show legacy successfull");
+			showMenu(event, menu, menuModel);
+		}
+		event.type = SWT.None;
+		event.doit = false;
 	}
 
 	private void cleanUp(final Menu menu) {
