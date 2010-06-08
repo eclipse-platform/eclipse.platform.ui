@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
+
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -105,8 +107,8 @@ public class ControlFactory {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MApplication container = (MApplication) editor.getMaster().getValue();
-						int idx = container.getCommands().indexOf(obj) - 1;
+						MContext container = (MContext) editor.getMaster().getValue();
+						int idx = container.getVariables().indexOf(obj) - 1;
 						if (idx >= 0) {
 							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), UiPackageImpl.Literals.CONTEXT__VARIABLES, obj, idx);
 
@@ -132,9 +134,9 @@ public class ControlFactory {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MApplication container = (MApplication) editor.getMaster().getValue();
-						int idx = container.getCommands().indexOf(obj) + 1;
-						if (idx < container.getCommands().size()) {
+						MContext container = (MApplication) editor.getMaster().getValue();
+						int idx = container.getVariables().indexOf(obj) + 1;
+						if (idx < container.getVariables().size()) {
 							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), UiPackageImpl.Literals.CONTEXT__VARIABLES, obj, idx);
 
 							if (cmd.canExecute()) {
@@ -156,13 +158,13 @@ public class ControlFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
-					MApplication el = (MApplication) editor.getMaster().getValue();
+					MContext el = (MContext) editor.getMaster().getValue();
 					List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
 					Command cmd = RemoveCommand.create(editor.getEditingDomain(), el, UiPackageImpl.Literals.CONTEXT__VARIABLES, ids);
 					if (cmd.canExecute()) {
 						editor.getEditingDomain().getCommandStack().execute(cmd);
-						if (el.getBindingContexts().size() > 0) {
-							viewer.setSelection(new StructuredSelection(el.getBindingContexts().get(0)));
+						if (el.getVariables().size() > 0) {
+							viewer.setSelection(new StructuredSelection(el.getVariables().get(0)));
 						}
 					}
 				}
