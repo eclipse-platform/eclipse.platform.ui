@@ -344,4 +344,12 @@ public class MenuServiceFilter implements Listener {
 		}
 		return false;
 	}
+
+	public void dispose() {
+		Menu[] keys = pendingCleanup.keySet().toArray(
+				new Menu[pendingCleanup.size()]);
+		for (Menu menu : keys) {
+			cleanUp(menu);
+		}
+	}
 }

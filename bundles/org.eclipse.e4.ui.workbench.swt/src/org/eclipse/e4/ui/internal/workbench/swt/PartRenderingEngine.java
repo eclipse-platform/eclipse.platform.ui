@@ -589,6 +589,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.removeFilter(SWT.Show, menuServiceFilter);
 				display.removeFilter(SWT.Hide, menuServiceFilter);
 				display.removeFilter(SWT.Dispose, menuServiceFilter);
+				menuServiceFilter.dispose();
 				menuServiceFilter = null;
 			}
 		}
