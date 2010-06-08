@@ -10,8 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.tools.compat.internal.PartHelper;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
@@ -48,5 +51,14 @@ public abstract class DIViewPart<C> extends ViewPart {
 	
 	public C getComponent() {
 		return component;
+	}
+	
+	@Override
+	public void setFocus() {
+		try {
+			ContextInjectionFactory.invoke(component, Focus.class, context);	
+		} catch (InjectionException e) {
+			// TODO: handle exception
+		}
 	}
 }

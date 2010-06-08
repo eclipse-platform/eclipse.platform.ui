@@ -16,6 +16,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.compat.internal.PartHelper;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -89,12 +90,10 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 		return dirtyState;
 	}
 	
-//FIXME Once we have an @Focus we can implement it
-//	@Override
-//	public void setFocus() {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	@Override
+	public void setFocus() {
+		ContextInjectionFactory.invoke(component, Focus.class, context);
+	}
 	
 	@Override
 	public void dispose() {

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.ui.di.Focus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -499,6 +501,7 @@ public class ModelEditor {
 		}
 	}
 
+	@Focus
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

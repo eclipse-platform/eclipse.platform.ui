@@ -19,9 +19,4 @@ public class E4WorkbenchModelEditor extends DIEditorPart<ApplicationModelEditor>
 	public E4WorkbenchModelEditor() {
 		super(ApplicationModelEditor.class);
 	}
-
-	@Override
-	public void setFocus() {
-		getComponent().setFocus();
-	}
 }
