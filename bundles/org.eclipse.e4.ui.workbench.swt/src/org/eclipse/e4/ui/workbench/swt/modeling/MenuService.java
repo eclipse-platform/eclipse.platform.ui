@@ -24,9 +24,7 @@ public class MenuService implements EMenuService {
 		for (MMenu mmenu : myPart.getMenus()) {
 			if (menuId.equals(mmenu.getElementId())
 					&& mmenu instanceof MPopupMenu) {
-				Menu menu = new Menu(parentControl);
-				parentControl.setMenu(menu);
-				if (registerMenu(menu, (MPopupMenu) mmenu)) {
+				if (registerMenu(parentControl, (MPopupMenu) mmenu)) {
 					return (MPopupMenu) mmenu;
 				} else {
 					return null;
@@ -36,10 +34,13 @@ public class MenuService implements EMenuService {
 		return null;
 	}
 
-	private boolean registerMenu(final Menu menu, final MPopupMenu mmenu) {
+	private boolean registerMenu(final Control parentControl,
+			final MPopupMenu mmenu) {
 		if (mmenu.getWidget() != null) {
 			return false;
 		}
+		Menu menu = new Menu(parentControl);
+		parentControl.setMenu(menu);
 		mmenu.setWidget(menu);
 		menu.setData(AbstractPartRenderer.OWNING_ME, mmenu);
 		IEclipseContext popupContext = myPart.getContext().createChild(
