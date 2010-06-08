@@ -76,9 +76,6 @@ public class MenuServiceFilter implements Listener {
 		if (obj == null && menu.getParentItem() != null) {
 			obj = menu.getParentItem().getData(AbstractPartRenderer.OWNING_ME);
 		}
-		if (DEBUG) {
-			trace("handleEvent: " + event.type + " obj: " + obj, menu, null);
-		}
 		if (obj instanceof MRenderedMenu) {
 			handlerRenderedMenu(event, menu, (MRenderedMenu) obj);
 		} else if (obj instanceof MPopupMenu) {
@@ -120,7 +117,8 @@ public class MenuServiceFilter implements Listener {
 
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(parentContext);
-		addMenuContributions(menuModel, menuContributionsToRemove, eContext);
+		addMenuContributions(menuModel, menuModel.getElementId(),
+				menuContributionsToRemove, eContext);
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -169,7 +167,14 @@ public class MenuServiceFilter implements Listener {
 
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(popupContext);
-		addMenuContributions(menuModel, menuContributionsToRemove, eContext);
+		addMenuContributions(menuModel, menuModel.getElementId(),
+				menuContributionsToRemove, eContext);
+		for (String tag : menuModel.getTags()) {
+			if (tag.startsWith("popup:") && tag.length() > 6) {
+				addMenuContributions(menuModel, tag.substring(6),
+						menuContributionsToRemove, eContext);
+			}
+		}
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -203,30 +208,35 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void addMenuContributions(final MMenu menuModel,
+	private void addMenuContributions(final MMenu menuModel, final String id,
 			final ArrayList<MMenuElement> menuContributionsToRemove,
 			final ExpressionContext eContext) {
+		ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		for (MMenuContribution menuContribution : application
 				.getMenuContributions()) {
 			String parentID = menuContribution.getParentID();
 			boolean popup = parentID.equals("popup")
 					&& (menuModel instanceof MPopupMenu);
-			if (!popup && !parentID.equals(menuModel.getElementId())) {
+			if (!popup && !parentID.equals(id)
+					|| !menuContribution.isToBeRendered()) {
 				continue;
 			}
 			if (isVisible(menuContribution, eContext)) {
-				// TODO place the menu contribution "in" the model, instead of
-				// at the end
-				for (MMenuElement item : menuContribution.getChildren()) {
-					MMenuElement copy = (MMenuElement) EcoreUtil
-							.copy((EObject) item);
-					if (DEBUG) {
-						trace("addMenuContribution " + copy,
-								(Widget) menuModel.getWidget(), menuModel);
-					}
-					menuContributionsToRemove.add(copy);
-					menuModel.getChildren().add(copy);
+				toContribute.add(menuContribution);
+			}
+		}
+		for (MMenuContribution menuContribution : toContribute) {
+			// TODO place the menu contribution "in" the model, instead of
+			// at the end
+			for (MMenuElement item : menuContribution.getChildren()) {
+				MMenuElement copy = (MMenuElement) EcoreUtil
+						.copy((EObject) item);
+				if (DEBUG) {
+					trace("addMenuContribution " + copy,
+							(Widget) menuModel.getWidget(), menuModel);
 				}
+				menuContributionsToRemove.add(copy);
+				menuModel.getChildren().add(copy);
 			}
 		}
 	}
@@ -294,10 +304,8 @@ public class MenuServiceFilter implements Listener {
 
 		if (menuModel.getChildren().size() == 1
 				&& menuModel.getChildren().get(0) instanceof MPopupMenu) {
-			System.err.println("show popups successfull");
 			showPopup(event, menu, (MPopupMenu) menuModel.getChildren().get(0));
 		} else {
-			System.err.println("show legacy successfull");
 			showMenu(event, menu, menuModel);
 		}
 		event.type = SWT.None;

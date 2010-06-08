@@ -82,6 +82,7 @@ public class CompatibilityView extends CompatibilityPart {
 				if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)
 						&& (me instanceof MRenderedMenu)) {
 					menu = (MRenderedMenu) me;
+					break;
 				}
 			}
 			if (menu == null) {
@@ -93,6 +94,21 @@ public class CompatibilityView extends CompatibilityPart {
 
 			}
 			menu.setContributionManager(mm);
+		} else {
+			MMenu menu = null;
+			for (MMenu me : part.getMenus()) {
+				if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
+					menu = me;
+					break;
+				}
+			}
+			if (menu == null) {
+				menu = MenuFactoryImpl.eINSTANCE.createMenu();
+				menu.setElementId(part.getElementId());
+
+				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
+				part.getMenus().add(menu);
+			}
 		}
 
 		// Construct the toolbar (if necessary)

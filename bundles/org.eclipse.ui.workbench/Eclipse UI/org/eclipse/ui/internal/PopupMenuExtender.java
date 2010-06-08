@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -46,10 +47,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.menus.InternalMenuService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.MenuUtil;
 
 /**
  * This class extends a single popup menu
@@ -130,7 +129,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		this.menu = menu;
 		this.selProvider = prov;
 		this.part = part;
-		this.modelPart = ((PartSite) part.getSite()).getModel();
+		this.modelPart = (MPart) part.getSite().getService(MPart.class);
 		if (includeEditorInput) {
 			bitSet |= INCLUDE_EDITOR_INPUT;
 		}
@@ -148,7 +147,8 @@ public class PopupMenuExtender implements IMenuListener2,
 	private void createModelFor(String id) {
 		menuModel = null;
 		for (MMenu item : modelPart.getMenus()) {
-			if (id.equals(item.getElementId()) && item instanceof MRenderedMenu) {
+			if (id.equals(item.getElementId()) && item instanceof MRenderedMenu
+					&& item.getTags().contains("popup")) { //$NON-NLS-1$
 				menuModel = (MRenderedMenu) item;
 				break;
 			}
@@ -156,6 +156,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		if (menuModel == null) {
 			menuModel = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			menuModel.setElementId(id);
+			menuModel.getTags().add("popup"); //$NON-NLS-1$
 			modelPart.getMenus().add(menuModel);
 			MPopupMenu popup = MenuFactoryImpl.eINSTANCE.createPopupMenu();
 			popup.setElementId(id);
@@ -212,6 +213,13 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     public final void addMenuId(final String menuId) {
 		bitSet &= ~STATIC_ACTION_READ;
+		if (menuModel != null) {
+			List<String> tags = menuModel.getChildren().get(0).getTags();
+			String tag = "popup:" + menuId; //$NON-NLS-1$
+			if (!tags.contains(tag)) {
+				tags.add(tag);
+			}
+		}
 		readStaticActionsFor(menuId);
 	}
 
@@ -344,7 +352,6 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     public void menuAboutToShow(IMenuManager mgr) {
 		registerE4Support();
-    	IMenuManager originalManager = mgr;
     	
     	// Add this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
@@ -374,7 +381,6 @@ public class PopupMenuExtender implements IMenuListener2,
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
-        addMenuContributions(originalManager);
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
             addEditorActions(mgr);
         }
@@ -383,35 +389,9 @@ public class PopupMenuExtender implements IMenuListener2,
         cleanUpContributionCache();
     }
     
-    private boolean contributionsPopulated = false;
 
 	private MRenderedMenu menuModel;
     
-    private void addMenuContributions(IMenuManager mgr) {
-		final IMenuService menuService = (IMenuService) part.getSite()
-				.getService(IMenuService.class);
-		if (menuService == null) {
-			return;
-		}
-		if ((mgr.getRemoveAllWhenShown() || !contributionsPopulated)
-				&& mgr instanceof ContributionManager) {
-			ContributionManager manager = (ContributionManager) mgr;
-			contributionsPopulated = true;
-			menuService
-					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
-			Iterator i = getMenuIds().iterator();
-			while (i.hasNext()) {
-				String id = "popup:" + i.next(); //$NON-NLS-1$
-				if (menuService instanceof InternalMenuService) {
-					((InternalMenuService) menuService)
-							.populateContributionManager(manager, id, false);
-				} else {
-					menuService.populateContributionManager(manager, id);
-				}
-			}
-		}
-	}
-
     /**
 	 * Notifies the listener that the menu is about to be hidden.
 	 */
@@ -470,23 +450,9 @@ public class PopupMenuExtender implements IMenuListener2,
 				items[i].dispose();
 			}
 		}
-		if (!managerContributionCache.isEmpty() && menu.getRemoveAllWhenShown()) {
-			ContributionManager[] items = (ContributionManager[]) managerContributionCache
-					.toArray(new ContributionManager[managerContributionCache
-							.size()]);
-			managerContributionCache.clear();
-			final IMenuService menuService = (IMenuService) part.getSite()
-					.getService(IMenuService.class);
-			if (menuService instanceof InternalMenuService) {
-				InternalMenuService realService = (InternalMenuService) menuService;
-				for (int i = 0; i < items.length; i++) {
-					realService.releaseContributions(items[i]);
-					items[i].removeAll();
-				}
-			}
-		} else {
-			managerContributionCache.clear();
-		}
+
+		managerContributionCache.clear();
+
 	}
 
 	/**

@@ -13,14 +13,6 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-
-import org.eclipse.e4.ui.internal.workbench.E4CommandProcessor;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.e4.ui.workbench.UIEvents;
-
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -36,8 +28,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -77,6 +69,9 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.E4CommandProcessor;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -87,15 +82,17 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1915,7 +1912,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 				bindingManager = new BindingManager(contextManager, commandManager);
 				serviceLocator.registerService(BindingManager.class, bindingManager);
-				bindingService[0] = (IBindingService) ContextInjectionFactory.make(
+				bindingService[0] = ContextInjectionFactory.make(
 						BindingService.class, e4Context);
 			}
 		});
@@ -1929,7 +1926,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class, commandImageService);
 
-		final WorkbenchMenuService menuService = new WorkbenchMenuService(serviceLocator);
+		final WorkbenchMenuService menuService = new WorkbenchMenuService(serviceLocator, e4Context);
 
 		serviceLocator.registerService(IMenuService.class, menuService);
 		// the service must be registered before it is initialized - its
