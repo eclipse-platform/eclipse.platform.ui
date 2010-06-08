@@ -29,10 +29,17 @@ public class SeparatorRenderer extends SWTPartRenderer {
 		Widget newSep = null;
 
 		if (element instanceof MMenuSeparator) {
+			Menu menu = null;
 			Object widget = element.getParent().getWidget();
-			Menu menu = widget instanceof Menu ? (Menu) widget
-					: ((MenuItem) widget).getMenu();
-			newSep = new MenuItem(menu, SWT.SEPARATOR);
+			if (widget instanceof Menu) {
+				menu = (Menu) widget;
+			} else if (widget instanceof MenuItem) {
+				menu = ((MenuItem) widget).getMenu();
+			}
+			if (menu != null) {
+				// this shouldn't happen, but it might
+				newSep = new MenuItem(menu, SWT.SEPARATOR);
+			}
 		} else if (element instanceof MToolBarSeparator) {
 			ToolBar tb = (ToolBar) element.getParent().getWidget();
 			newSep = new ToolItem(tb, SWT.SEPARATOR);
