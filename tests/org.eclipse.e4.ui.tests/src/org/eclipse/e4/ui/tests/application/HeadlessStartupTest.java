@@ -30,7 +30,7 @@ import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
-import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 
 public abstract class HeadlessStartupTest extends TestCase {
 
@@ -55,8 +55,9 @@ public abstract class HeadlessStartupTest extends TestCase {
 	}
 
 	private IEclipseContext createOSGiContext() {
-		osgiContext = EclipseContextFactory.getServiceContext(Activator
-				.getDefault().getBundle().getBundleContext());
+		osgiContext = EclipseContextFactory
+				.getServiceContext(WorkbenchSWTActivator.getDefault()
+						.getBundle().getBundleContext());
 		return osgiContext;
 	}
 

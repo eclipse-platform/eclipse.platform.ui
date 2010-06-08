@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Workbench SWT support (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.swt;singleton:=true
 Bundle-Version: 0.9.1.qualifier
-Bundle-Activator: org.eclipse.e4.ui.workbench.swt.Activator
+Bundle-Activator: org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator
 Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.equinox.app,
  org.eclipse.e4.ui.workbench,
@@ -22,7 +22,9 @@ Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.core.jobs;bundle-version="3.5.0",
  org.eclipse.e4.core.di,
  org.eclipse.e4.ui.css.swt.theme;bundle-version="0.9.0",
- org.eclipse.core.expressions;bundle-version="3.4.200"
+ org.eclipse.core.expressions;bundle-version="3.4.200",
+ org.eclipse.osgi;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-internal:=true,
@@ -33,7 +35,8 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.modeling,
  org.eclipse.e4.ui.workbench.swt.util
 Bundle-Vendor: Eclipse.org
-Import-Package: javax.annotation;version="1.0.0",
+Import-Package: com.ibm.icu.text;version="4.2.1",
+ javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0",
  org.apache.batik.css.engine;version="1.6.0",
  org.eclipse.osgi.service.datalocation;version="1.2.0",

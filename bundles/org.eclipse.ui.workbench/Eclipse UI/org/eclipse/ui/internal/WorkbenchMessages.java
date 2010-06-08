@@ -383,6 +383,7 @@ public class WorkbenchMessages extends NLS {
 
 
 	public static String ICategory_other;
+	public static String ICategory_general;
 
 	// ==============================================================================
 	// Wizards

@@ -46,7 +46,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
@@ -180,7 +180,7 @@ public class E4Application implements IApplication {
 			IEclipseContext eclipseContext) {
 		MApplication theApp = null;
 
-		Location instanceLocation = Activator.getDefault()
+		Location instanceLocation = WorkbenchSWTActivator.getDefault()
 				.getInstanceLocation();
 
 		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG, appContext);
@@ -194,8 +194,8 @@ public class E4Application implements IApplication {
 
 		saveAndRestore = value == null || Boolean.getBoolean(value);
 
-		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE,
-				Boolean.valueOf(saveAndRestore));
+		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE, Boolean
+				.valueOf(saveAndRestore));
 		eclipseContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI,
 				initialWorkbenchDefinitionInstance);
 		eclipseContext.set(E4Workbench.INSTANCE_LOCATION, instanceLocation);
@@ -252,11 +252,10 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext
-				.set(Logger.class.getName(), ContextInjectionFactory.make(
-						WorkbenchLogger.class, appContext));
-		appContext.set(Adapter.class.getName(),
-				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
+		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
+				WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
+				EclipseAdapter.class, appContext));
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());

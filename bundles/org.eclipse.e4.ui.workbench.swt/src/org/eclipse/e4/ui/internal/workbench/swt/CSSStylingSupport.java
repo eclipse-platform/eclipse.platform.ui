@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
@@ -31,7 +31,7 @@ public class CSSStylingSupport {
 
 	public static void initializeStyling(Display display, String cssURI,
 			String resourceURI, IEclipseContext appContext) {
-		Bundle bundle = Activator.getDefault().getBundle();
+		Bundle bundle = WorkbenchSWTActivator.getDefault().getBundle();
 		BundleContext context = bundle.getBundleContext();
 		ServiceReference ref = context.getServiceReference(IThemeManager.class
 				.getName());
@@ -43,7 +43,7 @@ public class CSSStylingSupport {
 
 		// Create the OSGi resource locator
 		if (resourceURI != null) {
-			//TODO: Should this be set through an extension as well?
+			// TODO: Should this be set through an extension as well?
 			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
 					.toString()));
 		}
