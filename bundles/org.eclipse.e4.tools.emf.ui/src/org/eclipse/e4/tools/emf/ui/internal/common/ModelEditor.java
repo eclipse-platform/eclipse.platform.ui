@@ -216,7 +216,7 @@ public class ModelEditor {
 					IStructuredSelection s = (IStructuredSelection) event.getSelection();
 					if (s.getFirstElement() instanceof EObject) {
 						EObject obj = (EObject) s.getFirstElement();
-						AbstractComponentEditor editor = editorMap.get(obj.eClass());
+						AbstractComponentEditor editor = getEditor(obj.eClass());
 						if (editor != null) {
 							textLabel.setText(editor.getLabel(obj));
 							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
@@ -264,7 +264,7 @@ public class ModelEditor {
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(s.getFirstElement());
 					} else {
 						EObject o = (EObject) s.getFirstElement();
-						AbstractComponentEditor editor = editorMap.get(o.eClass());
+						AbstractComponentEditor editor = getEditor(o.eClass());
 						if (editor != null) {
 							actions = editor.getActions(s.getFirstElement());
 						} else {
@@ -480,7 +480,16 @@ public class ModelEditor {
 	}
 
 	public AbstractComponentEditor getEditor(EClass eClass) {
-		return editorMap.get(eClass);
+		AbstractComponentEditor editor = editorMap.get(eClass);
+		if( editor == null ) {
+			for( EClass cl : eClass.getESuperTypes() ) {
+				editor = getEditor(cl);
+				if( editor != null ) {
+					return editor;
+				}
+			}
+		}
+		return editor;
 	}
 
 	@Persist
@@ -506,7 +515,7 @@ public class ModelEditor {
 			} else if (target instanceof VirtualEntry<?>) {
 				return ((VirtualEntry<?>) target).getList();
 			} else {
-				AbstractComponentEditor editor = editorMap.get(((EObject) target).eClass());
+				AbstractComponentEditor editor = getEditor(((EObject) target).eClass());
 				if (editor != null) {
 					return editor.getChildList(target);
 				}
