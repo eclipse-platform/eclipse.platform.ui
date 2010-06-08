@@ -1023,6 +1023,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		shutdown();
 
+		IPresentationEngine engine = application.getContext().get(IPresentationEngine.class);
+		engine.stop();
+		//System.err.println("stop()"); //$NON-NLS-1$
+
 		runEventLoop = false;
 		return true;
 	}
