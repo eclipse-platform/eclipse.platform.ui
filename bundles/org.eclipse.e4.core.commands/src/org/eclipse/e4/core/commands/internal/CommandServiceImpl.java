@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.core.commands.internal;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
@@ -21,6 +19,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  *
@@ -50,7 +49,11 @@ public class CommandServiceImpl implements ECommandService {
 	 * java.util.Map)
 	 */
 	public ParameterizedCommand createCommand(String id, Map parameters) {
-		return ParameterizedCommand.generateCommand(getCommand(id), parameters);
+		Command command = getCommand(id);
+		if (command == null) {
+			return null;
+		}
+		return ParameterizedCommand.generateCommand(command, parameters);
 	}
 
 	/*
