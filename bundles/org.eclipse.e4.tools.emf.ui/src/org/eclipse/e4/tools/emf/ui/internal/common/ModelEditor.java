@@ -355,7 +355,7 @@ public class ModelEditor {
 		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
 		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
-			if (!"virtualeditor".equals(el.getName())) {
+			if (!"virtualeditor".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
@@ -382,7 +382,6 @@ public class ModelEditor {
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {
-		// System.err.println("Registering: " + id + " => " + editor);
 		virtualEditors.put(id, editor);
 	}
 
@@ -395,7 +394,7 @@ public class ModelEditor {
 		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
 		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
-			if (!"editor".equals(el.getName())) {
+			if (!"editor".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
