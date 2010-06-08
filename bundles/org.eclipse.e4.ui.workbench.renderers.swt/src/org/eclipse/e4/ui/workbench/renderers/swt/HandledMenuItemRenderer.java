@@ -124,7 +124,8 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 			if (sequence != null) {
 				text = text + '\t' + sequence.format();
 			}
-			item.setText(text);
+			item.setText(text == null ? handledItem.getCommand().getElementId()
+					: text);
 		} else {
 			super.setItemText(model, item);
 		}
