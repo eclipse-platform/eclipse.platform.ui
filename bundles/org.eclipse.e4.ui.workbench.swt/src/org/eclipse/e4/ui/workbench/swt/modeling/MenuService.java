@@ -7,6 +7,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -15,10 +16,16 @@ public class MenuService implements EMenuService {
 	@Inject
 	private MPart myPart;
 
-	public MPopupMenu registerContextMenu(Menu menu, String menuId) {
+	public MPopupMenu registerContextMenu(Object parent, String menuId) {
+		if (!(parent instanceof Control)) {
+			return null;
+		}
+		Control parentControl = (Control) parent;
 		for (MMenu mmenu : myPart.getMenus()) {
 			if (menuId.equals(mmenu.getElementId())
 					&& mmenu instanceof MPopupMenu) {
+				Menu menu = new Menu(parentControl);
+				parentControl.setMenu(menu);
 				if (registerMenu(menu, (MPopupMenu) mmenu)) {
 					return (MPopupMenu) mmenu;
 				} else {

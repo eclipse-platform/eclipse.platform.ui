@@ -1,7 +1,6 @@
 package org.eclipse.e4.ui.workbench.swt.modeling;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.swt.widgets.Menu;
 
 /**
  * Provide for management of different menus.
@@ -9,13 +8,13 @@ import org.eclipse.swt.widgets.Menu;
 public interface EMenuService {
 
 	/**
-	 * Hook up this menu with the context menu in the model.
+	 * Create a menu for this control and hook it up with the MPopupMenu.
 	 * 
-	 * @param menu
-	 *            the SWT menu
+	 * @param parent
+	 *            The parent for the context menu. A Control in SWT.
 	 * @param menuId
 	 *            the ID of the menu to use
 	 */
-	MPopupMenu registerContextMenu(Menu menu, String menuId);
+	MPopupMenu registerContextMenu(Object parent, String menuId);
 
 }
