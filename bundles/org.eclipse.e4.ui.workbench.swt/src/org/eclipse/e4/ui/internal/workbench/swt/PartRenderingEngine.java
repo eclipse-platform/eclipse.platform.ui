@@ -584,10 +584,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public void stop() {
 		if (menuServiceFilter != null) {
-			System.err.println("IPE#stop()");
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {
-				System.err.println("IPE#stop() - dispose");
 				display.removeFilter(SWT.Show, menuServiceFilter);
 				display.removeFilter(SWT.Hide, menuServiceFilter);
 				display.removeFilter(SWT.Dispose, menuServiceFilter);
