@@ -21,80 +21,60 @@ import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerMenuContributionTest extends
 		ModelReconcilerTest {
 
-	// private void testMenuContribution_PositionInParent(String before,
-	// String after) {
-	// MApplication application = createApplication();
-	//
-	// MMenuContribution contribution = MenuFactoryImpl.eINSTANCE
-	// .createMenuContribution();
-	// application.getMenuContributions().add(contribution);
-	// contribution.setPositionInParent(before);
-	//
-	// saveModel();
-	//
-	// ModelReconciler reconciler = createModelReconciler();
-	// reconciler.recordChanges(application);
-	//
-	// contribution.setPositionInParent(after);
-	//
-	// Object state = reconciler.serialize();
-	//
-	// application = createApplication();
-	// contribution = application.getMenuContributions().get(0);
-	//
-	// Collection<ModelDelta> deltas = constructDeltas(application, state);
-	//
-	// assertEquals(1, application.getMenuContributions().size());
-	// assertEquals(contribution, application.getMenuContributions().get(0));
-	// assertEquals(before, contribution.getPositionInParent());
-	//
-	// applyAll(deltas);
-	//
-	// assertEquals(1, application.getMenuContributions().size());
-	// assertEquals(contribution, application.getMenuContributions().get(0));
-	// assertEquals(after, contribution.getPositionInParent());
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_NullNull() {
-	// testMenuContribution_PositionInParent(null, null);
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_NullEmpty() {
-	// testMenuContribution_PositionInParent(null, "");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_NullString() {
-	// testMenuContribution_PositionInParent(null, "id");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_EmptyNull() {
-	// testMenuContribution_PositionInParent("", null);
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_EmptyEmpty() {
-	// testMenuContribution_PositionInParent("", "");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_EmptyString() {
-	// testMenuContribution_PositionInParent("", "id");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_StringNull() {
-	// testMenuContribution_PositionInParent("id", null);
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_StringEmpty() {
-	// testMenuContribution_PositionInParent("id", "");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_StringStringUnchanged()
-	// {
-	// testMenuContribution_PositionInParent("id", "id");
-	// }
-	//
-	// public void testMenuContribution_PositionInParent_StringStringChanged() {
-	// testMenuContribution_PositionInParent("id", "id2");
-	// }
+	private void testMenuContribution_PositionInParent(String before,
+			String after) {
+		MApplication application = createApplication();
+
+		MMenuContribution contribution = MenuFactoryImpl.eINSTANCE
+				.createMenuContribution();
+		application.getMenuContributions().add(contribution);
+		contribution.setPositionInParent(before);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		contribution.setPositionInParent(after);
+
+		Object state = reconciler.serialize();
+		print(state);
+
+		application = createApplication();
+		contribution = application.getMenuContributions().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getMenuContributions().size());
+		assertEquals(contribution, application.getMenuContributions().get(0));
+		assertEquals(before, contribution.getPositionInParent());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getMenuContributions().size());
+		assertEquals(contribution, application.getMenuContributions().get(0));
+		assertEquals(after, contribution.getPositionInParent());
+	}
+
+	public void testMenuContribution_PositionInParent_EmptyEmpty() {
+		testMenuContribution_PositionInParent("", "");
+	}
+
+	public void testMenuContribution_PositionInParent_EmptyString() {
+		testMenuContribution_PositionInParent("", "id");
+	}
+
+	public void testMenuContribution_PositionInParent_StringEmpty() {
+		testMenuContribution_PositionInParent("id", "");
+	}
+
+	public void testMenuContribution_PositionInParent_StringStringUnchanged() {
+		testMenuContribution_PositionInParent("id", "id");
+	}
+
+	public void testMenuContribution_PositionInParent_StringStringChanged() {
+		testMenuContribution_PositionInParent("id", "id2");
+	}
 
 	private void testMenuContribution_ParentID(String before, String after) {
 		MApplication application = createApplication();
