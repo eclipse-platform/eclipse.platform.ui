@@ -274,6 +274,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentID();
 		} else if (featureName.equals(MENUITEM_MNEMONICS_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getMenuItem_Mnemonics();
+		} else if (featureName.equals(PARAMETER_NAME_ATTNAME)) {
+			return CommandsPackageImpl.eINSTANCE.getParameter_Name();
+		} else if (featureName.equals(PARAMETER_VALUE_ATTNAME)) {
+			return CommandsPackageImpl.eINSTANCE.getParameter_Value();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -407,6 +411,14 @@ public class XMLModelReconciler extends ModelReconciler {
 					if (constructDeltas(deltas, references, (EObject) trimBar, element, id)) {
 						return true;
 					}
+				}
+			}
+		}
+
+		if (object instanceof MHandledItem) {
+			for (MParameter parameter : ((MHandledItem) object).getParameters()) {
+				if (constructDeltas(deltas, references, (EObject) parameter, element, id)) {
+					return true;
 				}
 			}
 		}

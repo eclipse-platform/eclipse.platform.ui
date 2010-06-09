@@ -334,6 +334,18 @@ public abstract class ModelReconciler {
 			.getPlaceholder_Ref().getName();
 
 	/**
+	 * Attribute defined by MParameters (value is <code>name</code>).
+	 */
+	public static final String PARAMETER_NAME_ATTNAME = CommandsPackageImpl.eINSTANCE
+			.getParameter_Name().getName();
+
+	/**
+	 * Attribute defined by MParameters (value is <code>value</code>).
+	 */
+	public static final String PARAMETER_VALUE_ATTNAME = CommandsPackageImpl.eINSTANCE
+			.getParameter_Value().getName();
+
+	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements
 	 * of the object will also be recorded. When the desired changes have been captured,
 	 * {@link #serialize()} should be called.
