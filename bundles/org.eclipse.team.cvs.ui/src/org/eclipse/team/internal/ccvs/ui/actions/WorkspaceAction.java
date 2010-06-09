@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,12 +57,12 @@ public abstract class WorkspaceAction extends CVSAction {
 			// Ensure that the required sync info is loaded
 			if (requiresLocalSyncInfo()) {
 				// There is a possibility of the selection containing an orphaned subtree.
-				// If it does, they will be purged and enablement rechecked before the 
+				// If it does, they will be purged and enablement rechecked before the
 				// operation is performed.
 				handleOrphanedSubtrees();
 				// Check enablement just in case the sync info wasn't loaded
 				if (!isEnabled()) {
-					MessageDialog.openInformation(getShell(), CVSUIMessages.CVSAction_disabledTitle, CVSUIMessages.CVSAction_disabledMessage); // 
+					MessageDialog.openInformation(getShell(), CVSUIMessages.CVSAction_disabledTitle, CVSUIMessages.CVSAction_disabledMessage); //
 					return false;
 				}
 			}
@@ -207,7 +207,7 @@ public abstract class WorkspaceAction extends CVSAction {
 	protected void setActionEnablement(IAction action) {
 		try {
 			boolean requires = requiresLocalSyncInfo();
-			if (!requires || (requires && isSyncInfoLoaded(getSelectedResources()))) {
+			if (!requires || isSyncInfoLoaded(getSelectedResources())) {
 				super.setActionEnablement(action);
 			} else {
 				// If the sync info is not loaded, enable the menu item
@@ -249,11 +249,11 @@ public abstract class WorkspaceAction extends CVSAction {
 				}
 				String question;
 				if (resources.length == 1) {
-					question = NLS.bind(CVSUIMessages.CVSAction_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); 
+					question = NLS.bind(CVSUIMessages.CVSAction_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() });
 				} else {
-					question = NLS.bind(CVSUIMessages.CVSAction_refreshMultipleQuestion, new String[] { status.getMessage() }); 
+					question = NLS.bind(CVSUIMessages.CVSAction_refreshMultipleQuestion, new String[] { status.getMessage() });
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSAction_refreshTitle, question); 
+				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSAction_refreshTitle, question);
 			}
 		};
 		Display.getDefault().syncExec(runnable);
@@ -319,7 +319,7 @@ public abstract class WorkspaceAction extends CVSAction {
 				return false;
 			}
 			
-			// collect files and folders separately to check for overlap later	
+			// collect files and folders separately to check for overlap later
 			IPath resourceFullPath = resource.getFullPath();
 			if(resource.getType() == IResource.FILE) {
 				filePaths.add(resourceFullPath);
@@ -461,7 +461,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		try {
 			IResource[] resources = getSelectedResources();
 			CVSTag commonTag = null;
-			boolean sameTagType = true; 
+			boolean sameTagType = true;
 			boolean multipleSameNames = true;
 			
 			for (int i = 0; i < resources.length; i++) {
@@ -470,7 +470,7 @@ public abstract class WorkspaceAction extends CVSAction {
 				if(cvsResource.isFolder()) {
 					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
 					if(info != null) {
-						tag = info.getTag();									
+						tag = info.getTag();
 					}
 					if (tag != null && tag.getType() == CVSTag.BRANCH) {
 						tag = Util.getAccurateFolderTag(resources[i], tag);
@@ -483,7 +483,7 @@ public abstract class WorkspaceAction extends CVSAction {
 				}
 				if(commonTag == null) {
 					commonTag = tag;
-				} else if(!commonTag.equals(tag)) {					
+				} else if(!commonTag.equals(tag)) {
 					if(commonTag.getType() != tag.getType()) {
 						sameTagType = false;
 					}
@@ -494,25 +494,25 @@ public abstract class WorkspaceAction extends CVSAction {
 			}
 			
 			// set text to default
-			String actionText = CVSUIMessages.ReplaceWithLatestAction_multipleTags; 
+			String actionText = CVSUIMessages.ReplaceWithLatestAction_multipleTags;
 			if(commonTag != null) {
 				int tagType = commonTag.getType();
 				String tagName = commonTag.getName();
 				// multiple tag names but of the same type
 				if(sameTagType && !multipleSameNames) {
 					if(tagType == CVSTag.BRANCH) {
-						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleBranches; //					
+						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleBranches; //
 					} else {
-						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleVersions; 
+						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleVersions;
 					}
 				// same tag names and types
 				} else if(sameTagType && multipleSameNames) {
 					if(tagType == CVSTag.BRANCH) {
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleBranch, new String[] { tagName }); //					
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleBranch, new String[] { tagName }); //
 					} else if(tagType == CVSTag.VERSION){
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleVersion, new String[] { tagName }); 
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleVersion, new String[] { tagName });
 					} else if(tagType == CVSTag.HEAD) {
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleHEAD, new String[] { tagName }); 
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleHEAD, new String[] { tagName });
 					}
 				}
 			}
@@ -520,7 +520,7 @@ public abstract class WorkspaceAction extends CVSAction {
 			return actionText;
 		} catch (CVSException e) {
 			// silently ignore
-			return CVSUIMessages.ReplaceWithLatestAction_multipleTags; // 
+			return CVSUIMessages.ReplaceWithLatestAction_multipleTags; //
 		}
 	}
 
@@ -531,19 +531,19 @@ public abstract class WorkspaceAction extends CVSAction {
 		try {
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(null, selectedResources.length * 100);
-			monitor.setTaskName(CVSUIMessages.ReplaceWithAction_calculatingDirtyResources); 
+			monitor.setTaskName(CVSUIMessages.ReplaceWithAction_calculatingDirtyResources);
 			for (int i = 0; i < selectedResources.length; i++) {
 				IResource resource = selectedResources[i];
 				ICVSResource cvsResource = getCVSResourceFor(resource);
 				if(cvsResource.isModified(Policy.subMonitorFor(monitor, 100))) {
 					dirtyResources.add(resource);
-				}			
+				}
 			}
 		} finally {
-			monitor.done();		
+			monitor.done();
 		}
 		
-		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources, 
+		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources,
 				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), CVSUIMessages.ReplaceWithAction_confirmOverwrite);
 		return dialog.promptForMultiple();
 	}
