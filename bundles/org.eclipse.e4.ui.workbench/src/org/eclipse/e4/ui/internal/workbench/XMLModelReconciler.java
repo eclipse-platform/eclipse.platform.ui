@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
@@ -50,6 +51,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
@@ -208,7 +210,13 @@ public class XMLModelReconciler extends ModelReconciler {
 				return CommandsPackageImpl.eINSTANCE.getHandler_Command();
 			}
 			return MenuPackageImpl.eINSTANCE.getHandledItem_Command();
-		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)) {
+		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)
+				|| featureName.equals(HANDLEDITEM_PARAMETERS_ATTNAME)) {
+			// technically both names are the same
+
+			if (object instanceof MHandledItem) {
+				return MenuPackageImpl.eINSTANCE.getHandledItem_Parameters();
+			}
 			return CommandsPackageImpl.eINSTANCE.getCommand_Parameters();
 		} else if (featureName.equals(ITEM_ENABLED_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getItem_Enabled();
@@ -1054,6 +1062,35 @@ public class XMLModelReconciler extends ModelReconciler {
 			return parametersChanged ? null : reference.eContainer();
 		}
 
+		if (reference instanceof MParameter) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean parametersChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key instanceof MHandledItem) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(HANDLEDITEM_PARAMETERS_ATTNAME)) {
+							List<?> parameters = (List<?>) change.getValue();
+							for (Object parameter : parameters) {
+								if (parameter == reference) {
+									return key;
+								}
+							}
+
+							parametersChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return parametersChanged ? null : reference.eContainer();
+		}
+
 		if (reference instanceof MCommand) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
@@ -1769,7 +1806,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a MenuContributions has multiple menu contributions
 				featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME) ||
 				// a Command has multiple (command) parameters
-				featureName.equals(COMMAND_PARAMETERS_ATTNAME);
+				featureName.equals(COMMAND_PARAMETERS_ATTNAME) ||
+				// a HandledItem has multiple parameters
+				featureName.equals(HANDLEDITEM_PARAMETERS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

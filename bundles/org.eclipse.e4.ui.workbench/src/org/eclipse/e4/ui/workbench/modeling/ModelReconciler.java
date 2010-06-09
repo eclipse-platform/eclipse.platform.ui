@@ -256,6 +256,12 @@ public abstract class ModelReconciler {
 			.getHandledItem_Command().getName();
 
 	/**
+	 * Attribute defined by MHandledItems (value is <code>parameters</code>).
+	 */
+	public static final String HANDLEDITEM_PARAMETERS_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getHandledItem_Parameters().getName();
+
+	/**
 	 * Attribute defined by MKeyBindings (value is <code>command</code>).
 	 */
 	public static final String KEYBINDING_COMMAND_ATTNAME = CommandsPackageImpl.eINSTANCE
