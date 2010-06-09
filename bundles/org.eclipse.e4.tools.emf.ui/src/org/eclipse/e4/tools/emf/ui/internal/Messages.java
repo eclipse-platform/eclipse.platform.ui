@@ -168,6 +168,7 @@ public class Messages {
 	public static String ModelComponentEditor_UiChildren;
 	public static String ModelComponentEditor_PartDescriptors;
 	public static String ModelComponentEditor_DetailParentId;
+	public static String ModelComponentEditor_MenuContributions;
 	
 	public static String ModelComponentsEditor_Label;
 	public static String ModelComponentsEditor_Description;
@@ -308,9 +309,20 @@ public class Messages {
 	public static String ContributionClassDialog_Label_Classname;
 	public static String ContributionClassDialog_ShellTitle;
 
-	
-	
-	
+	public static String MenuContributionEditor_Id;
+	public static String MenuContributionEditor_MenuItems;
+	public static String MenuContributionEditor_MenuItemType;
+	public static String MenuContributionEditor_MenuItemItemType;
+	public static String MenuContributionEditor_Up;
+	public static String MenuContributionEditor_Down;
+	public static String MenuContributionEditor_HandledMenuItem;
+	public static String MenuContributionEditor_Separator;
+	public static String MenuContributionEditor_Menu;
+	public static String MenuContributionEditor_DirectMenuItem;
+	public static String MenuContributionEditor_Remove;
+	public static String MenuContributionEditor_ParentId;
+	public static String MenuContributionEditor_Position;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

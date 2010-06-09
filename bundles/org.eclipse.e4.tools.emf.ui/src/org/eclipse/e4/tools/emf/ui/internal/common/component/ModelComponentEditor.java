@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -55,6 +57,7 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
 	private IListProperty MODEL_COMPONENT__COMMANDS = EMFProperties.list(ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS);
 	private IListProperty MODEL_COMPONENT__BINDINGS = EMFProperties.list(ApplicationPackageImpl.Literals.MODEL_COMPONENT__BINDINGS);
+	private IListProperty MENU_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 	
 	public ModelComponentEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -242,6 +245,15 @@ public class ModelComponentEditor extends AbstractComponentEditor {
 			@Override
 			protected boolean accepted(Object o) {
 				return o instanceof MPartDescriptor;
+			}
+
+		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS, element, Messages.ModelComponentEditor_MenuContributions) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
 			}
 
 		});
