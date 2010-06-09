@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
+import javax.inject.Named;
+
 import javax.inject.Inject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -21,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ApplicationModelEditor extends ModelEditor {
 	@Inject
 	public ApplicationModelEditor(Composite composite, IEclipseContext context,
-			IModelResource modelProvider, @Optional IProject project) {
+			IModelResource modelProvider, @Named("org.eclipse.e4.tools.emf.ui.editorproject") @Optional IProject project) {
 		super(composite, context, modelProvider, project);
 	}
-}
+} 
