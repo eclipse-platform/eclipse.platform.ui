@@ -50,6 +50,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.IDelta;
@@ -255,6 +257,12 @@ public class XMLModelReconciler extends ModelReconciler {
 			return BasicPackageImpl.eINSTANCE.getTrimmedWindow_TrimBars();
 		} else if (featureName.equals(PLACEHOLDER_REF_NAME)) {
 			return AdvancedPackageImpl.eINSTANCE.getPlaceholder_Ref();
+		} else if (featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getMenuContributions_MenuContributions();
+		} else if (featureName.equals(MENUCONTRIBUTION_POSITIONINPARENT_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
+		} else if (featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentID();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -362,6 +370,15 @@ public class XMLModelReconciler extends ModelReconciler {
 			MToolBar toolBar = part.getToolbar();
 			if (toolBar != null) {
 				if (constructDeltas(deltas, references, (EObject) toolBar, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MMenuContributions) {
+			for (MMenuContribution contribution : ((MMenuContributions) object)
+					.getMenuContributions()) {
+				if (constructDeltas(deltas, references, (EObject) contribution, element, id)) {
 					return true;
 				}
 			}
@@ -1036,6 +1053,36 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		}
 
+		if (reference instanceof MMenuContribution) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean menuContributionsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(
+								MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME)) {
+							List<?> commands = (List<?>) change.getValue();
+							for (Object command : commands) {
+								if (command == reference) {
+									return key;
+								}
+							}
+
+							menuContributionsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return menuContributionsChanged ? null : reference.eContainer();
+		}
+
 		if (reference instanceof MBindingTable) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
@@ -1686,7 +1733,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a TrimmedWindow has multiple trim bars
 				featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME) ||
 				// a Window has multiple shared elements
-				featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME);
+				featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME) ||
+				// a MenuContributions has multiple menu contributions
+				featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

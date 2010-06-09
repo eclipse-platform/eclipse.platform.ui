@@ -280,6 +280,24 @@ public abstract class ModelReconciler {
 			.getName();
 
 	/**
+	 * Attribute defined by MMenuContributions (value is <code>menuContributions</code>).
+	 */
+	public static final String MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getMenuContributions_MenuContributions().getName();
+
+	/**
+	 * Attribute defined by MMenuContribution (value is <code>positionInParent</code>).
+	 */
+	public static final String MENUCONTRIBUTION_POSITIONINPARENT_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getMenuContribution_PositionInParent().getName();
+
+	/**
+	 * Attribute defined by MMenuContribution (value is <code>parentID</code>).
+	 */
+	public static final String MENUCONTRIBUTION_PARENTID_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getMenuContribution_ParentID().getName();
+
+	/**
 	 * Attribute defined by MPartDescriptor (value is <code>allowMultiple</code>).
 	 */
 	public static final String PARTDESCRIPTOR_ALLOWMULTIPLE_ATTNAME = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
