@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
@@ -208,7 +209,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 			return MenuPackageImpl.eINSTANCE.getHandledItem_Command();
 		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getKeyBinding_Parameters();
+			return CommandsPackageImpl.eINSTANCE.getCommand_Parameters();
 		} else if (featureName.equals(ITEM_ENABLED_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getItem_Enabled();
 		} else if (featureName.equals(ITEM_SELECTED_ATTNAME)) {
@@ -1024,6 +1025,35 @@ public class XMLModelReconciler extends ModelReconciler {
 			return reference.eContainer();
 		}
 
+		if (reference instanceof MCommandParameter) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean parametersChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key instanceof MCommand) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(COMMAND_PARAMETERS_ATTNAME)) {
+							List<?> parameters = (List<?>) change.getValue();
+							for (Object parameter : parameters) {
+								if (parameter == reference) {
+									return key;
+								}
+							}
+
+							parametersChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return parametersChanged ? null : reference.eContainer();
+		}
+
 		if (reference instanceof MCommand) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
@@ -1737,7 +1767,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a Window has multiple shared elements
 				featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME) ||
 				// a MenuContributions has multiple menu contributions
-				featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME);
+				featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME) ||
+				// a Command has multiple (command) parameters
+				featureName.equals(COMMAND_PARAMETERS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

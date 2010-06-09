@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests.reconciler;
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
@@ -153,5 +154,70 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 
 	public void testCommand_Description_StringStringChanged() {
 		testCommand_Description("description", "description2");
+	}
+
+	public void testCommand_Parameters_Add() {
+		MApplication application = createApplication();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		application.getCommands().add(command);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MCommandParameter parameter = CommandsFactoryImpl.eINSTANCE
+				.createCommandParameter();
+		parameter.setName("parameterName");
+		command.getParameters().add(parameter);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		command = application.getCommands().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, command.getParameters().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, command.getParameters().size());
+		assertEquals("parameterName", command.getParameters().get(0).getName());
+	}
+
+	public void testCommand_Parameters_Remove() {
+		MApplication application = createApplication();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		application.getCommands().add(command);
+
+		MCommandParameter parameter = CommandsFactoryImpl.eINSTANCE
+				.createCommandParameter();
+		parameter.setName("parameterName");
+		command.getParameters().add(parameter);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		command.getParameters().remove(0);
+
+		Object state = reconciler.serialize();
+		print(state);
+
+		application = createApplication();
+		command = application.getCommands().get(0);
+		parameter = command.getParameters().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, command.getParameters().size());
+		assertEquals(parameter, command.getParameters().get(0));
+		assertEquals("parameterName", parameter.getName());
+
+		applyAll(deltas);
+
+		assertEquals(0, command.getParameters().size());
 	}
 }
