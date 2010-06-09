@@ -64,8 +64,7 @@ public class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		persistence.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -121,5 +120,6 @@ public class WorkbenchMenuService implements IMenuService {
 	public void updateManagers() {
 		E4Util.unsupported("WorkbenchMenuService.updateManagers - time to update ... something"); //$NON-NLS-1$
 	}
+
 
 }

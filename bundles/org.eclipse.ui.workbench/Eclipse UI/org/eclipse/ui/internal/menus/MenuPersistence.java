@@ -42,6 +42,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 	private MApplication application;
 	private IEclipseContext appContext;
+	private ArrayList<MenuAdditionCacheEntry> contributions = new ArrayList<MenuAdditionCacheEntry>();
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
@@ -58,6 +59,10 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	public final void dispose() {
+		for (MenuAdditionCacheEntry mc : contributions) {
+			mc.dispose();
+		}
+		contributions.clear();
 		super.dispose();
 	}
 
@@ -197,11 +202,13 @@ final class MenuPersistence extends RegistryPersistence {
 				E4Util.unsupported("Programmatic Contribution Factories not supported"); //$NON-NLS-1$
 
 			} else {
-				new MenuAdditionCacheEntry(application, appContext,
+				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application, appContext,
 						configElement,
 						configElement
 								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
-						configElement.getNamespaceIdentifier()).addToModel();
+						configElement.getNamespaceIdentifier());
+				contributions.add(menuContribution);
+				menuContribution.addToModel();
 			}
 		}
 	}

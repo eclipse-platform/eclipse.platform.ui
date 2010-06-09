@@ -47,6 +47,7 @@ public class MenuAdditionCacheEntry {
 	// private IEclipseContext appContext;
 	private IConfigurationElement configElement;
 	private MenuLocationURI location;
+	private MMenuContribution menuContribution;
 
 	// private String namespaceIdentifier;
 
@@ -380,15 +381,23 @@ public class MenuAdditionCacheEntry {
 			E4Util.unsupported("We don't support toolbar menu contributions yet " + location); //$NON-NLS-1$
 			return;
 		}
-		MMenuContribution contribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		String idContrib = getId(configElement);
 		if (idContrib != null && idContrib.length() > 0) {
-			contribution.setElementId(idContrib);
+			menuContribution.setElementId(idContrib);
 		}
-		contribution.setParentID(location.getPath());
-		contribution.setPositionInParent(location.getQuery());
-		contribution.getTags().add(location.getScheme());
-		addChildren(contribution, configElement);
-		application.getMenuContributions().add(contribution);
+		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
+			menuContribution.setParentID("popup"); //$NON-NLS-1$
+		} else {
+			menuContribution.setParentID(location.getPath());
+		}
+		menuContribution.setPositionInParent(location.getQuery());
+		menuContribution.getTags().add(location.getScheme());
+		addChildren(menuContribution, configElement);
+		application.getMenuContributions().add(menuContribution);
+	}
+
+	public void dispose() {
+		application.getMenuContributions().remove(menuContribution);
 	}
 }
