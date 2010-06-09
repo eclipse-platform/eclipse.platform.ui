@@ -204,7 +204,6 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		command.getParameters().remove(0);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		command = application.getCommands().get(0);

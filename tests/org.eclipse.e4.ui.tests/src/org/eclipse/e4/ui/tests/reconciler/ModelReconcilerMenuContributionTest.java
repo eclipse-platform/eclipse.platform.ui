@@ -38,7 +38,6 @@ public abstract class ModelReconcilerMenuContributionTest extends
 		contribution.setPositionInParent(after);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		contribution = application.getMenuContributions().get(0);
