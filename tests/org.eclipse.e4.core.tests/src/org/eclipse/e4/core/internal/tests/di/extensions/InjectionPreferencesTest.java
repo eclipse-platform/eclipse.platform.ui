@@ -114,6 +114,8 @@ public class InjectionPreferencesTest extends TestCase {
 		@Inject @Preference(KEY_LONG)
 		public Long longField;
 
+		public IEclipsePreferences preferences;
+
 		public Integer intArg;
 		public Boolean booleanArg;
 		
@@ -121,6 +123,12 @@ public class InjectionPreferencesTest extends TestCase {
 		public void set(@Preference(KEY_INT) Integer intArg, @Preference(KEY_BOOL) Boolean booleanArg) {
 			this.intArg = intArg;
 			this.booleanArg = booleanArg;
+		}
+		
+		@Inject
+		public void set2(@Preference IEclipsePreferences prefNode) {
+			preferences = prefNode;
+			prefNode.put("testOutValue", "abc");
 		}
 	}
 	
@@ -229,6 +237,9 @@ public class InjectionPreferencesTest extends TestCase {
 		
 		assertEquals(new Integer(777), target.intArg);
 		assertEquals(new Boolean(false), target.booleanArg);
+		
+		assertNotNull(target.preferences);
+		assertEquals("abc", node.get("testOutValue", null)); 
 	}
 
 	private void setPreference(String key, String value) throws BackingStoreException {

@@ -43,15 +43,18 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 		if (descriptor == null)
 			return null;
-		String key = getKey(descriptor);
+		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
 		String nodePath = getNodePath(descriptor, requestor.getRequestingObject());
+		if (IEclipsePreferences.class.equals(descriptorsClass)) {
+			return (new InstanceScope()).getNode(nodePath);
+		}
+
+		String key = getKey(descriptor);
 		if (key == null || nodePath == null || key.length() == 0 || nodePath.length() == 0)
 			return IInjector.NOT_A_VALUE;
-
 		if (track)
 			addListener(nodePath, requestor);
 
-		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
 		if (descriptorsClass.isPrimitive()) {
 			if (descriptorsClass.equals(boolean.class))
 				return getPreferencesService().getBoolean(nodePath, key, false, null);
