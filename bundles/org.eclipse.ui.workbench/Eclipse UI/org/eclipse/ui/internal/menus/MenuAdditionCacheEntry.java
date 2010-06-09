@@ -391,7 +391,11 @@ public class MenuAdditionCacheEntry {
 		} else {
 			menuContribution.setParentID(location.getPath());
 		}
-		menuContribution.setPositionInParent(location.getQuery());
+		String query = location.getQuery();
+		if (query == null || query.length() == 0) {
+			query = "after=additions"; //$NON-NLS-1$
+		}
+		menuContribution.setPositionInParent(query);
 		menuContribution.getTags().add(location.getScheme());
 		addChildren(menuContribution, configElement);
 		application.getMenuContributions().add(menuContribution);

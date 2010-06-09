@@ -115,10 +115,12 @@ public class MenuServiceFilter implements Listener {
 		final IEclipseContext parentContext = modelService
 				.getContainingContext(menuModel);
 
+		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(parentContext);
-		addMenuContributions(menuModel, menuModel.getElementId(),
-				menuContributionsToRemove, eContext);
+		gatherMenuContributions(menuModel, menuModel.getElementId(),
+				toContribute, eContext);
+		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -165,16 +167,19 @@ public class MenuServiceFilter implements Listener {
 				.getLocal(IContextConstants.ACTIVE_CHILD);
 		parentContext.set(IContextConstants.ACTIVE_CHILD, popupContext);
 
+		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(popupContext);
-		addMenuContributions(menuModel, menuModel.getElementId(),
-				menuContributionsToRemove, eContext);
+		gatherMenuContributions(menuModel, menuModel.getElementId(),
+				toContribute, eContext);
+
 		for (String tag : menuModel.getTags()) {
 			if (tag.startsWith("popup:") && tag.length() > 6) {
-				addMenuContributions(menuModel, tag.substring(6),
-						menuContributionsToRemove, eContext);
+				gatherMenuContributions(menuModel, tag.substring(6),
+						toContribute, eContext);
 			}
 		}
+		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -208,10 +213,9 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void addMenuContributions(final MMenu menuModel, final String id,
-			final ArrayList<MMenuElement> menuContributionsToRemove,
+	private void gatherMenuContributions(final MMenu menuModel,
+			final String id, final ArrayList<MMenuContribution> toContribute,
 			final ExpressionContext eContext) {
-		ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		for (MMenuContribution menuContribution : application
 				.getMenuContributions()) {
 			String parentID = menuContribution.getParentID();
@@ -225,20 +229,74 @@ public class MenuServiceFilter implements Listener {
 				toContribute.add(menuContribution);
 			}
 		}
-		for (MMenuContribution menuContribution : toContribute) {
-			// TODO place the menu contribution "in" the model, instead of
-			// at the end
-			for (MMenuElement item : menuContribution.getChildren()) {
-				MMenuElement copy = (MMenuElement) EcoreUtil
-						.copy((EObject) item);
-				if (DEBUG) {
-					trace("addMenuContribution " + copy,
-							(Widget) menuModel.getWidget(), menuModel);
+	}
+
+	private void addMenuContributions(final MMenu menuModel,
+			final ArrayList<MMenuContribution> toContribute,
+			final ArrayList<MMenuElement> menuContributionsToRemove) {
+		boolean done = toContribute.size() == 0;
+		while (!done) {
+			ArrayList<MMenuContribution> curList = new ArrayList<MMenuContribution>(
+					toContribute);
+			int retryCount = toContribute.size();
+			toContribute.clear();
+
+			for (MMenuContribution menuContribution : curList) {
+				if (!processAddition(menuModel, menuContributionsToRemove,
+						menuContribution)) {
+					toContribute.add(menuContribution);
 				}
-				menuContributionsToRemove.add(copy);
-				menuModel.getChildren().add(copy);
 			}
+			// We're done if the retryList is now empty (everything done) or
+			// if the list hasn't changed at all (no hope)
+			done = (toContribute.size() == 0)
+					|| (toContribute.size() == retryCount);
 		}
+	}
+
+	private boolean processAddition(final MMenu menuModel,
+			final ArrayList<MMenuElement> menuContributionsToRemove,
+			MMenuContribution menuContribution) {
+		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
+		if (idx == -1) {
+			return false;
+		}
+		for (MMenuElement item : menuContribution.getChildren()) {
+			MMenuElement copy = (MMenuElement) EcoreUtil.copy((EObject) item);
+			if (DEBUG) {
+				trace("addMenuContribution " + copy,
+						(Widget) menuModel.getWidget(), menuModel);
+			}
+			menuContributionsToRemove.add(copy);
+			menuModel.getChildren().add(idx++, copy);
+		}
+		return true;
+	}
+
+	private int getIndex(MMenu menuModel, String positionInParent) {
+		String id = null;
+		String modifier = null;
+		if (positionInParent != null && positionInParent.length() > 0) {
+			String[] array = positionInParent.split("=");
+			modifier = array[0];
+			id = array[1];
+		}
+		if (id == null) {
+			return menuModel.getChildren().size();
+		}
+
+		int idx = 0;
+		int size = menuModel.getChildren().size();
+		while (idx < size) {
+			if (id.equals(menuModel.getChildren().get(idx).getElementId())) {
+				if ("after".equals(modifier)) {
+					idx++;
+				}
+				return idx;
+			}
+			idx++;
+		}
+		return -1;
 	}
 
 	private void removeMenuContributions(final MMenu menuModel,
