@@ -263,6 +263,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
 		} else if (featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentID();
+		} else if (featureName.equals(MENUITEM_MNEMONICS_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getMenuItem_Mnemonics();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$

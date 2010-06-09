@@ -280,6 +280,12 @@ public abstract class ModelReconciler {
 			.getName();
 
 	/**
+	 * Attribute defined by MMenuItems (value is <code>mnemonics</code>).
+	 */
+	public static final String MENUITEM_MNEMONICS_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getMenuItem_Mnemonics().getName();
+
+	/**
 	 * Attribute defined by MMenuContributions (value is <code>menuContributions</code>).
 	 */
 	public static final String MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME = MenuPackageImpl.eINSTANCE
