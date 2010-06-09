@@ -179,6 +179,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return UiPackageImpl.eINSTANCE.getUIElement_Visible();
 		} else if (featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)) {
 			return UiPackageImpl.eINSTANCE.getElementContainer_Children();
+		} else if (featureName.equals(UIELEMENT_VISIBLEWHEN_ATTNAME)) {
+			return UiPackageImpl.eINSTANCE.getUIElement_VisibleWhen();
 		} else if (featureName.equals(UIELEMENT_PARENT_ATTNAME)) {
 			return UiPackageImpl.eINSTANCE.getUIElement_Parent();
 		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
@@ -285,6 +287,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return CommandsPackageImpl.eINSTANCE.getParameter_Name();
 		} else if (featureName.equals(PARAMETER_VALUE_ATTNAME)) {
 			return CommandsPackageImpl.eINSTANCE.getParameter_Value();
+		} else if (featureName.equals(COREEXPRESSION_COREEXPRESSIONID_ATTNAME)) {
+			return UiPackageImpl.eINSTANCE.getCoreExpression_CoreExpressionId();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -1751,7 +1755,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		// a Window has a single reference to a menu
 		return featureName.equals(WINDOW_MAINMENU_ATTNAME) ||
 		// a Part has a single reference to a tool bar
-				featureName.equals(PART_TOOLBAR_ATTNAME);
+				featureName.equals(PART_TOOLBAR_ATTNAME) ||
+				// a UIElement has a single reference to a visibleWhen
+				featureName.equals(UIELEMENT_VISIBLEWHEN_ATTNAME);
 	}
 
 	/**

@@ -106,6 +106,12 @@ public abstract class ModelReconciler {
 			.getUIElement_ContainerData().getName();
 
 	/**
+	 * Attribute defined by MUIElements (value is <code>visibleWhen</code>).
+	 */
+	public static final String UIELEMENT_VISIBLEWHEN_ATTNAME = UiPackageImpl.eINSTANCE
+			.getUIElement_VisibleWhen().getName();
+
+	/**
 	 * Attribute defined by MElementContainers (value is <code>children</code>).
 	 */
 	public static final String ELEMENTCONTAINER_CHILDREN_ATTNAME = UiPackageImpl.eINSTANCE
@@ -350,6 +356,12 @@ public abstract class ModelReconciler {
 	 */
 	public static final String PARAMETER_VALUE_ATTNAME = CommandsPackageImpl.eINSTANCE
 			.getParameter_Value().getName();
+
+	/**
+	 * Attribute defined by MCoreExpressions (value is <code>coreExpressionId</code>).
+	 */
+	public static final String COREEXPRESSION_COREEXPRESSIONID_ATTNAME = UiPackageImpl.eINSTANCE
+			.getCoreExpression_CoreExpressionId().getName();
 
 	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements

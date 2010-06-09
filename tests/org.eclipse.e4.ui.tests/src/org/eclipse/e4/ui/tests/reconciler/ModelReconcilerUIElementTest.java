@@ -13,9 +13,11 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
@@ -379,5 +381,36 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 	public void testUIElement_Renderer_ObjectObject() {
 		testUIElement_Renderer(new Object(), new Object());
+	}
+
+	public void testUIElement_VisibleWhen() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MCoreExpression expression = UiFactoryImpl.eINSTANCE
+				.createCoreExpression();
+		expression.setCoreExpressionId("id");
+		window.setVisibleWhen(expression);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(null, window.getVisibleWhen());
+
+		applyAll(deltas);
+
+		assertTrue(window.getVisibleWhen() instanceof MCoreExpression);
+		expression = (MCoreExpression) window.getVisibleWhen();
+		assertEquals("id", expression.getCoreExpressionId());
 	}
 }
