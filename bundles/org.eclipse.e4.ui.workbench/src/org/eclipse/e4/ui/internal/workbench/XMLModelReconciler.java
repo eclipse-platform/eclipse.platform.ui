@@ -224,7 +224,14 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MenuPackageImpl.eINSTANCE.getItem_Selected();
 		} else if (featureName.equals(ITEM_TYPE_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getItem_Type();
-		} else if (featureName.equals(PART_MENUS_ATTNAME)) {
+		} else if (featureName.equals(PART_MENUS_ATTNAME)
+				|| featureName.equals(PARTDESCRIPTOR_MENUS_ATTNAME)) {
+			// technically both names are the same
+
+			if (object instanceof MPartDescriptor) {
+				return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
+						.getPartDescriptor_Menus();
+			}
 			return BasicPackageImpl.eINSTANCE.getPart_Menus();
 		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {
 			return BasicPackageImpl.eINSTANCE.getPart_Toolbar();

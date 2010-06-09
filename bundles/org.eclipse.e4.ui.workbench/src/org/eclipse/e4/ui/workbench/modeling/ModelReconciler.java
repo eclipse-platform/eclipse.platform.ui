@@ -328,6 +328,12 @@ public abstract class ModelReconciler {
 			.getPartDescriptorContainer_Descriptors().getName();
 
 	/**
+	 * Attribute defined by MPartDescriptor (value is <code>menus</code>).
+	 */
+	public static final String PARTDESCRIPTOR_MENUS_ATTNAME = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
+			.getPartDescriptor_Menus().getName();
+
+	/**
 	 * Attribute defined by MPlaceholders (value is <code>ref</code>).
 	 */
 	public static final String PLACEHOLDER_REF_NAME = AdvancedPackageImpl.eINSTANCE

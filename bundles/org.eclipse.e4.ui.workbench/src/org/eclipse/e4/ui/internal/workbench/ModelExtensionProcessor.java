@@ -192,6 +192,12 @@ public class ModelExtensionProcessor {
 
 						// TBD: 1) isn't it always a list?; 2) is there some utility to do this?
 						Object oldValue = parentObject.eGet(destinationFeature);
+						EObject contribution = (EObject) elements[i];
+						E4XMIResource primaryResource = (E4XMIResource) parentObject.eResource();
+						E4XMIResource contributingResource = (E4XMIResource) contribution
+								.eResource();
+						primaryResource.setInternalId(contribution,
+								contributingResource.getInternalId(contribution));
 						if (oldValue instanceof EList<?>)
 							((EList) oldValue).add(elements[i]);
 						else
