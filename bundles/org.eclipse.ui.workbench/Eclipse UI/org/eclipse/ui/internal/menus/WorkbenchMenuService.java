@@ -115,9 +115,7 @@ public class WorkbenchMenuService implements IMenuService {
 	 * contributions
 	 */
 	public void readRegistry() {
-		if (false) {
-			persistence.read();
-		}
+		persistence.read();
 	}
 
 	public void updateManagers() {
