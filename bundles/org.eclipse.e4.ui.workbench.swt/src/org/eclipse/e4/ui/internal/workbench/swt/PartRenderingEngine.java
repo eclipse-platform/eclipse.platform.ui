@@ -389,9 +389,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {
 				if (!element.isVisible()) {
-					if (limbo == null)
-						limbo = new Shell(Display.getCurrent(), SWT.NONE);
-					parent = limbo;
+					parent = getLimboShell();
 				} else {
 					parent = renderer.getUIContainer(element);
 				}
@@ -401,10 +399,33 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return createGui(element, parent);
 	}
 
+	private Shell getLimboShell() {
+		if (limbo == null)
+			limbo = new Shell(Display.getCurrent(), SWT.NONE);
+		return limbo;
+	}
+
 	/**
 	 * @param element
 	 */
 	public void removeGui(MUIElement element) {
+		// First, ensure that widgets referenced from a placeholder don't get
+		// either their widgets or context disposed
+		final MWindow win = modelService.getTopLevelWindowFor(element);
+
+		if (win != element) {
+			// make sure no shared elements get destroyed
+			unhookReferences(element, win.getContext());
+		} else {
+			// Make sure *all* sheared elements get destroyed
+			List<MUIElement> seList = win.getSharedElements();
+			for (MUIElement se : seList) {
+				if (se.getWidget() instanceof Control) {
+					Control ctrl = (Control) se.getWidget();
+					ctrl.dispose();
+				}
+			}
+		}
 
 		MUIElement parent = element.getParent();
 		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
@@ -425,20 +446,55 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// dispose the context
 		if (element instanceof MContext) {
-			MContext ctxt = (MContext) element;
-			IEclipseContext lclContext = ctxt.getContext();
-			if (lclContext != null) {
-				IEclipseContext parentContext = lclContext.getParent();
-				Object child = parentContext
-						.get(IContextConstants.ACTIVE_CHILD);
-				if (child == lclContext) {
-					parentContext.set(IContextConstants.ACTIVE_CHILD, null);
+			clearContext((MContext) element);
+		}
+	}
+
+	private void unhookReferences(MUIElement element, IEclipseContext newContext) {
+		List<MPlaceholder> phList = modelService.findElements(element, null,
+				MPlaceholder.class, null);
+		for (MPlaceholder ph : phList) {
+			MUIElement ref = ph.getRef();
+			if (ref.getCurSharedRef() == ph) {
+				if (ref.getWidget() instanceof Control) {
+					Control refCtrl = (Control) ref.getWidget();
+					if (!refCtrl.isDisposed())
+						refCtrl.setParent(getLimboShell());
 				}
 
-				ctxt.setContext(null);
-				if (lclContext instanceof IDisposable) {
-					((IDisposable) lclContext).dispose();
+				if (ref instanceof MContext) {
+					IEclipseContext lclContext = ((MContext) ref).getContext();
+					if (lclContext != null) {
+						IEclipseContext parentContext = lclContext.getParent();
+						Object child = parentContext
+								.get(IContextConstants.ACTIVE_CHILD);
+						if (child == lclContext) {
+							parentContext.set(IContextConstants.ACTIVE_CHILD,
+									null);
+						}
+
+						// Move the context under its window for now
+						lclContext.setParent(newContext);
+					}
 				}
+				ref.setCurSharedRef(null);
+			}
+		}
+	}
+
+	private void clearContext(MContext contextME) {
+		MContext ctxt = (MContext) contextME;
+		IEclipseContext lclContext = ctxt.getContext();
+		if (lclContext != null) {
+			IEclipseContext parentContext = lclContext.getParent();
+			Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
+			if (child == lclContext) {
+				parentContext.set(IContextConstants.ACTIVE_CHILD, null);
+			}
+
+			ctxt.setContext(null);
+			if (lclContext instanceof IDisposable) {
+				((IDisposable) lclContext).dispose();
 			}
 		}
 	}

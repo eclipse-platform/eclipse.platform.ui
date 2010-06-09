@@ -482,8 +482,9 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Dispose the existing toolbar
 		if (ctf.getTopRight() != null) {
-			ctf.getTopRight().dispose();
+			Control curTB = ctf.getTopRight();
 			ctf.setTopRight(null);
+			curTB.dispose();
 		}
 
 		ToolBar tb = getToolbar(element);

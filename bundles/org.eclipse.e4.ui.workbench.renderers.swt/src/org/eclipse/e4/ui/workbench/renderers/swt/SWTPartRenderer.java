@@ -133,15 +133,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void hookControllerLogic(final MUIElement me) {
 		Widget widget = (Widget) me.getWidget();
 
-		// Clean up if the widget is disposed
-		widget.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				MUIElement model = (MUIElement) e.widget.getData(OWNING_ME);
-				if (model != null)
-					model.setWidget(null);
-			}
-		});
-
 		// add an accessibility listener (not sure if this is in the wrong place
 		// (factory?)
 		if (widget instanceof Control && me instanceof MUILabel) {

@@ -217,6 +217,10 @@ public class TrimStack {
 	}
 
 	private void updateTrimStackItems() {
+		// Prevent exceptions on shutdown
+		if (trimStackTB == null || trimStackTB.isDisposed())
+			return;
+
 		// Remove any current items except the 'restore' button
 		while (trimStackTB.getItemCount() > 1) {
 			trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
