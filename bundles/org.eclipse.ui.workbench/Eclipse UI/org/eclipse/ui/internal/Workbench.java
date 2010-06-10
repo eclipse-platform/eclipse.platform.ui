@@ -2166,7 +2166,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createTrimmedWindow();
 		return openWorkbenchWindow(input, descriptor, window, true);
 	}
 
