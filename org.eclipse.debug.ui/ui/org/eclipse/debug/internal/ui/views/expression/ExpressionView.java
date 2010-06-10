@@ -102,6 +102,9 @@ public class ExpressionView extends VariablesView {
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void contextActivated(ISelection selection) {
+		if (!isAvailable() || !isVisible()) {
+			return;
+		}
 		if (selection == null || selection.isEmpty()) {
             super.contextActivated(new StructuredSelection(DebugPlugin.getDefault().getExpressionManager()));
 		} else {
