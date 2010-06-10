@@ -112,6 +112,10 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	@Inject
 	void trackActivePart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
+		if (activePart == p) {
+			return;
+		}
+
 		if (activePart != null) {
 			activePart.getTags().remove("active"); //$NON-NLS-1$
 
