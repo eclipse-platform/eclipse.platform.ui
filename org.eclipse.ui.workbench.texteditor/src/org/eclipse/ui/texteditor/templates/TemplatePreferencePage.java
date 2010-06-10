@@ -665,14 +665,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		 * <p>
 		 * The default implementation rejects invalid XML characters.
 		 * </p>
-		 * <p>
-		 * XXX: Make protected in 3.7
 		 * 
 		 * @param pattern the pattern to verify
 		 * @return <code>true</code> if the pattern is valid
-		 * @since 3.6
+		 * @since 3.7 protected, before it was private
 		 */
-		private boolean isValidPattern(String pattern) {
+		protected boolean isValidPattern(String pattern) {
 			for (int i= 0; i < pattern.length(); i++) {
 				char ch= pattern.charAt(i);
 				if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32))
