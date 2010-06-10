@@ -119,7 +119,7 @@ public class MenuServiceFilter implements Listener {
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(parentContext);
 		gatherMenuContributions(menuModel, menuModel.getElementId(),
-				toContribute, eContext);
+				toContribute, eContext, false);
 		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
 
 		// create a cleanup routine for the Hide or next Show
@@ -171,12 +171,12 @@ public class MenuServiceFilter implements Listener {
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(popupContext);
 		gatherMenuContributions(menuModel, menuModel.getElementId(),
-				toContribute, eContext);
+				toContribute, eContext, true);
 
 		for (String tag : menuModel.getTags()) {
 			if (tag.startsWith("popup:") && tag.length() > 6) {
 				gatherMenuContributions(menuModel, tag.substring(6),
-						toContribute, eContext);
+						toContribute, eContext, false);
 			}
 		}
 		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
@@ -215,12 +215,12 @@ public class MenuServiceFilter implements Listener {
 
 	private void gatherMenuContributions(final MMenu menuModel,
 			final String id, final ArrayList<MMenuContribution> toContribute,
-			final ExpressionContext eContext) {
+			final ExpressionContext eContext, boolean includePopups) {
 		for (MMenuContribution menuContribution : application
 				.getMenuContributions()) {
 			String parentID = menuContribution.getParentID();
 			boolean popup = parentID.equals("popup")
-					&& (menuModel instanceof MPopupMenu);
+					&& (menuModel instanceof MPopupMenu) && includePopups;
 			if (!popup && !parentID.equals(id)
 					|| !menuContribution.isToBeRendered()) {
 				continue;
@@ -296,7 +296,7 @@ public class MenuServiceFilter implements Listener {
 			}
 			idx++;
 		}
-		return -1;
+		return id.equals("additions") ? menuModel.getChildren().size() : -1;
 	}
 
 	private void removeMenuContributions(final MMenu menuModel,
