@@ -34,7 +34,6 @@ public class TrimBarLayout extends Layout {
 	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
-		System.out.println("computeSize"); //$NON-NLS-1$
 		int totalSpace = wHint;
 		int curY = 0;
 		int maxY = 0;
@@ -65,7 +64,6 @@ public class TrimBarLayout extends Layout {
 	protected void layout(Composite composite, boolean flushCache) {
 		composite.setRedraw(false);
 		try {
-			System.out.println("layout"); //$NON-NLS-1$
 			Rectangle bounds = composite.getBounds();
 			int totalSpace = bounds.width;
 
