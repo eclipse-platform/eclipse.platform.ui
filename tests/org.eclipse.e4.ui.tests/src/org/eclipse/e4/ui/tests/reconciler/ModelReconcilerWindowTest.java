@@ -319,6 +319,51 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		testWindow_Menu_Visible(false, false);
 	}
 
+	/**
+	 * Tests that a window's main menu can change and also additional menus
+	 * added to the main menu will be persisted correctly.
+	 */
+	public void testWindow_NestedMenu() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		window.setMainMenu(menu);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		menu.setLabel("menuLabel");
+
+		MMenu item = MenuFactoryImpl.eINSTANCE.createMenu();
+		item.setLabel("itemLabel");
+		menu.getChildren().add(item);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+		assertNull(menu.getLabel());
+		assertEquals(0, menu.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+		assertEquals("menuLabel", menu.getLabel());
+		assertEquals(1, menu.getChildren().size());
+		assertEquals("itemLabel", menu.getChildren().get(0).getLabel());
+	}
+
 	public void testWindow_SharedElements_Add() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);

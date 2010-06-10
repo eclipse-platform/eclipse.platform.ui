@@ -1398,6 +1398,11 @@ public class XMLModelReconciler extends ModelReconciler {
 				} else if (appendedMenu && !menuSet && !menuChanged) {
 					return null;
 				}
+
+				EObject container = reference.eContainer();
+				if (!(container instanceof MMenu)) {
+					return container;
+				}
 			}
 
 			if (reference instanceof MToolBar) {

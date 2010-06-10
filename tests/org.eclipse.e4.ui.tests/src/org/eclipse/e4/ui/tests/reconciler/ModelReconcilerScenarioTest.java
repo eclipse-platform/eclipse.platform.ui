@@ -1277,6 +1277,50 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	}
 
 	/**
+	 * Tests that the addition of a part to a window and the alteration of the
+	 * window's main menu will be reconciled appropriately.
+	 */
+	public void testWindow_AddPartAndChangeMenu() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		window.setMainMenu(menu);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		menu.setLabel("menuLabel");
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+		assertNull(menu.getLabel());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+		assertEquals("menuLabel", menu.getLabel());
+
+		assertEquals(1, window.getChildren().size());
+		assertTrue(window.getChildren().get(0) instanceof MPart);
+	}
+
+	/**
 	 * Tests that the changes pertaining to multiple key bindings that map to
 	 * the same command gets applied properly.
 	 * <p>
