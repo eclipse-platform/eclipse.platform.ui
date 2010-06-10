@@ -31,6 +31,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
+	final public static String MC_POPUP = "menuContribution:popup";
+	final public static String MC_MENU = "menuContribution:menu";
+
 	public static boolean DEBUG = false;
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
@@ -221,7 +224,8 @@ public class MenuServiceFilter implements Listener {
 			String parentID = menuContribution.getParentID();
 			boolean popup = parentID.equals("popup")
 					&& (menuModel instanceof MPopupMenu) && includePopups;
-			if (!popup && !parentID.equals(id)
+			boolean filtered = isFiltered(menuModel, menuContribution);
+			if (filtered || (!popup && !parentID.equals(id))
 					|| !menuContribution.isToBeRendered()) {
 				continue;
 			}
@@ -229,6 +233,19 @@ public class MenuServiceFilter implements Listener {
 				toContribute.add(menuContribution);
 			}
 		}
+	}
+
+	private boolean isFiltered(MMenu menuModel,
+			MMenuContribution menuContribution) {
+		if (menuModel.getTags().contains(MC_POPUP)) {
+			return !menuContribution.getTags().contains(MC_POPUP)
+					&& menuContribution.getTags().contains(MC_MENU);
+		}
+		if (menuModel.getTags().contains(MC_MENU)) {
+			return !menuContribution.getTags().contains(MC_MENU)
+					&& menuContribution.getTags().contains(MC_POPUP);
+		}
+		return false;
 	}
 
 	private void addMenuContributions(final MMenu menuModel,

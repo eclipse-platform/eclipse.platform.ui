@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -337,7 +338,7 @@ public class MenuAdditionCacheEntry {
 
 
 	private void addChildren(final MElementContainer<MMenuElement> container,
-			IConfigurationElement parent) {
+			IConfigurationElement parent, String filter) {
 		IConfigurationElement[] items = parent.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
@@ -355,8 +356,9 @@ public class MenuAdditionCacheEntry {
 				container.getChildren().add(element);
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				MMenu element = createMenuAddition(items[i]);
+				element.getTags().add(filter);
 				container.getChildren().add(element);
-				addChildren(element, items[i]);
+				addChildren(element, items[i], filter);
 				// newItem = createMenuAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
 				E4Util.unsupported("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
@@ -396,8 +398,13 @@ public class MenuAdditionCacheEntry {
 			query = "after=additions"; //$NON-NLS-1$
 		}
 		menuContribution.setPositionInParent(query);
-		menuContribution.getTags().add(location.getScheme());
-		addChildren(menuContribution, configElement);
+		menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+		String filter = MenuServiceFilter.MC_MENU;
+		if ("popup".equals(location.getScheme())) { //$NON-NLS-1$
+			filter = MenuServiceFilter.MC_POPUP;
+		}
+		menuContribution.getTags().add(filter);
+		addChildren(menuContribution, configElement, filter);
 		application.getMenuContributions().add(menuContribution);
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener2;
@@ -156,10 +157,11 @@ public class PopupMenuExtender implements IMenuListener2,
 		if (menuModel == null) {
 			menuModel = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			menuModel.setElementId(id);
-			menuModel.getTags().add("popup"); //$NON-NLS-1$
+			menuModel.getTags().add(MenuServiceFilter.MC_POPUP);
 			modelPart.getMenus().add(menuModel);
 			MPopupMenu popup = MenuFactoryImpl.eINSTANCE.createPopupMenu();
 			popup.setElementId(id);
+			popup.getTags().add(MenuServiceFilter.MC_POPUP);
 			menuModel.getChildren().add(popup);
 		}
 		menuModel.setContributionManager(menu);
