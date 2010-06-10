@@ -446,6 +446,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MMenu subMenu = MenuFactoryImpl.eINSTANCE.createMenu();
 				MenuManager menuManager = (MenuManager) item;
 				subMenu.setLabel(menuManager.getMenuText());
+				subMenu.setElementId(menuManager.getId());
 				fill(subMenu, menuManager);
 				menu.getChildren().add(subMenu);
 			} else if (item instanceof CommandContributionItem) {
