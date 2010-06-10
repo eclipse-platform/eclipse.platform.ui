@@ -42,6 +42,8 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -49,15 +51,22 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
+import org.eclipse.jface.action.AbstractGroupMarker;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -80,6 +89,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
@@ -89,6 +99,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -128,6 +139,7 @@ import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -148,6 +160,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private MWindow model;
 	@Inject
 	private IPresentationEngine engine;
+
+	@Inject
+	private MApplication application;
 
 	@Inject
 	EModelService modelService;
@@ -410,8 +425,75 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		fillActionBars(FILL_ALL_ACTION_BARS);
 
 		Shell shell = (Shell) model.getWidget();
+		MMenu mainMenu = model.getMainMenu();
+		if (mainMenu == null) {
+			mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+			mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
+
+			model.setMainMenu(mainMenu);
+			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
+			shell.setMenuBar(menu);
+		}
+		fill(mainMenu, menuManager);
+
 		createProgressIndicator(shell);
 		createHeapStatus(shell);
+	}
+
+	private void fill(MMenu menu, IMenuManager manager) {
+		for (IContributionItem item : manager.getItems()) {
+			if (item instanceof MenuManager) {
+				MMenu subMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+				MenuManager menuManager = (MenuManager) item;
+				subMenu.setLabel(menuManager.getMenuText());
+				fill(subMenu, menuManager);
+				menu.getChildren().add(subMenu);
+			} else if (item instanceof CommandContributionItem) {
+				String id = ((CommandContributionItem) item).getCommand().getId();
+				for (MCommand command : application.getCommands()) {
+					if (id.equals(command.getElementId())) {
+						MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+								.createHandledMenuItem();
+						menuItem.setCommand(command);
+						menuItem.setLabel(command.getCommandName());
+						menu.getChildren().add(menuItem);
+						break;
+					}
+				}
+			} else if (item instanceof ActionContributionItem) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				String id = action.getActionDefinitionId();
+				if (action instanceof OpenPreferencesAction) {
+					for (MCommand command : application.getCommands()) {
+						if (IWorkbenchCommandConstants.WINDOW_PREFERENCES.equals(command
+								.getElementId())) {
+							MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+									.createHandledMenuItem();
+							menuItem.setCommand(command);
+							menuItem.setLabel(command.getCommandName());
+							menu.getChildren().add(menuItem);
+							break;
+						}
+					}
+				} else if (id != null) {
+					for (MCommand command : application.getCommands()) {
+						if (id.equals(command.getElementId())) {
+							MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+									.createHandledMenuItem();
+							menuItem.setCommand(command);
+							menuItem.setLabel(command.getCommandName());
+							menu.getChildren().add(menuItem);
+							break;
+						}
+					}
+				}
+			} else if (item instanceof AbstractGroupMarker) {
+				MMenuSeparator separator = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+				separator.setToBeRendered(item.isVisible());
+				separator.setElementId(item.getId());
+				menu.getChildren().add(separator);
+			}
+		}
 	}
 
 	public static String getId(IConfigurationElement element) {

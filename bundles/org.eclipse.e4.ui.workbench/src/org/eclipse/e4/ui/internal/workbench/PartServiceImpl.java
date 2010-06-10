@@ -72,12 +72,12 @@ public class PartServiceImpl implements EPartService {
 				MPart oldSelectedPart = oldSelected instanceof MPart ? (MPart) oldSelected : null;
 				MPart selectedPart = selected instanceof MPart ? (MPart) selected : null;
 
-				if (oldSelectedPart != null && isInContainer(oldSelectedPart)) {
+				if (oldSelectedPart != null && getParts().contains(selectedPart)) {
 					firePartHidden(oldSelectedPart);
 				}
 
 				if (selectedPart != null && selectedPart.isToBeRendered()
-						&& isInContainer(selectedPart)) {
+						&& getParts().contains(selectedPart)) {
 					firePartVisible(selectedPart);
 					firePartBroughtToTop(selectedPart);
 				}
