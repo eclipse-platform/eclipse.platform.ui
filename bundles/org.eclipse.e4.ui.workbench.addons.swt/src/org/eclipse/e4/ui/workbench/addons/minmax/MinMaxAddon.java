@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -30,6 +33,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -70,15 +74,51 @@ public class MinMaxAddon {
 		}
 	};
 
+	private EventHandler perspectiveRemovedListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
+			if (!(changedElement instanceof MPerspectiveStack))
+				return;
+
+			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
+			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+				MUIElement removed = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+				String perspectiveId = removed.getElementId();
+				System.out.println("Perspective Removed: " + removed.getElementId());
+				MWindow window = modelService.getTopLevelWindowFor(changedElement);
+				MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
+
+				// gather up any minimized stacks for this perspective...
+				List<MToolControl> toRemove = new ArrayList<MToolControl>();
+				for (MUIElement child : bar.getChildren()) {
+					String trimElementId = child.getElementId();
+					if (child instanceof MToolControl && trimElementId.contains(perspectiveId)) {
+						toRemove.add((MToolControl) child);
+					}
+				}
+
+				// ...and remove them
+				for (MToolControl minStack : toRemove) {
+					minStack.setToBeRendered(false);
+					bar.getChildren().remove(minStack);
+				}
+			}
+		}
+	};
+
 	@PostConstruct
 	void hookListeners() {
 		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
 		eventBroker.subscribe(topic, null, installHook, false);
+		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.CHILDREN);
+		eventBroker.subscribe(topic, null, perspectiveRemovedListener, false);
 	}
 
 	@PreDestroy
 	void unhookListeners() {
 		eventBroker.unsubscribe(installHook);
+		eventBroker.unsubscribe(perspectiveRemovedListener);
 	}
 
 	void minimizeStack(MPartStack stack) {
@@ -94,7 +134,18 @@ public class MinMaxAddon {
 			trimStack.setContributionURI(trimURI);
 
 			MTrimBar bar = modelService.getTrim(window, SideValue.TOP);
-			bar.getChildren().add(trimStack);
+			MToolControl spacer = (MToolControl) modelService.find("PerspectiveSpacer", bar);
+			if (spacer != null) {
+				int spacerIndex = bar.getChildren().indexOf(spacer);
+				bar.getChildren().add(spacerIndex - 1, trimStack);
+				Control ctrl = (Control) trimStack.getWidget();
+				if (ctrl != null) {
+					Control spacerCtrl = (Control) spacer.getWidget();
+					ctrl.moveAbove(spacerCtrl);
+				}
+			} else {
+				bar.getChildren().add(trimStack);
+			}
 		} else {
 			trimStack.setVisible(true);
 		}

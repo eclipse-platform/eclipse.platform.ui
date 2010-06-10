@@ -199,9 +199,10 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.TOP) {
 			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
-				RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-				layout.marginTop = layout.marginBottom = layout.marginHeight = 0;
-				top.setLayout(layout);
+				// RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+				// layout.marginTop = layout.marginBottom = layout.marginHeight
+				// = 0;
+				top.setLayout(new TrimBarLayout());
 			}
 			return top;
 		} else if (side == SWT.BOTTOM) {
