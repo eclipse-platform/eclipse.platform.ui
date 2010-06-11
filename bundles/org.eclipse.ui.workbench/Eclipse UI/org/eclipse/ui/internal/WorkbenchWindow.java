@@ -434,7 +434,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
 			shell.setMenuBar(menu);
 		}
-		fill(mainMenu, menuManager);
+
+		if (mainMenu.getChildren().isEmpty()) {
+			fill(mainMenu, menuManager);
+		}
 
 		createProgressIndicator(shell);
 		createHeapStatus(shell);
