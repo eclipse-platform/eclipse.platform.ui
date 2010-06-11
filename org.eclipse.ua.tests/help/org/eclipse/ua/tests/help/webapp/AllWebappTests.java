@@ -36,6 +36,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(FilterExtensionTest.class);
 		suite.addTestSuite(FragmentServletTest.class);
 		suite.addTestSuite(HelpServerInterrupt.class);
+		suite.addTestSuite(ParallelServerAccessTest.class);
 		//$JUnit-END$
 		return suite;
 	}
