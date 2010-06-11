@@ -65,6 +65,8 @@ public class E4Application implements IApplication {
 	private IModelResourceHandler handler;
 	private Display display = null;
 
+	public static final String THEME_ID = "cssTheme";
+
 	public Display getApplicationDisplay() {
 		if (display == null) {
 			display = Display.getDefault();
@@ -156,8 +158,19 @@ public class E4Application implements IApplication {
 		// definition (if any) and put them in the context
 		String xmiURI = getArgValue(E4Workbench.XMI_URI_ARG, applicationContext);
 		appContext.set(E4Workbench.XMI_URI_ARG, xmiURI);
-		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG, applicationContext);
-		appContext.set(E4Workbench.CSS_URI_ARG, cssURI);
+
+		String themeId = getArgValue(E4Application.THEME_ID, applicationContext);
+
+		// Temporary to support old property as well
+		if (themeId == null) {
+			System.err.println("Warning usage of " + E4Workbench.CSS_URI_ARG
+					+ " is deprecated. Use " + E4Application.THEME_ID
+					+ " instead.");
+			String cssURI = getArgValue(E4Workbench.CSS_URI_ARG,
+					applicationContext);
+			appContext.set(E4Application.THEME_ID, cssURI);
+		}
+
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,
 				applicationContext);
 		appContext.set(E4Workbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);

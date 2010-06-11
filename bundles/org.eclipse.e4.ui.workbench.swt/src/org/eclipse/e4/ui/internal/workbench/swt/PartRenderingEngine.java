@@ -17,6 +17,8 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -28,6 +30,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
+import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -64,6 +67,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -81,6 +85,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	MenuServiceFilter menuServiceFilter;
 
 	org.eclipse.swt.widgets.Listener keyListener;
+
+	private static final String THEMEID_KEY = "themeid";
 
 	// Life Cycle handlers
 	private EventHandler toBeRenderedHandler = new EventHandler() {
@@ -534,10 +540,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 
 			public void run() {
-				String cssURI = (String) runContext
-						.get(E4Workbench.CSS_URI_ARG);
+				String cssURI = (String) runContext.get(E4Application.THEME_ID);
 				String cssResourcesURI = (String) runContext
 						.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+
 				initializeStyling(display, cssURI, cssResourcesURI, runContext);
 
 				// Register an SWT resource handler
@@ -706,8 +712,24 @@ public class PartRenderingEngine implements IPresentationEngine {
 					.toString()));
 		}
 
-		if (cssURI != null) {
-			// TODO: Change cssURI property to cssTheme
+		IEclipsePreferences preferences = new InstanceScope()
+				.getNode(FrameworkUtil.getBundle(PartRenderingEngine.class)
+						.getSymbolicName());
+
+		String prefThemeId = preferences.get(THEMEID_KEY, null);
+
+		boolean flag = true;
+		if (prefThemeId != null) {
+			for (ITheme t : engine.getThemes()) {
+				if (prefThemeId.equals(t.getId())) {
+					engine.setTheme(t);
+					flag = false;
+					break;
+				}
+			}
+		}
+
+		if (cssURI != null && flag) {
 			engine.setTheme(cssURI);
 		}
 		// TODO Should we create an empty default theme?
