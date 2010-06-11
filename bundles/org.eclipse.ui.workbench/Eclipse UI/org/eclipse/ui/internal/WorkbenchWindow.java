@@ -123,6 +123,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -505,6 +506,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 								.createHandledMenuItem();
 						menuItem.setCommand(command);
 						menuItem.setLabel(command.getCommandName());
+						menuItem.setIconURI(getIconURI(id));
 						menu.getChildren().add(menuItem);
 						break;
 					}
@@ -587,7 +589,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
 								.createHandledToolItem();
 						menuItem.setCommand(command);
-						menuItem.setLabel(command.getCommandName());
+
+						String iconURI = getIconURI(id);
+						if (iconURI == null) {
+							menuItem.setLabel(command.getCommandName());
+						} else {
+							menuItem.setIconURI(iconURI);
+						}
+
 						container.getChildren().add(menuItem);
 						break;
 					}
@@ -610,7 +619,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 							String iconURI = getIconURI(action.getImageDescriptor());
 							if (iconURI == null) {
-								menuItem.setLabel(command.getCommandName());
+								iconURI = getIconURI(id);
+								if (iconURI == null) {
+									menuItem.setLabel(command.getCommandName());
+								} else {
+									menuItem.setIconURI(iconURI);
+								}
 							} else {
 								menuItem.setIconURI(iconURI);
 							}
@@ -648,6 +662,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 		return null;
+	}
+
+	private String getIconURI(String commandId) {
+		ICommandImageService imageService = (ICommandImageService) workbench
+				.getService(ICommandImageService.class);
+		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
+		return getIconURI(descriptor);
 	}
 
 	public static String getId(IConfigurationElement element) {
