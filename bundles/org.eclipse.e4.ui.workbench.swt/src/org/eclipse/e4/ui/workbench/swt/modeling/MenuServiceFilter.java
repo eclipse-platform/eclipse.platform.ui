@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
+	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context";
 	final public static String MC_POPUP = "menuContribution:popup";
 	final public static String MC_MENU = "menuContribution:menu";
 
@@ -152,7 +153,7 @@ public class MenuServiceFilter implements Listener {
 			if (DEBUG) {
 				trace("handleContextMenu.Hide", menu, menuModel);
 			}
-			// TODO we'll clean up on show
+			hidePopup(event, menu, menuModel);
 			break;
 		case SWT.Dispose:
 			if (DEBUG) {
@@ -163,6 +164,22 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
+	private void hidePopup(Event event, Menu menu, MPopupMenu menuModel) {
+		final IEclipseContext popupContext = menuModel.getContext();
+		final IEclipseContext parentContext = popupContext.getParent();
+		final IEclipseContext originalChild = (IEclipseContext) popupContext
+				.get(TMP_ORIGINAL_CONTEXT);
+		popupContext.remove(TMP_ORIGINAL_CONTEXT);
+		if (!menu.isDisposed()) {
+			menu.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					parentContext.set(IContextConstants.ACTIVE_CHILD,
+							originalChild);
+				}
+			});
+		}
+	}
+
 	private void showPopup(final Event event, final Menu menu,
 			final MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
@@ -170,6 +187,7 @@ public class MenuServiceFilter implements Listener {
 		final IEclipseContext originalChild = (IEclipseContext) parentContext
 				.getLocal(IContextConstants.ACTIVE_CHILD);
 		parentContext.set(IContextConstants.ACTIVE_CHILD, popupContext);
+		popupContext.set(TMP_ORIGINAL_CONTEXT, originalChild);
 
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
@@ -192,8 +210,6 @@ public class MenuServiceFilter implements Listener {
 					unrender(menuModel);
 				}
 				removeMenuContributions(menuModel, menuContributionsToRemove);
-				parentContext
-						.set(IContextConstants.ACTIVE_CHILD, originalChild);
 			}
 		});
 		render(menu, menuModel);
