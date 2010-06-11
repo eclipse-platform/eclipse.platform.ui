@@ -62,6 +62,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -457,6 +458,19 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MTrimBar trimBar = getTopTrim();
 		if (trimBar.getChildren().isEmpty()) {
 			fill(trimBar, getCoolBarManager2());
+
+			MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
+			spacerControl
+					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SpacerToolControl"); //$NON-NLS-1$
+
+			MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+			switcherControl
+					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+
+			trimBar.getChildren().add(spacerControl);
+			trimBar.getChildren().add(switcherControl);
 		}
 
 		createProgressIndicator(shell);
