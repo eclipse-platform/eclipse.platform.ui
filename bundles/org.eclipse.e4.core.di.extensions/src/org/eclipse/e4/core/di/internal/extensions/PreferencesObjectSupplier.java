@@ -33,10 +33,38 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
-	private Map<String, List<IRequestor>> listenerCache = new HashMap<String, List<IRequestor>>();
+	static private class PrefInjectionListener implements IPreferenceChangeListener {
+
+		final private IRequestor requestor;
+		final private IEclipsePreferences node;
+
+		public PrefInjectionListener(IEclipsePreferences node, IRequestor requestor) {
+			this.node = node;
+			this.requestor = requestor;
+		}
+
+		public void preferenceChange(PreferenceChangeEvent event) {
+			if (!requestor.isValid()) {
+				node.removePreferenceChangeListener(this);
+				return;
+			}
+			requestor.resolveArguments();
+			requestor.execute();
+		}
+
+		public IRequestor getRequestor() {
+			return requestor;
+		}
+
+		public void stopListening() {
+			node.removePreferenceChangeListener(this);
+		}
+	}
+
+	private Map<String, List<PrefInjectionListener>> listenerCache = new HashMap<String, List<PrefInjectionListener>>();
 
 	public PreferencesObjectSupplier() {
-		// placeholder
+		DIEActivator.getDefault().registerPreferencesSupplier(this);
 	}
 
 	@Override
@@ -127,32 +155,38 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 			return;
 		synchronized (listenerCache) {
 			if (listenerCache.containsKey(nodePath)) {
-				for (IRequestor previousRequestor : listenerCache.get(nodePath)) {
+				for (PrefInjectionListener listener : listenerCache.get(nodePath)) {
+					IRequestor previousRequestor = listener.getRequestor();
 					if (previousRequestor.equals(requestor))
 						return; // avoid adding duplicate listeners
 				}
 			}
 		}
 		final IEclipsePreferences node = new InstanceScope().getNode(nodePath);
-		node.addPreferenceChangeListener(new IPreferenceChangeListener() {
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (!requestor.isValid()) {
-					node.removePreferenceChangeListener(this);
-					return;
-				}
+		PrefInjectionListener listener = new PrefInjectionListener(node, requestor);
+		node.addPreferenceChangeListener(listener);
 
-				requestor.resolveArguments();
-				requestor.execute();
-			}
-		});
 		synchronized (listenerCache) {
 			if (listenerCache.containsKey(nodePath))
-				listenerCache.get(nodePath).add(requestor);
+				listenerCache.get(nodePath).add(listener);
 			else {
-				List<IRequestor> listeningRequestors = new ArrayList<IRequestor>();
-				listeningRequestors.add(requestor);
+				List<PrefInjectionListener> listeningRequestors = new ArrayList<PrefInjectionListener>();
+				listeningRequestors.add(listener);
 				listenerCache.put(nodePath, listeningRequestors);
 			}
+		}
+	}
+
+	public void removeAllListeners() {
+		synchronized (listenerCache) {
+			for (List<PrefInjectionListener> listeners : listenerCache.values()) {
+				if (listeners == null)
+					continue;
+				for (PrefInjectionListener listener : listeners) {
+					listener.stopListening();
+				}
+			}
+			listenerCache.clear();
 		}
 	}
 
