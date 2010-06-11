@@ -27,6 +27,9 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -39,11 +42,13 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.equinox.app.IApplication;
@@ -57,6 +62,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -530,8 +538,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.get(E4Workbench.CSS_URI_ARG);
 				String cssResourcesURI = (String) runContext
 						.get(E4Workbench.CSS_RESOURCE_URI_ARG);
-				CSSStylingSupport.initializeStyling(display, cssURI,
-						cssResourcesURI, runContext);
+				initializeStyling(display, cssURI, cssResourcesURI, runContext);
 
 				// Register an SWT resource handler
 				runContext.set(IResourceUtilities.class.getName(),
@@ -678,5 +685,52 @@ public class PartRenderingEngine implements IPresentationEngine {
 				keyListener = null;
 			}
 		}
+	}
+
+	public static void initializeStyling(Display display, String cssURI,
+			String resourceURI, IEclipseContext appContext) {
+		Bundle bundle = WorkbenchSWTActivator.getDefault().getBundle();
+		BundleContext context = bundle.getBundleContext();
+		ServiceReference ref = context.getServiceReference(IThemeManager.class
+				.getName());
+		IThemeManager mgr = (IThemeManager) context.getService(ref);
+		final IThemeEngine engine = mgr.getEngineForDisplay(display);
+
+		// Store the app context
+		display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
+
+		// Create the OSGi resource locator
+		if (resourceURI != null) {
+			// TODO: Should this be set through an extension as well?
+			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
+					.toString()));
+		}
+
+		if (cssURI != null) {
+			// TODO: Change cssURI property to cssTheme
+			engine.setTheme(cssURI);
+		}
+		// TODO Should we create an empty default theme?
+
+		appContext.set(IThemeEngine.class.getName(), engine);
+
+		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+				((Widget) widget).setData(
+						"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+				engine.applyStyles((Widget) widget, true);
+			}
+
+			public void setId(Object widget, String id) {
+				((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+				engine.applyStyles((Widget) widget, true);
+			}
+
+			public void style(Object widget) {
+				engine.applyStyles((Widget) widget, true);
+			}
+
+		});
+
 	}
 }
