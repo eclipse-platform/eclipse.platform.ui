@@ -4,49 +4,6 @@
     <mainMenu xmi:id="_UW9TUPr3Ed6gmo7caOxU9g" elementId="org.eclipse.ui.main.menu">
     </mainMenu>
     <trimBars xmi:id="org.eclipse.ui.main.toolbar" elementId="org.eclipse.ui.main.toolbar">
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx001" elementId="org.eclipse.ui.workbench.file">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx002" elementId="new.group"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx003" elementId="save" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.gif" tooltip="Save" command="org.eclipse.ui.file.save"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx004" elementId="saveAll" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/saveall_edit.gif" tooltip="Save All" command="org.eclipse.ui.file.saveAll"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx005" elementId="print" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.gif" tooltip="Print" command="org.eclipse.ui.file.print"/>
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx006" elementId="build.group"/>
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx007" elementId="additions"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx008" elementId="org.eclipse.debug.ui.launchActionSet">
-        <children xsi:type="menu:DirectToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx009" elementId="debug"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00A" elementId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar" iconURI="platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/external_tools.gif" tooltip="External Tools" command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx00B" elementId="org.eclipse.jdt.ui.JavaElementCreationActionSet">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx00C" elementId="JavaWizards"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx00D" elementId="org.eclipse.search.searchActionSet">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx00E" elementId="Search"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx00F" elementId="openType" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/opentype.gif" tooltip="Open Type..." command="org.eclipse.jdt.ui.navigate.open.type"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx010" elementId="org.eclipse.ui.edit.text.actionSet.presentation">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx011" elementId="Presentation"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx012" elementId="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/toggle_breadcrumb.gif" tooltip="Toggle Breadcrumb" command="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx013" elementId="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/mark_occurrences.gif" tooltip="Toggle Mark Occurrences" command="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx014" elementId="org.eclipse.ui.edit.text.toggleBlockSelectionMode" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/block_selection_mode.gif" tooltip="Toggle Block Selection Mode" command="org.eclipse.ui.edit.text.toggleBlockSelectionMode"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx015" elementId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/show_whitespace_chars.gif" tooltip="Show Whitespace Characters" command="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx016" elementId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly" iconURI="platform:/plugin/org.eclipse.ui.workbench.texteditor/icons/full/etool16/segment_edit.gif" tooltip="Show Source of Selected Element Only" command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx01F" elementId="org.eclipse.ui.workbench.navigate">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx020" elementId="history.group"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx021" elementId="org.eclipse.ui.edit.text.gotoNextAnnotation" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/next_nav.gif" tooltip="Next Annotation" command="org.eclipse.ui.navigate.next"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx022" elementId="org.eclipse.ui.edit.text.gotoPreviousAnnotation" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/prev_nav.gif" tooltip="Previous Annotation" command="org.eclipse.ui.navigate.previous"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx023" elementId="org.eclipse.ui.edit.text.gotoLastEditPosition" iconURI="platform:/plugin/org.eclipse.ui.editors/icons/full/etool16/last_edit_pos.gif" tooltip="Last Edit Location" command="org.eclipse.ui.edit.text.gotoLastEditPosition"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx024" elementId="backardHistory" iconURI="platform:/plugin/org.eclipse.ui/icons/full/elcl16/backward_nav.gif" tooltip="Back" command="org.eclipse.ui.navigate.backwardHistory"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx025" elementId="forwardHistory" iconURI="platform:/plugin/org.eclipse.ui/icons/full/elcl16/forward_nav.gif" tooltip="Forward" command="org.eclipse.ui.navigate.forwardHistory"/>
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx026" elementId="pin.group"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_UW9TVvr3Ed6gmo7caOx027" elementId="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.gif" tooltip="Pin Editor" command="org.eclipse.ui.window.pinEditor"/>
-      </children>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx028" elementId="org.eclipse.jdt.ui.CompilationUnitEditor"/>
-      <children xsi:type="menu:ToolBar" xmi:id="_UW9TUPr3Ed6gmo7caOx029" elementId="org.eclipse.ui.workbench.help">
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_UW9TVvr3Ed6gmo7caOx02A" elementId="group.help"/>
-      </children>
-      <children xsi:type="menu:ToolControl" xmi:id="_50YegGp-Er-1cNZjH9g15Q" elementId="PerspectiveSpacer" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SpacerToolControl"/>
-      <children xsi:type="menu:ToolControl" xmi:id="_50YegGp-Ed-QyNZjH9g15Q" elementId="PerspectiveSwitcher" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"/>
     </trimBars>
   </children>
   <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" elementId="_UW9TY_r3Ed6gmo7caOxU9g" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.ExitHandler" command="e4.exit"/>
