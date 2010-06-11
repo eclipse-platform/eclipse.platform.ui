@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,6 +80,7 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.TextProcessor;
@@ -146,6 +149,9 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * A window within the workbench.
@@ -475,6 +481,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 									.createHandledMenuItem();
 							menuItem.setCommand(command);
 							menuItem.setLabel(command.getCommandName());
+							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
 							menu.getChildren().add(menuItem);
 							break;
 						}
@@ -486,6 +493,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 									.createHandledMenuItem();
 							menuItem.setCommand(command);
 							menuItem.setLabel(command.getCommandName());
+							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
 							menu.getChildren().add(menuItem);
 							break;
 						}
@@ -498,6 +506,34 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				menu.getChildren().add(separator);
 			}
 		}
+	}
+
+	private String getIconURI(ImageDescriptor descriptor) {
+		if (descriptor == null) {
+			return null;
+		}
+
+		String string = descriptor.toString();
+		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
+			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
+			string = string.substring(0, string.length() - 1);
+
+			BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
+
+			try {
+				URI uri = new URI(string);
+				String host = uri.getHost();
+				String bundleId = host.substring(0, host.indexOf('.'));
+				Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
+				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+				builder.append(bundle.getSymbolicName());
+				builder.append(uri.getPath());
+				return builder.toString();
+			} catch (URISyntaxException e) {
+				// ignored
+			}
+		}
+		return null;
 	}
 
 	public static String getId(IConfigurationElement element) {
