@@ -609,6 +609,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 						handle(err, runContext);
 					}
 				}
+				if (!spinOnce) {
+					cleanUp();
+				}
 			}
 
 			private void handle(Throwable ex, final IEclipseContext appContext) {
@@ -639,6 +642,24 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public void stop() {
+		// FIXME Without this call the test-suite fails
+		cleanUp();
+		if (theApp != null) {
+			for (MWindow window : theApp.getChildren()) {
+				if (window.getWidget() != null) {
+					((Shell) window.getWidget()).close();
+				}
+			}
+		} else if (testShell != null && !testShell.isDisposed()) {
+			testShell.close();
+		}
+	}
+
+	/*
+	 * There are situations where this is called more than once until we know
+	 * why this is needed we should make this safe for multiple calls
+	 */
+	private void cleanUp() {
 		if (menuServiceFilter != null) {
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {
@@ -656,15 +677,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.removeFilter(SWT.Traverse, keyListener);
 				keyListener = null;
 			}
-		}
-		if (theApp != null) {
-			for (MWindow window : theApp.getChildren()) {
-				if (window.getWidget() != null) {
-					((Shell) window.getWidget()).close();
-				}
-			}
-		} else if (testShell != null && !testShell.isDisposed()) {
-			testShell.close();
 		}
 	}
 }
