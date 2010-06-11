@@ -20,6 +20,7 @@ package org.eclipse.e4.ui.model.application.ui;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpressionId <em>Core Expression Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpression <em>Core Expression</em>}</li>
  * </ul>
  * </p>
  *
@@ -52,5 +53,30 @@ public interface MCoreExpression extends MExpression {
 	 * @generated
 	 */
 	void setCoreExpressionId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Core Expression</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Core Expression</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Core Expression</em>' attribute.
+	 * @see #setCoreExpression(Object)
+	 * @model transient="true"
+	 * @generated
+	 */
+	Object getCoreExpression();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpression <em>Core Expression</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Core Expression</em>' attribute.
+	 * @see #getCoreExpression()
+	 * @generated
+	 */
+	void setCoreExpression(Object value);
 
 } // MCoreExpression

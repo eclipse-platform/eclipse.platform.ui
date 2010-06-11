@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.inject.Inject;
 import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IContextConstants;
@@ -410,8 +411,13 @@ public class MenuServiceFilter implements Listener {
 		}
 		MCoreExpression exp = (MCoreExpression) menuContribution
 				.getVisibleWhen();
-		ReferenceExpression ref = new ReferenceExpression(
-				exp.getCoreExpressionId());
+		Expression ref = null;
+		if (exp.getCoreExpression() instanceof Expression) {
+			ref = (Expression) exp.getCoreExpression();
+		} else {
+			ref = new ReferenceExpression(exp.getCoreExpressionId());
+			exp.setCoreExpression(ref);
+		}
 		try {
 			return ref.evaluate(eContext) != EvaluationResult.FALSE;
 		} catch (CoreException e) {

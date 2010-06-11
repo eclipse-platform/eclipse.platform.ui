@@ -144,6 +144,7 @@ public class UIEvents {
 	public static interface ModelComponents {
 		public static final String TOPIC = UITopicBase + "/application/ModelComponents"; //$NON-NLS-1$
 		public static final String COMPONENTS = "components"; //$NON-NLS-1$
+		public static final String IMPORTS = "imports"; //$NON-NLS-1$
 	}
 
 	public static interface StringToStringMap {
@@ -194,6 +195,7 @@ public class UIEvents {
 
 	public static interface CoreExpression {
 		public static final String TOPIC = UITopicBase + "/ui/CoreExpression"; //$NON-NLS-1$
+		public static final String COREEXPRESSION = "coreExpression"; //$NON-NLS-1$
 		public static final String COREEXPRESSIONID = "coreExpressionId"; //$NON-NLS-1$
 	}
 
@@ -264,6 +266,7 @@ public class UIEvents {
 
 	public static interface MenuContribution {
 		public static final String TOPIC = UITopicBase + "/menu/MenuContribution"; //$NON-NLS-1$
+		public static final String PARENTID = "parentID"; //$NON-NLS-1$
 		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
 	}
 
@@ -275,6 +278,16 @@ public class UIEvents {
 	public static interface MenuItem {
 		public static final String TOPIC = UITopicBase + "/menu/MenuItem"; //$NON-NLS-1$
 		public static final String MNEMONICS = "mnemonics"; //$NON-NLS-1$
+	}
+
+	public static interface RenderedMenu {
+		public static final String TOPIC = UITopicBase + "/menu/RenderedMenu"; //$NON-NLS-1$
+		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
+	}
+
+	public static interface RenderedToolBar {
+		public static final String TOPIC = UITopicBase + "/menu/RenderedToolBar"; //$NON-NLS-1$
+		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
 	}
 
 	public static String buildTopic(String topic) {

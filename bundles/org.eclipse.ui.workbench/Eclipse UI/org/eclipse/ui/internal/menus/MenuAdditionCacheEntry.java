@@ -16,14 +16,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -90,8 +97,6 @@ public class MenuAdditionCacheEntry {
 	// return (Expression) visWhenMap.get(configElement);
 	// }
 
-
-
 	/**
 	 * @return <code>true</code> if this is a toolbar contribution
 	 */
@@ -103,8 +108,7 @@ public class MenuAdditionCacheEntry {
 	 * @param configurationElement
 	 * @return the menu manager
 	 */
-	private MMenu createMenuAddition(
-			final IConfigurationElement menuAddition) {
+	private MMenu createMenuAddition(final IConfigurationElement menuAddition) {
 		// Is this for a menu or a ToolBar ? We can't create
 		// a menu directly under a Toolbar; we have to add an
 		// item of style 'pulldown'
@@ -130,8 +134,7 @@ public class MenuAdditionCacheEntry {
 		return element;
 	}
 
-	private MMenuElement createSeparatorAddition(
-			final IConfigurationElement sepAddition) {
+	private MMenuElement createSeparatorAddition(final IConfigurationElement sepAddition) {
 		String name = getName(sepAddition);
 		MMenuElement element = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 		element.setElementId(name);
@@ -167,7 +170,39 @@ public class MenuAdditionCacheEntry {
 		item.setMnemonics(getMnemonic(commandAddition));
 		item.setTooltip(getTooltip(commandAddition));
 		item.setType(getStyle(commandAddition));
+		item.setVisibleWhen(getVisibleWhen(commandAddition));
 		return item;
+	}
+
+	/**
+	 * @param commandAddition
+	 * @return
+	 */
+	private MExpression getVisibleWhen(IConfigurationElement commandAddition) {
+		try {
+			IConfigurationElement[] visibleConfig = configElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
+			if (visibleConfig.length > 0 && visibleConfig.length < 2) {
+				IConfigurationElement[] visibleChild = visibleConfig[0].getChildren();
+				if (visibleChild.length > 0) {
+					Expression visWhen = ExpressionConverter.getDefault().perform(visibleChild[0]);
+					MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+					exp.setCoreExpressionId("programmatic.value"); //$NON-NLS-1$
+					exp.setCoreExpression(visWhen);
+					return exp;
+					// visWhenMap.put(configElement, visWhen);
+				}
+			}
+		} catch (InvalidRegistryObjectException e) {
+			// visWhenMap.put(configElement, null);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// visWhenMap.put(configElement, null);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -311,7 +346,7 @@ public class MenuAdditionCacheEntry {
 		}
 		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
 			E4Util.unsupported("Failed to get style for " + IWorkbenchRegistryConstants.STYLE_PULLDOWN); //$NON-NLS-1$
-//			return CommandContributionItem.STYLE_PULLDOWN;
+			// return CommandContributionItem.STYLE_PULLDOWN;
 		}
 		return ItemType.PUSH;
 	}
@@ -334,8 +369,6 @@ public class MenuAdditionCacheEntry {
 		}
 		return map;
 	}
-
-
 
 	private void addChildren(final MElementContainer<MMenuElement> container,
 			IConfigurationElement parent, String filter) {

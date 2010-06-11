@@ -157,8 +157,13 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 			return;
 		}
 		MCoreExpression exp = (MCoreExpression) item.getVisibleWhen();
-		ReferenceExpression ref = new ReferenceExpression(
-				exp.getCoreExpressionId());
+		Expression ref = null;
+		if (exp.getCoreExpression() instanceof Expression) {
+			ref = (Expression) exp.getCoreExpression();
+		} else {
+			ref = new ReferenceExpression(exp.getCoreExpressionId());
+			exp.setCoreExpression(ref);
+		}
 		menuItemToExpression.put(item, ref);
 		IEclipseContext itemContext = getContext(item);
 		VisibleRAT rat = new VisibleRAT(item, ref, itemContext);

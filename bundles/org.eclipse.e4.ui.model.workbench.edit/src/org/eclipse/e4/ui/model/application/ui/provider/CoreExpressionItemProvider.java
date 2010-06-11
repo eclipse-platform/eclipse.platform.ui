@@ -63,6 +63,7 @@ public class CoreExpressionItemProvider
 			super.getPropertyDescriptors(object);
 
 			addCoreExpressionIdPropertyDescriptor(object);
+			addCoreExpressionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -81,6 +82,28 @@ public class CoreExpressionItemProvider
 				 getString("_UI_CoreExpression_coreExpressionId_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_CoreExpression_coreExpressionId_feature", "_UI_CoreExpression_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Core Expression feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addCoreExpressionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_CoreExpression_coreExpression_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_CoreExpression_coreExpression_feature", "_UI_CoreExpression_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION,
 				 true,
 				 false,
 				 false,
@@ -127,6 +150,7 @@ public class CoreExpressionItemProvider
 
 		switch (notification.getFeatureID(MCoreExpression.class)) {
 			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
+			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
