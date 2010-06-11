@@ -51,11 +51,17 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -69,6 +75,7 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -76,7 +83,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
+import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -163,7 +172,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	@Inject
 	private IWorkbench workbench;
 	@Inject
-	private MWindow model;
+	private MTrimmedWindow model;
 	@Inject
 	private IPresentationEngine engine;
 
@@ -445,8 +454,24 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			fill(mainMenu, menuManager);
 		}
 
+		MTrimBar trimBar = getTopTrim();
+		if (trimBar.getChildren().isEmpty()) {
+			fill(trimBar, getCoolBarManager2());
+		}
+
 		createProgressIndicator(shell);
 		createHeapStatus(shell);
+	}
+
+	private MTrimBar getTopTrim() {
+		List<MTrimBar> trimBars = model.getTrimBars();
+		if (trimBars.size() == 0) {
+			MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+			trimBars.add(trimBar);
+			trimBar.setElementId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+			return trimBar;
+		}
+		return trimBars.get(0);
 	}
 
 	private void fill(MMenu menu, IMenuManager manager) {
@@ -504,6 +529,81 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				separator.setToBeRendered(item.isVisible());
 				separator.setElementId(item.getId());
 				menu.getChildren().add(separator);
+			}
+		}
+	}
+
+	private void fill(MTrimBar container, IContributionManager manager) {
+		for (IContributionItem item : manager.getItems()) {
+			if (item instanceof IToolBarContributionItem) {
+				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
+				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+				toolBar.setElementId(item.getId());
+				fill(toolBar, manager2);
+				container.getChildren().add(toolBar);
+			} else if (item instanceof IContributionManager) {
+				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+				toolBar.setElementId(item.getId());
+				fill(toolBar, (IContributionManager) item);
+				container.getChildren().add(toolBar);
+			} else if (item instanceof AbstractGroupMarker) {
+				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+				separator.setToBeRendered(item.isVisible());
+				separator.setElementId(item.getId());
+
+				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+				toolBar.setElementId(item.getId());
+				toolBar.getChildren().add(separator);
+				container.getChildren().add(toolBar);
+			}
+		}
+	}
+
+	private void fill(MToolBar container, IContributionManager manager) {
+		for (IContributionItem item : manager.getItems()) {
+			if (item instanceof IToolBarContributionItem) {
+				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
+				fill(container, manager2);
+			} else if (item instanceof IContributionManager) {
+				fill(container, (IContributionManager) item);
+			} else if (item instanceof CommandContributionItem) {
+				String id = ((CommandContributionItem) item).getCommand().getId();
+				for (MCommand command : application.getCommands()) {
+					if (id.equals(command.getElementId())) {
+						MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
+								.createHandledToolItem();
+						menuItem.setCommand(command);
+						menuItem.setLabel(command.getCommandName());
+						container.getChildren().add(menuItem);
+						break;
+					}
+				}
+			} else if (item instanceof AbstractGroupMarker) {
+				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+				separator.setToBeRendered(item.isVisible());
+				separator.setElementId(item.getId());
+				container.getChildren().add(separator);
+			} else if (item instanceof ActionContributionItem) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				String id = action.getActionDefinitionId();
+				if (id != null) {
+					for (MCommand command : application.getCommands()) {
+						if (id.equals(command.getElementId())) {
+							MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
+									.createHandledToolItem();
+							menuItem.setCommand(command);
+							container.getChildren().add(menuItem);
+
+							String iconURI = getIconURI(action.getImageDescriptor());
+							if (iconURI == null) {
+								menuItem.setLabel(command.getCommandName());
+							} else {
+								menuItem.setIconURI(iconURI);
+							}
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1957,8 +2057,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return menuManager;
 	}
 
+	ToolBarManager2 toolBarManager = new ToolBarManager2();
+
 	public IToolBarManager2 getToolBarManager2() {
-		return null;
+		return toolBarManager;
 	}
 
 	public IToolBarManager getToolBarManager() {
