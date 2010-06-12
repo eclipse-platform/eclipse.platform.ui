@@ -49,6 +49,11 @@
    </element>
 
    <element name="stylesheet">
+      <annotation>
+         <documentation>
+            Contribute a stylehsheet to themes
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="themeid" minOccurs="0" maxOccurs="unbounded"/>
