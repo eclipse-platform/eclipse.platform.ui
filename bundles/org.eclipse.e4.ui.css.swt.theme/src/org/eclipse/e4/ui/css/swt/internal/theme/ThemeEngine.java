@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
+import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
@@ -50,12 +51,13 @@ public class ThemeEngine implements IThemeEngine {
 	private Display display;
 
 	private List<String> globalStyles = new ArrayList<String>();
+	private List<IResourceLocator> globalSourceLocators = new ArrayList<IResourceLocator>();
 
 	private HashMap<String, List<String>> stylesheets = new HashMap<String, List<String>>();
 	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<String, List<IResourceLocator>>();
 
 	private static final String THEMEID_KEY = "themeid";
-	
+
 	public ThemeEngine(Display display) {
 		this.engine = new CSSSWTEngineImpl(display, true);
 		this.display = display;
@@ -71,12 +73,15 @@ public class ThemeEngine implements IThemeEngine {
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
 
 		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
+			for (IConfigurationElement ce : getPlatformMatches(e
+					.getConfigurationElements())) {
 				if (ce.getName().equals("theme")) {
-					registerTheme(ce.getAttribute("id"), ce
-							.getAttribute("label"), "platform:/plugin/"
-							+ ce.getContributor().getName() + "/" + ce
-							.getAttribute("basestylesheeturi"));
+					registerTheme(
+							ce.getAttribute("id"),
+							ce.getAttribute("label"),
+							"platform:/plugin/" + ce.getContributor().getName()
+									+ "/"
+									+ ce.getAttribute("basestylesheeturi"));
 				}
 			}
 		}
@@ -89,15 +94,33 @@ public class ThemeEngine implements IThemeEngine {
 						registerStylsheet("platform:/plugin/"
 								+ ce.getContributor().getName() + "/"
 								+ ce.getAttribute("uri"));
+
+						for (IConfigurationElement resourceEl : ce
+								.getChildren("osgiresourcelocator")) {
+							String uri = resourceEl.getAttribute("uri");
+							if (uri != null) {
+								registerResourceLocator(new OSGiResourceLocator(
+										uri));
+							}
+						}
 					} else {
 						String[] themes = new String[cces.length];
 						for (int i = 0; i < cces.length; i++) {
 							themes[i] = cces[i].getAttribute("refid");
 						}
-						String uri = "platform:/plugin/"
-								+ ce.getContributor().getName() + "/"
-								+ ce.getAttribute("uri");
-						registerStylsheet(uri, themes);
+						registerStylsheet(
+								"platform:/plugin/"
+										+ ce.getContributor().getName() + "/"
+										+ ce.getAttribute("uri"), themes);
+
+						for (IConfigurationElement resourceEl : ce
+								.getChildren("osgiresourcelocator")) {
+							String uri = resourceEl.getAttribute("uri");
+							if (uri != null) {
+								registerResourceLocator(new OSGiResourceLocator(
+										uri));
+							}
+						}
 					}
 				}
 			}
@@ -125,9 +148,9 @@ public class ThemeEngine implements IThemeEngine {
 		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
 		String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
-        
+
 		uri = uri.replaceAll("\\$os\\$", osname).replaceAll("\\$ws\\$", wsname);
-		
+
 		if (themes.length == 0) {
 			globalStyles.add(uri);
 		} else {
@@ -140,10 +163,16 @@ public class ThemeEngine implements IThemeEngine {
 	public synchronized void registerResourceLocator(IResourceLocator locator,
 			String... themes) {
 		if (themes.length == 0) {
-			engine.getResourcesLocatorManager()
-					.registerResourceLocator(locator);
+			globalSourceLocators.add(locator);
 		} else {
-
+			for (String t : themes) {
+				List<IResourceLocator> list = sourceLocators.get(t);
+				if (list == null) {
+					list = new ArrayList<IResourceLocator>();
+					sourceLocators.put(t, list);
+				}
+				list.add(locator);
+			}
 		}
 	}
 
@@ -168,46 +197,51 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	private List<IResourceLocator> getResourceLocators(String id) {
+		List<IResourceLocator> list = new ArrayList<IResourceLocator>(
+				globalSourceLocators);
 		List<IResourceLocator> s = sourceLocators.get(id);
-		if (s == null) {
-			s = Collections.emptyList();
+		if (s != null) {
+			list.addAll(s);
 		}
 
-		return s;
+		return list;
 	}
-	
-	 /**
-     * Get all elements that have os/ws attributes that best match the current 
-     * platform.
-     * 
-     * @param elements the elements to check
-     * @return the best matches, if any
-     */
-    private IConfigurationElement[] getPlatformMatches(
-            IConfigurationElement[] elements) {
-        Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
+
+	/**
+	 * Get all elements that have os/ws attributes that best match the current
+	 * platform.
+	 * 
+	 * @param elements
+	 *            the elements to check
+	 * @return the best matches, if any
+	 */
+	private IConfigurationElement[] getPlatformMatches(
+			IConfigurationElement[] elements) {
+		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
-		//TODO: Need to differentiate win32 versions
-		//System.getProperty("os.name");
-        String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
-        ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
-        for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
-            String elementOs = element.getAttribute("os");
-            String elementWs = element.getAttribute("ws");
-            if (osname != null && ( elementOs == null ||  elementOs.contains(osname) )) {
-                if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
-                	//best match
-                    matchingElements.add(element);
-                    continue;
-                }
-                matchingElements.add(element);
-            } else if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
-            	matchingElements.add(element);
-            }
-        }
-        return (IConfigurationElement[]) matchingElements.toArray(new IConfigurationElement[matchingElements.size()]);
-    }
+		// TODO: Need to differentiate win32 versions
+		// System.getProperty("os.name");
+		String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
+		ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			String elementOs = element.getAttribute("os");
+			String elementWs = element.getAttribute("ws");
+			if (osname != null
+					&& (elementOs == null || elementOs.contains(osname))) {
+				if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+					// best match
+					matchingElements.add(element);
+					continue;
+				}
+				matchingElements.add(element);
+			} else if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+				matchingElements.add(element);
+			}
+		}
+		return (IConfigurationElement[]) matchingElements
+				.toArray(new IConfigurationElement[matchingElements.size()]);
+	}
 
 	public void setTheme(String themeId, boolean restore) {
 		for (Theme t : themes) {
@@ -230,7 +264,7 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 
-			if( restore ) {
+			if (restore) {
 				IEclipsePreferences pref = getPreferences();
 				pref.put(THEMEID_KEY, theme.getId());
 				try {
@@ -240,13 +274,12 @@ public class ThemeEngine implements IThemeEngine {
 					e.printStackTrace();
 				}
 			}
-			
+
 			this.currentTheme = theme;
 			engine.reset();
 
 			for (IResourceLocator l : getResourceLocators(theme.getId())) {
-				engine.getResourcesLocatorManager()
-						.registerResourceLocator(l);
+				engine.getResourcesLocatorManager().registerResourceLocator(l);
 			}
 
 			for (String stylesheet : getAllStyles(theme.getId())) {
@@ -273,14 +306,14 @@ public class ThemeEngine implements IThemeEngine {
 					}
 				}
 			}
-			
+
 			Shell[] shells = display.getShells();
 			for (Shell s : shells) {
 				try {
 					s.setRedraw(false);
 					s.reskin(SWT.ALL);
 					applyStyles(s, true);
-				} catch(Exception e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} finally {
@@ -297,23 +330,22 @@ public class ThemeEngine implements IThemeEngine {
 	public void applyStyles(Widget widget, boolean applyStylesToChildNodes) {
 		engine.applyStyles(widget, applyStylesToChildNodes);
 	}
-	
+
 	// TODO may not be ideal??
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
 	public CSSEngine getCSSEngine() {
-				return engine;
+		return engine;
 	}
-	
+
 	private String getPreferenceThemeId() {
 		return getPreferences().get(THEMEID_KEY, null);
 	}
-	
+
 	private IEclipsePreferences getPreferences() {
-		return new InstanceScope()
-		.getNode(FrameworkUtil.getBundle(ThemeEngine.class)
-				.getSymbolicName());
+		return new InstanceScope().getNode(FrameworkUtil.getBundle(
+				ThemeEngine.class).getSymbolicName());
 	}
-	
+
 	public void restore(String alternateTheme) {
 		String prefThemeId = getPreferenceThemeId();
 		boolean flag = true;

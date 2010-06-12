@@ -52,6 +52,7 @@
       <complexType>
          <sequence>
             <element ref="themeid" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="osgiresourcelocator" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="uri" type="string" use="required">
             <annotation>
@@ -126,6 +127,18 @@
    <element name="themeid">
       <complexType>
          <attribute name="refid" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="osgiresourcelocator">
+      <complexType>
+         <attribute name="uri" type="string" use="required">
             <annotation>
                <documentation>
                   
