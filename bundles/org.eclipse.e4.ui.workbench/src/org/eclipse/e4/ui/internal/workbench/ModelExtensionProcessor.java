@@ -109,6 +109,10 @@ public class ModelExtensionProcessor {
 			for (IConfigurationElement ce : ces) {
 				if (!"snippet".equals(ce.getName())) //$NON-NLS-1$
 					continue;
+
+				System.err
+						.println("WARNING: The model component system is deprecated. Migrate your code to the new system"); //$NON-NLS-1$
+
 				IContributor contributor = ce.getContributor();
 				String attrURI = ce.getAttribute("uri"); //$NON-NLS-1$
 				if (attrURI == null) {
@@ -212,11 +216,10 @@ public class ModelExtensionProcessor {
 		// now that we have all components loaded, resolve imports
 		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<MApplicationElement, MApplicationElement>();
 		for (MApplicationElement importedElement : imports) {
-			MApplicationElement realElement = findElementById(e4Window, importedElement
-					.getElementId());
+			MApplicationElement realElement = findElementById(e4Window,
+					importedElement.getElementId());
 			if (realElement == null)
-				log(
-						"Could not resolve an import element for '" + realElement + "'", new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
+				log("Could not resolve an import element for '" + realElement + "'", new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
 			importMaps.put(importedElement, realElement);
 		}
 
