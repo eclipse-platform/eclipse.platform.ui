@@ -169,6 +169,8 @@ public class E4Application implements IApplication {
 			String cssURI = getArgValue(E4Workbench.CSS_URI_ARG,
 					applicationContext);
 			appContext.set(E4Application.THEME_ID, cssURI);
+		} else {
+			appContext.set(E4Application.THEME_ID, themeId);
 		}
 
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,

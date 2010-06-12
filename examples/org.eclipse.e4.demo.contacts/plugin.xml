@@ -16,7 +16,7 @@
                value="org.eclipse.e4.demo.contacts/Application.e4xmi">
          </property>
          <property
-               name="applicationCSS"
+               name="cssTheme"
                value="org.eclipse.e4.demo.contacts.themes.darkgradient">
          </property>
          <property
