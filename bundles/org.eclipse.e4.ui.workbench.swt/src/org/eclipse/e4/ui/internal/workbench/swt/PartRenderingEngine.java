@@ -712,7 +712,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (cssResourcesURI != null) {
 				// TODO: Should this be set through an extension as well?
 				engine.registerResourceLocator(new OSGiResourceLocator(
-						cssResourcesURI.toString()));
+						cssResourcesURI));
 			}
 
 			engine.restore(cssTheme);

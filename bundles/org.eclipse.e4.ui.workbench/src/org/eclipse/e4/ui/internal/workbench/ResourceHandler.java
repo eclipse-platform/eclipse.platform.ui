@@ -27,6 +27,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -60,19 +62,29 @@ public class ResourceHandler implements IModelResourceHandler {
 	private static final boolean RESTORE_VIA_DELTAS = true;
 
 	private File workbenchData;
-	private URI applicationDefinitionInstance;
+
 	private ResourceSetImpl resourceSetImpl;
 	private URI restoreLocation;
 	private Resource resource;
 	private ModelReconciler reconciler;
+
+	@Inject
 	private Logger logger;
 
 	@Inject
+	private IEclipseContext context;
+
+	@Inject
+	@Named(E4Workbench.INITIAL_WORKBENCH_MODEL_URI)
+	private URI applicationDefinitionInstance;
+
+	/**
+	 * @param instanceLocation
+	 * @param saveAndRestore
+	 */
+	@Inject
 	public ResourceHandler(@Named(E4Workbench.INSTANCE_LOCATION) Location instanceLocation,
-			@Named(E4Workbench.INITIAL_WORKBENCH_MODEL_URI) URI applicationDefinitionInstance,
-			@Named(E4Workbench.SAVE_AND_RESTORE) boolean saveAndRestore, Logger logger) {
-		this.applicationDefinitionInstance = applicationDefinitionInstance;
-		this.logger = logger;
+			@Named(E4Workbench.SAVE_AND_RESTORE) boolean saveAndRestore) {
 		resourceSetImpl = new ResourceSetImpl();
 		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
@@ -193,6 +205,13 @@ public class ResourceHandler implements IModelResourceHandler {
 				// This has to be done before commands are put into the context
 				ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
 				extProcessor.addModelExtensions();
+
+				IEclipseContext context = this.context.createChild();
+				this.context.set(MApplication.class, appElement);
+				ModelAssembler contribProcessor = ContextInjectionFactory.make(
+						ModelAssembler.class, context);
+				contribProcessor.processModel();
+				context.dispose();
 
 				File file = new File(restoreLocation.toFileString());
 				reconciler = new XMLModelReconciler();

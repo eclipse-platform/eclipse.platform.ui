@@ -11,7 +11,7 @@
  Contributors:
       IBM Corporation - initial API and implementation
 
- $Id: plugin.xml,v 1.6.2.1 2010/04/10 12:52:49 tschindl Exp $
+ $Id: plugin.xml,v 1.7 2010/04/16 17:31:41 rsuen Exp $
 -->
 
 <plugin>
@@ -45,6 +45,10 @@
             uri="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
             genModel="model/UIElements.genmodel"
             class="org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl"/>
+      <package
+            class="org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl"
+            genModel="model/ModelFragment.genmodel"
+            uri="http://www.eclipse.org/ui/2010/UIModel/fragment"/>
    </extension>
    
 </plugin>

@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -50,13 +52,22 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		return (Location) locationTracker.getService();
 	}
 
+	private ResourceHandler createHandler(URI uri) {
+		IEclipseContext localContext = applicationContext.createChild();
+		localContext.set(E4Workbench.INSTANCE_LOCATION, getInstanceLocation());
+		localContext.set(E4Workbench.SAVE_AND_RESTORE, true);
+		localContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI, uri);
+
+		return ContextInjectionFactory
+				.make(ResourceHandler.class, localContext);
+
+	}
+
 	public void testLoadMostRecent() {
 		URI uri = URI.createPlatformPluginURI(
 				"org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
 
-		ResourceHandler handler = new ResourceHandler(getInstanceLocation(),
-				uri, true, (Logger) applicationContext.get(Logger.class
-						.getName()));
+		ResourceHandler handler = createHandler(uri);
 		Resource resource = handler.loadMostRecentModel();
 		assertNotNull(resource);
 		assertEquals(E4XMIResource.class, resource.getClass());
@@ -67,9 +78,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		URI uri = URI.createPlatformPluginURI(
 				"org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
 
-		ResourceHandler handler = new ResourceHandler(getInstanceLocation(),
-				uri, true, (Logger) applicationContext.get(Logger.class
-						.getName()));
+		ResourceHandler handler = createHandler(uri);
 		Resource resource = handler.loadBaseModel();
 		assertNotNull(resource);
 		assertEquals(E4XMIResource.class, resource.getClass());
@@ -97,5 +106,38 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		assertEquals(1, stack.getChildren().size());
 		assertEquals("window1.partstack2.part1", stack.getChildren().get(0)
 				.getElementId());
+	}
+
+	public void testModelProcessor() {
+		URI uri = URI.createPlatformPluginURI(
+				"org.eclipse.e4.ui.tests/xmi/modelprocessor/base.e4xmi", true);
+
+		ResourceHandler handler = createHandler(uri);
+		Resource resource = handler.loadMostRecentModel();
+		MApplication application = (MApplication) resource.getContents().get(0);
+		assertNotNull(application);
+		assertEquals(2, application.getChildren().size());
+		assertEquals("fragment.contributedWindow", application.getChildren()
+				.get(1).getElementId());
+		assertEquals(1, application.getHandlers().size());
+		assertSame(application.getCommands().get(0), application.getHandlers()
+				.get(0).getCommand());
+		assertEquals(2, application.getCommands().get(0).getParameters().size());
+		assertEquals(1, application.getChildren().get(1).getVariables().size());
+		assertNotNull(application.getChildren().get(0).getMainMenu());
+		assertEquals(8, application.getChildren().get(0).getChildren().size());
+		assertEquals("fragment.contributedPosFirst", application.getChildren()
+				.get(0).getChildren().get(0).getElementId());
+		assertEquals("fragment.contributedPos1",
+				application.getChildren().get(0).getChildren().get(1)
+						.getElementId());
+		assertEquals("fragment.contributedBeforePart1", application
+				.getChildren().get(0).getChildren().get(2).getElementId());
+		assertEquals("fragment.contributedAfterPart1", application
+				.getChildren().get(0).getChildren().get(4).getElementId());
+		assertEquals("fragment.contributedBeforePart2", application
+				.getChildren().get(0).getChildren().get(5).getElementId());
+		assertEquals("fragment.contributedAfterPart2", application
+				.getChildren().get(0).getChildren().get(7).getElementId());
 	}
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_usTxcXVAEd-aXt9fFntEtw" elementId="app.base">
+  <children xsi:type="basic:Window" xmi:id="_yR_esHVAEd-aXt9fFntEtw" elementId="app.base.window">
+    <children xsi:type="basic:Part" xmi:id="_pNZpIXY6Ed-w8OZmMuje3w" elementId="app.base.part1"/>
+    <children xsi:type="basic:Part" xmi:id="_pneWAHY6Ed-w8OZmMuje3w" elementId="app.base.part2"/>
+  </children>
+  <commands xmi:id="_EvYGYHVJEd-aXt9fFntEtw" elementId="app.base.command"/>
+</application:Application>

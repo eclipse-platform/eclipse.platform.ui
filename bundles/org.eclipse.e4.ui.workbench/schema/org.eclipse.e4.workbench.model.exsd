@@ -18,7 +18,9 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="snippet" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="snippet" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="fragment" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="processor" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -64,6 +66,65 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.workbench.modeling.IModelExtension"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fragment">
+      <complexType>
+         <attribute name="uri" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="processor">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="element"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="beforefragment" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="element">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contextKey" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

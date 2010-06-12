@@ -28,7 +28,10 @@ Export-Package: org.eclipse.e4.ui.model.application,
  org.eclipse.e4.ui.model.application.ui.menu.impl,
  org.eclipse.e4.ui.model.application.ui.menu.util,
  org.eclipse.e4.ui.model.application.ui.util,
- org.eclipse.e4.ui.model.application.util
+ org.eclipse.e4.ui.model.application.util,
+ org.eclipse.e4.ui.model.fragment,
+ org.eclipse.e4.ui.model.fragment.impl,
+ org.eclipse.e4.ui.model.fragment.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
