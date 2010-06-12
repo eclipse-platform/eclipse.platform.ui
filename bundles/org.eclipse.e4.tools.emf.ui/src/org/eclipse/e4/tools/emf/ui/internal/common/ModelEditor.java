@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelFragmentsEditor;
+
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEditor;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
@@ -454,6 +460,9 @@ public class ModelEditor {
 		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, new PerspectiveStackEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE, new PerspectiveEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(AdvancedPackageImpl.Literals.PLACEHOLDER, new PlaceholderEditor(modelProvider.getEditingDomain()));
+		
+		registerEditor(FragmentPackageImpl.Literals.MODEL_FRAGMENTS, new ModelFragmentsEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, new StringModelFragment(modelProvider.getEditingDomain(),this));
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

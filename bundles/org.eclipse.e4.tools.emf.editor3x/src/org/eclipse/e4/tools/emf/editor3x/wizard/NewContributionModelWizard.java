@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x.wizard;
 
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.emf.ecore.EObject;
 
 
@@ -18,10 +18,10 @@ public class NewContributionModelWizard extends BaseApplicationModelWizard {
 
 	@Override
 	public String getDefaultFileName() {
-		return "components.e4xmi";
+		return "fragment.e4xmi";
 	}
 	
 	protected EObject createInitialModel() {
-		return (EObject) MApplicationFactory.INSTANCE.createModelComponents();
+		return (EObject) MFragmentFactory.INSTANCE.createModelFragments();
 	}
 }

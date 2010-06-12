@@ -323,6 +323,24 @@ public class Messages {
 	public static String MenuContributionEditor_ParentId;
 	public static String MenuContributionEditor_Position;
 
+	public static String ModelFragmentsEditor_ModelFragments;
+	public static String ModelFragmentsEditor_Up;
+	public static String ModelFragmentsEditor_Down;
+	public static String ModelFragmentsEditor_Add;
+	public static String ModelFragmentsEditor_Remove;
+	public static String ModelFragmentsEditor_Label;
+	public static String ModelFragmentsEditor_Description;
+
+	public static String StringModelFragment_Label;
+	public static String StringModelFragment_Description;
+	public static String StringModelFragment_Featurename;
+	public static String StringModelFragment_ParentId;
+	public static String StringModelFragment_PositionInList;
+	public static String StringModelFragment_Up;
+	public static String StringModelFragment_Down;
+	public static String StringModelFragment_Remove;
+	public static String StringModelFragment_Elements;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
