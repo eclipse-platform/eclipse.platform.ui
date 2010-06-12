@@ -87,7 +87,7 @@ public class ThemeEngine implements IThemeEngine {
 		}
 
 		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
+			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
 				if (ce.getName().equals("stylesheet")) {
 					IConfigurationElement[] cces = ce.getChildren("themeid");
 					if (cces.length == 0) {
