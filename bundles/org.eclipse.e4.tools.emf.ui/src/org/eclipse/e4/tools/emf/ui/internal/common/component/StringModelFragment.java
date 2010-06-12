@@ -1,5 +1,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+
 import org.eclipse.emf.ecore.EPackage;
 
 import java.util.ArrayList;
@@ -242,15 +244,17 @@ public class StringModelFragment extends AbstractComponentEditor {
 			childrenDropDown.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
+					FeatureClass eclass = (FeatureClass) element;
+					return eclass.label;
 				}
 			});
 
-			List<EClass> list = new ArrayList<EClass>();
+			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			addClasses(ApplicationPackageImpl.eINSTANCE, list);
+			list.addAll(editor.getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
 			childrenDropDown.setInput(list);
+			childrenDropDown.setSelection(new StructuredSelection(list.get(0)));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
@@ -258,7 +262,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
 					EObject eObject = EcoreUtil.create(eClass);
 
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
@@ -291,17 +295,17 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 		return parent;
 	}
-	
-	public void addClasses(EPackage ePackage, List<EClass> list) {
+
+	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
 		for (EClassifier c : ePackage.getEClassifiers()) {
 			if (c instanceof EClass) {
 				EClass eclass = (EClass) c;
-				if ( eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
-					list.add(eclass);
+				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+					list.add(new FeatureClass(eclass.getName(), eclass));
 				}
 			}
 		}
-		
+
 		for (EPackage eSubPackage : ePackage.getESubpackages()) {
 			addClasses(eSubPackage, list);
 		}

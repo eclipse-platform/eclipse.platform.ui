@@ -10,6 +10,16 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.emf.common.util.TreeIterator;
+
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -87,19 +97,16 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 			}
 		});
 		
-		if( resource.getRoot().get(0) instanceof MApplication ) {
-			MApplication app = (MApplication) resource.getRoot().get(0);
-			viewer.setInput(app.getCommands());
-		} else {
-			MModelComponents components = (MModelComponents)resource.getRoot().get(0);
-			List<MCommand> commands = new ArrayList<MCommand>();
-			for( MModelComponent comp : components.getComponents() ) {
-				commands.addAll(comp.getCommands());
+		List<EObject> commands = new ArrayList<EObject>();
+		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject)resource.getRoot().get(0), true);
+		while( it.hasNext() ) {
+			EObject o = it.next();
+			if( o.eClass() == CommandsPackageImpl.Literals.COMMAND ) {
+				commands.add(o);
 			}
-			viewer.setInput(commands);	
 		}
+		viewer.setInput(commands);
 		
-
 		final PatternFilter filter = new PatternFilter() {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {

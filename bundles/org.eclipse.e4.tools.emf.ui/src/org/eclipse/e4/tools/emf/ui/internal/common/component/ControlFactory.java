@@ -50,6 +50,131 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
+	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+		l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+		final Text t = new Text(parent, SWT.BORDER);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
+					handleAddText(editor, UiPackageImpl.Literals.CONTEXT__VARIABLES, t);
+				}
+			}
+		});
+
+		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+		b.setText(Messages.ControlFactory_Add);
+		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleAddText(editor, feature, t);
+			}
+		});
+
+		new Label(parent, SWT.NONE);
+
+		final TableViewer viewer = new TableViewer(parent);
+		viewer.setLabelProvider(new LabelProvider());
+		viewer.setContentProvider(new ObservableListContentProvider());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 150;
+		viewer.getControl().setLayoutData(gd);
+
+		IEMFListProperty prop = EMFProperties.list(feature);
+		viewer.setInput(prop.observeDetail(editor.getMaster()));
+
+		Composite buttonComp = new Composite(parent, SWT.NONE);
+		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+		GridLayout gl = new GridLayout();
+		gl.marginLeft = 0;
+		gl.marginRight = 0;
+		gl.marginWidth = 0;
+		gl.marginHeight = 0;
+		buttonComp.setLayout(gl);
+
+		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+		b.setText(Messages.ControlFactory_Up);
+		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MContext container = (MContext) editor.getMaster().getValue();
+						int idx = container.getVariables().indexOf(obj) - 1;
+						if (idx >= 0) {
+							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), feature, obj, idx);
+
+							if (cmd.canExecute()) {
+								editor.getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
+
+		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+		b.setText(Messages.ControlFactory_Down);
+		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MContext container = (MApplication) editor.getMaster().getValue();
+						int idx = container.getVariables().indexOf(obj) + 1;
+						if (idx < container.getVariables().size()) {
+							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), feature, obj, idx);
+
+							if (cmd.canExecute()) {
+								editor.getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
+
+		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+		b.setText(Messages.ControlFactory_Remove);
+		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					MContext el = (MContext) editor.getMaster().getValue();
+					List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
+					Command cmd = RemoveCommand.create(editor.getEditingDomain(), el, feature, ids);
+					if (cmd.canExecute()) {
+						editor.getEditingDomain().getCommandStack().execute(cmd);
+						if (el.getVariables().size() > 0) {
+							viewer.setSelection(new StructuredSelection(el.getVariables().get(0)));
+						}
+					}
+				}
+			}
+		});
+	}
+	
+	
 	public static void createVariablesWidget(Composite parent, final AbstractComponentEditor editor) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(Messages.ControlFactory_ContextVariables);

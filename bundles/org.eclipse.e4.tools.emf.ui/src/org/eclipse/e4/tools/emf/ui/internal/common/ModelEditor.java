@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelFragmentsEditor;
@@ -147,6 +153,7 @@ public class ModelEditor {
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
 	private List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
+	private List<IEditorFeature> editorFeatures = new ArrayList<IEditorFeature>();
 
 	// private List<AbstractComponentEditor> editors = new
 	// ArrayList<AbstractComponentEditor>();
@@ -167,6 +174,7 @@ public class ModelEditor {
 
 		registerContributedEditors();
 		registerContributedVirtualEditors();
+		loadEditorFeatures();
 
 		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -293,6 +301,34 @@ public class ModelEditor {
 			}
 		});
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+	}
+
+	private void loadEditorFeatures() {
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+
+		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+			if (!"editorfeature".equals(el.getName())) { //$NON-NLS-1$
+				continue;
+			}
+			
+			try {
+				editorFeatures.add((IEditorFeature) el.createExecutableExtension("class")); //$NON-NLS-1$
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public List<FeatureClass> getFeatureClasses(EClass eClass, EStructuralFeature feature) {
+		List<FeatureClass> list = new ArrayList<IEditorFeature.FeatureClass>();
+		
+		for( IEditorFeature f : editorFeatures ) {
+			list.addAll(f.getFeatureClasses(eClass, feature));
+		}
+		
+		return list;
 	}
 
 	@Inject

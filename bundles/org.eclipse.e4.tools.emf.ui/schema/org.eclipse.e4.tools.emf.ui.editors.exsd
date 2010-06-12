@@ -18,8 +18,9 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="editor" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="virtualeditor" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="editor" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="virtualeditor" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="editorfeature" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -79,6 +80,21 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="editorfeature">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.tools.emf.ui.common.IEditorFeature"/>
                </appinfo>
             </annotation>
          </attribute>
