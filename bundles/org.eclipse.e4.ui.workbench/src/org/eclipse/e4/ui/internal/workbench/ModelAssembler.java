@@ -213,6 +213,7 @@ public class ModelAssembler {
 					.create("platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 					localContext);
 			ContextInjectionFactory.invoke(o, Execute.class, localContext);
+			localContext.dispose();
 		} catch (Exception e) {
 			logger.warn(e, "Could not run processor"); //$NON-NLS-1$
 		}
