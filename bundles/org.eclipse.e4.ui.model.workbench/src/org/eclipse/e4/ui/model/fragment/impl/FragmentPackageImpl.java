@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
@@ -257,7 +256,6 @@ public class FragmentPackageImpl extends EPackageImpl {
 		isInited = true;
 
 		// Initialize simple dependencies
-		EcorePackage.eINSTANCE.eClass();
 		ApplicationPackageImpl.eINSTANCE.eClass();
 
 		// Create package meta-data objects

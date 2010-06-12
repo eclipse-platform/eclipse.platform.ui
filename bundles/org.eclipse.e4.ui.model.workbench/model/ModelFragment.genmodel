@@ -5,7 +5,7 @@
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
     modelName="ModelFragment" nonNLSMarkers="true" rootExtendsInterface="" suppressEMFTypes="true"
     suppressEMFMetaData="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
-    copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
+    copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
     interfaceNamePattern="M{0}">
   <foreignModel>ModelFragment.ecore</foreignModel>
   <genPackages prefix="Fragment" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
