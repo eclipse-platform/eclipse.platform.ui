@@ -19,6 +19,6 @@ public class BrightThemeHandler {
 
 	@Execute
 	public void execute( IThemeEngine engine) {		
-		 engine.setTheme("org.eclipse.e4.demo.contacts.themes.brightgradient");
+		 engine.setTheme("org.eclipse.e4.demo.contacts.themes.brightgradient",true);
 	}
 }

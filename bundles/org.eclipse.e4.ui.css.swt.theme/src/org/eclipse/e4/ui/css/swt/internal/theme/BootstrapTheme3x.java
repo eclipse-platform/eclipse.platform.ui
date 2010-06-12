@@ -39,9 +39,9 @@ public class BootstrapTheme3x {
 		final IThemeEngine engine = mgr.getEngineForDisplay(display);
 		ITheme theme = engine.registerTheme(IThemeEngine.DEFAULT_THEME_ID, "Default Theme", "platform:/plugin/org.eclipse.e4.ui.css.swt.theme/css/dummy.css");
 		if( themeId == null ) {
-			engine.setTheme(theme);
+			engine.setTheme(theme, false);
 		} else {
-			engine.setTheme(themeId);
+			engine.setTheme(themeId, false);
 		}
 	}
 }

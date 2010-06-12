@@ -27,12 +27,13 @@ public interface IThemeEngine {
 			String... themes);
 
 	public List<ITheme> getThemes();
-	public void setTheme(String themeId);
-	public void setTheme(ITheme theme);
+	public void setTheme(String themeId, boolean restore);
+	public void setTheme(ITheme theme, boolean restore);
 
 	public void applyStyles(Widget widget, boolean applyStylesToChildNodes);
 	
 	// TODO may not be ideal??
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
 	public CSSEngine getCSSEngine();
+	public void restore(String alternate);
 }

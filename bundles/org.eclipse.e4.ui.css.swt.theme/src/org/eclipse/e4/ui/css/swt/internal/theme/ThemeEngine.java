@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class ThemeEngine implements IThemeEngine {
 	private List<Theme> themes = new ArrayList<Theme>();
@@ -51,6 +54,8 @@ public class ThemeEngine implements IThemeEngine {
 	private HashMap<String, List<String>> stylesheets = new HashMap<String, List<String>>();
 	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<String, List<IResourceLocator>>();
 
+	private static final String THEMEID_KEY = "themeid";
+	
 	public ThemeEngine(Display display) {
 		this.engine = new CSSSWTEngineImpl(display, true);
 		this.display = display;
@@ -204,16 +209,16 @@ public class ThemeEngine implements IThemeEngine {
         return (IConfigurationElement[]) matchingElements.toArray(new IConfigurationElement[matchingElements.size()]);
     }
 
-	public void setTheme(String themeId) {
+	public void setTheme(String themeId, boolean restore) {
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
-				setTheme(t);
+				setTheme(t, restore);
 				break;
 			}
 		}
 	}
 
-	public void setTheme(ITheme theme) {
+	public void setTheme(ITheme theme, boolean restore) {
 		Assert.isNotNull(theme, "The theme must not be null");
 
 		if (this.currentTheme != theme) {
@@ -225,6 +230,17 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 
+			if( restore ) {
+				IEclipsePreferences pref = getPreferences();
+				pref.put(THEMEID_KEY, theme.getId());
+				try {
+					pref.flush();
+				} catch (BackingStoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 			this.currentTheme = theme;
 			engine.reset();
 
@@ -286,5 +302,33 @@ public class ThemeEngine implements IThemeEngine {
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
 	public CSSEngine getCSSEngine() {
 				return engine;
+	}
+	
+	private String getPreferenceThemeId() {
+		return getPreferences().get(THEMEID_KEY, null);
+	}
+	
+	private IEclipsePreferences getPreferences() {
+		return new InstanceScope()
+		.getNode(FrameworkUtil.getBundle(ThemeEngine.class)
+				.getSymbolicName());
+	}
+	
+	public void restore(String alternateTheme) {
+		String prefThemeId = getPreferenceThemeId();
+		boolean flag = true;
+		if (prefThemeId != null) {
+			for (ITheme t : getThemes()) {
+				if (prefThemeId.equals(t.getId())) {
+					setTheme(t, false);
+					flag = false;
+					break;
+				}
+			}
+		}
+
+		if (alternateTheme != null && flag) {
+			setTheme(alternateTheme, false);
+		}
 	}
 }

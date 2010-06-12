@@ -19,6 +19,6 @@ public class DarkThemeHandler {
 
 	@Execute
 	public void execute( IThemeEngine engine) {		
-		 engine.setTheme("org.eclipse.e4.demo.contacts.themes.darkgradient");
+		 engine.setTheme("org.eclipse.e4.demo.contacts.themes.darkgradient", true);
 	}
 }

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -17,8 +21,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -30,7 +33,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
-import org.eclipse.e4.ui.css.swt.theme.ITheme;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -67,7 +70,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -85,8 +87,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	MenuServiceFilter menuServiceFilter;
 
 	org.eclipse.swt.widgets.Listener keyListener;
-
-	private static final String THEMEID_KEY = "themeid";
 
 	// Life Cycle handlers
 	private EventHandler toBeRenderedHandler = new EventHandler() {
@@ -540,11 +540,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 
 			public void run() {
-				String cssURI = (String) runContext.get(E4Application.THEME_ID);
-				String cssResourcesURI = (String) runContext
-						.get(E4Workbench.CSS_RESOURCE_URI_ARG);
-
-				initializeStyling(display, cssURI, cssResourcesURI, runContext);
+				initializeStyling(display, runContext);
 
 				// Register an SWT resource handler
 				runContext.set(IResourceUtilities.class.getName(),
@@ -693,66 +689,117 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	}
 
-	public static void initializeStyling(Display display, String cssURI,
-			String resourceURI, IEclipseContext appContext) {
-		Bundle bundle = WorkbenchSWTActivator.getDefault().getBundle();
-		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(IThemeManager.class
-				.getName());
-		IThemeManager mgr = (IThemeManager) context.getService(ref);
-		final IThemeEngine engine = mgr.getEngineForDisplay(display);
+	public static void initializeStyling(Display display,
+			IEclipseContext appContext) {
+		String cssTheme = (String) appContext.get(E4Application.THEME_ID);
+		String cssURI = (String) appContext.get(E4Workbench.CSS_URI_ARG);
 
-		// Store the app context
-		display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
+		if (cssTheme != null) {
+			String cssResourcesURI = (String) appContext
+					.get(E4Workbench.CSS_RESOURCE_URI_ARG);
 
-		// Create the OSGi resource locator
-		if (resourceURI != null) {
-			// TODO: Should this be set through an extension as well?
-			engine.registerResourceLocator(new OSGiResourceLocator(resourceURI
-					.toString()));
-		}
+			Bundle bundle = WorkbenchSWTActivator.getDefault().getBundle();
+			BundleContext context = bundle.getBundleContext();
+			ServiceReference ref = context
+					.getServiceReference(IThemeManager.class.getName());
+			IThemeManager mgr = (IThemeManager) context.getService(ref);
+			final IThemeEngine engine = mgr.getEngineForDisplay(display);
 
-		IEclipsePreferences preferences = new InstanceScope()
-				.getNode(FrameworkUtil.getBundle(PartRenderingEngine.class)
-						.getSymbolicName());
+			// Store the app context
+			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
 
-		String prefThemeId = preferences.get(THEMEID_KEY, null);
+			// Create the OSGi resource locator
+			if (cssResourcesURI != null) {
+				// TODO: Should this be set through an extension as well?
+				engine.registerResourceLocator(new OSGiResourceLocator(
+						cssResourcesURI.toString()));
+			}
 
-		boolean flag = true;
-		if (prefThemeId != null) {
-			for (ITheme t : engine.getThemes()) {
-				if (prefThemeId.equals(t.getId())) {
-					engine.setTheme(t);
-					flag = false;
-					break;
+			engine.restore(cssTheme);
+			// TODO Should we create an empty default theme?
+
+			appContext.set(IThemeEngine.class.getName(), engine);
+
+			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+				public void setClassname(Object widget, String classname) {
+					((Widget) widget).setData(
+							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void setId(Object widget, String id) {
+					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void style(Object widget) {
+					engine.applyStyles((Widget) widget, true);
+				}
+
+			});
+		} else if (cssURI != null) {
+			String cssResourcesURI = (String) appContext
+					.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+			final CSSSWTEngineImpl engine = new CSSSWTEngineImpl(display, true);
+			if (cssResourcesURI != null) {
+				engine.getResourcesLocatorManager().registerResourceLocator(
+						new OSGiResourceLocator(cssResourcesURI.toString()));
+			}
+			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+				public void setClassname(Object widget, String classname) {
+					((Widget) widget).setData(
+							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void setId(Object widget, String id) {
+					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
+				public void style(Object widget) {
+					engine.applyStyles((Widget) widget, true);
+				}
+
+			});
+
+			URL url;
+			InputStream stream = null;
+			try {
+				url = FileLocator.resolve(new URL(cssURI));
+				stream = url.openStream();
+				engine.parseStyleSheet(stream);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
+			Shell[] shells = display.getShells();
+			for (Shell s : shells) {
+				try {
+					s.setRedraw(false);
+					s.reskin(SWT.ALL);
+					engine.applyStyles(s, true);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					s.setRedraw(true);
 				}
 			}
 		}
-
-		if (cssURI != null && flag) {
-			engine.setTheme(cssURI);
-		}
-		// TODO Should we create an empty default theme?
-
-		appContext.set(IThemeEngine.class.getName(), engine);
-
-		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
-			public void setClassname(Object widget, String classname) {
-				((Widget) widget).setData(
-						"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
-				engine.applyStyles((Widget) widget, true);
-			}
-
-			public void setId(Object widget, String id) {
-				((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
-				engine.applyStyles((Widget) widget, true);
-			}
-
-			public void style(Object widget) {
-				engine.applyStyles((Widget) widget, true);
-			}
-
-		});
 
 	}
 }

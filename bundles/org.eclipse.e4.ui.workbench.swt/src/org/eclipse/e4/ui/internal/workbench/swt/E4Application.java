@@ -160,17 +160,20 @@ public class E4Application implements IApplication {
 		appContext.set(E4Workbench.XMI_URI_ARG, xmiURI);
 
 		String themeId = getArgValue(E4Application.THEME_ID, applicationContext);
+		appContext.set(E4Application.THEME_ID, themeId);
+
+		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG, applicationContext);
+		if (cssURI != null) {
+			appContext.set(E4Workbench.CSS_URI_ARG, cssURI);
+		}
 
 		// Temporary to support old property as well
-		if (themeId == null) {
-			System.err.println("Warning usage of " + E4Workbench.CSS_URI_ARG
-					+ " is deprecated. Use " + E4Application.THEME_ID
-					+ " instead.");
-			String cssURI = getArgValue(E4Workbench.CSS_URI_ARG,
-					applicationContext);
+		if (cssURI != null && !cssURI.startsWith("platform:")) {
+			System.err
+					.println("Warning "
+							+ cssURI
+							+ " changed its meaning it is used now to run without theme support");
 			appContext.set(E4Application.THEME_ID, cssURI);
-		} else {
-			appContext.set(E4Application.THEME_ID, themeId);
 		}
 
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,
