@@ -12,19 +12,16 @@
 package org.eclipse.e4.ui.model.fragment.impl;
 
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**

@@ -14,7 +14,6 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;

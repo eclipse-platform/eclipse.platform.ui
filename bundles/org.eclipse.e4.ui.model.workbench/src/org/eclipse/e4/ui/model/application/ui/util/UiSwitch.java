@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.ui.util;
 
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;

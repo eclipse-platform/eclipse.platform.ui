@@ -1,20 +1,15 @@
 package org.eclipse.e4.ui.model.internal;
 
 import java.util.ArrayList;
-
 import java.util.Collections;
-
 import java.util.List;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypeParameter;
 
 public class ModelUtils {

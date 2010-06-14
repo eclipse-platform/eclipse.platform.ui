@@ -11,14 +11,13 @@
  */
 package org.eclipse.e4.ui.model.fragment.util;
 
-import org.eclipse.e4.ui.model.fragment.*;
-
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**

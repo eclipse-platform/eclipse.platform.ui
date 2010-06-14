@@ -11,14 +11,13 @@
  */
 package org.eclipse.e4.ui.model.fragment.impl;
 
-import org.eclipse.e4.ui.model.fragment.*;
-
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**

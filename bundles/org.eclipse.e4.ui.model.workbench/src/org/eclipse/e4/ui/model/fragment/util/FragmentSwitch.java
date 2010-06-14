@@ -12,9 +12,9 @@
 package org.eclipse.e4.ui.model.fragment.util;
 
 import java.util.List;
-
-import org.eclipse.e4.ui.model.fragment.*;
-
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
