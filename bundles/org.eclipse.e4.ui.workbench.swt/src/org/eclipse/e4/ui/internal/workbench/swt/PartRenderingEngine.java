@@ -47,6 +47,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -57,6 +58,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
@@ -115,6 +117,27 @@ public class PartRenderingEngine implements IPresentationEngine {
 				removeGui(changedElement);
 			}
 
+		}
+	};
+
+	private EventHandler trimHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (!(changedObj instanceof MTrimmedWindow))
+				return;
+
+			MTrimmedWindow window = (MTrimmedWindow) changedObj;
+			if (window.getWidget() == null)
+				return;
+
+			String eventType = (String) event
+					.getProperty(UIEvents.EventTags.TYPE);
+			if (UIEvents.EventTypes.ADD.equals(eventType)) {
+				MUIElement added = (MUIElement) event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (added.isToBeRendered())
+					createGui(added, window.getWidget());
+			}
 		}
 	};
 
@@ -260,6 +283,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 			eventBroker.subscribe(UIEvents.buildTopic(
 					UIEvents.ElementContainer.TOPIC,
 					UIEvents.ElementContainer.CHILDREN), childrenHandler);
+			eventBroker.subscribe(UIEvents.buildTopic(
+					UIEvents.TrimmedWindow.TOPIC,
+					UIEvents.TrimmedWindow.TRIMBARS), trimHandler);
 		}
 	}
 
@@ -269,6 +295,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			return;
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
+		eventBroker.unsubscribe(trimHandler);
 	}
 
 	private static void populateModelInterfaces(MContext contextModel,
@@ -399,6 +426,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Obtain the necessary parent and context
 		Object parent = null;
 		MUIElement parentME = element.getParent();
+		if (parentME == null)
+			parentME = (MUIElement) ((EObjectImpl) element).eContainer();
 		if (parentME != null) {
 			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {

@@ -21,12 +21,14 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -161,6 +163,8 @@ public class TrimStack {
 		}
 	};
 
+	private MTrimBar bar;
+
 	@PostConstruct
 	void addListeners() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
@@ -180,7 +184,7 @@ public class TrimStack {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent, MWindow window) {
+	void createWidget(Composite parent, MToolControl me) {
 		if (theStack == null) {
 			List<MPerspectiveStack> ps = modelService.findElements(window, null,
 					MPerspectiveStack.class, null);
@@ -198,7 +202,14 @@ public class TrimStack {
 			}
 		}
 
-		trimStackTB = new ToolBar(parent, SWT.FLAT | SWT.WRAP);
+		MUIElement meParent = me.getParent();
+		int orientation = SWT.HORIZONTAL;
+		if (meParent instanceof MTrimBar) {
+			bar = (MTrimBar) meParent;
+			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT)
+				orientation = SWT.VERTICAL;
+		}
+		trimStackTB = new ToolBar(parent, orientation | SWT.FLAT | SWT.WRAP);
 
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
 		restoreBtn.setImage(getRestoreImage(parent.getDisplay()));
@@ -332,12 +343,7 @@ public class TrimStack {
 			updateSelection(theStack.getSelectedElement());
 
 			// Set the initial location
-			Rectangle itemBounds = trimStackTB.getBounds();
-			Point shellSize = showShell.getSize();
-			Point loc = new Point(itemBounds.x - (shellSize.x / 2), itemBounds.y
-					+ itemBounds.height);
-			loc = trimStackTB.getDisplay().map(trimStackTB.getParent(), null, loc);
-			showShell.setLocation(loc);
+			setShellLocation(showShell);
 
 			showShell.layout(true);
 			showShell.moveAbove(null);
@@ -364,6 +370,33 @@ public class TrimStack {
 
 			inhibitHover = false;
 		}
+	}
+
+	/**
+	 * @param showShell2
+	 */
+	private void setShellLocation(Composite someShell) {
+		Rectangle toolbarBounds = trimStackTB.getBounds();
+		Point shellSize = showShell.getSize();
+
+		Point loc = null;
+		switch (bar.getSide().getValue()) {
+		case SideValue.TOP_VALUE:
+			loc = new Point(toolbarBounds.x - (shellSize.x / 2), toolbarBounds.y
+					+ toolbarBounds.height);
+			break;
+		case SideValue.BOTTOM_VALUE:
+			loc = new Point(toolbarBounds.x - (shellSize.x / 2), toolbarBounds.y - shellSize.y);
+			break;
+		case SideValue.RIGHT_VALUE:
+			loc = new Point(toolbarBounds.x - shellSize.x, toolbarBounds.y);
+			break;
+		case SideValue.LEFT_VALUE:
+			loc = new Point(toolbarBounds.x + toolbarBounds.width, toolbarBounds.y);
+			break;
+		}
+		loc = trimStackTB.getDisplay().map(trimStackTB.getParent(), null, loc);
+		someShell.setLocation(loc);
 	}
 
 	private void updateSelection(MStackElement selectedElement) {

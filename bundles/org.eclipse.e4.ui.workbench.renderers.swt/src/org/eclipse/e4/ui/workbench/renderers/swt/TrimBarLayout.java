@@ -21,8 +21,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 public class TrimBarLayout extends Layout {
+	private boolean horizontal;
 
-	public TrimBarLayout() {
+	public TrimBarLayout(boolean horizontal) {
+		this.horizontal = horizontal;
 	}
 
 	/*
@@ -34,9 +36,9 @@ public class TrimBarLayout extends Layout {
 	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
-		int totalSpace = wHint;
-		int curY = 0;
-		int maxY = 0;
+		int totalSpace = horizontal ? wHint : hHint;
+		int curMinor = 0;
+		int maxMinor = 0;
 		int spaceLeft = totalSpace;
 
 		Control[] kids = composite.getChildren();
@@ -46,32 +48,38 @@ public class TrimBarLayout extends Layout {
 
 			ctrl.pack(true);
 			Point ctrlSize = ctrl.getSize();
-			if (ctrlSize.x <= spaceLeft) {
-				if (ctrlSize.y > maxY)
-					maxY = ctrlSize.y;
-				spaceLeft -= ctrlSize.x;
+			int major = horizontal ? ctrlSize.x : ctrlSize.y;
+			int minor = horizontal ? ctrlSize.y : ctrlSize.x;
+			if (major <= spaceLeft) {
+				if (minor > maxMinor)
+					maxMinor = minor;
+				spaceLeft -= major;
 			} else {
-				curY += maxY;
-				maxY = ctrlSize.y;
-				spaceLeft = totalSpace - ctrlSize.x;
+				curMinor += maxMinor;
+				maxMinor = minor;
+				spaceLeft = totalSpace - major;
 			}
 		}
 
-		curY += maxY;
-		return new Point(wHint, curY); // MaxY-1 ?
+		curMinor += maxMinor;
+		if (curMinor == 0)
+			curMinor = 1; // Hack! returning '0' causes the parent's layout to
+							// be 64,64
+		return horizontal ? new Point(wHint, curMinor) : new Point(curMinor,
+				hHint);
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
 		composite.setRedraw(false);
 		try {
 			Rectangle bounds = composite.getBounds();
-			int totalSpace = bounds.width;
+			int totalSpace = horizontal ? bounds.width : bounds.height;
 
 			List<Control> curLine = new ArrayList<Control>();
 			List<Control> spacers = new ArrayList<Control>();
 
-			int curY = 0;
-			int maxY = 0;
+			int curMinor = 0;
+			int maxMinor = 0;
 			int spaceLeft = totalSpace;
 
 			Control[] kids = composite.getChildren();
@@ -82,19 +90,19 @@ public class TrimBarLayout extends Layout {
 					continue;
 				}
 
-				Rectangle ctrlBounds = ctrl.getBounds();
-				if (ctrlBounds.height > maxY)
-					maxY = ctrlBounds.height;
+				Point ctrlSize = ctrl.getSize();
+				int major = horizontal ? ctrlSize.x : ctrlSize.y;
+				int minor = horizontal ? ctrlSize.y : ctrlSize.x;
+				if (minor > maxMinor)
+					maxMinor = minor;
 
-				int length = ctrlBounds.width;
-
-				if (spaceLeft < length) {
-					tileLine(curLine, spacers, curY, maxY, spaceLeft);
+				if (spaceLeft < major) {
+					tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
 
 					// reset the tiling parameters
 					spaceLeft = totalSpace;
-					curY += maxY;
-					maxY = 0;
+					curMinor += maxMinor;
+					maxMinor = 0;
 
 					spacers.clear();
 					curLine.clear();
@@ -104,9 +112,9 @@ public class TrimBarLayout extends Layout {
 						curLine.add(curSpacer);
 					}
 					curLine.add(ctrl);
-					spaceLeft -= length;
+					spaceLeft -= major;
 				} else {
-					spaceLeft -= length;
+					spaceLeft -= major;
 
 					if (curSpacer != null) {
 						spacers.add(curSpacer);
@@ -116,14 +124,14 @@ public class TrimBarLayout extends Layout {
 				}
 				curSpacer = null;
 			}
-			tileLine(curLine, spacers, curY, maxY, spaceLeft);
+			tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
 		} finally {
 			composite.setRedraw(true);
 		}
 	}
 
 	private void tileLine(List<Control> curLine, List<Control> spacers,
-			int curY, int maxY, int spaceLeft) {
+			int curMinor, int maxMinor, int spaceLeft) {
 		// Process the elements in the current 'line'
 		// First, size the spacers to occupy all the space
 		int[] spacerWidths = new int[spacers.size()];
@@ -138,14 +146,20 @@ public class TrimBarLayout extends Layout {
 		}
 
 		// Now just tile the controls
-		int curX = 0;
+		int majorPos = 0;
 		int spacerCount = 0;
 		for (Control toTile : curLine) {
-			toTile.setLocation(curX, curY);
+			if (horizontal)
+				toTile.setLocation(majorPos, curMinor);
+			else
+				toTile.setLocation(curMinor, majorPos);
+
 			if (isSpacer(toTile)) {
-				curX += spacerWidths[spacerCount++];
+				majorPos += spacerWidths[spacerCount++];
 			} else {
-				curX += toTile.getSize().x;
+				int major = horizontal ? toTile.getSize().x
+						: toTile.getSize().y;
+				majorPos += major;
 			}
 		}
 	}

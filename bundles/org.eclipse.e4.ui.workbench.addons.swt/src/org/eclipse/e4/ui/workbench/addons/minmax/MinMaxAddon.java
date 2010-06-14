@@ -33,7 +33,9 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -123,6 +125,7 @@ public class MinMaxAddon {
 
 	void minimizeStack(MPartStack stack) {
 		MTrimmedWindow window = (MTrimmedWindow) modelService.getTopLevelWindowFor(stack);
+		Shell winShell = (Shell) window.getWidget();
 
 		// Is there already a TrimControl there ?
 		String trimId = stack.getElementId() + getMinimizedStackSuffix(stack);
@@ -133,7 +136,15 @@ public class MinMaxAddon {
 			trimStack.setElementId(trimId);
 			trimStack.setContributionURI(trimURI);
 
-			MTrimBar bar = modelService.getTrim(window, SideValue.TOP);
+			Rectangle winBounds = winShell.getBounds();
+			int winCenterX = winBounds.width / 2;
+			Control stackCtrl = (Control) stack.getWidget();
+			Rectangle stackBounds = stackCtrl.getBounds();
+			stackBounds = winShell.getDisplay().map(stackCtrl, winShell, stackBounds);
+			int stackCenterX = stackBounds.x + (stackBounds.width / 2);
+			SideValue side = stackCenterX < winCenterX ? SideValue.LEFT : SideValue.RIGHT;
+			MTrimBar bar = modelService.getTrim(window, side);
+
 			MToolControl spacer = (MToolControl) modelService.find("PerspectiveSpacer", bar);
 			if (spacer != null) {
 				int spacerIndex = bar.getChildren().indexOf(spacer);
@@ -150,7 +161,20 @@ public class MinMaxAddon {
 			trimStack.setVisible(true);
 		}
 
+		// Rectangle trimBounds = ((Control) (trimStack.getWidget())).getBounds();
+		// trimBounds = Display.getCurrent()
+		// .map((Control) trimStack.getWidget(), winShell, trimBounds);
+		// Rectangle stackBounds = ((Control) (stack.getWidget())).getBounds();
+		// stackBounds = Display.getCurrent().map((Control) stack.getWidget(), winShell,
+		// stackBounds);
+		// RectangleAnimationImageFeedback feedback = new RectangleAnimationImageFeedback(winShell,
+		// null, null);
+		// feedback.addStartRect((Control) (stack.getWidget()));
+		// feedback.addEndRect((Control) (trimStack.getWidget()));
+		// AnimationEngine engine = new AnimationEngine(feedback, 500);
+
 		stack.setVisible(false);
+		// engine.schedule();
 	}
 
 	void restoreStack(MPartStack stack) {

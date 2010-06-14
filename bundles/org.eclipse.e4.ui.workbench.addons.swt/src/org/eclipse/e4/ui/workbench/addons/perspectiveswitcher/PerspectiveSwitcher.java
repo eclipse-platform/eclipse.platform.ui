@@ -168,7 +168,7 @@ public class PerspectiveSwitcher {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent, MWindow window) {
+	void createWidget(Composite parent) {
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginLeft = layout.marginRight = 8;

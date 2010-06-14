@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -83,6 +84,9 @@ public class CleanupAddon {
 	private EventHandler visibilityChangeHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (changedObj instanceof MTrimBar)
+				return;
+
 			if (changedObj.getWidget() instanceof Shell) {
 				((Shell) changedObj).setVisible(changedObj.isVisible());
 			} else if (changedObj.getWidget() instanceof Control) {
@@ -136,7 +140,8 @@ public class CleanupAddon {
 					Composite curParent = ctrl.getParent();
 					ctrl.setParent(limbo);
 					curParent.layout(true);
-					curParent.getShell().layout(new Control[] { curParent }, SWT.DEFER);
+					if (curParent.getShell() != curParent)
+						curParent.getShell().layout(new Control[] { curParent }, SWT.DEFER);
 
 					// If there are no more 'visible' children then make the parent go away too
 					boolean makeInvisible = true;

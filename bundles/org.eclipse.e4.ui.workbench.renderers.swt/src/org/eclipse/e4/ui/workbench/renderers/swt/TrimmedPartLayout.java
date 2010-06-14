@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
@@ -199,34 +198,25 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.TOP) {
 			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
-				// RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-				// layout.marginTop = layout.marginBottom = layout.marginHeight
-				// = 0;
-				top.setLayout(new TrimBarLayout());
+				top.setLayout(new TrimBarLayout(true));
 			}
 			return top;
 		} else if (side == SWT.BOTTOM) {
 			if (bottom == null) {
 				bottom = new Composite(parent, SWT.NONE);
-				RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-				layout.marginTop = layout.marginBottom = layout.marginHeight = 0;
-				bottom.setLayout(layout);
+				bottom.setLayout(new TrimBarLayout(true));
 			}
 			return bottom;
 		} else if (side == SWT.LEFT) {
 			if (left == null) {
 				left = new Composite(parent, SWT.NONE);
-				RowLayout layout = new RowLayout(SWT.VERTICAL);
-				layout.marginLeft = layout.marginRight = layout.marginWidth = 0;
-				left.setLayout(layout);
+				left.setLayout(new TrimBarLayout(false));
 			}
 			return left;
 		} else if (side == SWT.RIGHT) {
 			if (right == null) {
 				right = new Composite(parent, SWT.NONE);
-				RowLayout layout = new RowLayout(SWT.VERTICAL);
-				layout.marginLeft = layout.marginRight = layout.marginWidth = 0;
-				right.setLayout(layout);
+				right.setLayout(new TrimBarLayout(false));
 			}
 			return right;
 		}

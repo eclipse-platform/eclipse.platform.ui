@@ -123,7 +123,8 @@ public class ModelServiceImpl implements EModelService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#getAllElements(org.eclipse.e4.ui.model.
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getAllElements(org.eclipse.e4.ui.model.
 	 * application.MUIElement, java.lang.String, java.lang.Class, java.util.List)
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
@@ -153,8 +154,8 @@ public class ModelServiceImpl implements EModelService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getContainingContext(org.eclipse.e4.ui.model
-	 * .application.MUIElement)
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getContainingContext(org.eclipse.e4.ui
+	 * .model .application.MUIElement)
 	 */
 	public IEclipseContext getContainingContext(MUIElement element) {
 		MUIElement curParent = null;
@@ -495,6 +496,7 @@ public class ModelServiceImpl implements EModelService {
 
 		// Didn't find a trim bar for the side, make one
 		MTrimBar newBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		newBar.setSide(sv);
 		window.getTrimBars().add(newBar);
 		return newBar;
 	}
@@ -503,8 +505,8 @@ public class ModelServiceImpl implements EModelService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getTopLevelWindowFor(org.eclipse.e4.ui.model
-	 * .application.ui.MUIElement)
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getTopLevelWindowFor(org.eclipse.e4.ui
+	 * .model .application.ui.MUIElement)
 	 */
 	public MWindow getTopLevelWindowFor(MUIElement element) {
 		EObjectImpl eObj = (EObjectImpl) element;
