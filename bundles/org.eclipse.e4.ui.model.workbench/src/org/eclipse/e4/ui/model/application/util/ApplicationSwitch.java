@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.util;
 
 import java.util.List;
 import java.util.Map;
+import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -27,6 +28,8 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -120,6 +123,8 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePartDescriptorContainer(application);
 				if (result == null) result = caseBindings(application);
 				if (result == null) result = caseMenuContributions(application);
+				if (result == null) result = caseToolBarContributions(application);
+				if (result == null) result = caseTrimContributions(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -389,6 +394,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarContributions(MToolBarContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimContributions(MTrimContributions object) {
 		return null;
 	}
 

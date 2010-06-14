@@ -344,9 +344,6 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS: {
 				MToolBarContributions toolBarContributions = (MToolBarContributions)theEObject;
 				T1 result = caseToolBarContributions(toolBarContributions);
-				if (result == null) result = caseElementContainer(toolBarContributions);
-				if (result == null) result = caseUIElement(toolBarContributions);
-				if (result == null) result = caseApplicationElement(toolBarContributions);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -362,9 +359,6 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.TRIM_CONTRIBUTIONS: {
 				MTrimContributions trimContributions = (MTrimContributions)theEObject;
 				T1 result = caseTrimContributions(trimContributions);
-				if (result == null) result = caseElementContainer(trimContributions);
-				if (result == null) result = caseUIElement(trimContributions);
-				if (result == null) result = caseApplicationElement(trimContributions);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

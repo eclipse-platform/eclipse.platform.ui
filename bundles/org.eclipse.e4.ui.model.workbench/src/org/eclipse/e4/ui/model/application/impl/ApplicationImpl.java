@@ -33,6 +33,10 @@ import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -44,6 +48,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -63,6 +68,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getMenuContributions <em>Menu Contributions</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getToolBarContributions <em>Tool Bar Contributions</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getTrimContributions <em>Trim Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
  * </ul>
@@ -170,6 +177,26 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MMenuContribution> menuContributions;
+
+	/**
+	 * The cached value of the '{@link #getToolBarContributions() <em>Tool Bar Contributions</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getToolBarContributions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MToolBarContribution> toolBarContributions;
+
+	/**
+	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTrimContributions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MTrimContribution> trimContributions;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -363,6 +390,30 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MToolBarContribution> getToolBarContributions() {
+		if (toolBarContributions == null) {
+			toolBarContributions = new EObjectResolvingEList<MToolBarContribution>(MToolBarContribution.class, this, ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
+		}
+		return toolBarContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<MTrimContribution> getTrimContributions() {
+		if (trimContributions == null) {
+			trimContributions = new EObjectResolvingEList<MTrimContribution>(MTrimContribution.class, this, ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
+		}
+		return trimContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public List<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, ApplicationPackageImpl.APPLICATION__COMMANDS);
@@ -437,6 +488,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return getBindingContexts();
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 				return getMenuContributions();
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				return getToolBarContributions();
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				return getTrimContributions();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return getCommands();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -487,6 +542,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getMenuContributions().clear();
 				getMenuContributions().addAll((Collection<? extends MMenuContribution>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				getToolBarContributions().clear();
+				getToolBarContributions().addAll((Collection<? extends MToolBarContribution>)newValue);
+				return;
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				getTrimContributions().clear();
+				getTrimContributions().addAll((Collection<? extends MTrimContribution>)newValue);
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
@@ -534,6 +597,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 				getMenuContributions().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				getToolBarContributions().clear();
+				return;
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				getTrimContributions().clear();
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
@@ -570,6 +639,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return bindingContexts != null && !bindingContexts.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 				return menuContributions != null && !menuContributions.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				return toolBarContributions != null && !toolBarContributions.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				return trimContributions != null && !trimContributions.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -624,6 +697,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				default: return -1;
 			}
 		}
+		if (baseClass == MToolBarContributions.class) {
+			switch (derivedFeatureID) {
+				case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS: return MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MTrimContributions.class) {
+			switch (derivedFeatureID) {
+				case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS: return MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -670,6 +755,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		if (baseClass == MMenuContributions.class) {
 			switch (baseFeatureID) {
 				case MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MToolBarContributions.class) {
+			switch (baseFeatureID) {
+				case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MTrimContributions.class) {
+			switch (baseFeatureID) {
+				case MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS;
 				default: return -1;
 			}
 		}

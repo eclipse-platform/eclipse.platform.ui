@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
 
 import org.eclipse.e4.ui.model.application.ui.provider.ElementContainerItemProvider;
@@ -25,12 +26,14 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 
 /**
  * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions} object.
@@ -39,7 +42,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * @generated
  */
 public class ToolBarContributionsItemProvider
-	extends ElementContainerItemProvider
+	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -67,8 +70,31 @@ public class ToolBarContributionsItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addToolBarContributionsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Tool Bar Contributions feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addToolBarContributionsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ToolBarContributions_toolBarContributions_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ToolBarContributions_toolBarContributions_feature", "_UI_ToolBarContributions_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
 	}
 
 	/**
@@ -90,10 +116,7 @@ public class ToolBarContributionsItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MToolBarContributions)object).getElementId();
-		return label == null || label.length() == 0 ?
-			getString("_UI_ToolBarContributions_type") : //$NON-NLS-1$
-			getString("_UI_ToolBarContributions_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+		return getString("_UI_ToolBarContributions_type"); //$NON-NLS-1$
 	}
 
 	/**

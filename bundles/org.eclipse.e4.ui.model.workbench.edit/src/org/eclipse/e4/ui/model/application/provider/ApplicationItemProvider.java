@@ -72,6 +72,8 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
 			addBindingContextsPropertyDescriptor(object);
+			addToolBarContributionsPropertyDescriptor(object);
+			addTrimContributionsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -138,6 +140,50 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Tool Bar Contributions feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addToolBarContributionsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ToolBarContributions_toolBarContributions_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ToolBarContributions_toolBarContributions_feature", "_UI_ToolBarContributions_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Trim Contributions feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTrimContributionsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_TrimContributions_trimContributions_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_TrimContributions_trimContributions_feature", "_UI_TrimContributions_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS,
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}

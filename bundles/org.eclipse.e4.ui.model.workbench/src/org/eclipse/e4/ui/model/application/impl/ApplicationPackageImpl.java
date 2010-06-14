@@ -364,13 +364,31 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__MENU_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__TOOL_BAR_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Trim Contributions</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__TRIM_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Addons</b></em>' containment reference list.
@@ -379,7 +397,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
+	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -388,7 +406,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
@@ -1280,6 +1298,10 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theCommandsPackage.getBindings());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theMenuPackage.getMenuContributions());
+		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theMenuPackage.getToolBarContributions());
+		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theMenuPackage.getTrimContributions());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 		modelComponentEClass.getESuperTypes().add(theBasicPackage_1.getPartDescriptorContainer());

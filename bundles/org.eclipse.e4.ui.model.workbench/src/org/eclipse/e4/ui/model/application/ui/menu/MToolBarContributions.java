@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
+import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 
 /**
@@ -17,9 +18,30 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * A representation of the model object '<em><b>Tool Bar Contributions</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions#getToolBarContributions <em>Tool Bar Contributions</em>}</li>
+ * </ul>
+ * </p>
  *
  * @model
  * @generated
  */
-public interface MToolBarContributions extends MElementContainer<MToolBarContribution> {
+public interface MToolBarContributions {
+
+	/**
+	 * Returns the value of the '<em><b>Tool Bar Contributions</b></em>' reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Tool Bar Contributions</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Tool Bar Contributions</em>' reference list.
+	 * @model
+	 * @generated
+	 */
+	List<MToolBarContribution> getToolBarContributions();
 } // MToolBarContributions

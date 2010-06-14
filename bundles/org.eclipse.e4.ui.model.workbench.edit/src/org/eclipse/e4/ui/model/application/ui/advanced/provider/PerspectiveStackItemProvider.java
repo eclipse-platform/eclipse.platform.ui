@@ -280,17 +280,7 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolBarContributions()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MMenuFactory.INSTANCE.createTrimContribution()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createTrimContributions()));
 
 		newChildDescriptors.add
 			(createChildParameter

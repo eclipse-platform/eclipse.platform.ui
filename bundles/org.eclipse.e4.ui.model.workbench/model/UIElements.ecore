@@ -23,6 +23,8 @@
     <eGenericSuperTypes eClassifier="#//descriptor/basic/PartDescriptorContainer"/>
     <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
     <eGenericSuperTypes eClassifier="#//ui/menu/MenuContributions"/>
+    <eGenericSuperTypes eClassifier="#//ui/menu/ToolBarContributions"/>
+    <eGenericSuperTypes eClassifier="#//ui/menu/TrimContributions"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -300,9 +302,8 @@
         </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions">
-        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/ToolBarContribution"/>
-        </eGenericSuperTypes>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
+            upperBound="-1" eType="#//ui/menu/ToolBarContribution"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -310,9 +311,8 @@
         </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContributions">
-        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/TrimContribution"/>
-        </eGenericSuperTypes>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
+            upperBound="-1" eType="#//ui/menu/TrimContribution"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"

@@ -3523,121 +3523,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_CONTRIBUTIONS = 21;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__WIDGET = UiPackageImpl.ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__RENDERER = UiPackageImpl.ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__TO_BE_RENDERED = UiPackageImpl.ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__ON_TOP = UiPackageImpl.ELEMENT_CONTAINER__ON_TOP;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__VISIBLE = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__PARENT = UiPackageImpl.ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__CONTAINER_DATA = UiPackageImpl.ELEMENT_CONTAINER__CONTAINER_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__CUR_SHARED_REF = UiPackageImpl.ELEMENT_CONTAINER__CUR_SHARED_REF;
-
-	/**
-	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__CHILDREN = UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+	public static final int TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS = 0;
 
 	/**
 	 * The number of structural features of the '<em>Tool Bar Contributions</em>' class.
@@ -3646,7 +3538,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_CONTRIBUTIONS_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	public static final int TOOL_BAR_CONTRIBUTIONS_FEATURE_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl <em>Trim Contribution</em>}' class.
@@ -3795,121 +3687,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTRIBUTIONS = 23;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * The feature id for the '<em><b>Trim Contributions</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TRIM_CONTRIBUTIONS__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__WIDGET = UiPackageImpl.ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__RENDERER = UiPackageImpl.ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__TO_BE_RENDERED = UiPackageImpl.ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__ON_TOP = UiPackageImpl.ELEMENT_CONTAINER__ON_TOP;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__VISIBLE = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__PARENT = UiPackageImpl.ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__CONTAINER_DATA = UiPackageImpl.ELEMENT_CONTAINER__CONTAINER_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__CUR_SHARED_REF = UiPackageImpl.ELEMENT_CONTAINER__CUR_SHARED_REF;
-
-	/**
-	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__CHILDREN = UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_CONTRIBUTIONS__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+	public static final int TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS = 0;
 
 	/**
 	 * The number of structural features of the '<em>Trim Contributions</em>' class.
@@ -3918,7 +3702,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TRIM_CONTRIBUTIONS_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	public static final int TRIM_CONTRIBUTIONS_FEATURE_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}' enum.
@@ -4633,6 +4417,20 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions#getToolBarContributions <em>Tool Bar Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Tool Bar Contributions</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions#getToolBarContributions()
+	 * @see #getToolBarContributions()
+	 * @generated
+	 */
+	public EReference getToolBarContributions_ToolBarContributions() {
+		return (EReference)toolBarContributionsEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution <em>Trim Contribution</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4655,6 +4453,20 @@ public class MenuPackageImpl extends EPackageImpl {
 	 */
 	public EClass getTrimContributions() {
 		return trimContributionsEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions#getTrimContributions <em>Trim Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Trim Contributions</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions#getTrimContributions()
+	 * @see #getTrimContributions()
+	 * @generated
+	 */
+	public EReference getTrimContributions_TrimContributions() {
+		return (EReference)trimContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
 
@@ -4756,10 +4568,12 @@ public class MenuPackageImpl extends EPackageImpl {
 		toolBarContributionEClass = createEClass(TOOL_BAR_CONTRIBUTION);
 
 		toolBarContributionsEClass = createEClass(TOOL_BAR_CONTRIBUTIONS);
+		createEReference(toolBarContributionsEClass, TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 
 		trimContributionEClass = createEClass(TRIM_CONTRIBUTION);
 
 		trimContributionsEClass = createEClass(TRIM_CONTRIBUTIONS);
+		createEReference(trimContributionsEClass, TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 
 		// Create enums
 		itemTypeEEnum = createEEnum(ITEM_TYPE);
@@ -4853,17 +4667,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		g1.getETypeArguments().add(g2);
 		toolBarContributionEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getElementContainer());
-		g2 = createEGenericType(this.getToolBarContribution());
-		g1.getETypeArguments().add(g2);
-		toolBarContributionsEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getElementContainer());
 		g2 = createEGenericType(theBasicPackage.getTrimElement());
 		g1.getETypeArguments().add(g2);
 		trimContributionEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getElementContainer());
-		g2 = createEGenericType(this.getTrimContribution());
-		g1.getETypeArguments().add(g2);
-		trimContributionsEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(itemEClass, MItem.class, "Item", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -4922,10 +4728,12 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEClass(toolBarContributionEClass, MToolBarContribution.class, "ToolBarContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolBarContributionsEClass, MToolBarContributions.class, "ToolBarContributions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getToolBarContributions_ToolBarContributions(), this.getToolBarContribution(), null, "toolBarContributions", null, 0, -1, MToolBarContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimContributionEClass, MTrimContribution.class, "TrimContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(trimContributionsEClass, MTrimContributions.class, "TrimContributions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getTrimContributions_TrimContributions(), this.getTrimContribution(), null, "trimContributions", null, 0, -1, MTrimContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize enums and add enum literals
 		initEEnum(itemTypeEEnum, ItemType.class, "ItemType"); //$NON-NLS-1$
@@ -5272,6 +5080,14 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions();
 
 		/**
+		 * The meta object literal for the '<em><b>Tool Bar Contributions</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions_ToolBarContributions();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl <em>Trim Contribution</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -5290,6 +5106,14 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions();
+
+		/**
+		 * The meta object literal for the '<em><b>Trim Contributions</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions_TrimContributions();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}' enum.
