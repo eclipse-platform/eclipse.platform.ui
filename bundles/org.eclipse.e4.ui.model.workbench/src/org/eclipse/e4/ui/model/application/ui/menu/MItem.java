@@ -27,7 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  * </ul>
  * </p>
  *
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MItem extends MUIElement, MUILabel {

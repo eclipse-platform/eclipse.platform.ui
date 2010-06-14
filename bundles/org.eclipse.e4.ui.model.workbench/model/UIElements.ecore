@@ -222,7 +222,7 @@
         <eLiterals name="Check" value="1"/>
         <eLiterals name="Radio" value="2"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//ui/UIElement #//ui/UILabel">
+      <eClassifiers xsi:type="ecore:EClass" name="Item" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="true"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

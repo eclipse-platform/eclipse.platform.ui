@@ -28,15 +28,6 @@ public interface MMenuFactory {
 	MMenuFactory INSTANCE = org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl.eINSTANCE;
 
 	/**
-	 * Returns a new object of class '<em>Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Item</em>'.
-	 * @generated
-	 */
-	MItem createItem();
-
-	/**
 	 * Returns a new object of class '<em>Handled Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -323,11 +323,6 @@ public class ModelComponentItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
-				 MMenuFactory.INSTANCE.createItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(ApplicationPackageImpl.Literals.MODEL_COMPONENT__CHILDREN,
 				 MMenuFactory.INSTANCE.createHandledItem()));
 
 		newChildDescriptors.add

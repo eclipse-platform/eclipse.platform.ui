@@ -77,29 +77,6 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MItem} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ItemItemProvider itemItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MItem}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createItemAdapter() {
-		if (itemItemProvider == null) {
-			itemItemProvider = new ItemItemProvider(this);
-		}
-
-		return itemItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -543,7 +520,6 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	 * @generated
 	 */
 	public void dispose() {
-		if (itemItemProvider != null) itemItemProvider.dispose();
 		if (handledItemItemProvider != null) handledItemItemProvider.dispose();
 		if (menuSeparatorItemProvider != null) menuSeparatorItemProvider.dispose();
 		if (menuItemProvider != null) menuItemProvider.dispose();

@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
@@ -87,7 +88,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case MenuPackageImpl.ITEM: return (EObject)createItem();
 			case MenuPackageImpl.HANDLED_ITEM: return (EObject)createHandledItem();
 			case MenuPackageImpl.MENU_SEPARATOR: return (EObject)createMenuSeparator();
 			case MenuPackageImpl.MENU: return (EObject)createMenu();
@@ -136,16 +136,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MItem createItem() {
-		ItemImpl item = new ItemImpl();
-		return item;
 	}
 
 	/**

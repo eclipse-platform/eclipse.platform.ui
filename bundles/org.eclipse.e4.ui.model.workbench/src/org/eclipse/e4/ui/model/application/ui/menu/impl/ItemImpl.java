@@ -37,7 +37,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ItemImpl extends UIElementImpl implements MItem {
+public abstract class ItemImpl extends UIElementImpl implements MItem {
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->

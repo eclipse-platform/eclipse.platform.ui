@@ -520,11 +520,6 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
-				 MMenuFactory.INSTANCE.createItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createHandledItem()));
 
 		newChildDescriptors.add

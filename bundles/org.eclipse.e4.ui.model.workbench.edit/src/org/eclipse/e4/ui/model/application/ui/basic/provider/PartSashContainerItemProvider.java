@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.model.application.ui.basic.provider;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.provider.GenericTileItemProvider;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
