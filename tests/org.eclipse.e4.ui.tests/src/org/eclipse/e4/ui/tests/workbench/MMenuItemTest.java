@@ -18,10 +18,13 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -179,5 +182,66 @@ public class MMenuItemTest extends TestCase {
 		assertFalse(menuItemWidget1.getSelection());
 		menuItem2.setSelected(true);
 		assertTrue(menuItemWidget2.getSelection());
+	}
+
+	public void testMDirectMenuItem_Check_Bug316752() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+
+		menuItem.setType(ItemType.CHECK);
+		menuItem.setSelected(true);
+
+		menu.getChildren().add(menuItem);
+		window.setMainMenu(menu);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget1 = menuItem.getWidget();
+		assertNotNull(widget1);
+		assertTrue(widget1 instanceof MenuItem);
+
+		MenuItem menuItemWidget = (MenuItem) widget1;
+		assertTrue(menuItemWidget.getSelection());
+	}
+
+	public void testMHandledMenuItem_Check_Bug316752() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+				.createHandledMenuItem();
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+
+		command.setElementId("commandId");
+
+		menuItem.setCommand(command);
+		menuItem.setType(ItemType.CHECK);
+		menuItem.setSelected(true);
+
+		menu.getChildren().add(menuItem);
+		window.setMainMenu(menu);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget1 = menuItem.getWidget();
+		assertNotNull(widget1);
+		assertTrue(widget1 instanceof MenuItem);
+
+		MenuItem menuItemWidget = (MenuItem) widget1;
+		assertTrue(menuItemWidget.getSelection());
 	}
 }
