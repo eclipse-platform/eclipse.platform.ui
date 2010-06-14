@@ -284,6 +284,26 @@ public class ModelComponentsItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createToolBarContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createToolBarContributions()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createTrimContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
+				 MMenuFactory.INSTANCE.createTrimContributions()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.MODEL_COMPONENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add

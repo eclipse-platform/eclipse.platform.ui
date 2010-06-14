@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -331,6 +332,42 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: {
+				MToolBarContribution toolBarContribution = (MToolBarContribution)theEObject;
+				T1 result = caseToolBarContribution(toolBarContribution);
+				if (result == null) result = caseElementContainer(toolBarContribution);
+				if (result == null) result = caseUIElement(toolBarContribution);
+				if (result == null) result = caseApplicationElement(toolBarContribution);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS: {
+				MToolBarContributions toolBarContributions = (MToolBarContributions)theEObject;
+				T1 result = caseToolBarContributions(toolBarContributions);
+				if (result == null) result = caseElementContainer(toolBarContributions);
+				if (result == null) result = caseUIElement(toolBarContributions);
+				if (result == null) result = caseApplicationElement(toolBarContributions);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TRIM_CONTRIBUTION: {
+				MTrimContribution trimContribution = (MTrimContribution)theEObject;
+				T1 result = caseTrimContribution(trimContribution);
+				if (result == null) result = caseElementContainer(trimContribution);
+				if (result == null) result = caseUIElement(trimContribution);
+				if (result == null) result = caseApplicationElement(trimContribution);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.TRIM_CONTRIBUTIONS: {
+				MTrimContributions trimContributions = (MTrimContributions)theEObject;
+				T1 result = caseTrimContributions(trimContributions);
+				if (result == null) result = caseElementContainer(trimContributions);
+				if (result == null) result = caseUIElement(trimContributions);
+				if (result == null) result = caseApplicationElement(trimContributions);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -632,6 +669,66 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseRenderedToolBar(MRenderedToolBar object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contribution</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarContribution(MToolBarContribution object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarContributions(MToolBarContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Contribution</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimContribution(MTrimContribution object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimContributions(MTrimContributions object) {
 		return null;
 	}
 

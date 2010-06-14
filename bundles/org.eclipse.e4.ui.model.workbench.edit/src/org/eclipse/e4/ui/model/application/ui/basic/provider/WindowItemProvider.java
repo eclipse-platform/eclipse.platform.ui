@@ -590,6 +590,26 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createToolBarContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createToolBarContributions()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createTrimContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createTrimContributions()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MAdvancedFactory.INSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add

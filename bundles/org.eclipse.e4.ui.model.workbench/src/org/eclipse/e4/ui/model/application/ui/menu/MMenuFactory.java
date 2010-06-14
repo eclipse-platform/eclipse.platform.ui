@@ -162,4 +162,40 @@ public interface MMenuFactory {
 	 */
 	MRenderedToolBar createRenderedToolBar();
 
+	/**
+	 * Returns a new object of class '<em>Tool Bar Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Tool Bar Contribution</em>'.
+	 * @generated
+	 */
+	MToolBarContribution createToolBarContribution();
+
+	/**
+	 * Returns a new object of class '<em>Tool Bar Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Tool Bar Contributions</em>'.
+	 * @generated
+	 */
+	MToolBarContributions createToolBarContributions();
+
+	/**
+	 * Returns a new object of class '<em>Trim Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Trim Contribution</em>'.
+	 * @generated
+	 */
+	MTrimContribution createTrimContribution();
+
+	/**
+	 * Returns a new object of class '<em>Trim Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Trim Contributions</em>'.
+	 * @generated
+	 */
+	MTrimContributions createTrimContributions();
+
 } //MMenuFactory

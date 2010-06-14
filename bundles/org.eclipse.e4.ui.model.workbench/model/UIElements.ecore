@@ -294,6 +294,26 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions">
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/menu/ToolBarContribution"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="TrimContributions">
+        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
+          <eTypeArguments eClassifier="#//ui/menu/TrimContribution"/>
+        </eGenericSuperTypes>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">
