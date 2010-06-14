@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -389,7 +389,7 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	}
 
-	// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104
 	public void testDocumentStamp2() throws BadLocationException, ExecutionException {
 		final Document document= new Document("");
 		fUndoManager= new DocumentUndoManager(document);
