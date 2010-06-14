@@ -656,5 +656,29 @@
             class="org.eclipse.ua.tests.help.criteria.SampleCriteriaDefinitionProvider">
       </criteriaDefinitionProvider>
    </extension>
+   <extension
+         id="testproduct"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="UA Test Product">
+         <property
+               name="preferenceCustomization"
+               value="data/test_customization.ini">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="criteriaproduct"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="UA Criteria Test Product">
+         <property
+               name="preferenceCustomization"
+               value="data/criteria_customization.ini">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
