@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -405,7 +405,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 						handleFileContentChanged(false, false);
 				}
 
-				if (isDerived(fFile)) {
+				if (fFile.isDerived(IResource.CHECK_ANCESTORS)) {
 					IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.DERIVED_FILE, FileBuffersMessages.ResourceFileBuffer_warning_fileIsDerived, null);
 					if (fStatus == null || fStatus.isOK())
 						fStatus= status;
@@ -421,20 +421,6 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			fIsStateValidated= fStatus == null || fStatus.getSeverity() != IStatus.CANCEL;
 			fManager.fireStateValidationChanged(this, fIsStateValidated);
 		}
-	}
-
-	/*
-	 *
-	 * @see IResource#isDerived()
-	 * @since 3.3
-	 */
-	private boolean isDerived(IResource resource) {
-		while (resource != null) {
-			if (resource.isDerived())
-				return true;
-			resource= resource.getParent();
-		}
-		return false;
 	}
 
 	/*

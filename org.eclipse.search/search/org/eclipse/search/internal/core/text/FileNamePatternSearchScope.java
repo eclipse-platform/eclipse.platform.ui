@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	}
 
 	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {
-		if (!includeDerived && isDerived(curr)) {
+		if (!includeDerived && curr.isDerived(IResource.CHECK_ANCESTORS)) {
 			return;
 		}
 		IPath currPath= curr.getFullPath();
@@ -184,16 +184,5 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 		}
 		res.add(curr);
 	}
-
-	private static boolean isDerived(IResource curr) {
-		do {
-			if (curr.isDerived()) {
-				return true;
-			}
-			curr= curr.getParent();
-		} while (curr != null);
-		return false;
-	}
-
 
 }
