@@ -23,20 +23,21 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -46,6 +47,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -86,6 +88,9 @@ public class PerspectiveSwitcher {
 	private ToolBar psTB;
 	private Composite comp;
 	private Image backgroundImage;
+
+	Color borderColor;
+	Control toolParent;
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -168,24 +173,32 @@ public class PerspectiveSwitcher {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent) {
+	void createWidget(Composite parent, MToolControl toolControl) {
+		borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginLeft = layout.marginRight = 8;
-		layout.marginBottom = layout.marginTop = 0;
+		layout.marginBottom = 4;
+		layout.marginTop = 6;
 		comp.setLayout(layout);
 		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
-		comp.addControlListener(new ControlListener() {
+		comp.addPaintListener(new PaintListener() {
 
-			public void controlMoved(ControlEvent e) {
-				// we don't care
+			public void paintControl(PaintEvent e) {
+				paint(e);
 			}
-
-			public void controlResized(ControlEvent e) {
-				resize();
-			}
-
 		});
+		toolParent = ((Control) toolControl.getParent().getWidget());
+		toolParent.addPaintListener(new PaintListener() {
+
+			public void paintControl(PaintEvent e) {
+				e.gc.setForeground(borderColor);
+				Point endPoint = e.display.map(comp, (Control) e.widget, new Point(
+						comp.getBounds().x, comp.getBounds().y));
+				e.gc.drawLine(0, e.height - 1, endPoint.x, e.height - 1);
+			}
+		});
+
 		comp.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
@@ -536,6 +549,42 @@ public class PerspectiveSwitcher {
 		}
 
 		return null;
+	}
+
+	void paint(PaintEvent e) {
+		GC gc = e.gc;
+		Point size = comp.getSize();
+		Color border1 = borderColor;
+		int h = size.y;
+		int[] simpleCurve = new int[] { 0, h - 1, 1, h - 1, 2, h - 2, 2, 1, 3, 0 };
+		// draw border
+		gc.setForeground(border1);
+		gc.setAntialias(SWT.ON);
+		gc.drawPolyline(simpleCurve);
+
+		Rectangle bounds = new Rectangle(e.x, e.y, e.width, e.height);
+		Region r = new Region();
+		r.add(bounds);
+		int[] simpleCurveClose = new int[simpleCurve.length + 4];
+		System.arraycopy(simpleCurve, 0, simpleCurveClose, 0, simpleCurve.length);
+		int index = simpleCurve.length;
+		simpleCurveClose[index++] = e.width;
+		simpleCurveClose[index++] = 0;
+		simpleCurveClose[index++] = e.width;
+		simpleCurveClose[index++] = e.height;
+		r.subtract(simpleCurveClose);
+		Region clipping = new Region();
+		gc.getClipping(clipping);
+		r.intersect(clipping);
+		gc.setClipping(r);
+		Image b = toolParent.getBackgroundImage();
+		if (b != null)
+			gc.drawImage(b, 0, 0);
+		// // gc.fillRectangle(bounds);
+		// Rectangle mappedBounds = e.display.map(comp, comp.getParent(), bounds);
+		// ((Composite) toolParent).drawBackground(gc, bounds.x, bounds.y, bounds.width,
+		// bounds.height, mappedBounds.x, mappedBounds.y);
+
 	}
 
 	void resize() {
