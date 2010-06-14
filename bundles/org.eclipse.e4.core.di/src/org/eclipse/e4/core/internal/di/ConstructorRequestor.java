@@ -40,7 +40,7 @@ public class ConstructorRequestor extends Requestor {
 		} catch (IllegalArgumentException e) {
 			throw new InjectionException(e);
 		} catch (InstantiationException e) {
-			throw new InjectionException(e);
+			throw new InjectionException("Unable to instantiate " + constructor, e); //$NON-NLS-1$
 		} catch (IllegalAccessException e) {
 			throw new InjectionException(e);
 		} catch (InvocationTargetException e) {

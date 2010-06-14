@@ -186,16 +186,29 @@ public class InjectorImpl implements IInjector {
 
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) {
 		IObjectDescriptor descriptor = new ObjectDescriptor(clazz, null);
-		return clazz.cast(make(descriptor, objectSupplier));
+		Binding binding = findBinding(descriptor);
+		Class<?> implementationClass;
+		if (binding == null)
+			implementationClass = getDesiredClass(descriptor.getDesiredType());
+		else
+			implementationClass = binding.getImplementationClass();
+		return clazz.cast(internalMake(implementationClass, objectSupplier));
 	}
 
-	public Object make(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
+	public Object makeFromProvider(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
 		Binding binding = findBinding(descriptor);
-		if (binding == null) {
-			Class<?> desiredClass = getDesiredClass(descriptor.getDesiredType());
-			return internalMake(desiredClass, objectSupplier);
+		Class<?> implementationClass;
+		if (binding == null)
+			implementationClass = getProviderType(descriptor.getDesiredType());
+		else
+			implementationClass = binding.getImplementationClass();
+		if (objectSupplier != null) {
+			IObjectDescriptor actualClass = new ObjectDescriptor(implementationClass, null);
+			Object[] result = objectSupplier.get(new IObjectDescriptor[] {actualClass}, null, false, false);
+			if (result[0] != IInjector.NOT_A_VALUE)
+				return result[0];
 		}
-		return internalMake(binding.getImplementationClass(), objectSupplier);
+		return internalMake(implementationClass, objectSupplier);
 	}
 
 	private Object internalMake(Class<?> clazz, PrimaryObjectSupplier objectSupplier) {

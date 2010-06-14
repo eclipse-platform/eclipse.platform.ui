@@ -30,7 +30,7 @@ public class ProviderImpl<T> implements Provider<T> {
 	@SuppressWarnings("unchecked")
 	public T get() {
 		try {
-			return (T) ((InjectorImpl) injector).make(objectDescriptor, objectProvider);
+			return (T) ((InjectorImpl) injector).makeFromProvider(objectDescriptor, objectProvider);
 		} catch (ClassCastException e) {
 			return null;
 		}
