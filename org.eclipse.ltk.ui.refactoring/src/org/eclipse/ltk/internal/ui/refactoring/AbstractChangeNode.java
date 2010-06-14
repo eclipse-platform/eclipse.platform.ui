@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,12 +163,12 @@ public abstract class AbstractChangeNode extends PreviewNode {
 	static boolean hasDerivedResourceChange(Change change) {
 		Object modifiedElement= change.getModifiedElement();
 		if (modifiedElement instanceof IResource) {
-			return ((IResource) modifiedElement).isDerived();
+			return ((IResource) modifiedElement).isDerived(IResource.CHECK_ANCESTORS);
 		} else if (modifiedElement instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) modifiedElement;
 			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
 			if (resource != null) {
-				return resource.isDerived();
+				return resource.isDerived(IResource.CHECK_ANCESTORS);
 			}
 		}
 		return false;
