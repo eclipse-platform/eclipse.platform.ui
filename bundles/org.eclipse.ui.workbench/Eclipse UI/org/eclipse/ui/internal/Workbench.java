@@ -28,8 +28,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -89,10 +89,10 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -526,6 +526,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (obj instanceof E4Application) {
 					E4Application e4app = (E4Application) obj;
 					E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext());
+					IEclipseContext workbenchContext = e4Workbench.getContext();
+					workbenchContext.set(Display.class, display);
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());

@@ -80,6 +80,8 @@ public class E4Application implements IApplication {
 		Display display = getApplicationDisplay();
 
 		E4Workbench workbench = createE4Workbench(applicationContext);
+		IEclipseContext workbenchContext = workbench.getContext();
+		workbenchContext.set(Display.class, display);
 
 		// Create and run the UI (if any)
 		workbench.createAndRunUI(workbench.getApplication());
@@ -275,8 +277,8 @@ public class E4Application implements IApplication {
 				contributionFactory);
 
 		appContext
-				.set(Logger.class.getName(), ContextInjectionFactory.make(
-						WorkbenchLogger.class, appContext));
+			.set(Logger.class.getName(), ContextInjectionFactory.make(
+				WorkbenchLogger.class, appContext));
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
 
