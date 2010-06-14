@@ -12,7 +12,10 @@ package org.eclipse.e4.core.internal.di.osgi;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
+import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -47,7 +50,7 @@ public class ProviderHelper {
 		}
 	}
 
-	static public ExtendedObjectSupplier findProvider(String qualifier) {
+	static public ExtendedObjectSupplier findProvider(String qualifier, PrimaryObjectSupplier objectSupplier) {
 		synchronized (extendedSuppliers) {
 			if (extendedSuppliers.containsKey(qualifier))
 				return extendedSuppliers.get(qualifier);
@@ -57,6 +60,8 @@ public class ProviderHelper {
 				ServiceReference[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);
 				if (refs != null && refs.length > 0) {
 					ExtendedObjectSupplier supplier = (ExtendedObjectSupplier) bundleContext.getService(refs[0]);
+					IInjector injector = InjectorFactory.getDefault();
+					injector.inject(supplier, objectSupplier);
 					extendedSuppliers.put(qualifier, supplier);
 					return supplier;
 				}

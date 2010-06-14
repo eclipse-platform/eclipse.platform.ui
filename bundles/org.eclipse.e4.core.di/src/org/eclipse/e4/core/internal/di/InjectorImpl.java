@@ -340,7 +340,7 @@ public class InjectorImpl implements IInjector {
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (descriptors[i] == null)
 				continue; // already resolved
-			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i]);
+			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i], objectSupplier);
 			if (extendedSupplier == null)
 				continue;
 			Object result = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
@@ -419,7 +419,7 @@ public class InjectorImpl implements IInjector {
 		return actualArgs;
 	}
 
-	private ExtendedObjectSupplier findExtendedSupplier(IObjectDescriptor descriptor) {
+	private ExtendedObjectSupplier findExtendedSupplier(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
 		Annotation[] qualifiers = descriptor.getQualifiers();
 		if (qualifiers == null)
 			return null;
@@ -434,7 +434,7 @@ public class InjectorImpl implements IInjector {
 			ExtendedObjectSupplier supplier;
 			try {
 				// use qualified name to refer to a class that might be missing
-				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key);
+				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key, objectSupplier);
 			} catch (NoClassDefFoundError e) {
 				return null; // OSGi framework not present 
 			}
