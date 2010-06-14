@@ -1,4 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2010 BestSolution.at and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
+
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 
@@ -10,12 +24,9 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 
 import org.eclipse.emf.ecore.EClassifier;
 
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 
 import java.util.List;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -87,7 +98,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/StringModelFragment.gif")); //$NON-NLS-1$
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/StringModelFragment.png")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -141,11 +152,31 @@ public class StringModelFragment extends AbstractComponentEditor {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Featurename);
 
-			Text t = new Text(parent, SWT.BORDER);
+			Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
+			comp.setLayoutData(gd);
+			GridLayout gl = new GridLayout(2,false);
+			gl.marginWidth=gl.marginHeight=0;
+			gl.verticalSpacing=0;
+			gl.marginLeft=gl.marginBottom=gl.marginRight=gl.marginTop=0;
+			comp.setLayout(gl);
+			
+			Text t = new Text(comp, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
+			
+			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
+			button.setText(Messages.StringModelFragment_Find);
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),getEditingDomain(),(MStringModelFragment) getMaster().getValue());
+					dialog.open();
+				}
+			});
+			
 		}
 
 		{

@@ -340,6 +340,12 @@ public class Messages {
 	public static String StringModelFragment_Down;
 	public static String StringModelFragment_Remove;
 	public static String StringModelFragment_Elements;
+	public static String StringModelFragment_Find;
+
+	public static String FeatureSelectionDialog_Filter;
+	public static String FeatureSelectionDialog_ShellTitle;
+	public static String FeatureSelectionDialog_DialogTitle;
+	public static String FeatureSelectionDialog_DialogMessage;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
