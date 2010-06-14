@@ -56,6 +56,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -523,6 +524,19 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							menuItem.setCommand(command);
 							menuItem.setLabel(command.getCommandName());
 							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+
+							switch (action.getStyle()) {
+							case IAction.AS_CHECK_BOX:
+								menuItem.setType(ItemType.CHECK);
+								break;
+							case IAction.AS_RADIO_BUTTON:
+								menuItem.setType(ItemType.RADIO);
+								break;
+							default:
+								menuItem.setType(ItemType.PUSH);
+								break;
+							}
+
 							menu.getChildren().add(menuItem);
 							break;
 						}
@@ -535,6 +549,19 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							menuItem.setCommand(command);
 							menuItem.setLabel(command.getCommandName());
 							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+
+							switch (action.getStyle()) {
+							case IAction.AS_CHECK_BOX:
+								menuItem.setType(ItemType.CHECK);
+								break;
+							case IAction.AS_RADIO_BUTTON:
+								menuItem.setType(ItemType.RADIO);
+								break;
+							default:
+								menuItem.setType(ItemType.PUSH);
+								break;
+							}
+
 							menu.getChildren().add(menuItem);
 							break;
 						}
@@ -612,21 +639,33 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				if (id != null) {
 					for (MCommand command : application.getCommands()) {
 						if (id.equals(command.getElementId())) {
-							MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
+							MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE
 									.createHandledToolItem();
-							menuItem.setCommand(command);
-							container.getChildren().add(menuItem);
+							toolItem.setCommand(command);
+							container.getChildren().add(toolItem);
 
 							String iconURI = getIconURI(action.getImageDescriptor());
 							if (iconURI == null) {
 								iconURI = getIconURI(id);
 								if (iconURI == null) {
-									menuItem.setLabel(command.getCommandName());
+									toolItem.setLabel(command.getCommandName());
 								} else {
-									menuItem.setIconURI(iconURI);
+									toolItem.setIconURI(iconURI);
 								}
 							} else {
-								menuItem.setIconURI(iconURI);
+								toolItem.setIconURI(iconURI);
+							}
+
+							switch (action.getStyle()) {
+							case IAction.AS_CHECK_BOX:
+								toolItem.setType(ItemType.CHECK);
+								break;
+							case IAction.AS_RADIO_BUTTON:
+								toolItem.setType(ItemType.RADIO);
+								break;
+							default:
+								toolItem.setType(ItemType.PUSH);
+								break;
 							}
 							break;
 						}
