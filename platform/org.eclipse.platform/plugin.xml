@@ -41,7 +41,7 @@
 				value="org.eclipse.platform/LegacyIDE.e4xmi">
 		  </property>
 		  <property
-				name="applicationCSS"
+				name="cssTheme"
 				value="org.eclipse.e4.ui.css.theme.e4_default">
 		  </property>
 		  <property
