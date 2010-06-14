@@ -153,8 +153,8 @@ public class GradientBackgroundListener implements Listener {
 		 * Dispose the old background image.
 		 */
 		if (oldImage != null && !oldImage.isDisposed()) {
-			oldImage.dispose();
-			oldImage = null;
+//			oldImage.dispose();
+//			oldImage = null;
 		}
 	}
 
