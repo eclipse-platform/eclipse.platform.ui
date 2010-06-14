@@ -39,9 +39,9 @@
          id="PhotoDemo"
          name="Photo Demo"
          point="org.eclipse.e4.workbench.model">
-      <snippet
-            uri="xmi/components.e4xmi">
-      </snippet>
+      <fragment
+            uri="xmi/fragment.e4xmi">
+      </fragment>
    </extension>
 
 </plugin>
