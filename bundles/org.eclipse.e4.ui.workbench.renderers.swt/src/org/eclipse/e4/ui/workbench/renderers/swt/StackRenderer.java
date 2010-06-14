@@ -438,6 +438,10 @@ public class StackRenderer extends LazyStackRenderer {
 						.get(EPartService.class.getName());
 				if (partService.savePart(part, true)) {
 					partService.hidePart(part);
+					// workaround for bug 316783
+					if (uiElement instanceof MPlaceholder) {
+						uiElement.setToBeRendered(false);
+					}
 				} else {
 					// the user has canceled the operation
 					event.doit = false;
