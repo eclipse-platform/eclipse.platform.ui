@@ -276,8 +276,10 @@ public class StackRenderer extends LazyStackRenderer {
 		MPart part = null;
 		if (element instanceof MPart)
 			part = (MPart) element;
-		else if (element instanceof MPlaceholder)
+		else if (element instanceof MPlaceholder) {
 			part = (MPart) ((MPlaceholder) element).getRef();
+			part.setCurSharedRef((MPlaceholder) element);
+		}
 
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 
@@ -438,10 +440,6 @@ public class StackRenderer extends LazyStackRenderer {
 						.get(EPartService.class.getName());
 				if (partService.savePart(part, true)) {
 					partService.hidePart(part);
-					// workaround for bug 316783
-					if (uiElement instanceof MPlaceholder) {
-						uiElement.setToBeRendered(false);
-					}
 				} else {
 					// the user has canceled the operation
 					event.doit = false;
