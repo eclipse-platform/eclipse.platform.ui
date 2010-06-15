@@ -290,6 +290,28 @@ public class UIEvents {
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
 	}
 
+	public static interface ToolBarContribution {
+		public static final String TOPIC = UITopicBase + "/menu/ToolBarContribution"; //$NON-NLS-1$
+		public static final String PARENTID = "parentId"; //$NON-NLS-1$
+		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
+	}
+
+	public static interface ToolBarContributions {
+		public static final String TOPIC = UITopicBase + "/menu/ToolBarContributions"; //$NON-NLS-1$
+		public static final String TOOLBARCONTRIBUTIONS = "toolBarContributions"; //$NON-NLS-1$
+	}
+
+	public static interface TrimContribution {
+		public static final String TOPIC = UITopicBase + "/menu/TrimContribution"; //$NON-NLS-1$
+		public static final String PARENTID = "parentId"; //$NON-NLS-1$
+		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
+	}
+
+	public static interface TrimContributions {
+		public static final String TOPIC = UITopicBase + "/menu/TrimContributions"; //$NON-NLS-1$
+		public static final String TRIMCONTRIBUTIONS = "trimContributions"; //$NON-NLS-1$
+	}
+
 	public static String buildTopic(String topic) {
 		return topic + TOPIC_SEP + ALL_SUB_TOPICS;
 	}
