@@ -11,6 +11,8 @@
 package org.eclipse.e4.core.internal.tests.di.extensions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +31,9 @@ import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.event.EventConstants;
 
 // TBD add auto-conversion?
 public class InjectionEventTest extends TestCase {
@@ -70,6 +74,19 @@ public class InjectionEventTest extends TestCase {
 		}
 	}
 	
+	// Class used to test receiving events
+	static class InjectTargetEvent {
+		public int counter1 = 0;
+		public Event event;
+		
+		@Inject @Optional
+		public void receivedEvent1(@EventTopic("e4/test/eventInjection") Event event) {
+			counter1++;
+			this.event = event;
+		}
+		
+	}
+	
 	// This tests and demos sending events
 	static public class EventAdminHelper {
 		@Inject
@@ -77,6 +94,10 @@ public class InjectionEventTest extends TestCase {
 		
 		public void sendEvent(String topic, Object data) {
 			EventUtils.send(eventAdmin, topic, data);
+		}
+		
+		public void sendEvent(Event event) {
+			eventAdmin.sendEvent(event);
 		}
 	}
 	
@@ -147,6 +168,29 @@ public class InjectionEventTest extends TestCase {
 		assertEquals(2, target.counter3);
 		assertEquals("event3data", target.string3);
 		assertNotNull(target.myBinding);
+	}
+	
+	public void testInjectType() {
+		IEclipseContext context = EclipseContextFactory.create();
+		InjectTargetEvent target = ContextInjectionFactory.make(InjectTargetEvent.class, context);
+		
+		// initial state
+		assertEquals(0, target.counter1);
+		assertNull(target.event);
+		
+		// send event
+		String eventTopic = "e4/test/eventInjection";
+		Dictionary<String, Object> d = new Hashtable<String, Object>();
+		d.put(EventConstants.EVENT_TOPIC, eventTopic);
+		d.put("data1", new Integer(5));
+		d.put("data2", "sample");
+		Event event = new Event(eventTopic, d);
+		helper.sendEvent(event);
+		
+		assertEquals(1, target.counter1);
+		assertEquals(event, target.event);
+		assertEquals(new Integer(5), target.event.getProperty("data1"));
+		assertEquals("sample", target.event.getProperty("data2"));
 	}
 
 	// NOTE: this test relies on GC being actually done on the test object.

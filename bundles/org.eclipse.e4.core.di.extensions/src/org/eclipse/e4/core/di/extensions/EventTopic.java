@@ -33,12 +33,16 @@ import javax.inject.Qualifier;
  *     ...
  *   }
  * </pre>
- * 
  * </p>
+ * <p>
+ * The value stored under the event's "org.eclipse.e4.data" property is injected unless 
+ * the class of the injected variable is org.osgi.service.event.Event. In that case the whole event 
+ * object is injected.
+ * </p> 
  */
 @Qualifier
 @Documented
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventTopic {
 	String value() default ""; // event id

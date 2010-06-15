@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
@@ -54,7 +57,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
-	protected Map<String, Object> currentEvents = new HashMap<String, Object>();
+	protected Map<String, Event> currentEvents = new HashMap<String, Event>();
 
 	class DIEventHandler implements EventHandler {
 
@@ -64,16 +67,16 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			this.requestor = requestor;
 		}
 
-		public void handleEvent(org.osgi.service.event.Event event) {
+		public void handleEvent(Event event) {
 			if (!requestor.isValid()) {
 				unsubscribe(requestor);
 				return;
 			}
 
-			Object data = event.getProperty(EventUtils.DATA);
-			addCurrentEvent(event.getTopic(), data);
+			String key = event.getTopic();
+			addCurrentEvent(key, event);
 			requestor.resolveArguments();
-			removeCurrentEvent(event.getTopic());
+			removeCurrentEvent(key);
 
 			requestor.execute();
 		}
@@ -129,9 +132,9 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	private Map<Subscriber, ServiceRegistration> registrations = new HashMap<Subscriber, ServiceRegistration>();
 
-	protected void addCurrentEvent(String topic, Object data) {
+	protected void addCurrentEvent(String topic, Event event) {
 		synchronized (currentEvents) {
-			currentEvents.put(topic, data);
+			currentEvents.put(topic, event);
 		}
 	}
 
@@ -150,11 +153,17 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		if (topic == null || eventAdmin == null || topic.length() == 0)
 			return IInjector.NOT_A_VALUE;
 
-		subscribe(topic, eventAdmin, requestor);
+		if (track)
+			subscribe(topic, eventAdmin, requestor);
 
-		if (currentEvents.containsKey(topic))
+		if (!currentEvents.containsKey(topic))
+			return IInjector.NOT_A_VALUE;
+
+		// convert to fit destination
+		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
+		if (descriptorsClass.equals(Event.class))
 			return currentEvents.get(topic);
-		return IInjector.NOT_A_VALUE;
+		return currentEvents.get(topic).getProperty(EventUtils.DATA);
 	}
 
 	private void subscribe(String topic, EventAdmin eventAdmin, IRequestor requestor) {
@@ -220,4 +229,16 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			array[i].unregister();
 		}
 	}
+
+	private Class<?> getDesiredClass(Type desiredType) {
+		if (desiredType instanceof Class<?>)
+			return (Class<?>) desiredType;
+		if (desiredType instanceof ParameterizedType) {
+			Type rawType = ((ParameterizedType) desiredType).getRawType();
+			if (rawType instanceof Class<?>)
+				return (Class<?>) rawType;
+		}
+		return null;
+	}
+
 }
