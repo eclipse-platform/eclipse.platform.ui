@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.model.application.ui.advanced.provider;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.provider.UIElementItemProvider;
 import org.eclipse.emf.common.notify.AdapterFactory;

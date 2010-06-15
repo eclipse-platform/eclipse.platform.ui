@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.model.application.ui.provider;
 
 import java.util.Collection;
 import java.util.List;
-import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
