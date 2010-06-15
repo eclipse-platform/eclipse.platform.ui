@@ -36,8 +36,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 		}
 
 		public void handleEvent(org.osgi.service.event.Event event) {
-			Object data = event.getProperty(EventUtils.DATA);
-			addCurrentEvent(event.getTopic(), data);
+			addCurrentEvent(event.getTopic(), event);
 			requestor.resolveArguments();
 			removeCurrentEvent(event.getTopic());
 			Display display = getDisplay();
