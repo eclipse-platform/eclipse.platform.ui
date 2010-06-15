@@ -193,9 +193,8 @@ public class PerspectiveSwitcher {
 
 			public void paintControl(PaintEvent e) {
 				e.gc.setForeground(borderColor);
-				Point endPoint = e.display.map(comp, (Control) e.widget, new Point(
-						comp.getBounds().x, comp.getBounds().y));
-				e.gc.drawLine(0, e.height - 1, endPoint.x, e.height - 1);
+				Rectangle bounds = ((Control) e.widget).getBounds();
+				e.gc.drawLine(0, bounds.height - 1, bounds.width, bounds.height - 1);
 			}
 		});
 
@@ -562,16 +561,17 @@ public class PerspectiveSwitcher {
 		gc.setAntialias(SWT.ON);
 		gc.drawPolyline(simpleCurve);
 
-		Rectangle bounds = new Rectangle(e.x, e.y, e.width, e.height);
+		Rectangle bounds = ((Control) e.widget).getBounds();
+		bounds.x = bounds.y = 0;
 		Region r = new Region();
 		r.add(bounds);
 		int[] simpleCurveClose = new int[simpleCurve.length + 4];
 		System.arraycopy(simpleCurve, 0, simpleCurveClose, 0, simpleCurve.length);
 		int index = simpleCurve.length;
-		simpleCurveClose[index++] = e.width;
+		simpleCurveClose[index++] = bounds.width;
 		simpleCurveClose[index++] = 0;
-		simpleCurveClose[index++] = e.width;
-		simpleCurveClose[index++] = e.height;
+		simpleCurveClose[index++] = bounds.width;
+		simpleCurveClose[index++] = bounds.height;
 		r.subtract(simpleCurveClose);
 		Region clipping = new Region();
 		gc.getClipping(clipping);
@@ -580,6 +580,8 @@ public class PerspectiveSwitcher {
 		Image b = toolParent.getBackgroundImage();
 		if (b != null)
 			gc.drawImage(b, 0, 0);
+
+		r.dispose();
 		// // gc.fillRectangle(bounds);
 		// Rectangle mappedBounds = e.display.map(comp, comp.getParent(), bounds);
 		// ((Composite) toolParent).drawBackground(gc, bounds.x, bounds.y, bounds.width,
