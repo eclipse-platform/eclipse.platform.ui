@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.modeling;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +21,7 @@ import org.eclipse.core.internal.expressions.ReferenceExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -22,8 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -125,7 +134,8 @@ public class MenuServiceFilter implements Listener {
 		ExpressionContext eContext = new ExpressionContext(parentContext);
 		gatherMenuContributions(menuModel, menuModel.getElementId(),
 				toContribute, eContext, false);
-		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
+		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
+				menuContributionsToRemove);
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -201,7 +211,8 @@ public class MenuServiceFilter implements Listener {
 						toContribute, eContext, false);
 			}
 		}
-		addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
+		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
+				menuContributionsToRemove);
 
 		// create a cleanup routine for the Hide or next Show
 		pendingCleanup.put(menu, new Runnable() {
@@ -263,74 +274,6 @@ public class MenuServiceFilter implements Listener {
 					&& menuContribution.getTags().contains(MC_POPUP);
 		}
 		return false;
-	}
-
-	private void addMenuContributions(final MMenu menuModel,
-			final ArrayList<MMenuContribution> toContribute,
-			final ArrayList<MMenuElement> menuContributionsToRemove) {
-		boolean done = toContribute.size() == 0;
-		while (!done) {
-			ArrayList<MMenuContribution> curList = new ArrayList<MMenuContribution>(
-					toContribute);
-			int retryCount = toContribute.size();
-			toContribute.clear();
-
-			for (MMenuContribution menuContribution : curList) {
-				if (!processAddition(menuModel, menuContributionsToRemove,
-						menuContribution)) {
-					toContribute.add(menuContribution);
-				}
-			}
-			// We're done if the retryList is now empty (everything done) or
-			// if the list hasn't changed at all (no hope)
-			done = (toContribute.size() == 0)
-					|| (toContribute.size() == retryCount);
-		}
-	}
-
-	private boolean processAddition(final MMenu menuModel,
-			final ArrayList<MMenuElement> menuContributionsToRemove,
-			MMenuContribution menuContribution) {
-		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
-		if (idx == -1) {
-			return false;
-		}
-		for (MMenuElement item : menuContribution.getChildren()) {
-			MMenuElement copy = (MMenuElement) EcoreUtil.copy((EObject) item);
-			if (DEBUG) {
-				trace("addMenuContribution " + copy,
-						(Widget) menuModel.getWidget(), menuModel);
-			}
-			menuContributionsToRemove.add(copy);
-			menuModel.getChildren().add(idx++, copy);
-		}
-		return true;
-	}
-
-	private int getIndex(MMenu menuModel, String positionInParent) {
-		String id = null;
-		String modifier = null;
-		if (positionInParent != null && positionInParent.length() > 0) {
-			String[] array = positionInParent.split("=");
-			modifier = array[0];
-			id = array[1];
-		}
-		if (id == null) {
-			return menuModel.getChildren().size();
-		}
-
-		int idx = 0;
-		int size = menuModel.getChildren().size();
-		while (idx < size) {
-			if (id.equals(menuModel.getChildren().get(idx).getElementId())) {
-				if ("after".equals(modifier)) {
-					idx++;
-				}
-				return idx;
-			}
-			idx++;
-		}
-		return id.equals("additions") ? menuModel.getChildren().size() : -1;
 	}
 
 	private void removeMenuContributions(final MMenu menuModel,

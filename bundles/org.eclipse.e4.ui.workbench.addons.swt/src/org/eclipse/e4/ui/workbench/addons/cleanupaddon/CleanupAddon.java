@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -72,7 +73,15 @@ public class CleanupAddon {
 							}
 							// Remove it from the model if it has no children at all
 							if (container.getChildren().size() == 0) {
-								container.getParent().getChildren().remove(container);
+								MElementContainer<MUIElement> parent = container.getParent();
+								if (container instanceof MToolBar) {
+									// may be null if it's a part's toolbar
+									if (parent != null) {
+										parent.getChildren().remove(container);
+									}
+								} else {
+									parent.getChildren().remove(container);
+								}
 							}
 						}
 					});

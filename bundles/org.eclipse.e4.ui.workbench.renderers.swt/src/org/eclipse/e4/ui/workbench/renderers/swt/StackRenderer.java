@@ -530,7 +530,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		ToolBar tb;
 		MToolBar tbModel = part.getToolbar();
-		if (tbModel != null) {
+		if (tbModel != null && !tbModel.getChildren().isEmpty()) {
 			if (tbModel.getWidget() != null) {
 				ToolBar oldTB = (ToolBar) tbModel.getWidget();
 				if (oldTB.getParent() instanceof CTabFolder) {
@@ -541,6 +541,7 @@ public class StackRenderer extends LazyStackRenderer {
 				oldTB.setParent(ctf);
 				return oldTB;
 			}
+			tbModel.setToBeRendered(true);
 			tb = (ToolBar) renderer.createGui(tbModel, ctf);
 		} else {
 			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);

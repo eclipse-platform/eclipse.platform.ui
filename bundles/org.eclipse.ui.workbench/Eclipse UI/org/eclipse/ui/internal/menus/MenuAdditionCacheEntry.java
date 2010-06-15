@@ -20,9 +20,12 @@ import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -39,6 +42,8 @@ public class MenuAdditionCacheEntry {
 	private IConfigurationElement configElement;
 	private MenuLocationURI location;
 	private MMenuContribution menuContribution;
+
+	private MToolBarContribution toolBarContribution;
 
 	// private String namespaceIdentifier;
 
@@ -83,7 +88,7 @@ public class MenuAdditionCacheEntry {
 		return element;
 	}
 
-	private MMenuElement createCommandAddition(final IConfigurationElement commandAddition) {
+	private MMenuElement createMenuCommandAddition(final IConfigurationElement commandAddition) {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.setElementId(MenuHelper.getId(commandAddition));
 		item.setCommand(MenuHelper.getCommandById(application,
@@ -106,8 +111,33 @@ public class MenuAdditionCacheEntry {
 		return item;
 	}
 
+	private MToolBarElement createToolBarCommandAddition(final IConfigurationElement commandAddition) {
+		MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+		item.setElementId(MenuHelper.getId(commandAddition));
+		item.setCommand(MenuHelper.getCommandById(application,
+				MenuHelper.getCommandId(commandAddition)));
+		Map parms = MenuHelper.getParameters(commandAddition);
+		for (Object obj : parms.entrySet()) {
+			Map.Entry e = (Map.Entry) obj;
+			MParameter parm = CommandsFactoryImpl.eINSTANCE.createParameter();
+			parm.setName(e.getKey().toString());
+			parm.setValue(e.getValue().toString());
+			item.getParameters().add(parm);
+		}
+		String iconUrl = MenuHelper.getIconUrl(commandAddition,
+				IWorkbenchRegistryConstants.ATT_ICON);
+		if (iconUrl == null) {
+			item.setLabel(MenuHelper.getLabel(commandAddition));
+		} else {
+			item.setIconURI(iconUrl);
+		}
+		item.setTooltip(MenuHelper.getTooltip(commandAddition));
+		item.setType(MenuHelper.getStyle(commandAddition));
+		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+		return item;
+	}
 
-	private void addChildren(final MElementContainer<MMenuElement> container,
+	private void addMenuChildren(final MElementContainer<MMenuElement> container,
 			IConfigurationElement parent, String filter) {
 		IConfigurationElement[] items = parent.getChildren();
 		for (int i = 0; i < items.length; i++) {
@@ -115,7 +145,7 @@ public class MenuAdditionCacheEntry {
 			String id = MenuHelper.getId(items[i]);
 
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
-				MMenuElement element = createCommandAddition(items[i]);
+				MMenuElement element = createMenuCommandAddition(items[i]);
 				container.getChildren().add(element);
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
 				E4Util.unsupported("Dynamic: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
@@ -128,7 +158,7 @@ public class MenuAdditionCacheEntry {
 				MMenu element = createMenuAddition(items[i]);
 				element.getTags().add(filter);
 				container.getChildren().add(element);
-				addChildren(element, items[i], filter);
+				addMenuChildren(element, items[i], filter);
 				// newItem = createMenuAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
 				E4Util.unsupported("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
@@ -148,9 +178,69 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
+	private void addToolBarChildren(final MElementContainer<MToolBarElement> container,
+			IConfigurationElement parent) {
+		IConfigurationElement[] items = parent.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			String itemType = items[i].getName();
+			// String id = getId(items[i]);
+
+			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
+				MToolBarElement element = createToolBarCommandAddition(items[i]);
+				container.getChildren().add(element);
+				// } else if
+				// (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
+				//				E4Util.unsupported("Dynamic: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
+				// } else if
+				// (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
+				//				E4Util.unsupported("Control: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
+				// } else if
+				// (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType))
+				// {
+				// MMenuElement element = createSeparatorAddition(items[i]);
+				// container.getChildren().add(element);
+				// } else if
+				// (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
+				// MMenu element = createMenuAddition(items[i]);
+				// element.getTags().add(filter);
+				// container.getChildren().add(element);
+				// addMenuChildren(element, items[i], filter);
+				// // newItem = createMenuAdditionContribution(items[i]);
+				// } else if
+				// (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
+				//				E4Util.unsupported("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
+			}
+
+			// if (newItem instanceof InternalControlContribution) {
+			// ((InternalControlContribution)
+			// newItem).setWorkbenchWindow(window);
+			// }
+
+			// Cache the relationship between the ICI and the
+			// registry element used to back it
+			// if (newItem != null) {
+			// additions.addContributionItem(newItem,
+			// getVisibleWhenForItem(newItem, items[i]));
+			// }
+		}
+	}
+
 	public void addToModel() {
 		if (inToolbar()) {
-			E4Util.unsupported("We don't support toolbar menu contributions yet " + location); //$NON-NLS-1$
+			toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
+			String idContrib = MenuHelper.getId(configElement);
+			if (idContrib != null && idContrib.length() > 0) {
+				toolBarContribution.setElementId(idContrib);
+			}
+			toolBarContribution.setParentId(location.getPath());
+			String query = location.getQuery();
+			if (query == null || query.length() == 0) {
+				query = "after=additions"; //$NON-NLS-1$
+			}
+			toolBarContribution.setPositionInParent(query);
+			addToolBarChildren(toolBarContribution, configElement);
+			application.getToolBarContributions().add(toolBarContribution);
+
 			return;
 		}
 		menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
@@ -175,11 +265,12 @@ public class MenuAdditionCacheEntry {
 		}
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
-		addChildren(menuContribution, configElement, filter);
+		addMenuChildren(menuContribution, configElement, filter);
 		application.getMenuContributions().add(menuContribution);
 	}
 
 	public void dispose() {
 		application.getMenuContributions().remove(menuContribution);
+		application.getToolBarContributions().remove(toolBarContribution);
 	}
 }
