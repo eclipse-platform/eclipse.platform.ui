@@ -297,6 +297,8 @@
             transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
         </eGenericSuperTypes>
@@ -306,6 +308,8 @@
             upperBound="-1" eType="#//ui/menu/ToolBarContribution"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
         </eGenericSuperTypes>

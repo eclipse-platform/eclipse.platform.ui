@@ -3504,13 +3504,31 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_CONTRIBUTION__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 
 	/**
+	 * The feature id for the '<em><b>Parent Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_CONTRIBUTION__PARENT_ID = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Tool Bar Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_CONTRIBUTION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	public static final int TOOL_BAR_CONTRIBUTION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionsImpl <em>Tool Bar Contributions</em>}' class.
@@ -3668,13 +3686,31 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTRIBUTION__SELECTED_ELEMENT = UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
 
 	/**
+	 * The feature id for the '<em><b>Parent Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTRIBUTION__PARENT_ID = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTRIBUTION__POSITION_IN_PARENT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Trim Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TRIM_CONTRIBUTION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	public static final int TRIM_CONTRIBUTION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionsImpl <em>Trim Contributions</em>}' class.
@@ -4404,6 +4440,34 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getParentId <em>Parent Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Parent Id</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getParentId()
+	 * @see #getToolBarContribution()
+	 * @generated
+	 */
+	public EAttribute getToolBarContribution_ParentId() {
+		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getPositionInParent <em>Position In Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getPositionInParent()
+	 * @see #getToolBarContribution()
+	 * @generated
+	 */
+	public EAttribute getToolBarContribution_PositionInParent() {
+		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions <em>Tool Bar Contributions</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4440,6 +4504,34 @@ public class MenuPackageImpl extends EPackageImpl {
 	 */
 	public EClass getTrimContribution() {
 		return trimContributionEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getParentId <em>Parent Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Parent Id</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getParentId()
+	 * @see #getTrimContribution()
+	 * @generated
+	 */
+	public EAttribute getTrimContribution_ParentId() {
+		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getPositionInParent <em>Position In Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getPositionInParent()
+	 * @see #getTrimContribution()
+	 * @generated
+	 */
+	public EAttribute getTrimContribution_PositionInParent() {
+		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(1);
 	}
 
 
@@ -4566,11 +4658,15 @@ public class MenuPackageImpl extends EPackageImpl {
 		createEAttribute(renderedToolBarEClass, RENDERED_TOOL_BAR__CONTRIBUTION_MANAGER);
 
 		toolBarContributionEClass = createEClass(TOOL_BAR_CONTRIBUTION);
+		createEAttribute(toolBarContributionEClass, TOOL_BAR_CONTRIBUTION__PARENT_ID);
+		createEAttribute(toolBarContributionEClass, TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT);
 
 		toolBarContributionsEClass = createEClass(TOOL_BAR_CONTRIBUTIONS);
 		createEReference(toolBarContributionsEClass, TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 
 		trimContributionEClass = createEClass(TRIM_CONTRIBUTION);
+		createEAttribute(trimContributionEClass, TRIM_CONTRIBUTION__PARENT_ID);
+		createEAttribute(trimContributionEClass, TRIM_CONTRIBUTION__POSITION_IN_PARENT);
 
 		trimContributionsEClass = createEClass(TRIM_CONTRIBUTIONS);
 		createEReference(trimContributionsEClass, TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
@@ -4726,11 +4822,15 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEAttribute(getRenderedToolBar_ContributionManager(), ecorePackage.getEJavaObject(), "contributionManager", null, 0, 1, MRenderedToolBar.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(toolBarContributionEClass, MToolBarContribution.class, "ToolBarContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getToolBarContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getToolBarContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, 1, MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(toolBarContributionsEClass, MToolBarContributions.class, "ToolBarContributions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getToolBarContributions_ToolBarContributions(), this.getToolBarContribution(), null, "toolBarContributions", null, 0, -1, MToolBarContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimContributionEClass, MTrimContribution.class, "TrimContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getTrimContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getTrimContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, 1, MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimContributionsEClass, MTrimContributions.class, "TrimContributions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getTrimContributions_TrimContributions(), this.getTrimContribution(), null, "trimContributions", null, 0, -1, MTrimContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -5070,6 +5170,22 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass TOOL_BAR_CONTRIBUTION = eINSTANCE.getToolBarContribution();
 
 		/**
+		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute TOOL_BAR_CONTRIBUTION__PARENT_ID = eINSTANCE.getToolBarContribution_ParentId();
+
+		/**
+		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getToolBarContribution_PositionInParent();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionsImpl <em>Tool Bar Contributions</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -5096,6 +5212,22 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTION = eINSTANCE.getTrimContribution();
+
+		/**
+		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute TRIM_CONTRIBUTION__PARENT_ID = eINSTANCE.getTrimContribution_ParentId();
+
+		/**
+		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute TRIM_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getTrimContribution_PositionInParent();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionsImpl <em>Trim Contributions</em>}' class.
