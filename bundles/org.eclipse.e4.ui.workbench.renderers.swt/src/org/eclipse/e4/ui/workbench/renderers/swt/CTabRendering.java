@@ -307,21 +307,21 @@ public class CTabRendering extends CTabFolderRenderer {
 		int radius = cornerSize / 2;
 		int circX = bounds.x + radius;
 		int circY = bounds.y - 1 + radius;
-
+		int selectionX1, selectionY1, selectionX2, selectionY2;
 		if (itemIndex == 0) {
 			circX -= 1;
 			points[index++] = circX - radius;
 			points[index++] = bounds.y + bounds.height;
 
-			points[index++] = circX - radius;
-			points[index++] = bounds.y + bounds.height;
+			points[index++] = selectionX1 = circX - radius;
+			points[index++] = selectionY1 = bounds.y + bounds.height;
 		} else {
 			points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0
 					+ INNER_KEYLINE + OUTER_KEYLINE;
 			points[index++] = bounds.y + bounds.height;
 
-			points[index++] = bounds.x;
-			points[index++] = bounds.y + bounds.height;
+			points[index++] = selectionX1 = bounds.x;
+			points[index++] = selectionY1 = bounds.y + bounds.height;
 		}
 		int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
 		for (int i = 0; i < ltt.length / 2; i += 2) {
@@ -348,8 +348,8 @@ public class CTabRendering extends CTabFolderRenderer {
 		System.arraycopy(rt, 0, points, index, rt.length);
 		index += rt.length;
 
-		points[index++] = bounds.width + circX - radius;
-		points[index++] = bounds.y + bounds.height;
+		points[index++] = selectionX2 = bounds.width + circX - radius;
+		points[index++] = selectionY2 = bounds.y + bounds.height;
 
 		points[index++] = parent.getSize().x
 				- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
@@ -360,10 +360,14 @@ public class CTabRendering extends CTabFolderRenderer {
 				- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
 						+ OUTER_KEYLINE), bounds.y + bounds.height);// bounds.height
 																	// + 4);
-		gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+		Color selectionFillColor = gc.getDevice().getSystemColor(
+				SWT.COLOR_WHITE);
+		gc.setBackground(selectionFillColor);
+		gc.setForeground(selectionFillColor);
 		int[] tmpPoints = new int[index];
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 		gc.fillPolygon(tmpPoints);
+		gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
 		gc.setForeground(new Color(gc.getDevice(), 182, 188, 204));
 		if (active)
 			gc.drawPolyline(tmpPoints);
