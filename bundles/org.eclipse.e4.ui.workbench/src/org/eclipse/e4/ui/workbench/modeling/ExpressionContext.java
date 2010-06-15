@@ -99,7 +99,8 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getVariable(java.lang.String)
 	 */
 	public Object getVariable(String name) {
-		return eclipseContext.get(name);
+		Object obj = eclipseContext.get(name);
+		return obj == null ? IEvaluationContext.UNDEFINED_VARIABLE : obj;
 	}
 
 	/*
