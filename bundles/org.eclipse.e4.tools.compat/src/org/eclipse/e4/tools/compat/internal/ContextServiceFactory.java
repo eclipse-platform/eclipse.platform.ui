@@ -10,8 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -61,9 +64,9 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
 
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
-//			IExtensionRegistry registry = RegistryFactory.getRegistry();
-//			ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(registry);
-//			appContext.set(IContributionFactory.class.getName(),contributionFactory);
+			appContext.set(Logger.class, new WorkbenchLogger());
+			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
+			appContext.set(IContributionFactory.class.getName(),contributionFactory);
 			
 			IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
