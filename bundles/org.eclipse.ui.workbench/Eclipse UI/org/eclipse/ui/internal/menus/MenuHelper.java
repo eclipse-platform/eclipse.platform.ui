@@ -3,8 +3,11 @@ package org.eclipse.ui.internal.menus;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -21,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,7 +38,6 @@ public class MenuHelper {
 	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	private static Field urlField;
-
 
 	public static int indexForId(MElementContainer<MMenuElement> parentMenu, String id) {
 		if (id == null || id.length() == 0) {
@@ -60,8 +63,7 @@ public class MenuHelper {
 		Object obj = element.getParent();
 		while (obj instanceof IConfigurationElement && actionSetId == null) {
 			IConfigurationElement parent = (IConfigurationElement) obj;
-			if (parent.getName().equals(
-					IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+			if (parent.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
 				actionSetId = MenuHelper.getId(parent);
 			}
 			obj = parent.getParent();
@@ -159,6 +161,78 @@ public class MenuHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private static String getKey(MMenuContribution contribution) {
+		String key = contribution.getParentID();
+		key = key + "?" //$NON-NLS-1$
+				+ (contribution.getPositionInParent() == null ? "after=additions" //$NON-NLS-1$
+						: contribution.getPositionInParent());
+		return key;
+	}
+
+	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
+			ArrayList<MMenuContribution> result) {
+		HashMap<String, ArrayList<MMenuContribution>> buckets = new HashMap<String, ArrayList<MMenuContribution>>();
+		for (MMenuContribution contribution : contributions) {
+			String key = getKey(contribution);
+			ArrayList<MMenuContribution> slot = buckets.get(key);
+			if (slot == null) {
+				slot = new ArrayList<MMenuContribution>();
+				buckets.put(key, slot);
+			}
+			slot.add(contribution);
+		}
+		Iterator<MMenuContribution> i = contributions.iterator();
+		while (i.hasNext() && !buckets.isEmpty()) {
+			MMenuContribution contribution = i.next();
+			String key = getKey(contribution);
+			ArrayList<MMenuContribution> slot = buckets.remove(key);
+			if (slot == null) {
+				continue;
+			}
+			MMenuContribution toContribute = null;
+			for (MMenuContribution item : slot) {
+				if (toContribute == null) {
+					toContribute = item;
+					continue;
+				}
+				Object[] array = item.getChildren().toArray();
+				for (int c = 0; c < array.length; c++) {
+					toContribute.getChildren().add((MMenuElement) array[c]);
+				}
+			}
+			if (toContribute != null) {
+				result.add(toContribute);
+			}
+		}
+	}
+
+	public static void mergeActionSetContributions(ArrayList<MMenuContribution> contributions,
+			ArrayList<MMenuContribution> result) {
+		ListIterator<MMenuContribution> i = contributions.listIterator(contributions.size());
+		MMenuContribution currentContribution = null;
+		while (i.hasPrevious()) {
+			MMenuContribution c = i.previous();
+			if (currentContribution == null) {
+				currentContribution = c;
+				continue;
+			}
+			if (c.getParentID().equals(currentContribution.getParentID())
+					&& c.getPositionInParent().equals(currentContribution.getPositionInParent())) {
+				ListIterator<MMenuElement> j = c.getChildren().listIterator(c.getChildren().size());
+				while (j.hasPrevious()) {
+					currentContribution.getChildren().add(j.previous());
+				}
+				c.getChildren().clear();
+			} else {
+				result.add(currentContribution);
+				currentContribution = c;
+			}
+		}
+		if (currentContribution != null) {
+			result.add(currentContribution);
+		}
 	}
 
 	/*
@@ -308,7 +382,6 @@ public class MenuHelper {
 		String text = MenuHelper.getLabel(menuAddition);
 		String mnemonic = MenuHelper.getMnemonic(menuAddition);
 		if (text != null && mnemonic != null) {
-			E4Util.unsupported("mnemonic processing in menus: " + id + ": " + text); //$NON-NLS-1$//$NON-NLS-2$
 			int idx = text.indexOf(mnemonic);
 			if (idx != -1) {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
@@ -327,7 +400,6 @@ public class MenuHelper {
 		String text = MenuHelper.getLabel(element);
 		String mnemonic = MenuHelper.getMnemonic(element);
 		if (text != null && mnemonic != null) {
-			E4Util.unsupported("mnemonic processing in actions: " + id + ": " + text); //$NON-NLS-1$//$NON-NLS-2$
 			int idx = text.indexOf(mnemonic);
 			if (idx != -1) {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
@@ -335,7 +407,6 @@ public class MenuHelper {
 		}
 		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
 		String cmdId = MenuHelper.getActionSetCommandId(element);
-		E4Util.unsupported("action: " + cmdId); //$NON-NLS-1$
 		if (cmdId == null) {
 			return null;
 		}
