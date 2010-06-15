@@ -2045,22 +2045,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__TYPE = ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_ITEM__SELECTED_ELEMENT = ITEM_FEATURE_COUNT + 1;
+	public static final int TOOL_ITEM__MENU = ITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Tool Item</em>' class.
@@ -2069,7 +2060,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
+	public static final int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl <em>Tool Bar</em>}' class.
@@ -2634,22 +2625,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLED_TOOL_ITEM__CHILDREN = TOOL_ITEM__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_TOOL_ITEM__SELECTED_ELEMENT = TOOL_ITEM__SELECTED_ELEMENT;
+	public static final int HANDLED_TOOL_ITEM__MENU = TOOL_ITEM__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -2851,22 +2833,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_TOOL_ITEM__CHILDREN = TOOL_ITEM__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_TOOL_ITEM__SELECTED_ELEMENT = TOOL_ITEM__SELECTED_ELEMENT;
+	public static final int DIRECT_TOOL_ITEM__MENU = TOOL_ITEM__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -4274,6 +4247,20 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Menu</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu()
+	 * @see #getToolItem()
+	 * @generated
+	 */
+	public EReference getToolItem_Menu() {
+		return (EReference)toolItemEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBar <em>Tool Bar</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4635,6 +4622,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		handledMenuItemEClass = createEClass(HANDLED_MENU_ITEM);
 
 		toolItemEClass = createEClass(TOOL_ITEM);
+		createEReference(toolItemEClass, TOOL_ITEM__MENU);
 
 		toolBarEClass = createEClass(TOOL_BAR);
 
@@ -4733,14 +4721,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		directMenuItemEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		handledMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		handledMenuItemEClass.getESuperTypes().add(this.getHandledItem());
-		g1 = createEGenericType(this.getItem());
-		toolItemEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getToolBarElement());
-		toolItemEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getElementContainer());
-		g2 = createEGenericType(this.getMenuElement());
-		g1.getETypeArguments().add(g2);
-		toolItemEClass.getEGenericSuperTypes().add(g1);
+		toolItemEClass.getESuperTypes().add(this.getItem());
+		toolItemEClass.getESuperTypes().add(this.getToolBarElement());
 		g1 = createEGenericType(theUiPackage.getElementContainer());
 		g2 = createEGenericType(this.getToolBarElement());
 		g1.getETypeArguments().add(g2);
@@ -4799,6 +4781,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEClass(handledMenuItemEClass, MHandledMenuItem.class, "HandledMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolItemEClass, MToolItem.class, "ToolItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getToolItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MToolItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(toolBarEClass, MToolBar.class, "ToolBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -5044,6 +5027,14 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TOOL_ITEM = eINSTANCE.getToolItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Menu</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference TOOL_ITEM__MENU = eINSTANCE.getToolItem_Menu();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl <em>Tool Bar</em>}' class.

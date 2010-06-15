@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -233,7 +234,6 @@ public class MenuSwitch<T1> {
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseToolBarElement(toolItem);
-				if (result == null) result = caseElementContainer(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseUILabel(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
@@ -276,7 +276,6 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
 				if (result == null) result = caseToolBarElement(handledToolItem);
-				if (result == null) result = caseElementContainer(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseUILabel(handledToolItem);
 				if (result == null) result = caseApplicationElement(handledToolItem);
@@ -290,7 +289,6 @@ public class MenuSwitch<T1> {
 				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseItem(directToolItem);
 				if (result == null) result = caseToolBarElement(directToolItem);
-				if (result == null) result = caseElementContainer(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
 				if (result == null) result = caseUILabel(directToolItem);
 				if (result == null) result = caseApplicationElement(directToolItem);

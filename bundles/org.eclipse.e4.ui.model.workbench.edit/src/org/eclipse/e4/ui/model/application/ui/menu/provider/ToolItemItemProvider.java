@@ -67,61 +67,31 @@ public class ToolItemItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addSelectedElementPropertyDescriptor(object);
+			addMenuPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Selected Element feature.
+	 * This adds a property descriptor for the Menu feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addSelectedElementPropertyDescriptor(Object object) {
+	protected void addMenuPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
+				 getString("_UI_ToolItem_menu_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ToolItem_menu_feature", "_UI_ToolItem_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.TOOL_ITEM__MENU,
 				 true,
 				 false,
 				 true,
 				 null,
 				 null,
 				 null));
-	}
-
-	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
 	}
 
 	/**
@@ -159,12 +129,6 @@ public class ToolItemItemProvider
 	@Override
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
-
-		switch (notification.getFeatureID(MToolItem.class)) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
-		}
 		super.notifyChanged(notification);
 	}
 
@@ -178,146 +142,6 @@ public class ToolItemItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createMenuSeparator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createMenu()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createMenuContribution()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createPopupMenu()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createDirectMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledMenuItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolBar()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolControl()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createDirectToolItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolBarSeparator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createRenderedMenu()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createRenderedToolBar()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createToolBarContribution()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createTrimContribution()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MApplicationFactory.INSTANCE.createApplication()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createPart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createInputPart()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createPartStack()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createPartSashContainer()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createWindow()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimmedWindow()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createTrimBar()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createStackElement()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPlaceholder()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspective()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
 	}
 
 }

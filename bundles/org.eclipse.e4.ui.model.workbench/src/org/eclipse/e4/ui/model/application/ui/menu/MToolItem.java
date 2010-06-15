@@ -10,16 +10,45 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Tool Item</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}</li>
+ * </ul>
+ * </p>
  *
  * @model abstract="true"
  * @generated
  */
-public interface MToolItem extends MItem, MToolBarElement, MElementContainer<MMenuElement> {
+public interface MToolItem extends MItem, MToolBarElement {
+
+	/**
+	 * Returns the value of the '<em><b>Menu</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Menu</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Menu</em>' reference.
+	 * @see #setMenu(MMenu)
+	 * @model
+	 * @generated
+	 */
+	MMenu getMenu();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Menu</em>' reference.
+	 * @see #getMenu()
+	 * @generated
+	 */
+	void setMenu(MMenu value);
 } // MToolItem

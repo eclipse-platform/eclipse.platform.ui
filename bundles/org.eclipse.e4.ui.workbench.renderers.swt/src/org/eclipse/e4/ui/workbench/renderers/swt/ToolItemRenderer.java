@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -184,8 +185,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		int addIndex = calcVisibleIndex(element);
 
 		// OK, it's a real menu item, what kind?
-		int flags = itemModel.getChildren().size() > 0 ? SWT.DROP_DOWN : 0;
-		if (itemModel.getType() == ItemType.PUSH)
+		MMenu menu = itemModel.getMenu();
+		int flags = 0;
+		if (menu != null) {
+			flags |= SWT.DROP_DOWN;
+		} else if (itemModel.getType() == ItemType.PUSH)
 			flags |= SWT.PUSH;
 		else if (itemModel.getType() == ItemType.CHECK)
 			flags |= SWT.CHECK;

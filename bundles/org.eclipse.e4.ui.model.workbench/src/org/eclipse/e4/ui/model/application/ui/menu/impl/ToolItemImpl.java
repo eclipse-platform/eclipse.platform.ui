@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -35,8 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl#getSelectedElement <em>Selected Element</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl#getMenu <em>Menu</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,24 +44,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	/**
-	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
+	 * The cached value of the '{@link #getMenu() <em>Menu</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getChildren()
+	 * @see #getMenu()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MMenuElement> children;
-
-	/**
-	 * The cached value of the '{@link #getSelectedElement() <em>Selected Element</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSelectedElement()
-	 * @generated
-	 * @ordered
-	 */
-	protected MMenuElement selectedElement;
+	protected MMenu menu;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -87,28 +77,16 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<MMenuElement> getChildren() {
-		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MMenuElement>(MUIElement.class, this, MenuPackageImpl.TOOL_ITEM__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
-		}
-		return children;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MMenuElement getSelectedElement() {
-		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
-			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MMenuElement)eResolveProxy(oldSelectedElement);
-			if (selectedElement != oldSelectedElement) {
+	public MMenu getMenu() {
+		if (menu != null && ((EObject)menu).eIsProxy()) {
+			InternalEObject oldMenu = (InternalEObject)menu;
+			menu = (MMenu)eResolveProxy(oldMenu);
+			if (menu != oldMenu) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.TOOL_ITEM__MENU, oldMenu, menu));
 			}
 		}
-		return selectedElement;
+		return menu;
 	}
 
 	/**
@@ -116,8 +94,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuElement basicGetSelectedElement() {
-		return selectedElement;
+	public MMenu basicGetMenu() {
+		return menu;
 	}
 
 	/**
@@ -125,40 +103,11 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSelectedElement(MMenuElement newSelectedElement) {
-		MMenuElement oldSelectedElement = selectedElement;
-		selectedElement = newSelectedElement;
+	public void setMenu(MMenu newMenu) {
+		MMenu oldMenu = menu;
+		menu = newMenu;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__MENU, oldMenu, menu));
 	}
 
 	/**
@@ -169,11 +118,9 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				return getChildren();
-			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				if (resolve) return getSelectedElement();
-				return basicGetSelectedElement();
+			case MenuPackageImpl.TOOL_ITEM__MENU:
+				if (resolve) return getMenu();
+				return basicGetMenu();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -187,12 +134,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends MMenuElement>)newValue);
-				return;
-			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				setSelectedElement((MMenuElement)newValue);
+			case MenuPackageImpl.TOOL_ITEM__MENU:
+				setMenu((MMenu)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -206,11 +149,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				getChildren().clear();
-				return;
-			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				setSelectedElement((MMenuElement)null);
+			case MenuPackageImpl.TOOL_ITEM__MENU:
+				setMenu((MMenu)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -224,56 +164,10 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__CHILDREN:
-				return children != null && !children.isEmpty();
-			case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT:
-				return selectedElement != null;
+			case MenuPackageImpl.TOOL_ITEM__MENU:
+				return menu != null;
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MToolBarElement.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MElementContainer.class) {
-			switch (derivedFeatureID) {
-				case MenuPackageImpl.TOOL_ITEM__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-				case MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
-				default: return -1;
-			}
-		}
-		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MToolBarElement.class) {
-			switch (baseFeatureID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MElementContainer.class) {
-			switch (baseFeatureID) {
-				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return MenuPackageImpl.TOOL_ITEM__CHILDREN;
-				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MenuPackageImpl.TOOL_ITEM__SELECTED_ELEMENT;
-				default: return -1;
-			}
-		}
-		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
 } //ToolItemImpl

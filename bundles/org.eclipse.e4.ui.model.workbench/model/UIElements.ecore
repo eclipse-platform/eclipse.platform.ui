@@ -263,12 +263,8 @@
       <eClassifiers xsi:type="ecore:EClass" name="PopupMenu" eSuperTypes="#//ui/menu/Menu #//ui/Context"/>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem"/>
-      <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true">
-        <eGenericSuperTypes eClassifier="#//ui/menu/Item"/>
-        <eGenericSuperTypes eClassifier="#//ui/menu/ToolBarElement"/>
-        <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
-          <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>
-        </eGenericSuperTypes>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/ToolBarElement">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//ui/menu/Menu"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
