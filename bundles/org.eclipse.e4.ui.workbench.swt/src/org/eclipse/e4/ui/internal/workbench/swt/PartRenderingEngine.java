@@ -37,9 +37,9 @@ import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.ToolBarContributionHandler;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.ToolBarContributionHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -591,6 +591,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.addFilter(SWT.Show, menuServiceFilter);
 				display.addFilter(SWT.Hide, menuServiceFilter);
 				display.addFilter(SWT.Dispose, menuServiceFilter);
+				runContext.set(MenuServiceFilter.class, menuServiceFilter);
 
 				// Show the initial UI
 
@@ -709,6 +710,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.removeFilter(SWT.Dispose, menuServiceFilter);
 				menuServiceFilter.dispose();
 				menuServiceFilter = null;
+				appContext.remove(MenuServiceFilter.class);
 			}
 		}
 		if (keyListener != null) {
