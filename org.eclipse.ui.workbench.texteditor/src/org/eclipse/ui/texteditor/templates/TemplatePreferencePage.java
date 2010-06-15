@@ -252,9 +252,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				contexts.add(new String[] { type.getId(), type.getName() });
 			}
 			Collections.sort(contexts, new Comparator() {
-				Collator collator= Collator.getInstance();
+				Collator fCollator= Collator.getInstance();
 				public int compare(Object o1, Object o2) {
-					return collator.compare(((String[])o1)[1], ((String[])o2)[1]);
+					return fCollator.compare(((String[])o1)[1], ((String[])o2)[1]);
 				}
 			});
 			fContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
