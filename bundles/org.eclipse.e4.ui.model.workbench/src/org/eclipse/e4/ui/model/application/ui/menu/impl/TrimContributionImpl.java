@@ -11,11 +11,8 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
-
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
