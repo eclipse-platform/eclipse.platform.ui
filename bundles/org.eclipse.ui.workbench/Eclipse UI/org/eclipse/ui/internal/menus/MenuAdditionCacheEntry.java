@@ -19,13 +19,16 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -37,6 +40,18 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class MenuAdditionCacheEntry {
 
+	private final static String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+
+	private final static String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
+
+	private final static String TRIM_COMMAND2 = "org.eclipse.ui.trim.command2"; //$NON-NLS-1$
+
+	private final static String TRIM_VERTICAL1 = "org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
+
+	private final static String TRIM_VERTICAL2 = "org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
+
+	private final static String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
+
 	private MApplication application;
 	// private IEclipseContext appContext;
 	private IConfigurationElement configElement;
@@ -44,6 +59,8 @@ public class MenuAdditionCacheEntry {
 	private MMenuContribution menuContribution;
 
 	private MToolBarContribution toolBarContribution;
+
+	private MTrimContribution trimContribution;
 
 	// private String namespaceIdentifier;
 
@@ -78,12 +95,22 @@ public class MenuAdditionCacheEntry {
 		return MenuHelper.createMenuAddition(menuAddition);
 	}
 
-	private MMenuElement createSeparatorAddition(final IConfigurationElement sepAddition) {
+	private MMenuElement createMenuSeparatorAddition(final IConfigurationElement sepAddition) {
 		String name = MenuHelper.getName(sepAddition);
 		MMenuElement element = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 		element.setElementId(name);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
 			element.setVisible(false);
+		}
+		return element;
+	}
+
+	private MToolBarElement createToolBarSeparatorAddition(final IConfigurationElement sepAddition) {
+		String name = MenuHelper.getName(sepAddition);
+		MToolBarElement element = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		element.setElementId(name);
+		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
+			element.setToBeRendered(false);
 		}
 		return element;
 	}
@@ -152,7 +179,7 @@ public class MenuAdditionCacheEntry {
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
 				E4Util.unsupported("Control: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
-				MMenuElement element = createSeparatorAddition(items[i]);
+				MMenuElement element = createMenuSeparatorAddition(items[i]);
 				container.getChildren().add(element);
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				MMenu element = createMenuAddition(items[i]);
@@ -183,63 +210,60 @@ public class MenuAdditionCacheEntry {
 		IConfigurationElement[] items = parent.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
-			// String id = getId(items[i]);
 
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
 				MToolBarElement element = createToolBarCommandAddition(items[i]);
 				container.getChildren().add(element);
-				// } else if
-				// (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
-				//				E4Util.unsupported("Dynamic: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
-				// } else if
-				// (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
-				//				E4Util.unsupported("Control: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
-				// } else if
-				// (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType))
-				// {
-				// MMenuElement element = createSeparatorAddition(items[i]);
-				// container.getChildren().add(element);
-				// } else if
-				// (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
-				// MMenu element = createMenuAddition(items[i]);
-				// element.getTags().add(filter);
-				// container.getChildren().add(element);
-				// addMenuChildren(element, items[i], filter);
-				// // newItem = createMenuAdditionContribution(items[i]);
-				// } else if
-				// (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
-				//				E4Util.unsupported("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
+			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
+				MToolBarElement element = createToolBarSeparatorAddition(items[i]);
+				container.getChildren().add(element);
 			}
+		}
+	}
 
-			// if (newItem instanceof InternalControlContribution) {
-			// ((InternalControlContribution)
-			// newItem).setWorkbenchWindow(window);
-			// }
+	private void addTrimChildren(final MElementContainer<MTrimElement> container,
+			IConfigurationElement parent) {
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		addToolBarChildren(toolBar, parent);
 
-			// Cache the relationship between the ICI and the
-			// registry element used to back it
-			// if (newItem != null) {
-			// additions.addContributionItem(newItem,
-			// getVisibleWhenForItem(newItem, items[i]));
-			// }
+		if (!toolBar.getChildren().isEmpty()) {
+			container.getChildren().add(toolBar);
 		}
 	}
 
 	public void addToModel() {
 		if (inToolbar()) {
-			toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
-			String idContrib = MenuHelper.getId(configElement);
-			if (idContrib != null && idContrib.length() > 0) {
-				toolBarContribution.setElementId(idContrib);
+			String path = location.getPath();
+			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
+					|| path.equals(TRIM_COMMAND2) || path.equals(TRIM_VERTICAL1)
+					|| path.equals(TRIM_VERTICAL2) || path.equals(TRIM_STATUS)) {
+				trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
+				String idContrib = MenuHelper.getId(configElement);
+				if (idContrib != null && idContrib.length() > 0) {
+					trimContribution.setElementId(idContrib);
+				}
+				trimContribution.setParentId(location.getPath());
+				String query = location.getQuery();
+				if (query == null || query.length() == 0) {
+					query = "after=additions"; //$NON-NLS-1$
+				}
+				trimContribution.setPositionInParent(query);
+				addTrimChildren(trimContribution, configElement);
+			} else {
+				toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
+				String idContrib = MenuHelper.getId(configElement);
+				if (idContrib != null && idContrib.length() > 0) {
+					toolBarContribution.setElementId(idContrib);
+				}
+				toolBarContribution.setParentId(location.getPath());
+				String query = location.getQuery();
+				if (query == null || query.length() == 0) {
+					query = "after=additions"; //$NON-NLS-1$
+				}
+				toolBarContribution.setPositionInParent(query);
+				addToolBarChildren(toolBarContribution, configElement);
+				application.getToolBarContributions().add(toolBarContribution);
 			}
-			toolBarContribution.setParentId(location.getPath());
-			String query = location.getQuery();
-			if (query == null || query.length() == 0) {
-				query = "after=additions"; //$NON-NLS-1$
-			}
-			toolBarContribution.setPositionInParent(query);
-			addToolBarChildren(toolBarContribution, configElement);
-			application.getToolBarContributions().add(toolBarContribution);
 
 			return;
 		}
@@ -272,5 +296,6 @@ public class MenuAdditionCacheEntry {
 	public void dispose() {
 		application.getMenuContributions().remove(menuContribution);
 		application.getToolBarContributions().remove(toolBarContribution);
+		application.getTrimContributions().remove(trimContribution);
 	}
 }

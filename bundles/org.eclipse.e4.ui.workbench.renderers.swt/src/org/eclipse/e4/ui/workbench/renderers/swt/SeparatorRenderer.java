@@ -41,7 +41,8 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				newSep = new MenuItem(menu, SWT.SEPARATOR);
 			}
 		} else if (element instanceof MToolBarSeparator) {
-			ToolBar tb = (ToolBar) element.getParent().getWidget();
+			ToolBar tb = parent instanceof ToolBar ? (ToolBar) parent
+					: (ToolBar) element.getParent().getWidget();
 			newSep = new ToolItem(tb, SWT.SEPARATOR);
 		}
 
