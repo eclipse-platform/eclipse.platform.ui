@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.jface.viewers.ViewerComparator;
+
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
@@ -279,13 +283,21 @@ public class StringModelFragment extends AbstractComponentEditor {
 					return eclass.label;
 				}
 			});
+			childrenDropDown.setComparator(new ViewerComparator() {
+				@Override
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					FeatureClass eClass1 = (FeatureClass) e1;
+					FeatureClass eClass2 = (FeatureClass) e2;
+					return eClass1.label.compareTo(eClass2.label);
+				}
+			});
 
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(editor.getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
-
+			
 			childrenDropDown.setInput(list);
-			childrenDropDown.setSelection(new StructuredSelection(list.get(0)));
+			childrenDropDown.getCombo().select(0);
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
