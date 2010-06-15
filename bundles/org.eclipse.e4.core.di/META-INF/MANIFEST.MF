@@ -8,8 +8,8 @@ Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.e4.core.internal.di.osgi.DIActivator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.core.di;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions",
- org.eclipse.e4.core.di.annotations;x-friends:="org.eclipse.e4.core.commands,org.eclipse.e4.ui.bindings",
+Export-Package: org.eclipse.e4.core.di;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions,org.eclipse.e4.ui.workbench",
+ org.eclipse.e4.core.di.annotations;x-friends:="org.eclipse.e4.core.commands,org.eclipse.e4.ui.bindings,org.eclipse.e4.ui.workbench",
  org.eclipse.e4.core.di.suppliers;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions",
  org.eclipse.e4.core.internal.di;x-internal:=true,
  org.eclipse.e4.core.internal.di.osgi;x-internal:=true,
