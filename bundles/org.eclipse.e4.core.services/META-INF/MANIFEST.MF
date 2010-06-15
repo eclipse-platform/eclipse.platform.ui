@@ -19,13 +19,13 @@ Require-Bundle: org.eclipse.equinox.common;bundle-version="3.4.0",
  org.eclipse.e4.core.di,
  org.eclipse.e4.core.contexts
 Export-Package: org.eclipse.e4.core.internal.services;x-internal:=true,
- org.eclipse.e4.core.services.adapter,
- org.eclipse.e4.core.services.contributions,
- org.eclipse.e4.core.services.events,
- org.eclipse.e4.core.services.log,
- org.eclipse.e4.core.services.statusreporter,
- org.eclipse.e4.core.services.util,
- org.eclipse.e4.core.services.work
+ org.eclipse.e4.core.services.adapter;x-internal:=true,
+ org.eclipse.e4.core.services.contributions;x-friends:="org.eclipse.e4.ui.workbench",
+ org.eclipse.e4.core.services.events;x-friends:="org.eclipse.e4.ui.services",
+ org.eclipse.e4.core.services.log;x-friends:="org.eclipse.e4.ui.bindings,org.eclipse.e4.ui.services,org.eclipse.e4.ui.workbench",
+ org.eclipse.e4.core.services.statusreporter;x-internal:=true,
+ org.eclipse.e4.core.services.util;x-internal:=true,
+ org.eclipse.e4.core.services.work;x-friends:="org.eclipse.e4.ui.workbench"
 Bundle-Vendor: Eclipse.org
 Eclipse-ExtensibleAPI: true
 Bundle-ClassPath: injection_annotations.jar, .
