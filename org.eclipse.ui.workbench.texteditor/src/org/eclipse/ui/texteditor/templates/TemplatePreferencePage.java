@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -129,6 +131,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+
 
 /**
  * A template preference page allows configuration of the templates for an
@@ -248,6 +251,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				TemplateContextType type= (TemplateContextType) it.next();
 				contexts.add(new String[] { type.getId(), type.getName() });
 			}
+			Collections.sort(contexts, new Comparator() {
+				Collator collator= Collator.getInstance();
+				public int compare(Object o1, Object o2) {
+					return collator.compare(((String[])o1)[1], ((String[])o2)[1]);
+				}
+			});
 			fContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
 
 			fValidationStatus= new StatusInfo();
