@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -37,6 +38,14 @@ public final class ContributionsAnalyzer {
 	public static void addMenuContributions(final MMenu menuModel,
 			final ArrayList<MMenuContribution> toContribute,
 			final ArrayList<MMenuElement> menuContributionsToRemove) {
+
+		HashSet<String> existingMenuIds = new HashSet<String>();
+		for (MMenuElement child : menuModel.getChildren()) {
+			if (child instanceof MMenu) {
+				existingMenuIds.add(child.getElementId());
+			}
+		}
+
 		boolean done = toContribute.size() == 0;
 		while (!done) {
 			ArrayList<MMenuContribution> curList = new ArrayList<MMenuContribution>(toContribute);
@@ -44,7 +53,8 @@ public final class ContributionsAnalyzer {
 			toContribute.clear();
 
 			for (MMenuContribution menuContribution : curList) {
-				if (!processAddition(menuModel, menuContributionsToRemove, menuContribution)) {
+				if (!processAddition(menuModel, menuContributionsToRemove, menuContribution,
+						existingMenuIds)) {
 					toContribute.add(menuContribution);
 				}
 			}
@@ -56,18 +66,25 @@ public final class ContributionsAnalyzer {
 
 	private static boolean processAddition(final MMenu menuModel,
 			final ArrayList<MMenuElement> menuContributionsToRemove,
-			MMenuContribution menuContribution) {
+			MMenuContribution menuContribution, final HashSet<String> existingMenuIds) {
 		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
 		if (idx == -1) {
 			return false;
 		}
 		for (MMenuElement item : menuContribution.getChildren()) {
+			if (item instanceof MMenu && existingMenuIds.contains(item.getElementId())) {
+				// skip this, it's already there
+				continue;
+			}
 			MMenuElement copy = (MMenuElement) EcoreUtil.copy((EObject) item);
 			if (DEBUG) {
 				trace("addMenuContribution " + copy, menuModel.getWidget(), menuModel); //$NON-NLS-1$
 			}
 			menuContributionsToRemove.add(copy);
 			menuModel.getChildren().add(idx++, copy);
+			if (copy instanceof MMenu) {
+				existingMenuIds.add(copy.getElementId());
+			}
 		}
 		return true;
 	}
