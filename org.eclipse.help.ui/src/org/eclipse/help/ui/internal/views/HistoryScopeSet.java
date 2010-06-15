@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,22 +54,13 @@ public class HistoryScopeSet extends ScopeSet {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
-			switch (c) {
-			case '\"':
-				buf.append("QUOTE"); //$NON-NLS-1$
-				break;
-			case ' ':
-				buf.append("_"); //$NON-NLS-1$
-				break;
-			case '?':
-				buf.append("QUESTION"); //$NON-NLS-1$
-				break;
-			case '*':
-				buf.append("STAR"); //$NON-NLS-1$
-				break;
-			default:
+
+			if (c == '_' || Character.isLetterOrDigit(c)) {
 				buf.append(c);
-				break;
+			} else {
+				buf.append('_');
+				buf.append((int) c);
+				buf.append('_');
 			}
 		}
 		return buf.toString();
