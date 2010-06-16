@@ -11,6 +11,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.URI;
@@ -30,7 +31,7 @@ public class NewModelContributionHandler {
 			
 			try {
 				E4XMIResource resource = new E4XMIResource();
-				resource.getContents().add((EObject) MApplicationFactory.INSTANCE.createModelComponents());
+				resource.getContents().add((EObject) MFragmentFactory.INSTANCE.createModelFragments());
 				resource.setURI(URI.createFileURI(file));
 				resource.save(null);
 				

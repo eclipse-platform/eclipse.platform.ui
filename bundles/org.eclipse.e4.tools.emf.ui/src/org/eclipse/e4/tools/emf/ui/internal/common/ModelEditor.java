@@ -71,8 +71,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.InputPartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuSeparatorEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelComponentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartSashContainerEditor;
@@ -91,8 +89,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTab
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelComponentBindingEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelComponentUIEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
@@ -135,15 +131,15 @@ public class ModelEditor {
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
 	public static final String VIRTUAL_PART_MENU = ModelEditor.class.getName() + ".VIRTUAL_PART_MENU"; //$NON-NLS-1$
-	public static final String VIRTUAL_MODEL_COMPONENT_CHILDREN = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMPONENT_CHILDREN"; //$NON-NLS-1$
+//	public static final String VIRTUAL_MODEL_COMPONENT_CHILDREN = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMPONENT_CHILDREN"; //$NON-NLS-1$
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_COMMANDS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MODEL_COMP_BINDINGS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
+//	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_COMMANDS"; //$NON-NLS-1$
+//	public static final String VIRTUAL_MODEL_COMP_BINDINGS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
 	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
@@ -421,12 +417,9 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_WINDOWS, new VWindowEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS, new VWindowControlEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, new VPartDescriptor(modelProvider.getEditingDomain(), this));
-		registerVirtualEditor(VIRTUAL_MODEL_COMP_COMMANDS, new VCommandEditor(modelProvider.getEditingDomain(), this, ApplicationPackageImpl.Literals.MODEL_COMPONENT__COMMANDS));
-		registerVirtualEditor(VIRTUAL_MODEL_COMP_BINDINGS, new VModelComponentBindingEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU, new VMenuEditor(modelProvider.getEditingDomain(), this, org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
 		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
-		registerVirtualEditor(VIRTUAL_MODEL_COMPONENT_CHILDREN, new VModelComponentUIEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS, new VMenuContributionsEditor(modelProvider.getEditingDomain(), this));
 	}
 
@@ -462,8 +455,6 @@ public class ModelEditor {
 
 	private void registerDefaultEditors() {
 		registerEditor(ApplicationPackageImpl.Literals.APPLICATION, new ApplicationEditor(modelProvider.getEditingDomain()));
-		registerEditor(ApplicationPackageImpl.Literals.MODEL_COMPONENTS, new ModelComponentsEditor(modelProvider.getEditingDomain(), this));
-		registerEditor(ApplicationPackageImpl.Literals.MODEL_COMPONENT, new ModelComponentEditor(modelProvider.getEditingDomain()));
 		registerEditor(ApplicationPackageImpl.Literals.ADDON, new AddonsEditor(modelProvider.getEditingDomain(), project));
 
 		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(), modelProvider));
