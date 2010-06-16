@@ -101,9 +101,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// If the parent isn't displayed who cares?
 			MElementContainer<?> parent = changedElement.getParent();
-			AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
-					: null;
-			if (parentRenderer == null)
+			if (parent != null && !parent.isToBeRendered())
 				return;
 
 			if (changedElement.isToBeRendered()) {
@@ -349,6 +347,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					parentContext = getContext(ph.getParent());
 				} else if (parentContext == null && element.getParent() != null) {
 					parentContext = getContext(element.getParent());
+				} else if (parentContext == null && element.getParent() == null) {
+					getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
+							.eContainer());
 				}
 				if (parentContext == null)
 					parentContext = appContext;

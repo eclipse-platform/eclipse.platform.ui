@@ -97,7 +97,7 @@ public class CleanupAddon {
 				return;
 
 			if (changedObj.getWidget() instanceof Shell) {
-				((Shell) changedObj).setVisible(changedObj.isVisible());
+				((Shell) changedObj.getWidget()).setVisible(changedObj.isVisible());
 			} else if (changedObj.getWidget() instanceof Control) {
 				Control ctrl = (Control) changedObj.getWidget();
 				MElementContainer<MUIElement> parent = changedObj.getParent();
@@ -181,10 +181,13 @@ public class CleanupAddon {
 				return;
 			}
 
-			// Don't mess with editor stacks (for now)
+			// never hide top-level windows
 			MUIElement containerElement = container;
+			if (containerElement instanceof MWindow && containerElement.getParent() != null) {
+				return;
+			}
+			// Don't mess with editor stacks (for now)
 			if (containerElement.getTags().contains("EditorStack")
-					|| containerElement instanceof MWindow
 					|| containerElement instanceof MPerspectiveStack) //$NON-NLS-1$
 				return;
 

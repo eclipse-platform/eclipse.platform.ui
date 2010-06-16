@@ -27,6 +27,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -36,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
@@ -444,7 +447,7 @@ public class ModelServiceImpl implements EModelService {
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#detach(org.eclipse.e4.ui.model.application
 	 * .MPartSashContainerElement)
 	 */
-	public void detach(MPartSashContainerElement element) {
+	public void detach(MPartSashContainerElement element, int x, int y, int width, int height) {
 		// Determine the correct parent for the new window
 		MUIElement curParent = element.getParent();
 		while (curParent != null && !(curParent instanceof MPerspective)
@@ -454,20 +457,30 @@ public class ModelServiceImpl implements EModelService {
 		if (curParent == null)
 			return; // log??
 
-		MWindow newWindow = BasicFactoryImpl.INSTANCE.createWindow();
+		MTrimmedWindow newWindow = BasicFactoryImpl.INSTANCE.createTrimmedWindow();
 
 		// HACK! should either be args or should be computed from the control being detached
-		newWindow.setX(100);
-		newWindow.setY(100);
-		newWindow.setWidth(400);
-		newWindow.setHeight(250);
+		newWindow.setX(x);
+		newWindow.setY(y);
+		newWindow.setWidth(width);
+		newWindow.setHeight(height);
 
 		element.getParent().getChildren().remove(element);
 		MWindowElement uiRoot = wrapElementForWindow(element);
 		newWindow.getChildren().add(uiRoot);
 
-		MElementContainer<MUIElement> windowParent = (MElementContainer<MUIElement>) curParent;
-		windowParent.getChildren().add(newWindow);
+		if (curParent instanceof MPerspective) {
+			MPerspective persp = (MPerspective) curParent;
+			persp.getWindows().add(newWindow);
+
+			MWindow window = getTopLevelWindowFor(persp);
+			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
+			Object foo = renderingEngine.createGui(newWindow, window.getWidget());
+			if (foo != null)
+				System.out.println(foo.toString());
+		} else if (curParent instanceof MWindow) {
+			((MWindow) curParent).getWindows().add(newWindow);
+		}
 	}
 
 	/**
@@ -477,6 +490,15 @@ public class ModelServiceImpl implements EModelService {
 	private MWindowElement wrapElementForWindow(MPartSashContainerElement element) {
 		if (element instanceof MWindowElement)
 			return (MWindowElement) element;
+
+		if (element instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) element).getRef();
+			if (ref instanceof MPart) {
+				MPartStack newPS = MBasicFactory.INSTANCE.createPartStack();
+				newPS.getChildren().add((MPlaceholder) element);
+				return newPS;
+			}
+		}
 		return null;
 	}
 

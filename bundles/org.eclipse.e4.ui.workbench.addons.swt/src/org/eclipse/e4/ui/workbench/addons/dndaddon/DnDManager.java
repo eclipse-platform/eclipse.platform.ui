@@ -128,6 +128,7 @@ class DnDManager {
 
 		modelService = (EModelService) window.getContext().get(EModelService.class.getName());
 		dropAgents.add(new SplitDropAgent(modelService));
+		dropAgents.add(new DetachedDropAgent(modelService));
 
 		if (baseWindow.getWidget() instanceof Shell) {
 			baseShell = (Shell) baseWindow.getWidget();

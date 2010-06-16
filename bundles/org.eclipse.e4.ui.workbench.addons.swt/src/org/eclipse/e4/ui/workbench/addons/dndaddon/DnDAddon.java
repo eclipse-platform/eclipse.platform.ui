@@ -32,24 +32,26 @@ public class DnDAddon {
 	@Inject
 	IEventBroker eventBroker;
 
+	private DnDManager dndMgr = null;
+
 	private EventHandler installHook = new EventHandler() {
 		public void handleEvent(Event event) {
-			MUIElement changedElement = (MUIElement) event
-					.getProperty(EventTags.ELEMENT);
+			MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 			if (!(changedElement instanceof MWindow))
 				return;
 
 			Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
 			if (widget instanceof Shell) {
-				new DnDManager((MWindow) changedElement);
+				if (dndMgr == null) {
+					dndMgr = new DnDManager((MWindow) changedElement);
+				}
 			}
 		}
 	};
 
 	@PostConstruct
 	void hookListeners() {
-		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET);
+		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
 		eventBroker.subscribe(topic, null, installHook, false);
 	}
 

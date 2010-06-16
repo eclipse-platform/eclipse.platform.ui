@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -41,6 +42,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -422,16 +424,24 @@ public class WBWRenderer extends SWTPartRenderer {
 			});
 			shell.addListener(SWT.Activate, new Listener() {
 				public void handleEvent(org.eclipse.swt.widgets.Event event) {
-					IEclipseContext parentContext = getContextForParent(w);
-					MApplication app = (MApplication) w.getContext().get(
-							MApplication.class.getName());
-					if (app != null && parentContext != null) {
-						if (app.getSelectedElement() == w) {
+					MUIElement parentME = w.getParent();
+					if (parentME instanceof MApplication) {
+						MApplication app = (MApplication) parentME;
+						if (app.getSelectedElement() == w)
 							return;
-						}
+
 						app.setSelectedElement(w);
-						parentContext.set(IContextConstants.ACTIVE_CHILD,
+						IEclipseContext appContext = app.getContext();
+						appContext.set(IContextConstants.ACTIVE_CHILD,
 								w.getContext());
+					} else if (parentME == null) {
+						parentME = (MUIElement) ((EObjectImpl) w).eContainer();
+						if (parentME instanceof MContext) {
+							IEclipseContext parentContext = ((MContext) parentME)
+									.getContext();
+							parentContext.set(IContextConstants.ACTIVE_CHILD,
+									w.getContext());
+						}
 					}
 				}
 			});

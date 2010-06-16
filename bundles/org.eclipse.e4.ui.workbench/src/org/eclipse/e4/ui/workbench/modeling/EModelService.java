@@ -182,8 +182,17 @@ public interface EModelService {
 	 * 
 	 * @param mPartSashContainerElement
 	 *            The element to detach
+	 * @param x
+	 *            The X position of the new window
+	 * @param y
+	 *            The Y position of the new window
+	 * @param width
+	 *            The Width of the new window
+	 * @param height
+	 *            The Height of the new window
 	 */
-	public void detach(MPartSashContainerElement mPartSashContainerElement);
+	public void detach(MPartSashContainerElement mPartSashContainerElement, int x, int y,
+			int width, int height);
 
 	public MWindow getTopLevelWindowFor(MUIElement element);
 
